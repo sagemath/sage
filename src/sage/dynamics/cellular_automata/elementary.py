@@ -225,7 +225,7 @@ class ElementaryCellularAutomata(SageObject):
 
         sage: ECA = cellular_automata.Elementary(60, width=200)
         sage: ECA.evolve(200)
-        sage: ECA.plot()
+        sage: ECA.plot()                                                                # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -239,7 +239,7 @@ class ElementaryCellularAutomata(SageObject):
 
         sage: ECA = cellular_automata.Elementary(90, initial_state=[1]+[0]*254+[1], boundary=None)
         sage: ECA.evolve(256)
-        sage: ECA.plot()
+        sage: ECA.plot()                                                                # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -598,7 +598,7 @@ class ElementaryCellularAutomata(SageObject):
 
             sage: ECA = cellular_automata.Elementary(110, width=256)
             sage: ECA.evolve(256)
-            sage: ECA.plot()
+            sage: ECA.plot()                                                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         if number is None:

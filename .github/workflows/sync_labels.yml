@@ -29,6 +29,15 @@ jobs:
         with:
           files: .github/sync_labels.py
 
+      # Set special sync_labels bot token
+      - name: Get Tocken
+        run: |
+          TOKEN="${{ secrets.SYNC_LABELS_BOT_TOKEN }}"
+          if [ -z "$TOKEN" ]; then
+            TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          fi
+          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+
       # Perform synchronization
       - name: Call script for synchronization
         if: github.event.schedule == ''
@@ -36,7 +45,7 @@ jobs:
           chmod a+x .github/sync_labels.py
           .github/sync_labels.py $ACTION $ISSUE_URL $PR_URL $ACTOR "$LABEL" "$REV_STATE" $LOG_LEVEL
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ env.TOKEN }}
           ACTION: ${{ github.event.action }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
           PR_URL: ${{ github.event.pull_request.html_url }}
@@ -52,6 +61,6 @@ jobs:
           chmod a+x .github/sync_labels.py
           .github/sync_labels.py $REPO_URL $LOG_LEVEL
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ env.TOKEN }}
           REPO_URL: ${{ github.event.repository.html_url }}
           LOG_LEVEL: ${{ vars.SYNC_LABELS_LOG_LEVEL }} # variable from repository settings, values can be "--debug", "--info" or "--warning"

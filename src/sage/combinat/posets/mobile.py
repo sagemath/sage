@@ -64,7 +64,7 @@ class MobilePoset(FinitePoset):
     _lin_ext_type = LinearExtensionsOfMobile
     _desc = 'Finite mobile poset'
 
-    def __init__(self, hasse_diagram, elements, category, facade, key, ribbon=None, check=True):
+    def __init__(self, hasse_diagram, elements, category, facade, key, ribbon=None, check=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -112,18 +112,18 @@ class MobilePoset(FinitePoset):
         num_anchors = 0
 
         for r in ribbon:
-            anchor_neighbors = set(G.neighbors_out(r)).difference(set(R.neighbors_out(r)))
+            anchor_neighbors = set(G.neighbor_out_iterator(r)).difference(set(R.neighbor_out_iterator(r)))
             if len(anchor_neighbors) == 1:
                 num_anchors += 1
             elif len(anchor_neighbors) > 1:
                 return False
 
-            for lc in G.neighbors_in(r):
+            for lc in G.neighbor_in_iterator(r):
                 if lc in ribbon:
                     continue
 
                 G_un.delete_edge(lc, r)
-                P = Poset(G.subgraph(G_un.connected_component_containing_vertex(lc)))
+                P = Poset(G.subgraph(G_un.connected_component_containing_vertex(lc, sort=False)))
                 if P.top() != lc or not P.is_d_complete():
                     return False
                 G_un.add_edge(lc, r)
@@ -151,7 +151,7 @@ class MobilePoset(FinitePoset):
 
         # Find the anchor vertex, if it exists, and return the edge
         for r in ribbon:
-            anchor_neighbors = set(H.neighbors_out(r)).difference(set(R.neighbors_out(r)))
+            anchor_neighbors = set(H.neighbor_out_iterator(r)).difference(set(R.neighbor_out_iterator(r)))
             if len(anchor_neighbors) == 1:
                 anchor = (r, anchor_neighbors.pop())
                 break

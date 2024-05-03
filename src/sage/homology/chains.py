@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
+# sage.doctest: needs sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
 r"""
 Chains and cochains
 
@@ -10,14 +10,14 @@ homogeneous dimension only, and that they reference their cell
 complex.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -298,7 +298,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
                 sage: chain.is_cocycle()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_cocycle'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_cocycle'...
             """
             return self.to_complex().is_cycle()
 
@@ -325,7 +325,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
                 sage: chain.is_coboundary()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_coboundary'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'is_coboundary'...
             """
             return self.to_complex().is_boundary()
 
@@ -539,7 +539,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: cochain.is_cycle()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_cycle'
+                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_cycle'...
             """
             return self.to_complex().is_cycle()
 
@@ -566,7 +566,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: cochain.is_boundary()
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_boundary'
+                AttributeError: 'Cochains_with_category.element_class' object has no attribute 'is_boundary'...
             """
             return self.to_complex().is_boundary()
 
@@ -604,7 +604,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
                 sage: z.eval(c) # z is not a cochain
                 Traceback (most recent call last):
                 ...
-                AttributeError: 'Chains_with_category.element_class' object has no attribute 'eval'
+                AttributeError: 'Chains_with_category.element_class' object has no attribute 'eval'...
                 sage: c.eval(c) # can't evaluate a cochain on a cochain
                 Traceback (most recent call last):
                 ...
@@ -672,9 +672,9 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
             accumulator = codomain.zero()
             for cell in codomain.indices():
                 for (coeff, left_cell, right_cell) in cx.alexander_whitney(cell, left_deg):
-                        if not coeff:
-                            continue
-                        left = left_chains(left_cell)
-                        right = right_chains(right_cell)
-                        accumulator += codomain(cell) * coeff * self.eval(left) * cochain.eval(right)
+                    if not coeff:
+                        continue
+                    left = left_chains(left_cell)
+                    right = right_chains(right_cell)
+                    accumulator += codomain(cell) * coeff * self.eval(left) * cochain.eval(right)
             return accumulator

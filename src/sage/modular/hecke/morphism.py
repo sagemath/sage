@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Morphisms of Hecke modules
 
@@ -6,7 +7,7 @@ AUTHORS:
 - William Stein
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -20,8 +21,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import sage.misc.misc as misc
@@ -33,9 +34,10 @@ from sage.categories.morphism import Morphism
 # modular abelian varieties (which are specified by matrices, but on
 # integral homology). All morphisms derive from HeckeModuleMorphism.
 
+
 def is_HeckeModuleMorphism(x):
     r"""
-    Return True if x is of type HeckeModuleMorphism.
+    Return ``True`` if x is of type HeckeModuleMorphism.
 
     EXAMPLES::
 
@@ -43,6 +45,7 @@ def is_HeckeModuleMorphism(x):
         True
     """
     return isinstance(x, HeckeModuleMorphism)
+
 
 def is_HeckeModuleMorphism_matrix(x):
     """
@@ -54,11 +57,13 @@ def is_HeckeModuleMorphism_matrix(x):
     """
     return isinstance(x, HeckeModuleMorphism_matrix)
 
+
 class HeckeModuleMorphism(Morphism):
     r"""
     Abstract base class for morphisms of Hecke modules.
     """
     pass
+
 
 class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
     """
@@ -146,9 +151,8 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
             'Hecke module morphism spam defined by the matrix\n[0 1 2]\n[3 4 5]\n[6 7 8]\nDomain: Modular Symbols space of dimension 3 for Gamma_0(6) of weight ...\nCodomain: Modular Symbols space of dimension 3 for Gamma_0(6) of weight ...'
         """
         name = self.__name
-        if name != '':
+        if name:
             name += ' '
-        return "Hecke module morphism %sdefined by the matrix\n%r\nDomain: %s\nCodomain: %s"%(
-                name, self.matrix(), misc.strunc(self.domain()), misc.strunc(self.codomain()))
+        return "Hecke module morphism %sdefined by the matrix\n%r\nDomain: %s\nCodomain: %s" % (name, self.matrix(), misc.strunc(self.domain()), misc.strunc(self.codomain()))
 
 # __mul__ method removed by David Loeffler 2009-04-14 as it is an exact duplicate of sage.modules.matrix_morphism.__mul__

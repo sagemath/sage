@@ -14,7 +14,7 @@ from sage.misc.sageinspect import _extract_embedded_position
 from sage.misc.sageinspect import is_function_or_cython_function as _isfunction
 
 
-def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
+def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, root=None):
     r"""
     Return a ReST table describing a list of functions.
 
@@ -35,13 +35,19 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
       precedence over the automatically computed name for the functions. Only
       used when ``list_of_entries`` is a list.
 
-    - ``sort`` (boolean; ``True``) -- whether to sort the list of methods
-      lexicographically.
+    - ``sort`` -- boolean (default: ``True``); whether to sort the list of
+      methods lexicographically.
 
-    - ``only_local_functions`` (boolean; ``True``) -- if ``list_of_entries`` is
-      a module, ``only_local_functions = True`` means that imported functions
-      will be filtered out. This can be useful to disable for making indexes of
-      e.g. catalog modules such as :mod:`sage.coding.codes_catalog`.
+    - ``only_local_functions`` -- boolean (default: ``True``); if
+      ``list_of_entries`` is a module, ``only_local_functions = True`` means
+      that imported functions will be filtered out. This can be useful to
+      disable for making indexes of e.g. catalog modules such as
+      :mod:`sage.coding.codes_catalog`.
+
+    - ``root`` -- module or class (default: ``None``); the module, or class,
+      whose elements are to be listed. This is needed to recover the class when
+      this method is called from :meth:`gen_thematic_rest_table_index` (see
+      :issue:`36178`).
 
     .. WARNING::
 
@@ -52,7 +58,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_rest_table_index
-        sage: print(gen_rest_table_index([graphs.PetersenGraph]))
+        sage: print(gen_rest_table_index([graphs.PetersenGraph]))                       # needs sage.graphs
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -70,14 +76,14 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
         <BLANKLINE>
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
            :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` @ Return a ReST table describing a list of functions.
-           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
-           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Returns the functions (resp. methods) of a given module (resp. class) with their names.
+           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted functions (or methods) of a module (or class).
+           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
 
     The table of a class::
 
-        sage: print(gen_rest_table_index(Graph))
+        sage: print(gen_rest_table_index(Graph))                                        # needs sage.graphs
         .. csv-table::
            :class: contentstable
            :widths: 30, 70
@@ -103,6 +109,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
 
     The inherited methods do not show up::
 
+        sage: # needs sage.graphs
         sage: gen_rest_table_index(sage.combinat.posets.lattices.FiniteLatticePoset).count('\n') < 75
         True
         sage: from sage.graphs.generic_graph import GenericGraph
@@ -122,8 +129,8 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
         <BLANKLINE>
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
            :func:`~sage.misc.rest_index_of_methods.gen_rest_table_index` @ Return a ReST table describing a list of functions.
-           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
-           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Returns the functions (resp. methods) of a given module (resp. class) with their names.
+           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted functions (or methods) of a module (or class).
+           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
         sage: print(gen_rest_table_index(sage.misc.rest_index_of_methods, only_local_functions=False))
@@ -133,18 +140,25 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
            :delim: @
         <BLANKLINE>
            :func:`~sage.misc.rest_index_of_methods.doc_index` @ Attribute an index name to a function.
-           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted function (or methods) of a module (or class).
-           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Returns the functions (resp. methods) of a given module (resp. class) with their names.
+           :func:`~sage.misc.rest_index_of_methods.gen_thematic_rest_table_index` @ Return a ReST string of thematically sorted functions (or methods) of a module (or class).
+           :func:`~sage.misc.rest_index_of_methods.list_of_subfunctions` @ Return the functions (resp. methods) of a given module (resp. class) with their names.
         <BLANKLINE>
         <BLANKLINE>
 
     A function that is imported into a class under a different name is listed
     under its 'new' name::
 
-        sage: 'cliques_maximum' in gen_rest_table_index(Graph)
+        sage: 'cliques_maximum' in gen_rest_table_index(Graph)                          # needs sage.graphs
         True
-        sage: 'all_max_cliques`' in gen_rest_table_index(Graph)
+        sage: 'all_max_cliques`' in gen_rest_table_index(Graph)                         # needs sage.graphs
         False
+
+    Check that :issue:`36178` is fixed::
+
+        sage: print(gen_rest_table_index(Graph))                                        # needs sage.graphs
+        ...
+           :meth:`~sage.graphs.graph.Graph.independent_set` @ Return a maximum independent set.
+        ...
     """
     if names is None:
         names = {}
@@ -168,14 +182,24 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
     if sort:
         list_of_entries.sort(key=fname)
 
+    obj_or_root_is_class = False
+    if inspect.isclass(root):
+        obj_or_root_is_class = True
+        class_name = root.__name__
+        module_name = root.__module__
+    elif inspect.isclass(obj):
+        obj_or_root_is_class = True
+        class_name = obj.__name__
+        module_name = obj.__module__
+
     for e in list_of_entries:
         if inspect.ismethod(e):
             link = ":meth:`~{module}.{cls}.{func}`".format(
                 module=e.im_class.__module__, cls=e.im_class.__name__,
                 func=fname(e))
-        elif _isfunction(e) and inspect.isclass(obj):
+        elif _isfunction(e) and obj_or_root_is_class:
             link = ":meth:`~{module}.{cls}.{func}`".format(
-                module=obj.__module__, cls=obj.__name__, func=fname(e))
+                module=module_name, cls=class_name, func=fname(e))
         elif _isfunction(e):
             link = ":func:`~{module}.{func}`".format(
                 module=e.__module__, func=fname(e))
@@ -203,15 +227,15 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
 
 def list_of_subfunctions(root, only_local_functions=True):
     r"""
-    Returns the functions (resp. methods) of a given module (resp. class) with their names.
+    Return the functions (resp. methods) of a given module (resp. class) with their names.
 
     INPUT:
 
     - ``root`` -- the module, or class, whose elements are to be listed.
 
-    - ``only_local_functions`` (boolean; ``True``) -- if ``root`` is a module,
-      ``only_local_functions = True`` means that imported functions will be
-      filtered out. This can be useful to disable for making indexes of
+    - ``only_local_functions`` -- boolean (default: ``True``); if ``root`` is a
+      module, ``only_local_functions = True`` means that imported functions will
+      be filtered out. This can be useful to disable for making indexes of
       e.g. catalog modules such as :mod:`sage.coding.codes_catalog`.
 
     OUTPUT:
@@ -223,17 +247,17 @@ def list_of_subfunctions(root, only_local_functions=True):
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]
-        sage: Graph.bipartite_color in l
+        sage: l = list_of_subfunctions(Graph)[0]                                        # needs sage.graphs
+        sage: Graph.bipartite_color in l                                                # needs sage.graphs
         True
 
     TESTS:
 
     A ``staticmethod`` is not callable. We must handle them correctly, however::
 
-        sage: class A:
+        sage: class A:                                                                  # needs sage.graphs
         ....:     x = staticmethod(Graph.order)
-        sage: list_of_subfunctions(A)
+        sage: list_of_subfunctions(A)                                                   # needs sage.graphs
         ([<function GenericGraph.order at 0x...>],
          {<function GenericGraph.order at 0x...>: 'x'})
 
@@ -255,39 +279,49 @@ def list_of_subfunctions(root, only_local_functions=True):
         else:
             return inspect.isclass(root) or not (f is gen_rest_table_index)
 
-    functions = {getattr(root,name):name for name,f in root.__dict__.items() if
-                  (not name.startswith('_')          and # private functions
-                   not hasattr(f,'issue_number')      and # deprecated functions
-                   not inspect.isclass(f)            and # classes
-                   callable(getattr(f,'__func__',f)) and # e.g. GenericGraph.graphics_array_defaults
-                   local_filter(f,name))                 # possibly filter imported functions
+    def can_import(f):
+        # poke it to provoke a lazy import to resolve
+        try:
+            hasattr(f, 'xyz')
+        except ImportError:
+            return False
+        return True
+
+    functions = {getattr(root, name): name for name, f in root.__dict__.items() if
+                  (not name.startswith('_')            and  # private functions
+                   can_import(f)                       and  # unresolved lazy imports
+                   not hasattr(f, 'issue_number')      and  # deprecated functions
+                   not inspect.isclass(f)              and  # classes
+                   callable(getattr(f, '__func__', f)) and  # e.g. GenericGraph.graphics_array_defaults
+                   local_filter(f, name))                   # possibly filter imported functions
                   }
 
     return list(functions.keys()), functions
 
 
-def gen_thematic_rest_table_index(root,additional_categories=None,only_local_functions=True):
+def gen_thematic_rest_table_index(root, additional_categories=None, only_local_functions=True):
     r"""
-    Return a ReST string of thematically sorted function (or methods) of a module (or class).
+    Return a ReST string of thematically sorted functions (or methods) of a
+    module (or class).
 
     INPUT:
 
     - ``root`` -- the module, or class, whose elements are to be listed.
 
-    - ``additional_categories`` -- a dictionary associating a category (given as
-      a string) to a function's name. Can be used when the decorator
-      :func:`doc_index` does not work on a function.
+    - ``additional_categories`` -- dictionary (default: ``None``); a dictionary
+      associating a category (given as a string) to a function's name. Can be
+      used when the decorator :func:`doc_index` does not work on a function.
 
-    - ``only_local_functions`` (boolean; ``True``) -- if ``root`` is a module,
-      ``only_local_functions = True`` means that imported functions will be
-      filtered out. This can be useful to disable for making indexes of
+    - ``only_local_functions`` -- boolean (default: ``True``); if ``root`` is a
+      module, ``only_local_functions = True`` means that imported functions will
+      be filtered out. This can be useful to disable for making indexes of
       e.g. catalog modules such as :mod:`sage.coding.codes_catalog`.
 
     EXAMPLES::
 
         sage: from sage.misc.rest_index_of_methods import gen_thematic_rest_table_index, list_of_subfunctions
-        sage: l = list_of_subfunctions(Graph)[0]
-        sage: Graph.bipartite_color in l
+        sage: l = list_of_subfunctions(Graph)[0]                                        # needs sage.graphs
+        sage: Graph.bipartite_color in l                                                # needs sage.graphs
         True
     """
     from collections import defaultdict
@@ -307,7 +341,7 @@ def gen_thematic_rest_table_index(root,additional_categories=None,only_local_fun
             except AttributeError:
                 doc_ind = "Unsorted"
         theme_to_function[doc_ind].append(f)
-    s = ["**"+theme+"**\n\n"+gen_rest_table_index(list_of_functions,names=names)
+    s = ["**" + theme + "**\n\n" + gen_rest_table_index(list_of_functions, names=names, root=root)
          for theme, list_of_functions in sorted(theme_to_function.items())]
     return "\n\n".join(s)
 
@@ -335,8 +369,10 @@ def doc_index(name):
         'Wouhouuuuu'
     """
     def hey(f):
-        setattr(f,"doc_index",name)
+        setattr(f, "doc_index", name)
         return f
     return hey
 
-__doc__ = __doc__.format(INDEX_OF_FUNCTIONS=gen_rest_table_index([gen_rest_table_index]))
+
+__doc__ = __doc__.format(INDEX_OF_FUNCTIONS=gen_rest_table_index([gen_rest_table_index,
+                                                                  gen_thematic_rest_table_index]))

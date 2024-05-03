@@ -2,29 +2,30 @@
 Error handler for the GLPK library
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_error
 
-from .env cimport *
+from sage.libs.glpk.env cimport *
 from cpython.exc cimport PyErr_SetObject
 from sage.cpython.string cimport char_to_str
 from sage.numerical.mip import MIPSolverException
+
 
 class GLPKError(MIPSolverException):
     """
     A low-level error that is raised by ``sage_glpk_term_hook``.
 
-    The GLPK API considers these errors non-recoverable.  User code should not try
-    to catch this exception.
+    The GLPK API considers these errors non-recoverable.
+    User code should not try to catch this exception.
 
     EXAMPLES::
 
@@ -41,7 +42,7 @@ class GLPKError(MIPSolverException):
 cdef error_message = ""
 
 
-cdef int sage_glpk_term_hook(void *info, const char *s) with gil:
+cdef int sage_glpk_term_hook(void *info, const char *s) noexcept with gil:
     """
     A hook to intercept all output written by GLPK.
     """
@@ -56,7 +57,7 @@ cdef int sage_glpk_term_hook(void *info, const char *s) with gil:
         return 0
 
 
-cdef void sage_glpk_error_hook(void *info) with gil:
+cdef void sage_glpk_error_hook(void *info) noexcept with gil:
     """
     A hook to intercept GLPK errors.
     """
@@ -94,7 +95,7 @@ def setup_glpk_error_handler():
         GLPKError: glp_term_out: flag = 12345; invalid parameter
         Error detected in file env/stdout.c at line ...
 
-    Check that normal terminal output still works, see :trac:`20832`::
+    Check that normal terminal output still works, see :issue:`20832`::
 
         sage: def verbose_GLPK():
         ....:     from sage.numerical.backends.generic_backend import get_solver

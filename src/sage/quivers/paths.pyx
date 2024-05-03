@@ -381,7 +381,7 @@ cdef class QuiverPath(MonoidElement):
             sage: list(range(6))[4:1]
             []
 
-        The following was fixed in :trac:`22278`. A path slice of length
+        The following was fixed in :issue:`22278`. A path slice of length
         zero of course has a specific start- and endpoint. It is always
         the startpoint of the arrow corresponding to the first item of
         the range::

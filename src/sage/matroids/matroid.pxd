@@ -1,8 +1,7 @@
 from sage.structure.sage_object cimport SageObject
 
 cdef class Matroid(SageObject):
-    cdef public __custom_name
-    cdef public _custom_name
+    cdef public _SageObject__custom_name
     cdef public _cached_info
     cdef int _stored_full_rank
     cdef int _stored_size
@@ -37,7 +36,7 @@ cdef class Matroid(SageObject):
     cpdef _line_length(self, F)
     cpdef _extension(self, element, hyperplanes)
 
-    cdef inline __subset(self, X):
+    cdef inline _subset_internal(self, X):
         """
         Convert ``X`` to a ``frozenset`` and check that it is a subset
         of the groundset.
@@ -125,8 +124,14 @@ cdef class Matroid(SageObject):
     cpdef coflats(self, r)
     cpdef hyperplanes(self)
     cpdef f_vector(self)
+    cpdef whitney_numbers(self)
+    cpdef whitney_numbers2(self)
     cpdef broken_circuits(self, ordering=*)
     cpdef no_broken_circuits_sets(self, ordering=*)
+
+    # polytopes
+    cpdef matroid_polytope(self)
+    cpdef independence_matroid_polytope(self)
 
     # isomorphism
     cpdef is_isomorphic(self, other, certificate=*)
@@ -136,6 +141,7 @@ cdef class Matroid(SageObject):
     cpdef equals(self, other)
     cpdef is_isomorphism(self, other, morphism)
     cpdef _is_isomorphism(self, other, morphism)
+    cpdef _relabel_map(self, mapping)
 
     # minors, dual, truncation
     cpdef minor(self, contractions=*, deletions=*)
@@ -154,6 +160,7 @@ cdef class Matroid(SageObject):
     cpdef modular_cut(self, subsets)
     cpdef linear_subclasses(self, line_length=*, subsets=*)
     cpdef extensions(self, element=*, line_length=*, subsets=*)
+    cpdef coextensions(self, element=*, coline_length=*, subsets=*)
 
     # connectivity
     cpdef simplify(self)
@@ -176,6 +183,9 @@ cdef class Matroid(SageObject):
     cpdef _is_3connected_CE(self, certificate=*)
     cpdef _is_3connected_BC(self, certificate=*)
     cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits)
+    cpdef is_paving(self)
+    cpdef is_sparse_paving(self)
+    cpdef girth(self)
 
     # representability
     cpdef _local_binary_matroid(self, basis=*)
@@ -184,6 +194,8 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
+    cpdef is_regular(self)
+    cpdef is_graphic(self)
 
     # matroid k-closed
     cpdef is_k_closed(self, int k)
@@ -211,13 +223,19 @@ cdef class Matroid(SageObject):
     cpdef _internal(self, B)
     cpdef _external(self, B)
     cpdef tutte_polynomial(self, x=*, y=*)
+    cpdef characteristic_polynomial(self, la=*)
     cpdef flat_cover(self, solver=*, verbose=*, integrality_tolerance=*)
 
     # misc
+    cpdef automorphism_group(self)
     cpdef bergman_complex(self)
     cpdef augmented_bergman_complex(self)
+    cpdef broken_circuit_complex(self, ordering=*)
 
     # visualization
     cpdef plot(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*)
     cpdef show(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*,lims=*)
     cpdef _fix_positions(self,pos_dict=*,lineorders=*)
+
+    # construction
+    cpdef direct_sum(self, matroids)

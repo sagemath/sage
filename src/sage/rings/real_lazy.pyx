@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.real_interval_field sage.rings.real_mpfr
 """
 Lazy real and complex numbers
 
@@ -12,11 +13,11 @@ specified in the forward direction).
 
 TESTS:
 
-Bug :trac:`21991`::
+Bug :issue:`21991`::
 
-    sage: a = QuadraticField(5).gen()
-    sage: u = -573147844013817084101/2*a + 1281597540372340914251/2
-    sage: RealIntervalField(128)(RLF(u)).is_exact()
+    sage: a = QuadraticField(5).gen()                                                   # needs sage.rings.number_field
+    sage: u = -573147844013817084101/2*a + 1281597540372340914251/2                     # needs sage.rings.number_field
+    sage: RealIntervalField(128)(RLF(u)).is_exact()                                     # needs sage.rings.number_field
     False
 """
 
@@ -48,9 +49,17 @@ from sage.rings.integer import Integer
 
 cdef QQ, RR, CC, RealField, ComplexField
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR, RealField
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.cc import CC
+
+cdef late_import():
+    global RR, CC, RealField, ComplexField
+    if CC is not None:
+        return
+    try:
+        from sage.rings.real_mpfr import RR, RealField
+        from sage.rings.complex_mpfr import ComplexField
+        from sage.rings.cc import CC
+    except ImportError:
+        pass
 
 cdef _QQx = None
 
@@ -149,16 +158,16 @@ cdef class LazyField(Field):
             True
             sage: RLF.has_coerce_map_from(QQ)
             True
-            sage: RLF.has_coerce_map_from(AA)
+            sage: RLF.has_coerce_map_from(AA)                                           # needs sage.rings.number_field
             True
-            sage: CLF.has_coerce_map_from(QQbar)
+            sage: CLF.has_coerce_map_from(QQbar)                                        # needs sage.rings.number_field
             True
             sage: RLF.has_coerce_map_from(RDF)
             False
 
             sage: CLF.has_coerce_map_from(QQ)
             True
-            sage: CLF.has_coerce_map_from(QQbar)
+            sage: CLF.has_coerce_map_from(QQbar)                                        # needs sage.rings.number_field
             True
             sage: CLF.has_coerce_map_from(CC)
             False
@@ -406,7 +415,7 @@ class ComplexLazyField_class(LazyField):
 
             sage: CLF.interval_field()
             Complex Interval Field with 53 bits of precision
-            sage: CLF.interval_field(333)
+            sage: CLF.interval_field(333)                                               # needs sage.rings.complex_interval_field
             Complex Interval Field with 333 bits of precision
             sage: CLF.interval_field() is CIF
             True
@@ -426,7 +435,7 @@ class ComplexLazyField_class(LazyField):
 
             sage: CLF.gen()
             1*I
-            sage: ComplexField(100)(CLF.gen())
+            sage: ComplexField(100)(CLF.gen())                                          # needs sage.rings.number_field
             1.0000000000000000000000000000*I
         """
         if i == 0:
@@ -746,6 +755,7 @@ cdef class LazyFieldElement(FieldElement):
 
         When the absolute value is involved, the result might be real::
 
+            sage: # needs sage.symbolic
             sage: z = exp(CLF(1 + I/2)); z
             2.38551673095914? + 1.303213729686996?*I
             sage: r = z.abs(); r
@@ -812,7 +822,6 @@ cdef class LazyFieldElement(FieldElement):
         try:
             return self.eval(complex)
         except Exception:
-            from .complex_mpfr import ComplexField
             return complex(self.eval(ComplexField(53)))
 
     cpdef eval(self, R):
@@ -827,7 +836,7 @@ cdef class LazyFieldElement(FieldElement):
         """
         raise NotImplementedError("Subclasses must override this method.")
 
-    cpdef int depth(self):
+    cpdef int depth(self) noexcept:
         """
         Abstract method for returning the depth of ``self`` as an arithmetic
         expression.
@@ -853,7 +862,7 @@ cdef class LazyFieldElement(FieldElement):
 
         TESTS::
 
-            sage: "log" in RLF(sqrt(8)).__dir__()
+            sage: "log" in RLF(sqrt(8)).__dir__()                                       # needs sage.symbolic
             True
 
         """
@@ -868,7 +877,7 @@ cdef class LazyFieldElement(FieldElement):
             sage: a = RLF(3)
             sage: a.sqrt()
             1.732050807568878?
-            sage: sin(a)
+            sage: sin(a)                                                                # needs sage.symbolic
             0.1411200080598673?
             sage: RealField(160)(tanh(RLF(3)))
             0.99505475368673045133188018525548847509781385470
@@ -884,6 +893,7 @@ cdef class LazyFieldElement(FieldElement):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: a = RLF(sqrt(2)) + RLF(sqrt(3))
             sage: cf = a.continued_fraction()
             sage: cf
@@ -901,15 +911,15 @@ def make_element(parent, *args):
 
     EXAMPLES::
 
-        sage: a = RLF(pi) + RLF(sqrt(1/2)) # indirect doctest
-        sage: bool(loads(dumps(a)) == a)
+        sage: a = RLF(pi) + RLF(sqrt(1/2))  # indirect doctest                          # needs sage.symbolic
+        sage: bool(loads(dumps(a)) == a)                                                # needs sage.symbolic
         True
     """
     return parent(*args)
 
 cdef class LazyWrapper(LazyFieldElement):
 
-    cpdef int depth(self):
+    cpdef int depth(self) noexcept:
         """
         Returns the depth of ``self`` as an expression, which is always 0.
 
@@ -1041,8 +1051,8 @@ cdef class LazyWrapper(LazyFieldElement):
 
         EXAMPLES::
 
-            sage: a = RLF(sqrt(2))
-            sage: a.continued_fraction()
+            sage: a = RLF(sqrt(2))                                                      # needs sage.symbolic
+            sage: a.continued_fraction()                                                # needs sage.symbolic
             [1; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...]
         """
         from sage.rings.continued_fraction import ContinuedFraction_real, ContinuedFraction_infinite
@@ -1076,7 +1086,7 @@ cdef class LazyBinop(LazyFieldElement):
         self._right = right
         self._op = op
 
-    cpdef int depth(self):
+    cpdef int depth(self) noexcept:
         """
         Return the depth of ``self`` as an arithmetic expression.
 
@@ -1214,7 +1224,7 @@ cdef class LazyUnop(LazyFieldElement):
         self._op = op
         self._arg = arg
 
-    cpdef int depth(self):
+    cpdef int depth(self) noexcept:
         """
         Return the depth of ``self`` as an arithmetic expression.
 
@@ -1244,7 +1254,7 @@ cdef class LazyUnop(LazyFieldElement):
 
             sage: from sage.rings.real_lazy import LazyUnop
             sage: a = LazyUnop(RLF, 3, sqrt)
-            sage: a.eval(ZZ)
+            sage: a.eval(ZZ)                                                            # needs sage.symbolic
             sqrt(3)
         """
         arg = self._arg.eval(R)
@@ -1260,7 +1270,7 @@ cdef class LazyUnop(LazyFieldElement):
 
         EXAMPLES::
 
-            sage: hash(RLF(sin(1))) == hash(RLF(sin(1)))
+            sage: hash(RLF(sin(1))) == hash(RLF(sin(1)))                                # needs sage.symbolic
             True
         """
         return hash(self._op(hash(self._arg)))
@@ -1474,7 +1484,7 @@ cdef class LazyConstant(LazyFieldElement):
 
         TESTS:
 
-        Check that :trac:`26839` is fixed::
+        Check that :issue:`26839` is fixed::
 
             sage: RLF.pi().eval(float)
             3.141592653589793
@@ -1605,6 +1615,9 @@ cdef class LazyAlgebraic(LazyFieldElement):
         if self._poly.degree() == 2:
             c, b, a = self._poly.list()
             self._quadratic_disc = b*b - 4*a*c
+
+        late_import()
+
         if isinstance(parent, RealLazyField_class):
             if not self._poly.number_of_real_roots():
                 raise ValueError("%s has no real roots" % self._poly)
@@ -1623,13 +1636,13 @@ cdef class LazyAlgebraic(LazyFieldElement):
             sage: a = LazyAlgebraic(CLF, QQ['x'].cyclotomic_polynomial(7), 0.6+0.8*CC.0)
             sage: a
             0.6234898018587335? + 0.7818314824680299?*I
-            sage: ComplexField(150)(a) # indirect doctest
+            sage: ComplexField(150)(a)  # indirect doctest                              # needs sage.rings.number_field
             0.62348980185873353052500488400423981063227473 + 0.78183148246802980870844452667405775023233452*I
 
             sage: a = LazyAlgebraic(CLF, QQ['x'].0^2-7, -2.0)
-            sage: RR(a)
+            sage: RR(a)                                                                 # needs sage.rings.number_field
             -2.64575131106459
-            sage: RR(a)^2
+            sage: RR(a)^2                                                               # needs sage.rings.number_field
             7.00000000000000
         """
         if isinstance(R, type):

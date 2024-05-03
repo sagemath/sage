@@ -191,8 +191,8 @@ from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.c_graph cimport CGraph
-from .static_sparse_backend cimport StaticSparseCGraph
-from .static_sparse_backend cimport StaticSparseBackend
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 
 
 cdef extern from "fenv.h":
@@ -310,7 +310,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
         cpython.Py_XINCREF(g.edge_labels)
 
 
-cdef inline int n_edges(short_digraph g):
+cdef inline int n_edges(short_digraph g) noexcept:
     """
     Return the number of edges in ``g``.
 
@@ -319,7 +319,7 @@ cdef inline int n_edges(short_digraph g):
     return <int> (g.neighbors[g.n] - g.edges)
 
 
-cdef inline int out_degree(short_digraph g, int i):
+cdef inline int out_degree(short_digraph g, int i) noexcept:
     """
     Return the out-degree of vertex `i` in ``g``.
 
@@ -402,14 +402,14 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
     return 0
 
 
-cdef int compare_uint32_p(const_void *a, const_void *b):
+cdef int compare_uint32_p(const_void *a, const_void *b) noexcept:
     """
     Comparison function needed for ``bsearch``.
     """
     return (<uint32_t *> a)[0] - (<uint32_t *> b)[0]
 
 
-cdef inline uint32_t * has_edge(short_digraph g, int u, int v):
+cdef inline uint32_t * has_edge(short_digraph g, int u, int v) noexcept:
     r"""
     Test the existence of an edge.
 
@@ -433,7 +433,7 @@ cdef uint32_t simple_BFS(short_digraph g,
                          uint32_t *distances,
                          uint32_t *predecessors,
                          uint32_t *waiting_list,
-                         bitset_t seen):
+                         bitset_t seen) noexcept:
     """
     Perform a breadth first search (BFS) using the same method as in
     sage.graphs.distances_all_pairs.all_pairs_shortest_path_BFS
@@ -565,7 +565,7 @@ cdef int can_be_reached_from(short_digraph g, int src, bitset_t reached) except 
     sig_free(stack)
 
 
-cdef int tarjan_strongly_connected_components_C(short_digraph g, int *scc):
+cdef int tarjan_strongly_connected_components_C(short_digraph g, int *scc) noexcept:
     r"""
     The Tarjan algorithm to compute strongly connected components (SCCs).
 
@@ -702,7 +702,7 @@ def tarjan_strongly_connected_components(G):
         sage: tarjan_strongly_connected_components(digraphs.Path(3))
         [[2], [1], [0]]
         sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
-        sage: D.connected_components()
+        sage: D.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: D = DiGraph( { 0 : [1, 3], 1 : [2], 2 : [3], 4 : [5, 6], 5 : [6] } )
         sage: D.strongly_connected_components()
@@ -731,8 +731,8 @@ def tarjan_strongly_connected_components(G):
 
     Checking against NetworkX::
 
-        sage: import networkx                                                                       # optional - networkx
-        sage: for i in range(10):                          # long time                              # optional - networkx
+        sage: import networkx                                                                       # needs networkx
+        sage: for i in range(10):               # long time                             # needs networkx
         ....:      g = digraphs.RandomDirectedGNP(100,.05)
         ....:      h = g.networkx_graph()
         ....:      scc1 = g.strongly_connected_components()
@@ -765,7 +765,7 @@ def tarjan_strongly_connected_components(G):
     return output
 
 
-cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int *scc, short_digraph output):
+cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int *scc, short_digraph output) noexcept:
     r"""
     Compute the strongly connected components (SCCs) digraph of `g`.
 
@@ -784,10 +784,8 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     cdef size_t s_nscc = <size_t>nscc
     cdef vector[vector[int]] scc_list = vector[vector[int]](nscc, vector[int]())
     cdef vector[vector[int]] sons = vector[vector[int]](nscc + 1, vector[int]())
-    cdef vector[int].iterator iter
     cdef short *neighbors = <short *> mem.calloc(nscc, sizeof(short))
     cdef long m = 0
-    cdef uint32_t degv
     cdef uint32_t *p_tmp
 
     for v in range(s_nscc):
@@ -903,7 +901,7 @@ cdef strongly_connected_component_containing_vertex(short_digraph g, short_digra
     bitset_intersection(scc, scc, scc_reversed)
 
 
-cdef void free_short_digraph(short_digraph g):
+cdef void free_short_digraph(short_digraph g) noexcept:
     """
     Free the resources used by ``g``
     """
@@ -925,7 +923,7 @@ def triangles_count(G):
         sage: from sage.graphs.base.static_sparse_graph import triangles_count
         sage: triangles_count(graphs.PetersenGraph())
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
-        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)
+        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3*binomial(15,3)           # needs sage.symbolic
         True
     """
     from sage.rings.integer import Integer
@@ -1023,8 +1021,8 @@ def spectral_radius(G, prec=1e-10):
 
         sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(2,4),(3,4)])
         sage: e_min, e_max = spectral_radius(G, 1e-14)
-        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))
-        sage: e_min < e < e_max
+        sage: e = max(G.adjacency_matrix().charpoly().roots(AA, multiplicities=False))  # needs sage.modules sage.rings.number_field
+        sage: e_min < e < e_max                                                         # needs sage.modules sage.rings.number_field sage.symbolic
         True
 
         sage: G.spectral_radius()  # abs tol 1e-9
@@ -1032,6 +1030,7 @@ def spectral_radius(G, prec=1e-10):
 
     A larger example::
 
+        sage: # needs sage.modules
         sage: G = DiGraph()
         sage: G.add_edges((i,i+1) for i in range(200))
         sage: G.add_edge(200,0)
@@ -1040,8 +1039,8 @@ def spectral_radius(G, prec=1e-10):
         sage: p = G.adjacency_matrix(sparse=True).charpoly()
         sage: p
         x^201 - x^199 - 1
-        sage: r = p.roots(AA, multiplicities=False)[0]
-        sage: e_min < r < e_max
+        sage: r = p.roots(AA, multiplicities=False)[0]                                  # needs sage.rings.number_field
+        sage: e_min < r < e_max                                                         # needs sage.rings.number_field
         True
 
     A much larger example::
@@ -1060,7 +1059,7 @@ def spectral_radius(G, prec=1e-10):
         sage: G.add_edges([(0,0),(0,0),(0,1),(1,0)])
         sage: spectral_radius(G, 1e-14)  # abs tol 1e-14
         (2.414213562373094, 2.414213562373095)
-        sage: max(G.adjacency_matrix().eigenvalues(AA))
+        sage: max(G.adjacency_matrix().eigenvalues(AA))                                 # needs sage.modules sage.rings.number_field
         2.414213562373095?
 
     Some bipartite graphs::
@@ -1091,7 +1090,7 @@ def spectral_radius(G, prec=1e-10):
         ...
         ValueError: precision (=1.00000000000000e-20) is too small
 
-        sage: for _ in range(100):
+        sage: for _ in range(100):                                                      # needs sage.modules sage.rings.number_field
         ....:     G = digraphs.RandomDirectedGNM(10,35)
         ....:     if not G.is_strongly_connected():
         ....:         continue

@@ -49,7 +49,7 @@ Sage example in ./linsolve.tex, line 653::
 
   sage: A = matrix(RDF, [[-1,2],[3,4]])
   sage: b = vector(RDF, [2,3])
-  sage: x = A\b; x
+  sage: x = A.solve_right(b); x
   (-0.20000000000000018, 0.9000000000000001)
 
 Sage example in ./linsolve.tex, line 666::

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Hecke modules
 """
@@ -21,7 +22,7 @@ from sage.modules.free_module import FreeModule
 from sage.modules.module import Module
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.sequence import Sequence
 
 from . import algebra
@@ -75,7 +76,7 @@ class HeckeModule_generic(Module):
             sage: ModularForms(3, 3).category()
             Category of Hecke modules over Rational Field
         """
-        if not isinstance(base_ring, CommutativeRing):
+        if base_ring not in CommutativeRings():
             raise TypeError("base_ring must be commutative ring")
 
         from sage.categories.hecke_modules import HeckeModules
@@ -455,7 +456,7 @@ class HeckeModule_generic(Module):
         r"""
         Return the rank of this module over its base ring.
 
-        This raises a ``NotImplementedError``, since this is an
+        This raises a :class:`NotImplementedError`, since this is an
         abstract base class.
 
         EXAMPLES::
@@ -472,7 +473,7 @@ class HeckeModule_generic(Module):
         Return the submodule of ``self`` corresponding to ``X``.
 
         As this is an abstract base class, this raises a
-        ``NotImplementedError``.
+        :class:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -738,7 +739,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Return the ambient module associated to this module.
 
-        As this is an abstract base class, raise ``NotImplementedError``.
+        As this is an abstract base class, raise :class:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -1269,7 +1270,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         TESTS:
 
-        This checks that :trac:`15201` is fixed::
+        This checks that :issue:`15201` is fixed::
 
             sage: M = ModularSymbols(5, 6, sign=1)
             sage: f = M.decomposition()[0]
@@ -1500,7 +1501,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Return ``True`` if this space is simple as a module for the
         corresponding Hecke algebra.
 
-        Raises ``NotImplementedError``, as this is an abstract base
+        This raises :class:`NotImplementedError`, as this is an abstract base
         class.
 
         EXAMPLES::
@@ -1696,7 +1697,6 @@ class HeckeModule_free_module(HeckeModule_generic):
         Next we define a function that does the above::
 
             sage: def b(N,k=2):
-            ....:    t=cputime()
             ....:    S = ModularSymbols(N,k,sign=-1).cuspidal_submodule().new_submodule()
             ....:    for A in S.decomposition():
             ....:        print("{} {}".format(N, A.system_of_eigenvalues(5)))

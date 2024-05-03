@@ -12,7 +12,7 @@ Base class for old-style parent objects with a base ring
 # ****************************************************************************
 
 cimport sage.structure.parent as parent
-from .coerce_exceptions import CoercionException
+from sage.structure.coerce_exceptions import CoercionException
 
 cdef inline check_old_coerce(parent.Parent p):
     if p._element_constructor is not None:

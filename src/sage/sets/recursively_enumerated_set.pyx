@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Recursively enumerated set
+Recursively Enumerated Sets
 
 A set `S` is called recursively enumerable if there is an algorithm that
 enumerates the members of `S`. We consider here the recursively enumerated
@@ -9,11 +9,11 @@ sets that are described by some ``seeds`` and a successor function
 graded, forest) or not. The elements of a set having a symmetric, graded or
 forest structure can be enumerated uniquely without keeping all of them in
 memory. Many kinds of iterators are provided in this module: depth first
-search, breadth first search or elements of given depth.
+search, breadth first search and elements of given depth.
 
 See :wikipedia:`Recursively_enumerable_set`.
 
-See documentation of :func:`RecursivelyEnumeratedSet` below for the
+See the documentation of :func:`RecursivelyEnumeratedSet` below for the
 description of the inputs.
 
 AUTHORS:
@@ -22,12 +22,11 @@ AUTHORS:
 
 EXAMPLES:
 
-No hypothesis on the structure
-------------------------------
+.. RUBRIC:: No hypothesis on the structure
 
 What we mean by "no hypothesis" is that the set is not known
 to be a forest, symmetric, or graded. However, it may have other
-structure, like not containing an oriented cycle, that does not
+structure, such as not containing an oriented cycle, that does not
 help with the enumeration.
 
 In this example, the seed is 0 and the successor function is either ``+2``
@@ -50,8 +49,7 @@ Depth first search::
     sage: [next(it) for _ in range(10)]
     [0, 3, 6, 9, 12, 15, 18, 21, 24, 27]
 
-Symmetric structure
--------------------
+.. RUBRIC:: Symmetric structure
 
 The origin ``(0, 0)`` as seed and the upper, lower, left and right lattice
 point as successor function. This function is symmetric since `p` is a
@@ -86,8 +84,7 @@ Levels (elements of given depth)::
     sage: sorted(C.graded_component(2))
     [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0)]
 
-Graded structure
-----------------
+.. RUBRIC:: Graded structure
 
 Identity permutation as seed and ``permutohedron_succ`` as successor
 function::
@@ -127,6 +124,7 @@ Elements of given depth iterator::
 
 Graded components (set of elements of the same depth)::
 
+    sage: # needs sage.combinat
     sage: sorted(R.graded_component(0))
     [[1, 2, 3, 4, 5]]
     sage: sorted(R.graded_component(1))
@@ -136,11 +134,10 @@ Graded components (set of elements of the same depth)::
     sage: sorted(R.graded_component(10))
     [[5, 4, 3, 2, 1]]
 
-Forest structure
-----------------
+.. RUBRIC:: Forest structure (Example 1)
 
 The set of words over the alphabet `\{a,b\}` can be generated from the
-empty word by appending letter `a` or `b` as a successor function. This set
+empty word by appending the letter `a` or `b` as a successor function. This set
 has a forest structure::
 
     sage: seeds = ['']
@@ -161,9 +158,6 @@ Breadth first search iterator::
     sage: [next(it) for _ in range(6)]
     ['', 'a', 'b', 'aa', 'ab', 'ba']
 
-Example: Forest structure
--------------------------
-
 This example was provided by Florent Hivert.
 
 How to define a set using those classes?
@@ -174,41 +168,23 @@ classes being very similar):
 
 .. MATH::
 
-    \begin{picture}(-300,0)(600,0)
-    % Root
-    \put(0,0){\circle*{7}}
-    \put(0,10){\makebox(0,10){``\ ''}}
-    % First Children
-    \put(-150,-60){\makebox(0,10){``a''}}
-    \put(0,-60){\makebox(0,10){``b''}}
-    \put(150,-60){\makebox(0,10){``c''}}
-    \multiput(-150,-70)(150,0){3}{\circle*{7}}
-    % Second children
-    \put(-200,-130){\makebox(0,10){``aa''}}
-    \put(-150,-130){\makebox(0,10){``ab''}}
-    \put(-100,-130){\makebox(0,10){``ac''}}
-    \put(-50,-130){\makebox(0,10){``ba''}}
-    \put(0,-130){\makebox(0,10){``bb''}}
-    \put(50,-130){\makebox(0,10){``bc''}}
-    \put(100,-130){\makebox(0,10){``ca''}}
-    \put(150,-130){\makebox(0,10){``cb''}}
-    \put(200,-130){\makebox(0,10){``cc''}}
-    \multiput(-200,-140)(50,0){9}{\circle*{7}}
-    % Legend
-    \put(100,-5){\makebox(0,10)[l]{1) An initial element}}
-    \put(-250,-5){\makebox(0,10)[l]{2) A function of an element enumerating}}
-    \put(-235,-20){\makebox(0,10)[l]{its children (if any)}}
-    % Arrows
-    \thicklines
-    \put(0,-10){\vector(0,-1){30}}
-    \put(-15,-5){\vector(-2,-1){110}}
-    \put(15,-5){\vector(2,-1){110}}
-    \multiput(-150,-80)(150,0){3}{\vector(0,-1){30}}
-    \multiput(-160,-80)(150,0){3}{\vector(-1,-1){30}}
-    \multiput(-140,-80)(150,0){3}{\vector(1,-1){30}}
-    \put(90,0){\vector(-1,0){70}}
-    \put(-215,-30){\vector(1,-1){40}}
-    \end{picture}
+    \begin{array}{ccc}
+                      & \emptyset \\
+        \hfil\swarrow & \downarrow & \searrow\hfil\\
+                    a & b & c \\
+        \begin{array}{ccc}
+             \swarrow & \downarrow & \searrow \\
+                   aa & ab & ac \\
+        \end{array}   &
+        \begin{array}{ccc}
+             \swarrow & \downarrow & \searrow \\
+                   ba & bb & bc \\
+        \end{array}   &
+        \begin{array}{ccc}
+             \swarrow & \downarrow & \searrow \\
+                   ca & cb & cc \\
+        \end{array}
+    \end{array}
 
 For the previous example, the two necessary pieces of information are:
 
@@ -218,7 +194,7 @@ For the previous example, the two necessary pieces of information are:
 
       lambda x: [x + letter for letter in ['a', 'b', 'c']
 
-This would actually describe an **infinite** set, as such rules describes
+This would actually describe an **infinite** set, as such rules describe
 "all words" on 3 letters. Hence, it is a good idea to replace the function by::
 
     lambda x: [x + letter for letter in ['a', 'b', 'c']] if len(x) < 2 else []
@@ -248,14 +224,13 @@ or::
     sage: S.list()
     ['', 'a', 'aa', 'ab', 'ac', 'b', 'ba', 'bb', 'bc', 'c', 'ca', 'cb', 'cc']
 
-Example: Forest structure 2
----------------------------
+.. RUBRIC:: Forest structure (Example 2)
 
 This example was provided by Florent Hivert.
 
 Here is a little more involved example. We want to iterate through all
 permutations of a given set `S`. One solution is to take elements of `S` one
-by one an insert them at every positions. So a node of the generating tree
+by one and insert them at every position. So a node of the generating tree
 contains two pieces of information:
 
 - the list ``lst`` of already inserted element;
@@ -319,7 +294,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     A set `S` is called recursively enumerable if there is an algorithm that
     enumerates the members of `S`. We consider here the recursively
-    enumerated set that are described by some ``seeds`` and a successor
+    enumerated sets that are described by some ``seeds`` and a successor
     function ``successors``.
 
     Let `U` be a set and ``successors`` `:U \to 2^U` be a successor function
@@ -394,9 +369,10 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     A recursive set given by a graded relation::
 
-        sage: f = lambda a: [a+1, a+I]
-        sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-        sage: C
+        sage: # needs sage.symbolic
+        sage: def f(a):
+        ....:     return [a + 1, a + I]
+        sage: C = RecursivelyEnumeratedSet([0], f, structure='graded'); C
         A recursively enumerated set with a graded structure (breadth first search)
         sage: it = iter(C)
         sage: [next(it) for _ in range(7)]
@@ -404,7 +380,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     .. WARNING::
 
-        If you do not set the good structure, you might obtain bad results,
+        If you do not set a good structure, you might obtain bad results,
         like elements generated twice::
 
             sage: f = lambda a: [a-1,a+1]
@@ -573,7 +549,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
     def __len__(self):
         """
-        Disable ``__len__()`` from :class:`Parent` :trac:`12955`.
+        Disable ``__len__()`` from :class:`Parent` :issue:`12955`.
 
         Because Python assumes ``__len__()`` is fast and we cannot
         have a fast default implementation.
@@ -779,8 +755,8 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate over the elements of ``self`` of given depth.
 
-        An element of depth `n` can be obtained applying `n` times the
-        successor function to a seed.
+        An element of depth `n` can be obtained by applying the
+        successor function `n` times to a seed.
 
         INPUT:
 
@@ -845,7 +821,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate on the elements of ``self`` (breadth first).
 
-        This code remembers every elements generated and uses python
+        This code remembers every element generated and uses python
         queues. It is 3 times slower than the other one.
 
         See :wikipedia:`Breadth-first_search`.
@@ -874,12 +850,13 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate on the elements of ``self`` (in no particular order).
 
-        This code remembers every elements generated.
+        This code remembers every element generated.
 
         TESTS:
 
         We compute all the permutations of 3::
 
+            sage: # needs sage.combinat
             sage: seeds = [Permutation([1,2,3])]
             sage: succ = attrcall("permutohedron_succ")
             sage: R = RecursivelyEnumeratedSet(seeds, succ)
@@ -902,7 +879,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate on the elements of ``self`` (depth first).
 
-        This code remembers every elements generated.
+        This code remembers every element generated.
 
         The elements are traversed right-to-left, so the last element returned
         by the successor function is visited first.
@@ -954,29 +931,30 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
             sage: child = lambda i: [(i+3) % 10, (i+8) % 10]
             sage: R = RecursivelyEnumeratedSet([0], child)
-            sage: R.to_digraph()
+            sage: R.to_digraph()                                                        # needs sage.graphs
             Looped multi-digraph on 10 vertices
 
-        Digraph of an recursively enumerated set with a symmetric structure of
+        Digraph of a recursively enumerated set with a symmetric structure of
         infinite cardinality using ``max_depth`` argument::
 
             sage: succ = lambda a: [(a[0]-1,a[1]), (a[0],a[1]-1), (a[0]+1,a[1]), (a[0],a[1]+1)]
             sage: seeds = [(0,0)]
             sage: C = RecursivelyEnumeratedSet(seeds, succ, structure='symmetric')
-            sage: C.to_digraph(max_depth=3)
+            sage: C.to_digraph(max_depth=3)                                             # needs sage.graphs
             Looped multi-digraph on 41 vertices
 
         The ``max_depth`` argument can be given at the creation of the set::
 
-            sage: C = RecursivelyEnumeratedSet(seeds, succ, structure='symmetric', max_depth=2)
-            sage: C.to_digraph()
+            sage: C = RecursivelyEnumeratedSet(seeds, succ, structure='symmetric',
+            ....:                              max_depth=2)
+            sage: C.to_digraph()                                                        # needs sage.graphs
             Looped multi-digraph on 25 vertices
 
-        Digraph of an recursively enumerated set with a graded structure::
+        Digraph of a recursively enumerated set with a graded structure::
 
             sage: f = lambda a: [a+1, a+I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-            sage: C.to_digraph(max_depth=4)
+            sage: C.to_digraph(max_depth=4)                                             # needs sage.graphs
             Looped multi-digraph on 21 vertices
         """
         successors = self.successors
@@ -1061,7 +1039,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         TESTS:
 
-        Check that :trac:`28674` is fixed::
+        Check that :issue:`28674` is fixed::
 
             sage: D = RecursivelyEnumeratedSet([(0,0)], f)
             sage: s == list(D.breadth_first_search_iterator(max_depth=2))
@@ -1125,7 +1103,9 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         Gaussian integers::
 
-            sage: f = lambda a: [a+1, a+I]
+            sage: # needs sage.symbolic
+            sage: def f(a):
+            ....:     return [a + 1, a + I]
             sage: S = RecursivelyEnumeratedSet([0], f, structure='symmetric')
             sage: it = S.graded_component_iterator()
             sage: [sorted(next(it)) for _ in range(7)]
@@ -1142,6 +1122,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         Note that interrupting the computation (``KeyboardInterrupt`` for
         instance) breaks the iterator::
 
+            sage: # needs sage.symbolic
             sage: def f(a):
             ....:     sleep(0.05r)
             ....:     return [a-1,a+1]
@@ -1200,7 +1181,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         TESTS:
 
-        We make sure that :trac:`21312` is fixed::
+        We make sure that :issue:`21312` is fixed::
 
             sage: def f(a):
             ....:    sleep(0.1r)
@@ -1369,7 +1350,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         TESTS:
 
-        Make sure that :trac:`20225` is fixed::
+        Make sure that :issue:`20225` is fixed::
 
             sage: child = lambda k:[2*k,2*k+1] if k<8 else []
             sage: root = [0]
@@ -1411,7 +1392,9 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         EXAMPLES::
 
-            sage: f = lambda a: [a+1, a+I]
+            sage: # needs sage.symbolic
+            sage: def f(a):
+            ....:     return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
             sage: for i in range(5): sorted(C.graded_component(i))
             [0]
@@ -1422,8 +1405,9 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         TESTS:
 
-        We make sure that :trac:`21312` is fixed::
+        We make sure that :issue:`21312` is fixed::
 
+            sage: # needs sage.symbolic
             sage: def f(a):
             ....:    sleep(0.1r)
             ....:    return [a+1, a+I]
@@ -1542,7 +1526,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
          [0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1],
          [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
 
-    This allows for iterating trough trees of infinite depth::
+    This allows for iterating through trees of infinite depth::
 
         sage: it = search_forest_iterator([[]], lambda l: [l+[0], l+[1]], algorithm='breadth')
         sage: [ next(it) for i in range(16) ]
@@ -1564,9 +1548,9 @@ def search_forest_iterator(roots, children, algorithm='depth'):
          [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]]
     """
     # Little trick: the same implementation handles both depth and
-    # breadth first search. Setting position to -1 makes a depth search
+    # breadth first search. Setting position to -1 results in a depth search
     # (you ask the children for the last node you met). Setting
-    # position on 0 makes a breadth search (enumerate all the
+    # position on 0 results in a breadth search (enumerate all the
     # descendants of a node before going on to the next father)
     if algorithm == 'depth':
         position = -1
@@ -1910,8 +1894,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     def _elements_of_depth_iterator_rec(self, depth=0):
         r"""
         Return an iterator over the elements of ``self`` of given depth.
-        An element of depth `n` can be obtained applying `n` times the
-        children function from a root. This function is not affected
+        An element of depth `n` can be obtained by applying the
+        children function `n` times from a root. This function is not affected
         by post processing.
 
         EXAMPLES::
@@ -1941,8 +1925,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     def elements_of_depth_iterator(self, depth=0):
         r"""
         Return an iterator over the elements of ``self`` of given depth.
-        An element of depth `n` can be obtained applying `n` times the
-        children function from a root.
+        An element of depth `n` can be obtained by applying the
+        children function `n` times from a root.
 
         EXAMPLES::
 
@@ -2000,7 +1984,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         depth first search and breadth first search failed. The
         following example enumerates all ordered pairs of nonnegative
         integers, starting from an infinite set of roots, where each
-        roots has an infinite number of children::
+        root has an infinite number of children::
 
             sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
             sage: S = RecursivelyEnumeratedSet_forest(Family(NN, lambda x : (x, 0)),
@@ -2088,13 +2072,20 @@ class RecursivelyEnumeratedSet_forest(Parent):
             sage: F = RecursivelyEnumeratedSet(seeds, succ,
             ....:                       structure='forest', enumeration='depth')
 
+            sage: # needs sage.symbolic
             sage: y = var('y')
             sage: def map_function(t):
             ....:     li, sum, _ = t
             ....:     return y ^ sum
-            sage: reduce_function = lambda x,y: x + y
+            sage: def reduce_function(x, y):
+            ....:     return x + y
             sage: F.map_reduce(map_function, reduce_function, 0)
-            y^45 + y^44 + y^43 + 2*y^42 + 2*y^41 + 3*y^40 + 4*y^39 + 5*y^38 + 6*y^37 + 8*y^36 + 9*y^35 + 10*y^34 + 12*y^33 + 13*y^32 + 15*y^31 + 17*y^30 + 18*y^29 + 19*y^28 + 21*y^27 + 21*y^26 + 22*y^25 + 23*y^24 + 23*y^23 + 23*y^22 + 23*y^21 + 22*y^20 + 21*y^19 + 21*y^18 + 19*y^17 + 18*y^16 + 17*y^15 + 15*y^14 + 13*y^13 + 12*y^12 + 10*y^11 + 9*y^10 + 8*y^9 + 6*y^8 + 5*y^7 + 4*y^6 + 3*y^5 + 2*y^4 + 2*y^3 + y^2 + y
+            y^45 + y^44 + y^43 + 2*y^42 + 2*y^41 + 3*y^40 + 4*y^39 + 5*y^38 + 6*y^37
+            + 8*y^36 + 9*y^35 + 10*y^34 + 12*y^33 + 13*y^32 + 15*y^31 + 17*y^30
+            + 18*y^29 + 19*y^28 + 21*y^27 + 21*y^26 + 22*y^25 + 23*y^24 + 23*y^23
+            + 23*y^22 + 23*y^21 + 22*y^20 + 21*y^19 + 21*y^18 + 19*y^17 + 18*y^16
+            + 17*y^15 + 15*y^14 + 13*y^13 + 12*y^12 + 10*y^11 + 9*y^10 + 8*y^9 + 6*y^8
+            + 5*y^7 + 4*y^6 + 3*y^5 + 2*y^4 + 2*y^3 + y^2 + y
 
         Here is an example with the default values::
 

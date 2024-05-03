@@ -1,9 +1,9 @@
 cimport cython
 from sage.structure.sage_object cimport SageObject
-from .list_of_faces             cimport ListOfFaces
-from .face_data_structure       cimport face_t
-from .face_list_data_structure  cimport face_list_t
-from .combinatorial_face        cimport CombinatorialFace
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces             cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure  cimport face_list_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face        cimport CombinatorialFace
 
 cdef enum FaceStatus:
     NOT_INITIALIZED
@@ -80,9 +80,11 @@ cdef class FaceIterator_base(SageObject):
     cdef int only_subsets(self) except -1
     cdef int find_face(self, face_t face) except -1
 
+
 @cython.final
 cdef class FaceIterator(FaceIterator_base):
     pass
+
 
 @cython.final
 cdef class FaceIterator_geom(FaceIterator_base):
@@ -94,6 +96,6 @@ cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parall
 
 # Nogil definitions of crucial functions.
 
-cdef int next_dimension(iter_t structure, size_t parallelization_depth=?) nogil except -1
-cdef int next_face_loop(iter_t structure) nogil except -1
-cdef size_t n_atom_rep(iter_t structure) nogil except -1
+cdef int next_dimension(iter_t structure, size_t parallelization_depth=?) except -1 nogil
+cdef int next_face_loop(iter_t structure) except -1 nogil
+cdef size_t n_atom_rep(iter_t structure) except -1 nogil

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Set of words
 
@@ -10,8 +9,8 @@ AUTHORS:
     - Franco Saliola (2008-12-17): merged into sage
     - Sebastien Labbe (2008-12-17): merged into sage
     - Arnaud Bergeron (2008-12-17): merged into sage
-    - Sebastien Labbe (2009-07-21): Improved morphism iterator (:trac:`6571`).
-    - Vincent Delecroix (2015): classes simplifications (:trac:`19619`)
+    - Sebastien Labbe (2009-07-21): Improved morphism iterator (:issue:`6571`).
+    - Vincent Delecroix (2015): classes simplifications (:issue:`19619`)
 
 EXAMPLES::
 
@@ -118,7 +117,7 @@ class AbstractLanguage(Parent):
     Abstract base class
 
     This is *not* to be used by any means. This class gather previous features
-    of set of words (prior to :trac:`19619`). In the future that class might
+    of set of words (prior to :issue:`19619`). In the future that class might
     simply disappear or become a common base class for all languages. In the
     latter case, its name would possibly change to ``Language``.
     """
@@ -705,9 +704,9 @@ class FiniteWords(AbstractLanguage):
         Construction of a word path from a finite word::
 
             sage: W = FiniteWords('abcd')
-            sage: P = WordPaths('abcd')                                                 # optional - sage.modules
+            sage: P = WordPaths('abcd')                                                 # needs sage.modules
             sage: w = W('aaab')
-            sage: P(w)                                                                  # optional - sage.modules
+            sage: P(w)                                                                  # needs sage.modules
             Path: aaab
 
         Construction of a word path from a Christoffel word::
@@ -715,8 +714,8 @@ class FiniteWords(AbstractLanguage):
             sage: w = words.ChristoffelWord(5,8)
             sage: w
             word: 0010010100101
-            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
-            sage: P(w)                                                                  # optional - sage.modules
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: P(w)                                                                  # needs sage.modules
             Path: 0010010100101
 
         Construction of a word represented by a list from a word
@@ -744,19 +743,19 @@ class FiniteWords(AbstractLanguage):
 
             sage: w = words.FibonacciWord()
             sage: f = w[:100]
-            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
-            sage: p = P(f); p                                                           # optional - sage.modules
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: p = P(f); p                                                           # needs sage.modules
             Path: 0100101001001010010100100101001001010010...
-            sage: p.length()                                                            # optional - sage.modules
+            sage: p.length()                                                            # needs sage.modules
             100
 
         Creation of a word path from a FiniteWord_callable::
 
             sage: g = W(lambda n:n%2, length = 100)
-            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
-            sage: p = P(g); p                                                           # optional - sage.modules
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: p = P(g); p                                                           # needs sage.modules
             Path: 0101010101010101010101010101010101010101...
-            sage: p.length()                                                            # optional - sage.modules
+            sage: p.length()                                                            # needs sage.modules
             100
 
         Creation of a word from a pickled function::
@@ -960,8 +959,7 @@ class FiniteWords(AbstractLanguage):
             word: 444
         """
         for l in itertools.count():
-            for w in self.iterate_by_length(l):
-                yield w
+            yield from self.iterate_by_length(l)
 
     def __contains__(self, x):
         """
@@ -1018,7 +1016,7 @@ class FiniteWords(AbstractLanguage):
 
         TESTS::
 
-            sage: _ = FiniteWords(GF(5)).random_element()                               # optional - sage.rings.finite_rings
+            sage: _ = FiniteWords(GF(5)).random_element()                               # needs sage.rings.finite_rings
         """
         if length is None:
             length = ZZ.random_element(0, 10)
@@ -1635,11 +1633,12 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         r"""
         TESTS::
 
-            sage: import os
+            sage: import os, tempfile
             sage: W = Words('ab')
-            sage: filename = os.path.join(tmp_dir(), 'test.sobj')
-            sage: W.save(filename)
-            sage: load(filename)
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     filename = os.path.join(d, 'test.sobj')
+            ....:     W.save(filename)
+            ....:     load(filename)
             Finite and infinite words over {'a', 'b'}
         """
         # add a default to support old pickles from #19619
@@ -1928,9 +1927,9 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         Construction of a word path from a finite word::
 
             sage: W = Words('abcd')
-            sage: P = WordPaths('abcd')                                                 # optional - sage.modules
+            sage: P = WordPaths('abcd')                                                 # needs sage.modules
             sage: w = W('aaab')
-            sage: P(w)                                                                  # optional - sage.modules
+            sage: P(w)                                                                  # needs sage.modules
             Path: aaab
 
         Construction of a word path from a Christoffel word::
@@ -1938,8 +1937,8 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             sage: w = words.ChristoffelWord(5,8)
             sage: w
             word: 0010010100101
-            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
-            sage: P(w)                                                                  # optional - sage.modules
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: P(w)                                                                  # needs sage.modules
             Path: 0010010100101
 
         Construction of a word represented by a list from a word
@@ -1967,24 +1966,24 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
             sage: w = words.FibonacciWord()
             sage: f = w[:100]
-            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
-            sage: p = P(f); p                                                           # optional - sage.modules
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: p = P(f); p                                                           # needs sage.modules
             Path: 0100101001001010010100100101001001010010...
-            sage: p.length()                                                            # optional - sage.modules
+            sage: p.length()                                                            # needs sage.modules
             100
 
-        Creation of a word path from a FiniteWord_callable::
+        Creation of a word path from a :class:`FiniteWord_callable`::
 
             sage: g = Word(lambda n: n%2, length=100)
-            sage: P = WordPaths([0,1,2,3])                                              # optional - sage.modules
-            sage: p = P(g); p                                                           # optional - sage.modules
+            sage: P = WordPaths([0,1,2,3])                                              # needs sage.modules
+            sage: p = P(g); p                                                           # needs sage.modules
             Path: 0101010101010101010101010101010101010101...
-            sage: p.length()                                                            # optional - sage.modules
+            sage: p.length()                                                            # needs sage.modules
             100
 
         Creation of a word from a pickled function::
 
-            sage: f = lambda n : n % 10
+            sage: f = lambda n: n % 10
             sage: from sage.misc.fpickle import pickle_function
             sage: s = pickle_function(f)
             sage: Word(s, datatype='pickled_function')
@@ -2100,11 +2099,12 @@ class Words_n(Parent):
         r"""
         TESTS::
 
-            sage: import os
+            sage: import os, tempfile
             sage: W = Words('ab', 10)
-            sage: filename = os.path.join(tmp_dir(), 'test.sobj')
-            sage: W.save(filename)
-            sage: load(filename)
+            sage: with tempfile.TemporaryDirectory() as d:
+            ....:     filename = os.path.join(d, 'test.sobj')
+            ....:     W.save(filename)
+            ....:     load(filename)
             Words of length 10 over {'a', 'b'}
         """
         # add a default to support old pickles from #19619
@@ -2215,9 +2215,9 @@ class Words_n(Parent):
 
         TESTS::
 
-            sage: _ = Words(GF(5),4).random_element()                                   # optional - sage.rings.finite_rings
+            sage: _ = Words(GF(5),4).random_element()                                   # needs sage.rings.finite_rings
 
-        Check that :trac:`18283` is fixed::
+        Check that :issue:`18283` is fixed::
 
             sage: w = Words('abc', 5).random_element()
             sage: w.length()

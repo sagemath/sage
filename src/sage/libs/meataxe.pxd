@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-meataxe
+
 #*****************************************************************************
 #       Copyright (C) 2015 Simon King <simon.king@uni-jena.de>
 #

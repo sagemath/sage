@@ -108,14 +108,14 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
                 R = ()
             elements = R
             if not elements:
-                R = ZZ # default to ZZ as the base ring if no elements are given
+                R = ZZ  # default to ZZ as the base ring if no elements are given
             elif isinstance(R, Parent):
                 elements = ()
             else:
                 R = elements[0].parent()
-        elif R is None: # elements is not None
+        elif R is None:  # elements is not None
             R = elements[0].parent()
-        return super(KoszulComplex, cls).__classcall__(cls, R, tuple(elements))
+        return super().__classcall__(cls, R, tuple(elements))
 
     def __init__(self, R, elements):
         """
@@ -134,12 +134,12 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
         diff = {}
         zero = R.zero()
         for i in I:
-            M = matrix(R, binomial(n,i), binomial(n,i+1), zero)
+            M = matrix(R, binomial(n, i), binomial(n, i+1), zero)
             j = 0
             for comb in itertools.combinations(I, i+1):
-                for k,val in enumerate(comb):
+                for k, val in enumerate(comb):
                     r = rank(comb[:k] + comb[k+1:], n, False)
-                    M[r,j] = (-1)**k * elements[val]
+                    M[r, j] = (-1)**k * elements[val]
                 j += 1
             M.set_immutable()
             diff[i+1] = M

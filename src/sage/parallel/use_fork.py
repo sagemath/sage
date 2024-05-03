@@ -209,7 +209,7 @@ class p_iter_fork():
                         try:
                             with open(sobj, "rb") as file:
                                 data = file.read()
-                        except IOError:
+                        except OSError:
                             answer = "NO DATA" + W.failure
                         else:
                             os.unlink(sobj)
@@ -223,7 +223,7 @@ class p_iter_fork():
                             with open(out) as file:
                                 sys.stdout.write(file.read())
                             os.unlink(out)
-                        except IOError:
+                        except OSError:
                             pass
 
                         yield (W.input, answer)
@@ -301,7 +301,12 @@ class p_iter_fork():
         # The pexpect interfaces (and objects defined in them) are
         # not valid.
         if self.reset_interfaces:
-            sage.interfaces.quit.invalidate_all()
+            try:
+                from sage.interfaces.quit import invalidate_all
+            except ImportError:
+                pass
+            else:
+                invalidate_all()
 
         # Now evaluate the function f.
         value = f(*args, **kwds)

@@ -35,6 +35,7 @@ from sage.libs.gmp.mpz cimport *
 from sage.misc.prandom import random
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
+from sage.graphs.base.static_sparse_graph cimport init_reverse
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
 
@@ -387,7 +388,7 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
 
 
 @cython.cdivision(True)
-cdef inline double sqrt_approx(double x, double y, double xx, double yy):
+cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcept:
     r"""
     Approximation of `\sqrt(x^2+y^2)`.
 
@@ -399,7 +400,7 @@ cdef inline double sqrt_approx(double x, double y, double xx, double yy):
         ....:    y = abs(y)
         ....:    return max(x,y) + min(x,y)**2/(2*max(x,y))
 
-        sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))              # optional - sage.plot
+        sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))              # needs sage.plot
         Graphics object consisting of 2 graphics primitives
     """
     if xx < yy:
@@ -486,11 +487,10 @@ def small_integer_to_graph6(n):
     """
     if n < 63:
         return chr(n + 63)
-    else:
-        # get 18-bit rep of n
-        n = int_to_binary_string(n)
-        n = '0'*(18 - len(n)) + n
-        return chr(126) + binary_string_to_graph6(n)
+    # get 18-bit rep of n
+    n = int_to_binary_string(n)
+    n = '0'*(18 - len(n)) + n
+    return chr(126) + binary_string_to_graph6(n)
 
 
 def length_and_string_from_graph6(s):
@@ -501,7 +501,7 @@ def length_and_string_from_graph6(s):
 
     INPUT:
 
-    - ``s`` -- a graph6 string describing an binary vector (and encoding its
+    - ``s`` -- a graph6 string describing a binary vector (and encoding its
       length).
 
     EXAMPLES::
@@ -612,6 +612,7 @@ def binary_string_from_dig6(s, n):
     m = "".join(l)
     return m[:n*n]
 
+
 # Exhaustive search in graphs
 
 cdef class SubgraphSearch:
@@ -650,28 +651,28 @@ cdef class SubgraphSearch:
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.subgraph_search(graphs.CycleGraph(5))                               # optional - sage.modules
+            sage: g.subgraph_search(graphs.CycleGraph(5))                               # needs sage.modules
             Subgraph of (Petersen graph): Graph on 5 vertices
 
         TESTS:
 
-        Test proper initialization and deallocation, see :trac:`14067`.
+        Test proper initialization and deallocation, see :issue:`14067`.
         We intentionally only create the class without doing any
         computations with it::
 
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
-            sage: SubgraphSearch(Graph(5), Graph(1))                                    # optional - sage.modules
+            sage: SubgraphSearch(Graph(5), Graph(1))                                    # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: Searched graph should have at least 2 vertices.
-            sage: SubgraphSearch(Graph(5), Graph(2))                                    # optional - sage.modules
+            ValueError: searched graph should have at least 2 vertices
+            sage: SubgraphSearch(Graph(5), Graph(2))                                    # needs sage.modules
             <sage.graphs.generic_graph_pyx.SubgraphSearch ...>
         """
         if H.order() <= 1:
-            raise ValueError("Searched graph should have at least 2 vertices.")
+            raise ValueError("searched graph should have at least 2 vertices")
 
-        if sum([G.is_directed(), H.is_directed()]) == 1:
-            raise ValueError("One graph cannot be directed while the other is not.")
+        if G.is_directed() != H.is_directed():
+            raise ValueError("one graph cannot be directed while the other is not")
 
         G._scream_if_not_simple(allow_loops=True)
         H._scream_if_not_simple(allow_loops=True)
@@ -690,8 +691,8 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
-            sage: for p in S:                                                           # optional - sage.modules
+            sage: S = SubgraphSearch(g, h)                                              # needs sage.modules
+            sage: for p in S:                                                           # needs sage.modules
             ....:     print(p)
             [0, 1, 2]
             [1, 2, 3]
@@ -721,9 +722,21 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
-            sage: S.cardinality()                                                       # optional - sage.modules
+            sage: S = SubgraphSearch(g, h)                                              # needs sage.modules
+            sage: S.cardinality()                                                       # needs sage.modules
             6
+
+        Check that the method is working even when vertices or edges are of
+        incomparable types (see :issue:`35904`)::
+
+            sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
+            sage: G = Graph()
+            sage: G.add_cycle(['A', 1, 2, 3, ('a', 1)])
+            sage: H = Graph()
+            sage: H.add_path("xyz")
+            sage: S = SubgraphSearch(G, H)                                              # needs sage.modules
+            sage: S.cardinality()                                                       # needs sage.modules
+            10
         """
         if self.nh > self.ng:
             return 0
@@ -756,18 +769,18 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
-            sage: S.__next__()                                                          # optional - sage.modules
+            sage: S = SubgraphSearch(g, h)                                              # needs sage.modules
+            sage: S.__next__()                                                          # needs sage.modules
             [0, 1, 2]
-            sage: S._initialization()                                                   # optional - sage.modules
-            sage: S.__next__()                                                          # optional - sage.modules
+            sage: S._initialization()                                                   # needs sage.modules
+            sage: S.__next__()                                                          # needs sage.modules
             [0, 1, 2]
 
         TESTS:
 
-        Check that :trac:`21828` is fixed::
+        Check that :issue:`21828` is fixed::
 
-            sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # optional - sage.modules
+            sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # needs sage.modules
             True
         """
         cdef int i
@@ -802,7 +815,7 @@ cdef class SubgraphSearch:
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.subgraph_search(graphs.CycleGraph(5))                               # optional - sage.modules
+            sage: g.subgraph_search(graphs.CycleGraph(5))                               # needs sage.modules
             Subgraph of (Petersen graph): Graph on 5 vertices
         """
         self.mem = MemoryAllocator()
@@ -812,22 +825,23 @@ cdef class SubgraphSearch:
         self.nh = H.order()
 
         # Storing the list of vertices
-        self.g_vertices = G.vertices(sort=True)
+        self.g_vertices = list(G)
+        cdef list h_vertices = list(H)
 
         # Are the graphs directed (in __init__(), we check
         # whether both are of the same type)
         self.directed = G.is_directed()
 
-        cdef int i, j, k
+        cdef int i, j
 
         # A vertex is said to be busy if it is already part of the partial copy
         # of H in G.
-        self.busy       = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.tmp_array  = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.stack      = <int *>  self.mem.allocarray(self.nh, sizeof(int))
-        self.vertices   = <int *>  self.mem.allocarray(self.nh, sizeof(int))
+        self.busy = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.tmp_array = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.stack = <int *> self.mem.allocarray(self.nh, sizeof(int))
+        self.vertices = <int *> self.mem.allocarray(self.nh, sizeof(int))
         self.line_h_out = <int **> self.mem.allocarray(self.nh, sizeof(int *))
-        self.line_h_in  = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
+        self.line_h_in = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
 
         self.line_h_out[0] = <int *> self.mem.allocarray(self.nh*self.nh,
                                                          sizeof(int))
@@ -846,15 +860,22 @@ cdef class SubgraphSearch:
         self.h = DenseGraph(self.nh)
 
         # copying the adjacency relations in both G and H
-        for i, row in enumerate(G.adjacency_matrix()):
-            for j, k in enumerate(row):
-                if k:
-                    self.g.add_arc(i, j)
+        cdef dict vertex_to_int = {v: i for i, v in enumerate(self.g_vertices)}
+        cdef bint undirected = not G.is_directed()
+        for u, v in G.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
+            self.g.add_arc(i, j)
+            if undirected:
+                self.g.add_arc(j, i)
 
-        for i, row in enumerate(H.adjacency_matrix()):
-            for j, k in enumerate(row):
-                if k:
-                    self.h.add_arc(i, j)
+        vertex_to_int = {v: i for i, v in enumerate(h_vertices)}
+        for u, v in H.edge_iterator(labels=False):
+            i = vertex_to_int[u]
+            j = vertex_to_int[v]
+            self.h.add_arc(i, j)
+            if undirected:
+                self.h.add_arc(j, i)
 
         # vertices is equal to range(nh), as an int *variable
         for i in range(self.nh):
@@ -883,8 +904,8 @@ cdef class SubgraphSearch:
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: g = graphs.PathGraph(5)
             sage: h = graphs.PathGraph(3)
-            sage: S = SubgraphSearch(g, h)                                              # optional - sage.modules
-            sage: S.__next__()                                                          # optional - sage.modules
+            sage: S = SubgraphSearch(g, h)                                              # needs sage.modules
+            sage: S.__next__()                                                          # needs sage.modules
             [0, 1, 2]
         """
         if not self.ng:
@@ -959,7 +980,7 @@ cdef class SubgraphSearch:
         sig_off()
         raise StopIteration
 
-cdef inline bint vectors_equal(int n, int *a, int *b):
+cdef inline bint vectors_equal(int n, int *a, int *b) noexcept:
     r"""
     Tests whether the two given vectors are equal. Two integer vectors
     `a = (a_1, a_2, \dots, a_n)` and `b = (b_1, b_2, \dots, b_n)` are equal
@@ -982,7 +1003,7 @@ cdef inline bint vectors_equal(int n, int *a, int *b):
             return False
     return True
 
-cdef inline bint vectors_inferior(int n, int *a, int *b):
+cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
     r"""
     Tests whether the second vector of integers is inferior to the first. Let
     `u = (u_1, u_2, \dots, u_k)` and `v = (v_1, v_2, \dots, v_k)` be two
@@ -1009,6 +1030,7 @@ cdef inline bint vectors_inferior(int n, int *a, int *b):
         if a[i] < b[i]:
             return False
     return True
+
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
@@ -1237,15 +1259,33 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     Finally, an example on a graph which does not have a Hamiltonian
     path::
 
-        sage: G=graphs.HyperStarGraph(5,2)
-        sage: fh(G,find_path=False)
-        (False, ['00110', '10100', '01100', '11000', '01010', '10010', '00011', '10001', '00101'])
-        sage: fh(G,find_path=True)
-        (False, ['01001', '10001', '00101', '10100', '00110', '10010', '01010', '11000', '01100'])
+        sage: G = graphs.HyperStarGraph(5, 2)
+        sage: G.order()
+        10
+        sage: b, P = fh(G,find_path=False)
+        sage: b, len(P)
+        (False, 9)
+        sage: b, P = fh(G,find_path=True)
+        sage: b, len(P)
+        (False, 9)
+
+    The method can also be used for directed graphs::
+
+        sage: G = DiGraph([(0, 1), (1, 2), (2, 3)])
+        sage: fh(G)
+        (False, [0, 1, 2, 3])
+        sage: G = G.reverse()
+        sage: fh(G)
+        (False, [3, 2, 1, 0])
+        sage: G = DiGraph()
+        sage: G.add_cycle([0, 1, 2, 3, 4, 5])
+        sage: b, P = fh(G)
+        sage: b, len(P)
+        (True, 6)
 
     TESTS:
 
-    :trac:`10206` -- Hamiltonian cycle in small (di)graphs::
+    :issue:`10206` -- Hamiltonian cycle in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1263,7 +1303,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (False, [0, 1])
         order 2 and size 2: (False, [0, 1])
 
-    :trac:`10206` -- Hamiltonian path in small (di)graphs::
+    :issue:`10206` -- Hamiltonian path in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1281,7 +1321,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (True, [0, 1])
         order 2 and size 2: (True, [0, 1])
 
-    :trac:`10206` -- disconnected graphs::
+    :issue:`10206` -- disconnected graphs::
 
         sage: G = graphs.CompleteGraph(4) + Graph(1)
         sage: fh(G, find_path=False)
@@ -1289,23 +1329,29 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         sage: fh(G, find_path=True)
         (False, [0, 1, 2, 3])
 
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 'a'), ('a', 2), (2, 3), (3, 1)])
+        sage: b, C = fh(G, find_path=False)
+        sage: b, len(C)
+        (True, 4)
     """
+    G._scream_if_not_simple()
+
     from sage.misc.prandom import randint
     cdef int n = G.order()
 
     # Easy cases
-    if not n:
-        return False, []
-    if n == 1:
-        return False, G.vertices(sort=False)
+    if n < 2:
+        return False, list(G)
 
     # To clean the output when find_path is None or a number
     find_path = (find_path > 0)
 
     if G.is_clique(induced=False):
-        # We have an hamiltonian path since n >= 2, but we have an hamiltonian
+        # We have a hamiltonian path since n >= 2, but we have a hamiltonian
         # cycle only if n >= 3
-        return find_path or n >= 3, G.vertices(sort=True)
+        return find_path or n >= 3, list(G)
 
     cdef list best_path, p
     if not G.is_connected():
@@ -1313,6 +1359,8 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         # longest path in its connected components.
         best_path = []
         for H in G.connected_components_subgraphs():
+            if H.order() <= len(best_path):
+                continue
             _, p = find_hamiltonian(H, max_iter=max_iter, reset_bound=reset_bound,
                                     backtrack_bound=backtrack_bound, find_path=True)
             if len(p) > len(best_path):
@@ -1321,20 +1369,24 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     # Misc variables used below
     cdef int i, j
-    cdef int n_available
+    cdef bint directed = G.is_directed()
 
     # Initialize the path.
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int *path = <int *>mem.allocarray(n, sizeof(int))
-    memset(path, -1, n * sizeof(int))
 
     # Initialize the membership array
     cdef bint *member = <bint *>mem.allocarray(n, sizeof(int))
     memset(member, 0, n * sizeof(int))
 
     # static copy of the graph for more efficient operations
+    cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    cdef short_digraph rev_sd
+    cdef bint reverse = False
+    if directed:
+        init_reverse(rev_sd, sd)
 
     # A list to store the available vertices at each step
     cdef list available_vertices = []
@@ -1344,7 +1396,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     cdef int u = randint(0, n - 1)
     while not out_degree(sd, u):
         u = randint(0, n - 1)
-    #  Then we pick at random a neighbor of u
+    # Then we pick at random a neighbor of u
     cdef int x = randint(0, out_degree(sd, u) - 1)
     cdef int v = sd.neighbors[u][x]
     # This will be the first edge in the path
@@ -1362,27 +1414,25 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     # Initialize a path to contain the longest path
     cdef int *longest_path = <int *>mem.allocarray(n, sizeof(int))
-    memset(longest_path, -1, n * sizeof(int))
     for i in range(length):
         longest_path[i] = path[i]
 
-    # Initialize a temporary path for flipping
-    cdef int *temp_path = <int *>mem.allocarray(n, sizeof(int))
-    memset(temp_path, -1, n * sizeof(int))
-
     cdef bint longer = False
-    cdef bint good = True
+    cdef bint longest_reversed = False
     cdef bint flag
 
     while not done:
         counter = counter + 1
         if counter % 10 == 0:
             # Reverse the path
-
             for i in range(length//2):
                 t = path[i]
                 path[i] = path[length - i - 1]
                 path[length - i - 1] = t
+
+            if directed:
+                # We now work on the reverse graph
+                reverse = not reverse
 
         if counter > reset_bound:
             bigcount = bigcount + 1
@@ -1390,6 +1440,9 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
             # Time to reset the procedure
             memset(member, 0, n * sizeof(int))
+            if directed and reverse:
+                # We restore the original orientation
+                reverse = False
 
             # First we pick a random vertex u of (out-)degree at least one
             u = randint(0, n - 1)
@@ -1405,37 +1458,44 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
             member[u] = True
             member[v] = True
 
-        if counter % backtrack_bound == 0:
+        if length > 5 and counter % backtrack_bound == 0:
             for i in range(5):
                 member[path[length - i - 1]] = False
             length = length - 5
         longer = False
 
+        # We search for a possible extension of the path
         available_vertices = []
         u = path[length - 1]
-        for i in range(out_degree(sd, u)):
-            v = sd.neighbors[u][i]
-            if not member[v]:
-                available_vertices.append(v)
+        if directed and reverse:
+            for i in range(out_degree(rev_sd, u)):
+                v = rev_sd.neighbors[u][i]
+                if not member[v]:
+                    available_vertices.append(v)
+        else:
+            for i in range(out_degree(sd, u)):
+                v = sd.neighbors[u][i]
+                if not member[v]:
+                    available_vertices.append(v)
 
-        n_available = len(available_vertices)
-        if n_available > 0:
+        if available_vertices:
             longer = True
-            x = randint(0, n_available - 1)
-            path[length] = available_vertices[x]
+            x = randint(0, len(available_vertices) - 1)
+            v = available_vertices[x]
+            path[length] = v
             length = length + 1
-            member[available_vertices[x]] = True
+            member[v] = True
 
         if not longer and length > longest:
-
+            # Store the current best solution
             for i in range(length):
                 longest_path[i] = path[i]
 
             longest = length
+            longest_reversed = reverse
 
-        if not longer:
-
-            memset(temp_path, -1, n * sizeof(int))
+        if not directed and not longer and out_degree(sd, path[length - 1]) > 1:
+            # We revert a cycle to change the extremity of the path
             degree = out_degree(sd, path[length - 1])
             while True:
                 x = randint(0, degree - 1)
@@ -1455,37 +1515,53 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
                     j += 1
                 if path[i] == u:
                     flag = True
+
         if length == n:
             if find_path:
                 done = True
+            elif directed and reverse:
+                done = has_edge(rev_sd, path[0], path[n - 1]) != NULL
             else:
                 done = has_edge(sd, path[n - 1], path[0]) != NULL
 
         if bigcount * reset_bound > max_iter:
-            verts = G.vertices(sort=True)
-            output = [verts[longest_path[i]] for i in range(longest)]
+            output = [int_to_vertex[longest_path[i]] for i in range(longest)]
             free_short_digraph(sd)
+            if directed:
+                free_short_digraph(rev_sd)
+                if longest_reversed:
+                    return (False, output[::-1])
             return (False, output)
     # #
     # # Output test
     # #
 
+    if directed and reverse:
+        # We revert the path to work on sd
+        for i in range(length//2):
+            t = path[i]
+            path[i] = path[length - i - 1]
+            path[length - i - 1] = t
+
     # Test adjacencies
+    cdef bint good = True
     for i in range(n - 1):
         u = path[i]
         v = path[i + 1]
-        # Graph is simple, so both arcs are present
         if has_edge(sd, u, v) == NULL:
             good = False
             break
     if good is False:
-        raise RuntimeError('vertices %d and %d are consecutive in the cycle but are not adjacent' % (u, v))
-    if not find_path and has_edge(sd, path[0], path[n - 1]) == NULL:
-        raise RuntimeError('vertices %d and %d are not adjacent' % (path[0], path[n - 1]))
+        raise RuntimeError(f"vertices {int_to_vertex[u]} and {int_to_vertex[v]}"
+                           " are consecutive in the cycle but are not adjacent")
+    if not find_path and has_edge(sd, path[n - 1], path[0]) == NULL:
+        raise RuntimeError(f"vertices {int_to_vertex[path[n - 1]]} and "
+                           f"{int_to_vertex[path[0]]} are not adjacent")
 
-    verts = G.vertices(sort=True)
-    output = [verts[path[i]] for i in range(length)]
+    output = [int_to_vertex[path[i]] for i in range(length)]
     free_short_digraph(sd)
+    if directed:
+        free_short_digraph(rev_sd)
 
     return (True, output)
 

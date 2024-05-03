@@ -1,1 +1,2 @@
-glpk libglpk-devel
+glpk
+libglpk-devel

@@ -1,3 +1,4 @@
+# sage.doctest: needs numpy sage.symbolic
 """
 Riemann Mapping
 
@@ -407,7 +408,7 @@ cdef class Riemann_Map:
             sage: m = Riemann_Map([f], [fprime], 0)
             sage: sz = m.get_szego(boundary=0)
             sage: points = m.get_szego(absolute_value=True)
-            sage: list_plot(points)
+            sage: list_plot(points)                                                     # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         Extending the points by a spline::
@@ -415,7 +416,7 @@ cdef class Riemann_Map:
             sage: s = spline(points)
             sage: s(3*pi / 4)
             0.0012158...
-            sage: plot(s,0,2*pi) # plot the kernel
+            sage: plot(s,0,2*pi)  # plot the kernel                                     # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         The unit circle with a small hole::
@@ -482,7 +483,7 @@ cdef class Riemann_Map:
             sage: fprime(t) = I*e^(I*t) + 0.5*I*e^(-I*t)
             sage: m = Riemann_Map([f], [fprime], 0)
             sage: points = m.get_theta_points()
-            sage: list_plot(points)
+            sage: list_plot(points)                                                     # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         Extending the points by a spline::
@@ -739,12 +740,12 @@ cdef class Riemann_Map:
 
         Default plot::
 
-            sage: m.plot_boundaries()
+            sage: m.plot_boundaries()                                                   # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         Big blue collocation points::
 
-            sage: m.plot_boundaries(plotjoined=False, rgbcolor=[0,0,1], thickness=6)
+            sage: m.plot_boundaries(plotjoined=False, rgbcolor=[0,0,1], thickness=6)    # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.all import list_plot
@@ -904,17 +905,18 @@ cdef class Riemann_Map:
 
         Default plot::
 
-            sage: m.plot_spiderweb()
+            sage: m.plot_spiderweb()                                                    # needs sage.plot
             Graphics object consisting of 21 graphics primitives
 
         Simplified plot with many discrete points::
 
-            sage: m.plot_spiderweb(spokes=4, circles=1, pts=400, linescale=0.95, plotjoined=False)
+            sage: m.plot_spiderweb(spokes=4, circles=1, pts=400,                        # needs sage.plot
+            ....:                  linescale=0.95, plotjoined=False)
             Graphics object consisting of 6 graphics primitives
 
         Plot with thick, red lines::
 
-            sage: m.plot_spiderweb(rgbcolor=[1,0,0], thickness=3)
+            sage: m.plot_spiderweb(rgbcolor=[1,0,0], thickness=3)                       # needs sage.plot
             Graphics object consisting of 21 graphics primitives
 
         To generate the unit circle map, it's helpful to see what the
@@ -923,7 +925,7 @@ cdef class Riemann_Map:
             sage: f(t) = e^(I*t)
             sage: fprime(t) = I*e^(I*t)
             sage: m = Riemann_Map([f], [fprime], 0, 1000)
-            sage: m.plot_spiderweb()
+            sage: m.plot_spiderweb()                                                    # needs sage.plot
             Graphics object consisting of 21 graphics primitives
 
         A multiply connected region with corners. We set ``min_mag`` higher
@@ -933,8 +935,10 @@ cdef class Riemann_Map:
             sage: z1 = lambda t: ps.value(t); z1p = lambda t: ps.derivative(t)
             sage: z2(t) = -2+exp(-I*t); z2p(t) = -I*exp(-I*t)
             sage: z3(t) = 2+exp(-I*t); z3p(t) = -I*exp(-I*t)
-            sage: m = Riemann_Map([z1,z2,z3],[z1p,z2p,z3p],0,ncorners=4) # long time
-            sage: p = m.plot_spiderweb(withcolor=True,plot_points=500, thickness = 2.0, min_mag=0.1) # long time
+            sage: m = Riemann_Map([z1,z2,z3], [z1p,z2p,z3p], 0,             # long time
+            ....:                 ncorners=4)
+            sage: p = m.plot_spiderweb(withcolor=True, plot_points=500,         # long time, needs sage.plot
+            ....:                      thickness=2.0, min_mag=0.1)
         """
         from sage.plot.complex_plot import ComplexPlot
         from sage.plot.all import list_plot, Graphics
@@ -1027,17 +1031,17 @@ cdef class Riemann_Map:
             sage: f(t) = e^(I*t) - 0.5*e^(-I*t)
             sage: fprime(t) = I*e^(I*t) + 0.5*I*e^(-I*t)
             sage: m = Riemann_Map([f], [fprime], 0)
-            sage: m.plot_colored()
+            sage: m.plot_colored()                                                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         Plot zoomed in on a specific spot::
 
-            sage: m.plot_colored(plot_range=[0,1,.25,.75])
+            sage: m.plot_colored(plot_range=[0,1,.25,.75])                              # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         High resolution plot::
 
-            sage: m.plot_colored(plot_points=1000)  # long time (29s on sage.math, 2012)
+            sage: m.plot_colored(plot_points=1000)      # long time (29s on sage.math, 2012), needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         To generate the unit circle map, it's helpful to see what the
@@ -1046,7 +1050,7 @@ cdef class Riemann_Map:
             sage: f(t) = e^(I*t)
             sage: fprime(t) = I*e^(I*t)
             sage: m = Riemann_Map([f], [fprime], 0, 1000)
-            sage: m.plot_colored()
+            sage: m.plot_colored()                                                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.complex_plot import ComplexPlot
@@ -1080,7 +1084,7 @@ cdef comp_pt(clist, loop=True):
         sage: f(t) = e^(I*t) - 0.5*e^(-I*t)
         sage: fprime(t) = I*e^(I*t) + 0.5*I*e^(-I*t)
         sage: m = Riemann_Map([f], [fprime], 0)
-        sage: m.plot_spiderweb()
+        sage: m.plot_spiderweb()                                                        # needs sage.plot
         Graphics object consisting of 21 graphics primitives
     """
     list2 = [(c.real, c.imag) for c in clist]
@@ -1190,9 +1194,10 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
 
         sage: from sage.calculus.riemann import complex_to_spiderweb
         sage: import numpy
-        sage: zval = numpy.array([[0, 1, 1000],[.2+.3j,1,-.3j],[0,0,0]],dtype = numpy.complex128)
+        sage: zval = numpy.array([[0,1,1000], [.2+.3j,1,-.3j], [0,0,0]],
+        ....:                    dtype=numpy.complex128)
         sage: deriv = numpy.array([[.1]],dtype = numpy.float64)
-        sage: complex_to_spiderweb(zval, deriv,deriv, 4,4,[0,0,0],1,False,0.001)
+        sage: complex_to_spiderweb(zval, deriv, deriv, 4, 4, [0,0,0], 1, False, 0.001)
         array([[[1., 1., 1.],
                 [1., 1., 1.],
                 [1., 1., 1.]],
@@ -1205,7 +1210,7 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
                 [1., 1., 1.],
                 [1., 1., 1.]]])
 
-        sage: complex_to_spiderweb(zval, deriv,deriv, 4,4,[0,0,0],1,True,0.001)
+        sage: complex_to_spiderweb(zval, deriv, deriv, 4, 4, [0,0,0], 1, True, 0.001)
         array([[[1.        , 1.        , 1.        ],
                 [1.        , 0.05558355, 0.05558355],
                 [0.17301243, 0.        , 0.        ]],
@@ -1280,12 +1285,12 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
 
         sage: from sage.calculus.riemann import complex_to_rgb
         sage: import numpy
-        sage: complex_to_rgb(numpy.array([[0, 1, 1000]], dtype = numpy.complex128))
+        sage: complex_to_rgb(numpy.array([[0, 1, 1000]], dtype=numpy.complex128))
         array([[[1.        , 1.        , 1.        ],
                 [1.        , 0.05558355, 0.05558355],
                 [0.17301243, 0.        , 0.        ]]])
 
-        sage: complex_to_rgb(numpy.array([[0, 1j, 1000j]], dtype = numpy.complex128))
+        sage: complex_to_rgb(numpy.array([[0, 1j, 1000j]], dtype=numpy.complex128))
         array([[[1.        , 1.        , 1.        ],
                 [0.52779177, 1.        , 0.05558355],
                 [0.08650622, 0.17301243, 0.        ]]])
@@ -1410,7 +1415,7 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
     """
     cdef FLOAT_T i
     cdef FLOAT_T result = t
-    for i from 1 <= i < n+1:
+    for i in range(1, n + 1):
         result += (2*(-1)**i/i)*(epsilon**i/(1+epsilon**(2*i)))*sin(2*i*t)
     return result
 

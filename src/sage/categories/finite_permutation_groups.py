@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.groups
+# sage.doctest: needs sage.groups
 r"""
 Finite Permutation Groups
 """
@@ -180,7 +180,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 p[1, 1, 1, 1, 1] + 10*p[2, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 20*p[3, 2] + 30*p[4, 1] + 24*p[5]
 
             Permutation groups with arbitrary domains are supported
-            (see :trac:`22765`)::
+            (see :issue:`22765`)::
 
                 sage: G = PermutationGroup([['b','c','a']], domain=['a','b','c'])
                 sage: G.cycle_index()
@@ -270,8 +270,8 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 Univariate Polynomial Ring in z over Rational Field
                 sage: D8.profile_series(variable='y')
                 y^8 + y^7 + 4*y^6 + 5*y^5 + 8*y^4 + 5*y^3 + 4*y^2 + y + 1
-                sage: u = var('u')                                              # optional - sage.symbolic
-                sage: D8.profile_series(u).parent()                             # optional - sage.symbolic
+                sage: u = var('u')                                                      # needs sage.symbolic
+                sage: D8.profile_series(u).parent()                                     # needs sage.symbolic
                 Symbolic Ring
             """
             from sage.rings.integer_ring import ZZ

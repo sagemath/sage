@@ -1,17 +1,14 @@
 # distutils: libraries = gmp
 """
-Enumeration of Totally Real Fields
+Enumeration of totally real fields: data
 
 AUTHORS:
 
-- Craig Citro and John Voight (2007-11-04):
-  Type checking and other polishing.
-- John Voight (2007-10-09):
-  Improvements: Smyth bound, Lagrange multipliers for b.
-- John Voight (2007-09-19):
-  Various optimization tweaks.
-- John Voight (2007-09-01):
-  Initial version.
+- John Voight (2007-09-01): Initial version
+- John Voight (2007-09-19): various optimization tweaks
+- John Voight (2007-10-09): improvements: Smyth bound, Lagrange multipliers for b
+- Craig Citro and John Voight (2007-11-04): type checking and other polishing
+
 """
 
 #*****************************************************************************
@@ -112,7 +109,7 @@ def hermite_constant(n):
 
     return gamma
 
-cdef double eval_seq_as_poly(int *f, int n, double x):
+cdef double eval_seq_as_poly(int *f, int n, double x) noexcept:
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
@@ -129,7 +126,7 @@ cdef double eval_seq_as_poly(int *f, int n, double x):
         s = s * x + f[i]
     return s
 
-cdef double newton(int *f, int *df, int n, double x0, double eps):
+cdef double newton(int *f, int *df, int n, double x0, double eps) noexcept:
     r"""
     Find the real root x of f (with derivative df) near x0
     with provable precision eps, i.e. |x-z| < eps where z is the actual
@@ -174,7 +171,7 @@ cdef double newton(int *f, int *df, int n, double x0, double eps):
     return x
 
 cdef void newton_in_intervals(int *f, int *df, int n, double *beta,
-                              double eps, double *rts):
+                              double eps, double *rts) noexcept:
     r"""
     Find the real roots of f in the intervals specified by beta:
 
@@ -215,7 +212,7 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
 
     TESTS:
 
-    Check that :trac:`13101` is solved::
+    Check that :issue:`13101` is solved::
 
         sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(4,12,19,42)
         [0.0, -1.0]
@@ -346,7 +343,7 @@ def int_has_small_square_divisor(sage.rings.integer.Integer d):
 
     return asq
 
-cdef int eval_seq_as_poly_int(int *f, int n, int x):
+cdef int eval_seq_as_poly_int(int *f, int n, int x) noexcept:
     r"""
     Evaluates the sequence a, thought of as a polynomial with
 
@@ -366,7 +363,7 @@ eps_abs = 10.**(-12)
 phi = 0.618033988749895
 sqrt2 = 1.41421356237310
 
-cdef int easy_is_irreducible(int *a, int n):
+cdef int easy_is_irreducible(int *a, int n) noexcept:
     r"""
     Very often, polynomials have roots in {+/-1, +/-2, +/-phi, sqrt2}, so we rule
     these out quickly.  Returns 0 if reducible, 1 if inconclusive.
@@ -440,7 +437,7 @@ def easy_is_irreducible_py(f):
 cdef double eps_global
 eps_global = 10.**(-4)
 
-from .totallyreal_phc import __lagrange_bounds_phc
+from sage.rings.number_field.totallyreal_phc import __lagrange_bounds_phc
 
 cdef class tr_data:
     r"""
@@ -635,7 +632,7 @@ cdef class tr_data:
 
         return g
 
-    cdef void incr(self, int *f_out, int verbose, int haltk, int phc):
+    cdef void incr(self, int *f_out, int verbose, int haltk, int phc) noexcept:
         r"""
         This function 'increments' the totally real data to the next
         value which satisfies the bounds essentially given by Rolle's

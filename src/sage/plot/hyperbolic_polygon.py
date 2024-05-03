@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Polygons and triangles in hyperbolic geometry
 
@@ -107,6 +108,7 @@ class HyperbolicPolygon(HyperbolicArcCore):
             Hyperbolic polygon (0.000000000000000, 0.500000000000000, 1.00000000000000*I)
         """
         return "Hyperbolic polygon ({})".format(", ".join(map(str, self._pts)))
+
 
 def _winding_number(vertices, point):
     r"""

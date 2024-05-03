@@ -46,7 +46,9 @@ class Package(object):
         self._init_checksum()
         self._init_version()
         self._init_type()
-        self._init_install_requires()
+        self._init_version_requirements()
+        self._init_dependencies()
+        self._init_trees()
 
     def __repr__(self):
         return 'Package {0}'.format(self.name)
@@ -120,6 +122,42 @@ class Package(object):
             self.__tarball = Tarball(self.tarball_filename, package=self)
         return self.__tarball
 
+    def _substitute_variables_once(self, pattern):
+        """
+        Substitute (at most) one occurrence of variables in ``pattern`` by the values.
+
+        These variables are ``VERSION``, ``VERSION_MAJOR``, ``VERSION_MINOR``,
+        ``VERSION_MICRO``, either appearing like this or in the form ``${VERSION_MAJOR}``
+        etc.
+
+        Return a tuple:
+        - the string with the substitution done or the original string
+        - whether a substitution was done
+        """
+        for var in ('VERSION_MAJOR', 'VERSION_MINOR', 'VERSION_MICRO', 'VERSION'):
+            # As VERSION is a substring of the other three, it needs to be tested last.
+            dollar_brace_var = '${' + var + '}'
+            if dollar_brace_var in pattern:
+                value = getattr(self, var.lower())
+                return pattern.replace(dollar_brace_var, value, 1), True
+            elif var in pattern:
+                value = getattr(self, var.lower())
+                return pattern.replace(var, value, 1), True
+        return pattern, False
+
+    def _substitute_variables(self, pattern):
+        """
+        Substitute all occurrences of ``VERSION`` in ``pattern`` by the actual version.
+
+        Likewise for ``VERSION_MAJOR``, ``VERSION_MINOR``, ``VERSION_MICRO``,
+        either appearing like this or in the form ``${VERSION}``, ``${VERSION_MAJOR}``,
+        etc.
+        """
+        not_done = True
+        while not_done:
+            pattern, not_done = self._substitute_variables_once(pattern)
+        return pattern
+
     @property
     def tarball_pattern(self):
         """
@@ -149,7 +187,7 @@ class Package(object):
         """
         pattern = self.tarball_pattern
         if pattern:
-            return pattern.replace('VERSION', self.version)
+            return self._substitute_variables(pattern)
         else:
             return None
 
@@ -176,7 +214,7 @@ class Package(object):
         """
         pattern = self.tarball_upstream_url_pattern
         if pattern:
-            return pattern.replace('VERSION', self.version)
+            return self._substitute_variables(pattern)
         else:
             return None
 
@@ -212,6 +250,39 @@ class Package(object):
         return self.__version
 
     @property
+    def version_major(self):
+        """
+        Return the major version
+
+        OUTPUT:
+
+        String. The package's major version.
+        """
+        return self.version.split('.')[0]
+
+    @property
+    def version_minor(self):
+        """
+        Return the minor version
+
+        OUTPUT:
+
+        String. The package's minor version.
+        """
+        return self.version.split('.')[1]
+
+    @property
+    def version_micro(self):
+        """
+        Return the micro version
+
+        OUTPUT:
+
+        String. The package's micro version.
+        """
+        return self.version.split('.')[2]
+
+    @property
     def patchlevel(self):
         """
         Return the patchlevel
@@ -224,6 +295,23 @@ class Package(object):
         return self.__patchlevel
 
     @property
+    def version_with_patchlevel(self):
+        """
+        Return the version, including the Sage-specific patchlevel
+
+        OUTPUT:
+
+        String.
+        """
+        v = self.version
+        if v is None:
+            return v
+        p = self.patchlevel
+        if p < 0:
+            return v
+        return "{0}.p{1}".format(v, p)
+
+    @property
     def type(self):
         """
         Return the package type
@@ -231,19 +319,90 @@ class Package(object):
         return self.__type
 
     @property
+    def source(self):
+        """
+        Return the package source type
+        """
+        if self.has_file('requirements.txt'):
+            return 'pip'
+        if self.tarball_filename:
+            if self.tarball_filename.endswith('.whl'):
+                return 'wheel'
+            return 'normal'
+        if self.has_file('spkg-install') or self.has_file('spkg-install.in'):
+            return 'script'
+        return 'none'
+
+    @property
+    def trees(self):
+        """
+        Return the installation trees for the package
+
+        OUTPUT:
+
+        A white-space-separated string of environment variable names
+        """
+        if self.__trees is not None:
+            return self.__trees
+        if self.__version_requirements is not None:
+            return 'SAGE_VENV'
+        if self.has_file('requirements.txt'):
+            return 'SAGE_VENV'
+        return 'SAGE_LOCAL'
+
+    @property
     def distribution_name(self):
         """
         Return the Python distribution name or ``None`` for non-Python packages
         """
-        if self.__install_requires is None:
+        if self.__version_requirements is None:
             return None
-        for line in self.__install_requires.split('\n'):
+        for line in self.__version_requirements.split('\n'):
             line = line.strip()
             if line.startswith('#'):
                 continue
             for part in line.split():
                 return part
         return None
+
+    @property
+    def dependencies(self):
+        """
+        Return a list of strings, the package names of the (ordinary) dependencies
+        """
+        # after a '|', we have order-only dependencies
+        return self.__dependencies.partition('|')[0].strip().split()
+
+    @property
+    def dependencies_order_only(self):
+        """
+        Return a list of strings, the package names of the order-only dependencies
+        """
+        return self.__dependencies.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
+
+    @property
+    def dependencies_optional(self):
+        """
+        Return a list of strings, the package names of the optional build dependencies
+        """
+        return self.__dependencies_optional.strip().split()
+
+    @property
+    def dependencies_runtime(self):
+        """
+        Return a list of strings, the package names of the runtime dependencies
+        """
+        # after a '|', we have order-only build dependencies
+        return self.__dependencies.partition('|')[0].strip().split()
+
+    dependencies = dependencies_runtime
+
+    @property
+    def dependencies_check(self):
+        """
+        Return a list of strings, the package names of the check dependencies
+        """
+        return self.__dependencies_order_only.strip().split()
 
     def __eq__(self, other):
         return self.tarball == other.tarball
@@ -278,6 +437,28 @@ class Package(object):
         """
         return os.path.exists(os.path.join(self.path, filename))
 
+    def line_count_file(self, filename):
+        """
+        Return the number of lines of the file
+
+        Directories are traversed recursively.
+
+        OUTPUT:
+
+        integer; 0 if the file cannot be read, 1 if it is a symlink
+        """
+        path = os.path.join(self.path, filename)
+        if os.path.islink(path):
+            return 1
+        if os.path.isdir(path):
+            return sum(self.line_count_file(os.path.join(filename, entry))
+                       for entry in os.listdir(path))
+        try:
+            with open(path, "rb") as f:
+                return len(list(f))
+        except OSError:
+            return 0
+
     def _init_checksum(self):
         """
         Load the checksums from the appropriate ``checksums.ini`` file
@@ -303,7 +484,7 @@ class Package(object):
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
 
-    VERSION_PATCHLEVEL = re.compile('(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
+    VERSION_PATCHLEVEL = re.compile(r'(?P<version>.*)\.p(?P<patchlevel>[0-9]+)')
 
     def _init_version(self):
         try:
@@ -329,9 +510,38 @@ class Package(object):
         ]
         self.__type = package_type
 
-    def _init_install_requires(self):
+    def _init_version_requirements(self):
         try:
-            with open(os.path.join(self.path, 'install-requires.txt')) as f:
-                self.__install_requires = f.read().strip()
+            with open(os.path.join(self.path, 'version_requirements.txt')) as f:
+                self.__version_requirements = f.read().strip()
         except IOError:
-            self.__install_requires = None
+            self.__version_requirements = None
+
+    def _init_dependencies(self):
+        try:
+            with open(os.path.join(self.path, 'dependencies')) as f:
+                self.__dependencies = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__dependencies = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_check')) as f:
+                self.__dependencies_check = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__dependencies_check = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_optional')) as f:
+                self.__dependencies_optional = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__dependencies_optional = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_order_only')) as f:
+                self.__dependencies_order_only = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__dependencies_order_only = ''
+
+    def _init_trees(self):
+        try:
+            with open(os.path.join(self.path, 'trees.txt')) as f:
+                self.__trees = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__trees = None

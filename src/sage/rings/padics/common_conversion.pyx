@@ -26,7 +26,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.int cimport *
+from cpython.long cimport *
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
 from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
@@ -84,7 +84,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         if x == 0:
             return maxordp
         try:
-            n = PyInt_AsLong(x)
+            n = PyLong_AsLong(x)
         except OverflowError:
             return get_ordp(Integer(x), prime_pow)
         else:
@@ -250,7 +250,7 @@ cdef long comb_prec(iprec, long prec) except? -10000:
             raise OverflowError("precision overflow")
         return mpz_get_si(intprec.value)
     if isinstance(iprec, int):
-        return min(PyInt_AS_LONG(iprec), prec)
+        return min(PyLong_AsLong(iprec), prec)
     return comb_prec(Integer(iprec), prec)
 
 cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absolute, PowComputer_class prime_pow) except -1:
@@ -405,7 +405,7 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
     - ``prime_pow`` -- a PowComputer for the ring.
 
     """
-    if PyInt_Check(x):
+    if PyLong_Check(x):
         x = Integer(x)
     elif isinstance(x, pari_gen):
         x = x.sage()

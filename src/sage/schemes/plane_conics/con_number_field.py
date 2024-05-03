@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 r"""
 Projective plane conics over a number field
 
@@ -355,8 +355,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: C.is_locally_solvable(p2)
             True
 
-            sage: O = K.maximal_order()
-            sage: f = (2*O).factor()
+            sage: f = (2*K).factor()
             sage: C.is_locally_solvable(f[0][0])
             True
 
@@ -442,10 +441,10 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                     for a in self.symmetric_matrix().list():
                         if a != 0:
                             for f in O.fractional_ideal(a).factor():
-                                if f[1] < 0 and not f[0] in candidates:
+                                if f[1] < 0 and f[0] not in candidates:
                                     candidates.append(f[0])
                     for f in O.fractional_ideal(2 * self.determinant()).factor():
-                        if f[1] > 0 and not f[0] in candidates:
+                        if f[1] > 0 and f[0] not in candidates:
                             candidates.append(f[0])
                 for b in candidates:
                     if not self.is_locally_solvable(b):

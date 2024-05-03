@@ -205,7 +205,7 @@ cdef class _LazyString():
 
     cdef val(self):
         cdef f = self.func
-        if isinstance(f, basestring):
+        if isinstance(f, str):
             return f % self.args
         return PyObject_Call(f, self.args, self.kwargs)
 
@@ -313,7 +313,7 @@ cdef class _LazyString():
         Return the file system representation of ``self``, assuming that
         ``self`` is a path.
 
-        This is for Python 3 compatibility: see :trac:`24046`, and also
+        This is for Python 3 compatibility: see :issue:`24046`, and also
         :pep:`519` and
         https://docs.python.org/3/library/os.html#os.fspath
 
@@ -519,23 +519,24 @@ cdef class _LazyString():
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.misc.lazy_string import lazy_string
-            sage: f = lambda op,A,B:"unsupported operand parent(s) for %s: '%s' and '%s'"%(op,A,B)
+            sage: def f(op, A, B):
+            ....:     return "unsupported operand parent(s) for %s: '%s' and '%s'" % (op, A, B)
             sage: R = GF(5)
             sage: S = GF(3)
-            sage: D = lazy_string(f, '+', R, S)
-            sage: D
+            sage: D = lazy_string(f, '+', R, S); D
             l"unsupported operand parent(s) for +: 'Finite Field of size 5' and 'Finite Field of size 3'"
             sage: D.update_lazy_string(('+', S, R), {})
 
         Apparently, the lazy string got changed in-place::
 
-            sage: D
+            sage: D                                                                     # needs sage.rings.finite_rings
             l"unsupported operand parent(s) for +: 'Finite Field of size 3' and 'Finite Field of size 5'"
 
         TESTS::
 
-            sage: D.update_lazy_string(None, None)
+            sage: D.update_lazy_string(None, None)                                      # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             TypeError: Expected tuple, got NoneType

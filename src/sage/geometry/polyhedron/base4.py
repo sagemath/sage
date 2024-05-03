@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs
+# sage.doctest: needs sage.graphs
 r"""
 Base class for polyhedra: Graph-theoretic methods
 
@@ -70,7 +70,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         This function constructs a directed bipartite graph.
         The nodes of the graph correspond to the vertices of the polyhedron
-        and the facets of the polyhedron. There is an directed edge
+        and the facets of the polyhedron. There is a directed edge
         from a vertex to a face if and only if the vertex is incident to the face.
 
         INPUT:
@@ -95,7 +95,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: P = polytopes.cube()
             sage: G = P.vertex_facet_graph(); G
             Digraph on 14 vertices
-            sage: G.vertices(key = lambda v: str(v))
+            sage: G.vertices(sort=True, key=lambda v: str(v))
             [A vertex at (-1, -1, -1),
              A vertex at (-1, -1, 1),
              A vertex at (-1, 1, -1),
@@ -126,12 +126,12 @@ class Polyhedron_base4(Polyhedron_base3):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: G._immutable
             True
 
-        Check that :trac:`29188` is fixed::
+        Check that :issue:`29188` is fixed::
 
             sage: P = polytopes.cube()
             sage: P.vertex_facet_graph().is_isomorphic(P.vertex_facet_graph(False))
@@ -192,7 +192,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         TESTS:
 
-        Check for a line segment (:trac:`30545`)::
+        Check for a line segment (:issue:`30545`)::
 
             sage: polytopes.simplex(1).graph().edges(sort=True)
             [(A vertex at (0, 1), A vertex at (1, 0), None)]
@@ -308,7 +308,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         .. NOTE::
 
-            The face lattice is not cached, as long as this creates a memory leak, see :trac:`28982`.
+            The face lattice is not cached, as long as this creates a memory leak, see :issue:`28982`.
 
         EXAMPLES::
 
@@ -353,7 +353,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: c5_20_fl = c5_20.face_lattice() # long time
             sage: [len(x) for x in c5_20_fl.level_sets()] # long time
             [1, 20, 190, 580, 680, 272, 1]
-            sage: polytopes.hypercube(2).face_lattice().plot()  # optional - sage.plot
+            sage: polytopes.hypercube(2).face_lattice().plot()                          # needs sage.plot
             Graphics object consisting of 27 graphics primitives
             sage: level_sets = polytopes.cross_polytope(2).face_lattice().level_sets()
             sage: level_sets[0][0].ambient_V_indices(), level_sets[-1][0].ambient_V_indices()
@@ -399,31 +399,33 @@ class Polyhedron_base4(Polyhedron_base3):
 
         EXAMPLES::
 
-            sage: P = polytopes.regular_polygon(4).pyramid()                    # optional - sage.rings.number_field
-            sage: D = P.hasse_diagram(); D                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = polytopes.regular_polygon(4).pyramid()
+            sage: D = P.hasse_diagram(); D
             Digraph on 20 vertices
-            sage: D.degree_polynomial()                                         # optional - sage.rings.number_field
+            sage: D.degree_polynomial()
             x^5 + x^4*y + x*y^4 + y^5 + 4*x^3*y + 8*x^2*y^2 + 4*x*y^3
 
-        Faces of an mutable polyhedron are not hashable. Hence those are not suitable as
+        Faces of a mutable polyhedron are not hashable. Hence those are not suitable as
         vertices of the hasse diagram. Use the combinatorial polyhedron instead::
 
-            sage: P = polytopes.regular_polygon(4).pyramid()                    # optional - sage.rings.number_field
-            sage: parent = P.parent()                                           # optional - sage.rings.number_field
-            sage: parent = parent.change_ring(QQ, backend='ppl')                # optional - sage.rings.number_field
-            sage: Q = parent._element_constructor_(P, mutable=True)             # optional - sage.rings.number_field
-            sage: Q.hasse_diagram()                                             # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = polytopes.regular_polygon(4).pyramid()
+            sage: parent = P.parent()
+            sage: parent = parent.change_ring(QQ, backend='ppl')
+            sage: Q = parent._element_constructor_(P, mutable=True)
+            sage: Q.hasse_diagram()
             Traceback (most recent call last):
             ...
             TypeError: mutable polyhedra are unhashable
-            sage: C = Q.combinatorial_polyhedron()                              # optional - sage.rings.number_field
-            sage: D = C.hasse_diagram()                                         # optional - sage.rings.number_field
-            sage: set(D.vertices()) == set(range(20))                           # optional - sage.rings.number_field
+            sage: C = Q.combinatorial_polyhedron()
+            sage: D = C.hasse_diagram()
+            sage: set(D.vertices(sort=False)) == set(range(20))
             True
             sage: def index_to_combinatorial_face(n):
             ....:     return C.face_by_face_lattice_index(n)
-            sage: D.relabel(index_to_combinatorial_face, inplace=True)          # optional - sage.rings.number_field
-            sage: D.vertices()                                                  # optional - sage.rings.number_field
+            sage: D.relabel(index_to_combinatorial_face, inplace=True)
+            sage: D.vertices(sort=True)
             [A -1-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
@@ -444,7 +446,7 @@ class Polyhedron_base4(Polyhedron_base3):
              A 2-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 2-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 3-dimensional face of a 3-dimensional combinatorial polyhedron]
-            sage: D.degree_polynomial()                                         # optional - sage.rings.number_field
+            sage: D.degree_polynomial()
             x^5 + x^4*y + x*y^4 + y^5 + 4*x^3*y + 8*x^2*y^2 + 4*x*y^3
         """
 
@@ -643,7 +645,8 @@ class Polyhedron_base4(Polyhedron_base3):
         EXAMPLES::
 
             sage: quadrangle = Polyhedron(vertices=[(0,0),(1,0),(0,1),(2,3)])
-            sage: quadrangle.combinatorial_automorphism_group().is_isomorphic(groups.permutation.Dihedral(4))
+            sage: quadrangle.combinatorial_automorphism_group().is_isomorphic(
+            ....:     groups.permutation.Dihedral(4))
             True
             sage: quadrangle.restricted_automorphism_group()
             Permutation Group with generators [()]
@@ -655,19 +658,24 @@ class Polyhedron_base4(Polyhedron_base3):
             Permutation Group with generators [(A vertex at (1,0),A vertex at (1,1))]
 
         This shows an example of two polytopes whose vertex-edge graphs are isomorphic,
-        but their face_lattices are not isomorphic::
+        but their face lattices are not isomorphic::
 
-            sage: Q=Polyhedron([[-123984206864/2768850730773, -101701330976/922950243591, -64154618668/2768850730773, -2748446474675/2768850730773],
-            ....: [-11083969050/98314591817, -4717557075/98314591817, -32618537490/98314591817, -91960210208/98314591817],
-            ....: [-9690950/554883199, -73651220/554883199, 1823050/554883199, -549885101/554883199], [-5174928/72012097, 5436288/72012097, -37977984/72012097, 60721345/72012097],
-            ....: [-19184/902877, 26136/300959, -21472/902877, 899005/902877], [53511524/1167061933, 88410344/1167061933, 621795064/1167061933, 982203941/1167061933],
-            ....: [4674489456/83665171433, -4026061312/83665171433, 28596876672/83665171433, -78383796375/83665171433], [857794884940/98972360190089, -10910202223200/98972360190089, 2974263671400/98972360190089, -98320463346111/98972360190089]])
+            sage: Q = Polyhedron([[-123984206864/2768850730773, -101701330976/922950243591, -64154618668/2768850730773, -2748446474675/2768850730773],
+            ....:                 [-11083969050/98314591817, -4717557075/98314591817, -32618537490/98314591817, -91960210208/98314591817],
+            ....:                 [-9690950/554883199, -73651220/554883199, 1823050/554883199, -549885101/554883199],
+            ....:                 [-5174928/72012097, 5436288/72012097, -37977984/72012097, 60721345/72012097],
+            ....:                 [-19184/902877, 26136/300959, -21472/902877, 899005/902877],
+            ....:                 [53511524/1167061933, 88410344/1167061933, 621795064/1167061933, 982203941/1167061933],
+            ....:                 [4674489456/83665171433, -4026061312/83665171433, 28596876672/83665171433, -78383796375/83665171433],
+            ....:                 [857794884940/98972360190089, -10910202223200/98972360190089, 2974263671400/98972360190089, -98320463346111/98972360190089]])
             sage: C = polytopes.cyclic_polytope(4,8)
             sage: C.is_combinatorially_isomorphic(Q)
             False
-            sage: C.combinatorial_automorphism_group(vertex_graph_only=True).is_isomorphic(Q.combinatorial_automorphism_group(vertex_graph_only=True))
+            sage: C.combinatorial_automorphism_group(vertex_graph_only=True).is_isomorphic(
+            ....:     Q.combinatorial_automorphism_group(vertex_graph_only=True))
             True
-            sage: C.combinatorial_automorphism_group(vertex_graph_only=False).is_isomorphic(Q.combinatorial_automorphism_group(vertex_graph_only=False))
+            sage: C.combinatorial_automorphism_group(vertex_graph_only=False).is_isomorphic(
+            ....:     Q.combinatorial_automorphism_group(vertex_graph_only=False))
             False
 
         The automorphism group of the face lattice is isomorphic to the combinatorial automorphism group::
@@ -913,7 +921,7 @@ class Polyhedron_base4(Polyhedron_base3):
             ...
             ValueError: unknown output 'foobar', valid values are ('abstract', 'permutation', 'matrix', 'matrixlist')
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: P.restricted_automorphism_group(output="matrixlist")[0].is_immutable()
             True
@@ -1080,10 +1088,10 @@ class Polyhedron_base4(Polyhedron_base3):
         All the faces of the 3-dimensional permutahedron are either
         combinatorially isomorphic to a square or a hexagon::
 
-            sage: H = polytopes.regular_polygon(6)                              # optional - sage.rings.number_field
+            sage: H = polytopes.regular_polygon(6)                                      # needs sage.rings.number_field
             sage: S = polytopes.hypercube(2)
             sage: P = polytopes.permutahedron(4)
-            sage: all(F.as_polyhedron().is_combinatorially_isomorphic(S)        # optional - sage.rings.number_field
+            sage: all(F.as_polyhedron().is_combinatorially_isomorphic(S)                # needs sage.rings.number_field
             ....:       or F.as_polyhedron().is_combinatorially_isomorphic(H)
             ....:     for F in P.faces(2))
             True
@@ -1102,7 +1110,7 @@ class Polyhedron_base4(Polyhedron_base3):
             ....:    return C.intersection(H)
             sage: [simplex_intersection(k).is_combinatorially_isomorphic(cube_intersection(k)) for k in range(2,5)]
             [True, True, True]
-            sage: simplex_intersection(2).is_combinatorially_isomorphic(polytopes.regular_polygon(6))   # optional - sage.rings.number_field
+            sage: simplex_intersection(2).is_combinatorially_isomorphic(polytopes.regular_polygon(6))                   # needs sage.rings.number_field
             True
             sage: simplex_intersection(3).is_combinatorially_isomorphic(polytopes.octahedron())
             True
@@ -1225,7 +1233,7 @@ class Polyhedron_base4(Polyhedron_base3):
             True
             sage: polytopes.cube().is_self_dual()
             False
-            sage: polytopes.hypersimplex(5,2).is_self_dual()                            # optional - sage.combinat
+            sage: polytopes.hypersimplex(5,2).is_self_dual()                            # needs sage.combinat
             False
             sage: P = Polyhedron(vertices=[[1/2, 1/3]], rays=[[1, 1]]).is_self_dual()
             Traceback (most recent call last):

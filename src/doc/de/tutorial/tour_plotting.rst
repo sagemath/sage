@@ -1,3 +1,5 @@
+.. sage-doctest: needs sage.plot sage.symbolic
+
 .. _section-plot:
 
 Plotten

@@ -2,13 +2,13 @@ r"""
 Set of homomorphisms between two schemes
 
 For schemes `X` and `Y`, this module implements the set of morphisms
-`Hom(X,Y)`. This is done by :class:`SchemeHomset_generic`.
+`\mathrm{Hom}(X,Y)`. This is done by :class:`SchemeHomset_generic`.
 
-As a special case, the Hom-sets can also represent the points of a
-scheme. Recall that the `K`-rational points of a scheme `X` over `k`
-can be identified with the set of morphisms `Spec(K) \to X`. In Sage
-the rational points are implemented by such scheme morphisms. This is
-done by :class:`SchemeHomset_points` and its subclasses.
+As a special case, the Hom-sets can also represent the points of a scheme.
+Recall that the `K`-rational points of a scheme `X` over `k` can be identified
+with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage the rational points
+are implemented by such scheme morphisms. This is done by
+:class:`SchemeHomset_points` and its subclasses.
 
 .. note::
 
@@ -36,6 +36,7 @@ AUTHORS:
 # *****************************************************************************
 
 from sage.categories.homset import HomsetWithBase
+from sage.misc.lazy_import import lazy_import
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Set_generic
 
@@ -48,6 +49,11 @@ from sage.schemes.generic.morphism import (
     SchemeMorphism,
     SchemeMorphism_structure_map,
     SchemeMorphism_spec )
+
+lazy_import('sage.schemes.affine.affine_space', 'AffineSpace_generic', as_='AffineSpace')
+lazy_import('sage.schemes.generic.algebraic_scheme', 'AlgebraicScheme_subscheme')
+lazy_import('sage.schemes.product_projective.space', 'ProductProjectiveSpaces_ring', as_='ProductProjectiveSpaces')
+lazy_import('sage.schemes.projective.projective_space', 'ProjectiveSpace_ring', as_='ProjectiveSpace')
 
 
 def is_SchemeHomset(H):
@@ -169,7 +175,7 @@ class SchemeHomsetFactory(UniqueFactory):
         if not category:
             from sage.categories.schemes import Schemes
             category = Schemes(base_spec)
-        key = tuple([id(X), id(Y), category, as_point_homset])
+        key = (id(X), id(Y), category, as_point_homset)
         extra = {'X':X, 'Y':Y, 'base_ring':base_ring, 'check':check}
         return key, extra
 
@@ -307,7 +313,7 @@ class SchemeHomset_generic(HomsetWithBase):
         OUTPUT:
 
         A :class:`SchemeMorphism` if there is a natural map from
-        domain to codomain. Otherwise, a ``NotImplementedError`` is
+        domain to codomain. Otherwise, a :class:`NotImplementedError` is
         raised.
 
         EXAMPLES::
@@ -401,12 +407,12 @@ class SchemeHomset_generic(HomsetWithBase):
 # *******************************************************************
 
 class SchemeHomset_points(SchemeHomset_generic):
-    """
+    r"""
     Set of rational points of the scheme.
 
-    Recall that the `K`-rational points of a scheme `X` over `k` can
-    be identified with the set of morphisms `Spec(K) \to X`. In Sage,
-    the rational points are implemented by such scheme morphisms.
+    Recall that the `K`-rational points of a scheme `X` over `k` can be
+    identified with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage, the
+    rational points are implemented by such scheme morphisms.
 
     If a scheme has a finite number of points, then the homset is
     supposed to implement the Python iterator interface. See
@@ -473,8 +479,8 @@ class SchemeHomset_points(SchemeHomset_generic):
         ::
 
             sage: P = ProjectiveSpace(QQ, 1, 'x')
-            sage: P2 = ProjectiveSpace(CC, 1, 'y')
-            sage: P2(CC)._coerce_map_from_(P(QQ))
+            sage: P2 = ProjectiveSpace(CC, 1, 'y')                                      # needs sage.rings.real_mpfr
+            sage: P2(CC)._coerce_map_from_(P(QQ))                                       # needs sage.rings.real_mpfr
             False
 
         ::
@@ -484,13 +490,13 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: L = A.subscheme([z, y + z])
             sage: A(QQ)._coerce_map_from_(H(QQ))
             True
-            sage: H(QQ)._coerce_map_from_(L(QQ))
+            sage: H(QQ)._coerce_map_from_(L(QQ))                                        # needs sage.libs.singular
             True
-            sage: L(QQ).has_coerce_map_from(H(QQ))
+            sage: L(QQ).has_coerce_map_from(H(QQ))                                      # needs sage.libs.singular
             False
-            sage: A(CC)._coerce_map_from_(H(QQ))
+            sage: A(CC)._coerce_map_from_(H(QQ))                                        # needs sage.rings.real_mpfr
             True
-            sage: H(CC)._coerce_map_from_(L(RR))
+            sage: H(CC)._coerce_map_from_(L(RR))                                        # needs sage.libs.singular sage.rings.real_mpfr
             True
 
         ::
@@ -516,10 +522,10 @@ class SchemeHomset_points(SchemeHomset_generic):
         ::
 
             sage: PS = ProjectiveSpace(ZZ, 1, 'x')
-            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # optional - sage.rings.padics
-            sage: PS(ZZ).has_coerce_map_from(PS2(Zp(7)))                                # optional - sage.rings.padics
+            sage: PS2 = ProjectiveSpace(Zp(7), 1, 'x')                                  # needs sage.rings.padics
+            sage: PS(ZZ).has_coerce_map_from(PS2(Zp(7)))                                # needs sage.rings.padics
             False
-            sage: PS2(Zp(7)).has_coerce_map_from(PS(ZZ))                                # optional - sage.rings.padics
+            sage: PS2(Zp(7)).has_coerce_map_from(PS(ZZ))                                # needs sage.rings.padics
             True
 
         ::
@@ -536,10 +542,11 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         ::
 
-            sage: K.<w> = QuadraticField(2)                                             # optional - sage.rings.number_field
-            sage: A.<x,y,z> = AffineSpace(QQ, 3)                                        # optional - sage.rings.number_field
-            sage: H = A.subscheme(z)                                                    # optional - sage.rings.number_field
-            sage: A(K).has_coerce_map_from(H(QQ))                                       # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = QuadraticField(2)
+            sage: A.<x,y,z> = AffineSpace(QQ, 3)
+            sage: H = A.subscheme(z)
+            sage: A(K).has_coerce_map_from(H(QQ))
             True
 
         TESTS::
@@ -552,8 +559,8 @@ class SchemeHomset_points(SchemeHomset_generic):
         ::
 
             sage: A = AffineSpace(QQ, 1, 'x')
-            sage: AC = AffineSpace(CC, 1, 'x')
-            sage: A(3/2) == AC(3/2)
+            sage: AC = AffineSpace(CC, 1, 'x')                                          # needs sage.rings.real_mpfr
+            sage: A(3/2) == AC(3/2)                                                     # needs sage.rings.real_mpfr
             True
 
         ::
@@ -567,9 +574,8 @@ class SchemeHomset_points(SchemeHomset_generic):
         # and the base rings are coercible
         if isinstance(other, CommutativeRing):
             try:
-                from sage.schemes.affine.affine_space import is_AffineSpace
-                if is_AffineSpace(target.ambient_space())\
-                  and target.ambient_space().dimension_relative() == 1:
+                if (isinstance(target.ambient_space(), AffineSpace)
+                        and target.ambient_space().dimension_relative() == 1):
                     return target.base_ring().has_coerce_map_from(other)
                 else:
                     return False
@@ -577,7 +583,6 @@ class SchemeHomset_points(SchemeHomset_generic):
                 return False
         elif isinstance(other, SchemeHomset_points):
         #we are converting between scheme points
-            from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
             source = other.codomain()
             if isinstance(target, AlgebraicScheme_subscheme):
                 #subscheme coerce when there is containment
@@ -591,9 +596,6 @@ class SchemeHomset_points(SchemeHomset_generic):
                 #if the target is an ambient space, we can coerce if the base rings coerce
                 #and they are the same type: affine, projective, etc and have the same
                 #variable names
-                from sage.schemes.projective.projective_space import is_ProjectiveSpace
-                from sage.schemes.affine.affine_space import is_AffineSpace
-                from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
                 try:
                     ta = target.ambient_space()
                     sa = source.ambient_space()
@@ -601,15 +603,15 @@ class SchemeHomset_points(SchemeHomset_generic):
                     return False
                 #for projective and affine varieties, we check dimension
                 #and matching variable names
-                if (is_ProjectiveSpace(ta) and is_ProjectiveSpace(sa))\
-                  or (is_AffineSpace(ta) and is_AffineSpace(sa)):
+                if ((isinstance(ta, ProjectiveSpace) and isinstance(sa, ProjectiveSpace))
+                        or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
                     if (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
                     else:
                         return False
                 #for products of projective spaces, we check dimension of
                 #components and matching variable names
-                elif (is_ProductProjectiveSpaces(ta) and is_ProductProjectiveSpaces(sa)):
+                elif isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
                     if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
                       and (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
@@ -632,52 +634,52 @@ class SchemeHomset_points(SchemeHomset_generic):
         EXAMPLES::
 
             sage: A2 = AffineSpace(ZZ, 2)
-            sage: F = GF(3)                                                             # optional - sage.rings.finite_rings
-            sage: F_points = A2(F);  type(F_points)                                     # optional - sage.rings.finite_rings
+            sage: F = GF(3)
+            sage: F_points = A2(F);  type(F_points)
             <class 'sage.schemes.affine.affine_homset.SchemeHomset_points_affine_with_category'>
-            sage: F_points([2,5])                                                       # optional - sage.rings.finite_rings
+            sage: F_points([2,5])
             (2, 2)
 
-            sage: P2 = ProjectiveSpace(GF(3), 2)                                        # optional - sage.rings.finite_rings
-            sage: F.<a> = GF(9, 'a')                                                    # optional - sage.rings.finite_rings
-            sage: F_points = P2(F)                                                      # optional - sage.rings.finite_rings
-            sage: type(F_points)                                                        # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P2 = ProjectiveSpace(GF(3), 2)
+            sage: F.<a> = GF(9, 'a')
+            sage: F_points = P2(F)
+            sage: type(F_points)
             <class 'sage.schemes.projective.projective_homset.SchemeHomset_points_projective_field_with_category'>
-            sage: F_points([4,2*a])                                                     # optional - sage.rings.finite_rings
+            sage: F_points([4,2*a])
             (1 : 2*a : 1)
 
         TESTS::
 
-            sage: F_points._element_constructor_([4,2*a])                               # optional - sage.rings.finite_rings
+            sage: F_points._element_constructor_([4,2*a])                               # needs sage.rings.finite_rings
             (1 : 2*a : 1)
         """
         if len(v) == 1:
             v = v[0]
-        return self.codomain()._point(self, v, **kwds)
+        return self.extended_codomain()._point(self, v, **kwds)
 
     def extended_codomain(self):
-        """
+        r"""
         Return the codomain with extended base, if necessary.
 
         OUTPUT:
 
         The codomain scheme, with its base ring extended to the
-        codomain. That is, the codomain is of the form `Spec(R)` and
+        codomain. That is, the codomain is of the form `\mathrm{Spec}(R)` and
         the base ring of the domain is extended to `R`.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: P2 = ProjectiveSpace(QQ, 2)
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 + x - (3^3-3))                                # optional - sage.rings.number_field
-            sage: K_points = P2(K);  K_points                                           # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + x - (3^3-3))
+            sage: K_points = P2(K);  K_points
             Set of rational points of Projective Space of dimension 2
              over Number Field in a with defining polynomial x^2 + x - 24
-
-            sage: K_points.codomain()                                                   # optional - sage.rings.number_field
+            sage: K_points.codomain()
             Projective Space of dimension 2 over Rational Field
-
-            sage: K_points.extended_codomain()                                          # optional - sage.rings.number_field
+            sage: K_points.extended_codomain()
             Projective Space of dimension 2
              over Number Field in a with defining polynomial x^2 + x - 24
         """
@@ -690,6 +692,12 @@ class SchemeHomset_points(SchemeHomset_generic):
             X = self.codomain()
         self._extended_codomain = X
         return X
+
+    def zero(self):
+        """
+        Return the identity of the codomain with extended base, if necessary.
+        """
+        return self.extended_codomain().zero()
 
     def _repr_(self):
         """
@@ -708,8 +716,8 @@ class SchemeHomset_points(SchemeHomset_generic):
         return 'Set of rational points of '+str(self.extended_codomain())
 
     def value_ring(self):
-        """
-        Return `R` for a point Hom-set `X(Spec(R))`.
+        r"""
+        Return `R` for a point Hom-set `X(\mathrm{Spec}(R))`.
 
         OUTPUT:
 
@@ -736,11 +744,11 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: toric_varieties.P2().point_set().cardinality()
+            sage: toric_varieties.P2().point_set().cardinality()                        # needs sage.geometry.polyhedron sage.graphs
             +Infinity
 
-            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # optional - sage.rings.finite_rings
-            sage: P2.point_set().cardinality()                                          # optional - sage.rings.finite_rings
+            sage: P2 = toric_varieties.P2(base_ring=GF(3))                              # needs sage.geometry.polyhedron sage.graphs
+            sage: P2.point_set().cardinality()                                          # needs sage.geometry.polyhedron sage.graphs
             13
         """
         if hasattr(self, 'is_finite') and not self.is_finite():
@@ -760,8 +768,8 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         EXAMPLES::
 
-            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # optional - sage.rings.finite_rings
-            sage: P1.point_set().list()                                                 # optional - sage.rings.finite_rings
+            sage: P1 = toric_varieties.P1(base_ring=GF(3))                              # needs sage.geometry.polyhedron sage.graphs
+            sage: P1.point_set().list()                                                 # needs sage.geometry.polyhedron sage.graphs
             ([0 : 1], [1 : 0], [1 : 1], [1 : 2])
         """
         return tuple(self)

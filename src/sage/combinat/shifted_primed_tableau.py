@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Shifted primed tableaux
 
@@ -357,7 +357,7 @@ class ShiftedPrimedTableau(ClonableArray,
             sage: ShiftedPrimedTableau([['2p',3],[2,2]], skew=[2])._repr_list()
             "[(None, None, 2', 3), (2, 2)]"
         """
-        return repr([row for row in self])
+        return repr(list(self))
 
     def _repr_tab(self):
         """
@@ -553,7 +553,7 @@ class ShiftedPrimedTableau(ClonableArray,
                 else:
                     l1 += uh + h*width
                 if unicode:
-                    l2 += u"{}{:^{width}}".format(v, e, width=width)
+                    l2 += "{}{:^{width}}".format(v, e, width=width)
                 else:
                     l2 += "{}{:^{width}}".format(v, e, width=width)
             if i <= n:

@@ -95,7 +95,7 @@ def J0(N):
         sage: J0(33) is J0(33)
         True
     """
-    key = 'J0(%s)'%N
+    key = 'J0(%s)' % N
     try:
         return _get(key)
     except ValueError:
@@ -113,7 +113,7 @@ def J1(N):
         sage: J1(389)
         Abelian variety J1(389) of dimension 6112
     """
-    key = 'J1(%s)'%N
+    key = 'J1(%s)' % N
     try:
         return _get(key)
     except ValueError:
@@ -130,7 +130,7 @@ def JH(N, H):
         sage: JH(389,[16])
         Abelian variety JH(389,[16]) of dimension 64
     """
-    key = 'JH(%s,%s)'%(N,H)
+    key = 'JH(%s,%s)' % (N,H)
     try:
         return _get(key)
     except ValueError:

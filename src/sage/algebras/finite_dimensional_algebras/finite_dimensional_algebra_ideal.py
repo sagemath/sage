@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings (because all doctests use GF)
 """
 Ideals of Finite Algebras
 """

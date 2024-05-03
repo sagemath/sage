@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 """
 Miscellaneous Functions
 """
@@ -16,12 +17,14 @@ Miscellaneous Functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.groups.perm_gps.permgroup import PermutationGroup_generic
-from sage.groups.perm_gps.constructor import PermutationGroupElement
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.misc.misc_c import prod
 from functools import wraps
+
+from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.groups.perm_gps.permgroup', ['PermutationGroup', 'PermutationGroup_generic'])
+lazy_import('sage.groups.perm_gps.constructor', 'PermutationGroupElement')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 
 def change_support(perm, support, change_perm=None):

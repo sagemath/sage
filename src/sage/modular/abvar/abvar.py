@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Base class for modular abelian varieties
 
@@ -33,8 +33,11 @@ TESTS::
 from copy import copy
 from random import randrange
 
+import sage.rings.abc
+
 from sage.arith.functions import lcm as LCM
 from sage.arith.misc import divisors, next_prime, is_prime
+from sage.categories.fields import Fields
 from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
 from sage.matrix.constructor import matrix
 from sage.matrix.special import block_diagonal_matrix, identity_matrix
@@ -55,9 +58,7 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
-from sage.rings.ring import is_Ring
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.sets.primes import Primes
 from sage.structure.parent import Parent
@@ -66,6 +67,7 @@ from sage.structure.sequence import Sequence, Sequence_generic
 
 lazy_import('sage.databases.cremona',
             ['cremona_letter_code', 'CremonaDatabase'])
+
 
 from . import homspace
 from . import lseries
@@ -170,7 +172,7 @@ class ModularAbelianVariety_abstract(Parent):
             self.__degen_t = number
         if isogeny_number is not None:
             self.__isogeny_number = isogeny_number
-        if check and not is_Ring(base_field) and base_field.is_field():
+        if check and base_field not in Fields():
             raise TypeError("base_field must be a field")
         Parent.__init__(self, base=base_field,
                         category=ModularAbelianVarieties(base_field))
@@ -315,7 +317,7 @@ class ModularAbelianVariety_abstract(Parent):
 
             sage: A = J0(37); A
             Abelian variety J0(37) of dimension 2
-            sage: A.base_extend(QQbar)
+            sage: A.base_extend(QQbar)                                                  # needs sage.rings.number_field
             Abelian variety J0(37) over Algebraic Field of dimension 2
             sage: A.base_extend(GF(7))
             Abelian variety J0(37) over Finite Field of size 7 of dimension 2
@@ -523,15 +525,17 @@ class ModularAbelianVariety_abstract(Parent):
     def newform(self, names=None):
         """
         Return the newform `f` such that this abelian variety is isogenous to
-        the newform abelian variety `A_f`. If this abelian variety is not
-        simple, raise a ``ValueError``.
+        the newform abelian variety `A_f`.
+
+        If this abelian variety is not
+        simple, this raises a :class:`ValueError`.
 
         INPUT:
 
-        - ``names`` -- (default: None) If the newform has coefficients in a
-          number field, then a generator name must be specified.
+        - ``names`` -- (default: ``None``) If the newform has coefficients
+          in a number field, then a generator name must be specified.
 
-        OUTPUT: A newform `f` so that self is isogenous to `A_f`.
+        OUTPUT: A newform `f` so that ``self`` is isogenous to `A_f`.
 
         EXAMPLES::
 
@@ -578,9 +582,11 @@ class ModularAbelianVariety_abstract(Parent):
     def newform_label(self):
         """
         Return the label [level][isogeny class][group] of the newform
-        `f` such that this abelian variety is isogenous to the
-        newform abelian variety `A_f`. If this abelian variety is
-        not simple, raise a ValueError.
+        `f` such that this abelian variety is isogenous to the newform
+        abelian variety `A_f`.
+
+        If this abelian variety is not simple, this raises
+        a :class:`ValueError`.
 
         OUTPUT: string
 
@@ -609,16 +615,19 @@ class ModularAbelianVariety_abstract(Parent):
 
     def elliptic_curve(self):
         """
-        Return an elliptic curve isogenous to self. If self is not dimension 1
-        with rational base ring, raise a ValueError.
+        Return an elliptic curve isogenous to ``self``.
 
-        The elliptic curve is found by looking it up in the CremonaDatabase.
-        The CremonaDatabase contains all curves up to some large conductor.  If
-        a curve is not found in the CremonaDatabase, a RuntimeError will be
-        raised. In practice, only the most committed users will see this
-        RuntimeError.
+        If ``self`` is not dimension 1
+        with rational base ring, this raises a :class:`ValueError`.
 
-        OUTPUT: an elliptic curve isogenous to self.
+        The elliptic curve is found by looking it up in the
+        CremonaDatabase.  The CremonaDatabase contains all curves up
+        to some large conductor.  If a curve is not found in the
+        CremonaDatabase, a :class:`RuntimeError` will be raised. In
+        practice, only the most committed users will see this
+        :class:`RuntimeError`.
+
+        OUTPUT: an elliptic curve isogenous to ``self``.
 
         EXAMPLES::
 
@@ -682,8 +691,10 @@ class ModularAbelianVariety_abstract(Parent):
     def _isogeny_to_newform_abelian_variety(self):
         r"""
         Return an isogeny from self to an abelian variety `A_f`
-        attached to a newform. If self is not simple (so that no such
-        isogeny exists), raise a ValueError.
+        attached to a newform.
+
+        If self is not simple (so that no such
+        isogeny exists), this raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -728,13 +739,12 @@ class ModularAbelianVariety_abstract(Parent):
         """
         Given self and other, if both are simple, and correspond to the
         same newform with the same congruence subgroup, return an isogeny.
-        Otherwise, raise a ValueError.
+
+        Otherwise, this raises a :class:`ValueError`.
 
         INPUT:
 
-
-        -  ``self, other`` - modular abelian varieties
-
+        - ``self, other`` -- modular abelian varieties
 
         OUTPUT: an isogeny
 
@@ -798,8 +808,8 @@ class ModularAbelianVariety_abstract(Parent):
             L = B.base_field()
             if K == L:
                 F = K
-            elif K == QQbar or L == QQbar:
-                F = QQbar
+            elif isinstance(K, sage.rings.abc.AlgebraicField) or isinstance(L, sage.rings.abc.AlgebraicField):
+                from sage.rings.qqbar import QQbar as F
             else:
                 # TODO -- improve this
                 raise ValueError("please specify a category")
@@ -934,7 +944,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         When the intersection is infinite, the output is ``(G, A)``, where
         ``G`` surjects onto the component group. This choice of ``G`` is not
-        canonical (see :trac:`26189`). In this following example, ``B`` is a
+        canonical (see :issue:`26189`). In this following example, ``B`` is a
         subvariety of ``J``::
 
             sage: d1 = J0(11).degeneracy_map(22, 1)
@@ -997,7 +1007,7 @@ class ModularAbelianVariety_abstract(Parent):
                 for v in V.coordinate_module(S).basis()]
 
         if A.dimension() > 0:
-            finitegroup_base_field = QQbar
+            from sage.rings.qqbar import QQbar as finitegroup_base_field
         else:
             finitegroup_base_field = self.base_field()
         G = self.finite_subgroup(gens, field_of_definition=finitegroup_base_field)
@@ -1064,7 +1074,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         TESTS:
 
-        This exposed a bug in HNF (see :trac:`4527`)::
+        This exposed a bug in HNF (see :issue:`4527`)::
 
             sage: A = J0(206).new_subvariety().decomposition()[3] ; A # long time
             Simple abelian subvariety 206d(1,206) of dimension 4 of J0(206)
@@ -1400,7 +1410,7 @@ class ModularAbelianVariety_abstract(Parent):
             True
 
         Quotienting by the identity should return the original variety and the
-        identity morphism. :trac:`6392` ::
+        identity morphism. :issue:`6392` ::
 
             sage: J = J0(22)
             sage: G = J.zero_subgroup()
@@ -2050,8 +2060,8 @@ class ModularAbelianVariety_abstract(Parent):
             if none_if_not_known:
                 return None
             level = LCM([f.level() for f in self.newform_decomposition('a')])
-            groups = sorted(set([f.group() for f in
-                                 self.newform_decomposition('a')]))
+            groups = sorted({f.group()
+                             for f in self.newform_decomposition('a')})
             if len(groups) == 1:
                 groups = groups[0]
             self.__newform_level = level, groups
@@ -3096,7 +3106,7 @@ class ModularAbelianVariety_abstract(Parent):
             Finite subgroup with invariants [5] over QQ of Abelian variety J0(33) of dimension 3
 
         This method gives a way of changing the ambient abelian variety of a
-        finite subgroup. This caused an issue in :trac:`6392` but should be
+        finite subgroup. This caused an issue in :issue:`6392` but should be
         fixed now. ::
 
             sage: A, B = J0(43)
@@ -3126,7 +3136,7 @@ class ModularAbelianVariety_abstract(Parent):
                     raise ValueError("X must be a subgroup of self.")
 
         if field_of_definition is None:
-            field_of_definition = QQbar
+            from sage.rings.qqbar import QQbar as field_of_definition
 
         return FiniteSubgroup_lattice(
             self, X, field_of_definition=field_of_definition, check=check)
@@ -3178,7 +3188,7 @@ class ModularAbelianVariety_abstract(Parent):
         `(t,N)`, where `N` is the ambient level and
         `t` is an integer that divides the quotient of `N`
         by the newform level. This function returns the tuple
-        `(t,N)`, or raises a ValueError if self isn't simple.
+        `(t,N)`, or raises a :class:`ValueError` if self is not simple.
 
         .. note::
 
@@ -3229,24 +3239,25 @@ class ModularAbelianVariety_abstract(Parent):
     def isogeny_number(self, none_if_not_known=False):
         """
         Return the number (starting at 0) of the isogeny class of new
-        simple abelian varieties that self is in. If self is not simple,
-        raises a ValueError exception.
+        simple abelian varieties that ``self`` is in.
+
+        If ``self`` is not simple,
+        this raises a :class:`ValueError` exception.
 
         INPUT:
 
+        -  ``none_if_not_known`` -- bool (default: ``False``); if
+           ``True`` then this function may return ``None`` instead of ``True``
+           or ``False`` if
+           we do not already know the isogeny number of ``self``.
 
-        -  ``none_if_not_known`` - bool (default: False); if
-           True then this function may return None instead of True of False if
-           we don't already know the isogeny number of self.
-
-
-        EXAMPLES: We test the none_if_not_known flag first::
+        EXAMPLES: We test the ``none_if_not_known`` flag first::
 
             sage: J0(33).isogeny_number(none_if_not_known=True) is None
             True
 
         Of course, `J_0(33)` is not simple, so this function
-        raises a ValueError::
+        raises a :class:`ValueError`::
 
             sage: J0(33).isogeny_number()
             Traceback (most recent call last):
@@ -3859,7 +3870,7 @@ class ModularAbelianVariety_abstract(Parent):
         if not isinstance(other, ModularAbelianVariety_abstract):
             raise TypeError("other must be an abelian variety")
         D = self.decomposition()
-        C = set([A.newform_label() for A in other.decomposition()])
+        C = {A.newform_label() for A in other.decomposition()}
         Z = []
         for X in D:
             lbl = X.newform_label()
@@ -4181,7 +4192,8 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         """
         Return space of modular symbols (with given sign) associated to
         this modular abelian variety, if it can be found by cutting down
-        using Hecke operators. Otherwise raise a RuntimeError exception.
+        using Hecke operators. Otherwise raise a :class:`RuntimeError`
+        exception.
 
         EXAMPLES::
 
@@ -4887,7 +4899,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
                 else:
                     raise NotImplementedError("Atkin-Lehner at p must act as a scalar")
         else:
-            mul_primes = sorted(set([p] + [q for q in prime_range(2, 2 * self.dimension() + 2)]))
+            mul_primes = sorted(set([p] + list(prime_range(2, 2 * self.dimension() + 2))))
         div = Integer(div)
         mul = Integer(mul)
         mul_primes = tuple(mul_primes)
@@ -5134,7 +5146,7 @@ def simple_factorization_of_modsym_space(M, simple=True):
 
     TESTS:
 
-    Check that :trac:`21799` is fixed::
+    Check that :issue:`21799` is fixed::
 
         sage: JH(28, [15]).decomposition()
         [

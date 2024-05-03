@@ -37,15 +37,15 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
 
     Here is a piece of the Cayley graph for the multiplicative structure::
 
-        sage: G = NN.cayley_graph(elements=range(9), generators=[0,1,2,3,5,7])          # optional - sage.graphs
-        sage: G                                                                         # optional - sage.graphs
+        sage: G = NN.cayley_graph(elements=range(9), generators=[0,1,2,3,5,7])          # needs sage.graphs
+        sage: G                                                                         # needs sage.graphs
         Looped multi-digraph on 9 vertices
-        sage: G.plot()                                                                  # optional - sage.graphs
+        sage: G.plot()                                                                  # needs sage.graphs sage.plot
         Graphics object consisting of 48 graphics primitives
 
     This is the Hasse diagram of the divisibility order on ``NN``.
 
-        sage: Poset(NN.cayley_graph(elements=[1..12], generators=[2,3,5,7,11])).show()  # optional - sage.combinat sage.graphs
+        sage: Poset(NN.cayley_graph(elements=[1..12], generators=[2,3,5,7,11])).show()  # needs sage.combinat sage.graphs sage.plot
 
     Note: as for :class:`NonNegativeIntegers
     <sage.sets.non_negative_integers.NonNegativeIntegers>`, ``NN`` is
@@ -100,5 +100,6 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
             '\\Bold{N}'
         """
         return '\\Bold{N}'
+
 
 NN = NonNegativeIntegerSemiring()

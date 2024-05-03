@@ -42,7 +42,7 @@ cdef int mpz_vector_init(mpz_vector* v, Py_ssize_t degree, Py_ssize_t num_nonzer
     v.num_nonzero = num_nonzero
     v.degree = degree
 
-cdef void mpz_vector_clear(mpz_vector* v):
+cdef void mpz_vector_clear(mpz_vector* v) noexcept:
     cdef Py_ssize_t i
     # Free all mpz objects allocated in creating v
     for i from 0 <= i < v.num_nonzero:
@@ -54,7 +54,7 @@ cdef void mpz_vector_clear(mpz_vector* v):
     sig_free(v.entries)
     sig_free(v.positions)
 
-cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x):
+cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x) noexcept:
     """
     Find the position of the integers x in the array v, which has length n.
     Returns -1 if x is not in the array v.
@@ -79,7 +79,7 @@ cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x):
             return k
     return -1
 
-cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* ins):
+cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* ins) noexcept:
     """
     Find the position of the integer x in the array v, which has length n.
     Returns -1 if x is not in the array v, and in this case ins is
@@ -91,7 +91,7 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
        n -- integer (length of array v)
        x -- mpz_t  (integer)
     OUTPUT:
-       position of x (as an Py_ssize_t)
+       position of x (as a Py_ssize_t)
        ins -- (call be pointer), the insertion point if x is not found.
     """
     cdef Py_ssize_t i, j, k, c
@@ -142,7 +142,7 @@ cdef int mpz_vector_get_entry(mpz_t ans, mpz_vector* v, Py_ssize_t n) except -1:
     mpz_set(ans, v.entries[m])
     return 0
 
-cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n):
+cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n) noexcept:
     """
     Return if the ``n``-th entry of the sparse vector ``v`` is zero.
 
@@ -175,7 +175,6 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
     if n >= v.degree or n < 0:
         raise IndexError("Index (=%s) must be between 0 and %s." % (n, v.degree - 1))
     cdef Py_ssize_t i, m, ins
-    cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
     cdef mpz_t *e
 
@@ -195,7 +194,7 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
             e = v.entries
             pos = v.positions
             allocate_mpz_vector(v, v.num_nonzero - 1)  # This does *not* change v.num_nonzero
-            for i from 0 <= i < m:
+            for i in range(m):
                 # v.entries[i] = e[i]
                 mpz_set(v.entries[i], e[i])
                 mpz_clear(e[i])
@@ -223,7 +222,7 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
         e = v.entries
         pos = v.positions
         allocate_mpz_vector(v, v.num_nonzero)
-        for i from 0 <= i < ins:
+        for i in range(ins):
             # v.entries[i] = e[i]
             mpz_set(v.entries[i], e[i])
             mpz_clear(e[i])
@@ -388,7 +387,7 @@ cdef int mpz_vector_scalar_multiply(mpz_vector* v, mpz_vector* w, mpz_t scalar) 
             v.positions[i] = w.positions[i]
         return 0
 
-cdef int mpz_vector_cmp(mpz_vector* v, mpz_vector* w):
+cdef int mpz_vector_cmp(mpz_vector* v, mpz_vector* w) noexcept:
     if v.degree < w.degree:
         return -1
     elif v.degree > w.degree:

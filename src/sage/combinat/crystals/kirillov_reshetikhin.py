@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Kirillov-Reshetikhin Crystals
 """
@@ -375,21 +376,21 @@ def KashiwaraNakashimaTableaux(cartan_type, r, s):
         if ct.type() == 'A':
             return KR_type_A(ct, r, s)
         elif ct.type() == 'D':
-            if r<ct.rank()-2:
+            if r < ct.rank()-2:
                 return KR_type_vertical(ct, r, s)
             elif r in {ct.rank()-2,ct.rank()-1}:
                 return KR_type_spin(ct, r, s)
             else:
                 raise ValueError("wrong range of parameters")
         elif ct.type() == 'B':
-            if r<ct.rank()-1:
+            if r < ct.rank()-1:
                 return KR_type_vertical(ct, r, s)
             elif r == ct.rank()-1:
                 return KR_type_Bn(ct, r, s)
             else:
                 raise ValueError("wrong range of parameters")
         elif ct.type() == 'C':
-            if r<ct.rank()-1:
+            if r < ct.rank()-1:
                 return KR_type_C(ct, r, s)
             elif r == ct.rank()-1:
                 return KR_type_Cn(ct, r, s)
@@ -409,7 +410,7 @@ def KashiwaraNakashimaTableaux(cartan_type, r, s):
         elif ct.dual().type() == 'BC':
             return KR_type_A2(ct, r, s)
         elif ct.dual().type() == 'C':
-            if r<ct.rank()-1:
+            if r < ct.rank()-1:
                 return KR_type_box(ct, r, s)
             elif r == ct.rank()-1:
                 return KR_type_Dn_twisted(ct, r, s)
@@ -973,7 +974,7 @@ class KR_type_vertical(KirillovReshetikhinCrystalFromPromotion):
         """
         n = self.cartan_type().rank() - 1
         inner = Partition([Integer(b.weight()[i]) for i in range(1,n+1)])
-        inter = Partition([len([i for i in r if i>0]) for r in b.to_tableau()])
+        inter = Partition([len([i for i in r if i > 0]) for r in b.to_tableau()])
         outer = b.to_tableau().shape()
         return PMDiagram([self.r(), self.s(), outer, inter, inner], from_shapes=True)
 
@@ -1601,7 +1602,7 @@ class KR_type_A2(KirillovReshetikhinGenericCrystal):
 
         TESTS:
 
-        Check that :trac:`23028` is fixed::
+        Check that :issue:`23028` is fixed::
 
             sage: ct = CartanType(['A',8,2]).dual()
             sage: K = crystals.KirillovReshetikhin(ct, 4, 3)
@@ -2469,7 +2470,7 @@ class KR_type_Cn(KirillovReshetikhinGenericCrystal):
         """
         n = self.cartan_type().rank()-1
         inner = Partition([Integer(b.weight()[i]) for i in range(1,n+1)])
-        inter = Partition([len([i for i in r if i>0]) for r in b.to_tableau()])
+        inter = Partition([len([i for i in r if i > 0]) for r in b.to_tableau()])
         outer = b.to_tableau().shape()
         return PMDiagram([self.r(), self.s(), outer, inter, inner], from_shapes=True)
 
@@ -2748,15 +2749,15 @@ class KR_type_Dn_twisted(KirillovReshetikhinGenericCrystal):
         inner = Partition(inner)
         inter = [2*i for i in inter]+[0]*(n-len(inter))
         w = t.weight()
-        if w[0]==0 and w[n-1]==0:
+        if w[0] == 0 and w[n-1] == 0:
             v = [0]*n
         else:
             v = [1]*n
-            if w[0]<0 and w[n-1]>0:
-                v[n-1]=0
-            elif w[0]>0 and w[n-1]<0:
-                v[n-1]=0
-                v[n-2]=-1
+            if w[0] < 0 and w[n-1] > 0:
+                v[n-1] = 0
+            elif w[0] > 0 and w[n-1] < 0:
+                v[n-1] = 0
+                v[n-2] = -1
         inter = Partition([inter[i] + v[i] for i in range(n)])
         outer = Partition([s]*n)
         return PMDiagram([n, s, outer, inter, inner], from_shapes=True)
@@ -2781,7 +2782,7 @@ class KR_type_Dn_twisted(KirillovReshetikhinGenericCrystal):
         ulist = []
         plus = pm.heights_of_addable_plus()
         minus = pm.heights_of_minus()
-        l = len([i for i in plus if i==rank-1])
+        l = len([i for i in plus if i == rank-1])
         a = (len(plus) + l) // 2
         ulist += sum(([i]*a for i in range(1,rank+1)),[])
         a = (len(minus)-l) // 2
@@ -2823,15 +2824,15 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
         pm = self.parent().from_highest_weight_vector_to_pm_diagram(b)
         [l1,l2] = pm.pm_diagram[n-1]
         l3 = pm.pm_diagram[n-2][0]
-        if l1+l2+l3==s and l1==0:
+        if l1+l2+l3 == s and l1 == 0:
             return None
-        if l1+l2+l3<s:
+        if l1+l2+l3 < s:
             pm.pm_diagram[n-1][1] = l2+2
             pm.pm_diagram[n][0] -= 2
-        elif l1>1:
+        elif l1 > 1:
             pm.pm_diagram[n-1][0] = l1-2
             pm.pm_diagram[n][0] += 2
-        elif l1 ==1:
+        elif l1 == 1:
             pm.pm_diagram[n-1][0] = 0
             pm.pm_diagram[n-1][1] = l2+1
         pm = PMDiagram(pm.pm_diagram)
@@ -2860,13 +2861,13 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
         l3 = pm.pm_diagram[n-2][0]
         if l1+l2+l3 == s and l2 == 0:
             return None
-        if l1+l2+l3<s:
+        if l1+l2+l3 < s:
             pm.pm_diagram[n-1][0] = l1+2
             pm.pm_diagram[n][0] -= 2
-        elif l2>1:
+        elif l2 > 1:
             pm.pm_diagram[n-1][1] = l2-2
             pm.pm_diagram[n][0] += 2
-        elif l2 ==1:
+        elif l2 == 1:
             pm.pm_diagram[n-1][1] = 0
             pm.pm_diagram[n-1][0] = l1+1
         pm = PMDiagram(pm.pm_diagram)
@@ -2887,7 +2888,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
 
         TESTS:
 
-        Check that :trac:`19982` is fixed::
+        Check that :issue:`19982` is fixed::
 
             sage: K = crystals.KirillovReshetikhin(['D',3,2], 2,3)
             sage: def eps0_defn(elt):
@@ -2920,7 +2921,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
 
         TESTS:
 
-        Check that :trac:`19982` is fixed::
+        Check that :issue:`19982` is fixed::
 
             sage: K = crystals.KirillovReshetikhin(['D',3,2], 2,3)
             sage: def phi0_defn(elt):
@@ -3137,7 +3138,7 @@ class KR_type_spin(KirillovReshetikhinCrystalFromPromotion):
         ind.remove(1)
         C = T.cartan_type()
         n = C.n
-        sh = [i for i in T.shapes[0]]
+        sh = list(T.shapes[0])
         sh[n-1] = -sh[n-1]
         T_dual = CrystalOfTableaux(C, shape=sh)
         hw = [t for t in T if t.is_highest_weight(index_set=ind)]
@@ -3273,7 +3274,7 @@ class KR_type_D_tri1(KirillovReshetikhinGenericCrystal):
 
         l = C.letters
         lst = ([l(1)]*coords[0] + [l(2)]*coords[1] + [l(3)]*(coords[2]//2)
-               + [l(0)]*(coords[2]%2) + [l(-3)]*(coords[3]//2)
+               + [l(0)]*(coords[2] % 2) + [l(-3)]*(coords[3]//2)
                + [l(-2)]*coords[4] + [l(-1)]*coords[5])
         return self.element_class(self, C(*lst))
 
@@ -3996,7 +3997,7 @@ def horizontal_dominoes_removed(r, s):
         sage: sage.combinat.crystals.kirillov_reshetikhin.horizontal_dominoes_removed(3,2)
         [[], [2], [2, 2], [2, 2, 2]]
     """
-    ulist = [ [y for y in x] + [0]*(r-x.length()) for x in partitions_in_box(r, s//2) ]
+    ulist = [list(x) + [0]*(r-x.length()) for x in partitions_in_box(r, s//2)]
     two = lambda x : 2 * (x - s // 2) + s
     return [Partition([two(y) for y in x]) for x in ulist]
 

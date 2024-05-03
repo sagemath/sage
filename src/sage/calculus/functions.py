@@ -1,8 +1,11 @@
+# sage.doctest: needs sage.symbolic
 r"""
 Calculus functions
 """
-from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import is_Matrix, is_Vector, Expression
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 from .functional import diff
 

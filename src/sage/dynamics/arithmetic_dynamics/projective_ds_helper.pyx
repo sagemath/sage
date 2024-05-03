@@ -151,7 +151,8 @@ cpdef _fast_possible_periods(self, return_points=False):
     if not return_points:
         return sorted(periods)
     else:
-        return(points_periods)
+        return points_periods
+
 
 def _enum_points(int prime, int dimension):
     """
@@ -177,7 +178,7 @@ def _enum_points(int prime, int dimension):
             yield _get_point_from_hash(value, prime, dimension)
         current_range = current_range * prime
 
-cpdef int _hash(list Point, int prime):
+cpdef int _hash(list Point, int prime) noexcept:
     """
     Hash point given as list to unique number.
 
@@ -217,7 +218,7 @@ cpdef list _get_point_from_hash(int value, int prime, int dimension):
 
     return P
 
-cdef inline int _mod_inv(int num, int prime):
+cdef inline int _mod_inv(int num, int prime) noexcept:
     """
     Find the inverse of the number modulo the given prime.
     """

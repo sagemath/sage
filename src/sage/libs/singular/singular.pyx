@@ -898,7 +898,7 @@ cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees):
     return (res_mats, res_degs)
 
 
-cdef number *sa2si_QQ(Rational r, ring *_ring):
+cdef number *sa2si_QQ(Rational r, ring *_ring) noexcept:
     """
     Create a singular number from a sage rational.
 
@@ -928,7 +928,7 @@ cdef number *sa2si_QQ(Rational r, ring *_ring):
     if _ring != currRing: rChangeCurrRing(_ring)
     return nlInit2gmp( mpq_numref(r.value), mpq_denref(r.value),_ring.cf )
 
-cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
+cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
     """
     Create a singular number in a small finite field.
 
@@ -995,7 +995,7 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring):
     _ring.cf.cfDelete(&a, _ring.cf)
     return n1
 
-cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring):
+cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a finite field of
     characteristic 2.
@@ -1061,7 +1061,7 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_GFq_generic(object elem, ring *_ring):
+cdef number *sa2si_GFq_generic(object elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a generic finite field.
 
@@ -1126,7 +1126,7 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_transext_QQ(object elem, ring *_ring):
+cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a transcendental extension
     of the rationals.
@@ -1276,7 +1276,7 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_transext_FF(object elem, ring *_ring):
+cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a transcendental extension
     of a prime field.
@@ -1377,7 +1377,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_NF(object elem, ring *_ring):
+cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a number field.
 
@@ -1469,7 +1469,7 @@ cdef number *sa2si_NF(object elem, ring *_ring):
 
     return n1
 
-cdef number *sa2si_ZZ(Integer d, ring *_ring):
+cdef number *sa2si_ZZ(Integer d, ring *_ring) noexcept:
     """
     Create a singular number from a sage Integer.
 
@@ -1500,7 +1500,7 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring):
     mpz_set(<mpz_ptr>n, d.value)
     return <number*>n
 
-cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring):
+cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
     """
     Create a singular number from a sage element of a IntegerModRing.
 
@@ -1544,7 +1544,6 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring):
         sage: P(3)
         3
     """
-    nr2mModul = d.parent().characteristic()
     if _ring != currRing: rChangeCurrRing(_ring)
 
     cdef number *nn
@@ -1633,7 +1632,7 @@ cdef object si2sa(number *n, ring *_ring, object base):
     else:
         raise ValueError("cannot convert from SINGULAR number")
 
-cdef number *sa2si(Element elem, ring * _ring):
+cdef number *sa2si(Element elem, ring * _ring) noexcept:
     r"""
     Create a singular number from a sage one.
 
@@ -1699,6 +1698,25 @@ cdef object si2sa_intvec(intvec *v):
         l.append(v.get(r))
     return tuple(l)
 
+cdef object si2sa_bigintvec(bigintmat *v):
+    r"""
+    create a sage tuple from a singular vector of big integers
+
+    INPUT:
+
+    - ``v`` -- a (pointer to) singular bigintmat
+
+    OUTPUT:
+
+    a sage tuple
+    """
+    cdef int r
+    cdef list l = list()
+    for r in range(v.length()):
+        n = v.get(r)
+        l.append(si2sa_QQ(n, &n, currRing))
+    return tuple(l)
+
 # ==============
 # Initialisation
 # ==============
@@ -1721,7 +1739,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     Whether an overflow occurs or not partially depends
 
     on the number of variables in the ring. See github issue
-    :trac:`11856`. With Singular 4, it is by default optimized
+    :issue:`11856`. With Singular 4, it is by default optimized
     for at least 4 variables on 64-bit and 2 variables on 32-bit,
     which in both cases makes a maximal default exponent of
     2^16-1.
@@ -1776,14 +1794,12 @@ cdef init_libsingular():
     else:
         os.environ["SINGULAR_BIN_DIR"] = dirname(singular_executable)
 
-    import platform
-    if not platform.system().startswith("CYGWIN"):
-        # reload the current module to force reload of libSingular (see #33446)
-        lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
-        handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
-        if not handle:
-            err = dlerror()
-            raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
+    # reload the current module to force reload of libSingular (see #33446)
+    lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
+    handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
+    if not handle:
+        err = dlerror()
+        raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
 
     # load SINGULAR
     siInit(lib)
@@ -1812,9 +1828,10 @@ saved_PATH = os.environ["PATH"]
 init_libsingular()
 os.environ["PATH"] = saved_PATH
 
-cdef void libsingular_error_callback(const_char_ptr s):
+cdef void libsingular_error_callback(const_char_ptr s) noexcept:
     _s = char_to_str(s)
     error_messages.append(_s)
+
 
 def get_resource(id):
     """

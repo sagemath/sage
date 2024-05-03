@@ -387,7 +387,7 @@ sage class. In this case the class is specified using the arguments to
 
 Here is an example to test the pickling of a :class:`GlobalOptions` instance::
 
-    sage: TestSuite(Partitions.options).run()                                           # optional - sage.combinat
+    sage: TestSuite(Partitions.options).run()                                           # needs sage.combinat
 
 TESTS:
 
@@ -526,15 +526,16 @@ class Option():
 
     EXAMPLES::
 
-        sage: Partitions.options.display                                                # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: Partitions.options.display
         list
-        sage: Partitions.options.display = 'compact'                                    # optional - sage.combinat
-        sage: Partitions.options.display('list')                                        # optional - sage.combinat
-        sage: Partitions.options._reset()                                               # optional - sage.combinat
+        sage: Partitions.options.display = 'compact'
+        sage: Partitions.options.display('list')
+        sage: Partitions.options._reset()
 
     TESTS::
 
-        sage: TestSuite(Partitions.options.display).run()                               # optional - sage.combinat
+        sage: TestSuite(Partitions.options.display).run()                               # needs sage.combinat
     """
     __name__ = 'Option class'
 
@@ -545,7 +546,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: type(Partitions.options.display)    # indirect doctest                # optional - sage.combinat
+            sage: type(Partitions.options.display)    # indirect doctest                # needs sage.combinat
             <class 'sage.structure.global_options.Option'>
         """
         self._name = name
@@ -559,7 +560,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: Partitions.options.display # indirect doctest                         # optional - sage.combinat
+            sage: Partitions.options.display # indirect doctest                         # needs sage.combinat
             list
         """
         # NOTE: we intentionally use str() instead of repr()
@@ -572,7 +573,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: Tableaux.options.convention + ' is good'                              # optional - sage.combinat
+            sage: Tableaux.options.convention + ' is good'                              # needs sage.combinat
             'English is good'
         """
         return self._options[self._name] + other
@@ -584,7 +585,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: 'Good ' + Tableaux.options.convention                                 # optional - sage.combinat
+            sage: 'Good ' + Tableaux.options.convention                                 # needs sage.combinat
             'Good English'
         """
         return other + self._options[self._name]
@@ -596,7 +597,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: Tableaux.options.convention + ' is good'                              # optional - sage.combinat
+            sage: Tableaux.options.convention + ' is good'                              # needs sage.combinat
             'English is good'
         """
         return self._options[self._name] * other
@@ -608,7 +609,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: 'Good ' + Tableaux.options.convention                                 # optional - sage.combinat
+            sage: 'Good ' + Tableaux.options.convention                                 # needs sage.combinat
             'Good English'
         """
         return other * self._options[self._name]
@@ -619,14 +620,15 @@ class Option():
 
         EXAMPLES::
 
-            sage: RiggedConfigurations.options.half_width_boxes_type_B                          # optional - sage.combinat
+            sage: # needs sage.combinat sage.graphs sage.modules
+            sage: RiggedConfigurations.options.half_width_boxes_type_B
             True
-            sage: 'yes' if RiggedConfigurations.options.half_width_boxes_type_B else 'no'       # optional - sage.combinat
+            sage: 'yes' if RiggedConfigurations.options.half_width_boxes_type_B else 'no'
             'yes'
-            sage: RiggedConfigurations.options.half_width_boxes_type_B = False                  # optional - sage.combinat
-            sage: 'yes' if RiggedConfigurations.options.half_width_boxes_type_B else 'no'       # optional - sage.combinat
+            sage: RiggedConfigurations.options.half_width_boxes_type_B = False
+            sage: 'yes' if RiggedConfigurations.options.half_width_boxes_type_B else 'no'
             'no'
-            sage: RiggedConfigurations.options._reset()                                         # optional - sage.combinat
+            sage: RiggedConfigurations.options._reset()
         """
         return bool(self._options[self._name])
 
@@ -636,16 +638,17 @@ class Option():
 
         EXAMPLES::
 
-            sage: Partitions.options.display()       # indirect doctest                         # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: Partitions.options.display()       # indirect doctest
             'list'
-            sage: Partitions.options.display('exp')  # indirect doctest                         # optional - sage.combinat
-            sage: Partitions.options.display()       # indirect doctest                         # optional - sage.combinat
+            sage: Partitions.options.display('exp')  # indirect doctest
+            sage: Partitions.options.display()       # indirect doctest
             'exp_low'
-            sage: Partitions.options._reset()                                                   # optional - sage.combinat
+            sage: Partitions.options._reset()
 
         TESTS:
 
-        Check that values can be set to ``None`` (:trac:`30763`)::
+        Check that values can be set to ``None`` (:issue:`30763`)::
 
             sage: from sage.structure.global_options import GlobalOptions
             sage: class config(GlobalOptions):
@@ -696,11 +699,11 @@ class Option():
 
         EXAMPLES::
 
-            sage: Tableaux.options.convention                                           # optional - sage.combinat
+            sage: Tableaux.options.convention                                           # needs sage.combinat
             English
-            sage: Tableaux.options.convention == "English"                              # optional - sage.combinat
+            sage: Tableaux.options.convention == "English"                              # needs sage.combinat
             True
-            sage: Tableaux.options.convention == "French"                               # optional - sage.combinat
+            sage: Tableaux.options.convention == "French"                               # needs sage.combinat
             False
         """
         return self._options[self._name] == other
@@ -712,11 +715,11 @@ class Option():
 
         EXAMPLES::
 
-            sage: Tableaux.options.convention                                           # optional - sage.combinat
+            sage: Tableaux.options.convention                                           # needs sage.combinat
             English
-            sage: Tableaux.options.convention != "English"                              # optional - sage.combinat
+            sage: Tableaux.options.convention != "English"                              # needs sage.combinat
             False
-            sage: Tableaux.options.convention != "French"                               # optional - sage.combinat
+            sage: Tableaux.options.convention != "French"                               # needs sage.combinat
             True
         """
         return self._options[self._name] != other
@@ -728,7 +731,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: hash(Tableaux.options.convention) == hash(Tableaux.options('convention'))     # optional - sage.combinat
+            sage: hash(Tableaux.options.convention) == hash(Tableaux.options('convention'))         # needs sage.combinat
             True
         """
         return hash(self._options[self._name])
@@ -740,7 +743,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: str(Tableaux.options.convention)                                      # optional - sage.combinat
+            sage: str(Tableaux.options.convention)                                      # needs sage.combinat
             'English'
         """
         return str(self._options[self._name])
@@ -1232,7 +1235,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         EXAMPLES::
 
-            sage: print(Partitions.options.__doc__)                                     # optional - sage.combinat
+            sage: print(Partitions.options.__doc__)                                     # needs sage.combinat
             <BLANKLINE>
             Sets and displays the global options for elements of the partition,
             skew partition, and partition tuple classes.  If no parameters are
@@ -1273,12 +1276,12 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         EXAMPLES::
 
-            sage: Partitions.options.display = 'exp'                                    # optional - sage.combinat
-            sage: Partitions.options.dispplay = 'list'                                  # optional - sage.combinat
+            sage: Partitions.options.display = 'exp'                                    # needs sage.combinat
+            sage: Partitions.options.dispplay = 'list'                                  # needs sage.combinat
             Traceback (most recent call last):
             ...
             ValueError: dispplay is not an option for Partitions
-            sage: Partitions.options._reset()                                           # optional - sage.combinat
+            sage: Partitions.options._reset()                                           # needs sage.combinat
         """
         # Underscore, and "special", attributes are set using type.__setattr__
         if name[0] == '_' or name in ['reset', 'dispatch', 'default_value']:
@@ -1298,24 +1301,25 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         EXAMPLES::
 
-            sage: Partitions.options()                                                  # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: Partitions.options()
             Current options for Partitions
               - convention:        English
               - diagram_str:       *
               - display:           list
               - latex:             young_diagram
               - latex_diagram_str: \ast
-            sage: Partitions.options.convention = "French"                              # optional - sage.combinat
-            sage: pickle = dumps(Partitions.options)                                    # optional - sage.combinat
-            sage: Partitions.options._reset()        # reset options                    # optional - sage.combinat
-            sage: loads(pickle)                      # indirect doctest                 # optional - sage.combinat
+            sage: Partitions.options.convention = "French"
+            sage: pickle = dumps(Partitions.options)
+            sage: Partitions.options._reset()        # reset options
+            sage: loads(pickle)                      # indirect doctest
             Current options for Partitions
               - convention:        French
               - diagram_str:       *
               - display:           list
               - latex:             young_diagram
               - latex_diagram_str: \ast
-            sage: Partitions.options._reset()                                           # optional - sage.combinat
+            sage: Partitions.options._reset()
         """
         # open the options for the corresponding "parent" and copy all of
         # the data from its options class into unpickle
@@ -1350,8 +1354,8 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         EXAMPLES::
 
-            sage: Partitions.options._reset()                                           # optional - sage.combinat
-            sage: Partitions.options.__getstate__()                                     # optional - sage.combinat
+            sage: Partitions.options._reset()                                           # needs sage.combinat
+            sage: Partitions.options.__getstate__()                                     # needs sage.combinat
              {'convention': 'English',
              'option_class': 'Partitions',
              'options_module': 'sage.combinat.partition'}
@@ -1385,9 +1389,9 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         EXAMPLES::
 
-            sage: Partitions.options == PartitionsGreatestLE.options # indirect doctest # optional - sage.combinat
+            sage: Partitions.options == PartitionsGreatestLE.options # indirect doctest             # needs sage.combinat
             True
-            sage: Partitions.options == Tableaux.options                                # optional - sage.combinat
+            sage: Partitions.options == Tableaux.options                                # needs sage.combinat
             False
         """
         return isinstance(other, GlobalOptions) and self.__getstate__() == other.__getstate__()

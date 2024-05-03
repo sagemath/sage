@@ -1,4 +1,4 @@
-from .commutative_polynomial cimport CommutativePolynomial
+from sage.rings.polynomial.commutative_polynomial cimport CommutativePolynomial
 
 
 cdef class MPolynomial(CommutativePolynomial):

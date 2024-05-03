@@ -65,7 +65,7 @@ Trying to multiply temperatures by another unit then converting raises a ValueEr
 
 TESTS:
 
-Check that :trac:`12373` is fixed::
+Check that :issue:`12373` is fixed::
 
     sage: b = units.amount_of_substance.mole
     sage: b.convert(units.amount_of_substance.elementary_entity)
@@ -968,7 +968,7 @@ def unit_derivations_expr(v):
         sage: sage.symbolic.units.unit_derivations_expr('electric_potential')
         length^2*mass/(current*time^3)
 
-    If the unit name is unknown, a KeyError is raised::
+    If the unit name is unknown, a :class:`KeyError` is raised::
 
         sage: sage.symbolic.units.unit_derivations_expr('invalid')
         Traceback (most recent call last):

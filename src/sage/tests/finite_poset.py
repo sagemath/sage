@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.modules
 """
 This file contains test functions that can be used to search
 bugs by testing random finite posets and lattices.
@@ -104,7 +105,7 @@ def test_attrcall(name, L):
         sage: N5 = posets.PentagonPoset()
         sage: N5.is_modular() == test_attrcall('is_modular', N5)
         True
-        sage: N5.is_constructible_by_doublings('convex') == test_attrcall('is_doubling_convex', N5)
+        sage: N5.is_constructible_by_doublings('convex') == test_attrcall('is_doubling_convex', N5)                     # needs sage.combinat
         True
     """
     if name == 'is_doubling_any':

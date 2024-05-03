@@ -19,8 +19,8 @@ cdef class ClonableElement(Element):
     cdef long int  _hash
 
     cpdef bint _require_mutable(self) except -2
-    cpdef bint is_mutable(self)
-    cpdef bint is_immutable(self)
+    cpdef bint is_mutable(self) noexcept
+    cpdef bint is_immutable(self) noexcept
     cpdef set_immutable(self)
 
     cpdef _set_mutable(self)

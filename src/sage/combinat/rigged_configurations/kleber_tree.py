@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Kleber Trees
 
@@ -121,13 +122,13 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
         start = [0., 0.]
     if rpos is None:
         rpos = [0., 0.]
-    draw_point = lambda point: '(%.3f, %.3f)'%(point[0],point[1])
+    draw_point = lambda point: '(%.3f, %.3f)' % (point[0],point[1])
     if not tree_node.children:
         r = ''
         node_name = node_prefix + str(node_id)
-        r = "\\node (%s) at %s"%(node_name, draw_point(start))
+        r = "\\node (%s) at %s" % (node_name, draw_point(start))
         if node_label:
-            r += "{$%s$};\n"%tree_node._latex_()
+            r += "{$%s$};\n" % tree_node._latex_()
         else:
             r += "{};\n"
         rpos[0] = start[0]
@@ -139,7 +140,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
     if style_line is None:
         style_line_str = ''
     else:
-        style_line_str = "[%s]"%style_line
+        style_line_str = "[%s]" % style_line
     if node_label:
         node_place_str = ''
     else:
@@ -166,29 +167,29 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
                 edge_str = latex(child.up_root.to_vector())
             else:
                 edge_str = latex(child.up_root)
-            lines_str += "\\draw%s (%s%s) to node[sloped,above]{\\tiny $%s$} (%s%s%s);\n"%(style_line_str, node_name, node_place_str, edge_str, node_name, i, node_place_str)
+            lines_str += "\\draw%s (%s%s) to node[sloped,above]{\\tiny $%s$} (%s%s%s);\n" % (style_line_str, node_name, node_place_str, edge_str, node_name, i, node_place_str)
         else:
-            lines_str += "\\draw%s (%s%s) -- (%s%s%s);\n"%(style_line_str, node_name, node_place_str, node_name, i, node_place_str)
+            lines_str += "\\draw%s (%s%s) -- (%s%s%s);\n" % (style_line_str, node_name, node_place_str, node_name, i, node_place_str)
 
     # drawing root
     if style_node is None:
         style_node = ''
     else:
-        style_node = "[%s]"%style_node
+        style_node = "[%s]" % style_node
     if style_point is None:
         style_point = ''
     else:
-        style_point = "[%s]"%style_point
+        style_point = "[%s]" % style_point
     start[1] -= vspace
     rpos[0] = pos[0]
     rpos[1] = pos[1]
     point_str = ''
-    node_str = "\\node%s (%s) at %s"%(style_node, node_name, draw_point(pos))
+    node_str = "\\node%s (%s) at %s" % (style_node, node_name, draw_point(pos))
     if node_label:
-        node_str += "{$%s$};\n"%tree_node._latex_()
+        node_str += "{$%s$};\n" % tree_node._latex_()
     else:
         node_str += "{};\n"
-        point_str = "\\draw%s (%s) circle;\n"%(style_point, node_name)
+        point_str = "\\draw%s (%s) circle;\n" % (style_point, node_name)
 
     res = node_str
     res += children_str
@@ -323,7 +324,7 @@ class KleberTreeNode(Element):
 
         TESTS:
 
-        We check that :trac:`16057` is fixed::
+        We check that :issue:`16057` is fixed::
 
             sage: RC = RiggedConfigurations(['D',4,1], [[1,3],[3,3],[4,3]])
             sage: sum(x.multiplicity() for x in RC.kleber_tree()) == len(RC.module_generators)
@@ -568,7 +569,7 @@ class KleberTree(UniqueRepresentation, Parent):
         sage: KT.cardinality()  # long time
         12
 
-    We check that relabelled types work (:trac:`16876`)::
+    We check that relabelled types work (:issue:`16876`)::
 
         sage: ct = CartanType(['A',3,1]).relabel(lambda x: x+2)
         sage: kt = KleberTree(ct, [[3,1],[5,1]])
@@ -608,7 +609,7 @@ class KleberTree(UniqueRepresentation, Parent):
             classical = cartan_type.classical()
         else:
             classical = CartanType(classical)
-        return super(KleberTree, cls).__classcall__(cls, cartan_type, B, classical)
+        return super().__classcall__(cls, cartan_type, B, classical)
 
     def __init__(self, cartan_type, B, classical_ct):
         r"""
@@ -810,8 +811,7 @@ class KleberTree(UniqueRepresentation, Parent):
         #   tradeoff occurs between the methods. However, this may grow as
         #   the _children_iter_vector is further optimized.
         if node != self.root and prod(val+1 for val in node.up_root.coefficients()) < 1000:
-            for x in self._children_iter_vector(node):
-                yield x
+            yield from self._children_iter_vector(node)
             return
 
         n = self._classical_ct.rank()
@@ -984,8 +984,7 @@ class KleberTree(UniqueRepresentation, Parent):
         yield cur
 
         for child in cur.children:
-            for x in self._depth_first_iter(child):
-                yield x
+            yield from self._depth_first_iter(child)
 
     __iter__ = breadth_first_iter
 
@@ -999,7 +998,7 @@ class KleberTree(UniqueRepresentation, Parent):
             sage: KleberTree(['D', 4, 1], [[2, 2]]) # indirect doctest
             Kleber tree of Cartan type ['D', 4, 1] and B = ((2, 2),)
         """
-        return "Kleber tree of Cartan type %s and B = %s"%(repr(self._cartan_type), self.B)
+        return "Kleber tree of Cartan type %s and B = %s" % (repr(self._cartan_type), self.B)
 
     def cartan_type(self):
         r"""
@@ -1045,7 +1044,7 @@ class KleberTree(UniqueRepresentation, Parent):
 
             sage: from sage.combinat.rigged_configurations.kleber_tree import KleberTree
             sage: KT = KleberTree(['D', 4, 1], [[2, 2]])
-            sage: print(KT.plot())                                                      # optional - sage.plot
+            sage: print(KT.plot())                                                      # needs sage.plot
             Graphics object consisting of 8 graphics primitives
         """
         return self.digraph().plot(edge_labels=True, vertex_size=0, **options)
@@ -1159,7 +1158,7 @@ class VirtualKleberTree(KleberTree):
             return KleberTreeTypeA2Even(cartan_type, B)
         if cartan_type.classical().is_simply_laced():
             raise ValueError("use KleberTree for simply-laced types")
-        return super(VirtualKleberTree, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, B):
         """
@@ -1193,7 +1192,7 @@ class VirtualKleberTree(KleberTree):
             sage: VirtualKleberTree(['C', 4, 1], [[2, 2]])
             Virtual Kleber tree of Cartan type ['C', 4, 1] and B = ((2, 2),)
         """
-        return "Virtual Kleber tree of Cartan type %s and B = %s"%(repr(self._cartan_type), self.base_dims)
+        return "Virtual Kleber tree of Cartan type %s and B = %s" % (repr(self._cartan_type), self.base_dims)
 
     def _prune(self, new_child, depth):
         r"""
@@ -1353,7 +1352,7 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
         cartan_type = CartanType(cartan_type)
         # Standardize B input into a tuple of tuples
         B = tuple(map(tuple, B))
-        return super(KleberTreeTypeA2Even, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, B):
         """

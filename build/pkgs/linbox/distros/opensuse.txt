@@ -1,1 +1,1 @@
-"pkgconfig(linbox)"
+pkgconfig(linbox)

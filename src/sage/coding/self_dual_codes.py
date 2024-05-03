@@ -537,7 +537,7 @@ def self_dual_binary_codes(n):
                  "Type":"I","Comment": "Huge aut gp. Unique codeword of smallest non-zero wt.\
                  Same spectrum as '[18,3]' sd code."}
         # [18,5]:
-        C = self_dual_binary_codes(n-2)["%s"%(n-2)]["5"]["code"]
+        C = self_dual_binary_codes(n-2)["%s" % (n-2)]["5"]["code"]
         A0 = C.redundancy_matrix()
         genmat = _I2(n).augment(block_diagonal_matrix([A0,_matId(n)[8]]))
         # G = PermutationGroup( [ "(5,10)(6,11)", "(5,11)(6,10)", "(5,11,12)(6,7,10)",\
@@ -550,7 +550,7 @@ def self_dual_binary_codes(n):
         self_dual_codes_18_5 = {"order autgp":451584,"code":LinearCode(genmat),"spectrum":spectrum,
                  "Type":"I","Comment": "'Exceptional' construction."}
         # [18,6]:
-        C = self_dual_binary_codes(n-2)["%s"%(n-2)]["6"]["code"]
+        C = self_dual_binary_codes(n-2)["%s" % (n-2)]["6"]["code"]
         A0 = C.redundancy_matrix()
         genmat = _I2(n).augment(block_diagonal_matrix([A0,_matId(n)[8]]))
         G = PermutationGroup( [ "(9,18)", "(7,10)(11,17)", "(7,11)(10,17)", "(6,7)(11,12)",
@@ -649,7 +649,7 @@ def self_dual_binary_codes(n):
         # G = PermutationGroup( [ "(5,6)(15,16)", "(5,15)(6,16)", "(4,5)(14,15)", "(3,4)(13,14)",\
         #             "(2,3)(12,13)", "(1,2)(11,12)", "(8,17)(9,10)", "(8,10)(9,17)", "(8,10,20)(9,19,17)",\
         #             "(8,19,20,9,17,10,18)", "(7,8,19,20,9,18)(10,17)"] )
-        spectrum =[1, 0, 0, 0, 29, 0, 32, 0, 226, 0, 448, 0, 226, 0, 32, 0, 29, 0, 0, 0, 1]
+        spectrum = [1, 0, 0, 0, 29, 0, 32, 0, 226, 0, 448, 0, 226, 0, 32, 0, 29, 0, 0, 0, 1]
         self_dual_codes_20_3 = {"order autgp":30965760,"code":LinearCode(genmat),"spectrum":spectrum,
                  "Type":"I","Comment":"Min dist 4."}
         # [20,4]:
@@ -660,7 +660,7 @@ def self_dual_binary_codes(n):
         #              "(1,2,3,11,14,4,12)(5,17,18)(6,15,8)", "(1,5,13,17,14,8,2,7,3,16,12,6,11,18)(4,15)",\
         #               "(2,3,12)(4,11,14)(5,17,18)(6,15,8)(10,20)",\
         #               "(2,3,12)(4,11,14)(5,17,18)(6,15,8)(9,10,19,20)"] )
-        spectrum =[1, 0, 2, 0, 29, 0, 56, 0, 226, 0, 396, 0, 226, 0, 56, 0, 29, 0, 2, 0, 1]
+        spectrum = [1, 0, 2, 0, 29, 0, 56, 0, 226, 0, 396, 0, 226, 0, 56, 0, 29, 0, 2, 0, 1]
         self_dual_codes_20_4 = {"order autgp":28901376,"code":LinearCode(genmat),"spectrum":spectrum,
                  "Type":"I","Comment":""}
         # [20,5]:
@@ -715,7 +715,7 @@ def self_dual_binary_codes(n):
         #  G = PermutationGroup( [ "(9,10)(19,20)", "(9,19)(10,20)", "(8,9)(18,19)", "(7,8)(17,18)",\
         #        "(6,7)(16,17)", "(5,6)(15,16)", "(4,5)(14,15)", "(3,4)(13,14)",\
         #        "(2,3)(12,13)", "(1,2)(11,12)"] )
-        spectrum =[1, 0, 0, 0, 45, 0, 0, 0, 210, 0, 512, 0, 210, 0, 0, 0, 45, 0, 0, 0, 1]
+        spectrum = [1, 0, 0, 0, 45, 0, 0, 0, 210, 0, 512, 0, 210, 0, 0, 0, 45, 0, 0, 0, 1]
         self_dual_codes_20_8 = {"order autgp":1857945600,"code":LinearCode(genmat),"spectrum":spectrum,
                  "Type":"I","Comment":"Huge aut gp. Min dist 4."}
         # [20,9]: (genmat, K20 are equiv)

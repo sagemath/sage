@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Constellations
 
@@ -48,7 +48,8 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from itertools import repeat
+from itertools import repeat, product
+
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -399,7 +400,7 @@ class Constellation_class(Element):
             sage: c is copy(c)
             False
         """
-        return self.parent()([gg for gg in self._g],
+        return self.parent()(list(self._g),
                              check=False,
                              mutable=self._mutable)
 
@@ -416,7 +417,7 @@ class Constellation_class(Element):
             sage: d.is_mutable()
             True
         """
-        return self.parent()([gg for gg in self._g],
+        return self.parent()(list(self._g),
                              check=False,
                              mutable=True)
 
@@ -475,7 +476,7 @@ class Constellation_class(Element):
         G.add_vertices(list(range(self.degree())))
         for p in self._g:
             G.add_edges(enumerate(p.domain()), loops=False)
-        m = G.connected_components()
+        m = G.connected_components(sort=False)
         if len(m) == 1:
             return [self]
         for mm in m:
@@ -564,7 +565,7 @@ class Constellation_class(Element):
             True
         """
         if return_map:
-            if not(self.degree() == other.degree() and
+            if not (self.degree() == other.degree() and
                    self.length() == other.length()):
                 return False, None
             sn, sn_map = self.relabel(return_map=True)
@@ -1408,8 +1409,6 @@ class Constellations_p(UniqueRepresentation, Parent):
             g1 ('a','d','b')('c')
             g2 ('a','b')('c','d')
         """
-        from sage.misc.mrange import cartesian_product_iterator
-
         if self._cd._length == 1:
             if self._cd._degree == 1:
                 yield self([[0]])
@@ -1417,8 +1416,7 @@ class Constellations_p(UniqueRepresentation, Parent):
 
         S = self._cd._sym
         profile = list(self._profile)[:-1]
-        for p in cartesian_product_iterator([S.conjugacy_class(pi)
-                                             for pi in profile]):
+        for p in product(*[S.conjugacy_class(pi) for pi in profile]):
             if self._cd._connected and not perms_are_connected(p, self._cd._degree):
                 continue
             c = self._cd(list(p) + [None], check=False)

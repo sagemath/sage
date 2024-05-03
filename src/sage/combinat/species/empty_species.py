@@ -38,7 +38,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         [0, 0, 0, 0]
         sage: X.isotype_generating_series()[0:4]
         [0, 0, 0, 0]
-        sage: X.cycle_index_series()[0:4]
+        sage: X.cycle_index_series()[0:4]                                               # needs sage.modules
         [0, 0, 0, 0]
 
     The empty species is the zero of the semi-ring of species.
@@ -55,7 +55,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         sage: (X.isotype_generating_series()[0:4] ==
         ....:  S.isotype_generating_series()[0:4])
         True
-        sage: (X.cycle_index_series()[0:4] ==
+        sage: (X.cycle_index_series()[0:4] ==                                           # needs sage.modules
         ....:  S.cycle_index_series()[0:4])
         True
 
@@ -69,7 +69,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         [0, 0, 0, 0]
         sage: Y.isotype_generating_series()[0:4]
         [0, 0, 0, 0]
-        sage: Y.cycle_index_series()[0:4]
+        sage: Y.cycle_index_series()[0:4]                                               # needs sage.modules
         [0, 0, 0, 0]
 
     TESTS::

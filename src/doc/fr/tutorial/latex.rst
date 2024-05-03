@@ -306,17 +306,18 @@ d'appeler latex (ou plus généralement le moteur choisi via ``latex.engine()``)
 au lieu MathJax. Les méthodes ``latex.add_to_mathjax_avoid_list`` et
 ``latex.mathjax_avoid_list`` permettent de gérer le contenu de cette liste. ::
 
-    sage: latex.mathjax_avoid_list([])  # not tested
-    sage: latex.mathjax_avoid_list()    # not tested
+    sage: # not tested
+    sage: latex.mathjax_avoid_list([])
+    sage: latex.mathjax_avoid_list()
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
-    sage: latex.mathjax_avoid_list()                # not tested
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])
+    sage: latex.mathjax_avoid_list()
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
-    sage: latex.mathjax_avoid_list()                      # not tested
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
+    sage: latex.mathjax_avoid_list()
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])  # not tested
-    sage: latex.mathjax_avoid_list()    # not tested
+    sage: latex.mathjax_avoid_list([])
+    sage: latex.mathjax_avoid_list()
     []
 
 Supposons maintenant que, dans le bloc-notes, un appel à ``view()`` ou

@@ -202,8 +202,7 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
         for p, e in L1:
             if e >= d / 2:
                 raise ValueError('cannot have a root with multiplicity >= %s/2' % d)
-            for _ in range(e):
-                L.append(p)
+            L.extend(p for _ in range(e))
         RCF = PolynomialRing(CF, 'u,t')
         a = RCF.zero()
         c = RCF.zero()
@@ -418,7 +417,7 @@ def get_bound_poly(F, prec=53, norm_type='norm', emb=None):
     else:
         compF = F
     n = F.degree()
-    assert(n > 2), "degree 2 polynomial"
+    assert (n > 2), "degree 2 polynomial"
 
     z0F, thetaF = covariant_z0(compF, prec=prec, emb=emb)
     if norm_type == 'norm':

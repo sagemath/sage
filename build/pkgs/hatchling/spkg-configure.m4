@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([hatchling], [SAGE_PYTHON_PACKAGE_CHECK([hatchling])])

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Quotients of the Bruhat-Tits tree
 
@@ -41,11 +41,7 @@ AUTHORS:
 from copy import copy
 from collections import deque
 
-from sage.algebras.quatalg.quaternion_algebra import QuaternionAlgebra
 from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminant
-from sage.graphs.graph import Graph
-from sage.interfaces.magma import magma
-from sage.libs.pari.all import pari
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -57,18 +53,23 @@ from sage.misc.verbose import verbose
 from sage.modular.arithgroup.all import Gamma0
 from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor
 from sage.modular.dirichlet import DirichletGroup
-lazy_import("sage.plot.colors", "rainbow")
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import NumberField
-from sage.rings.padics.factory import Qp, Zp
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+lazy_import("sage.plot.colors", "rainbow")
+
+lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.plot.colors', 'rainbow')
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
+lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
 
 
 class DoubleCosetReduction(SageObject):
@@ -538,8 +539,8 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: x = Zp(3)(-17)
-                sage: lift(x)
+                sage: x = Zp(3)(-17)                                                    # needs sage.rings.padics
+                sage: lift(x)                                                           # needs sage.rings.padics
                 3486784384
             """
             try:
@@ -599,6 +600,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: p = 5
             sage: T = BruhatTitsTree(p)
@@ -693,7 +695,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - 2x2 integer matrix, representing the edge from ``v1`` to
           ``v2``.  If ``v1`` and ``v2`` are not at distance `1`, raise
-          a ``ValueError``.
+          a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -960,6 +962,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: T = BruhatTitsTree(5)
             sage: K.<a> = Qq(5^2,20)
@@ -975,9 +978,9 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         affinoid. That is, it is a `p`-adic unit and its reduction
         modulo `p` is not in `\GF{p}`::
 
-            sage: gz = (v[0,0]*z+v[0,1])/(v[1,0]*z+v[1,1]); gz
+            sage: gz = (v[0,0]*z+v[0,1])/(v[1,0]*z+v[1,1]); gz                          # needs sage.rings.padics
             (a + 1) + O(5^19)
-            sage: gz.valuation() == 0
+            sage: gz.valuation() == 0                                                   # needs sage.rings.padics
             True
         """
         # Assume z belongs to some extension of QQp.
@@ -1061,6 +1064,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.padics
             sage: from sage.modular.btquotients.btquotient import BruhatTitsTree
             sage: p = 3
             sage: K.<a> = Qq(p^2)
@@ -1435,7 +1439,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             True
         """
         return super().__classcall__(cls, p, Nminus, Nplus,
-               character, use_magma, seed, magma_session)
+                                     character, use_magma,
+                                     seed, magma_session)
 
     def __init__(self, p, Nminus, Nplus=1, character=None,
                  use_magma=False, seed=None, magma_session=None):
@@ -2125,7 +2130,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot()
+            sage: X.plot()                                                              # needs sage.plot
             Graphics object consisting of 17 graphics primitives
         """
         S = self.get_graph()
@@ -2158,7 +2163,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: X = BruhatTitsQuotient(7,23)
-            sage: X.plot_fundom()
+            sage: X.plot_fundom()                                                       # needs sage.plot
             Graphics object consisting of 88 graphics primitives
         """
         S = self.get_fundom_graph()
@@ -3463,7 +3468,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             OBasis = Omagma.Basis()
             self._A = QuaternionAlgebra((g[0] ** 2).sage(), (g[1] ** 2).sage())
             i, j, k = self._A.gens()
-            v = [1] + self._A.gens()
+            v = [1] + list(self._A.gens())
             self._B = [self._A(sum([OBasis[tt + 1][rr + 1].sage() * v[rr]
                                     for rr in range(4)])) for tt in range(4)]
             self._O = self._A.quaternion_order(self._B)
@@ -3473,7 +3478,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             # Note that we can't work with non-maximal orders in sage
             assert self._Nplus == 1
             self._A = QuaternionAlgebra(self._Nminus)
-            v = [1] + self._A.gens()
+            v = [1] + list(self._A.gens())
             self._O = self._A.maximal_order()
             self._OMax = self._O
             OBasis = self._O.basis()
@@ -3618,8 +3623,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         v0 = Vertex(p, num_verts, self._Mat_22([1, 0, 0, 1]),
                     determinant=1, valuation=0)
         V = deque([v0])
-        S = Graph(0, multiedges=True, weighted=True)
-        Sfun = Graph(0)
+        S = Graph(0, multiedges=True, weighted=True)  # noqa:F821
+        Sfun = Graph(0)  # noqa:F821
         edge_list = []
         vertex_list = [v0]
         num_edges = 0
@@ -3705,7 +3710,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                                    'from expected.')
 
         self._nontorsion_generators = nontorsion_generators
-        self._boundary = dict([(vv.rep, vv) for vv in vertex_list])
+        self._boundary = {vv.rep: vv for vv in vertex_list}
         self._edge_list = edge_list
         self._vertex_list = vertex_list
         self._num_edges = num_edges

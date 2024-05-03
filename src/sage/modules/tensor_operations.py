@@ -60,7 +60,7 @@ vectors of the vector collection ``VW`` ::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from itertools import product
 from collections import defaultdict
 
 from sage.modules.free_module import FreeModule_ambient_field
@@ -90,12 +90,11 @@ def symmetrized_coordinate_sums(dim, n):
         ((0, 0), (0, 1) + (1, 0), (1, 1))
     """
     from sage.structure.formal_sum import FormalSum
-    from sage.categories.cartesian_product import cartesian_product
 
     coordinates = [list(range(dim)) for i in range(n)]
     table = defaultdict(list)
 
-    for i in cartesian_product(coordinates):
+    for i in product(*coordinates):
         sort_i = tuple(sorted(i))
         table[sort_i].append([1, tuple(i)])
 
@@ -119,21 +118,15 @@ def antisymmetrized_coordinate_sums(dim, n):
     EXAMPLES::
 
         sage: from sage.modules.tensor_operations import antisymmetrized_coordinate_sums
-        sage: antisymmetrized_coordinate_sums(3, 2)
+        sage: antisymmetrized_coordinate_sums(3, 2)                                     # needs sage.groups
         ((0, 1) - (1, 0), (0, 2) - (2, 0), (1, 2) - (2, 1))
     """
     from sage.structure.formal_sum import FormalSum
-    table = []
     from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-    S_d = SymmetricGroup(n)
     from sage.combinat.combination import Combinations
-    for i in Combinations(range(dim), n):
-        i = tuple(i)
-        x = []
-        for g in S_d:
-            x.append([g.sign(), g(i)])
-        x = FormalSum(x)
-        table.append(x)
+    S_d = SymmetricGroup(n)
+    table = [FormalSum([[g.sign(), g(tuple(i))] for g in S_d])
+             for i in Combinations(range(dim), n)]
     return tuple(table)
 
 
@@ -283,7 +276,7 @@ class TensorOperation(VectorCollection):
         assert all(V.base_ring() is base_ring for V in vector_collections)
         self._V = tuple(vector_collections)
         self._vectors = []
-        self._index_map = dict()
+        self._index_map = {}
         if operation == 'product':
             self._init_product()
         elif operation == 'symmetric':
@@ -344,11 +337,7 @@ class TensorOperation(VectorCollection):
         """
         # Pick out the i[j]-th vector
         rays = [list(self._V[j].vectors()[k]) for j, k in enumerate(i)]
-        v = []
-        # Note: convert to list, as cartesian_product of vectors is unrelated
-        from sage.categories.cartesian_product import cartesian_product
-        for r in cartesian_product(rays):
-            v.append(prod(r))   # build up the tensor product
+        v = [prod(r) for r in product(*rays)]  # build up the tensor product
         v = tuple(v)
         # Use index of pre-existing tensor product vector if there is one
         try:
@@ -379,8 +368,8 @@ class TensorOperation(VectorCollection):
             sage: Sym2_R = TensorOperation([R,R], operation='symmetric')
             sage: Sym2_R.vectors()    # indirect doctest
             ((1, 0, 0), (1, 2, 0), (-1, -2, 0), (1, 4, 4), (-1, -4, -4))
-            sage: Alt2_R = TensorOperation([R, R], operation='antisymmetric')
-            sage: Alt2_R.vectors()    # indirect doctest
+            sage: Alt2_R = TensorOperation([R, R], operation='antisymmetric')           # needs sage.groups
+            sage: Alt2_R.vectors()    # indirect doctest                                # needs sage.groups
             ((2), (-2))
         """
         rays = [self._V[j].vectors()[k] for j, k in enumerate(i)]
@@ -415,8 +404,7 @@ class TensorOperation(VectorCollection):
             [((0, 0), 0), ((0, 1), 1), ((1, 0), 2), ((1, 1), 3), ((2, 0), 3), ((2, 1), 2)]
         """
         V_list_indices = [list(range(V.n_vectors())) for V in self._V]
-        from sage.categories.cartesian_product import cartesian_product
-        for i in cartesian_product(V_list_indices):
+        for i in product(*V_list_indices):
             self._index_map[tuple(i)] = self._init_product_vectors(i)
         self._symmetrize_indices = False
 
@@ -433,12 +421,11 @@ class TensorOperation(VectorCollection):
             sage: sorted(Sym2_R._index_map.items())
             [((0, 0), 0), ((0, 1), 1), ((0, 2), 2), ((1, 1), 3), ((1, 2), 4), ((2, 2), 3)]
         """
-        from sage.categories.cartesian_product import cartesian_product
         V_list_indices = [list(range(V.n_vectors())) for V in self._V]
         Sym = symmetrized_coordinate_sums(self._V[0].dimension(),
                                           len(self._V))
         N = len(V_list_indices)
-        for i in cartesian_product(V_list_indices):
+        for i in product(*V_list_indices):
             if any(i[j - 1] > i[j] for j in range(1, N)):
                 continue
             self._index_map[tuple(i)] = self._init_power_operation_vectors(i, Sym)
@@ -453,8 +440,8 @@ class TensorOperation(VectorCollection):
             sage: from sage.modules.tensor_operations import \
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (1,2), (-1,-2)], QQ, 2)
-            sage: Alt2_R = TensorOperation([R, R], operation='antisymmetric')  # indirect doctest
-            sage: sorted(Alt2_R._index_map.items())
+            sage: Alt2_R = TensorOperation([R, R], operation='antisymmetric')  # indirect doctest   # needs sage.groups
+            sage: sorted(Alt2_R._index_map.items())                                                 # needs sage.groups
             [((0, 1), 0), ((0, 2), 1)]
         """
         n = len(self._V)
@@ -517,17 +504,17 @@ class TensorOperation(VectorCollection):
             sage: from sage.modules.tensor_operations import \
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (0,1), (-2,-3)], QQ, 2)
-            sage: detR = TensorOperation([R]*2, 'antisymmetric')
-            sage: detR.index_map(1, 0)
+            sage: detR = TensorOperation([R]*2, 'antisymmetric')                        # needs sage.groups
+            sage: detR.index_map(1, 0)                                                  # needs sage.groups
             0
-            sage: detR.index_map(0, 1)
+            sage: detR.index_map(0, 1)                                                  # needs sage.groups
             0
 
         TESTS::
 
-            sage: sorted(detR._index_map.items())
+            sage: sorted(detR._index_map.items())                                       # needs sage.groups
             [((0, 1), 0), ((0, 2), 1), ((1, 2), 2)]
-            sage: detR.vectors()
+            sage: detR.vectors()                                                        # needs sage.groups
             ((1), (-3), (2))
         """
         if len(i) == 1 and isinstance(i[0], (list, tuple)):
@@ -553,10 +540,10 @@ class TensorOperation(VectorCollection):
             sage: from sage.modules.tensor_operations import \
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (0,1), (-2,-3)], QQ, 2)
-            sage: detR = TensorOperation([R]*2, 'antisymmetric')
-            sage: sorted(detR.preimage())
+            sage: detR = TensorOperation([R]*2, 'antisymmetric')                        # needs sage.groups
+            sage: sorted(detR.preimage())                                               # needs sage.groups
             [(0, 1), (0, 2), (1, 2)]
-            sage: sorted(detR.codomain())
+            sage: sorted(detR.codomain())                                               # needs sage.groups
             [0, 1, 2]
         """
         return self._index_map.keys()
@@ -574,10 +561,10 @@ class TensorOperation(VectorCollection):
             sage: from sage.modules.tensor_operations import \
             ....:      VectorCollection, TensorOperation
             sage: R = VectorCollection([(1,0), (0,1), (-2,-3)], QQ, 2)
-            sage: detR = TensorOperation([R]*2, 'antisymmetric')
-            sage: sorted(detR.preimage())
+            sage: detR = TensorOperation([R]*2, 'antisymmetric')                        # needs sage.groups
+            sage: sorted(detR.preimage())                                               # needs sage.groups
             [(0, 1), (0, 2), (1, 2)]
-            sage: sorted(detR.codomain())
+            sage: sorted(detR.codomain())                                               # needs sage.groups
             [0, 1, 2]
         """
         return self._index_map.values()

@@ -22,7 +22,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.int cimport *
+from cpython.long cimport *
 
 from sage.libs.gmp.all cimport *
 import sage.rings.finite_rings.integer_mod
@@ -97,6 +97,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS::
 
+            sage: # needs sage.libs.ntl
             sage: QQq.<zz> = Qq(25,4)
             sage: FFp = Zp(5,5).residue_field()
             sage: QQq(FFp.zero())
@@ -146,7 +147,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                         x = [x]
         elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
             if not Integer(self.prime_pow.prime).divides(x.parent().order()):
-                raise TypeError("p does not divide modulus %s"%x.parent().order())
+                raise TypeError("p does not divide modulus %s" % x.parent().order())
         elif isinstance(x, Element) and isinstance(x.parent(), FiniteField):
             k = self.parent().residue_field()
             if not k.has_coerce_map_from(x.parent()):
@@ -253,7 +254,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         # The "verify that shift is an integer" part could be shared
         cdef long s
         if isinstance(shift, int):
-            s = PyInt_AS_LONG(shift)
+            s = PyLong_AsLong(shift)
         else:
             if not isinstance(shift, Integer):
                 shift = Integer(shift)
@@ -301,7 +302,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         """
         cdef long s
         if isinstance(shift, int):
-            s = PyInt_AS_LONG(shift)
+            s = PyLong_AsLong(shift)
         else:
             if not isinstance(shift, Integer):
                 shift = Integer(shift)
@@ -515,8 +516,9 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS:
 
-        Check to see that :trac:`10292` is resolved::
+        Check to see that :issue:`10292` is resolved::
 
+            sage: # needs sage.schemes
             sage: E = EllipticCurve('37a')
             sage: R = E.padic_regulator(7)
             sage: len(R.expansion())
@@ -613,6 +615,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Qq(125)
             sage: b = a^2 + 5*a + 1
             sage: b._ext_p_list(True)
@@ -624,7 +627,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             return trim_zeros(list(self.unit_part().expansion(lift_mode='smallest')))
 
     cpdef pAdicTemplateElement unit_part(self):
-        """
+        r"""
         Returns the unit part of this element.
 
         This is the `p`-adic element `u` in the same ring so that this
@@ -633,6 +636,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(125)
             sage: (5*a).unit_part()
             a + O(5^20)
@@ -692,6 +696,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(27, 4)
             sage: (3 + 3*a).residue()
             0
@@ -700,6 +705,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS::
 
+            sage: # needs sage.libs.ntl
             sage: a.residue(0)
             0
             sage: a.residue(2)
@@ -715,12 +721,14 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             ...
             NotImplementedError: reduction modulo p^n with n>1
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCA(27, 4)
             sage: (3 + 3*a).residue()
             0
             sage: (a + 1).residue()
             a0 + 1
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Qq(27, 4)
             sage: (3 + 3*a).residue()
             0
@@ -739,7 +747,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         if check_prec and (R.is_fixed_mod() or R.is_floating_point()):
             check_prec = False
         if check_prec and absprec > self.precision_absolute():
-            raise PrecisionError("insufficient precision to reduce modulo p^%s"%absprec)
+            raise PrecisionError("insufficient precision to reduce modulo p^%s" % absprec)
         if field and absprec != 1:
             raise ValueError("field keyword may only be set at precision 1")
         if absprec == 0:
@@ -825,7 +833,7 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
         sage: a = R(9283732, 6); b = R(17^3*237, 7)
         sage: str(a)
         '...692AAF'
-        sage: str(a^b) # indirect doctest
+        sage: str(a^b)  # indirect doctest
         '...55GA0001'
         sage: str((a // R.teichmuller(15))^b)
         '...55GA0001'
@@ -834,15 +842,15 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
     """
     if base_val != 0:
         raise ValueError("in order to raise to a p-adic exponent, base must be a unit")
-    ####### NOTE:  this function needs to be updated for extension elements. #######
+    # TODO NOTE:  this function needs to be updated for extension elements.
     cdef long loga_val, loga_aprec, bloga_val, bloga_aprec
     cdef Integer expcheck, right
     cteichmuller(prime_pow.powhelper_oneunit, base, base_relprec, prime_pow)
     cdivunit(prime_pow.powhelper_oneunit, base, prime_pow.powhelper_oneunit, base_relprec, prime_pow)
     csetone(prime_pow.powhelper_teichdiff, prime_pow)
     csub(prime_pow.powhelper_teichdiff, prime_pow.powhelper_oneunit, prime_pow.powhelper_teichdiff, base_relprec, prime_pow)
-    ## For extension elements in ramified extensions, the computation of the
-    ## valuation and precision of log(a) is more complicated)
+    # For extension elements in ramified extensions, the computation of the
+    # valuation and precision of log(a) is more complicated)
     loga_val = cvaluation(prime_pow.powhelper_teichdiff, base_relprec, prime_pow)
     loga_aprec = base_relprec
     # valuation of b*log(a)
@@ -862,8 +870,8 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
         # Here we need to use the exp(b log(a)) definition,
         # since we can't convert the exponent to an integer
         raise NotImplementedError("exponents with negative valuation not yet supported")
-    ## For extension elements in ramified extensions
-    ## the following precision might need to be changed.
+    # For extension elements in ramified extensions
+    # the following precision might need to be changed.
     cpow(result, prime_pow.powhelper_oneunit, right.value, bloga_aprec, prime_pow)
     return bloga_aprec
 
@@ -898,7 +906,7 @@ cdef class ExpansionIter():
     EXAMPLES::
 
         sage: E = Zp(5,4)(373).expansion()
-        sage: I = iter(E) # indirect doctest
+        sage: I = iter(E)  # indirect doctest
         sage: type(I)
         <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
     """
@@ -1031,7 +1039,7 @@ cdef class ExpansionIterable():
 
     EXAMPLES::
 
-        sage: E = Zp(5,4)(373).expansion() # indirect doctest
+        sage: E = Zp(5,4)(373).expansion()  # indirect doctest
         sage: type(E)
         <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIterable'>
     """
@@ -1185,5 +1193,4 @@ cdef class ExpansionIterable():
         else:
             modestr = " (teichmuller)"
         p = self.elt.prime_pow.prime
-        return "%s-adic expansion of %s%s"%(p, self.elt, modestr)
-
+        return "%s-adic expansion of %s%s" % (p, self.elt, modestr)

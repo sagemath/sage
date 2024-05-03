@@ -93,8 +93,10 @@ How to get Sage's Python to recognize my system's Tcl/Tk install?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 It may be that you have Tcl/Tk installed and that your system's Python
-recognizes it but Sage's Python does not. To fix that, install the
-tcl/tk development library. On Ubuntu, this is the command
+recognizes it but Sage's Python does not. Normally speaking, there is little
+need to build Sage's Python nowadays (anno 2023), but if you do, here it is.
+Make sure you installed the Tcl/Tk development library.  On Ubuntu, this is the
+command
 
 .. CODE-BLOCK:: shell-session
 
@@ -104,9 +106,9 @@ or something along that line. Next, reinstall Sage's Python:
 
 .. CODE-BLOCK:: shell-session
 
-    $ sage -f python3
+    $ make python3-clean python3-uninstall && make python3
 
-This will pick up the tcl/tk library automatically. After successfully
+This will pick up the Tcl/Tk library automatically. After successfully
 reinstalling Sage's Python, from within the Sage command line interface,
 issue these commands:
 
@@ -115,7 +117,7 @@ issue these commands:
     import _tkinter
     import Tkinter
 
-If they do not raise an ``ImportError`` then it worked.
+If they do not raise an :class:`ImportError` then it worked.
 
 
 How do I import Sage into a Python script?
@@ -663,7 +665,7 @@ With objects a and b and a function f, I accidentally typed f(a) = b instead of 
 It is because of how functions are defined in Sage with the
 ``f(x) = expr`` notation using the preparser. Also notice that if you
 make this mistake inside of an ``if`` statement, you will get a
-``SyntaxError`` before anything else goes wrong. So in this case,
+:class:`SyntaxError` before anything else goes wrong. So in this case,
 there is no problem.
 
 

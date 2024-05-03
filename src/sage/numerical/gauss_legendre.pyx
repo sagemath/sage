@@ -79,11 +79,11 @@ def nodes_uncached(degree, prec):
 
         sage: from sage.numerical.gauss_legendre import nodes_uncached
         sage: L1 = nodes_uncached(24, 53)
-        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))
-        sage: Pdif = P.diff()
-        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)
+        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))            # needs sage.symbolic
+        sage: Pdif = P.diff()                                                           # needs sage.symbolic
+        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)                                  # needs sage.symbolic
         ....:        for r, _ in RR['x'](P).roots()]
-        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9
+        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9            # needs sage.symbolic
         ....:      for a, b in zip(L1, L2))
         True
 
@@ -103,8 +103,8 @@ def nodes_uncached(degree, prec):
 
     .. TODO::
 
-        It may be worth testing if using the Arb algorithm for finding the
-        nodes and weights in ``arb/acb_calc/integrate_gl_auto_deg.c`` has better
+        It may be worth testing if using the FLINT/Arb algorithm for finding the
+        nodes and weights in ``src/acb_calc/integrate_gl_auto_deg.c`` has better
         performance.
     """
     cdef long j,j1,n
@@ -117,8 +117,8 @@ def nodes_uncached(degree, prec):
         raise ValueError("degree=%s not supported (degree must be 3 or even)" % degree)
     R = RealField(int(prec*3/2))
     Rout = RealField(prec)
-    mpfr_init2(u,R.__prec)
-    mpfr_init2(v,R.__prec)
+    mpfr_init2(u,R._prec)
+    mpfr_init2(v,R._prec)
     ZERO = R.zero()
     ONE = R.one()
     HALF = ONE/2
@@ -188,11 +188,11 @@ def nodes(degree, prec):
 
         sage: from sage.numerical.gauss_legendre import nodes
         sage: L1 = nodes(24, 53)
-        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))
-        sage: Pdif = P.diff()
-        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)
+        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))            # needs sage.symbolic
+        sage: Pdif = P.diff()                                                           # needs sage.symbolic
+        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)                                  # needs sage.symbolic
         ....:        for r, _ in RR['x'](P).roots()]
-        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9
+        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9            # needs sage.symbolic
         ....:      for a, b in zip(L1, L2))
         True
 
@@ -304,7 +304,7 @@ def integrate_vector_N(f, prec, N=3):
         The nodes and weights are calculated in the real field with ``prec``
         bits of precision. If the vector space in which ``f`` takes values
         is over a field which is incompatible with this field (e.g. a finite
-        field) then a TypeError occurs.
+        field) then a :class:`TypeError` occurs.
     """
     # We use nodes_uncached, because caching takes up memory, and numerics in
     # Bruin-DisneyHogg-Gao suggest that caching provides little benefit in the
@@ -343,8 +343,8 @@ def integrate_vector(f, prec, epsilon=None):
         sage: epsilon = K(2^(-prec + 4))
         sage: f = lambda t:V((1 + t^2, 1/(1 + t^2)))
         sage: I = integrate_vector(f, prec, epsilon=epsilon)
-        sage: J = V((4/3, pi/4))
-        sage: max(c.abs() for c in (I - J)) < epsilon
+        sage: J = V((4/3, pi/4))                                                        # needs sage.symbolic
+        sage: max(c.abs() for c in (I - J)) < epsilon                                   # needs sage.symbolic
         True
 
     We can also use complex-valued integrands::
@@ -354,10 +354,10 @@ def integrate_vector(f, prec, epsilon=None):
         sage: K = ComplexField(prec)
         sage: V = VectorSpace(K, 2)
         sage: epsilon = Kreal(2^(-prec + 4))
-        sage: f = lambda t: V((t, K(exp(2*pi*t*K.0))))
-        sage: I = integrate_vector(f, prec, epsilon=epsilon)
+        sage: f = lambda t: V((t, K(exp(2*pi*t*K.0))))                                  # needs sage.symbolic
+        sage: I = integrate_vector(f, prec, epsilon=epsilon)                            # needs sage.symbolic
         sage: J = V((1/2, 0))
-        sage: max(c.abs() for c in (I - J)) < epsilon
+        sage: max(c.abs() for c in (I - J)) < epsilon                                   # needs sage.symbolic
         True
     """
     results = []

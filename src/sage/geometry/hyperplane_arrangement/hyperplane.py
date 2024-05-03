@@ -26,7 +26,7 @@ object to define the variables `x`, `y`, `z`::
     (3, 2, -5)
     sage: h.constant_term()
     -7
-    sage: h.change_ring(GF(3))                                                          # optional - sage.rings.finite_rings
+    sage: h.change_ring(GF(3))
     Hyperplane 0*x + 2*y + z + 2
     sage: h.point()
     (21/38, 7/19, -35/38)
@@ -108,9 +108,10 @@ Which you can't do with hyperplane arrangements::
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.geometry.abc
 
-from sage.misc.cachefunc import cached_method
 from sage.geometry.linear_expression import LinearExpression, LinearExpressionModule
+from sage.misc.cachefunc import cached_method
 
 
 class Hyperplane(LinearExpression):
@@ -238,9 +239,9 @@ class Hyperplane(LinearExpression):
             sage: (x + 3/2*y - 2*z)._normal_pivot()
             2
 
-            sage: H.<x,y,z> = HyperplaneArrangements(GF(5))                             # optional - sage.rings.finite_rings
-            sage: V = H.ambient_space()                                                 # optional - sage.rings.finite_rings
-            sage: (x + 3*y - 4*z)._normal_pivot()                                       # optional - sage.rings.finite_rings
+            sage: H.<x,y,z> = HyperplaneArrangements(GF(5))
+            sage: V = H.ambient_space()
+            sage: (x + 3*y - 4*z)._normal_pivot()
             1
         """
         try:
@@ -397,16 +398,17 @@ class Hyperplane(LinearExpression):
             sage: h.point() in h
             True
 
-            sage: H.<x,y,z> = HyperplaneArrangements(GF(3))                             # optional - sage.rings.finite_rings
-            sage: h = 2*x + y + z + 1                                                   # optional - sage.rings.finite_rings
-            sage: h.point()                                                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: H.<x,y,z> = HyperplaneArrangements(GF(3))
+            sage: h = 2*x + y + z + 1
+            sage: h.point()
             (1, 0, 0)
-            sage: h.point().base_ring()                                                 # optional - sage.rings.finite_rings
+            sage: h.point().base_ring()
             Finite Field of size 3
 
-            sage: H.<x,y,z> = HyperplaneArrangements(GF(3))                             # optional - sage.rings.finite_rings
-            sage: h = x + y + z + 1                                                     # optional - sage.rings.finite_rings
-            sage: h.point()                                                             # optional - sage.rings.finite_rings
+            sage: H.<x,y,z> = HyperplaneArrangements(GF(3))
+            sage: h = x + y + z + 1
+            sage: h.point()
             (2, 0, 0)
         """
         P = self.parent()
@@ -459,9 +461,8 @@ class Hyperplane(LinearExpression):
             sage: h.intersection(polytopes.cube())
             A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 3 vertices
         """
-        from sage.geometry.polyhedron.base import is_Polyhedron
         from sage.geometry.polyhedron.constructor import Polyhedron
-        if not is_Polyhedron(other):
+        if not isinstance(other, sage.geometry.abc.Polyhedron):
             try:
                 other = other.polyhedron()
             except AttributeError:
@@ -483,7 +484,7 @@ class Hyperplane(LinearExpression):
         A vector in the ambient vector space that lies on the
         hyperplane.
 
-        In finite characteristic, a ``ValueError`` is raised if the
+        In finite characteristic, a :class:`ValueError` is raised if the
         the norm of the hyperplane normal is zero.
 
         EXAMPLES::
@@ -550,23 +551,25 @@ class Hyperplane(LinearExpression):
 
         TESTS:
 
-        Check that :trac:`30078` is fixed::
+        Check that :issue:`30078` is fixed::
 
-            sage: R.<sqrt2> = QuadraticField(2)                                         # optional - sage.rings.number_field
-            sage: H.<x,y> = HyperplaneArrangements(base_ring=R)                         # optional - sage.rings.number_field
-            sage: B = H([1,1,0], [2,2,0], [sqrt2,sqrt2,0])                              # optional - sage.rings.number_field
-            sage: B                                                                     # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<sqrt2> = QuadraticField(2)
+            sage: H.<x,y> = HyperplaneArrangements(base_ring=R)
+            sage: B = H([1,1,0], [2,2,0], [sqrt2,sqrt2,0])
+            sage: B
             Arrangement <x + 1>
 
-        Check that :trac:`30749` is fixed::
+        Check that :issue:`30749` is fixed::
 
-            sage: tau = (1+AA(5).sqrt()) / 2                                            # optional - sage.rings.number_field
-            sage: ncn = [[2*tau+1,2*tau,tau],[2*tau+2,2*tau+1,tau+1]]                   # optional - sage.rings.number_field
-            sage: ncn += [[tau+1,tau+1,tau],[2*tau,2*tau,tau],[tau+1,tau+1,1]]          # optional - sage.rings.number_field
-            sage: ncn += [[1,1,1],[1,1,0],[0,1,0],[1,0,0],[tau+1,tau,tau]]              # optional - sage.rings.number_field
-            sage: H = HyperplaneArrangements(AA,names='xyz')                            # optional - sage.rings.number_field
-            sage: A = H([[0]+v for v in ncn])                                           # optional - sage.rings.number_field
-            sage: A.n_regions()                                                         # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: tau = (1+AA(5).sqrt()) / 2
+            sage: ncn = [[2*tau+1,2*tau,tau],[2*tau+2,2*tau+1,tau+1]]
+            sage: ncn += [[tau+1,tau+1,tau],[2*tau,2*tau,tau],[tau+1,tau+1,1]]
+            sage: ncn += [[1,1,1],[1,1,0],[0,1,0],[1,0,0],[tau+1,tau,tau]]
+            sage: H = HyperplaneArrangements(AA,names='xyz')
+            sage: A = H([[0]+v for v in ncn])
+            sage: A.n_regions()
             60
         """
         from sage.rings.rational_field import QQ
@@ -638,7 +641,7 @@ class Hyperplane(LinearExpression):
         EXAMPLES::
 
             sage: L.<x, y> = HyperplaneArrangements(QQ)
-            sage: (x + y - 2).plot()                                                    # optional - sage.plot
+            sage: (x + y - 2).plot()                                                    # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.geometry.hyperplane_arrangement.plot import plot_hyperplane

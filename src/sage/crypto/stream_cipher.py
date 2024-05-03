@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 """
 Stream Ciphers
 """
@@ -94,7 +95,7 @@ class LFSRCipher(SymmetricKeyCipher):
         N = len(M)
         Melt = M._element_list
         Kelt = lfsr_sequence(poly.list(), IS, N)
-        return B([ (Melt[i]+int(Kelt[i]))%n for i in range(N) ])
+        return B([ (Melt[i]+int(Kelt[i])) % n for i in range(N) ])
 
     def _repr_(self):
         r"""

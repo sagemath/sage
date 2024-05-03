@@ -300,7 +300,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     # is wrong from our point of view.
     cpdef _dot_product_(self, Vector right):
         """
-        Raise a ``TypeError`` exception.
+        Raise a :class:`TypeError` exception.
 
         Dot product is not defined on toric lattices (there are actions of
         dual lattices on each other instead).
@@ -311,7 +311,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         OUTPUT:
 
-        - ``TypeError`` exception is raised.
+        - :class:`TypeError` exception is raised.
 
         TESTS::
 
@@ -394,7 +394,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
             sage: N = ToricLattice(3)
             sage: n = N(1,2,3)
-            sage: n.plot()  # optional - sage.plot
+            sage: n.plot()                                                              # needs sage.plot
             Graphics3d Object
         """
         tp = ToricPlotter(options, self.parent().degree())

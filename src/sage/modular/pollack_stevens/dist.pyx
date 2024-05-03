@@ -26,25 +26,25 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.arith.misc import binomial, bernoulli
-from sage.matrix.matrix cimport Matrix
-from sage.matrix.constructor import matrix
-from sage.structure.element cimport Element
 import operator
-from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.integer cimport Integer
+
+from sage.arith.misc import binomial, bernoulli
+from sage.categories.fields import Fields
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix cimport Matrix
 from sage.misc.verbose import verbose
+from sage.modular.pollack_stevens.sigma0 import Sigma0
+from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import Infinity
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.structure.element cimport Element
+from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 #from sage.libs.flint.ulong_extras cimport *
-
-from .sigma0 import Sigma0
 
 cdef long overflow = 1 << (4 * sizeof(long) - 1)
 cdef long underflow = -overflow
@@ -67,7 +67,7 @@ def get_dist_classes(p, prec_cap, base, symk, implementation):
 
     - ``implementation`` - string - If not None, override the
       automatic choice of implementation. May be 'long' or 'vector',
-      otherwise raise a ``NotImplementedError``
+      otherwise raise a :class:`NotImplementedError`
 
     OUTPUT:
 
@@ -158,13 +158,13 @@ cdef class Dist(ModuleElement):
         """
         raise NotImplementedError
 
-    cdef long _relprec(self):
+    cdef long _relprec(self) noexcept:
         raise NotImplementedError
 
     cdef _unscaled_moment(self, long i):
         raise NotImplementedError
 
-    cpdef long _ord_p(self):
+    cpdef long _ord_p(self) noexcept:
         r"""
         Return power of `p` by which the moments are shifted.
 
@@ -293,9 +293,9 @@ cdef class Dist(ModuleElement):
     def find_scalar(self, _other, p, M=None, check=True):
         r"""
         Return an ``alpha`` with ``other = self * alpha``, or raises
-        a ``ValueError``.
+        a :class:`ValueError`.
 
-        It will also raise a ``ValueError`` if this distribution is zero.
+        It will also raise a :class:`ValueError` if this distribution is zero.
 
         INPUT:
 
@@ -417,9 +417,9 @@ cdef class Dist(ModuleElement):
     def find_scalar_from_zeroth_moment(self, _other, p, M=None, check=True):
         r"""
         Return an ``alpha`` with ``other = self * alpha`` using only
-        the zeroth moment, or raises a ``ValueError``.
+        the zeroth moment, or raises a :class:`ValueError`.
 
-        It will also raise a ``ValueError`` if the zeroth moment of the
+        It will also raise a :class:`ValueError` if the zeroth moment of the
         distribution is zero.
 
         INPUT:
@@ -853,7 +853,7 @@ cdef class Dist_vector(Dist):
             sage: QQ(d)
             4/3
 
-        We get a TypeError if there is more than 1 moment::
+        We get a :class:`TypeError` if there is more than 1 moment::
 
             sage: D = Symk(1); d = D([1,2]); d
             (1, 2)
@@ -866,7 +866,7 @@ cdef class Dist_vector(Dist):
             return QQ(self.moment(0))
         raise TypeError("k must be 0")
 
-    cdef long _relprec(self):
+    cdef long _relprec(self) noexcept:
         """
         Return the number of moments.
 
@@ -1167,7 +1167,7 @@ cdef class Dist_vector(Dist):
         p = self.parent().prime()
         cdef Dist_vector ans
         if p == 0:
-            if R.is_field():
+            if R in Fields():
                 ans = self._new_c()
                 ans.ordp = 0
                 ans._moments = V(v)

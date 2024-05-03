@@ -44,7 +44,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(27) #indirect doctest
+            sage: R.<a> = Zq(27)  # indirect doctest                                    # needs sage.libs.ntl
         """
         #base = poly.base_ring()
         #if base.is_field():
@@ -63,13 +63,13 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(5^3)
-            sage: K._extension_type()
+            sage: K.<a> = Qq(5^3)                                                       # needs sage.libs.ntl
+            sage: K._extension_type()                                                   # needs sage.libs.ntl
             'Unramified'
 
             sage: x = polygen(ZZ, 'x')
-            sage: L.<pi> = Qp(5).extension(x^2 - 5)
-            sage: L._extension_type()
+            sage: L.<pi> = Qp(5).extension(x^2 - 5)                                     # needs sage.libs.ntl
+            sage: L._extension_type()                                                   # needs sage.libs.ntl
             'Eisenstein'
         """
         return "Unramified"
@@ -81,13 +81,13 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(3^5)
-            sage: K.absolute_f()
+            sage: K.<a> = Qq(3^5)                                                       # needs sage.libs.ntl
+            sage: K.absolute_f()                                                        # needs sage.libs.ntl
             5
 
             sage: x = polygen(ZZ, 'x')
-            sage: L.<pi> = Qp(3).extension(x^2 - 3)
-            sage: L.absolute_f()
+            sage: L.<pi> = Qp(3).extension(x^2 - 3)                                     # needs sage.libs.ntl
+            sage: L.absolute_f()                                                        # needs sage.libs.ntl
             1
         """
         return self.modulus().degree() * self.base_ring().absolute_f()
@@ -104,7 +104,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125); R.residue_class_field()
+            sage: R.<a> = Zq(125); R.residue_class_field()                              # needs sage.libs.ntl
             Finite Field in a0 of size 5^3
         """
         #should eventually take advantage of finite field
@@ -119,13 +119,13 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125)
-            sage: R.residue_ring(1)
+            sage: R.<a> = Zq(125)                                                       # needs sage.libs.ntl
+            sage: R.residue_ring(1)                                                     # needs sage.libs.ntl
             Finite Field in a0 of size 5^3
 
         The following requires implementing more general Artinian rings::
 
-            sage: R.residue_ring(2)
+            sage: R.residue_ring(2)                                                     # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -145,8 +145,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125)
-            sage: R.discriminant()
+            sage: R.<a> = Zq(125)                                                       # needs sage.libs.ntl
+            sage: R.discriminant()                                                      # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -186,7 +186,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125); R.is_galois()
+            sage: R.<a> = Zq(125); R.is_galois()                                        # needs sage.libs.ntl
             True
         """
         if K is None or K is self:
@@ -203,7 +203,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125); R.gen()
+            sage: R.<a> = Zq(125); R.gen()                                              # needs sage.libs.ntl
             a + O(5^20)
         """
         if n != 0:
@@ -217,20 +217,20 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(9)
-            sage: R._frob_gen()
+            sage: R.<a> = Zq(9)                                                         # needs sage.libs.ntl
+            sage: R._frob_gen()                                                         # needs sage.libs.ntl
             (2*a + 1) + (2*a + 2)*3 + (2*a + 2)*3^2 + (2*a + 2)*3^3 + (2*a + 2)*3^4 + (2*a + 2)*3^5 + (2*a + 2)*3^6 + (2*a + 2)*3^7 + (2*a + 2)*3^8 + (2*a + 2)*3^9 + (2*a + 2)*3^10 + (2*a + 2)*3^11 + (2*a + 2)*3^12 + (2*a + 2)*3^13 + (2*a + 2)*3^14 + (2*a + 2)*3^15 + (2*a + 2)*3^16 + (2*a + 2)*3^17 + (2*a + 2)*3^18 + (2*a + 2)*3^19 + O(3^20)
         """
         p = self.prime()
         exp = p
         a = self.gen()
         if not arithmetic:
-            exp = p**(self.absolute_degree()-1)
+            exp = p**(self.absolute_degree() - 1)
         approx = (self(a.residue()**exp)).lift_to_precision(self.precision_cap()) #first approximation
         f = self.defining_polynomial()
         g = f.derivative()
-        while(f(approx) != 0): #hensel lift frobenius(a)
-            approx = approx - f(approx)/g(approx)
+        while f(approx) != 0:  # hensel lift frobenius(a)
+            approx = approx - f(approx) / g(approx)
         return approx
 
     def uniformizer_pow(self, n):
@@ -239,8 +239,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = ZqCR(125)
-            sage: R.uniformizer_pow(5)
+            sage: R.<a> = ZqCR(125)                                                     # needs sage.libs.ntl
+            sage: R.uniformizer_pow(5)                                                  # needs sage.libs.ntl
             5^5 + O(5^25)
         """
         return self(self.prime_pow(n))
@@ -254,8 +254,8 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = ZqCR(125)
-            sage: R.uniformizer()
+            sage: R.<a> = ZqCR(125)                                                     # needs sage.libs.ntl
+            sage: R.uniformizer()                                                       # needs sage.libs.ntl
             5 + O(5^21)
         """
         return self(self.ground_ring().uniformizer())
@@ -266,7 +266,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125); R._uniformizer_print()
+            sage: R.<a> = Zq(125); R._uniformizer_print()                               # needs sage.libs.ntl
             '5'
         """
         return self.ground_ring()._uniformizer_print()
@@ -277,7 +277,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125); R._unram_print()
+            sage: R.<a> = Zq(125); R._unram_print()                                     # needs sage.libs.ntl
             'a'
         """
         return self.variable_name()
@@ -300,9 +300,9 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(1024); R.has_pth_root()
+            sage: R.<a> = Zq(1024); R.has_pth_root()                                    # needs sage.libs.ntl
             True
-            sage: R.<a> = Zq(17^5); R.has_pth_root()
+            sage: R.<a> = Zq(17^5); R.has_pth_root()                                    # needs sage.libs.ntl
             False
         """
         return self.ground_ring().has_pth_root()
@@ -323,6 +323,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(37^8)
             sage: R.has_root_of_unity(144)
             True

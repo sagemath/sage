@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Quantum Clifford Algebras
 
@@ -288,14 +289,14 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         for i in range(self._n):
             r = list(zero)  # Make a copy
             r[i] = 1
-            d['psi%s'%i] = self.monomial( (self._psi(r), one) )
+            d['psi%s' % i] = self.monomial((self._psi(r), one))
             r[i] = -1
-            d['psid%s'%i] = self.monomial( (self._psi(r), one) )
+            d['psid%s' % i] = self.monomial((self._psi(r), one))
         zero = self._psi(zero)
         for i in range(self._n):
             temp = list(zero)  # Make a copy
             temp[i] = 1
-            d['w%s'%i] = self.monomial( (zero, tuple(temp)) )
+            d['w%s' % i] = self.monomial((zero, tuple(temp)))
         return Family(sorted(d), lambda i: d[i])
 
     @cached_method
@@ -397,10 +398,10 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
             5
         """
         p, v = m
-        rp = '*'.join('psi%s'%i if p[i] > 0 else 'psid%s'%i
+        rp = '*'.join('psi%s' % i if p[i] > 0 else 'psid%s' % i
                       for i in range(self._n) if p[i] != 0)
-        gen_str = lambda e: '' if e == 1 else '^%s'%e
-        rv = '*'.join('w%s'%i + gen_str(v[i]) for i in range(self._n) if v[i] != 0)
+        gen_str = lambda e: '' if e == 1 else '^%s' % e
+        rv = '*'.join('w%s' % i + gen_str(v[i]) for i in range(self._n) if v[i] != 0)
         if rp:
             if rv:
                 return rp + '*' + rv
@@ -429,10 +430,10 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
             5
         """
         p, v = m
-        rp = ''.join('\\psi_{%s}'%i if p[i] > 0 else '\\psi^{\\dagger}_{%s}'%i
+        rp = ''.join('\\psi_{%s}' % i if p[i] > 0 else '\\psi^{\\dagger}_{%s}' % i
                      for i in range(self._n) if p[i] != 0)
-        gen_str = lambda e: '' if e == 1 else '^{%s}'%e
-        rv = ''.join('\\omega_{%s}'%i + gen_str(v[i])
+        gen_str = lambda e: '' if e == 1 else '^{%s}' % e
+        rv = ''.join('\\omega_{%s}' % i + gen_str(v[i])
                      for i in range(self._n) if v[i] != 0)
         if not rp and not rv:
             return '1'
@@ -700,15 +701,15 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         def ppr(i):
             val = p[i]
             if val == -1:
-                return 'psid%s'%i
+                return 'psid%s' % i
             elif val == 1:
-                return 'psi%s'%i
+                return 'psi%s' % i
             elif val == 2:
-                return 'psi%s*psid%s'%(i,i)
+                return 'psi%s*psid%s' % (i,i)
 
         rp = '*'.join(ppr(i) for i in range(self._n) if p[i] != 0)
-        gen_str = lambda e: '' if e == 1 else '^%s'%e
-        rv = '*'.join('w%s'%i + gen_str(v[i]) for i in range(self._n) if v[i] != 0)
+        gen_str = lambda e: '' if e == 1 else '^%s' % e
+        rv = '*'.join('w%s' % i + gen_str(v[i]) for i in range(self._n) if v[i] != 0)
         if rp:
             if rv:
                 return rp + '*' + rv
@@ -741,15 +742,15 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         def ppr(i):
             val = p[i]
             if val == -1:
-                return '\\psi^{\\dagger}_{%s}'%i
+                return '\\psi^{\\dagger}_{%s}' % i
             elif val == 1:
-                return '\\psi_{%s}'%i
+                return '\\psi_{%s}' % i
             elif val == 2:
                 return '\\psi_{%s}\\psi^{\\dagger}_{%s}' % (i, i)
 
         rp = ''.join(ppr(i) for i in range(self._n) if p[i] != 0)
-        gen_str = lambda e: '' if e == 1 else '^{%s}'%e
-        rv = ''.join('\\omega_{%s}'%i + gen_str(v[i])
+        gen_str = lambda e: '' if e == 1 else '^{%s}' % e
+        rv = ''.join('\\omega_{%s}' % i + gen_str(v[i])
                      for i in range(self._n) if v[i] != 0)
         if not rp and not rv:
             return '1'
@@ -875,7 +876,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             return (self._psi(p), tuple(e))
 
         q = self._q
-        ret = {key(X): (-1)**len(X) * sign * q**(q_power+k*(len(pairings)%2))
+        ret = {key(X): (-1)**len(X) * sign * q**(q_power+k*(len(pairings) % 2))
                for X in powerset(pairings)}
 
         return self._from_dict(ret)

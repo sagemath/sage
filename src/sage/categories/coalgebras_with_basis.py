@@ -61,12 +61,12 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                        # optional - sage.groups sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                        # needs sage.groups sage.modules
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                   as a permutation group over Rational Field
-                sage: (a, b) = A._group.gens()                                          # optional - sage.groups sage.modules
-                sage: A.coproduct_on_basis(a)                                           # optional - sage.groups sage.modules
+                sage: (a, b) = A._group.gens()                                          # needs sage.groups sage.modules
+                sage: A.coproduct_on_basis(a)                                           # needs sage.groups sage.modules
                 B[(1,2,3)] # B[(1,2,3)]
             """
 
@@ -81,14 +81,15 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                        # optional - sage.groups sage.modules
+                sage: # needs sage.groups sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                   as a permutation group over Rational Field
-                sage: a, b = A.algebra_generators()                                     # optional - sage.groups sage.modules
-                sage: a, A.coproduct(a)                                                 # optional - sage.groups sage.modules
+                sage: a, b = A.algebra_generators()
+                sage: a, A.coproduct(a)
                 (B[(1,2,3)], B[(1,2,3)] # B[(1,2,3)])
-                sage: b, A.coproduct(b)                                                 # optional - sage.groups sage.modules
+                sage: b, A.coproduct(b)
                 (B[(1,3)], B[(1,3)] # B[(1,3)])
 
             """
@@ -115,12 +116,12 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                        # optional - sage.groups sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                        # needs sage.groups sage.modules
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                   as a permutation group over Rational Field
-                sage: (a, b) = A._group.gens()                                          # optional - sage.groups sage.modules
-                sage: A.counit_on_basis(a)                                              # optional - sage.groups sage.modules
+                sage: (a, b) = A._group.gens()                                          # needs sage.groups sage.modules
+                sage: A.counit_on_basis(a)                                              # needs sage.groups sage.modules
                 1
             """
 
@@ -133,14 +134,15 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = HopfAlgebrasWithBasis(QQ).example(); A                        # optional - sage.groups sage.modules
+                sage: # needs sage.groups sage.modules
+                sage: A = HopfAlgebrasWithBasis(QQ).example(); A
                 An example of Hopf algebra with basis:
                  the group algebra of the Dihedral group of order 6
                   as a permutation group over Rational Field
-                sage: a, b = A.algebra_generators()                                     # optional - sage.groups sage.modules
-                sage: a, A.counit(a)                                                    # optional - sage.groups sage.modules
+                sage: a, b = A.algebra_generators()
+                sage: a, A.counit(a)
                 (B[(1,2,3)], 1)
-                sage: b, A.counit(b)                                                    # optional - sage.groups sage.modules
+                sage: b, A.counit(b)
                 (B[(1,3)], 1)
 
             """
@@ -160,29 +162,29 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: Psi = NonCommutativeSymmetricFunctions(QQ).Psi()                  # optional - sage.combinat
-                sage: Psi[2,2].coproduct_iterated(0)                                    # optional - sage.combinat
+                sage: Psi = NonCommutativeSymmetricFunctions(QQ).Psi()                  # needs sage.combinat sage.modules
+                sage: Psi[2,2].coproduct_iterated(0)                                    # needs sage.combinat sage.modules
                 Psi[2, 2]
-                sage: Psi[2,2].coproduct_iterated(2)                                    # optional - sage.combinat
+                sage: Psi[2,2].coproduct_iterated(2)                                    # needs sage.combinat sage.modules
                 Psi[] # Psi[] # Psi[2, 2] + 2*Psi[] # Psi[2] # Psi[2]
                  + Psi[] # Psi[2, 2] # Psi[] + 2*Psi[2] # Psi[] # Psi[2]
                  + 2*Psi[2] # Psi[2] # Psi[] + Psi[2, 2] # Psi[] # Psi[]
 
             TESTS::
 
-                sage: p = SymmetricFunctions(QQ).p()                                    # optional - sage.combinat
-                sage: p[5,2,2].coproduct_iterated()                                     # optional - sage.combinat
+                sage: p = SymmetricFunctions(QQ).p()                                    # needs sage.combinat sage.modules
+                sage: p[5,2,2].coproduct_iterated()                                     # needs sage.combinat sage.modules
                 p[] # p[5, 2, 2] + 2*p[2] # p[5, 2] + p[2, 2] # p[5]
                  + p[5] # p[2, 2] + 2*p[5, 2] # p[2] + p[5, 2, 2] # p[]
-                sage: p([]).coproduct_iterated(3)                                       # optional - sage.combinat
+                sage: p([]).coproduct_iterated(3)                                       # needs sage.combinat sage.modules
                 p[] # p[] # p[] # p[]
 
             ::
 
-                sage: Psi = NonCommutativeSymmetricFunctions(QQ).Psi()                  # optional - sage.combinat
-                sage: Psi[2,2].coproduct_iterated(0)                                    # optional - sage.combinat
+                sage: Psi = NonCommutativeSymmetricFunctions(QQ).Psi()                  # needs sage.combinat sage.modules
+                sage: Psi[2,2].coproduct_iterated(0)                                    # needs sage.combinat sage.modules
                 Psi[2, 2]
-                sage: Psi[2,2].coproduct_iterated(3)                                    # optional - sage.combinat
+                sage: Psi[2,2].coproduct_iterated(3)                                    # needs sage.combinat sage.modules
                 Psi[] # Psi[] # Psi[] # Psi[2, 2] + 2*Psi[] # Psi[] # Psi[2] # Psi[2]
                  + Psi[] # Psi[] # Psi[2, 2] # Psi[] + 2*Psi[] # Psi[2] # Psi[] # Psi[2]
                  + 2*Psi[] # Psi[2] # Psi[2] # Psi[] + Psi[] # Psi[2, 2] # Psi[] # Psi[]
@@ -191,14 +193,14 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # optional - sage.combinat
-                sage: m[[1,3],[2]].coproduct_iterated(2)                                # optional - sage.combinat
+                sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # needs sage.combinat sage.modules
+                sage: m[[1,3],[2]].coproduct_iterated(2)                                # needs sage.combinat sage.modules
                 m{} # m{} # m{{1, 3}, {2}} + m{} # m{{1}} # m{{1, 2}}
                  + m{} # m{{1, 2}} # m{{1}} + m{} # m{{1, 3}, {2}} # m{}
                  + m{{1}} # m{} # m{{1, 2}} + m{{1}} # m{{1, 2}} # m{}
                  + m{{1, 2}} # m{} # m{{1}} + m{{1, 2}} # m{{1}} # m{}
                  + m{{1, 3}, {2}} # m{} # m{}
-                sage: m[[]].coproduct_iterated(3), m[[1,3],[2]].coproduct_iterated(0)   # optional - sage.combinat
+                sage: m[[]].coproduct_iterated(3), m[[1,3],[2]].coproduct_iterated(0)   # needs sage.combinat sage.modules
                 (m{} # m{} # m{} # m{}, m{{1, 3}, {2}})
             """
             if n < 0:

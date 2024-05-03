@@ -45,8 +45,8 @@ is ``Objects()``, the elements are not guaranteed to have any
 special parent.  This is what should happen, e.g., with finite field
 elements of different characteristics::
 
-    sage: v = Sequence([GF(3)(1), GF(7)(1)])                                            # optional - sage.rings.finite_rings
-    sage: v.universe()                                                                  # optional - sage.rings.finite_rings
+    sage: v = Sequence([GF(3)(1), GF(7)(1)])
+    sage: v.universe()
     Category of objects
 
 You can make a list immutable with ``v.freeze()``.  Assignment is
@@ -201,9 +201,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     This example illustrates how every element of a list is taken into account
     when constructing a sequence.::
 
-        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v                                      # optional - sage.rings.finite_rings
+        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v
         [1, 2, 1, 3]
-        sage: v.universe()                                                              # optional - sage.rings.finite_rings
+        sage: v.universe()
         Finite Field of size 5
 
     TESTS::
@@ -397,9 +397,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     ::
 
-        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v                                      # optional - sage.rings.finite_rings
+        sage: v = Sequence([1, 7, 6, GF(5)(3)]); v
         [1, 2, 1, 3]
-        sage: v.universe()                                                              # optional - sage.rings.finite_rings
+        sage: v.universe()
         Finite Field of size 5
 
     """
@@ -500,7 +500,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         else:
             y = self.__universe(value)
         list.__setitem__(self, n, y)
-        self.__hash=None
+        self.__hash = None
 
     def __getitem__(self, n):
         """
@@ -674,11 +674,11 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         r"""
         TESTS::
 
-            sage: t= Sequence([sqrt(x), exp(x), x^(x-1)], universe=SR); t               # optional - sage.symbolic
+            sage: t= Sequence([sqrt(x), exp(x), x^(x-1)], universe=SR); t               # needs sage.symbolic
             [sqrt(x), e^x, x^(x - 1)]
-            sage: t._latex_()                                                           # optional - sage.symbolic
+            sage: t._latex_()                                                           # needs sage.symbolic
             '\\left[\\sqrt{x}, e^{x}, x^{x - 1}\\right]'
-            sage: latex(t)                                                              # optional - sage.symbolic
+            sage: latex(t)                                                              # needs sage.symbolic
             \left[\sqrt{x}, e^{x}, x^{x - 1}\right]
         """
         from sage.misc.latex import list_function as list_latex_function
@@ -854,12 +854,12 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             sage: S.universe()
             Traceback (most recent call last):
             ...
-            AttributeError: 'Sequence_generic' object has no attribute '_Sequence_generic__universe'
+            AttributeError: 'Sequence_generic' object has no attribute '_Sequence_generic__universe'...
             sage: S._Sequence__universe = 'foobar'
             sage: S.universe()
             'foobar'
 
-        We test that :trac:`13998` is fixed::
+        We test that :issue:`13998` is fixed::
 
             sage: S = Sequence([])
             sage: S.set_immutable()
@@ -867,7 +867,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             sage: hash(S)
             Traceback (most recent call last):
             ...
-            AttributeError: 'Sequence_generic' object has no attribute '_Sequence_generic__hash'
+            AttributeError: 'Sequence_generic' object has no attribute '_Sequence_generic__hash'...
             sage: S._Sequence__hash = int(34)
             sage: hash(S)
             34
@@ -888,7 +888,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             self.__hash = self._Sequence__hash
             return self.__hash
         else:
-            raise AttributeError("'Sequence_generic' object has no attribute '%s'"%name)
+            raise AttributeError("'Sequence_generic' object has no attribute '%s'" % name)
+
+
 seq = Sequence
 
 from sage.misc.persist import register_unpickle_override

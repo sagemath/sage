@@ -175,7 +175,7 @@ def is_strongly_regular(g, parameters=False):
         sage: g.is_strongly_regular()
         False
 
-    Complete graphs are not strongly regular. (:trac:`14297`) ::
+    Complete graphs are not strongly regular. (:issue:`14297`) ::
 
         sage: g = graphs.CompleteGraph(5)
         sage: g.is_strongly_regular()
@@ -344,7 +344,7 @@ def triangles_count(G):
         sage: from sage.graphs.base.static_dense_graph import triangles_count
         sage: triangles_count(graphs.PetersenGraph())
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
-        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3 * binomial(15, 3)
+        sage: sum(triangles_count(graphs.CompleteGraph(15)).values()) == 3 * binomial(15, 3)        # needs sage.symbolic
         True
     """
     from sage.rings.integer import Integer

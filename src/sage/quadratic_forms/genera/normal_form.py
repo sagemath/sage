@@ -1,4 +1,4 @@
-# sage.doctest:           optional - sage.libs.pari sage.rings.padics
+# sage.doctest:           needs sage.libs.pari sage.rings.padics
 r"""
 Normal forms for `p`-adic quadratic and bilinear forms
 
@@ -539,7 +539,7 @@ def _homogeneous_normal_form(G, w):
         e1 = D[-2, -2].unit_part()
         e2 = D[-1, -1].unit_part()
         e = {e1, e2}
-        E = [{3, 3}, {3, 5}, {5, 5}, {5, 7}]
+        E = [{3}, {3, 5}, {5}, {5, 7}]
         if e in E:
             B[-2:, :] = _relations(D[-2:, -2:], 1) * B[-2:, :]
             D = B * G * B.T
@@ -1374,7 +1374,7 @@ def _relations(G, n):
         e1 = G[0, 0].unit_part()
         e2 = G[1, 1].unit_part()
         B = Matrix(R, 2, 2, [1, 1, -4 * e2, e1])
-    D, B1 = _normalize(B * G * B.T)
+    _, B1 = _normalize(B * G * B.T)
     return B1 * B
 
 

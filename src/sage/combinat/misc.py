@@ -19,7 +19,7 @@ Miscellaneous
 from sage.misc.misc_c import prod
 
 
-class DoublyLinkedList():
+class DoublyLinkedList:
     """
     A doubly linked list class that provides constant time hiding and
     unhiding of entries.

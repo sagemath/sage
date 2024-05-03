@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs          (because all doctests use SimplicialComplex)
+# sage.doctest: needs sage.graphs          (because all doctests use SimplicialComplex)
 r"""
 Homspaces between chain complexes
 
@@ -86,7 +86,7 @@ EXAMPLES::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2009 D. Benjamin Antieau <d.ben.antieau@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -100,7 +100,7 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 #
-#*****************************************************************************
+# ****************************************************************************
 
 import sage.categories.homset
 from sage.homology.chain_complex_morphism import ChainComplexMorphism

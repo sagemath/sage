@@ -110,8 +110,8 @@ def breadth_first_level_search(G, start):
 
     EXAMPLES::
 
-        sage: H = digraphs.DeBruijn(3,2)                                                # optional - sage.combinat
-        sage: list(sage.graphs.partial_cube.breadth_first_level_search(H, '00'))        # optional - sage.combinat
+        sage: H = digraphs.DeBruijn(3,2)                                                # needs sage.combinat
+        sage: list(sage.graphs.partial_cube.breadth_first_level_search(H, '00'))        # needs sage.combinat
         [{'00': {'01', '02'}},
          {'01': {'10', '11', '12'}, '02': {'20', '21', '22'}},
          {'10': set(),
@@ -162,9 +162,9 @@ def depth_first_traversal(G, start):
 
     EXAMPLES::
 
-        sage: H = digraphs.DeBruijn(3,2)                                                # optional - sage.combinat
-        sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))         # optional - sage.combinat
-        sage: len(t)                                                                    # optional - sage.combinat
+        sage: H = digraphs.DeBruijn(3,2)                                                # needs sage.combinat
+        sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))         # needs sage.combinat
+        sage: len(t)                                                                    # needs sage.combinat
         16
     """
     neighbors = G.neighbor_out_iterator
@@ -329,7 +329,7 @@ def is_partial_cube(G, certificate=False):
         labeled = Graph([contracted.vertices(sort=False), []])
         for v, w in contracted.edge_iterator(labels=False):
             diff = bitvec[v] ^ bitvec[w]
-            if not diff or not bitvec[w] &~ bitvec[v]:
+            if not diff or not bitvec[w] & ~bitvec[v]:
                 continue    # zero edge or wrong direction
             if diff not in neighbors:
                 return fail
@@ -342,7 +342,7 @@ def is_partial_cube(G, certificate=False):
 
         # Map vertices to components of labeled-edge graph
         component = {}
-        for i, SCC in enumerate(labeled.connected_components()):
+        for i, SCC in enumerate(labeled.connected_components(sort=False)):
             for v in SCC:
                 component[v] = i
 
@@ -363,7 +363,7 @@ def is_partial_cube(G, certificate=False):
     # Make a digraph with edges labeled by the equivalence classes in unionfind
     g = DiGraph({v: {w: unionfind.find((v, w)) for w in G[v]} for v in G})
 
-    # Associates to a vertex the token that acts on it, an check that
+    # Associates to a vertex the token that acts on it, and check that
     # no two edges on a single vertex have the same label
     action = {}
     for v in g:

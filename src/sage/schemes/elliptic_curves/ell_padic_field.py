@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.padics
 """
 Elliptic curves over padic fields
 """
@@ -33,9 +34,10 @@ class EllipticCurve_padic_field(EllipticCurve_field, HyperellipticCurve_padic_fi
 
     EXAMPLES::
 
-        sage: Qp=pAdicField(17)
-        sage: E=EllipticCurve(Qp,[2,3]); E
-        Elliptic Curve defined by y^2  = x^3 + (2+O(17^20))*x + (3+O(17^20)) over 17-adic Field with capped relative precision 20
+        sage: Qp = pAdicField(17)
+        sage: E = EllipticCurve(Qp,[2,3]); E
+        Elliptic Curve defined by y^2  = x^3 + (2+O(17^20))*x + (3+O(17^20))
+         over 17-adic Field with capped relative precision 20
         sage: E == loads(dumps(E))
         True
     """
@@ -59,7 +61,7 @@ class EllipticCurve_padic_field(EllipticCurve_field, HyperellipticCurve_padic_fi
             sage: E.frobenius(point)
             (0 : 1 + O(13^20) : 1 + O(13^20))
 
-        Check that :trac:`29709` is fixed::
+        Check that :issue:`29709` is fixed::
 
             sage: Qp = pAdicField(13)
             sage: E = EllipticCurve(Qp,[0,0,1,0,1])

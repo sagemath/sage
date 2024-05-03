@@ -10,10 +10,11 @@ Algebra modules
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_module
-from .commutative_algebras import CommutativeAlgebras
-from .commutative_rings import CommutativeRings
-from .modules import Modules
+from sage.categories.category_types import Category_module
+from sage.categories.commutative_algebras import CommutativeAlgebras
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.modules import Modules
+
 
 class AlgebraModules(Category_module):
     """
@@ -39,7 +40,7 @@ class AlgebraModules(Category_module):
             sage: AlgebraModules(QQ['a'])
             Category of algebra modules over Univariate Polynomial Ring in a over Rational Field
             sage: AlgebraModules(QQ['a,b']) # todo: not implemented (QQ['a,b'] should be in Algebras(QQ))
-            sage: AlgebraModules(FreeAlgebra(QQ, 2, 'a,b'))                             # optional - sage.combinat sage.modules
+            sage: AlgebraModules(FreeAlgebra(QQ, 2, 'a,b'))                             # needs sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             TypeError: A (=Free Algebra on 2 generators (a, b) over Rational Field) must be a commutative algebra

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 Parametric surface
 
@@ -122,14 +122,14 @@ from math import cos, sin
 from sage.rings.real_double import RDF
 
 from sage.plot.colors import check_color_data
-from .base import RenderParams
-from .transform cimport point_c, face_c
+from sage.plot.plot3d.base import RenderParams
+from sage.plot.plot3d.transform cimport point_c, face_c
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 
 include "point_c.pxi"
 
 
-cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b):
+cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b) noexcept:
     if point_c_eq(vs[f.vertices[a]], vs[f.vertices[b]]):
         f.vertices[b] = f.vertices[a]
         f.n -= 1
@@ -357,7 +357,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: print(s[0][:100])
             {"vertices":[{"x":-2,"y":-2,"z":0},{"x":-2,"y":-1.89744,"z":0.399737},{"x":-1.89744,"y":-1.89744,"z"
 
-        One test for :trac:`22688`::
+        One test for :issue:`22688`::
 
             sage: P = spherical_plot3d(sqrt(x-pi/2),(x,0,pi),(y,0,2*pi))
             sage: s = P.json_repr(P.default_render_params())
@@ -468,7 +468,8 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
             sage: M = MoebiusStrip(7,3,2)
             sage: M.bounding_box()
-            ((-10.0, -7.53907349250478..., -2.9940801852848145), (10.0, 7.53907349250478..., 2.9940801852848145))
+            ((-10.0, -7.53907349250478..., -2.9940801852848145),
+             (10.0, 7.53907349250478..., 2.9940801852848145))
         """
         # We must triangulate before computing the bounding box; otherwise
         # we'll get an empty bounding box, as the bounding box is computed
@@ -493,7 +494,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: def f(x,y): return x+y, sin(x)*sin(y), x*y                        # indirect doctests
             sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)))  # indirect doctests
             sage: P.show()                                                          # indirect doctests
-            sage: S = MoebiusStrip(1,.2)                                             # indirect doctests
+            sage: S = MoebiusStrip(1, .2)                                           # indirect doctests
             sage: S.show()                                                          # indirect doctests
         """
         cdef double u, v
@@ -710,9 +711,9 @@ cdef class ParametricSurface(IndexFaceSet):
 
                 res = self.vs
                 if fast_y:  # must be Wrapper_rdf
-                    for i from 0 <= i < m:
+                    for i in range(m):
                         uv[0] = ulist[i]
-                        for j from 0 <= j < n:
+                        for j in range(n):
                             sig_check()
                             uv[1] = vlist[j]
                             (<Wrapper_rdf>fy).call_c(uv, &res.y)
@@ -777,7 +778,7 @@ cdef class ParametricSurface(IndexFaceSet):
         """
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
-        Needed to support PLOT in doctrings, see :trac:`17498`
+        Needed to support PLOT in doctrings, see :issue:`17498`
 
         EXAMPLES::
 

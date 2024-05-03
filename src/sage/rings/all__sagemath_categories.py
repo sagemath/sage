@@ -1,6 +1,6 @@
 # Ring base classes
-from .ring import Ring
-
+from sage.rings.ring import Ring
 # Ideals
-from .ideal import Ideal
+from sage.rings.ideal import Ideal
+
 ideal = Ideal

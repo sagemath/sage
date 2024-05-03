@@ -1,5 +1,5 @@
-from .types cimport mat_GF2_c
-from .ntl_GF2 cimport ntl_GF2
+from sage.libs.ntl.types cimport mat_GF2_c
+from sage.libs.ntl.ntl_GF2 cimport ntl_GF2
 
 cdef class ntl_mat_GF2():
     cdef mat_GF2_c x

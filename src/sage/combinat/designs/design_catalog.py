@@ -4,7 +4,7 @@ Catalog of designs
 This module gathers all designs that can be reached through
 ``designs.<tab>``. Example with the Witt design on 24 points::
 
-    sage: designs.WittDesign(24) # optional - gap_packages
+    sage: designs.WittDesign(24)                                # optional - gap_package_design
     Incidence structure with 24 points and 759 blocks
 
 Or a Steiner Triple System on 19 points::

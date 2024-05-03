@@ -8,7 +8,7 @@ which require certain external software installed on the system.
 Even though the functions in this module should also work when an external
 software is not present, most doctests in this module are only tested if
 testing of external software is explicitly enabled in order to avoid invoking
-external software otherwise. See :trac:`28819` for details.
+external software otherwise. See :issue:`28819` for details.
 
 AUTHORS:
 
@@ -16,7 +16,12 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2016 KWANKYU LEE <ekwankyu@gmail.com>
+#       Copyright (C) 2016      Kwankyu Lee <ekwankyu@gmail.com>
+#                     2018      Thierry Monteil
+#                     2018-2021 Sébastien Labbé
+#                     2019      Markus Wageringel
+#                     2020      John H. Palmieri
+#                     2021      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -355,7 +360,7 @@ def external_features():
     yield CPLEX()
     yield Gurobi()
 
-def external_software():
+def external_software() -> list[str]:
     """
     Return the alphabetical list of external software supported by this module.
 
@@ -366,6 +371,7 @@ def external_software():
         True
     """
     return sorted(f.name for f in external_features())
+
 
 external_software = external_software()
 

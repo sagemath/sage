@@ -223,7 +223,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             sage: F = GF(3); MS = MatrixSpace(F,2,2)
             sage: G = MatrixGroup([MS([1,1,0,1])])
             sage: g = G.gen(0)
-            sage: M = matrix(GF(9), g); M; parent(M)
+            sage: M = matrix(GF(9), g); M; parent(M)                                    # needs sage.rings.finite_rings
             [1 1]
             [0 1]
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field in z2 of size 3^2
@@ -306,14 +306,14 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
 
         This method writes the group element as a product of the
         elements of the list ``gens``, or the standard generators of
-        the parent of self if ``gens`` is None.
+        the parent of ``self`` if ``gens`` is ``None``.
 
         INPUT:
 
         - ``gens`` -- a list/tuple/iterable of elements (or objects
           that can be converted to group elements), or ``None``
-          (default). By default, the generators of the parent group
-          are used.
+          (default); by default, the generators of the parent group
+          are used
 
         OUTPUT:
 

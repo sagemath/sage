@@ -80,7 +80,7 @@ cdef inline tuple _flatten_coeffs(tuple eq_tup):
     coefficients.
 
     This is used to avoid pickling cyclotomic coefficient objects, which fails
-    with new PARI settings introduced in :trac:`30537`.
+    with new PARI settings introduced in :issue:`30537`.
     """
     cdef list flat = []
     cdef NumberFieldElement_absolute cyc_coeff
@@ -94,7 +94,7 @@ cpdef tuple _unflatten_coeffs(field, tuple eq_tup):
     coefficients representation.
 
     Used to circumvent pickling issue introduced by PARI settigs
-    in :trac:`30537`.
+    in :issue:`30537`.
 
     EXAMPLES::
 
@@ -118,7 +118,7 @@ cpdef tuple _unflatten_coeffs(field, tuple eq_tup):
 #   Useful private predicates   #
 #################################
 
-cdef inline int has_appropriate_linear_term(tuple eq_tup):
+cdef inline int has_appropriate_linear_term(tuple eq_tup) noexcept:
     r"""
     Determine whether the given tuple of pairs (of length 2) contains
     an *appropriate* linear term.
@@ -320,7 +320,7 @@ cpdef tuple apply_coeff_map(tuple eq_tup, coeff_map):
     return tuple(new_tup)
 
 # cpdef inline bint tup_fixes_sq(tuple eq_tup):
-cdef inline bint tup_fixes_sq(tuple eq_tup):
+cdef inline bint tup_fixes_sq(tuple eq_tup) noexcept:
     r"""
     Determine if given equation fixes the square of a variable.
 

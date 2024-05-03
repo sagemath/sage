@@ -379,7 +379,7 @@ cdef class GLPKBackend(GenericBackend):
                 raise ValueError("Problem name for GLPK must not be longer than 255 characters.")
             glp_set_prob_name(self.lp, name)
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d=0.0):
         """
         Set the objective function.
 
@@ -595,7 +595,7 @@ cdef class GLPKBackend(GenericBackend):
 
         TESTS:
 
-        This used to crash Sage, but was fixed in :trac:`19525`::
+        This used to crash Sage, but was fixed in :issue:`19525`::
 
             sage: p = MixedIntegerLinearProgram(solver="glpk")
             sage: q = MixedIntegerLinearProgram(solver="glpk")
@@ -966,7 +966,7 @@ cdef class GLPKBackend(GenericBackend):
         .. WARNING::
 
             GLPK's ``glp_intopt`` sometimes fails catastrophically
-            when given a system it cannot solve (:trac:`12309`). It
+            when given a system it cannot solve (:issue:`12309`). It
             can loop indefinitely, or just plain segfault. Upstream
             considers this behavior "essentially innate" to the
             current design, and suggests preprocessing with
@@ -1062,7 +1062,7 @@ cdef class GLPKBackend(GenericBackend):
             True
 
         Below we test that GLPK backend can detect unboundedness in
-        "simplex_only" mode (:trac:`18838`).
+        "simplex_only" mode (:issue:`18838`).
 
         EXAMPLES::
 
@@ -1097,6 +1097,7 @@ cdef class GLPKBackend(GenericBackend):
         the result is not optimal. To do this, we try to compute the maximum
         number of disjoint balls (of diameter 1) in a hypercube::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
             sage: p.solver_parameter("mip_gap_tolerance",100)
@@ -1110,6 +1111,7 @@ cdef class GLPKBackend(GenericBackend):
 
         Same, now with a time limit::
 
+            sage: # needs sage.graphs
             sage: p.solver_parameter("mip_gap_tolerance",1)
             sage: p.solver_parameter("timelimit",3.0)
             sage: p.solve() # rel tol 100
@@ -1197,6 +1199,7 @@ cdef class GLPKBackend(GenericBackend):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
             sage: p.solver_parameter("mip_gap_tolerance",100)
@@ -1231,6 +1234,7 @@ cdef class GLPKBackend(GenericBackend):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
             sage: p = MixedIntegerLinearProgram(solver="GLPK")
             sage: p.solver_parameter("mip_gap_tolerance",100)
@@ -1250,7 +1254,7 @@ cdef class GLPKBackend(GenericBackend):
         Just make sure that the variable *has* been defined, and is not just
         undefined::
 
-            sage: backend.get_relative_objective_gap() > 1
+            sage: backend.get_relative_objective_gap() > 1                              # needs sage.graphs
             True
         """
         return self.search_tree_data.mip_gap
@@ -1349,7 +1353,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_row_prim(self.lp, i+1)
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -1366,7 +1370,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return glp_get_num_cols(self.lp)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -1466,7 +1470,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             return ""
 
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
@@ -1503,7 +1507,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_col_kind(self.lp, index + 1) == GLP_BV
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
@@ -1540,7 +1544,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_col_kind(self.lp, index + 1) == GLP_IV
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -1579,7 +1583,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_col_kind(self.lp, index + 1) == GLP_CV
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -1596,7 +1600,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_obj_dir(self.lp) == GLP_MAX
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -1622,7 +1626,7 @@ cdef class GLPKBackend(GenericBackend):
 
         TESTS:
 
-        :trac:`14581`::
+        :issue:`14581`::
 
             sage: P = MixedIntegerLinearProgram(solver="GLPK")
             sage: x = P["x"]
@@ -1630,7 +1634,7 @@ cdef class GLPKBackend(GenericBackend):
             sage: P.get_max(x)
             0.0
 
-        Check that :trac:`10232` is fixed::
+        Check that :issue:`10232` is fixed::
 
             sage: p = get_solver(solver="GLPK")
             sage: p.variable_upper_bound(2)
@@ -1695,7 +1699,7 @@ cdef class GLPKBackend(GenericBackend):
                     glp_set_col_bnds(self.lp, index + 1, GLP_DB, min, dvalue)
                 sig_off()
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 
@@ -1721,7 +1725,7 @@ cdef class GLPKBackend(GenericBackend):
 
         TESTS:
 
-        :trac:`14581`::
+        :issue:`14581`::
 
             sage: P = MixedIntegerLinearProgram(solver="GLPK")
             sage: x = P["x"]
@@ -1730,7 +1734,7 @@ cdef class GLPKBackend(GenericBackend):
             sage: P.get_min(x)
             0.0
 
-        Check that :trac:`10232` is fixed::
+        Check that :issue:`10232` is fixed::
 
             sage: p = get_solver(solver="GLPK")
             sage: p.variable_lower_bound(2)
@@ -1870,7 +1874,7 @@ cdef class GLPKBackend(GenericBackend):
         return p
 
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter
 
@@ -2319,7 +2323,7 @@ cdef class GLPKBackend(GenericBackend):
         else:
             raise ValueError("This parameter is not available.")
 
-    cpdef bint is_variable_basic(self, int index):
+    cpdef bint is_variable_basic(self, int index) noexcept:
         """
         Test whether the given variable is basic.
 
@@ -2350,7 +2354,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.get_col_stat(index) == GLP_BS
 
-    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the given variable is nonbasic at lower bound.
         This assumes that the problem has been solved with the simplex method
@@ -2380,7 +2384,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.get_col_stat(index) == GLP_NL
 
-    cpdef bint is_slack_variable_basic(self, int index):
+    cpdef bint is_slack_variable_basic(self, int index) noexcept:
         """
         Test whether the slack variable of the given row is basic.
 
@@ -2411,7 +2415,7 @@ cdef class GLPKBackend(GenericBackend):
         """
         return self.get_row_stat(index) == GLP_BS
 
-    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the slack variable of the given row is nonbasic at lower bound.
 
@@ -2525,7 +2529,7 @@ cdef class GLPKBackend(GenericBackend):
                                                 'surrogateescape'))
         return res
 
-    cpdef double get_row_dual(self, int variable):
+    cpdef double get_row_dual(self, int variable) noexcept:
         r"""
         Returns the dual value of a constraint.
 
@@ -2791,7 +2795,7 @@ cdef class GLPKBackend(GenericBackend):
 
         glp_set_col_stat(self.lp, j+1, stat)
 
-    cpdef int warm_up(self):
+    cpdef int warm_up(self) noexcept:
         r"""
         Warm up the basis using current statuses assigned to rows and cols.
 
@@ -3033,7 +3037,7 @@ cdef class GLPKBackend(GenericBackend):
         sig_free(self.iocp)
         sig_free(self.smcp)
 
-cdef void glp_callback(glp_tree* tree, void* info):
+cdef void glp_callback(glp_tree* tree, void* info) noexcept:
     r"""
     A callback routine called by glp_intopt
 

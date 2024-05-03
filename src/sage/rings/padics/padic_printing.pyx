@@ -211,7 +211,7 @@ class pAdicPrinterDefaults(SageObject):
             sage: padic_printing.max_unram_terms(2)
             sage: padic_printing.max_unram_terms()
             2
-            sage: Zq(5^6, 5, names='a')([1,2,3,-1])^17
+            sage: Zq(5^6, 5, names='a')([1,2,3,-1])^17                                  # needs sage.libs.ntl
             (3*a^4 + ... + 3) + (a^5 + ... + a)*5 + (3*a^3 + ... + 2)*5^2 + (3*a^5 + ... + 2)*5^3 + (4*a^5 + ... + 4)*5^4 + O(5^5)
 
             sage: padic_printing.max_unram_terms(-1)
@@ -236,7 +236,7 @@ class pAdicPrinterDefaults(SageObject):
             sage: padic_printing.max_poly_terms()
             3
             sage: padic_printing.mode('terse')
-            sage: Zq(7^5, 5, names='a')([2,3,4])^8
+            sage: Zq(7^5, 5, names='a')([2,3,4])^8                                      # needs sage.libs.ntl
             2570 + 15808*a + 9018*a^2 + ... + O(7^5)
 
             sage: padic_printing.max_poly_terms(-1)
@@ -379,7 +379,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         TESTS::
 
-            sage: R = Qp(7, print_mode='bars', print_sep='&') #indirect doctest
+            sage: R = Qp(7, print_mode='bars', print_sep='&')  # indirect doctest
 
             sage: R = Zp(5, print_mode='digits', print_max_terms=10)
             Traceback (most recent call last):
@@ -464,7 +464,7 @@ cdef class pAdicPrinter_class(SageObject):
                 raise ValueError("max_terse_terms must be positive and fit in a long")
         else:
             self.max_terse_terms = _printer_defaults._max_terse_terms
-        from .factory import _canonicalize_show_prec
+        from sage.rings.padics.factory import _canonicalize_show_prec
         self.show_prec = _canonicalize_show_prec(self.ring._prec_type(), mode, show_prec)
 
         # Incompatibilities
@@ -614,7 +614,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         EXAMPLES::
 
-            sage: Zp(5)._printer #indirect doctest
+            sage: Zp(5)._printer  # indirect doctest
             series printer for 5-adic Ring with capped relative precision 20
         """
         return "%s printer for %s"%(self._print_mode(), self.ring)
@@ -830,7 +830,7 @@ cdef class pAdicPrinter_class(SageObject):
         EXAMPLES::
 
             sage: P = Zp(17)._printer
-            sage: P._base_p_list(1298734,True) #indirect doctest
+            sage: P._base_p_list(1298734,True)  # indirect doctest
             [2, 15, 5, 9, 15]
             sage: P._base_p_list(1298734,False)
             [2, -2, 6, -8, -1, 1]
@@ -900,7 +900,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         EXAMPLES::
 
-            sage: R = Zp(7,4,'capped-rel','val-unit'); a = R(364); a #indirect doctest
+            sage: R = Zp(7,4,'capped-rel','val-unit'); a = R(364); a  # indirect doctest
             7 * 52 + O(7^5)
             sage: print(a.str('terse'))
             364 + O(7^5)
@@ -922,13 +922,12 @@ cdef class pAdicPrinter_class(SageObject):
 
         TESTS:
 
-        Check that :trac:`24843` is resolved::
+        Check that :issue:`24843` is resolved::
 
             sage: R = Zp(2, print_mode='digits', show_prec=True)
             sage: repr(R(0,10))
             '...0000000000'
         """
-        cdef Py_ssize_t i
         s = ""
         if self.show_prec == "dots":
             unknown_digit = "?"
@@ -1063,10 +1062,8 @@ cdef class pAdicPrinter_class(SageObject):
         """
         cdef Integer lift_z, pprec
         cdef int ZZ_pEX
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         cdef long val
-        #cdef bint ellipsis = 0
-        cdef ellipsis_unram
         cdef bint integral
         var_name = self.latex_var_name if do_latex else self.var_name
         if self.base:
@@ -1200,10 +1197,10 @@ cdef class pAdicPrinter_class(SageObject):
                                     s += " - "
                                     s += self._var(var_name, i, do_latex)
                                 else:
-                                    s += " - %s"%(arep)
+                                    s += " - %s" % (arep)
                                     s += self._dot_var(var_name, i, do_latex)
                             elif a == pk:
-                                if s != "":
+                                if s:
                                     s += " + "
                                 s += self._var(var_name, i, do_latex)
                             else:
@@ -1211,9 +1208,9 @@ cdef class pAdicPrinter_class(SageObject):
                                 v, u = a.val_unit(self.prime_pow.prime)
                                 arep = self._terse_frac(a, v, u, ram_name, do_latex)
                                 if s == "":
-                                    s = "%s"%arep
+                                    s = "%s" % arep
                                 else:
-                                    s += " + %s"%arep
+                                    s += " + %s" % arep
                                 s += self._dot_var(var_name, i, do_latex)
                     if ellipsis:
                         s += self._plus_ellipsis(do_latex)

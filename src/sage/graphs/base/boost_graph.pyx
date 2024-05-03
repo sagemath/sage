@@ -515,7 +515,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     Unfortunately, exactly computing the bandwidth is NP-hard (and an
     exponential algorithm is implemented in Sagemath in routine
     :func:`~sage.graphs.graph_decompositions.bandwidth.bandwidth`). Here, we
-    implement two heuristics to find good orderings: Cuthill-McKee, and King.
+    implement two heuristics to find good orderings: Cuthill-McKee, reverse
+    Cuthill-McKee (also known as ``RCM``) and King.
 
     This function works only in undirected graphs, and its running time is
     `O(md_{max}\log d_{max})` for the Cuthill-McKee ordering, and
@@ -527,7 +528,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     - ``g`` -- the input Sage graph
 
     - ``algorithm`` -- string (default: ``'cuthill_mckee'``); the heuristic used
-      to compute the ordering among ``'cuthill_mckee'`` and ``'king'``
+      to compute the ordering among ``'cuthill_mckee'``,
+      ``'reverse_cuthill_mckee'`` and ``'king'``
 
     OUTPUT:
 
@@ -542,6 +544,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
         (1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         sage: bandwidth_heuristics(graphs.GridGraph([3,3]))
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
+        sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='reverse_cuthill_mckee')
+        (3, [(2, 2), (1, 2), (2, 1), (0, 2), (1, 1), (2, 0), (0, 1), (1, 0), (0, 0)])
         sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='king')
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
 
@@ -561,7 +565,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     Given a wrong algorithm::
 
-        from sage.graphs.base.boost_graph import bandwidth_heuristics
+        sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(graphs.PathGraph(3), algorithm='tip top')
         Traceback (most recent call last):
         ...
@@ -569,10 +573,10 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     Given a graph with no edges::
 
-        from sage.graphs.base.boost_graph import bandwidth_heuristics
+        sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(Graph())
         (0, [])
-        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # optional - networkx
+        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # needs networkx
         (0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     """
@@ -581,10 +585,15 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     # Tests for errors and trivial cases
     if not isinstance(g, Graph):
         raise TypeError("the input must be a Sage Graph")
-    if algorithm not in ['cuthill_mckee', 'king']:
+    if algorithm not in ['cuthill_mckee', 'reverse_cuthill_mckee', 'king']:
         raise ValueError(f"unknown algorithm {algorithm!r}")
     if not g.num_edges():
         return (0, list(g))
+
+    cdef bint reverse = False
+    if algorithm == 'reverse_cuthill_mckee':
+        reverse = True
+        algorithm = 'cuthill_mckee'
 
     # These variables are automatically deleted when the function terminates.
     cdef BoostVecGraph g_boost
@@ -601,8 +610,12 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     cdef int n = g.num_verts()
     cdef dict pos = {int_to_vertex[<int> result[i]]: i for i in range(n)}
-    cdef int bandwidth = max([abs(pos[u] - pos[v]) for u, v in g.edge_iterator(labels=False)])
+    cdef int bandwidth = max([abs(pos[u] - pos[v])
+                              for u, v in g.edge_iterator(labels=False)])
 
+    if reverse:
+        return (bandwidth, [int_to_vertex[<int> result[i]]
+                            for i in range(n - 1, -1, -1)])
     return (bandwidth, [int_to_vertex[<int> result[i]] for i in range(n)])
 
 
@@ -686,6 +699,16 @@ cpdef min_spanning_tree(g,
         Traceback (most recent call last):
         ...
         TypeError: float() argument must be a string or a... number...
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)], weighted=True)
+        sage: E = min_spanning_tree(G, algorithm='Kruskal')
+        sage: sum(w for _, _, w in E)
+        3
+        sage: F = min_spanning_tree(G, algorithm='Prim')
+        sage: sum(w for _, _, w in F)
+        3
     """
     from sage.graphs.graph import Graph
 
@@ -719,9 +742,8 @@ cpdef min_spanning_tree(g,
 
     if <v_index> result.size() != 2 * (n - 1):
         return []
-    else:
-        edges = [(int_to_vertex[<int> result[2*i]], int_to_vertex[<int> result[2*i + 1]]) for i in range(n - 1)]
-        return [(min(e[0], e[1]), max(e[0], e[1]), g.edge_label(e[0], e[1])) for e in edges]
+    edges = [(int_to_vertex[<int> result[2*i]], int_to_vertex[<int> result[2*i + 1]]) for i in range(n - 1)]
+    return [(u, v, g.edge_label(u, v)) for u, v in edges]
 
 
 cpdef blocks_and_cut_vertices(g):
@@ -1964,8 +1986,8 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
 
     TESTS::
 
-        sage: G = graphs.RandomBarabasiAlbert(17,6)                                     # optional - networkx
-        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')               # optional - networkx
+        sage: G = graphs.RandomBarabasiAlbert(17,6)                                     # needs networkx
+        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')               # needs networkx
         True
         sage: G = Graph([(0,1,-1)], weighted=True)
         sage: diameter_DHV(G)
@@ -2289,7 +2311,7 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     Return the diameter of a weighted directed graph.
 
     The ``DiFUB`` (Directed iterative Fringe Upper Bound) algorithm calculates
-    the exact value of the diameter of an weighted directed graph [CGLM2012]_.
+    the exact value of the diameter of a weighted directed graph [CGLM2012]_.
 
     This algorithm starts from a vertex found through a 2Dsweep call (a directed
     version of the 2sweep method). The worst case time complexity of the DiFUB
@@ -2483,11 +2505,11 @@ cpdef diameter(G, algorithm=None, source=None,
     - ``algorithm`` -- string (default: ``None``); specifies the algorithm to
       use among:
 
-      - ``'2Dsweep'`` -- Computes lower bound on the diameter of an weighted
+      - ``'2Dsweep'`` -- Computes lower bound on the diameter of a weighted
         directed graph using the weighted version of the algorithm proposed in
         [Broder2000]_. See the code's documentation for more details.
 
-      - ``'DiFUB'`` -- Computes the diameter of an weighted directed graph
+      - ``'DiFUB'`` -- Computes the diameter of a weighted directed graph
         using the weighted version of the algorithm proposed in [CGLM2012]_.
         See the code's documentation for more details.
 

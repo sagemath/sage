@@ -17,13 +17,16 @@ AUTHOR:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *************************************************************************
 
 from sage.categories.morphism import Morphism, is_Morphism
 from .fgp_module import DEBUG
 from sage.structure.richcmp import richcmp, op_NE
 from sage.misc.cachefunc import cached_method
+from sage.categories.homset import Homset
+import sage.misc.weak_dict
+
 
 class FGP_Morphism(Morphism):
     """
@@ -93,7 +96,7 @@ class FGP_Morphism(Morphism):
                 if phi.parent() != parent:
                     raise TypeError
             phi = phi._phi
-            check = False # no need
+            check = False  # no need
 
         # input: phi is a morphism from MO = M.optimized().V() to N.V()
         # that sends MO.W() to N.W()
@@ -127,7 +130,7 @@ class FGP_Morphism(Morphism):
             sage: phi._repr_()
             'Morphism from module over Integer Ring with invariants (4, 12) to module with invariants (4, 12) that sends the generators to [(1, 3), (0, 11)]'
         """
-        return "Morphism from module over %s with invariants %s to module with invariants %s that sends the generators to %s"%(
+        return "Morphism from module over %s with invariants %s to module with invariants %s that sends the generators to %s" % (
             self.domain().base_ring(), self.domain().invariants(), self.codomain().invariants(),
             list(self.im_gens()))
 
@@ -443,19 +446,17 @@ class FGP_Morphism(Morphism):
 
         # Write back in terms of rows of B, and delete rows not corresponding to A,
         # since those corresponding to relations
-        v = (z*U)[:A.nrows()]
+        v = (z * U)[:A.nrows()]
 
         # Take the linear combination that v defines.
-        y = v*self.domain().optimized()[0].V().basis_matrix()
+        y = v * self.domain().optimized()[0].V().basis_matrix()
 
         # Return the finitely generated module element defined by y.
         y = self.domain()(y)
         assert self(y) == x, "bug in phi.lift()"
         return y
 
-from sage.categories.homset import Homset
 
-import sage.misc.weak_dict
 _fgp_homset = sage.misc.weak_dict.WeakValueDictionary()
 
 

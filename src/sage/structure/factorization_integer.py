@@ -57,7 +57,7 @@ class IntegerFactorization(Factorization):
             sage: factor(15)
             3 * 5
 
-        We check that :trac:`13139` is fixed::
+        We check that :issue:`13139` is fixed::
 
             sage: from sage.structure.factorization_integer import IntegerFactorization
             sage: IntegerFactorization([(3, 1)], unsafe=True)
@@ -69,9 +69,9 @@ class IntegerFactorization(Factorization):
             else:
                 self._Factorization__unit = unit
 
-            self._Factorization__x        = x
+            self._Factorization__x = x
             self._Factorization__universe = ZZ
-            self._Factorization__cr       = cr
+            self._Factorization__cr = cr
 
             if sort:
                 self.sort()

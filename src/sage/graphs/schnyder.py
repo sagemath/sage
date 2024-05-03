@@ -66,7 +66,7 @@ def _triangulate(g, comb_emb):
 
     TESTS:
 
-    :trac:`29522` is fixed::
+    :issue:`29522` is fixed::
 
         sage: g = Graph(2)
         sage: _triangulate(g, {})
@@ -555,7 +555,7 @@ def _compute_coordinates(g, x):
     g.set_pos(coordinates)  # Setting _pos attribute to store coordinates
 
 
-class TreeNode():
+class TreeNode:
     """
     A class to represent each node in the trees used by ``_realizer`` and
     ``_compute_coordinates`` when finding a planar geometric embedding in
@@ -743,7 +743,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
         sage: newg = minimal_schnyder_wood(g)
         sage: newg.edges(sort=True)
         [(0, -3, 'red'), (0, -2, 'blue'), (0, -1, 'green')]
-        sage: newg.plot(color_by_label={'red':'red','blue':'blue',                      # optional - sage.plot
+        sage: newg.plot(color_by_label={'red':'red','blue':'blue',                      # needs sage.plot
         ....:  'green':'green',None:'black'})
         Graphics object consisting of 8 graphics primitives
 
@@ -804,7 +804,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
             raise ValueError('not a planar graph')
         if not all(len(u) == 3 for u in graph.faces()):
             raise ValueError('not a triangulation')
-        if not(a in graph.neighbors(b)):
+        if a not in graph.neighbors(b):
             raise ValueError('not a valid root edge')
 
     new_g = DiGraph()

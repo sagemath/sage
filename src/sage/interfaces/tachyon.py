@@ -673,14 +673,14 @@ parameters so that you can position the image map on the object
 properly.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 John E. Stone
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
@@ -804,8 +804,8 @@ class TachyonRT(SageObject):
         if self.version() >= '0.99.2':
             # this keyword was changed in 0.99.2
             model = model.replace(
-                    "              focallength ",
-                    "              focaldist ")
+                "              focallength ",
+                "              focaldist ")
         modelfile = tmp_filename(ext='.dat')
         with open(modelfile, 'w') as file:
             file.write(model)
@@ -890,5 +890,6 @@ class TachyonRT(SageObject):
             See https://github.com/sagemath/sage/issues/34066 for details.
         """
         deprecation(34066, "type 'sage.interfaces.tachyon?' for help")
+
 
 tachyon_rt = TachyonRT()

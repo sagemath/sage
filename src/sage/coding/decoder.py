@@ -31,7 +31,7 @@ class Decoder(SageObject):
     Every decoder class for linear codes (of any metric) should inherit from
     this abstract class.
 
-    To implement an decoder, you need to:
+    To implement a decoder, you need to:
 
     - inherit from :class:`Decoder`
 

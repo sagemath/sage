@@ -184,8 +184,8 @@ Second, you need the information necessary to describe a
 
   Compare::
 
-      sage: from sage.combinat.q_analogues import q_factorial
-      sage: q_factorial(5)
+      sage: from sage.combinat.q_analogues import q_factorial                           # needs sage.combinat
+      sage: q_factorial(5)                                                              # needs sage.combinat
       q^10 + 4*q^9 + 9*q^8 + 15*q^7 + 20*q^6 + 22*q^5 + 20*q^4 + 15*q^3 + 9*q^2 + 4*q + 1
 
 * **Listing the objects.** One can also compute the list of objects in a
@@ -293,8 +293,9 @@ It is possible to profile a map/reduce computation. First we create a
 The profiling is activated by the ``profile`` parameter. The value provided
 should be a prefix (including a possible directory) for the profile dump::
 
-    sage: prof = tmp_dir('RESetMR_profile') + 'profcomp'
-    sage: res = S.run(profile=prof)  # random
+    sage: import tempfile
+    sage: d = tempfile.TemporaryDirectory(prefix="RESetMR_profile")
+    sage: res = S.run(profile=d.name)  # random
     [RESetMapReduceWorker-1:58] (20:00:41.444) Profiling in
     /home/user/.sage/temp/.../32414/RESetMR_profilewRCRAx/profcomp1
     ...
@@ -309,7 +310,7 @@ In this example, the profiles have been dumped in files such as
 :class:`cProfile.Profile` for more details::
 
     sage: import cProfile, pstats
-    sage: st = pstats.Stats(prof+'0')
+    sage: st = pstats.Stats(d.name+'0')
     sage: st.strip_dirs().sort_stats('cumulative').print_stats()  # random
     ...
        Ordered by: cumulative time
@@ -319,6 +320,11 @@ In this example, the profiles have been dumped in files such as
         11968    0.151    0.000    0.223    0.000 map_reduce.py:1292(walk_branch_locally)
     ...
     <pstats.Stats instance at 0x7fedea40c6c8>
+
+Like a good neighbor we clean up our temporary directory as soon as
+possible::
+
+    sage: d.cleanup()
 
 .. SEEALSO::
 
@@ -542,17 +548,17 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import copy
-import sys
-import random
-import queue
 import ctypes
 import logging
 import multiprocessing as mp
+import queue
+import random
+import sys
 from collections import deque
 from threading import Thread
 
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
 
 logger = logging.getLogger(__name__)
 logger.__doc__ = ("""
@@ -1018,7 +1024,7 @@ class RESetMapReduce():
             sage: S = RESetMapReduce(map_function = lambda x: 3*x + 5)
             sage: S.map_function(7)
             26
-         """
+        """
         return 1
 
     def reduce_function(self, a, b):
@@ -1120,7 +1126,7 @@ class RESetMapReduce():
         self._active_tasks = ActiveTaskCounter(self._nprocess)
         self._done = mp.Lock()
         # We use lock=False here, as a compromise, to avoid deadlocking when a
-        # subprocess holding a lock is terminated. (:trac:`33236`)
+        # subprocess holding a lock is terminated. (:issue:`33236`)
         self._aborted = mp.Value(ctypes.c_bool, False, lock=False)
         sys.stdout.flush()
         sys.stderr.flush()
@@ -1234,7 +1240,7 @@ class RESetMapReduce():
             sage: S.print_communication_statistics()
             Traceback (most recent call last):
             ...
-            AttributeError: 'RESetMPExample' object has no attribute '_stats'
+            AttributeError: 'RESetMPExample' object has no attribute '_stats'...
 
             sage: S.finish()
 
@@ -1653,14 +1659,14 @@ class RESetMapReduceWorker(mp.Process):
             sage: EX = RESetMPExample(maxl=6)
             sage: EX.setup_workers(2)
 
+            sage: # known bug (Issue #27537)
             sage: w0, w1 = EX._workers
             sage: w0._todo.append(42)
             sage: thief0 = Thread(target = w0._thief, name="Thief")
-            sage: thief0.start()  # known bug (Issue #27537)
-
-            sage: w1.steal()  # known bug (Issue #27537)
+            sage: thief0.start()
+            sage: w1.steal()
             42
-            sage: w0._todo  # known bug (Issue #27537)
+            sage: w0._todo
             deque([])
         """
         self._mapred._signal_task_done()
@@ -1713,7 +1719,7 @@ class RESetMapReduceWorker(mp.Process):
             PROFILER.runcall(self.run_myself)
 
             output = profile + str(self._iproc)
-            logger.warn(f"Profiling in {output} ...")
+            logger.warning(f"Profiling in {output} ...")
             PROFILER.dump_stats(output)
         else:
             self.run_myself()
@@ -1780,7 +1786,7 @@ class RESetMapReduceWorker(mp.Process):
         r"""
         Send results to the MapReduce process.
 
-        Send the result stored in ``self._res`` to the master an reinitialize it to
+        Send the result stored in ``self._res`` to the master and reinitialize it to
         ``master.reduce_init``.
 
         EXAMPLES::
@@ -1889,8 +1895,8 @@ class RESetMPExample(RESetMapReduce):
             <sage.parallel.map_reduce.RESetMPExample object at 0x...>
         """
         RESetMapReduce.__init__(self)
-        from sage.rings.polynomial.polynomial_ring import polygen
         from sage.rings.integer_ring import ZZ
+        from sage.rings.polynomial.polynomial_ring import polygen
         self.x = polygen(ZZ, 'x')
         self.maxl = maxl
 

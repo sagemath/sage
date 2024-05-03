@@ -119,7 +119,7 @@ cpdef tuple parallelotope_points(spanning_points, lattice):
         sage: parallelotope_points(c.rays(), c.lattice())
         (N(0, 0), N(1, 1))
 
-    A ``ValueError`` is raised if the ``spanning_points`` are not
+    A :class:`ValueError` is raised if the ``spanning_points`` are not
     linearly independent::
 
         sage: rays = list(map(ToricLattice(2), [(1,1)]*2))
@@ -474,8 +474,8 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Long ints and non-integral polyhedra are explicitly allowed::
 
-        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)                  # optional - sage.symbolic
-        sage: len(rectangular_box_points([-100], [100], polytope))                      # optional - sage.symbolic
+        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)                  # needs sage.symbolic
+        sage: len(rectangular_box_points([-100], [100], polytope))                      # needs sage.symbolic
         31
 
         sage: halfplane = Polyhedron(ieqs=[(-1,1,0)])
@@ -488,15 +488,16 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Using a PPL polyhedron::
 
-        sage: from ppl import Variable, Generator_System, C_Polyhedron, point           # optional - pplpy
-        sage: gs = Generator_System()                                                   # optional - pplpy
-        sage: x = Variable(0); y = Variable(1); z = Variable(2)                         # optional - pplpy
-        sage: gs.insert(point(0*x + 1*y + 0*z))                                         # optional - pplpy
-        sage: gs.insert(point(0*x + 1*y + 3*z))                                         # optional - pplpy
-        sage: gs.insert(point(3*x + 1*y + 0*z))                                         # optional - pplpy
-        sage: gs.insert(point(3*x + 1*y + 3*z))                                         # optional - pplpy
-        sage: poly = C_Polyhedron(gs)                                                   # optional - pplpy
-        sage: rectangular_box_points([0]*3, [3]*3, poly)                                # optional - pplpy
+        sage: # needs pplpy
+        sage: from ppl import Variable, Generator_System, C_Polyhedron, point
+        sage: gs = Generator_System()
+        sage: x = Variable(0); y = Variable(1); z = Variable(2)
+        sage: gs.insert(point(0*x + 1*y + 0*z))
+        sage: gs.insert(point(0*x + 1*y + 3*z))
+        sage: gs.insert(point(3*x + 1*y + 0*z))
+        sage: gs.insert(point(3*x + 1*y + 3*z))
+        sage: poly = C_Polyhedron(gs)
+        sage: rectangular_box_points([0]*3, [3]*3, poly)
         ((0, 1, 0), (0, 1, 1), (0, 1, 2), (0, 1, 3), (1, 1, 0), (1, 1, 1), (1, 1, 2), (1, 1, 3),
          (2, 1, 0), (2, 1, 1), (2, 1, 2), (2, 1, 3), (3, 1, 0), (3, 1, 1), (3, 1, 2), (3, 1, 3))
 
@@ -521,7 +522,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     TESTS:
 
-    Check that this can be interrupted, see :trac:`20781`::
+    Check that this can be interrupted, see :issue:`20781`::
 
         sage: ieqs = [(-1, -1, -1, -1, -1, -1, -1, -1, -1),
         ....:         (0, -1, 0, 0, 0, 0, 0, 0, 0),
@@ -544,13 +545,13 @@ cpdef rectangular_box_points(list box_min, list box_max,
     assert not (count_only and return_saturated)
     cdef int d = len(box_min)
     cdef int i, j
-    cdef list diameter = sorted([ (box_max[i]-box_min[i], i) for i in range(d) ],
+    cdef list diameter = sorted([(box_max[i]-box_min[i], i) for i in range(d)],
                                 reverse=True)
     cdef list diameter_value = [x[0] for x in diameter]
     cdef list diameter_index = [x[1] for x in diameter]
 
     # Construct the inverse permutation
-    cdef list orig_perm = list(xrange(len(diameter_index)))
+    cdef list orig_perm = list(range(len(diameter_index)))
     for i, j in enumerate(diameter_index):
         orig_perm[j] = i
 
@@ -739,7 +740,7 @@ cdef class Inequality_generic:
     EXAMPLES::
 
         sage: from sage.geometry.integral_points import Inequality_generic
-        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                          # optional - sage.symbolic
+        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                          # needs sage.symbolic
         generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
     """
 
@@ -761,7 +762,7 @@ cdef class Inequality_generic:
         EXAMPLES::
 
             sage: from sage.geometry.integral_points import Inequality_generic
-            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                      # optional - sage.symbolic
+            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                      # needs sage.symbolic
             generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
         """
         self.A = A
@@ -852,9 +853,9 @@ cdef class Inequality_int:
 
     OUTPUT:
 
-    Inequality `A x + b \geq 0`. A ``OverflowError`` is raised if a
+    Inequality `A x + b \geq 0`. A :class:`OverflowError` is raised if a
     machine integer is not long enough to hold the results. A
-    ``ValueError`` is raised if some of the input is not integral.
+    :class:`ValueError` is raised if some of the input is not integral.
 
     EXAMPLES::
 
@@ -884,7 +885,7 @@ cdef class Inequality_int:
 
     TESTS:
 
-    Check that :trac:`21993` is fixed::
+    Check that :issue:`21993` is fixed::
 
         sage: Inequality_int([18560500, -89466500], 108027, [178933, 37121])
         Traceback (most recent call last):
@@ -978,10 +979,10 @@ cdef class Inequality_int:
         else:
             self.cache = self.cache_next
 
-    cdef bint is_not_satisfied(Inequality_int self, int inner_loop_variable):
+    cdef bint is_not_satisfied(Inequality_int self, int inner_loop_variable) noexcept:
         return inner_loop_variable * self.coeff + self.cache < 0
 
-    cdef bint is_equality(Inequality_int self, int inner_loop_variable):
+    cdef bint is_equality(Inequality_int self, int inner_loop_variable) noexcept:
         return inner_loop_variable * self.coeff + self.cache == 0
 
 
@@ -1131,16 +1132,17 @@ cdef class InequalityCollection:
 
         EXAMPLES::
 
-            sage: from ppl import Variable, Generator_System, C_Polyhedron, point       # optional - pplpy
-            sage: gs = Generator_System()                                               # optional - pplpy
-            sage: x = Variable(0); y = Variable(1); z = Variable(2)                     # optional - pplpy
-            sage: gs.insert(point(0*x + 0*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(0*x + 3*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(3*x + 0*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(3*x + 3*y + 1*z))                                     # optional - pplpy
-            sage: poly = C_Polyhedron(gs)                                               # optional - pplpy
-            sage: from sage.geometry.integral_points import InequalityCollection        # optional - pplpy
-            sage: InequalityCollection(poly, [0,2,1], [0]*3, [3]*3 )                    # optional - pplpy
+            sage: # needs pplpy
+            sage: from ppl import Variable, Generator_System, C_Polyhedron, point
+            sage: gs = Generator_System()
+            sage: x = Variable(0); y = Variable(1); z = Variable(2)
+            sage: gs.insert(point(0*x + 0*y + 1*z))
+            sage: gs.insert(point(0*x + 3*y + 1*z))
+            sage: gs.insert(point(3*x + 0*y + 1*z))
+            sage: gs.insert(point(3*x + 3*y + 1*z))
+            sage: poly = C_Polyhedron(gs)
+            sage: from sage.geometry.integral_points import InequalityCollection
+            sage: InequalityCollection(poly, [0,2,1], [0]*3, [3]*3 )
             The collection of inequalities
             integer: (0, 1, 0) x + -1 >= 0
             integer: (0, -1, 0) x + 1 >= 0
@@ -1188,11 +1190,11 @@ cdef class InequalityCollection:
 
         TESTS:
 
-        Check that :trac:`21037` is fixed::
+        Check that :issue:`21037` is fixed::
 
             sage: P = Polyhedron(vertices=((0, 0), (17,3)))
-            sage: P += 1/1000*polytopes.regular_polygon(5)                              # optional - sage.rings.number_field
-            sage: P.integral_points()                                                   # optional - sage.rings.number_field
+            sage: P += 1/1000*polytopes.regular_polygon(5)                              # needs sage.rings.number_field
+            sage: P.integral_points()                                                   # needs sage.rings.number_field
             ((0, 0), (17, 3))
         """
         cdef list A

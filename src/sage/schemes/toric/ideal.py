@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs sage.libs.singular
 r"""
 Toric ideals
 
@@ -160,7 +161,7 @@ class ToricIdeal(MPolynomialIdeal):
 
       You may specify the ambient polynomial ring via the
       ``polynomial_ring`` parameter or via the ``names`` and
-      ``base_ring`` parameter. A ``ValueError`` is raised if you
+      ``base_ring`` parameter. A :class:`ValueError` is raised if you
       specify both.
 
     - ``algorithm`` -- string (optional). The algorithm to use. For
@@ -217,7 +218,7 @@ class ToricIdeal(MPolynomialIdeal):
             sage: ToricIdeal(A)
             Ideal (-z1^2 + z0*z2) of Multivariate Polynomial Ring
             in z0, z1, z2 over Rational Field
-            sage: ToricIdeal(A, names='x', base_ring=GF(101))                           # optional - sage.rings.finite_rings
+            sage: ToricIdeal(A, names='x', base_ring=GF(101))
             Ideal (-x1^2 + x0*x2) of Multivariate Polynomial Ring
             in x0, x1, x2 over Finite Field of size 101
             sage: ToricIdeal(A, names='x', base_ring=FractionField(QQ['t']))

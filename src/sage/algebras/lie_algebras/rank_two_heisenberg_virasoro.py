@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Rank Two Heisenberg-Virasoro Algebras
 

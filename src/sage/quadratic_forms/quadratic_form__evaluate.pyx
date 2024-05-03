@@ -4,14 +4,15 @@
 def QFEvaluateVector(Q, v):
     r"""
     Evaluate this quadratic form `Q` on a vector or matrix of elements
-    coercible to the base ring of the quadratic form.  If a vector
-    is given, then the output will be the ring element `Q(v)`, but if a
-    matrix is given, then the output will be the quadratic form `Q'`
-    which in matrix notation is given by:
+    coercible to the base ring of the quadratic form.
+
+    If a vector is given, then the output will be the ring element
+    `Q(v)`, but if a matrix is given, then the output will be the
+    quadratic form `Q'` which in matrix notation is given by:
 
     .. MATH::
 
-            Q' = v^t\cdot Q\cdot v.
+        Q' = v^t\cdot Q\cdot v.
 
     .. NOTE::
 
@@ -43,7 +44,6 @@ def QFEvaluateVector(Q, v):
     return QFEvaluateVector_cdef(Q, v)
 
 
-
 cdef QFEvaluateVector_cdef(Q, v):
     r"""
     Routine to quickly evaluate a quadratic form `Q` on a vector `v`.  See
@@ -54,14 +54,13 @@ cdef QFEvaluateVector_cdef(Q, v):
     # (In matrix notation: A^t * Q * A)
     n = Q.dim()
 
-    tmp_val = Q.base_ring()(0)
-    for i from 0 <= i < n:
-        for j from i <= j < n:
-            tmp_val += Q[i,j] * v[i] * v[j]
+    tmp_val = Q.base_ring().zero()
+    for i in range(n):
+        for j in range(i, n):
+            tmp_val += Q[i, j] * v[i] * v[j]
 
     # Return the value (over R)
     return Q.base_ring().coerce(tmp_val)
-
 
 
 def QFEvaluateMatrix(Q, M, Q2):
@@ -72,7 +71,7 @@ def QFEvaluateMatrix(Q, M, Q2):
 
     .. MATH::
 
-            Q_2 = M^t\cdot Q\cdot M.
+        Q_2 = M^t\cdot Q\cdot M.
 
     .. NOTE::
 
@@ -125,14 +124,17 @@ cdef QFEvaluateMatrix_cdef(Q, M, Q2):
     # TODO: Check the dimensions of M are compatible with those of Q and Q2
 
     # Evaluate Q(M) into Q2
-    for k from 0 <= k < m:
-        for l from k <= l < m:
-            tmp_sum = Q2.base_ring()(0)
-            for i from 0 <= i < n:
-                for j from i <= j < n:
-                    if (k == l):
-                        tmp_sum += Q[i,j] * (M[i,k] * M[j,l])
-                    else:
-                        tmp_sum += Q[i,j] * (M[i,k] * M[j,l] + M[i,l] * M[j,k])
-            Q2[k,l] = tmp_sum
+    for k in range(m):
+        for l in range(k, m):
+            tmp_sum = Q2.base_ring().zero()
+            if k == l:
+                for i in range(n):
+                    for j in range(i, n):
+                        tmp_sum += Q[i, j] * (M[i, k] * M[j, l])
+            else:
+                for i in range(n):
+                    for j in range(i, n):
+                        tmp_sum += Q[i, j] * (M[i, k] * M[j, l] +
+                                              M[i, l] * M[j, k])
+            Q2[k, l] = tmp_sum
     return Q2

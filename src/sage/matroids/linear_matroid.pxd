@@ -1,8 +1,8 @@
 from sage.data_structures.bitset cimport bitset_t
 
-from .matroid cimport Matroid
-from .basis_exchange_matroid cimport BasisExchangeMatroid
-from .lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix
 
 
 cdef class LinearMatroid(BasisExchangeMatroid):
@@ -15,7 +15,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef characteristic(self)
 
     cdef list _setup_internal_representation(self, matrix, reduced_matrix, ring, keep_initial_representation)
-    cdef __exchange_value(self, long x, long y)
+    cdef _exchange_value_internal(self, long x, long y)
 
     cpdef representation(self, B=*, reduced=*, labels=*, order=*, lift_map=*)
     cpdef _current_rows_cols(self, B=*)
@@ -23,11 +23,12 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef LeanMatrix _basic_representation(self, B=*)
     cpdef LeanMatrix _reduced_representation(self, B=*)
 
-    cpdef bint _is_field_isomorphism(self, LinearMatroid other, morphism)
+    cpdef bint _is_field_isomorphism(self, LinearMatroid other, morphism) noexcept
     cpdef is_field_equivalent(self, other)
     cpdef is_field_isomorphism(self, other, morphism)
     # cpdef is_field_isomorphic(self, other)  # TODO: currently only works as ``def``
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
     cpdef _minor(self, contractions, deletions)
     cpdef dual(self)
@@ -88,6 +89,7 @@ cdef class BinaryMatroid(LinearMatroid):
     cpdef BinaryMatrix _projection(self)
     cpdef BinaryMatrix _projection_partition(self)
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
     cpdef is_graphic(self)
     cpdef is_valid(self)
@@ -118,6 +120,7 @@ cdef class TernaryMatroid(LinearMatroid):
     cpdef _principal_quadripartition(self)
     cpdef TernaryMatrix _projection(self)
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
     cpdef is_valid(self)
 
@@ -144,6 +147,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
     cpdef bicycle_dimension(self)
     cpdef _principal_tripartition(self)
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
     cpdef is_valid(self)
 
@@ -159,6 +163,7 @@ cdef class RegularMatroid(LinearMatroid):
 
     cpdef _invariant(self)
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
     cpdef bases_count(self)
     cpdef _projection(self)

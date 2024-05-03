@@ -22,18 +22,18 @@ EXAMPLES::
 
 ::
 
-    sage: F.<a> = GF(3)                                                                 # optional - sage.rings.finite_rings
-    sage: R.<x> = F[]                                                                   # optional - sage.rings.finite_rings
-    sage: f = x^5 - 1                                                                   # optional - sage.rings.finite_rings
-    sage: C = HyperellipticCurve(f)                                                     # optional - sage.rings.finite_rings
-    sage: J = C.jacobian()                                                              # optional - sage.rings.finite_rings
-    sage: X = J(F)                                                                      # optional - sage.rings.finite_rings
-    sage: a = x^2 - x + 1; b = -x + 1; c = x - 1; d = 0                                 # optional - sage.rings.finite_rings
-    sage: D1 = X([a,b]); D1                                                             # optional - sage.rings.finite_rings
+    sage: F.<a> = GF(3)
+    sage: R.<x> = F[]
+    sage: f = x^5 - 1
+    sage: C = HyperellipticCurve(f)
+    sage: J = C.jacobian()
+    sage: X = J(F)
+    sage: a = x^2 - x + 1; b = -x + 1; c = x - 1; d = 0
+    sage: D1 = X([a,b]); D1
     (x^2 + 2*x + 1, y + x + 2)
-    sage: D2 = X([c,d]); D2                                                             # optional - sage.rings.finite_rings
+    sage: D2 = X([c,d]); D2
     (x + 2, y)
-    sage: D1 + D2                                                                       # optional - sage.rings.finite_rings
+    sage: D1 + D2
     (x^2 + 2*x + 2, y + 2*x + 1)
 """
 # ****************************************************************************
@@ -98,18 +98,18 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
 
         ::
 
-            sage: F.<a> = GF(3)                                                         # optional - sage.rings.finite_rings
-            sage: R.<x> = F[]                                                           # optional - sage.rings.finite_rings
-            sage: f = x^5 - 1                                                           # optional - sage.rings.finite_rings
-            sage: C = HyperellipticCurve(f)                                             # optional - sage.rings.finite_rings
-            sage: J = C.jacobian()                                                      # optional - sage.rings.finite_rings
-            sage: X = J(F)                                                              # optional - sage.rings.finite_rings
-            sage: a = x^2 - x + 1; b = -x + 1; c = x - 1; d = 0                         # optional - sage.rings.finite_rings
-            sage: D1 = X([a,b]); D1                                                     # optional - sage.rings.finite_rings
+            sage: F.<a> = GF(3)
+            sage: R.<x> = F[]
+            sage: f = x^5 - 1
+            sage: C = HyperellipticCurve(f)
+            sage: J = C.jacobian()
+            sage: X = J(F)
+            sage: a = x^2 - x + 1; b = -x + 1; c = x - 1; d = 0
+            sage: D1 = X([a,b]); D1
             (x^2 + 2*x + 1, y + x + 2)
-            sage: D2 = X([c,d]); D2                                                     # optional - sage.rings.finite_rings
+            sage: D2 = X([c,d]); D2
             (x + 2, y)
-            sage: D1 + D2                                                               # optional - sage.rings.finite_rings
+            sage: D1 + D2
             (x^2 + 2*x + 2, y + 2*x + 1)
         """
         if isinstance(P, (Integer, int)) and P == 0:

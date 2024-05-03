@@ -9,21 +9,24 @@ AUTHOR:
 * Martin Albrecht <malb@informatik.uni-bremen.de>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
+from sage.categories.fields import Fields
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
 
-from sage.libs.singular.function import singular_function
+from sage.libs.singular.function import singular_function, lib
+
+from cysignals.signals cimport sig_on, sig_off
 
 
 cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
@@ -451,6 +454,68 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         """
         return self.fetch('swapped_columns')
 
+    def _fitting_ideal(self, i):
+        r"""
+        Return the `i`-th Fitting ideal of the matrix. This is the ideal generated
+        by the `n - i` minors, where `n` is the number of columns.
+
+        INPUT:
+
+        ``i`` -- an integer
+
+        OUTPUT:
+
+        An ideal on the base ring.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: M = matrix(R, [[2*x-z, 0, y-z^2, 0], [0, z - y, z - x, 0],[z - y, x^2 - y, 0, z]])
+            sage: M
+            [ 2*x - z        0 -z^2 + y        0]
+            [       0   -y + z   -x + z        0]
+            [  -y + z  x^2 - y        0        z]
+            sage: M.fitting_ideal(0)
+            Ideal (0) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(1)
+            Ideal (2*x^4 - 3*x^3*z + x^2*z^2 + y^2*z^2 - 2*y*z^3 + z^4 - 2*x^2*y - y^3 + 3*x*y*z + 2*y^2*z - 2*y*z^2, y*z^3 - z^4 - y^2*z + y*z^2, -2*x*y*z + 2*x*z^2 + y*z^2 - z^3, -2*x^2*z + 3*x*z^2 - z^3) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(2)
+            Ideal (-x^3 + x^2*z + x*y - y*z, -y^2 + 2*y*z - z^2, -x^2*z^2 + x^2*y + y*z^2 - y^2, 2*x^3 - x^2*z - 2*x*y + y*z, -x*y + x*z + y*z - z^2, -y*z^2 + z^3 + y^2 - y*z, -2*x*y + 2*x*z + y*z - z^2, y*z^2 - z^3 - y^2 + y*z, 2*x^2 - 3*x*z + z^2, 2*x*z - z^2, -z^3 + y*z, -y*z + z^2, -x*z + z^2) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(3)
+            Ideal (2*x - z, -z^2 + y, -y + z, -x + z, -y + z, x^2 - y, z) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.fitting_ideal(4)
+            Ideal (1) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)]
+            [True, True, True, True, True]
+
+        """
+        minor = singular_function("minor")
+        R = self.base_ring()
+        for (nrow, row) in enumerate(self.rows()):
+            if not row:
+                N = self.delete_rows([nrow])
+                return N._fitting_ideal(i)
+            for (ncoef, coef) in enumerate(row):
+                if all(coef.divides(f) for f in row):
+                    N = self.__copy__()
+                    for j in range(self.ncols()):
+                        if j != ncoef:
+                            N.add_multiple_of_column(j, ncoef, -R(self[nrow,j] / coef))
+                    return N.fitting_ideal(i)
+        for (ncolumn, column) in enumerate(self.columns()):
+            if not column:
+                N = self.delete_columns([ncolumn])
+                return N._fitting_ideal(i-1)
+            for (ncoef, coef) in enumerate(column):
+                if all(coef.divides(f) for f in column):
+                    N = self.__copy__()
+                    for j in range(self.nrows()):
+                        if j != ncoef:
+                            N.add_multiple_of_row(j, ncoef, -R(self[j, ncolumn] / coef))
+                    return N.fitting_ideal(i)
+        rank = self.ncols() - i
+        return R.ideal(minor(self, rank))
+
     def determinant(self, algorithm=None):
         """
         Return the determinant of this matrix
@@ -506,7 +571,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             sage: m.det()
             0
 
-        Check :trac:`23535` is fixed::
+        Check :issue:`23535` is fixed::
 
             sage: x = polygen(QQ)
             sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])
@@ -541,7 +606,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         else:
             R = self._base_ring
 
-            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring().is_field():
+            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring() in Fields():
                 singular_det = singular_function("det")
                 d = singular_det(self)
 

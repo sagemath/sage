@@ -440,7 +440,7 @@ class LinearExpression(ModuleElement):
             9
             sage: ex([1,1])    # syntactic sugar
             9
-            sage: ex([pi, e])                                           # optional - sage.symbolic
+            sage: ex([pi, e])                                                           # needs sage.symbolic
             2*pi + 3*e + 4
         """
         try:
@@ -534,7 +534,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
         return len(self._names)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -761,7 +761,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: from sage.geometry.linear_expression import LinearExpressionModule
             sage: L.<x> = LinearExpressionModule(QQ);  L
             Module of linear expressions in variable x over Rational Field
-       """
+        """
         return 'Module of linear expressions in variable{2} {0} over {1}'.format(
             ', '.join(self._names), self.base_ring(), 's' if self.ngens() > 1 else '')
 

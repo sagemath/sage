@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The matrix monoid `\Sigma_0(N)`.
 
@@ -161,6 +160,7 @@ class Sigma0_factory(UniqueFactory):
             Monoid Sigma0(3) with coefficients in Integer Ring
         """
         return Sigma0_class(*key)
+
 
 Sigma0 = Sigma0_factory('sage.modular.pollack_stevens.sigma0.Sigma0')
 

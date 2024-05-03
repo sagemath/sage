@@ -9,7 +9,7 @@ def _monomials(gens, R, n, i):
 
     EXAMPLES::
 
-        sage: monomials([x], [3]) # indirect doctest
+        sage: monomials([x], [3])  # indirect doctest                                   # needs sage.symbolic
         [1, x, x^2]
     """
     # each power of the ith generator times all products
@@ -34,7 +34,9 @@ def _monomials(gens, R, n, i):
             z *= gens[i]
         return v
 
+
 from sage.structure.sequence import Sequence
+
 
 def monomials(v, n):
     """
@@ -51,7 +53,7 @@ def monomials(v, n):
 
     EXAMPLES::
 
-        sage: monomials([x], [3])
+        sage: monomials([x], [3])                                                       # needs sage.symbolic
         [1, x, x^2]
         sage: R.<x,y,z> = QQ[]
         sage: monomials([x,y], [5,5])

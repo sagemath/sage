@@ -23,9 +23,14 @@ from . import permgroup_element
 from sage.misc.sage_eval import sage_eval
 from sage.misc.lazy_import import lazy_import
 from sage.interfaces.gap import GapElement
-from sage.libs.pari.all import pari_gen
 from sage.libs.gap.element import GapElement_Permutation
+
 lazy_import('sage.combinat.permutation', ['Permutation', 'from_cycles'])
+
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
 
 
 def PermutationGroupElement(g, parent=None, check=True):
@@ -156,8 +161,8 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
 
     INPUT:
 
-    - ``g`` -- a list, tuple, string, GapElement,
-      PermutationGroupElement, Permutation
+    - ``g`` -- a :class:`list`, :class:`tuple`, :class:`string`, :class:`GapElement`,
+      :class:`PermutationGroupElement`, or :class:`Permutation`
 
     - ``convert_dict`` -- (optional) a dictionary used to convert the
       points to a number compatible with GAP
@@ -165,10 +170,8 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
     - ``as_cycles`` -- (default: ``False``) whether the output should be
       as cycles or in one-line notation
 
-    OUTPUT:
-
-    The permutation in as a list in one-line notation or a list of cycles
-    as tuples.
+    OUTPUT: the permutation in as a list in one-line notation or a list of
+    cycles as tuples.
 
     EXAMPLES::
 

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.modules
 """
 Ideals of non-commutative rings
 
@@ -6,7 +6,7 @@ Generic implementation of one- and two-sided ideals of non-commutative rings.
 
 AUTHOR:
 
-- Simon King (2011-03-21), <simon.king@uni-jena.de>, :trac:`7797`.
+- Simon King (2011-03-21), <simon.king@uni-jena.de>, :issue:`7797`.
 
 EXAMPLES::
 
@@ -39,6 +39,7 @@ algebras.
 
 TESTS::
 
+    sage: # needs sage.combinat
     sage: A = SteenrodAlgebra(2)
     sage: IL = A*[A.1+A.2,A.1^2]; IL
     Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
@@ -115,6 +116,7 @@ class IdealMonoid_nc(IdealMonoid_c):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2) # indirect doctest
             sage: IL = A*[A.1+A.2,A.1^2]; IL
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
@@ -128,6 +130,7 @@ class IdealMonoid_nc(IdealMonoid_c):
 
         ::
 
+            sage: # needs sage.combinat
             sage: IL == loads(dumps(IL))
             True
             sage: IR == loads(dumps(IR))
@@ -244,6 +247,7 @@ class Ideal_nc(Ideal_generic):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2)
             sage: A*[A.1+A.2,A.1^2]      # indirect doctest
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
@@ -263,14 +267,15 @@ class Ideal_nc(Ideal_generic):
 
         EXAMPLES::
 
-             sage: A = SteenrodAlgebra(2)
-             sage: IR = [A.1+A.2,A.1^2]*A
-             sage: IL = A*[A.1+A.2,A.1^2]
-             sage: IT = A*[A.1+A.2,A.1^2]*A
-             sage: IT == IL
-             False
-             sage: IR == [A.1+A.2,A.1^2]*A
-             True
+            sage: # needs sage.combinat
+            sage: A = SteenrodAlgebra(2)
+            sage: IR = [A.1+A.2,A.1^2]*A
+            sage: IL = A*[A.1+A.2,A.1^2]
+            sage: IT = A*[A.1+A.2,A.1^2]*A
+            sage: IT == IL
+            False
+            sage: IR == [A.1+A.2,A.1^2]*A
+            True
         """
         if not isinstance(right, Ideal_nc):
             return False
@@ -289,14 +294,15 @@ class Ideal_nc(Ideal_generic):
 
         EXAMPLES::
 
-             sage: A = SteenrodAlgebra(2)
-             sage: IR = [A.1+A.2,A.1^2]*A
-             sage: IL = A*[A.1+A.2,A.1^2]
-             sage: IT = A*[A.1+A.2,A.1^2]*A
-             sage: IT != IL
-             True
-             sage: IR != [A.1+A.2,A.1^2]*A
-             False
+            sage: # needs sage.combinat
+            sage: A = SteenrodAlgebra(2)
+            sage: IR = [A.1+A.2,A.1^2]*A
+            sage: IL = A*[A.1+A.2,A.1^2]
+            sage: IT = A*[A.1+A.2,A.1^2]*A
+            sage: IT != IL
+            True
+            sage: IR != [A.1+A.2,A.1^2]*A
+            False
         """
         return not self.__eq__(right)
 
@@ -306,14 +312,15 @@ class Ideal_nc(Ideal_generic):
 
         EXAMPLES::
 
-             sage: A = SteenrodAlgebra(2)
-             sage: IR = [A.1+A.2,A.1^2]*A
-             sage: IL = A*[A.1+A.2,A.1^2]
-             sage: IT = A*[A.1+A.2,A.1^2]*A
-             sage: hash(IT) == hash(IL)
-             False
-             sage: hash(IR) == hash([A.1^2,A.1+A.2]*A)
-             True
+            sage: # needs sage.combinat
+            sage: A = SteenrodAlgebra(2)
+            sage: IR = [A.1+A.2,A.1^2]*A
+            sage: IL = A*[A.1+A.2,A.1^2]
+            sage: IT = A*[A.1+A.2,A.1^2]*A
+            sage: hash(IT) == hash(IL)
+            False
+            sage: hash(IR) == hash([A.1^2,A.1+A.2]*A)
+            True
         """
         return hash((self.parent(), self.__side, frozenset(self.gens())))
 
@@ -323,6 +330,7 @@ class Ideal_nc(Ideal_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: A = SteenrodAlgebra(2)
             sage: IL = A*[A.1+A.2,A.1^2]
             sage: IR = [A.1+A.2,A.1^2]*A

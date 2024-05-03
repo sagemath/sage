@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Dimensions of spaces of modular forms
 
@@ -227,6 +227,7 @@ def CohenOesterle(eps, k):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43, K).0^2
             sage: sage.modular.dims.CohenOesterle(eps, 2)
@@ -290,7 +291,7 @@ def dimension_new_cusp_forms(X, k=2, p=0):
         sage: dimension_new_cusp_forms(Gamma1(30),3)
         12
 
-    Check that :trac:`12640` is fixed::
+    Check that :issue:`12640` is fixed::
 
         sage: dimension_new_cusp_forms(DirichletGroup(1)(1), 12)
         1
@@ -387,7 +388,7 @@ def dimension_cusp_forms(X, k=2):
         sage: dimension_cusp_forms(e^2,2)
         1
 
-    Check that :trac:`12640` is fixed::
+    Check that :issue:`12640` is fixed::
 
         sage: dimension_cusp_forms(DirichletGroup(1)(1), 12)
         1

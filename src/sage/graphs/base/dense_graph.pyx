@@ -580,7 +580,7 @@ cdef class DenseGraphBackend(CGraphBackend):
         self.vertex_labels = {}
         self.vertex_ints = {}
 
-    cdef bint _delete_edge_before_adding(self):
+    cdef bint _delete_edge_before_adding(self) noexcept:
         """
         Return whether we should delete edges before adding any.
 

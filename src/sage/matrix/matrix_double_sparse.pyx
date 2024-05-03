@@ -1,5 +1,6 @@
-from .matrix2 cimport Matrix
-from .matrix_generic_sparse cimport Matrix_generic_sparse
+from sage.matrix.matrix2 cimport Matrix
+from sage.matrix.matrix_generic_sparse cimport Matrix_generic_sparse
+
 
 cdef class Matrix_double_sparse(Matrix_generic_sparse):
     r"""
@@ -143,6 +144,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: A = matrix(CDF, [[        2,   4 + 2*I,   6 - 4*I],
             ....:                  [ -2*I + 4,        11, 10 - 12*I],
             ....:                  [  4*I + 6, 10 + 12*I,        37]])
@@ -168,11 +170,12 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: (A - L*L.T).norm(1) < 1e-10
             True
             sage: B = A.dense_matrix()
-            sage: (B.cholesky() - L).norm(1) < 1e-10
+            sage: (B.cholesky() - L).norm(1) < 1e-10                                    # needs scipy
             True
 
         ::
 
+            sage: # needs sage.rings.complex_double sage.symbolic
             sage: n = ZZ.random_element(1,5)
             sage: A = matrix.random(CDF, n, sparse=True)
             sage: I = matrix.identity(CDF, n, sparse=True)
@@ -181,7 +184,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: (A - L*L.H).norm(1) < 1e-10
             True
             sage: B = A.dense_matrix()
-            sage: (B.cholesky() - L).norm(1) < 1e-10
+            sage: (B.cholesky() - L).norm(1) < 1e-10                                    # needs scipy
             True
         """
         cdef Matrix L # output matrix

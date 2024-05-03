@@ -53,17 +53,18 @@ cdef class InteractiveLPBackend:
 
         This backend can work with irrational algebraic numbers::
 
-            sage: poly = polytopes.dodecahedron(base_ring=AA)                                   # optional - sage.rings.number_field
-            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)  # optional - sage.rings.number_field
-            sage: lp.set_objective(x[0] + x[1] + x[2])                                          # optional - sage.rings.number_field
-            sage: lp.solve()                                                                    # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: poly = polytopes.dodecahedron(base_ring=AA)
+            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)
+            sage: lp.set_objective(x[0] + x[1] + x[2])
+            sage: lp.solve()
             2.291796067500631?
-            sage: lp.get_values(x[0], x[1], x[2])                                               # optional - sage.rings.number_field
+            sage: lp.get_values(x[0], x[1], x[2])
             [0.763932022500211?, 0.763932022500211?, 0.763932022500211?]
-            sage: lp.set_objective(x[0] - x[1] - x[2])                                          # optional - sage.rings.number_field
-            sage: lp.solve()                                                                    # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] - x[1] - x[2])
+            sage: lp.solve()
             2.291796067500631?
-            sage: lp.get_values(x[0], x[1], x[2])                                               # optional - sage.rings.number_field
+            sage: lp.get_values(x[0], x[1], x[2])
             [0.763932022500211?, -0.763932022500211?, -0.763932022500211?]
         """
 
@@ -395,7 +396,7 @@ cdef class InteractiveLPBackend:
                                            constraint_types, variable_types,
                                            problem_type, ring, objective_constant_term=d)
 
-    cpdef set_objective(self, list coeff, d = 0):
+    cpdef set_objective(self, list coeff, d=0):
         """
         Set the objective function.
 
@@ -691,7 +692,7 @@ cdef class InteractiveLPBackend:
         solution = self.std_form_transformation(self.final_dictionary.basic_solution())
         return solution[variable]
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -708,7 +709,7 @@ cdef class InteractiveLPBackend:
         """
         return self.lp.n_variables()
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -724,7 +725,7 @@ cdef class InteractiveLPBackend:
         """
         return self.lp.n_constraints()
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -870,7 +871,7 @@ cdef class InteractiveLPBackend:
         else:
             raise ValueError("Bad _variable_types")
 
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
@@ -892,7 +893,7 @@ cdef class InteractiveLPBackend:
         """
         return False
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
@@ -913,7 +914,7 @@ cdef class InteractiveLPBackend:
         """
         return False
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -976,7 +977,7 @@ cdef class InteractiveLPBackend:
         """
         return str(self.lp.decision_variables()[index])
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -1020,7 +1021,7 @@ cdef class InteractiveLPBackend:
                                                constraint_types, variable_types,
                                                problem_type, ring, objective_constant_term=d)
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 
@@ -1064,7 +1065,7 @@ cdef class InteractiveLPBackend:
                                                constraint_types, variable_types,
                                                problem_type, ring, objective_constant_term=d)
 
-    cpdef bint is_variable_basic(self, int index):
+    cpdef bint is_variable_basic(self, int index) noexcept:
         """
         Test whether the given variable is basic.
 
@@ -1094,7 +1095,7 @@ cdef class InteractiveLPBackend:
         """
         return self.lp_std_form.decision_variables()[index] in self.final_dictionary.basic_variables()
 
-    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the given variable is nonbasic at lower bound.
 
@@ -1124,7 +1125,7 @@ cdef class InteractiveLPBackend:
         """
         return self.lp_std_form.decision_variables()[index] in self.final_dictionary.nonbasic_variables()
 
-    cpdef bint is_slack_variable_basic(self, int index):
+    cpdef bint is_slack_variable_basic(self, int index) noexcept:
         """
         Test whether the slack variable of the given row is basic.
 
@@ -1154,7 +1155,7 @@ cdef class InteractiveLPBackend:
         """
         return self.lp_std_form.slack_variables()[index] in self.final_dictionary.basic_variables()
 
-    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the given variable is nonbasic at lower bound.
 

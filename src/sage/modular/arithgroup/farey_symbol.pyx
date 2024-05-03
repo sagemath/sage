@@ -1,5 +1,7 @@
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
-
+# distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
+# sage.doctest: needs sage.libs.pari
 r"""
 Farey symbol for arithmetic subgroups of `\PSL_2(\ZZ)`
 
@@ -43,7 +45,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp_not_equal
 
 
-cdef extern from "sage/modular/arithgroup/sl2z.hpp":
+cdef extern from "sl2z.hpp":
     cppclass cpp_SL2Z "SL2Z":
         mpz_class a, b, c, d
         cpp_SL2Z(int, int, int, int)
@@ -53,7 +55,7 @@ cdef extern from "sage/modular/arithgroup/sl2z.hpp":
         mpz_class c()
         mpz_class d()
 
-cdef extern from "sage/modular/arithgroup/farey.hpp":
+cdef extern from "farey.hpp":
     cppclass is_element_Gamma0:
         is_element_Gamma0(int)
     cppclass is_element_Gamma1:
@@ -418,13 +420,13 @@ cdef class Farey:
             sage: g == g1
             True
 
-        Check that it works for GammaH as well (:trac:`19660`)::
+        Check that it works for GammaH as well (:issue:`19660`)::
 
             sage: G = GammaH(147, [8])
             sage: G.farey_symbol().word_problem(G([1,1,0,1]))
             (1,)
 
-        Check that :trac:`20347` is solved::
+        Check that :issue:`20347` is solved::
 
             sage: from sage.misc.misc_c import prod
             sage: G = ArithmeticSubgroup_Permutation(S2="(1,2)(3,4)",S3="(1,2,3)")
@@ -731,6 +733,7 @@ cdef class Farey:
 
         The unique index 2 even subgroup and index 4 odd subgroup each get handled correctly::
 
+            sage: # needs sage.groups
             sage: FareySymbol(ArithmeticSubgroup_Permutation(S2="(1,2)", S3="()")).generators()
             [
             [ 0  1]  [-1  1]
@@ -876,6 +879,7 @@ cdef class Farey:
 
         Reduce 11/17 to a cusp of for HsuExample10()::
 
+            sage: # needs sage.groups
             sage: from sage.modular.arithgroup.arithgroup_perm import HsuExample10
             sage: f = FareySymbol(HsuExample10())
             sage: f.reduce_to_cusp(11/17)
@@ -893,7 +897,6 @@ cdef class Farey:
         sig_off()
         return result
 
-    @rename_keyword(rgbcolor='color')
     @options(alpha=1, fill=True, thickness=1, color='lightgray',
              color_even='white',
              zorder=2, linestyle='solid', show_pairing=True,
@@ -932,7 +935,7 @@ cdef class Farey:
         For example, to plot the fundamental domain of `\Gamma_0(11)`
         with pairings use the following command::
 
-            sage: FareySymbol(Gamma0(11)).fundamental_domain()
+            sage: FareySymbol(Gamma0(11)).fundamental_domain()                          # needs sage.plot sage.symbolic
             Graphics object consisting of 54 graphics primitives
 
         indicating that side 1 is paired with side 3 and side 2 is
@@ -941,18 +944,20 @@ cdef class Farey:
         To plot the fundamental domain of `\Gamma(3)` without pairings
         use the following command::
 
-            sage: FareySymbol(Gamma(3)).fundamental_domain(show_pairing=False)
+            sage: FareySymbol(Gamma(3)).fundamental_domain(show_pairing=False)          # needs sage.plot sage.symbolic
             Graphics object consisting of 48 graphics primitives
 
         Plot the fundamental domain of `\Gamma_0(23)` showing the left
         coset representatives::
 
-            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset')
+            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset')       # needs sage.plot sage.symbolic
             Graphics object consisting of 58 graphics primitives
 
         The same as above but with a custom linestyle::
 
-            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset', linestyle=':', thickness='2')
+            sage: FareySymbol(Gamma0(23)).fundamental_domain(tesselation='coset',       # needs sage.plot sage.symbolic
+            ....:                                            linestyle=':',
+            ....:                                            thickness='2')
             Graphics object consisting of 58 graphics primitives
         """
         from sage.plot.all import Graphics
@@ -1030,7 +1035,7 @@ cdef class Farey:
 
 #--- conversions ------------------------------------------------------------
 
-cdef public long convert_to_long(n):
+cdef public long convert_to_long(n) noexcept:
     cdef long m = n
     return m
 

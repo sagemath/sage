@@ -53,7 +53,6 @@ Internal functionality supporting calculus
 - :doc:`sage/symbolic/function_factory`
 - :doc:`Internals of Callable Symbolic Expressions <sage/symbolic/callable>`
 - :doc:`sage/symbolic/expression_conversions`
-- :doc:`sage/symbolic/substitution_map`
 - :doc:`sage/symbolic/benchmark`
 - :doc:`sage/symbolic/random_tests`
 - :doc:`sage/symbolic/maxima_wrapper`
@@ -95,7 +94,6 @@ Internal functionality supporting calculus
    sage/calculus/var
    sage/symbolic/maxima_wrapper
    sage/symbolic/operators
-   sage/symbolic/substitution_map
    sage/symbolic/benchmark
    sage/symbolic/random_tests
 

@@ -221,7 +221,7 @@ Sage example in ./lp.tex, line 892::
 Sage example in ./lp.tex, line 906::
 
   sage: while not h.is_connected():
-  ....:     S = h.connected_components()[0]
+  ....:     S = h.connected_components(sort=False)[0]
   ....:     p.add_constraint(
   ....:            p.sum( B(u,v) for u,v
   ....:                 in g.edge_boundary(S, labels = False))

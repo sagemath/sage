@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Poor Man's map
 """
@@ -94,8 +93,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
         """
         return ((self._name if self._name is not None else "A map") +
-                (" from %s"%(self._domain,) if self._domain   is not None else ""     ) +
-                (" to %s"%(self._codomain,) if self._codomain is not None else ""     ))
+                (" from %s" % (self._domain,) if self._domain   is not None else ""     ) +
+                (" to %s" % (self._codomain,) if self._codomain is not None else ""     ))
 
     def domain(self):
         """
@@ -209,12 +208,13 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         But it is detected here::
 
             sage: g = PoorManMap(factorial, domain=ZZ, codomain=ZZ)
-            sage: h = PoorManMap(sqrt, domain=RR, codomain=CC)
-            sage: g*h
+            sage: h = PoorManMap(sqrt, domain=RR, codomain=CC)                          # needs sage.rings.real_mpfr
+            sage: g*h                                                                   # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
-            ValueError: the codomain Complex Field with 53 bits of precision does not coerce into the domain Integer Ring
-            sage: h*g
+            ValueError: the codomain Complex Field with 53 bits of precision
+            does not coerce into the domain Integer Ring
+            sage: h*g                                                                   # needs sage.rings.real_mpfr
             A map from Integer Ring to Complex Field with 53 bits of precision
         """
         self_domain = self.domain()
@@ -266,8 +266,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         EXAMPLES::
 
             sage: from sage.categories.poor_man_map import PoorManMap
-            sage: h = PoorManMap(sin, domain=RR, codomain=RR)                           # optional - sage.symbolic
-            sage: h._sympy_()                                                           # optional - sage.symbolic
+            sage: h = PoorManMap(sin, domain=RR, codomain=RR)
+            sage: h._sympy_()                                                           # needs sympy sage.symbolic
             sin
         """
         from sympy import Lambda, sympify

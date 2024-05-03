@@ -1,7 +1,7 @@
 r"""
 Dynamical systems for products of projective spaces
 
-This class builds on the prouct projective space class.
+This class builds on the product projective space class.
 The main constructor functions are given by ``DynamicalSystem`` and
 ``DynamicalSystem_projective``. The constructors function can take either
 polynomials or a morphism from which to construct a dynamical system.
@@ -47,19 +47,18 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
     INPUT:
 
-    - ``polys`` -- a list of ``n_1 + \cdots + n_r`` multi-homogeneous polynomials, all
+    - ``polys`` -- a list of `n_1 + \cdots + n_r` multi-homogeneous polynomials, all
       of which should have the same parent
 
     - ``domain`` -- a projective scheme embedded in
-      ``P^{n_1-1} \times \cdots \times P^{n_r-1}``
+      `P^{n_1-1} \times \cdots \times P^{n_r-1}`
 
     EXAMPLES::
 
         sage: T.<x,y,z,w,u> = ProductProjectiveSpaces([2, 1], QQ)
         sage: DynamicalSystem_projective([x^2, y^2, z^2, w^2, u^2], domain=T)
         Dynamical System of Product of projective spaces P^2 x P^1 over Rational Field
-              Defn: Defined by sending (x : y : z , w : u) to
-                    (x^2 : y^2 : z^2 , w^2 : u^2).
+          Defn: Defined by sending (x : y : z , w : u) to (x^2 : y^2 : z^2 , w^2 : u^2).
     """
 
     def __init__(self, polys, domain):
@@ -86,7 +85,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``P`` -- a point in the domain
 
-        - ``check`` -- Boolean - whether or not to perform the input checks
+        - ``check`` -- Boolean; whether or not to perform the input checks
           on the image point (Default: ``True``)
 
         OUTPUT: The image point in the codomain
@@ -104,9 +103,9 @@ class DynamicalSystem_product_projective(DynamicalSystem,
                 try:
                     P = self.domain()(P)
                 except (TypeError, NotImplementedError):
-                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self.domain()))
-            elif self.domain()!= P.codomain():
-                raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented"%(P, self.domain()))
+                    raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (P, self.domain()))
+            elif self.domain() != P.codomain():
+                raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (P, self.domain()))
 
         A = self.domain()
         Q = list(P)
@@ -135,7 +134,8 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         EXAMPLES::
 
             sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], QQ)
-            sage: f = DynamicalSystem_projective([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y], domain=Z)
+            sage: f = DynamicalSystem_projective([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y],
+            ....:                                domain=Z)
             sage: P = Z([1, 1, 1, 1, 1])
             sage: f.nth_iterate(P, 3)
             (1/1872 : 1 , 1 : 1 : 0)
@@ -145,7 +145,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
             sage: Z.<a,b,x,y> = ProductProjectiveSpaces([1, 1], ZZ)
             sage: f = DynamicalSystem_projective([a*b, b^2, x^3 - y^3, y^2*x], domain=Z)
             sage: P = Z([2, 6, 2, 4])
-            sage: f.nth_iterate(P, 2, normalize = True)
+            sage: f.nth_iterate(P, 2, normalize=True)
             (1 : 3 , 407 : 112)
         """
         if P.codomain() != self.domain():
@@ -194,10 +194,12 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         EXAMPLES::
 
             sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], QQ)
-            sage: f = DynamicalSystem_projective([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y], domain=Z)
+            sage: f = DynamicalSystem_projective([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y],
+            ....:                                domain=Z)
             sage: P = Z([1, 1, 1, 1, 1])
             sage: f.orbit(P, 3)
-            [(1 : 1 , 1 : 1 : 1), (1/2 : 1 , 1 : 0 : 1), (1/12 : 1 , -1 : 1 : 0), (1/1872 : 1 , 1 : 1 : 0)]
+            [(1 : 1 , 1 : 1 : 1), (1/2 : 1 , 1 : 0 : 1),
+             (1/12 : 1 , -1 : 1 : 0), (1/1872 : 1 , 1 : 1 : 0)]
 
         ::
 
@@ -205,7 +207,8 @@ class DynamicalSystem_product_projective(DynamicalSystem,
             sage: f = DynamicalSystem_projective([a*b, b^2, x^3 - y^3, y^2*x], domain=Z)
             sage: P = Z([2, 6, 2, 4])
             sage: f.orbit(P, 3, normalize=True)
-            [(1 : 3 , 1 : 2), (1 : 3 , -7 : 4), (1 : 3 , 407 : 112), (1 : 3 , 66014215 : 5105408)]
+            [(1 : 3 , 1 : 2), (1 : 3 , -7 : 4),
+             (1 : 3 , 407 : 112), (1 : 3 , 66014215 : 5105408)]
         """
         if P.codomain() != self.domain():
             raise TypeError("point is not defined over domain of function")
@@ -241,7 +244,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
     def nth_iterate_map(self, n):
         r"""
-        Return the nth iterate of this dynamical system.
+        Return the ``n``-th iterate of this dynamical system.
 
         ALGORITHM:
 
@@ -301,22 +304,22 @@ class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_pr
         EXAMPLES::
 
             sage: P.<a,b,c,d> = ProductProjectiveSpaces(GF(3), [1,1])
-            sage: f = DynamicalSystem_projective([a^2,b^2,c^2,d^2], domain=P)
-            sage: f.cyclegraph()
+            sage: f = DynamicalSystem_projective([a^2, b^2, c^2, d^2], domain=P)
+            sage: f.cyclegraph()                                                        # needs sage.graphs
             Looped digraph on 16 vertices
 
         ::
 
             sage: P.<a,b,c,d> = ProductProjectiveSpaces(GF(5), [1,1])
-            sage: f = DynamicalSystem_projective([a^2,b^2,c,d], domain=P)
-            sage: f.cyclegraph()
+            sage: f = DynamicalSystem_projective([a^2, b^2, c, d], domain=P)
+            sage: f.cyclegraph()                                                        # needs sage.graphs
             Looped digraph on 36 vertices
 
         ::
 
             sage: P.<a,b,c,d,e> = ProductProjectiveSpaces(GF(2), [1,2])
-            sage: f = DynamicalSystem_projective([a^2,b^2,c,d,e], domain=P)
-            sage: f.cyclegraph()
+            sage: f = DynamicalSystem_projective([a^2, b^2, c, d, e], domain=P)
+            sage: f.cyclegraph()                                                        # needs sage.graphs
             Looped digraph on 21 vertices
 
         .. TODO:: Dynamical systems for subschemes of product projective spaces needs work.

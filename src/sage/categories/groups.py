@@ -42,7 +42,7 @@ class Groups(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: Groups().example()                                                    # optional - sage.groups
+            sage: Groups().example()                                                    # needs sage.modules
             General Linear Group of degree 4 over Rational Field
         """
         from sage.rings.rational_field import QQ
@@ -69,13 +69,14 @@ class Groups(CategoryWithAxiom):
 
         EXAMPLES::
 
-            sage: Groups.free(index_set=ZZ)                                             # optional - sage.groups
+            sage: # needs sage.groups
+            sage: Groups.free(index_set=ZZ)
             Free group indexed by Integer Ring
-            sage: Groups().free(ZZ)                                                     # optional - sage.groups
+            sage: Groups().free(ZZ)
             Free group indexed by Integer Ring
-            sage: Groups().free(5)                                                      # optional - sage.groups
+            sage: Groups().free(5)
             Free Group on generators {x0, x1, x2, x3, x4}
-            sage: F.<x,y,z> = Groups().free(); F                                        # optional - sage.groups
+            sage: F.<x,y,z> = Groups().free(); F
             Free Group on generators {x, y, z}
         """
         from sage.rings.integer_ring import ZZ
@@ -99,9 +100,9 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: A = AlternatingGroup(4)                                           # optional - sage.groups
-                sage: A.group_generators()                                              # optional - sage.groups
-                Family ((2,3,4), (1,2,3))
+                sage: A = AlternatingGroup(4)                                           # needs sage.groups
+                sage: A.group_generators()                                              # needs sage.groups
+                Family ((1,2,3), (2,3,4))
             """
             from sage.sets.family import Family
             try:
@@ -120,11 +121,12 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: A = AlternatingGroup(4)                                           # optional - sage.groups
-                sage: A.monoid_generators()                                             # optional - sage.groups
-                Family ((2,3,4), (1,2,3))
-                sage: F.<x,y> = FreeGroup()                                             # optional - sage.groups
-                sage: F.monoid_generators()                                             # optional - sage.groups
+                sage: # needs sage.groups
+                sage: A = AlternatingGroup(4)
+                sage: A.monoid_generators()
+                Family ((1,2,3), (2,3,4))
+                sage: F.<x,y> = FreeGroup()
+                sage: F.monoid_generators()
                 Family (x, y, x^-1, y^-1)
             """
             G = self.group_generators()
@@ -142,8 +144,8 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = SymmetricGroup(3)                                             # optional - sage.groups
-                sage: G._test_inverse()                                                 # optional - sage.groups
+                sage: G = SymmetricGroup(3)                                             # needs sage.groups
+                sage: G._test_inverse()                                                 # needs sage.groups
             """
             tester = self._tester(**options)
             for x in tester.some_elements():
@@ -156,8 +158,8 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = Groups().example()                                            # optional - sage.groups
-                sage: G.semidirect_product(G, Morphism(G, G))                           # optional - sage.groups
+                sage: G = Groups().example()                                            # needs sage.modules
+                sage: G.semidirect_product(G, Morphism(G, G))                           # needs sage.modules
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: semidirect product of General Linear Group of degree 4
@@ -178,14 +180,14 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = Groups().example()                                            # optional - sage.groups
-                sage: G.holomorph()                                                     # optional - sage.groups
+                sage: G = Groups().example()                                            # needs sage.modules
+                sage: G.holomorph()                                                     # needs sage.modules
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: holomorph of General Linear Group of degree 4
                 over Rational Field not yet implemented
             """
-            raise NotImplementedError("holomorph of %s not yet implemented"%self)
+            raise NotImplementedError("holomorph of %s not yet implemented" % self)
 
         def cayley_table(self, names='letters', elements=None):
             r"""
@@ -246,11 +248,12 @@ class Groups(CategoryWithAxiom):
             Permutation groups, matrix groups and abelian groups
             can all compute their multiplication tables.  ::
 
-                sage: G = DiCyclicGroup(3)                                              # optional - sage.groups
-                sage: T = G.cayley_table()                                              # optional - sage.groups
-                sage: T.column_keys()                                                   # optional - sage.groups
+                sage: # needs sage.groups
+                sage: G = DiCyclicGroup(3)
+                sage: T = G.cayley_table()
+                sage: T.column_keys()
                 ((), (5,6,7), ..., (1,4,2,3)(5,7))
-                sage: T                                                                 # optional - sage.groups
+                sage: T
                 *  a b c d e f g h i j k l
                  +------------------------
                 a| a b c d e f g h i j k l
@@ -268,8 +271,8 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: M = SL(2, 2)                                                      # optional - sage.groups
-                sage: M.cayley_table()                                                  # optional - sage.groups
+                sage: M = SL(2, 2)                                                      # needs sage.modules
+                sage: M.cayley_table()                                                  # needs sage.modules
                 *  a b c d e f
                  +------------
                 a| a b c d e f
@@ -282,8 +285,8 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: A = AbelianGroup([2, 3])                                          # optional - sage.groups
-                sage: A.cayley_table()                                                  # optional - sage.groups
+                sage: A = AbelianGroup([2, 3])                                          # needs sage.groups
+                sage: A.cayley_table()                                                  # needs sage.groups
                 *  a b c d e f
                  +------------
                 a| a b c d e f
@@ -301,8 +304,8 @@ class Groups(CategoryWithAxiom):
             you can choose to just use the string representations
             of the elements themselves.  ::
 
-                sage: C = CyclicPermutationGroup(11)                                    # optional - sage.groups
-                sage: C.cayley_table(names='digits')                                    # optional - sage.groups
+                sage: C = CyclicPermutationGroup(11)                                    # needs sage.groups
+                sage: C.cayley_table(names='digits')                                    # needs sage.groups
                  *  00 01 02 03 04 05 06 07 08 09 10
                   +---------------------------------
                 00| 00 01 02 03 04 05 06 07 08 09 10
@@ -319,9 +322,9 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: G = QuaternionGroup()                                             # optional - sage.groups
-                sage: names = ['1', 'I', '-1', '-I', 'J', '-K', '-J', 'K']              # optional - sage.groups
-                sage: G.cayley_table(names=names)                                       # optional - sage.groups
+                sage: G = QuaternionGroup()                                             # needs sage.groups
+                sage: names = ['1', 'I', '-1', '-I', 'J', '-K', '-J', 'K']
+                sage: G.cayley_table(names=names)                                       # needs sage.groups
                  *   1  I -1 -I  J -K -J  K
                   +------------------------
                  1|  1  I -1 -I  J -K -J  K
@@ -335,8 +338,8 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: A = AbelianGroup([2, 2])                                          # optional - sage.groups
-                sage: A.cayley_table(names='elements')                                  # optional - sage.groups
+                sage: A = AbelianGroup([2, 2])                                          # needs sage.groups
+                sage: A.cayley_table(names='elements')                                  # needs sage.groups
                     *      1    f1    f0 f0*f1
                      +------------------------
                     1|     1    f1    f0 f0*f1
@@ -348,10 +351,11 @@ class Groups(CategoryWithAxiom):
             routine behaves similarly, but changes an existing table "in-place."
             ::
 
-                sage: G = AlternatingGroup(3)                                           # optional - sage.groups
-                sage: T = G.cayley_table()                                              # optional - sage.groups
-                sage: T.change_names('digits')                                          # optional - sage.groups
-                sage: T                                                                 # optional - sage.groups
+                sage: # needs sage.groups
+                sage: G = AlternatingGroup(3)
+                sage: T = G.cayley_table()
+                sage: T.change_names('digits')
+                sage: T
                 *  0 1 2
                  +------
                 0| 0 1 2
@@ -363,11 +367,11 @@ class Groups(CategoryWithAxiom):
             Elements will be coerced into the group as part of setting
             up the table.  ::
 
-                sage: G = SL(2,ZZ)                                                      # optional - sage.groups
-                sage: G                                                                 # optional - sage.groups
+                sage: # needs sage.modules
+                sage: G = SL(2,ZZ); G
                 Special Linear Group of degree 2 over Integer Ring
-                sage: identity = matrix(ZZ, [[1,0], [0,1]])                             # optional - sage.groups
-                sage: G.cayley_table(elements=[identity, -identity])                    # optional - sage.groups
+                sage: identity = matrix(ZZ, [[1,0], [0,1]])
+                sage: G.cayley_table(elements=[identity, -identity])
                 *  a b
                  +----
                 a| a b
@@ -384,11 +388,11 @@ class Groups(CategoryWithAxiom):
             confirms that they form a closed subset in the group.
             ::
 
-                sage: from sage.matrix.operation_table import OperationTable            # optional - sage.groups
-                sage: G = DiCyclicGroup(3)                                              # optional - sage.groups
-                sage: commutator = lambda x, y: x*y*x^-1*y^-1                           # optional - sage.groups
-                sage: T = OperationTable(G, commutator)                                 # optional - sage.groups
-                sage: T                                                                 # optional - sage.groups
+                sage: # needs sage.groups sage.modules
+                sage: from sage.matrix.operation_table import OperationTable
+                sage: G = DiCyclicGroup(3)
+                sage: commutator = lambda x, y: x*y*x^-1*y^-1
+                sage: T = OperationTable(G, commutator); T
                 .  a b c d e f g h i j k l
                  +------------------------
                 a| a a a a a a a a a a a a
@@ -403,13 +407,12 @@ class Groups(CategoryWithAxiom):
                 j| a b c a b c a c b a c b
                 k| a b c a b c b a c b a c
                 l| a b c a b c c b a c b a
-
-                sage: trans = T.translation()                                           # optional - sage.groups
-                sage: comm = [trans['a'], trans['b'], trans['c']]                       # optional - sage.groups
-                sage: comm                                                              # optional - sage.groups
+                sage: trans = T.translation()
+                sage: comm = [trans['a'], trans['b'], trans['c']]
+                sage: comm
                 [(), (5,6,7), (5,7,6)]
-                sage: P = G.cayley_table(elements=comm)                                 # optional - sage.groups
-                sage: P                                                                 # optional - sage.groups
+                sage: P = G.cayley_table(elements=comm)
+                sage: P
                 *  a b c
                  +------
                 a| a b c
@@ -421,7 +424,7 @@ class Groups(CategoryWithAxiom):
                 Arrange an ordering of elements into cosets of a normal
                 subgroup close to size `\sqrt{n}`.  Then the quotient
                 group structure is often apparent in the table.  See
-                comments on :trac:`7555`.
+                comments on :issue:`7555`.
 
             AUTHOR:
 
@@ -440,9 +443,9 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: A = AbelianGroup([2, 2])                                          # optional - sage.groups
-                sage: c = A.conjugacy_class(A.an_element())                             # optional - sage.groups
-                sage: type(c)                                                           # optional - sage.groups
+                sage: A = AbelianGroup([2, 2])                                          # needs sage.groups
+                sage: c = A.conjugacy_class(A.an_element())                             # needs sage.groups
+                sage: type(c)                                                           # needs sage.groups
                 <class 'sage.groups.conjugacy_classes.ConjugacyClass_with_category'>
             """
             from sage.groups.conjugacy_classes import ConjugacyClass
@@ -455,16 +458,16 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: D = DihedralGroup(5)                                              # optional - sage.groups
-                sage: g = D((1,3,5,2,4))                                                # optional - sage.groups
-                sage: g.conjugacy_class()                                               # optional - sage.groups
+                sage: D = DihedralGroup(5)                                              # needs sage.groups
+                sage: g = D((1,3,5,2,4))                                                # needs sage.groups
+                sage: g.conjugacy_class()                                               # needs sage.groups
                 Conjugacy class of (1,3,5,2,4)
                  in Dihedral group of order 10 as a permutation group
 
-                sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                   # optional - sage.groups sage.rings.finite_rings sage.modules
+                sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                   # needs sage.modules
                 ....:                  matrix(GF(5), 2, [1,1, 0,1])])
-                sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                              # optional - sage.groups sage.rings.finite_rings sage.modules
-                sage: h.conjugacy_class()                                               # optional - sage.groups sage.rings.finite_rings sage.modules
+                sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                              # needs sage.modules
+                sage: h.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 2]
                                    [4 1]
                 in Matrix group over Finite Field of size 5 with 2 generators (
@@ -472,15 +475,15 @@ class Groups(CategoryWithAxiom):
                 [4 1], [0 1]
                 )
 
-                sage: G = SL(2, GF(2))                                                  # optional - sage.groups sage.rings.finite_rings sage.modules
-                sage: g = G.gens()[0]                                                   # optional - sage.groups sage.rings.finite_rings sage.modules
-                sage: g.conjugacy_class()                                               # optional - sage.groups sage.rings.finite_rings sage.modules
+                sage: G = SL(2, GF(2))                                                  # needs sage.modules
+                sage: g = G.gens()[0]                                                   # needs sage.modules
+                sage: g.conjugacy_class()                                               # needs sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
 
-                sage: G = SL(2, QQ)                                                     # optional - sage.groups sage.modules
-                sage: g = G([[1,1], [0,1]])                                             # optional - sage.groups sage.modules
-                sage: g.conjugacy_class()                                               # optional - sage.groups sage.modules
+                sage: G = SL(2, QQ)                                                     # needs sage.modules
+                sage: g = G([[1,1], [0,1]])                                             # needs sage.modules
+                sage: g.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Rational Field
             """
@@ -511,13 +514,14 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: Groups.Commutative.free(index_set=ZZ)                             # optional - sage.groups
+                sage: # needs sage.groups
+                sage: Groups.Commutative.free(index_set=ZZ)
                 Free abelian group indexed by Integer Ring
-                sage: Groups().Commutative().free(ZZ)                                   # optional - sage.groups
+                sage: Groups().Commutative().free(ZZ)
                 Free abelian group indexed by Integer Ring
-                sage: Groups().Commutative().free(5)                                    # optional - sage.groups
+                sage: Groups().Commutative().free(5)
                 Multiplicative Abelian group isomorphic to Z x Z x Z x Z x Z
-                sage: F.<x,y,z> = Groups().Commutative().free(); F                      # optional - sage.groups
+                sage: F.<x,y,z> = Groups().Commutative().free(); F
                 Multiplicative Abelian group isomorphic to Z x Z x Z
             """
             from sage.rings.integer_ring import ZZ
@@ -574,28 +578,30 @@ class Groups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: C5 = CyclicPermutationGroup(5)                                # optional - sage.groups
-                    sage: C4 = CyclicPermutationGroup(4)                                # optional - sage.groups
-                    sage: S4 = SymmetricGroup(3)                                        # optional - sage.groups
-                    sage: C = cartesian_product([C5, C4, S4])                           # optional - sage.groups
-                    sage: C.group_generators()                                          # optional - sage.groups
+                    sage: # needs sage.groups
+                    sage: C5 = CyclicPermutationGroup(5)
+                    sage: C4 = CyclicPermutationGroup(4)
+                    sage: S4 = SymmetricGroup(3)
+                    sage: C = cartesian_product([C5, C4, S4])
+                    sage: C.group_generators()
                     Family (((1,2,3,4,5), (), ()),
                             ((), (1,2,3,4), ()),
                             ((), (), (1,2)),
                             ((), (), (2,3)))
 
-                We check the other portion of :trac:`16718` is fixed::
+                We check the other portion of :issue:`16718` is fixed::
 
-                    sage: len(C.j_classes())                                            # optional - sage.groups
+                    sage: len(C.j_classes())                                            # needs sage.groups
                     1
 
                 An example with an infinitely generated group (a better output
                 is needed)::
 
-                    sage: G = Groups.free([1,2])                                        # optional - sage.groups
-                    sage: H = Groups.free(ZZ)                                           # optional - sage.groups
-                    sage: C = cartesian_product([G, H])                                 # optional - sage.groups
-                    sage: C.monoid_generators()                                         # optional - sage.groups
+                    sage: # needs sage.groups
+                    sage: G = Groups.free([1,2])
+                    sage: H = Groups.free(ZZ)
+                    sage: C = cartesian_product([G, H])
+                    sage: C.monoid_generators()
                     Lazy family (gen(i))_{i in The Cartesian product of (...)}
                 """
                 F = self.cartesian_factors()
@@ -628,13 +634,13 @@ class Groups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([SymmetricGroup(10), SL(2, GF(3))])     # optional - sage.groups sage.rings.finite_rings
-                    sage: C.order()                                                     # optional - sage.groups sage.rings.finite_rings
+                    sage: C = cartesian_product([SymmetricGroup(10), SL(2, GF(3))])     # needs sage.groups sage.rings.finite_rings
+                    sage: C.order()                                                     # needs sage.groups sage.rings.finite_rings
                     87091200
 
                 TESTS::
 
-                    sage: C.order.__module__                                            # optional - sage.groups sage.rings.finite_rings
+                    sage: C.order.__module__                                            # needs sage.groups sage.rings.finite_rings
                     'sage.categories.groups'
 
                 .. TODO::

@@ -20,6 +20,6 @@ Upstream Contact
 
 -  Author: Fredrik Johansson
 -  Email: fredrik.johansson@gmail.com
--  http://mpmath.org
--  Website: https://github.com/fredrik-johansson/mpmath/
+-  https://mpmath.org
+-  Website: https://github.com/mpmath/mpmath
 

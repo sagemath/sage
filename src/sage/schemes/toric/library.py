@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Library of toric varieties
 
@@ -40,7 +41,7 @@ or immediately during assignment like this::
 
 from sage.structure.sage_object import SageObject
 
-from sage.matrix.constructor import Matrix as matrix
+from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
 from sage.geometry.fan import Fan
 from sage.geometry.lattice_polytope import LatticePolytope
@@ -867,7 +868,7 @@ class ToricVarietyFactory(SageObject):
 
         .. NOTE::
 
-            * This is an example of an non-polyhedral fan.
+            * This is an example of a non-polyhedral fan.
 
             * Its Chow group has torsion: `A_2(X)=\ZZ^5 \oplus \ZZ_2`
 
@@ -1330,7 +1331,7 @@ class ToricVarietyFactory(SageObject):
             in 3-d lattice N
             sage: T3.gens()
             (z0, z1, z2)
-            sage: sorted(T3.change_ring(GF(3)).point_set().list())                      # optional - sage.rings.finite_rings
+            sage: sorted(T3.change_ring(GF(3)).point_set().list())
             [[1 : 1 : 1], [1 : 1 : 2], [1 : 2 : 1], [1 : 2 : 2],
              [2 : 1 : 1], [2 : 1 : 2], [2 : 2 : 1], [2 : 2 : 2]]
         """

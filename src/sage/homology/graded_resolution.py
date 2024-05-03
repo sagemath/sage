@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.singular
+# sage.doctest: needs sage.libs.singular
 r"""
 Graded free resolutions
 
@@ -47,7 +47,7 @@ An example of multigraded resolution from Example 9.1 of [MilStu2005]_::
     sage: R.<s,t> = QQ[]
     sage: S.<a,b,c,d> = QQ[]
     sage: phi = S.hom([s, s*t, s*t^2, s*t^3])
-    sage: I = phi.kernel(); I
+    sage: I = phi.kernel(); I                                                           # needs sage.rings.function_field
     Ideal (c^2 - b*d, b*c - a*d, b^2 - a*c) of
      Multivariate Polynomial Ring in a, b, c, d over Rational Field
     sage: P3 = ProjectiveSpace(S)
@@ -86,6 +86,7 @@ from sage.rings.ideal import Ideal_generic
 from sage.homology.free_resolution import (FiniteFreeResolution,
                                            FiniteFreeResolution_free_module,
                                            FiniteFreeResolution_singular)
+from sage.misc.superseded import deprecated_function_alias
 
 
 class GradedFiniteFreeResolution(FiniteFreeResolution):
@@ -96,16 +97,16 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
 
     - ``module`` -- a homogeneous submodule of a free module `M` of rank `n`
       over `S` or a homogeneous ideal of a multivariate polynomial ring `S`
+
     - ``degrees`` -- (default: a list with all entries `1`) a list of integers
       or integer vectors giving degrees of variables of `S`
+
     - ``shifts`` -- a list of integers or integer vectors giving shifts of
       degrees of `n` summands of the free module `M`; this is a list of zero
       degrees of length `n` by default
+
     - ``name`` -- a string; name of the base ring
 
-    .. WARNING::
-
-        This does not check that the module is homogeneous.
     """
     def __init__(self, module, degrees=None, shifts=None, name='S', **kwds):
         r"""
@@ -142,7 +143,7 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
         if degrees[0] in ZZ:
             zero_deg = 0
             multigrade = False
-        else: # degrees are integer vectors
+        else:  # degrees are integer vectors
             degrees = tuple([vector(v) for v in degrees])
             zero_deg = degrees[0].parent().zero()
             multigrade = True
@@ -316,10 +317,6 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
     r"""
     Graded free resolution of free modules.
 
-    .. WARNING::
-
-        This does not check that the module is homogeneous.
-
     EXAMPLES::
 
         sage: from sage.homology.free_resolution import FreeResolution
@@ -402,7 +399,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
 
         def find_deg(i):
             for j in range(M.nrows()):
-                ret = M[j,i].degree()
+                ret = M[j, i].degree()
                 if ret != -1:
                     return ret
             raise NotImplementedError("a generator maps to 0")
@@ -433,8 +430,10 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
 
     - ``algorithm`` -- Singular algorithm to compute a resolution of ``ideal``
 
-    If ``module`` is an ideal of `S`, it is considered as a submodule of a
-    free module of rank `1` over `S`.
+    OUTPUT: a graded minimal free resolution of ``ideal``
+
+    If ``module`` is an ideal of `S`, it is considered as a submodule of a free
+    module of rank `1` over `S`.
 
     The degrees given to the variables of `S` are integers or integer vectors of
     the same length. In the latter case, `S` is said to be multigraded, and the
@@ -445,25 +444,18 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
     rank one over `S`, denoted `S(-d)` with shift `d`.
 
     The computation of the resolution is done by using ``libSingular``.
-    Different Singular algorithms can be chosen for best performance.
-
-    OUTPUT: a graded minimal free resolution of ``ideal``
-
-    The available algorithms and the corresponding Singular commands are shown
+    Different Singular algorithms can be chosen for best performance. The
+    available algorithms and the corresponding Singular commands are shown
     below:
 
-        ============= ============================
-        algorithm     Singular commands
-        ============= ============================
-        ``minimal``   ``mres(ideal)``
-        ``shreyer``   ``minres(sres(std(ideal)))``
-        ``standard``  ``minres(nres(std(ideal)))``
-        ``heuristic`` ``minres(res(std(ideal)))``
-        ============= ============================
-
-    .. WARNING::
-
-        This does not check that the module is homogeneous.
+    ============= ============================
+    algorithm     Singular commands
+    ============= ============================
+    ``minimal``   ``mres(ideal)``
+    ``shreyer``   ``minres(sres(std(ideal)))``
+    ``standard``  ``minres(nres(std(ideal)))``
+    ``heuristic`` ``minres(res(std(ideal)))``
+    ============= ============================
 
     EXAMPLES::
 
@@ -518,8 +510,8 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         from sage.libs.singular.singular import si2sa_resolution_graded
         from sage.libs.singular.function import singular_function
 
-        #cdef int i, j, k, ncols, nrows
-        #cdef list res_shifts, prev_shifts, new_shifts
+        # cdef int i, j, k, ncols, nrows
+        # cdef list res_shifts, prev_shifts, new_shifts
 
         # This ensures the first component of the Singular resolution to be a
         # module, like the later components. This is important when the
@@ -572,5 +564,4 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         return res_mats
 
 
-from sage.misc.superseded import deprecated_function_alias
 GradedFreeResolution = deprecated_function_alias(34873, GradedFiniteFreeResolution_singular)

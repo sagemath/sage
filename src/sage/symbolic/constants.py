@@ -196,7 +196,7 @@ floating point rings::
     sage: ComplexField(230)(a)
     13.271347940197249310098819199575813940871106820003074817832971189555
 
-Check that :trac:`8237` is fixed::
+Check that :issue:`8237` is fixed::
 
     sage: maxima('infinity').sage()
     Infinity
@@ -212,7 +212,7 @@ Check that :trac:`8237` is fixed::
 #                     2009 Mike Hansen <mhansen@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
 
 import math
@@ -590,11 +590,11 @@ class Pi(Constant):
 
     def _real_double_(self, R):
         """
-         EXAMPLES::
+        EXAMPLES::
 
-             sage: pi._real_double_(RDF)
-             3.141592653589793
-         """
+            sage: pi._real_double_(RDF)
+            3.141592653589793
+        """
         return R.pi()
 
     def _sympy_(self):
@@ -603,8 +603,8 @@ class Pi(Constant):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: sympy.pi == pi # indirect doctest
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.pi == pi  # indirect doctest                                    # needs sympy
             True
         """
         import sympy
@@ -744,10 +744,10 @@ class NotANumber(Constant):
 
         EXAMPLES::
 
-            sage: bool(NaN._sympy_()._sage_() == NaN)
+            sage: bool(NaN._sympy_()._sage_() == NaN)                                   # needs sympy
             True
-            sage: import sympy
-            sage: sympy.nan == NaN  # this should be fixed
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.nan == NaN  # this should be fixed                              # needs sympy
             False
         """
         import sympy
@@ -850,8 +850,8 @@ class GoldenRatio(Constant):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: sympy.GoldenRatio == golden_ratio # indirect doctest
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.GoldenRatio == golden_ratio  # indirect doctest                 # needs sympy
             True
         """
         import sympy
@@ -1007,8 +1007,8 @@ class EulerGamma(Constant):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: sympy.EulerGamma == euler_gamma # indirect doctest
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.EulerGamma == euler_gamma  # indirect doctest                   # needs sympy
             True
         """
         import sympy
@@ -1077,8 +1077,8 @@ class Catalan(Constant):
 
         EXAMPLES::
 
-            sage: import sympy
-            sage: sympy.Catalan == catalan # indirect doctest
+            sage: import sympy                                                          # needs sympy
+            sage: sympy.Catalan == catalan  # indirect doctest                          # needs sympy
             True
         """
         import sympy

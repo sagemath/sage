@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Tools for enumeration modulo the action of a permutation group
 """
@@ -56,7 +57,7 @@ cpdef list all_children(ClonableIntArray v, int max_part):
             all_children.append(child)
     return all_children
 
-cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step):
+cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step) noexcept:
     r"""
     Partial comparison of the two lists according the lexicographic
     order. It compares the ``step``-th first entries.
@@ -85,7 +86,7 @@ cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step):
             return -1
     return 0
 
-cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2):
+cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
     """
     Lexicographic comparison of :class:`~sage.structure.list_clone.ClonableIntArray`.
 

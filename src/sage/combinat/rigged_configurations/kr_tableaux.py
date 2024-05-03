@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Kirillov-Reshetikhin Tableaux
 
@@ -554,7 +554,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
                 elif isinstance(B, KirillovReshetikhinTableaux):
                     dims.append([B._r, B._s])
             return TensorProductOfKirillovReshetikhinTableaux(ct, dims)
-        return super(KirillovReshetikhinTableaux, self).tensor(*crystals, **options)
+        return super().tensor(*crystals, **options)
 
     @lazy_attribute
     def _tableau_height(self):

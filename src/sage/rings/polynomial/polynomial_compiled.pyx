@@ -184,7 +184,7 @@ cdef class CompiledPolynomialFunction:
             gaps.insert(gap,g)
             return g
 
-    cdef void _fill_gaps_binary(CompiledPolynomialFunction self, BinaryTree gaps):
+    cdef void _fill_gaps_binary(CompiledPolynomialFunction self, BinaryTree gaps) noexcept:
         """
         The desired gaps come in a tree, filled with dummy nodes (with the
         exception of the var node, which is not a dummy).  The nodes are
@@ -352,7 +352,7 @@ cdef inline int pd_eval(generic_pd pd, object vars, object coeffs) except -2:
         pd.eval(vars, coeffs)
     pd.hits += 1
 
-cdef inline void pd_clean(generic_pd pd):
+cdef inline void pd_clean(generic_pd pd) noexcept:
     if pd.hits >= pd.refs:
         pd.value = None
         pd.hits = 0
@@ -370,7 +370,7 @@ cdef class generic_pd:
     cdef generic_pd nodummies(generic_pd self):
         return self
 
-    cdef void reset(generic_pd self):
+    cdef void reset(generic_pd self) noexcept:
         self.hits = 0
         self.value = None
 
@@ -378,7 +378,7 @@ cdef class dummy_pd(generic_pd):
     def __init__(dummy_pd self, int label):
         self.label = label
 
-    cdef void fill(dummy_pd self, generic_pd link):
+    cdef void fill(dummy_pd self, generic_pd link) noexcept:
         self.link = link
 
     cdef generic_pd nodummies(dummy_pd self):
@@ -392,8 +392,9 @@ cdef class var_pd(generic_pd):
         self.index = index
     cdef int eval(var_pd self, object vars, object coeffs) except -2:
         self.value = vars[self.index]
+
     def __repr__(self):
-        return "x[%s]"%(self.index)
+        return "x[%s]" % (self.index)
 
 
 cdef class univar_pd(generic_pd):
@@ -402,6 +403,7 @@ cdef class univar_pd(generic_pd):
         self.label = 1
     cdef int eval(univar_pd self, object var, object coeffs) except -2:
         self.value = var
+
     def __repr__(self):
         return "x"
 
@@ -411,10 +413,11 @@ cdef class coeff_pd(generic_pd):
         self.index = index
     cdef int eval(coeff_pd self, object vars, object coeffs) except -2:
         self.value = coeffs[self.index]
-    def __repr__(self):
-        return "a%s"%(self.index)
 
-    cdef void reset(self):
+    def __repr__(self):
+        return "a%s" % (self.index)
+
+    cdef void reset(self) noexcept:
         pass
 
 cdef class unary_pd(generic_pd):
@@ -427,7 +430,7 @@ cdef class unary_pd(generic_pd):
         self.operand = self.operand.nodummies()
         return self
 
-    cdef void reset(self):
+    cdef void reset(self) noexcept:
         generic_pd.reset(self)
         self.operand.reset()
 
@@ -439,7 +442,7 @@ cdef class sqr_pd(unary_pd):
         pd_clean(self.operand)
 
     def __repr__(self):
-        return "(%s)^2"%(self.operand)
+        return "(%s)^2" % (self.operand)
 
 cdef class pow_pd(unary_pd):
     def __init__(unary_pd self, generic_pd base, object exponent):
@@ -452,7 +455,7 @@ cdef class pow_pd(unary_pd):
         pd_clean(self.operand)
 
     def __repr__(self):
-        return "(%s^%s)"%(self.left, self.exponent)
+        return "(%s^%s)" % (self.left, self.exponent)
 
 
 
@@ -469,7 +472,7 @@ cdef class binary_pd(generic_pd):
         self.right = self.right.nodummies()
         return self
 
-    cdef void reset(self):
+    cdef void reset(self) noexcept:
         generic_pd.reset(self)
         self.left.reset()
         self.right.reset()
@@ -481,8 +484,9 @@ cdef class add_pd(binary_pd):
         self.value = self.left.value + self.right.value
         pd_clean(self.left)
         pd_clean(self.right)
+
     def __repr__(self):
-        return "(%s+%s)"%(self.left, self.right)
+        return "(%s+%s)" % (self.left, self.right)
 
 cdef class mul_pd(binary_pd):
     cdef int eval(mul_pd self, object vars, object coeffs) except -2:
@@ -491,8 +495,9 @@ cdef class mul_pd(binary_pd):
         self.value = self.left.value * self.right.value
         pd_clean(self.left)
         pd_clean(self.right)
+
     def __repr__(self):
-        return "(%s*%s)"%(self.left, self.right)
+        return "(%s*%s)" % (self.left, self.right)
 
 cdef class abc_pd(binary_pd):
     def __init__(abc_pd self, generic_pd left, generic_pd right, int index):
@@ -500,7 +505,7 @@ cdef class abc_pd(binary_pd):
         self.index = index
 
     def __repr__(self):
-        return "(%s*%s+a%s)"%(self.left, self.right, self.index)
+        return "(%s*%s+a%s)" % (self.left, self.right, self.index)
 
     cdef int eval(abc_pd self, object vars, object coeffs) except -2:
         pd_eval(self.left, vars, coeffs)

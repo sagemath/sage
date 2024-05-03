@@ -15,7 +15,7 @@ multiplication algorithms.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .matrix_window cimport MatrixWindow
+from sage.matrix.matrix_window cimport MatrixWindow
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -44,9 +44,10 @@ def strassen_window_multiply(C, A,B, cutoff):
     AUTHORS:
 
     - David Harvey
-    - Simon King (2011-07): Improve memory efficiency; :trac:`11610`
+    - Simon King (2011-07): Improve memory efficiency; :issue:`11610`
     """
     strassen_window_multiply_c(C, A, B, cutoff)
+
 
 cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
                                 MatrixWindow B, Py_ssize_t cutoff):
@@ -97,7 +98,6 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
 
     cdef MatrixWindow S0, S1, S2, S3, T0, T1 ,T2, T3, P0, P1, P2, P3, P4, P5, P6, U0, U1, U2, U3, U4, U5, U6
     cdef MatrixWindow X, Y
-    cdef Py_ssize_t tmp_cols, start_row
     X = A.new_empty_window(A_sub_nrows, max(A_sub_ncols,B_sub_ncols))
     Y = B.new_empty_window(A_sub_ncols, B_sub_ncols)
 
@@ -253,12 +253,10 @@ def strassen_echelon(MatrixWindow A, cutoff):
 
     INPUT:
 
-
     -  ``A`` - matrix window
 
     -  ``cutoff`` - size at which algorithm reverts to
        naive Gaussian elimination and multiplication must be at least 1.
-
 
     OUTPUT: The list of pivot columns
 
@@ -311,6 +309,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
     sig_on()
     strassen_echelon_c(A, cutoff, A._matrix._strassen_default_cutoff(A._matrix))
     sig_off()
+
 
 cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff):
     # The following notation will be used in the comments below, which should be understood to give

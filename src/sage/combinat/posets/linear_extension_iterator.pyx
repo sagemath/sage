@@ -5,6 +5,8 @@ Fast linear extension iterator
 cimport cython
 
 from copy import copy
+
+
 def _linear_extension_prepare(D):
     r"""
     The preprocessing routine in Figure 7 of "Generating Linear
@@ -27,9 +29,8 @@ def _linear_extension_prepare(D):
         sage: D = Poset({ 0:[1,2], 1:[3], 2:[3,4] })._hasse_diagram
         sage: _linear_extension_prepare(D)
         ([0, 1, 2, 3, 4], [1, 3], [2, 4])
-
     """
-    dag_copy = copy(D) # this copy is destroyed during preparation
+    dag_copy = copy(D)  # this copy is destroyed during preparation
     le = []
     a = []
     b = []
@@ -57,9 +58,10 @@ def _linear_extension_prepare(D):
 
     return (le, a, b)
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py_ssize_t i):
+cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py_ssize_t i) noexcept:
     """
     This implements the ``Switch`` procedure described on page 7
     of "Generating Linear Extensions Fast" by Pruesse and Ruskey.
@@ -81,9 +83,10 @@ cdef void _linear_extension_switch(list _le, list _a, list _b, list _is_plus, Py
         _b[i] = a
         _a[i] = b
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i):
+cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i) noexcept:
     """
     Return ``True`` if and only if ``_a[i]`` is incomparable with the
     element to its right in ``_le`` and the element to the right is
@@ -109,9 +112,10 @@ cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i
     y = _le[yindex]
     return y != _b[i] and _D.are_incomparable(x, y)
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i):
+cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i) noexcept:
     """
     Return True if and only if ``_b[i]`` is incomparable with the
     elements to its right in ``_le``.
@@ -135,6 +139,7 @@ cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i
         return False
     y = _le[yindex]
     return _D.are_incomparable(x, y)
+
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
@@ -276,7 +281,7 @@ def linear_extension_iterator(D):
     """
     _le, _a, _b = _linear_extension_prepare(D)
     _max_pair = len(_a) - 1
-    _is_plus = [True] # this is modified by _linear_extension_switch
+    _is_plus = [True]  # this is modified by _linear_extension_switch
 
     yield _le[:]
     for e in _linear_extension_gen(D, _le, _a, _b, _is_plus, _max_pair):

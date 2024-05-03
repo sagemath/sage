@@ -51,7 +51,7 @@ cdef int singular_polynomial_check(poly *p, ring *r) except -1:
         p = p.next
     return 0
 
-cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r):
+cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r) noexcept:
     """
     ``ret[0] = p+q`` where ``p`` and ``p`` in ``r``.
 
@@ -78,7 +78,7 @@ cdef int singular_polynomial_add(poly **ret, poly *p, poly *q, ring *r):
     ret[0] = p_Add_q(p, q, r)
     return 0
 
-cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r):
+cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r) noexcept:
     """
     ``ret[0] = p-q`` where ``p`` and ``p`` in ``r``.
 
@@ -105,7 +105,7 @@ cdef int singular_polynomial_sub(poly **ret, poly *p, poly *q, ring *r):
     ret[0] = p_Add_q(p, p_Neg(q, r), r)
     return 0
 
-cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r):
+cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r) noexcept:
     """
     ``ret[0] = n*p`` where ``n`` is a coefficient and ``p`` in ``r``.
 
@@ -132,7 +132,8 @@ cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r):
     n_Delete(&_n, r.cf)
     return 0
 
-cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly *(*get_element)(object)):
+cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
+                                  poly *(*get_element)(object) noexcept) noexcept:
     """
     ``ret[0] = p(*args)`` where each entry in arg  is a polynomial and ``p`` in ``r``.
 
@@ -231,7 +232,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly 
 
     return 0
 
-cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r):
+cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
     """
     Compare two Singular elements ``p`` and ``q`` in ``r``.
 
@@ -399,7 +400,7 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r
         sig_off()
     return 0
 
-cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r):
+cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r) noexcept:
     """
     ``ret[0] = -p where ``p`` in ``r``.
 
@@ -468,7 +469,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         10 x^{2} + \frac{1}{2} y
 
     Demonstrate that coefficients over non-atomic representated rings are
-    properly parenthesized (:trac:`11186`)::
+    properly parenthesized (:issue:`11186`)::
 
         sage: x = var('x')
         sage: K.<z> = QQ.extension(x^2 + x + 1)
@@ -477,7 +478,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         \left(z + 1\right) v w - z w^{2} + z v + \left(-z - 1\right) w + z + 1
 
     Demonstrate that there are no extra blanks in latex expression of multivariate
-    polynomial (:trac:`12908`)::
+    polynomial (:issue:`12908`)::
 
         sage: R.<X,Y> = ZZ[]
         sage: latex(X-Y)
@@ -555,7 +556,7 @@ cdef object singular_polynomial_str_with_changed_varnames(poly *p, ring *r, obje
     omFree(_names)
     return s
 
-cdef long singular_polynomial_deg(poly *p, poly *x, ring *r):
+cdef long singular_polynomial_deg(poly *p, poly *x, ring *r) noexcept:
     cdef long _deg, deg
     cdef int dummy
 
@@ -579,7 +580,7 @@ cdef long singular_polynomial_deg(poly *p, poly *x, ring *r):
         p = pNext(p)
     return deg
 
-cdef int singular_polynomial_length_bounded(poly *p, int bound):
+cdef int singular_polynomial_length_bounded(poly *p, int bound) noexcept:
     """
     Return the number of monomials in ``p`` but stop counting at
     ``bound``.

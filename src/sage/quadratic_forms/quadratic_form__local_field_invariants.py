@@ -5,7 +5,7 @@ This contains routines to compute local (p-adic) invariants of
 quadratic forms over the rationals.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein and Jonathan Hanke
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -13,8 +13,8 @@ quadratic forms over the rationals.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 ###########################################################################
 # TO DO: Add routines for hasse invariants at all places, anisotropic
@@ -237,12 +237,12 @@ def _rational_diagonal_form_and_transformation(self):
         # Diagonal matrix
         D = MS()
         for i in range(n):
-            D[i,i] = R[i,i]
+            D[i, i] = R[i, i]
         Q = Q.parent()(D)
         # Transformation matrix (inverted)
         T = MS(R.sage())
         for i in range(n):
-            T[i,i] = K.one()
+            T[i, i] = K.one()
         try:
             return Q, ~T
         except ZeroDivisionError:
@@ -256,13 +256,13 @@ def _rational_diagonal_form_and_transformation(self):
     for i in range(n):
 
         # Deal with rows where the diagonal entry is zero.
-        if Q[i,i] == 0:
+        if Q[i, i] == 0:
 
             # Look for a non-zero entry and use it to make the diagonal non-zero (if it exists)
-            for j in range(i+1, n):
-                if Q[i,j] != 0:
+            for j in range(i + 1, n):
+                if Q[i, j] != 0:
                     temp = MS(1)
-                    if Q[i,j] + Q[j,j] == 0:
+                    if Q[i, j] + Q[j, j] == 0:
                         temp[j, i] = -1
                     else:
                         temp[j, i] = 1
@@ -274,9 +274,9 @@ def _rational_diagonal_form_and_transformation(self):
 
         # Create a matrix which deals with off-diagonal entries (all at once for each row)
         temp = MS(1)
-        for j in range(i+1, n):
-            if Q[i,j] != 0:
-                temp[i,j] = -Q[i,j] / (Q[i,i] * 2)    # This should only occur when Q[i,i] != 0, which the above step guarantees.
+        for j in range(i + 1, n):
+            if Q[i, j] != 0:
+                temp[i, j] = -Q[i, j] / (Q[i, i] * 2)    # This should only occur when Q[i,i] != 0, which the above step guarantees.
 
         Q = Q(temp)
         T = T * temp
@@ -325,9 +325,9 @@ def signature_vector(self):
     n = 0
     z = 0
     for i in range(diag.dim()):
-        if diag[i,i] > 0:
+        if diag[i, i] > 0:
             p += 1
-        elif diag[i,i] < 0:
+        elif diag[i, i] < 0:
             n += 1
         else:
             z += 1
@@ -367,9 +367,8 @@ def signature(self):
         [ * * * 9 ]
         sage: Q.signature()
         2
-
     """
-    (p, n, z) = self.signature_vector()
+    p, n, _ = self.signature_vector()
     return p - n
 
 
@@ -411,33 +410,33 @@ def hasse_invariant(self, p):
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 1 0 ]
         [ * 2 ]
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                       # optional - sage.libs.pari
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]               # optional - sage.libs.pari
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1])
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                       # optional - sage.libs.pari
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]               # optional - sage.libs.pari
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1,5])
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                       # optional - sage.libs.pari
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]               # optional - sage.libs.pari
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^2 - 23)                                         # optional - sage.rings.number_field
-        sage: Q = DiagonalQuadraticForm(K, [-a, a + 2])                             # optional - sage.rings.number_field
-        sage: [Q.hasse_invariant(p) for p in K.primes_above(19)]                    # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^2 - 23)                                             # needs sage.rings.number_field
+        sage: Q = DiagonalQuadraticForm(K, [-a, a + 2])                                 # needs sage.rings.number_field
+        sage: [Q.hasse_invariant(p) for p in K.primes_above(19)]                        # needs sage.rings.number_field
         [-1, 1]
     """
     # TO DO: Need to deal with the case n=1 separately somewhere!
@@ -449,14 +448,16 @@ def hasse_invariant(self, p):
     n = Diag.dim()
 
     if R == QQ:
-        for j in range(n-1):
-            for k in range(j+1, n):
-                hasse_temp = hasse_temp * hilbert_symbol(Diag[j,j], Diag[k,k], p)
+        for j in range(n - 1):
+            for k in range(j + 1, n):
+                hasse_temp = hasse_temp * hilbert_symbol(Diag[j, j],
+                                                         Diag[k, k], p)
 
     else:
-        for j in range(n-1):
-            for k in range(j+1, n):
-                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j,j], Diag[k,k], p)
+        for j in range(n - 1):
+            for k in range(j + 1, n):
+                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j, j],
+                                                           Diag[k, k], p)
 
     return hasse_temp
 
@@ -494,33 +495,33 @@ def hasse_invariant__OMeara(self, p):
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 1 0 ]
         [ * 2 ]
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                       # optional - sage.libs.pari
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]               # optional - sage.libs.pari
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1])
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                       # optional - sage.libs.pari
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]               # optional - sage.libs.pari
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ,[1,-1,-1])
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                       # optional - sage.libs.pari
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]               # optional - sage.libs.pari
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^2 - 23)                                         # optional - sage.rings.number_field
-        sage: Q = DiagonalQuadraticForm(K, [-a, a + 2])                             # optional - sage.rings.number_field
-        sage: [Q.hasse_invariant__OMeara(p) for p in K.primes_above(19)]            # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^2 - 23)                                             # needs sage.rings.number_field
+        sage: Q = DiagonalQuadraticForm(K, [-a, a + 2])                                 # needs sage.rings.number_field
+        sage: [Q.hasse_invariant__OMeara(p) for p in K.primes_above(19)]                # needs sage.rings.number_field
         [1, 1]
     """
     # TO DO: Need to deal with the case n=1 separately somewhere!
@@ -533,17 +534,19 @@ def hasse_invariant__OMeara(self, p):
     if R == QQ:
         for j in range(n):
             for k in range(j, n):
-                hasse_temp = hasse_temp * hilbert_symbol(Diag[j,j], Diag[k,k], p)
+                hasse_temp = hasse_temp * hilbert_symbol(Diag[j, j],
+                                                         Diag[k, k], p)
 
     else:
         for j in range(n):
             for k in range(j, n):
-                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j,j], Diag[k,k], p)
+                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j, j],
+                                                           Diag[k, k], p)
 
     return hasse_temp
 
 
-def is_hyperbolic(self, p):
+def is_hyperbolic(self, p) -> bool:
     r"""
     Check if the quadratic form is a sum of hyperbolic planes over
     the `p`-adic numbers `\QQ_p` or over the real numbers `\RR`.
@@ -563,18 +566,19 @@ def is_hyperbolic(self, p):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.is_hyperbolic(-1)                                                   # optional - sage.libs.pari
+        sage: Q.is_hyperbolic(-1)
         False
-        sage: Q.is_hyperbolic(2)                                                    # optional - sage.libs.pari
+        sage: Q.is_hyperbolic(2)
         False
-        sage: Q.is_hyperbolic(3)                                                    # optional - sage.libs.pari
+        sage: Q.is_hyperbolic(3)
         False
-        sage: Q.is_hyperbolic(5)     # Here -1 is a square, so it's true.           # optional - sage.libs.pari
+        sage: Q.is_hyperbolic(5)     # Here -1 is a square, so it's true.
         True
-        sage: Q.is_hyperbolic(7)                                                    # optional - sage.libs.pari
+        sage: Q.is_hyperbolic(7)
         False
-        sage: Q.is_hyperbolic(13)    # Here -1 is a square, so it's true.           # optional - sage.libs.pari
+        sage: Q.is_hyperbolic(13)    # Here -1 is a square, so it's true.
         True
     """
     # False for odd-dim'l forms
@@ -614,33 +618,33 @@ def is_anisotropic(self, p):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.is_anisotropic(2)                                                   # optional - sage.libs.pari
+        sage: Q.is_anisotropic(2)                                                       # needs sage.libs.pari
         True
-        sage: Q.is_anisotropic(3)                                                   # optional - sage.libs.pari
+        sage: Q.is_anisotropic(3)                                                       # needs sage.libs.pari
         True
-        sage: Q.is_anisotropic(5)                                                   # optional - sage.libs.pari
+        sage: Q.is_anisotropic(5)                                                       # needs sage.libs.pari
         False
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1])
-        sage: Q.is_anisotropic(2)                                                   # optional - sage.libs.pari
+        sage: Q.is_anisotropic(2)                                                       # needs sage.libs.pari
         False
-        sage: Q.is_anisotropic(3)                                                   # optional - sage.libs.pari
+        sage: Q.is_anisotropic(3)                                                       # needs sage.libs.pari
         False
-        sage: Q.is_anisotropic(5)                                                   # optional - sage.libs.pari
+        sage: Q.is_anisotropic(5)                                                       # needs sage.libs.pari
         False
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ,                                            # optional - sage.libs.pari
+        sage: [DiagonalQuadraticForm(ZZ,                                                # needs sage.libs.pari
         ....:                        [1, -least_quadratic_nonresidue(p)]).is_anisotropic(p)
         ....:  for p in prime_range(3, 30)]
         [True, True, True, True, True, True, True, True, True]
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),        # optional - sage.libs.pari
+        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),            # needs sage.libs.pari
         ....:                             p, -p*least_quadratic_nonresidue(p)]).is_anisotropic(p)
         ....:  for p in prime_range(3, 30)]
         [True, True, True, True, True, True, True, True, True]
@@ -684,33 +688,33 @@ def is_isotropic(self, p):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.is_isotropic(2)                                                     # optional - sage.libs.pari
+        sage: Q.is_isotropic(2)                                                         # needs sage.libs.pari
         False
-        sage: Q.is_isotropic(3)                                                     # optional - sage.libs.pari
+        sage: Q.is_isotropic(3)                                                         # needs sage.libs.pari
         False
-        sage: Q.is_isotropic(5)                                                     # optional - sage.libs.pari
+        sage: Q.is_isotropic(5)                                                         # needs sage.libs.pari
         True
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1])
-        sage: Q.is_isotropic(2)                                                     # optional - sage.libs.pari
+        sage: Q.is_isotropic(2)                                                         # needs sage.libs.pari
         True
-        sage: Q.is_isotropic(3)                                                     # optional - sage.libs.pari
+        sage: Q.is_isotropic(3)                                                         # needs sage.libs.pari
         True
-        sage: Q.is_isotropic(5)                                                     # optional - sage.libs.pari
+        sage: Q.is_isotropic(5)                                                         # needs sage.libs.pari
         True
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ,                                            # optional - sage.libs.pari
+        sage: [DiagonalQuadraticForm(ZZ,                                                # needs sage.libs.pari
         ....:                        [1, -least_quadratic_nonresidue(p)]).is_isotropic(p)
         ....:  for p in prime_range(3, 30)]
         [False, False, False, False, False, False, False, False, False]
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),        # optional - sage.libs.pari
+        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),            # needs sage.libs.pari
         ....:                             p, -p*least_quadratic_nonresidue(p)]).is_isotropic(p)
         ....:  for p in prime_range(3, 30)]
         [False, False, False, False, False, False, False, False, False]
@@ -728,15 +732,15 @@ def anisotropic_primes(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.anisotropic_primes()                                                # optional - sage.libs.pari
+        sage: Q.anisotropic_primes()                                                    # needs sage.libs.pari
         [2, -1]
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
-        sage: Q.anisotropic_primes()                                                # optional - sage.libs.pari
+        sage: Q.anisotropic_primes()                                                    # needs sage.libs.pari
         [2, -1]
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1,1])
-        sage: Q.anisotropic_primes()                                                # optional - sage.libs.pari
+        sage: Q.anisotropic_primes()                                                    # needs sage.libs.pari
         [-1]
     """
     # Look at all prime divisors of 2 * Det(Q) to find the
@@ -895,8 +899,8 @@ def compute_definiteness_string_by_determinants(self):
         return "degenerate"
 
     # Check the sign of the ratios of consecutive determinants of the upper triangular r x r submatrices
-    first_coeff = self[0,0]
-    for r in range(1,n+1):
+    first_coeff = self[0, 0]
+    for r in range(1, n + 1):
         I = list(range(r))
         new_det = M.matrix_from_rows_and_columns(I, I).det()
 

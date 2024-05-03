@@ -198,6 +198,7 @@ Pygen('I:=sqrt(-1)').eval()   # WTF?
 # self._giac_() does.
 SRexpressiontoGiac = InterfaceInit(giac)
 
+
 #######################################################
 # The wrapper to eval with giac
 #######################################################
@@ -1057,7 +1058,7 @@ cdef class Pygen(GiacMethods_base):
             sage: [ i for i in l ] == list(range(10^6))
             True
 
-        Check for :trac:`18841`::
+        Check for :issue:`18841`::
 
             sage: L = libgiac(range(10))
             sage: next(iter(L))
@@ -1266,11 +1267,10 @@ cdef class Pygen(GiacMethods_base):
         GIAC_archive( <string>encstring23(filename), (<Pygen>self).gptr[0], context_ptr)
         sig_off()
 
-
-
     # NB: with giac <= 1.2.3-57 redim doesn't have a non evaluated for so Pygen('redim') fails.
     # hence replacement  for redim:
-    def redim(self,a,b=None):
+
+    def redim(self, a, b=None):
         """
         Increase the size of a matrix when possible, otherwise return self.
 
@@ -1546,7 +1546,7 @@ cdef class Pygen(GiacMethods_base):
 
         TESTS:
 
-        Check that variables and constants are not mixed up (:trac:`30133`)::
+        Check that variables and constants are not mixed up (:issue:`30133`)::
 
             sage: ee, ii, pp = SR.var('e,i,pi')
             sage: libgiac(ee * ii * pp).sage().variables()
@@ -1677,11 +1677,11 @@ cdef class Pygen(GiacMethods_base):
                 xyplot=[[(u.real())._double,(u.im())._double] for u in l]
 
 
-        if (xyscat != []):
-            result=scatter_plot(xyscat)
+        if xyscat:
+            result = scatter_plot(xyscat)
 
         else:
-            result=line(xyplot)
+            result = line(xyplot)
         sig_off()
 
         return result
@@ -1695,11 +1695,11 @@ cdef class Pygen(GiacMethods_base):
     #
     # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    def __richcmp__( self, other,op):
+    def __richcmp__(self, other, op):
         if not isinstance(other, Pygen):
-            other=Pygen(other)
+            other = Pygen(other)
         if not isinstance(self, Pygen):
-            self=Pygen(self)
+            self = Pygen(self)
         sig_on()
         result= giacgenrichcmp((<Pygen>self).gptr[0],(<Pygen>other).gptr[0], op, context_ptr )
         sig_off()
@@ -1708,10 +1708,11 @@ cdef class Pygen(GiacMethods_base):
     #
     # Some attributes of the gen class:
     #
+
     property _type:
         def __get__(self):
             sig_on()
-            result=self.gptr.type
+            result = self.gptr.type
             sig_off()
             return result
 
@@ -1723,30 +1724,27 @@ cdef class Pygen(GiacMethods_base):
             sig_off()
             return result
 
-
-
     property _val:  # immediate int (type _INT_)
         """
         immediate int value of an _INT_ type gen.
         """
         def __get__(self):
-            if(self._type == 0):
+            if self._type == 0:
                 sig_on()
-                result=self.gptr.val
+                result = self.gptr.val
                 sig_off()
                 return result
             else:
                 raise TypeError("cannot convert non _INT_ giac gen")
-
 
     property _double:  # immediate double (type _DOUBLE_)
         """
         immediate conversion to float for a gen of _DOUBLE_ type.
         """
         def __get__(self):
-            if(self._type == 1):
+            if self._type == 1:
                 sig_on()
-                result=self.gptr._DOUBLE_val
+                result = self.gptr._DOUBLE_val
                 sig_off()
                 return result
             else:
@@ -1755,8 +1753,6 @@ cdef class Pygen(GiacMethods_base):
     property help:
         def __get__(self):
             return self._help()
-
-
 
     ###################################################
     # Add the others methods
@@ -1767,30 +1763,22 @@ cdef class Pygen(GiacMethods_base):
     #
     #     def __getattr__(self, name):
     #       return GiacMethods[str(name)](self)
-    ##
 
+    # test
 
-    #test
     def giacAiry_Ai(self, *args):
-        cdef gen result=GIAC_Airy_Ai(self.gptr[0], context_ptr)
+        cdef gen result = GIAC_Airy_Ai(self.gptr[0], context_ptr)
         return _wrap_gen(result)
 
     def giacifactor(self, *args):
         cdef gen result
         sig_on()
-        result=GIAC_eval(self.gptr[0], <int>1, context_ptr)
-        result=GIAC_ifactor(result, context_ptr)
+        result = GIAC_eval(self.gptr[0], <int>1, context_ptr)
+        result = GIAC_ifactor(result, context_ptr)
         sig_off()
         return _wrap_gen(result)
 
 
-
-
-
-
-
-
-##
 ################################################################
 #   A wrapper from a cpp element of type giac gen to create    #
 #   the Python object                                          #
@@ -1991,6 +1979,7 @@ class GiacFunction(Pygen):
             args = (Pygen(args[0]).eval(),)
         return Pygen.__call__(self, *args)
 
+
 class GiacFunctionNoEV(Pygen):
     # a class to allow to write the __doc__ attribute.
     """
@@ -2020,19 +2009,19 @@ for i in mostkeywords:
     if i in NoEvArgsFunc:
         # do not eval args before calling this function. Ex purge
         #tmp=Pygen(i)
-        tmp=GiacFunctionNoEV(i)
+        tmp = GiacFunctionNoEV(i)
     else:
-        tmp=GiacFunction(i)
+        tmp = GiacFunction(i)
     # in the sage version we remove:    globals()[i]=tmp
-    GiacMethods[i]=tmp
+    GiacMethods[i] = tmp
 
 # We put the giac names that should not be exported to Python in moremethods.
 for i in moremethods:
-    tmp=GiacFunction(i)
-    GiacMethods[i]=tmp
+    tmp = GiacFunction(i)
+    GiacMethods[i] = tmp
 
 for i in mostkeywords+moremethods:
-    GiacMethods[i].__doc__=eval("Pygen."+i+".__doc__")
+    GiacMethods[i].__doc__ = eval("Pygen."+i+".__doc__")
 
 # To avoid conflicts we export only these few ones.  Most giac keywords will be
 # avaible through: libgiac.keywordname
@@ -2115,7 +2104,7 @@ class GiacInstance:
 
 libgiac=GiacInstance()
 
-# trac #23976 (bound threads with SAGE_NUM_THREADS)
+# Issue #23976 (bound threads with SAGE_NUM_THREADS)
 import os
 try:
     ncpus = int(os.environ['SAGE_NUM_THREADS'])

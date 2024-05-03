@@ -14,9 +14,10 @@ from .half_integral import half_integral_weight_modform_basis
 
 from .theta import theta_qexp, theta2_qexp
 
-from .j_invariant import j_invariant_qexp
+from sage.misc.lazy_import import lazy_import
 
-from .vm_basis import victor_miller_basis, delta_qexp
+lazy_import('sage.modular.modform.j_invariant', 'j_invariant_qexp')
+lazy_import('sage.modular.modform.vm_basis', ['victor_miller_basis', 'delta_qexp'])
 
 from .hecke_operator_on_qexp import hecke_operator_on_qexp, hecke_operator_on_basis
 

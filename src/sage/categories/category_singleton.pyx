@@ -135,13 +135,14 @@ class Category_singleton(Category):
     One sees that containment tests for the singleton class is a lot faster
     than for a usual class::
 
-        sage: timeit("R in MyRings()", number=10000)                  # not tested
+        sage: # not tested
+        sage: timeit("R in MyRings()", number=10000)
         10000 loops, best of 3: 7.12 µs per loop
-        sage: timeit("R1 in MyRings()", number=10000)                 # not tested
+        sage: timeit("R1 in MyRings()", number=10000)
         10000 loops, best of 3: 6.98 µs per loop
-        sage: timeit("R in MyRingsSingleton()", number=10000)         # not tested
+        sage: timeit("R in MyRingsSingleton()", number=10000)
         10000 loops, best of 3: 3.08 µs per loop
-        sage: timeit("R2 in MyRingsSingleton()", number=10000)        # not tested
+        sage: timeit("R2 in MyRingsSingleton()", number=10000)
         10000 loops, best of 3: 2.99 µs per loop
 
     So this is an improvement, but not yet competitive with a pure

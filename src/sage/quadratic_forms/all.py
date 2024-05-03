@@ -1,5 +1,7 @@
 from .binary_qf import BinaryQF, BinaryQF_reduced_representatives
 
+from .bqf_class_group import BQFClassGroup
+
 from .ternary_qf import TernaryQF, find_all_ternary_qf_by_level_disc, find_a_ternary_qf_by_level_disc
 
 from .quadratic_form import QuadraticForm, DiagonalQuadraticForm, quadratic_form_from_invariants

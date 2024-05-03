@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Rigged Configurations
 
@@ -357,7 +358,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         if not cartan_type.classical().is_simply_laced():
             return RCNonSimplyLaced(cartan_type, B)
 
-        return super(RiggedConfigurations, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, B):
         r"""
@@ -475,7 +476,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         """
         if key == 'element_ascii_art':
             return self.options.element_ascii_art
-        return super(RiggedConfigurations, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def __iter__(self):
         """
@@ -530,7 +531,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        We check that this works with relabelled Cartan types (:trac:`16876`)::
+        We check that this works with relabelled Cartan types (:issue:`16876`)::
 
             sage: ct = CartanType(['A',3,1]).relabel(lambda x: x+2)
             sage: RC = RiggedConfigurations(ct, [[4,1],[5,1]])
@@ -730,7 +731,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`17054` is fixed::
+        Check that :issue:`17054` is fixed::
 
             sage: B = crystals.infinity.RiggedConfigurations(['A',2])
             sage: RC = RiggedConfigurations(['A',2,1], [[1,1]]*4 + [[2,1]]*4)
@@ -1061,7 +1062,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
             for B in crystals:
                 dims += B.dims
             return RiggedConfigurations(ct, dims)
-        return super(RiggedConfigurations, self).tensor(*crystals, **options)
+        return super().tensor(*crystals, **options)
 
     Element = KRRCSimplyLacedElement
 
@@ -1092,7 +1093,7 @@ class RCNonSimplyLaced(RiggedConfigurations):
 
         # Standardize B input into a tuple of tuples
         B = tuple(map(tuple, B))
-        return super(RCNonSimplyLaced, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, dims):
         """
@@ -1110,7 +1111,7 @@ class RCNonSimplyLaced(RiggedConfigurations):
             sage: TestSuite(RC).run() # long time
             sage: RC = RiggedConfigurations(['A',5,2], [[2,1]])
             sage: TestSuite(RC).run() # long time
-         """
+        """
         self._folded_ct = cartan_type.as_folding()
         RiggedConfigurations.__init__(self, cartan_type, dims)
 
@@ -1548,7 +1549,7 @@ class RCTypeA2Even(RCNonSimplyLaced):
         for a,rp in enumerate(rc):
             g = gamma[a+1]
             for i in sigma[a+1]:
-                partitions[i-1] = RiggedPartition([row_len for row_len in rp._list],
+                partitions[i-1] = RiggedPartition(list(rp._list),
                                                   [rig_val*g for rig_val in rp.rigging],
                                                   [vac_num*g for vac_num in rp.vacancy_numbers])
         return self.virtual.element_class(self.virtual, partitions, use_vacancy_numbers=True)
@@ -1584,7 +1585,7 @@ class RCTypeA2Even(RCNonSimplyLaced):
         for a in range(n):
             rp = vrc[sigma[a+1][0] - 1]
             g = gamma[a+1]
-            partitions[a] = RiggedPartition([row_len for row_len in rp._list],
+            partitions[a] = RiggedPartition(list(rp._list),
                                             [rig_val//g for rig_val in rp.rigging],
                                             [vac_val//g for vac_val in rp.vacancy_numbers])
         return self.element_class(self, partitions, use_vacancy_numbers=True)
@@ -1873,7 +1874,7 @@ class RCTypeA2Dual(RCTypeA2Even):
         for a,rp in enumerate(rc):
             g = gammatilde[a+1]
             for i in sigma[a+1]:
-                partitions[i-1] = RiggedPartition([row_len for row_len in rp._list],
+                partitions[i-1] = RiggedPartition(list(rp._list),
                                                   [rig_val*g for rig_val in rp.rigging])
         return self.virtual.element_class(self.virtual, partitions)
 
@@ -1909,7 +1910,7 @@ class RCTypeA2Dual(RCTypeA2Even):
         for a in range(n):
             rp = vrc[sigma[a+1][0] - 1]
             g = gammatilde[a+1]
-            partitions[a] = RiggedPartition([row_len for row_len in rp._list],
+            partitions[a] = RiggedPartition(list(rp._list),
                                             [rig_val/g for rig_val in rp.rigging])
         return self.element_class(self, partitions)
 

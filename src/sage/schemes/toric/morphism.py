@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Morphisms of toric varieties
 
@@ -181,12 +182,12 @@ torus orbits are::
     sage: table([('cone', 'dim')] +
     ....:       [(cone.ambient_ray_indices(), single_chart.fiber_dimension(cone))
     ....:        for cone in A2_Z2_cones], header_row=True)
-      cone     dim
-    +--------+-----+
-      ()       0
-      (0,)     0
-      (1,)     -1
-      (0, 1)   1
+        cone     dim
+      ├────────┼─────┤
+        ()       0
+        (0,)     0
+        (1,)     -1
+        (0, 1)   1
 
 Lets look closer at the one-dimensional fiber. Although not the case
 in this example, connected components of fibers over higher-dimensional cones
@@ -201,12 +202,12 @@ base that defines the torus orbit::
     ....:       [(cone.ambient_ray_indices(),
     ....:         single_chart.fan_morphism().primitive_preimage_cones(cone))
     ....:        for cone in A2_Z2_cones], header_row=True)
-      base cone   primitive preimage cones
-    +-----------+---------------------------------------------------------+
-      ()          (0-d cone of Rational polyhedral fan in 2-d lattice N,)
-      (0,)        (1-d cone of Rational polyhedral fan in 2-d lattice N,)
-      (1,)        ()
-      (0, 1)      (1-d cone of Rational polyhedral fan in 2-d lattice N,)
+        base cone   primitive preimage cones
+      ├───────────┼─────────────────────────────────────────────────────────┤
+        ()          (0-d cone of Rational polyhedral fan in 2-d lattice N,)
+        (0,)        (1-d cone of Rational polyhedral fan in 2-d lattice N,)
+        (1,)        ()
+        (0, 1)      (1-d cone of Rational polyhedral fan in 2-d lattice N,)
 
 The fiber over the trivial cone is the generic fiber that we have
 already encountered. The interesting fiber is the one over the
@@ -245,7 +246,7 @@ Here is an example with higher dimensional varieties involved::
     Traceback (most recent call last):
     ...
     AttributeError: 'SchemeMorphism_fan_toric_variety' object
-    has no attribute 'fiber_generic'
+    has no attribute 'fiber_generic'...
 
 Let's use factorization mentioned above::
 
@@ -283,7 +284,7 @@ verified by ::
     sage: phi_d.codomain().fan().is_isomorphic(toric_varieties.P2().fan()) # known bug
     True
 
-(Unfortunately it cannot be verified correctly until :trac:`16012` is fixed.)
+(Unfortunately it cannot be verified correctly until :issue:`16012` is fixed.)
 
 We now have access to fiber methods::
 
@@ -520,7 +521,8 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
 
         OUTPUT: A :class:`SchemeMorphism_polynomial_toric_variety`.
 
-        Raises a ``TypeError`` if the morphism cannot be written in such a way.
+        This raises a :class:`TypeError` if the morphism cannot be written
+        in such a way.
 
         EXAMPLES::
 
@@ -679,9 +681,10 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
 
         OUTPUT:
 
-        A :class:`SchemeMorphism_polynomial_toric_variety`. Raises a
-        ``TypeError`` if the morphism cannot be written in terms of
-        homogeneous polynomials.
+        A :class:`SchemeMorphism_polynomial_toric_variety`.
+
+        This raises a :class:`TypeError` if the morphism cannot be
+        written in terms of homogeneous polynomials.
 
         The defining polynomials are not necessarily unique. There are
         choices if multiple ambient space ray generators project to
@@ -715,7 +718,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         orbit = self.domain()
         codomain_fan = self.codomain().fan()
         R = orbit.coordinate_ring()
-        polys = [ R.one() ] * codomain_fan.nrays()
+        polys = [R.one()] * codomain_fan.nrays()
         for i in self._defining_cone.ambient_ray_indices():
             polys[i] = R.zero()
         ray_index_map = self._reverse_ray_map()
@@ -1069,8 +1072,8 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         OUTPUT: A :class:`SchemeMorphism_polynomial_toric_variety`.
 
-        Raises a ``TypeError`` if the morphism cannot be written in terms of
-        homogeneous polynomials.
+        This raises a :class:`TypeError` if the morphism cannot be written
+        in terms of homogeneous polynomials.
 
         EXAMPLES::
 
@@ -1103,8 +1106,8 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
                                     'homogeneous polynomials')
                 polys[i] *= x**d
         if phi.domain_fan().virtual_rays():
-            raise NotImplementedError("polynomial representations for fans "
-                                    "with virtual rays are not implemented yet")
+            raise NotImplementedError("polynomial representations for fans with"
+                                      " virtual rays are not implemented yet")
         return SchemeMorphism_polynomial_toric_variety(self.parent(), polys)
 
     def is_bundle(self):
@@ -1476,7 +1479,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         embedding = SchemeMorphism_fan_fiber_component_toric_variety(self, domain_cone)
         if multiplicity:
             return embedding.domain(), \
-               self.fan_morphism().index(embedding.base_cone())
+                self.fan_morphism().index(embedding.base_cone())
         else:
             return embedding.domain()
 
@@ -1608,7 +1611,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             except ValueError:
                 return False
 
-        m = matrix(ZZ, n, n, lambda i,j:is_union_in_fan(self,prim[i], prim[j]))
+        m = matrix(ZZ, n, n, lambda i, j: is_union_in_fan(self, prim[i], prim[j]))
 
         for i in range(n):
             m[i, i] = 0
@@ -1726,9 +1729,10 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
 
         OUTPUT:
 
-        A :class:`SchemeMorphism_polynomial_toric_variety`. Raises a
-        ``ValueError`` if the morphism cannot be written in terms of
-        homogeneous polynomials.
+        A :class:`SchemeMorphism_polynomial_toric_variety`.
+
+        This raises a :class:`ValueError` if the morphism cannot be
+        written in terms of homogeneous polynomials.
 
         EXAMPLES::
 
@@ -1829,7 +1833,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         star_rays = set()
         for cone in fm.relative_star_generators(defining_cone):
             star_rays.update(cone.rays())
-            projected_rays = [ projection(r) for r in cone.rays() ]
+            projected_rays = [projection(r) for r in cone.rays()]
             cones.append(Cone(projected_rays))
         fiber_fan = Fan(cones)
 

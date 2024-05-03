@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.plot
 r"""
 Colors
 
@@ -215,7 +215,7 @@ def mod_one(x):
         0.0
         sage: mod_one(-11/7)
         0.4285714285714286
-        sage: mod_one(pi) + mod_one(-pi)
+        sage: mod_one(pi) + mod_one(-pi)                                                # needs sage.symbolic
         1.0
     """
     x = float(x)
@@ -254,7 +254,7 @@ def html_to_float(c):
         raise ValueError("'%s' must be a valid HTML hex color (e.g., '#f07' or '#d6e7da')" % c)
     h = c[1:]
     if len(h) == 3:
-        h = '%s%s%s%s%s%s' % (h[0], h[0], h[1], h[1], h[2], h[2])
+        h = f'{h[0]}{h[0]}{h[1]}{h[1]}{h[2]}{h[2]}'
     elif len(h) != 6:
         raise ValueError("color hex string (= '%s') must have length 3 or 6" % h)
     return tuple([int(h[i:i + 2], base=16) / 255 for i in [0, 2, 4]])
@@ -338,8 +338,8 @@ def rgbcolor(c, space='rgb'):
 
     elif isinstance(c, (list, tuple)):
         if len(c) != 3:
-            raise ValueError("color list or tuple '%s' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel" % (c, ))
-        c = [mod_one(_) for _ in list(c)]
+            raise ValueError(f"color list or tuple '{c}' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel")
+        c = [mod_one(comp) for comp in c]
         if space == 'rgb':
             return tuple(c)
         elif space == 'hsv':
@@ -358,10 +358,10 @@ def rgbcolor(c, space='rgb'):
 to_mpl_color = rgbcolor
 
 
-class Color():
+class Color:
     def __init__(self, r='#0000ff', g=None, b=None, space='rgb'):
         """
-        An Red-Green-Blue (RGB) color model color object.  For most
+        A Red-Green-Blue (RGB) color model color object.  For most
         consumer-grade devices (e.g., CRTs, LCDs, and printers), as
         well as internet applications, this is a point in the sRGB
         absolute color space.  The Hue-Saturation-Lightness (HSL),
@@ -421,7 +421,7 @@ class Color():
             sage: Color(1, 0.5, 1/16, space='hsl').__repr__()
             'RGB color (0.09375, 0.03125, 0.03125)'
         """
-        return "RGB color %s" % (self._rgb, )
+        return f"RGB color {self._rgb}"
 
     def __lt__(self, right):
         """
@@ -645,7 +645,7 @@ class Color():
             color = [float(_) for _ in color]
             return Color(rgbcolor([(1 - fraction) * a + fraction * b
                                    for a, b in zip(self._rgb, color)]))
-        raise TypeError("%s must be a Color or float-convertible 3-tuple/list" % (color, ))
+        raise TypeError(f"{color} must be a Color or float-convertible 3-tuple/list")
 
     def __add__(self, right):
         """
@@ -1099,12 +1099,12 @@ class ColorsDict(dict):
             sage: cols.punk
             Traceback (most recent call last):
             ...
-            AttributeError: 'ColorsDict' has no attribute or colormap punk
+            AttributeError: 'ColorsDict' has no attribute or colormap punk...
         """
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'%s' has no attribute or colormap %s" % (type(self).__name__, name))
+            raise AttributeError("'{}' has no attribute or colormap {}".format(type(self).__name__, name))
 
     def __dir__(self):
         """
@@ -1146,9 +1146,10 @@ def hue(h, s=1, v=1):
     This function makes it easy to sample a broad range of colors for
     graphics::
 
+        sage: # needs sage.symbolic
         sage: p = Graphics()
         sage: for phi in xsrange(0, 2 * pi, 1 / pi):
-        ....:     p += plot(sin(x + phi), (x, -7, 7), rgbcolor = hue(phi))
+        ....:     p += plot(sin(x + phi), (x, -7, 7), rgbcolor=hue(phi))
         sage: p
         Graphics object consisting of 20 graphics primitives
 
@@ -1364,7 +1365,7 @@ def get_cmap(cmap):
 
     TESTS:
 
-    Check that :trac:`33491` is fixed::
+    Check that :issue:`33491` is fixed::
 
         sage: get_cmap('turbo')
         <matplotlib.colors.ListedColormap object at 0x...>
@@ -1599,7 +1600,7 @@ class Colormaps(MutableMapping):
             sage: maps.punk
             Traceback (most recent call last):
             ...
-            AttributeError: 'Colormaps' has no attribute or colormap punk
+            AttributeError: 'Colormaps' has no attribute or colormap punk...
             sage: maps['punk']
             Traceback (most recent call last):
             ...
@@ -1610,7 +1611,7 @@ class Colormaps(MutableMapping):
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'%s' has no attribute or colormap %s" % (type(self).__name__, name))
+            raise AttributeError("'{}' has no attribute or colormap {}".format(type(self).__name__, name))
 
     def __repr__(self):
         """

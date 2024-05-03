@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.numerical.mip
 r"""
 Solve SAT problems Integer Linear Programming
 
@@ -53,7 +54,7 @@ class SatLP(SatSolver):
             1
         """
         nvars = n = self._LP.number_of_variables()
-        while nvars==self._LP.number_of_variables():
+        while nvars == self._LP.number_of_variables():
             n += 1
             self._vars[n] # creates the variable if needed
         return n
@@ -101,8 +102,8 @@ class SatLP(SatSolver):
         if 0 in lits:
             raise ValueError("0 should not appear in the clause: {}".format(lits))
         p = self._LP
-        p.add_constraint(p.sum(self._vars[x] if x>0 else 1-self._vars[-x] for x in lits)
-                         >=1)
+        p.add_constraint(p.sum(self._vars[x] if x > 0 else 1-self._vars[-x] for x in lits)
+                         >= 1)
 
     def __call__(self):
         """

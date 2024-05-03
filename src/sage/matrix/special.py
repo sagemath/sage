@@ -7,7 +7,7 @@ interesting matrices. These can be reached through ``matrix.<tab>``.
 
 For example, here is a circulant matrix of order five::
 
-    sage: matrix.circulant(SR.var('a b c d e'))
+    sage: matrix.circulant(SR.var('a b c d e'))                                         # needs sage.symbolic
     [a b c d e]
     [e a b c d]
     [d e a b c]
@@ -62,9 +62,10 @@ matrices and Latin squares. See:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
-from sage.rings.ring import is_Ring
 import sage.matrix.matrix_space as matrix_space
+from sage.categories.rings import Rings
 from sage.modules.free_module_element import vector
 from sage.structure.element import is_Matrix, parent
 from sage.structure.sequence import Sequence
@@ -72,9 +73,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.misc.misc_c import running_total
-from copy import copy
+from sage.misc.prandom import randint, shuffle
 from .constructor import matrix
-
 import sage.categories.pushout
 
 
@@ -266,7 +266,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         An upper bound on the absolute value of the entries may be set
         when the ``algorithm`` is ``echelonizable`` or ``unimodular``.
         In these cases it is possible for this constructor to fail with
-        a ``ValueError``.   If you *must* have this routine return
+        a :class:`ValueError`.  If you *must* have this routine return
         successfully, do not set ``upper_bound``.  This behavior can
         be partially controlled by a ``max_tries`` keyword.
 
@@ -356,6 +356,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         ....:     A = random_matrix(*args, **kwds)
         ....:     density_sum += float(A.density())
 
+        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=-10, y=10, density=0.75)
@@ -365,12 +366,14 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=-10, y=10, density=0.75)
 
+        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=20, y=30, density=0.75)
         sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=20, y=30, density=0.75)
 
+        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)
@@ -383,7 +386,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     For a matrix with low density it may be advisable to insist on a sparse
     representation, as this representation is not selected automatically. ::
 
-        sage: A=random_matrix(ZZ, 5, 5)
+        sage: A = random_matrix(ZZ, 5, 5)
         sage: A.is_sparse()
         False
         sage: A = random_matrix(ZZ, 5, 5, sparse=True)
@@ -393,15 +396,16 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     For algorithm testing you might want to control the number of bits,
     say 10,000 entries, each limited to 16 bits.  ::
 
+        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: A = random_matrix(ZZ, 100, 100, x=2^16); A
         100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 
     One can prescribe a specific matrix implementation::
 
-        sage: K.<a> = FiniteField(2^8)
-        sage: type(random_matrix(K, 2, 5))
+        sage: K.<a> = FiniteField(2^8)                                                  # needs sage.rings.finite_rings
+        sage: type(random_matrix(K, 2, 5))                                              # needs sage.libs.m4ri sage.rings.finite_rings
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-        sage: type(random_matrix(K, 2, 5, implementation="generic"))
+        sage: type(random_matrix(K, 2, 5, implementation="generic"))                    # needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
     Random rational matrices.  Now ``num_bound`` and ``den_bound`` control the
@@ -421,7 +425,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         ....:     for a in A.list())
         True
 
-        sage: A = random_matrix(QQ, 4, density = 0.5, sparse=True)
+        sage: A = random_matrix(QQ, 4, density=0.5, sparse=True)
         sage: type(A)
         <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
         sage: A.density() <= 0.5
@@ -460,11 +464,11 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     randomisation when using the optional meataxe package, we have to make sure
     that we use the default implementation in this test::
 
-        sage: K.<a>=FiniteField(3^2)
-        sage: A = random_matrix(K, 2, 5, implementation='generic')
+        sage: K.<a> = FiniteField(3^2)                                                  # needs sage.rings.finite_rings
+        sage: A = random_matrix(K, 2, 5, implementation='generic')                      # needs sage.rings.finite_rings
         sage: type(A)
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-        sage: A.base_ring() is K
+        sage: A.base_ring() is K                                                        # needs sage.rings.finite_rings
         True
         sage: TestSuite(A).run()
 
@@ -544,14 +548,15 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     When the eigenvalues and dimensions are not specified the result will have
     randomly generated values for both that fit with the designated size. ::
 
-        sage: A = random_matrix(QQ, 5, algorithm='diagonalizable', eigenvalues=[2,3,-1], dimensions=[1,2,2]); A # random
-        sage: all(x in ZZ for x in (A-(2*identity_matrix(5))).rref().list())
+        sage: A = random_matrix(QQ, 5, algorithm='diagonalizable',  # random
+        ....:                   eigenvalues=[2,3,-1], dimensions=[1,2,2]); A
+        sage: all(x in ZZ for x in (A - (2*identity_matrix(5))).rref().list())
         True
-        sage: all(x in ZZ for x in (A-(3*identity_matrix(5))).rref().list())
+        sage: all(x in ZZ for x in (A - 3*identity_matrix(5)).rref().list())
         True
-        sage: all(x in ZZ for x in (A-(-1*identity_matrix(5))).rref().list())
+        sage: all(x in ZZ for x in (A - (-1)*identity_matrix(5)).rref().list())
         True
-        sage: A.jordan_form()
+        sage: A.jordan_form()                                                           # needs sage.combinat sage.libs.pari
         [ 2| 0| 0| 0| 0]
         [--+--+--+--+--]
         [ 0| 3| 0| 0| 0]
@@ -575,14 +580,14 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     contain only integer entries.  If ``rank``, is not set, the
     rank of the matrix will be generated randomly. ::
 
-        sage: B = random_matrix(QQ, 5, 6, algorithm='subspaces', rank=3); B #random
-        sage: B_expanded=B.augment(identity_matrix(5)).rref()
+        sage: B = random_matrix(QQ, 5, 6, algorithm='subspaces', rank=3); B  # random
+        sage: B_expanded = B.augment(identity_matrix(5)).rref()
         sage: (B.nrows(), B.ncols())
         (5, 6)
         sage: all(x in ZZ for x in B_expanded.list())
         True
-        sage: C=B_expanded.submatrix(0,0,B.nrows()-B.nullity(),B.ncols())
-        sage: L=B_expanded.submatrix(B.nrows()-B.nullity(),B.ncols())
+        sage: C = B_expanded.submatrix(0, 0, B.nrows() - B.nullity(), B.ncols())
+        sage: L = B_expanded.submatrix(B.nrows() - B.nullity(), B.ncols())
         sage: B.right_kernel() == C.right_kernel()
         True
         sage: B.row_space() == C.row_space()
@@ -604,7 +609,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     or ``QQ`` the result has integer entries, whose magnitudes
     can be limited by the value of ``upper_bound``. ::
 
-        sage: C=random_matrix(QQ, 5, algorithm='unimodular', upper_bound=70); C # random
+        sage: C = random_matrix(QQ, 5, algorithm='unimodular', upper_bound=70); C  # random
         sage: det(C)
         1
         sage: C.base_ring()
@@ -624,7 +629,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
     We return an error for a bogus value of ``algorithm``::
 
-        sage: random_matrix(ZZ, 5, algorithm = 'bogus')
+        sage: random_matrix(ZZ, 5, algorithm='bogus')
         Traceback (most recent call last):
         ...
         ValueError: random matrix algorithm "bogus" is not recognized
@@ -748,6 +753,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     NumPy arrays may be used as input. ::
 
+        sage: # needs numpy
         sage: import numpy
         sage: entries = numpy.array([1.2, 5.6]); entries
         array([1.2, 5.6])
@@ -758,6 +764,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Real Double Field
 
+        sage: # needs numpy
         sage: j = complex(0,1)
         sage: entries = numpy.array([2.0+j, 8.1, 3.4+2.6*j]); entries
         array([2. +1.j , 8.1+0.j , 3.4+2.6j])
@@ -768,6 +775,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Complex Double Field
 
+        sage: # needs numpy
         sage: entries = numpy.array([4, 5, 6])
         sage: A = diagonal_matrix(entries); A
         [4 0 0]
@@ -776,8 +784,8 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         sage: A.parent()
         Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
 
-        sage: entries = numpy.array([4.1, 5.2, 6.3])
-        sage: A = diagonal_matrix(ZZ, entries); A
+        sage: entries = numpy.array([4.1, 5.2, 6.3])                                    # needs numpy
+        sage: A = diagonal_matrix(ZZ, entries); A                                       # needs numpy
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 4.1 to an element of Integer Ring
@@ -819,7 +827,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     Types for the entries need to be iterable (tuple, list, vector, NumPy array,
     etc)::
 
-        sage: diagonal_matrix(x^2)
+        sage: diagonal_matrix(x^2)                                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: 'sage.symbolic.expression.Expression' object is not iterable
@@ -837,7 +845,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     # Leads with a ring?
     # Formats 3, 4, else remains None
     ring = None
-    if is_Ring(arg0):
+    if arg0 in Rings():
         ring = arg0
         arg0 = arg1
         arg1 = arg2
@@ -852,8 +860,14 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     entries = arg0
 
     # sanity check for entries
-    from numpy import ndarray
-    if not isinstance(entries, (list, tuple, ndarray)):
+    types = (list, tuple)
+    try:
+        from numpy import ndarray
+    except ImportError:
+        pass
+    else:
+        types += (ndarray,)
+    if not isinstance(entries, types):
         entries = list(entries)
 
     # Reconcile matrix size and number of entries
@@ -1275,14 +1289,18 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Rational Field
 
+        sage: # needs sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=I)
         sage: E.parent()
-        Full MatrixSpace of 4 by 4 dense matrices over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+        Full MatrixSpace of 4 by 4 dense matrices over
+         Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
+        sage: # needs sage.rings.complex_double sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=CDF(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Complex Double Field
 
+        sage: # needs sage.rings.number_field sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=QQbar(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Algebraic Field
@@ -1396,10 +1414,10 @@ def elementary_matrix(arg0, arg1=None, **kwds):
     """
     import sage.structure.element
     # determine ring and matrix size
-    if arg1 is not None and not is_Ring(arg0):
+    if arg1 is not None and arg0 not in Rings():
         raise TypeError('optional first parameter must be a ring, not {0}'.format(arg0))
     scale = kwds.pop('scale', None)
-    if is_Ring(arg0):
+    if arg0 in Rings():
         R = arg0
         arg0 = arg1
     elif scale is not None:
@@ -1500,7 +1518,7 @@ def circulant(v, sparse=None):
 
     EXAMPLES::
 
-        sage: v=[1,2,3,4,8]
+        sage: v = [1,2,3,4,8]
         sage: matrix.circulant(v)
         [1 2 3 4 8]
         [8 1 2 3 4]
@@ -1546,7 +1564,7 @@ def _determine_block_matrix_grid(sub_matrices):
     Non-zero scalars are considered to be square matrices of any size,
     and zeroes are considered to be zero matrices of any size.
 
-    A ValueError is raised if there is insufficient or
+    A :class:`ValueError` is raised if there is insufficient or
     conflicting information.
 
     TESTS::
@@ -1584,7 +1602,7 @@ def _determine_block_matrix_grid(sub_matrices):
                 if is_Matrix(M):
                     sub_width = M.ncols()
                     sub_height = M.nrows()
-                elif M: # non-zero scalar is interpreted as a square matrix
+                elif M:  # non-zero scalar is interpreted as a square matrix
                     if row_heights[i] is None:
                         sub_width = col_widths[j]
                     else:
@@ -1921,7 +1939,7 @@ def block_matrix(*args, **kwds):
         else:
             return matrix_space.MatrixSpace(ZZ, 0, 0)([])
 
-    if len(args) >= 1 and is_Ring(args[0]):
+    if len(args) >= 1 and args[0] in Rings():
         # A ring is specified
         if kwds.get('ring', args[0]) != args[0]:
             raise ValueError("base ring specified twice and they are different")
@@ -2074,7 +2092,7 @@ def block_matrix(*args, **kwds):
                     M = matrix(ring, row_heights[i], zero_widths[i], 0, sparse=sparse)
                     zero_widths[i] = 0
                 else:
-                    continue # zero-width matrix
+                    continue  # zero-width matrix
             else:
                 if zero_widths is not None:
                     M = matrix(ring, row_heights[i], row_heights[i], M, sparse=sparse)
@@ -2267,14 +2285,16 @@ def companion_matrix(poly, format='right'):
         [ 1  0 -8]
         [ 0  1  4]
 
+        sage: # needs sage.symbolic
         sage: y = var('y')
-        sage: q = y^3 -2*y + 1
+        sage: q = y^3 - 2*y + 1
         sage: companion_matrix(q)
         Traceback (most recent call last):
         ...
-        TypeError: input must be a polynomial (not a symbolic expression, see docstring), or other iterable, not y^3 - 2*y + 1
-
-        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k) for k in range(1, q.degree(y)+1)]
+        TypeError: input must be a polynomial (not a symbolic expression, see docstring),
+        or other iterable, not y^3 - 2*y + 1
+        sage: coeff_list = [q(y=0)] + [q.coefficient(y^k)
+        ....:                          for k in range(1, q.degree(y) + 1)]
         sage: coeff_list
         [1, -2, 0, 1]
         sage: companion_matrix(coeff_list)
@@ -2290,9 +2310,9 @@ def companion_matrix(poly, format='right'):
         sage: t = polygen(QQ, 't')
         sage: p = t^12 - 7*t^4 + 28*t^2 - 456
         sage: C = companion_matrix(p, format='top')
-        sage: q = C.minpoly(var='t'); q
+        sage: q = C.minpoly(var='t'); q                                                 # needs sage.libs.pari
         t^12 - 7*t^4 + 28*t^2 - 456
-        sage: p == q
+        sage: p == q                                                                    # needs sage.libs.pari
         True
 
         sage: p = t^3 + 3*t - 8
@@ -2301,9 +2321,9 @@ def companion_matrix(poly, format='right'):
         ....:                            companion_matrix(p^2),
         ....:                            companion_matrix(q),
         ....:                            companion_matrix(q) )
-        sage: A.charpoly(var='t').factor()
+        sage: A.charpoly(var='t').factor()                                              # needs sage.libs.pari
         (t^3 + 3*t - 8)^3 * (t^5 + t - 17)^2
-        sage: A.minpoly(var='t').factor()
+        sage: A.minpoly(var='t').factor()                                               # needs sage.libs.pari
         (t^3 + 3*t - 8)^2 * (t^5 + t - 17)
 
     TESTS::
@@ -2313,18 +2333,20 @@ def companion_matrix(poly, format='right'):
         ...
         ValueError: format must be 'right', 'left', 'top' or 'bottom', not junk
 
-        sage: companion_matrix(sin(x))
+        sage: companion_matrix(sin(x))                                                  # needs sage.symbolic
         Traceback (most recent call last):
         ...
-        TypeError: input must be a polynomial (not a symbolic expression, see docstring), or other iterable, not sin(x)
+        TypeError: input must be a polynomial (not a symbolic expression, see docstring),
+        or other iterable, not sin(x)
 
         sage: companion_matrix([2, 3, 896])
         Traceback (most recent call last):
         ...
-        ValueError: polynomial (or the polynomial implied by coefficients) must be monic, not a leading coefficient of 896
+        ValueError: polynomial (or the polynomial implied by coefficients) must be monic,
+        not a leading coefficient of 896
 
-        sage: F.<a> = GF(2^2)
-        sage: companion_matrix([4/3, a+1, 1])
+        sage: F.<a> = GF(2^2)                                                           # needs sage.rings.finite_rings
+        sage: companion_matrix([4/3, a+1, 1])                                           # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: unable to find common ring for coefficients from polynomial
@@ -2417,7 +2439,7 @@ def random_rref_matrix(parent, num_pivots):
 
         sage: from sage.matrix.constructor import random_rref_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5, 6)
-        sage: A = random_rref_matrix(matrix_space, num_pivots=4); A # random
+        sage: A = random_rref_matrix(matrix_space, num_pivots=4); A  # random
         [ 1  0  0 -6  0 -3]
         [ 0  1  0  2  0  3]
         [ 0  0  1 -4  0 -2]
@@ -2436,10 +2458,11 @@ def random_rref_matrix(parent, num_pivots):
 
     Matrices can be generated over other exact rings. ::
 
-        sage: B = random_matrix(FiniteField(7), 4, 4, algorithm='echelon_form', num_pivots=3); B # random
+        sage: B = random_matrix(FiniteField(7), 4, 4,  # random
+        ....:                   algorithm='echelon_form', num_pivots=3); B
         [1 0 0 0]
         [0 1 0 6]
-        [0 0 1 4]
+        [0 0 1 1]
         [0 0 0 0]
         sage: B.rank() == 3
         True
@@ -2450,104 +2473,107 @@ def random_rref_matrix(parent, num_pivots):
 
     TESTS:
 
+    Rank zero::
+
+        sage: random_matrix(QQ, 1, 1, algorithm='echelon_form', num_pivots=0)
+        [0]
+
     Rank of a matrix must be an integer. ::
 
         sage: random_matrix(QQ, 120, 56, algorithm='echelon_form', num_pivots=61/2)
         Traceback (most recent call last):
         ...
-        TypeError: the number of pivots must be an integer.
+        TypeError: the number of pivots must be an integer
 
     Matrices must be generated over exact fields. ::
 
         sage: random_matrix(RR, 40, 88, algorithm='echelon_form', num_pivots=39)
         Traceback (most recent call last):
         ...
-        TypeError: the base ring must be exact.
+        TypeError: the base ring must be exact
 
     Matrices must have the number of pivot columns be less than or equal to the number of rows. ::
 
-        sage: C=random_matrix(ZZ, 6,4, algorithm='echelon_form', num_pivots=7); C
+        sage: C = random_matrix(ZZ, 6,4, algorithm='echelon_form', num_pivots=7); C
         Traceback (most recent call last):
         ...
-        ValueError: number of pivots cannot exceed the number of rows or columns.
+        ValueError: number of pivots cannot exceed the number of rows or columns
 
     Matrices must have the number of pivot columns be less than or equal to the number of columns. ::
 
-        sage: D=random_matrix(QQ, 1,3, algorithm='echelon_form', num_pivots=5); D
+        sage: D = random_matrix(QQ, 1,3, algorithm='echelon_form', num_pivots=5); D
         Traceback (most recent call last):
         ...
-        ValueError: number of pivots cannot exceed the number of rows or columns.
+        ValueError: number of pivots cannot exceed the number of rows or columns
 
     Matrices must have the number of pivot columns be greater than zero. ::
 
         sage: random_matrix(QQ, 5, 4, algorithm='echelon_form', num_pivots=-1)
         Traceback (most recent call last):
         ...
-        ValueError: the number of pivots must be zero or greater.
+        ValueError: the number of pivots must be zero or greater
 
     AUTHOR:
 
     Billy Wonderly (2010-07)
     """
     import sage.probability.probability_distribution as pd
-    from sage.misc.prandom import randint
 
     try:
         num_pivots = ZZ(num_pivots)
     except TypeError:
-        raise TypeError("the number of pivots must be an integer.")
+        raise TypeError("the number of pivots must be an integer")
     if num_pivots < 0:
-        raise ValueError("the number of pivots must be zero or greater.")
+        raise ValueError("the number of pivots must be zero or greater")
     ring = parent.base_ring()
     if not ring.is_exact():
-        raise TypeError("the base ring must be exact.")
+        raise TypeError("the base ring must be exact")
     num_row = parent.nrows()
     num_col = parent.ncols()
     if num_pivots > num_row or num_pivots > num_col:
-        raise ValueError("number of pivots cannot exceed the number of rows or columns.")
+        raise ValueError("number of pivots cannot exceed the number of rows or columns")
+
+    if num_pivots == 0:
+        return parent.zero()
+
+    one = ring.one()
+    # Create a matrix of the desired size to be modified and then returned.
+    return_matrix = copy(parent.zero_matrix())
+
+    # No harm if no pivots at all.
+    subset = list(range(1, num_col))
+    shuffle(subset)
+    pivots = [0] + sorted(subset[:num_pivots - 1])
+
+    # Use the list of pivot columns to set the pivot entries of the return_matrix to leading ones.
+    for pivot_row, pivot in enumerate(pivots):
+        return_matrix[pivot_row, pivot] = one
+    if ring is QQ or ring is ZZ:
+        # Keep track of the non-pivot columns by using the pivot_index, start at the first column to
+        # the right of the initial pivot column, go until the first column to the left of the next
+        # pivot column.
+        for pivot_index in range(num_pivots - 1):
+            for non_pivot_column_index in range(pivots[pivot_index] + 1, pivots[pivot_index + 1]):
+                entry_generator1 = pd.RealDistribution("beta", [6, 4])
+                # Experimental distribution used to generate the values.
+                for non_pivot_column_entry in range(pivot_index + 1):
+                    sign1 = (2 * randint(0, 1) - 1)
+                    return_matrix[non_pivot_column_entry, non_pivot_column_index] = sign1 * int(entry_generator1.get_random_element() * ((1 - non_pivot_column_entry / return_matrix.ncols()) * 7))
+        # Use index to fill entries of the columns to the right of the last pivot column.
+        for rest_non_pivot_column in range(pivots[num_pivots - 1] + 1, num_col):
+            entry_generator2 = pd.RealDistribution("beta", [2.6, 4])
+            # experimental distribution to generate small values.
+            for rest_entries in range(num_pivots):
+                sign2 = (2 * randint(0, 1) - 1)
+                return_matrix[rest_entries, rest_non_pivot_column] = sign2 * int(entry_generator2.get_random_element() * 5)
     else:
-        one = ring.one()
-        # Create a matrix of the desired size to be modified and then returned.
-        return_matrix = copy(parent.zero_matrix())
-        pivots = [0] #Force first column to be a pivot. No harm if no pivots at all.
-        # Probability distribution for the placement of leading one's.
-        pivot_generator = pd.RealDistribution("beta", [1.6, 4.3])
-        while len(pivots) < num_pivots:
-            pivot_column = int(pivot_generator.get_random_element() * num_col)
-            if pivot_column not in pivots:
-                pivots.append(pivot_column)
-        pivots.sort()
-        pivot_row = 0
-        # Use the list of pivot columns to set the pivot entries of the return_matrix to leading ones.
-        while pivot_row < num_pivots:
-            return_matrix[pivot_row, pivots[pivot_row]] = one
-            pivot_row += 1
-        if ring is QQ or ring is ZZ:
-            # Keep track of the non-pivot columns by using the pivot_index, start at the first column to
-            # the right of the initial pivot column, go until the first column to the left of the next
-            # pivot column.
-            for pivot_index in range(num_pivots-1):
-                for non_pivot_column_index in range(pivots[pivot_index]+1, pivots[pivot_index+1]):
-                    entry_generator1 = pd.RealDistribution("beta", [6, 4])
-                    # Experimental distribution used to generate the values.
-                    for non_pivot_column_entry in range(pivot_index+1):
-                        sign1 = (2*randint(0,1)-1)
-                        return_matrix[non_pivot_column_entry,non_pivot_column_index]=sign1*int(entry_generator1.get_random_element()*((1-non_pivot_column_entry/return_matrix.ncols())*7))
-            # Use index to fill entries of the columns to the right of the last pivot column.
-            for rest_non_pivot_column in range(pivots[num_pivots-1]+1,num_col):
-                entry_generator2=pd.RealDistribution("beta",[2.6,4])
-                # experimental distribution to generate small values.
-                for rest_entries in range(num_pivots):
-                    sign2=(2*randint(0,1)-1)
-                    return_matrix[rest_entries,rest_non_pivot_column]=sign2*int(entry_generator2.get_random_element()*5)
-        else:
-            for pivot_index in range(num_pivots-1):
-                for non_pivot_column_index in range(pivots[pivot_index]+1,pivots[pivot_index+1]):
-                    for non_pivot_column_entry in range(pivot_index+1):
-                            return_matrix[non_pivot_column_entry,non_pivot_column_index]=ring.random_element()
-            for rest_non_pivot_column in range(pivots[num_pivots-1]+1,num_col):
-                for rest_entries in range(num_pivots):
-                    return_matrix[rest_entries,rest_non_pivot_column]=ring.random_element()
+        for pivot_index in range(num_pivots - 1):
+            for non_pivot_column_index in range(pivots[pivot_index] + 1, pivots[pivot_index + 1]):
+                for non_pivot_column_entry in range(pivot_index + 1):
+                    return_matrix[non_pivot_column_entry, non_pivot_column_index] = ring.random_element()
+        for rest_non_pivot_column in range(pivots[num_pivots - 1] + 1, num_col):
+            for rest_entries in range(num_pivots):
+                return_matrix[rest_entries, rest_non_pivot_column] = ring.random_element()
     return return_matrix
 
 
@@ -2602,14 +2628,14 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
         sage: A = random_echelonizable_matrix(matrix_space, rank=4, upper_bound=40)
         sage: A.rank()
         4
-        sage: max(map(abs,A.list()))<40
+        sage: max(map(abs,A.list())) < 40
         True
         sage: A.rref() == A.rref().change_ring(ZZ)
         True
 
     An example with default settings (i.e. no entry size control). ::
 
-        sage: C=random_matrix(QQ, 6, 7, algorithm='echelonizable', rank=5)
+        sage: C = random_matrix(QQ, 6, 7, algorithm='echelonizable', rank=5)
         sage: C.rank()
         5
         sage: C.rref() == C.rref().change_ring(ZZ)
@@ -2617,7 +2643,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     A matrix without size control may have very large entry sizes. ::
 
-        sage: D=random_matrix(ZZ, 7, 8, algorithm='echelonizable', rank=6); D  # random
+        sage: D = random_matrix(ZZ, 7, 8, algorithm='echelonizable', rank=6); D  # random
         [    1     2     8   -35  -178  -239  -284   778]
         [    4     9    37  -163  -827 -1111 -1324  3624]
         [    5     6    21   -88  -454  -607  -708  1951]
@@ -2628,8 +2654,10 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     Matrices can be generated over any exact ring. ::
 
-        sage: F.<a>=GF(2^3)
-        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4, upper_bound=None)
+        sage: # needs sage.rings.finite_rings
+        sage: F.<a> = GF(2^3)
+        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4,
+        ....:                   upper_bound=None)
         sage: B.rank()
         4
         sage: B.base_ring() is F
@@ -2667,11 +2695,11 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
         sage: random_matrix(RR, 3, 3, algorithm='echelonizable', rank=2)
         Traceback (most recent call last):
         ...
-        TypeError: the base ring must be exact.
+        TypeError: the base ring must be exact
 
     Works for rank==1, too. ::
 
-        sage: random_matrix( QQ, 3, 3, algorithm='echelonizable', rank=1).ncols()
+        sage: random_matrix(QQ, 3, 3, algorithm='echelonizable', rank=1).ncols()
         3
 
 
@@ -2694,7 +2722,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
     if ring is QQ or ring is ZZ:
         # If upper_bound is not set, don't control entry size.
         if upper_bound is None:
-        # If size control is not desired, the routine will run slightly faster, particularly with large matrices.
+            # If size control is not desired, the routine will run slightly faster, particularly with large matrices.
             for pivots in range(rank-1, -1, -1):
                 row_index = 0
                 while row_index < rows:
@@ -2713,52 +2741,52 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
                 while max(abs(c) for c in matrix.list()) >= upper_bound:
                     matrix = random_rref_matrix(parent, rank)
                     tries += 1
-                    if tries > max_tries: # to prevent endless attempts
+                    if tries > max_tries:  # to prevent endless attempts
                         raise ValueError("tried "+str(max_tries)+" times to get a rank 1 random matrix. Try bigger upper_bound?")
                 matrix_copy = matrix
 
             for pivots in range(len(matrix.pivots()) - 1, -1, -1):
-            # keep track of the pivot column positions from the pivot column with the largest index to
-            # the one with the smallest.
+                # keep track of the pivot column positions from the pivot column with the largest index to
+                # the one with the smallest.
                 row_index = 0
                 tries = 0
                 while row_index < rows:
                     # To each row in a pivot column add a scalar multiple of the pivot row.
                     # for full rank, square matrices, using only this row operation preserves the determinant of 1.
-                    if pivots!=row_index:
-                    # To ensure a leading one is not removed by the addition of the pivot row by its
-                    # additive inverse.
-                        matrix_copy=matrix.with_added_multiple_of_row(row_index,matrix.pivot_rows()[pivots],randint(-5,5))
+                    if pivots != row_index:
+                        # To ensure a leading one is not removed by the addition of the pivot row by its
+                        # additive inverse.
+                        matrix_copy = matrix.with_added_multiple_of_row(row_index,matrix.pivot_rows()[pivots],randint(-5,5))
                         tries += 1
                         # Range for scalar multiples determined experimentally.
-                    if max(map(abs,matrix_copy.list())) < upper_bound:
-                    # Continue if the largest entry after a row operation is within the bound.
-                        matrix=matrix_copy
-                        row_index+=1
+                    if max(map(abs, matrix_copy.list())) < upper_bound:
+                        # Continue if the largest entry after a row operation is within the bound.
+                        matrix = matrix_copy
+                        row_index += 1
                         tries = 0
-                    if tries > max_tries: # to prevent endless unsuccessful row adding
+                    if tries > max_tries:  # to prevent endless unsuccessful row adding
                         raise ValueError("tried "+str(max_tries)+" times to get row number "+str(row_index)+". Try bigger upper_bound?")
             # The leading one in row one has not been altered, so add a scalar multiple of a random row
             # to row one.
-            row1=0
-            if rows>1:
-                while row1<1:
-                    matrix_copy=matrix.with_added_multiple_of_row(0,randint(1,rows-1),randint(-3,3))
+            row1 = 0
+            if rows > 1:
+                while row1 < 1:
+                    matrix_copy = matrix.with_added_multiple_of_row(0,randint(1,rows-1),randint(-3,3))
                     if max(map(abs,matrix_copy.list())) < upper_bound:
-                        matrix=matrix_copy
-                        row1+=1
+                        matrix = matrix_copy
+                        row1 += 1
     # If the matrix generated over a different ring, random elements from the designated ring are used as and
     # the routine is run similarly to the size unchecked version for rationals and integers.
     else:
         for pivots in range(rank-1,-1,-1):
-            row_index=0
-            while row_index<rows:
-                if pivots==row_index:
-                    row_index+=1
-                if pivots!=row_index and row_index!=rows:
+            row_index = 0
+            while row_index < rows:
+                if pivots == row_index:
+                    row_index += 1
+                if pivots != row_index and row_index != rows:
                     matrix.add_multiple_of_row(row_index,matrix.pivot_rows()[pivots],ring.random_element())
-                    row_index+=1
-        if rows>1:
+                    row_index += 1
+        if rows > 1:
             matrix.add_multiple_of_row(0,randint(1,rows-1),ring.random_element())
     return matrix
 
@@ -2814,7 +2842,7 @@ def random_subspaces_matrix(parent, rank=None):
         sage: all(x in ZZ for x in B_expanded.list())
         True
 
-    Check that we fixed :trac:`10543` (echelon forms should be immutable)::
+    Check that we fixed :issue:`10543` (echelon forms should be immutable)::
 
         sage: B_expanded.is_immutable()
         True
@@ -2841,11 +2869,11 @@ def random_subspaces_matrix(parent, rank=None):
         (5, 7)
         sage: all(x in ZZ for x in A.list())
         True
-        sage: A_expanded=A.augment(identity_matrix(5)).rref()
+        sage: A_expanded = A.augment(identity_matrix(5)).rref()
         sage: all(x in ZZ for x in A_expanded.list())
         True
-        sage: C = A_expanded.submatrix(0,0,A.nrows()-A.nullity(), A.ncols())
-        sage: L = A_expanded.submatrix(A.nrows()-A.nullity(), A.ncols())
+        sage: C = A_expanded.submatrix(0, 0, A.nrows() - A.nullity(), A.ncols())
+        sage: L = A_expanded.submatrix(A.nrows() - A.nullity(), A.ncols())
         sage: A.right_kernel() == C.right_kernel()
         True
         sage: A.row_space() == C.row_space()
@@ -2886,7 +2914,7 @@ def random_subspaces_matrix(parent, rank=None):
         left_nullity_generator = pd.RealDistribution("beta", [1.4, 5.5])
         nullity = int(left_nullity_generator.get_random_element()*(rows-1) + 1)
         rank = rows - nullity
-    if rank<0:
+    if rank < 0:
         raise ValueError("matrices must have rank zero or greater.")
     if rank > rows or rank > columns:
         raise ValueError("rank cannot exceed the number of rows or columns.")
@@ -2972,6 +3000,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     A matrix over the number Field in `y` with defining polynomial `y^2-2y-2`. ::
 
+        sage: # needs sage.rings.number_field
         sage: y = polygen(ZZ, 'y')
         sage: K = NumberField(y^2 - 2*y - 2, 'y')
         sage: C = random_matrix(K, 3, algorithm='unimodular')
@@ -2991,8 +3020,8 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     Only matrices over ZZ and QQ can have size control. ::
 
-        sage: F.<a>=GF(5^7)
-        sage: random_matrix(F, 5, algorithm='unimodular', upper_bound=20)
+        sage: F.<a> = GF(5^7)                                                           # needs sage.rings.finite_rings
+        sage: random_matrix(F, 5, algorithm='unimodular', upper_bound=20)               # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
         TypeError: only matrices over ZZ or QQ can have size control.
@@ -3002,16 +3031,16 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
     Billy Wonderly (2010-07)
     """
 
-    ring=parent.base_ring()
-    size=parent.nrows()
-    if parent.nrows()!=parent.ncols():
+    ring = parent.base_ring()
+    size = parent.nrows()
+    if parent.nrows() != parent.ncols():
         raise TypeError("a unimodular matrix must be square.")
-    if upper_bound is not None and (ring!=ZZ and ring!=QQ):
+    if upper_bound is not None and (ring != ZZ and ring != QQ):
         raise TypeError("only matrices over ZZ or QQ can have size control.")
     if upper_bound is None:
         # random_echelonizable_matrix() always returns a determinant one matrix if given full rank.
         return random_matrix(ring, size, algorithm='echelonizable', rank=size)
-    elif upper_bound is not None and (ring==ZZ or ring==QQ):
+    elif upper_bound is not None and (ring == ZZ or ring == QQ):
         return random_matrix(ring, size,algorithm='echelonizable',rank=size, upper_bound=upper_bound, max_tries=max_tries)
 
 
@@ -3028,11 +3057,11 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     If eigenvalues and dimensions are not specified in a list,
     they will be assigned randomly.
 
-    - ``parent`` - the desired size of the square matrix.
+    - ``parent`` -- the desired size of the square matrix.
 
-    - ``eigenvalues`` - the list of desired eigenvalues (default=None).
+    - ``eigenvalues`` -- the list of desired eigenvalues (default=None).
 
-    - ``dimensions`` - the list of dimensions corresponding to each
+    - ``dimensions`` -- the list of dimensions corresponding to each
       eigenspace (default=None).
 
     OUTPUT:
@@ -3056,6 +3085,8 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         sage: from sage.matrix.constructor import random_diagonalizable_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
         sage: A = random_diagonalizable_matrix(matrix_space)
+
+        sage: # needs sage.rings.number_field
         sage: eigenvalues = A.eigenvalues()
         sage: S = A.right_eigenmatrix()[1]
         sage: eigenvalues2 = (S.inverse()*A*S).diagonal()
@@ -3067,13 +3098,16 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     entries would all be integers. ::
 
         sage: eigenvalues = [ZZ.random_element() for _ in range(3)]
-        sage: B = random_matrix(QQ, 6, algorithm='diagonalizable', eigenvalues=eigenvalues, dimensions=[2,3,1])
+        sage: B = random_matrix(QQ, 6, algorithm='diagonalizable',
+        ....:                   eigenvalues=eigenvalues, dimensions=[2,3,1])
         sage: all(x in ZZ for x in (B-(-12*identity_matrix(6))).rref().list())
         True
         sage: all(x in ZZ for x in (B-(4*identity_matrix(6))).rref().list())
         True
         sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
         True
+
+        sage: # needs sage.rings.number_field
         sage: S = B.right_eigenmatrix()[1]
         sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
         sage: all(e in eigenvalues for e in eigenvalues2)
@@ -3083,7 +3117,8 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
 
     Eigenvalues must all be integers. ::
 
-        sage: random_matrix(QQ,3,algorithm='diagonalizable', eigenvalues=[2+I,2-I,2],dimensions=[1,1,1])
+        sage: random_matrix(QQ, 3, algorithm='diagonalizable',                          # needs sage.symbolic
+        ....:               eigenvalues=[2+I, 2-I, 2], dimensions=[1,1,1])
         Traceback (most recent call last):
         ...
         TypeError: eigenvalues must be integers.
@@ -3157,19 +3192,19 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         raise ValueError("the list of dimensions must have a list of corresponding eigenvalues.")
     if eigenvalues is None and dimensions is None:
         values = []
-        #create a list with "size" number of entries
+        # create a list with "size" number of entries
         for eigen_index in range(size):
             eigenvalue = randint(-10, 10)
             values.append(eigenvalue)
         values.sort()
         dimensions = []
         eigenvalues = []
-        #create a list with no duplicate values to be the eigenvalues
+        # create a list with no duplicate values to be the eigenvalues
         for eigenvalue in range(size):
             if values[eigenvalue] not in eigenvalues:
                 eigenvalues.append(values[eigenvalue])
         for dimension in range(len(eigenvalues)):
-            #dimension is equal to how many times an eigenvalue was generated in the 'values' list
+            # dimension is equal to how many times an eigenvalue was generated in the 'values' list
             dimensions.append(values.count(eigenvalues[dimension]))
     size_check = 0
     for check in range(len(dimensions)):
@@ -3182,11 +3217,11 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         raise ValueError("eigenspaces must have a dimension of at least 1.")
     if len(eigenvalues) != len(dimensions):
         raise ValueError("each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.")
-    #sort the dimensions in order of increasing size, and sort the eigenvalues list in an identical fashion, to maintain corresponding values.
+    # sort the dimensions in order of increasing size, and sort the eigenvalues list in an identical fashion, to maintain corresponding values.
     dimensions_sort = sorted(zip(dimensions, eigenvalues))
     dimensions = [x[0] for x in dimensions_sort]
     eigenvalues = [x[1] for x in dimensions_sort]
-    #Create the matrix of eigenvalues on the diagonal.  Use a lower limit and upper limit determined by the eigenvalue dimensions.
+    # Create the matrix of eigenvalues on the diagonal.  Use a lower limit and upper limit determined by the eigenvalue dimensions.
     diagonal_matrix = matrix(QQ, size)
     up_bound = 0
     low_bound = 0
@@ -3194,39 +3229,39 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         up_bound = up_bound + dimensions[row_index]
         for entry in range(low_bound,up_bound):
             diagonal_matrix[entry, entry] = eigenvalues[row_index]
-        low_bound=low_bound+dimensions[row_index]
+        low_bound = low_bound+dimensions[row_index]
     # Create a matrix to hold each of the eigenvectors as its columns, begin with an identity matrix so that after row and column
     # operations the resulting matrix will be unimodular.
     eigenvector_matrix = matrix(QQ, size, size, 1)
     upper_limit = 0
     lower_limit = 0
-    #run the routine over the necessary number of columns corresponding eigenvalue dimension.
+    # run the routine over the necessary number of columns corresponding eigenvalue dimension.
     for dimension_index in range(len(dimensions)-1):
-        upper_limit=upper_limit+dimensions[dimension_index]
-        lowest_index_row_with_one=size-dimensions[dimension_index]
-        #assign a one to the row that is the eigenvalue dimension rows up from the bottom row then assign ones diagonally down to the right.
+        upper_limit = upper_limit+dimensions[dimension_index]
+        lowest_index_row_with_one = size-dimensions[dimension_index]
+        # assign a one to the row that is the eigenvalue dimension rows up from the bottom row then assign ones diagonally down to the right.
         for eigen_ones in range(lower_limit,upper_limit):
-            eigenvector_matrix[lowest_index_row_with_one,eigen_ones]=1
-            lowest_index_row_with_one+=1
-        lower_limit=lower_limit+dimensions[dimension_index]
-    #Create a list to give the eigenvalue dimension corresponding to each column.
+            eigenvector_matrix[lowest_index_row_with_one,eigen_ones] = 1
+            lowest_index_row_with_one += 1
+        lower_limit = lower_limit+dimensions[dimension_index]
+    # Create a list to give the eigenvalue dimension corresponding to each column.
     dimension_check = []
     for i in range(len(dimensions)):
         for k in range(dimensions[i]):
             dimension_check.append(dimensions[i])
-    #run routine over the rows that are in the range of the protected ones.  Use addition of column multiples to fill entries.
+    # run routine over the rows that are in the range of the protected ones.  Use addition of column multiples to fill entries.
     for dimension_multiplicity in range(max(dimensions),min(dimensions),-1):
-        highest_one_row=size-dimension_multiplicity
-        highest_one_column=0
-        #find the column with the protected one in the lowest indexed row.
-        while eigenvector_matrix[highest_one_row,highest_one_column]==0:
-            highest_one_column+=1
-        #dimension_check determines if column has a low enough eigenvalue dimension to take a column multiple.
+        highest_one_row = size-dimension_multiplicity
+        highest_one_column = 0
+        # find the column with the protected one in the lowest indexed row.
+        while eigenvector_matrix[highest_one_row,highest_one_column] == 0:
+            highest_one_column += 1
+        # dimension_check determines if column has a low enough eigenvalue dimension to take a column multiple.
         for bottom_entry_filler in range(len(dimension_check)):
-            if dimension_check[bottom_entry_filler]<dimension_multiplicity and eigenvector_matrix[highest_one_row,bottom_entry_filler]==0:
+            if dimension_check[bottom_entry_filler] < dimension_multiplicity and eigenvector_matrix[highest_one_row,bottom_entry_filler] == 0:
                 # randint range determined experimentally to keep entries manageable.
                 eigenvector_matrix.add_multiple_of_column(bottom_entry_filler,highest_one_column,randint(-4,4))
-    #Fill remaining rows using scalar row addition.
+    # Fill remaining rows using scalar row addition.
     for row in range(size-max(dimensions),size):
         for upper_row in range(size-max(dimensions)):
             # range of multiplier determined experimentally so that entries stay manageable for small matrices
@@ -3259,15 +3294,16 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
         sage: from sage.matrix.constructor import vector_on_axis_rotation_matrix
         sage: v = vector((1,2,3))
-        sage: vector_on_axis_rotation_matrix(v, 2) * v
+        sage: vector_on_axis_rotation_matrix(v, 2) * v                                  # needs sage.symbolic
         (0, 0, sqrt(14))
-        sage: vector_on_axis_rotation_matrix(v, 1) * v
+        sage: vector_on_axis_rotation_matrix(v, 1) * v                                  # needs sage.symbolic
         (0, sqrt(14), 0)
-        sage: vector_on_axis_rotation_matrix(v, 0) * v
+        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # needs sage.symbolic
         (sqrt(14), 0, 0)
 
     ::
 
+        sage: # needs sage.symbolic
         sage: x,y = var('x,y')
         sage: v = vector((x,y))
         sage: vector_on_axis_rotation_matrix(v, 1)
@@ -3284,7 +3320,7 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
     ::
 
         sage: v = vector((1,2,3,4))
-        sage: vector_on_axis_rotation_matrix(v, 0) * v
+        sage: vector_on_axis_rotation_matrix(v, 0) * v                                  # needs sage.symbolic
         (sqrt(30), 0, 0, 0)
         sage: vector_on_axis_rotation_matrix(v, 0, ring=RealField(10))
         [ 0.18  0.37  0.55  0.73]
@@ -3329,35 +3365,35 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
         sage: from sage.matrix.constructor import ith_to_zero_rotation_matrix
         sage: v = vector((1,2,3))
-        sage: ith_to_zero_rotation_matrix(v, 2)
+        sage: ith_to_zero_rotation_matrix(v, 2)                                         # needs sage.symbolic
         [             1              0              0]
         [             0  2/13*sqrt(13)  3/13*sqrt(13)]
         [             0 -3/13*sqrt(13)  2/13*sqrt(13)]
-        sage: ith_to_zero_rotation_matrix(v, 2) * v
+        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # needs sage.symbolic
         (1, sqrt(13), 0)
 
     ::
 
-        sage: ith_to_zero_rotation_matrix(v, 0)
+        sage: ith_to_zero_rotation_matrix(v, 0)                                         # needs sage.symbolic
         [ 3/10*sqrt(10)              0 -1/10*sqrt(10)]
         [             0              1              0]
         [ 1/10*sqrt(10)              0  3/10*sqrt(10)]
-        sage: ith_to_zero_rotation_matrix(v, 1)
+        sage: ith_to_zero_rotation_matrix(v, 1)                                         # needs sage.symbolic
         [ 1/5*sqrt(5)  2/5*sqrt(5)            0]
         [-2/5*sqrt(5)  1/5*sqrt(5)            0]
         [           0            0            1]
-        sage: ith_to_zero_rotation_matrix(v, 2)
+        sage: ith_to_zero_rotation_matrix(v, 2)                                         # needs sage.symbolic
         [             1              0              0]
         [             0  2/13*sqrt(13)  3/13*sqrt(13)]
         [             0 -3/13*sqrt(13)  2/13*sqrt(13)]
 
     ::
 
-        sage: ith_to_zero_rotation_matrix(v, 0) * v
+        sage: ith_to_zero_rotation_matrix(v, 0) * v                                     # needs sage.symbolic
         (0, 2, sqrt(10))
-        sage: ith_to_zero_rotation_matrix(v, 1) * v
+        sage: ith_to_zero_rotation_matrix(v, 1) * v                                     # needs sage.symbolic
         (sqrt(5), 0, 3)
-        sage: ith_to_zero_rotation_matrix(v, 2) * v
+        sage: ith_to_zero_rotation_matrix(v, 2) * v                                     # needs sage.symbolic
         (1, sqrt(13), 0)
 
     Other ring::
@@ -3373,6 +3409,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     On the symbolic ring::
 
+        sage: # needs sage.symbolic
         sage: x,y,z = var('x,y,z')
         sage: v = vector((x,y,z))
         sage: ith_to_zero_rotation_matrix(v, 2)
@@ -3417,7 +3454,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
     bb = b / norm
     entries = {(k, k): 1 for k in range(dim)}
     entries.update({(j, j): aa, (j, i): bb, (i, j): -bb, (i, i): aa})
-    return matrix(entries, nrows=dim, ring=ring)
+    return matrix(entries, nrows=dim, base_ring=ring)
 
 
 @matrix_method
@@ -3451,7 +3488,7 @@ def hilbert(dim, ring=QQ):
     """
     def entries(i, j):
         return ZZ.one() / (i + j + 1)
-    return matrix(entries, nrows=dim, ncols=dim, ring=ring)
+    return matrix(entries, nrows=dim, ncols=dim, base_ring=ring)
 
 
 @matrix_method
@@ -3478,14 +3515,14 @@ def vandermonde(v, ring=None):
 
     A Vandermonde matrix of order three over the symbolic ring::
 
-        sage: matrix.vandermonde(SR.var(['x0', 'x1', 'x2']))
+        sage: matrix.vandermonde(SR.var(['x0', 'x1', 'x2']))                            # needs sage.symbolic
         [   1   x0 x0^2]
         [   1   x1 x1^2]
         [   1   x2 x2^2]
     """
     def entries(i, j):
         return v[i]**j
-    return matrix(entries, nrows=len(v), ncols=len(v), ring=ring)
+    return matrix(entries, nrows=len(v), ncols=len(v), base_ring=ring)
 
 
 @matrix_method
@@ -3531,7 +3568,7 @@ def toeplitz(c, r, ring=None):
     """
     def entries(i, j):
         return c[i - j] if i >= j else r[j - i - 1]
-    return matrix(entries, nrows=len(c), ncols=len(r)+1, ring=ring)
+    return matrix(entries, nrows=len(c), ncols=len(r)+1, base_ring=ring)
 
 
 @matrix_method
@@ -3565,7 +3602,7 @@ def hankel(c, r=None, ring=None):
 
     A Hankel matrix with symbolic entries::
 
-        sage: matrix.hankel(SR.var('a, b, c, d, e'))
+        sage: matrix.hankel(SR.var('a, b, c, d, e'))                                    # needs sage.symbolic
         [a b c d e]
         [b c d e 0]
         [c d e 0 0]
@@ -3574,7 +3611,7 @@ def hankel(c, r=None, ring=None):
 
     We can also pass the elements of the last row, starting at the second column::
 
-        sage: matrix.hankel(SR.var('a, b, c, d, e'), SR.var('f, g, h, i'))
+        sage: matrix.hankel(SR.var('a, b, c, d, e'), SR.var('f, g, h, i'))              # needs sage.symbolic
         [a b c d e]
         [b c d e f]
         [c d e f g]
@@ -3601,4 +3638,4 @@ def hankel(c, r=None, ring=None):
 
     def entries(i):
         return c[i] if i < m else r[i - m]
-    return matrix(lambda i, j: entries(i + j), nrows=m, ncols=n + 1, ring=ring)
+    return matrix(lambda i, j: entries(i + j), nrows=m, ncols=n + 1, base_ring=ring)

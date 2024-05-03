@@ -105,8 +105,7 @@ it makes sense to build on top of the base class
 This base class provides a lot more methods than a general parent::
 
     sage: [p for p in dir(Field) if p not in dir(Parent)]
-    ['__fraction_field',
-     '__ideal_monoid',
+    ['_CommutativeRing__fraction_field',
      '__iter__',
      '__len__',
      '__rxor__',
@@ -115,15 +114,14 @@ This base class provides a lot more methods than a general parent::
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
-     '_coerce_try',
      '_default_category',
      '_gens',
      '_ideal_class_',
+     '_ideal_monoid',
      '_latex_names',
      '_list',
      '_one_element',
      '_pseudo_fraction_field',
-     '_random_nonzero_element',
      '_unit_ideal',
      '_zero_element',
      '_zero_ideal',
@@ -725,7 +723,7 @@ A first note on performance
 ---------------------------
 
 The category framework is sometimes blamed for speed regressions, as in
-:trac:`9138` and :trac:`11900`. But if the category framework is *used
+:issue:`9138` and :issue:`11900`. But if the category framework is *used
 properly*, then it is fast. For illustration, we determine the time needed to
 access an attribute inherited from the element class. First, we consider an
 element that uses the class that we implemented above, but does not use the
@@ -839,7 +837,7 @@ The four axioms requested for coercions
           sage: ZZ(P2.gen(1))
           Traceback (most recent call last):
           ...
-          TypeError: not a constant polynomial
+          TypeError: v is not a constant polynomial
 
       Hence, we only have a *partial* map. This is fine for a *conversion*,
       but a partial map does not qualify as a *coercion*.
@@ -1223,7 +1221,7 @@ However, only "elementary" construction functors have a rank::
     sage: (Fract*Poly).rank
     Traceback (most recent call last):
     ...
-    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'
+    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'...
 
 .. end of output
 
@@ -1429,7 +1427,7 @@ Being able to do arithmetics involving elements of different parents, with the
 automatic creation of a pushout to contain the result, is certainly
 convenient\---but one should not rely on it, if speed matters. Simply the
 conversion of elements into different parents takes time. Moreover, by
-:trac:`14058`, the pushout may be subject to Python's cyclic garbage
+:issue:`14058`, the pushout may be subject to Python's cyclic garbage
 collection. Hence, if one does not keep a strong reference to it, the same
 parent may be created repeatedly, which is a waste of time. In the following
 example, we illustrate the slow\--down resulting from blindly relying on

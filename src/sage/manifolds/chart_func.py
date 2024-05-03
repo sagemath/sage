@@ -40,9 +40,14 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.manifolds.utilities import ExpressionNice
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.symbolic.ring import SR
 from sage.structure.mutability import Mutability
-import sympy
+
+try:
+    import sympy
+except ImportError:
+    pass
 
 
 class ChartFunction(AlgebraElement, ModuleElementWithMutability):

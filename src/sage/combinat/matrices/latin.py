@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
 Latin Squares
 
@@ -40,8 +41,8 @@ This file contains
 #. some named latin squares (back circulant, forward circulant, abelian
    `2`-group);
 
-#. functions is\_partial\_latin\_square and is\_latin\_square to test
-   if a LatinSquare object satisfies the definition of a latin square
+#. methods :meth:`is_partial_latin_square` and :meth:`is_latin_square` to test
+   if a :class:`LatinSquare` object satisfies the definition of a latin square
    or partial latin square, respectively;
 
 #. tests for completion and unique completion (these use the C++
@@ -56,7 +57,7 @@ This file contains
 
 #. a few examples of `\tau_i` representations of bitrades constructed
    from the action of a group on itself by right multiplication,
-   functions for converting to a pair of LatinSquare objects.
+   functions for converting to a pair of :class:`LatinSquare` objects.
 
 EXAMPLES::
 
@@ -135,9 +136,9 @@ from sage.rings.integer import Integer
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
-from sage.interfaces.gap import GapElement
+from sage.libs.gap.libgap import libgap
+from sage.libs.gap.element import GapElement
 from sage.combinat.permutation import Permutation
-from sage.interfaces.gap import gap
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.arith.misc import is_prime
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -1530,7 +1531,7 @@ def isotopism(p):
     if isinstance(p, tuple):
         # We have a single cycle:
         if isinstance(p[0], Integer):
-            return Permutation(tuple((x+1 for x in p)))
+            return Permutation(tuple(x+1 for x in p))
 
         # We have a tuple of cycles:
         if isinstance(p[0], tuple):
@@ -2327,14 +2328,14 @@ def group_to_LatinSquare(G):
 
     ::
 
-        sage: G = gap.Group(PermutationGroupElement((1,2,3)))
+        sage: G = libgap.Group(PermutationGroupElement((1,2,3)))
         sage: group_to_LatinSquare(G)
         [0 1 2]
         [1 2 0]
         [2 0 1]
     """
     if isinstance(G, GapElement):
-        rows = (list(x) for x in list(gap.MultiplicationTable(G)))
+        rows = (list(x) for x in list(libgap.MultiplicationTable(G)))
         new_rows = []
 
         for x in rows:
@@ -2454,15 +2455,15 @@ def p3_group_bitrade_generators(p):
 
         sage: from sage.combinat.matrices.latin import *
         sage: p3_group_bitrade_generators(3)
-        ((2,6,7)(3,8,9), (1,2,3)(4,7,8)(5,6,9), (1,9,2)(3,7,4)(5,8,6), Permutation Group with generators [(2,6,7)(3,8,9), (1,2,3)(4,7,8)(5,6,9)])
+        ((2,6,7)(3,8,9),
+         (1,2,3)(4,7,8)(5,6,9),
+         (1,9,2)(3,7,4)(5,8,6),
+         Permutation Group with generators [(2,6,7)(3,8,9), (1,2,3)(4,7,8)(5,6,9)])
     """
     assert is_prime(p)
 
-    F = gap.new("FreeGroup(3)")
-
-    a = F.gen(1)
-    b = F.gen(2)
-    c = F.gen(3)
+    F = libgap.FreeGroup(3)
+    a, b, c = F.GeneratorsOfGroup()
 
     rels = []
     rels.append(a**p)
@@ -2473,11 +2474,12 @@ def p3_group_bitrade_generators(p):
     rels.append(c*b*((b*c)**(-1)))
 
     G = F.FactorGroupFpGroupByRels(rels)
+    u, v, _ = G.GeneratorsOfGroup()
 
-    iso = gap.IsomorphismPermGroup(G)
+    iso = libgap.IsomorphismPermGroup(G)
 
-    x = PermutationConstructor(gap.Image(iso, G.gen(1)))
-    y = PermutationConstructor(gap.Image(iso, G.gen(2)))
+    x = PermutationConstructor(libgap.Image(iso, u))
+    y = PermutationConstructor(libgap.Image(iso, v))
 
     return (x, y, (x*y)**(-1), PermutationGroup([x, y]))
 
@@ -2494,7 +2496,7 @@ def check_bitrade_generators(a, b, c):
         sage: a, b, c, G = p3_group_bitrade_generators(3)
         sage: check_bitrade_generators(a, b, c)
         True
-        sage: check_bitrade_generators(a, b, gap('()'))
+        sage: check_bitrade_generators(a, b, libgap(gap('()')))
         False
     """
     A = PermutationGroup([a])
@@ -2504,7 +2506,7 @@ def check_bitrade_generators(a, b, c):
     if a*b != c**(-1):
         return False
 
-    X = gap.Intersection(gap.Intersection(A, B), C)
+    X = libgap.Intersection(libgap.Intersection(A, B), C)
     return X.Size() == 1
 
 
@@ -2648,11 +2650,11 @@ def bitrade_from_group(a, b, c, G):
         [ 2  1  3 -1]
         [ 0  3 -1  2]
     """
-    hom = gap.ActionHomomorphism(G, gap.RightCosets(G, gap.TrivialSubgroup(G)), gap.OnRight)
+    hom = libgap.ActionHomomorphism(G, libgap.RightCosets(G, libgap.TrivialSubgroup(G)), libgap.OnRight)
 
-    t1 = gap.Image(hom, a)
-    t2 = gap.Image(hom, b)
-    t3 = gap.Image(hom, c)
+    t1 = libgap.Image(hom, a)
+    t2 = libgap.Image(hom, b)
+    t3 = libgap.Image(hom, c)
 
     t1 = Permutation(str(t1).replace('\n', ''))
     t2 = Permutation(str(t2).replace('\n', ''))

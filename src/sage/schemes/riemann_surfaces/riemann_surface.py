@@ -1,3 +1,4 @@
+# sage.doctest: needs scipy sage.graphs sage.groups
 r"""
 Riemann matrices and endomorphism rings of algebraic Riemann surfaces
 
@@ -124,6 +125,7 @@ from sage.matrix.special import block_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.functional import numerical_approx
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_integer import IntegerLattice
@@ -134,11 +136,12 @@ from sage.rings.function_field.divisor import FunctionFieldDivisor
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
 import sage.libs.mpmath.all as mpall
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 
 def voronoi_ghost(cpoints, n=6, CC=CDF):
@@ -279,7 +282,7 @@ def numerical_inverse(C):
     with mpall.workprec(prec):
         Cmp = mpall.matrix([mpall.sage_to_mpmath(list(c), prec) for c in C])
         PLU = mpall.lu(Cmp)
-    P, L, U = [R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU]
+    P, L, U = (R([mpall.mpmath_to_sage(c, prec) for c in M]) for M in PLU)
     return U.inverse() * L.inverse() * P
 
 
@@ -709,7 +712,7 @@ class RiemannSurface():
         combined_discriminant = lcm(discriminants)(*self._R.gens())
         self._differentials_branch_locus = []
         for x in combined_discriminant.factor():
-            if not x[0] in existing_factors:
+            if x[0] not in existing_factors:
                 self._differentials_branch_locus += self._CCz(
                     x[0](self._CCz.gen(), 0)
                 ).roots(multiplicities=False)
@@ -1685,10 +1688,10 @@ class RiemannSurface():
                 # that entry, and the corresponding cycle. (also, forms it
                 # into a loop)
                 if P[i][j] != 0:
-                    acycles[i] += [(P[i][j], [x for x in cycles[j]] + [cycles[j][0]])]
+                    acycles[i] += [(P[i][j], list(cycles[j]) + [cycles[j][0]])]
                 if P[self.genus + i][j] != 0:
                     bcycles[i] += [
-                        (P[self.genus + i][j], [x for x in cycles[j]] + [cycles[j][0]])
+                        (P[self.genus + i][j], list(cycles[j]) + [cycles[j][0]])
                     ]
         return acycles + bcycles
 
@@ -2149,7 +2152,10 @@ class RiemannSurface():
         z1 = zwt(1)[0]
 
         # list of (centre, radius) pairs that still need to be processed
-        ball_stack = [(self._RR(1 / 2), self._RR(1 / 2), 0)]
+        # None is a sentinel value to indicate that the minimum number of
+        # nodes required to integrate on the corresponding segment within
+        # the required error tolerance is not yet known.
+        ball_stack = [(self._RR(1 / 2), self._RR(1 / 2), None)]
         alpha = self._RR(912 / 1000)
         # alpha set manually for scaling purposes. Basic benchmarking shows
         # that ~0.9 is a sensible value.
@@ -2183,8 +2189,21 @@ class RiemannSurface():
             rho_z = min(distances)
             rho_t = rho_z / (z1_minus_z0).abs()
             rho_t = alpha * rho_t + (1 - alpha) * rt  # sqrt(rho_t*rt) could also work
-            rho_z = rho_t * (z1 - z0).abs()
+            rho_z = rho_t * (z1_minus_z0).abs()
             delta_z = (alpha * rho_t + (1 - alpha) * rt) * (z1_minus_z0).abs()
+            # delta_z and delta_z^2 / (rho_z * (rho_z - delta_z)) are the two
+            # prefactors that occur in the computation of the magnitude bound
+            # M. delta_z should never be infinite, but the second factor could
+            # be if rho_z - delta_z is 0. Mathematically it would never be 0
+            # as we ensure rho_t > rt before running local_N, but the
+            # floating point operations can ruin this.
+            # The second prefactor is actually homogeneous in
+            # z1_minus_z0.abs(), so we shall compute this factor without those
+            # multiplications as a function of rho_t / rt which should thus be
+            # more resistance to floating-point errors.
+            pf2 = (alpha + (1 - alpha) * (rt / rho_t))**2 / (
+                  (1 - alpha) * (1 - rt / rho_t)
+            )
             expr = (
                 rho_t / rt + ((rho_t / rt)**2 - 1).sqrt()
             )  # Note this is really exp(arcosh(rho_t/rt))
@@ -2205,15 +2224,14 @@ class RiemannSurface():
                 )
                 cg = g(cz, cw)
                 cdgdz = dgdz(cz, cg)
-                Delta = delta_z * cdgdz.abs() + (delta_z**2) * M_tilde / (
-                    rho_z * (rho_z - delta_z)
-                )
-                M = Delta
+                M = delta_z * cdgdz.abs() + pf2 * M_tilde
                 N_required = (
                     (M * (self._RR.pi() + 64 / (15 * (expr**2 - 1))) / E_global).log()
                     / (2 * expr.log())
-                ).ceil()
-                Ni = max(Ni, N_required)
+                )
+                if N_required.is_positive_infinity():
+                    return 2**max(60, self._prec)
+                Ni = max(Ni, N_required.ceil())
             return Ni
 
         while ball_stack:
@@ -2221,15 +2239,15 @@ class RiemannSurface():
             ncts = [ct - rt / 2, ct + rt / 2]
             nrt = rt / 2
 
-            if not lN:
+            if lN is None:
                 cz = (1 - ct) * z0 + ct * z1
                 distances = [(cz - b).abs() for b in self.branch_locus]
                 rho_z = min(distances)
                 rho_t = rho_z / (z1_minus_z0).abs()
 
                 if rho_t <= rt:
-                    ball_stack.append((ncts[0], nrt, 0))
-                    ball_stack.append((ncts[1], nrt, 0))
+                    ball_stack.append((ncts[0], nrt, None))
+                    ball_stack.append((ncts[1], nrt, None))
                     continue
 
                 lN = local_N(ct, rt)
@@ -2323,7 +2341,7 @@ class RiemannSurface():
             integral_dict = self._integral_dict
         else:
             fcd = [fast_callable(omega, domain=self._CC) for omega in differentials]
-            integral_dict = dict()
+            integral_dict = {}
 
         if integration_method == "heuristic":
             line_int = lambda edge: self.simple_vector_line_integral(edge, fcd)
@@ -2372,7 +2390,8 @@ class RiemannSurface():
         easier to test.::
 
             sage: parent(M)
-            Full MatrixSpace of 3 by 6 dense matrices over Complex Field with 30 bits of precision
+            Full MatrixSpace of 3 by 6 dense matrices
+             over Complex Field with 30 bits of precision
             sage: M.rank()
             3
 
@@ -2411,7 +2430,7 @@ class RiemannSurface():
         field::
 
             sage: x = polygen(QQ)
-            sage: K.<a> = NumberField(x^2-x+2)
+            sage: K.<a> = NumberField(x^2 - x + 2)
             sage: all(len(m.algdep(6).roots(K)) > 0 for m in M.list())
             True
         """
@@ -2438,7 +2457,7 @@ class RiemannSurface():
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
             sage: S = RiemannSurface(y^2 - x^3 - x)
-            sage: S.plot_paths()
+            sage: S.plot_paths()                                                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d
@@ -2474,8 +2493,8 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
-            sage: S = RiemannSurface(y^2-x^3-x)
-            sage: S.plot_paths3d()
+            sage: S = RiemannSurface(y^2 - x^3 - x)
+            sage: S.plot_paths3d()                                                      # needs sage.plot
             Graphics3d Object
         """
         from sage.plot.graphics import Graphics
@@ -2946,16 +2965,16 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<z,w> = QQ[]
-            sage: S = RiemannSurface(w^2+z^4-1, prec=100)
+            sage: S = RiemannSurface(w^2 + z^4 - 1, prec=100)
             sage: branch = 0
             sage: eps = S._RR(2)**(-S._prec)
-            sage: z_start = 1-eps
+            sage: z_start = 1 - eps
             sage: z_end = 0
             sage: w_start = S.w_values(z_start)[0]
             sage: s = sign(w_start)
             sage: u_edge = ((z_start, w_start), z_end)
             sage: J, _ = S._integrate_differentials_iteratively(u_edge)
-            sage: bool(J[0]+s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2)<1e-10)
+            sage: bool(J[0] + s*S._RR(sqrt(pi)*gamma(5/4)/gamma(3/4)/2) < 1e-10)        # needs sage.symbolic
             True
 
         .. NOTE::
@@ -3573,7 +3592,7 @@ class RiemannSurface():
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<x,y> = QQ[]
-            sage: S = RiemannSurface(y^2-x^5+1)
+            sage: S = RiemannSurface(y^2 - x^5 + 1)
             sage: epsilon = S._RR(2)^(-S._prec+1)
             sage: for vector in S.period_matrix().columns():
             ....:     print(bool(S.reduce_over_period_lattice(vector).norm()<epsilon))
@@ -3908,9 +3927,9 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     r"""
     Determine integer relations between complex matrices.
 
-    Given two square matrices with complex entries of size g, h respectively,
-    numerically determine an (approximate) ZZ-basis for the 2g x 2h matrices
-    with integer entries of the shape (D, B; C, A) such that B+M1*A=(D+M1*C)*M2.
+    Given two square matrices with complex entries of size `g`, `h` respectively,
+    numerically determine an (approximate) `\ZZ`-basis for the `2g \times 2h` matrices
+    with integer entries of the shape `(D, B; C, A)` such that `B+M_1*A=(D+M_1*C)*M2`.
     By considering real and imaginary parts separately we obtain `2gh` equations
     with real coefficients in `4gh` variables. We scale the coefficients by a
     constant `2^b` and round them to integers, in order to obtain an integer
@@ -3925,7 +3944,7 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
 
     - ``M1`` -- square complex valued matrix
 
-    - ``M2`` -- square complex valued matrix of same size as M1
+    - ``M2`` -- square complex valued matrix of same size as ``M1``
 
     - ``b`` -- integer (default provided). The equation coefficients are scaled
       by `2^b` before rounding to integers.
@@ -3935,16 +3954,16 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
 
     OUTPUT:
 
-    A list of 2g x 2h integer matrices that, for large enough `r`, `b-r`,
-    generate the ZZ-module of relevant transformations.
+    A list of `2g \times 2h` integer matrices that, for large enough `r`, `b-r`,
+    generate the `\ZZ`-module of relevant transformations.
 
     EXAMPLES::
 
         sage: from sage.schemes.riemann_surfaces.riemann_surface import integer_matrix_relations
-        sage: M1=M2=matrix(CC,2,2,[sqrt(d) for d in [2,-3,-3,-6]])
-        sage: T=integer_matrix_relations(M1,M2)
-        sage: id=parent(M1)(1)
-        sage: M1t=[id.augment(M1) * t for t in T]
+        sage: M1 = M2 = matrix(CC, 2, 2, [CC(d).sqrt() for d in [2,-3,-3,-6]])
+        sage: T = integer_matrix_relations(M1,M2)
+        sage: id = parent(M1)(1)
+        sage: M1t = [id.augment(M1) * t for t in T]
         sage: [((m[:,:2]^(-1)*m)[:,2:]-M2).norm() < 1e-13 for m in M1t]
         [True, True]
     """

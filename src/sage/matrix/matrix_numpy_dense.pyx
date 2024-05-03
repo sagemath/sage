@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 Dense matrices using a NumPy backend
 
@@ -39,7 +40,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 cimport sage.structure.element
 
 cimport numpy as cnumpy
@@ -133,7 +134,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             [0.0 1.0 2.0]
             [3.0 4.0 5.0]
             [6.0 7.0 8.0]
-            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])
+            sage: matrix(CDF,2,2,[CDF(1+I)*j for j in range(4)])                        # needs sage.symbolic
             [        0.0 1.0 + 1.0*I]
             [2.0 + 2.0*I 3.0 + 3.0*I]
         """
@@ -305,10 +306,10 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         TESTS:
 
-        Complex entries are supported (:trac:`27831`).  ::
+        Complex entries are supported (:issue:`27831`).  ::
 
-            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])
-            sage: a.is_symmetric()
+            sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])             # needs sage.symbolic
+            sage: a.is_symmetric()                                                      # needs sage.symbolic
             False
         """
         cdef Py_ssize_t i, j

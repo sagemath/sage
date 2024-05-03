@@ -269,7 +269,7 @@ class ResidueSequence(ClonableArray,
 
     def check(self):
         r"""
-        Raise a ``ValueError`` if ``self`` is not a residue sequence.
+        Raise a :class:`ValueError` if ``self`` is not a residue sequence.
 
         EXAMPLES::
 
@@ -340,7 +340,7 @@ class ResidueSequence(ClonableArray,
         except (IndexError, KeyError):
             raise IndexError('k must be in the range 1, 2, ..., {}'.format(len(self)))
 
-    def residues(self):
+    def residues(self) -> list:
         r"""
         Return a list of the residue sequence.
 
@@ -350,7 +350,7 @@ class ResidueSequence(ClonableArray,
             sage: ResidueSequence(3,(0,0,1),[0,0,1,1,2,2,3,3]).residues()
             [0, 0, 1, 1, 2, 2, 0, 0]
         """
-        return [r for r in self]
+        return list(self)
 
     def restrict(self, m):
         r"""

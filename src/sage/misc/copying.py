@@ -1,7 +1,7 @@
 "License"
 
 import os
-from . import pager
+from sage.misc import pager
 
 from sage.env import SAGE_ROOT
 

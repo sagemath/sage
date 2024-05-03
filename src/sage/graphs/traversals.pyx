@@ -338,16 +338,17 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: G.lex_BFS(initial_vertex='000', algorithm="fast")                         # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: G.lex_BFS(initial_vertex='000', algorithm="fast")
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_BFS(initial_vertex='000', algorithm="slow")                         # optional - sage.combinat
+        sage: G.lex_BFS(initial_vertex='000', algorithm="slow")
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
+        sage: G.lex_UP(initial_vertex='000')
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
+        sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -474,8 +475,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(n) if pred[i] != i]
         g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
         return sigma, g
-    else:
-        return sigma
+    return sigma
 
 
 def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
@@ -541,14 +541,15 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
+        sage: G.lex_UP(initial_vertex='000')
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
+        sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -595,8 +596,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
@@ -647,9 +647,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
-
-    else:
-        return value
+    return value
 
 
 def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
@@ -714,14 +712,15 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
+        sage: G.lex_UP(initial_vertex='000')
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
+        sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -768,8 +767,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
@@ -821,9 +819,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
-
-    else:
-        return value
+    return value
 
 
 def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
@@ -889,14 +885,15 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: G = digraphs.DeBruijn(2,3)                                                # optional - sage.combinat
-        sage: G.lex_BFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: # needs sage.combinat
+        sage: G = digraphs.DeBruijn(2,3)
+        sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_DFS(initial_vertex='000')                                           # optional - sage.combinat
+        sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
-        sage: G.lex_UP(initial_vertex='000')                                            # optional - sage.combinat
+        sage: G.lex_UP(initial_vertex='000')
         ['000', '001', '010', '101', '110', '111', '011', '100']
-        sage: G.lex_DOWN(initial_vertex='000')                                          # optional - sage.combinat
+        sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
 
     TESTS:
@@ -943,8 +940,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
@@ -996,9 +992,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
-
-    else:
-        return value
+    return value
 
 
 def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorithm=None):
@@ -1147,10 +1141,9 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
 
     if algorithm == "lex_M_slow":
         return lex_M_slow(self, triangulation=triangulation, labels=labels, initial_vertex=initial_vertex)
-    else:
-        if labels:
-            raise ValueError("'{}' cannot return labels assigned to vertices".format(algorithm))
-        return lex_M_fast(self, triangulation=triangulation, initial_vertex=initial_vertex)
+    if labels:
+        raise ValueError("'{}' cannot return labels assigned to vertices".format(algorithm))
+    return lex_M_fast(self, triangulation=triangulation, initial_vertex=initial_vertex)
 
 
 def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
@@ -1313,8 +1306,7 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
         return alpha, F
     elif labels:
         return alpha, label
-    else:
-        return alpha
+    return alpha
 
 
 def lex_M_fast(G, triangulation=False, initial_vertex=None):
@@ -1518,8 +1510,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
 
     if triangulation:
         return ordering, F
-    else:
-        return ordering
+    return ordering
 
 
 def is_valid_lex_M_order(G, alpha, F):
@@ -1744,7 +1735,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     return alpha
 
 
-cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u):
+cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u) noexcept:
     """
     Swap positions of u and v in alpha, where v is be the vertex occupying cell
     new_pos_u in alpha.
@@ -2009,7 +2000,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
         ....:     if len(X) < k - 1:
         ....:         raise ValueError("something goes wrong")
         sage: G = graphs.RandomGNP(10, .2)
-        sage: cc = G.connected_components()
+        sage: cc = G.connected_components(sort=False)
         sage: _, _, X = G.maximum_cardinality_search_M()
         sage: len(X) >= len(cc) - 1
         True

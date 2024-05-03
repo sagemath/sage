@@ -51,12 +51,10 @@ class QmodnZ(Parent, UniqueRepresentation):
 
     #. ``QQ/(n*ZZ)``, where
 
-        - `n` -- an integer (including 0 or negative integers).
+        - `n` -- integer (including 0 or negative integers).
 
 
-    OUTPUT:
-
-    The abelian group `\Q/n\Z`.
+    OUTPUT: the abelian group `\Q/n\Z`
 
     EXAMPLES::
 
@@ -180,7 +178,7 @@ class QmodnZ(Parent, UniqueRepresentation):
             sage: len(L)
             92
         """
-        return list(set(self(x) for x in QQ.some_elements()))
+        return list({self(x) for x in QQ.some_elements()})
 
     def random_element(self):
         r"""

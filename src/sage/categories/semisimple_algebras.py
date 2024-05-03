@@ -8,12 +8,13 @@ Semisimple Algebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.categories.algebras import Algebras
+from sage.categories.category_types import Category_over_base_ring
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.misc.bindable_class import BoundClass
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from .category_types import Category_over_base_ring
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from .algebras import Algebras
+
 
 class SemisimpleAlgebras(Category_over_base_ring):
     """
@@ -37,15 +38,15 @@ class SemisimpleAlgebras(Category_over_base_ring):
 
     Typically, finite group algebras are semisimple::
 
-        sage: DihedralGroup(5).algebra(QQ) in SemisimpleAlgebras                        # optional - sage.groups
+        sage: DihedralGroup(5).algebra(QQ) in SemisimpleAlgebras                        # needs sage.groups
         True
 
     Unless the characteristic of the field divides the order of the group::
 
-        sage: DihedralGroup(5).algebra(IntegerModRing(5)) in SemisimpleAlgebras         # optional - sage.groups
+        sage: DihedralGroup(5).algebra(IntegerModRing(5)) in SemisimpleAlgebras         # needs sage.groups
         False
 
-        sage: DihedralGroup(5).algebra(IntegerModRing(7)) in SemisimpleAlgebras         # optional - sage.groups
+        sage: DihedralGroup(5).algebra(IntegerModRing(7)) in SemisimpleAlgebras         # needs sage.groups
         True
 
     .. SEEALSO:: :wikipedia:`Semisimple_algebra`
@@ -96,13 +97,13 @@ class SemisimpleAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: A = SymmetricGroup(4).algebra(QQ)                                 # optional - sage.groups
-                sage: A.radical_basis()                                                 # optional - sage.groups
+                sage: A = SymmetricGroup(4).algebra(QQ)                                 # needs sage.groups
+                sage: A.radical_basis()                                                 # needs sage.groups
                 ()
 
             TESTS::
 
-                sage: A.radical_basis.__module__                                        # optional - sage.groups
+                sage: A.radical_basis.__module__                                        # needs sage.groups
                 'sage.categories.finite_dimensional_semisimple_algebras_with_basis'
             """
             return ()

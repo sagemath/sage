@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat, sage.groups
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Coxeter Group Algebras
 """
@@ -168,10 +168,10 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 sage: q1, q2 = K.gens()
                 sage: KW = W.algebra(K)
                 sage: E = KW.demazure_lusztig_eigenvectors(q1,q2)
-                sage: E.keys()
+                sage: E.keys()                                                          # needs sage.rings.number_field
                 Weyl Group of type ['B', 2] (as a matrix group acting on the ambient space)
                 sage: w = W.an_element()
-                sage: E[w]
+                sage: E[w]                                                              # needs sage.rings.number_field
                 (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12
             """
             W = self.basis().keys()

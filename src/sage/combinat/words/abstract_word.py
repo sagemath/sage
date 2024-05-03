@@ -225,7 +225,7 @@ class Word_class(SageObject):
             sage: len(Word(iter('a'*200), length='finite'))
             200
 
-        We make sure :trac:`8574` is fixed::
+        We make sure :issue:`8574` is fixed::
 
             sage: s = WordMorphism('0->000,1->%s'%('1'*100))
             sage: len(s('1'))
@@ -251,7 +251,7 @@ class Word_class(SageObject):
         """
         L = self.length()
         if L is None or L is Infinity:
-            msg = "Python len method cannot return a non integer value (=%s): "%L
+            msg = "Python len method cannot return a non integer value (=%s): " % L
             msg += "use length method instead."
             raise TypeError(msg)
         return int(L)
@@ -632,7 +632,7 @@ class Word_class(SageObject):
         """
         from sage.combinat.words.words import FiniteWords, InfiniteWords
         if use_parent_alphabet and\
-            isinstance(self.parent(), (FiniteWords, InfiniteWords)):
+                isinstance(self.parent(), (FiniteWords, InfiniteWords)):
             A = self.parent().alphabet()
             for letter in self:
                 yield A.rank(letter)
@@ -641,7 +641,7 @@ class Word_class(SageObject):
             mapping = {}
             next_value = 0
             for letter in self:
-                if not(letter in mapping):
+                if letter not in mapping:
                     mapping[letter] = next_value
                     next_value += 1
                 yield mapping[letter]
@@ -900,8 +900,7 @@ class Word_class(SageObject):
             w = (w*par([letter])).palindromic_closure(f=f)
             length_after = w.length()
             d = length_after - length_before
-            for a in w[-d:]:
-                yield a
+            yield from w[-d:]
 
     def _iterated_right_palindromic_closure_recursive_iterator(self, f=None):
         r"""
@@ -991,8 +990,7 @@ class Word_class(SageObject):
             else:
                 to_append = ipcw[lengths[pos]:]
             ipcw += to_append
-            for a in to_append:
-                yield a
+            yield from to_append
 
     def iterated_right_palindromic_closure(self, f=None, algorithm='recursive'):
         r"""
@@ -1478,24 +1476,24 @@ class Word_class(SageObject):
 
         Sum of digits modulo 2 of the prime numbers written in base 2::
 
-            sage: Word(primes(1000)).sum_digits()                                       # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits()                                       # needs sage.libs.pari
             word: 1001110100111010111011001011101110011011...
 
         Sum of digits modulo 3 of the prime numbers written in base 3::
 
-            sage: Word(primes(1000)).sum_digits(base=3)                                 # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits(base=3)                                 # needs sage.libs.pari
             word: 2100002020002221222121022221022122111022...
-            sage: Word(primes(1000)).sum_digits(base=3, mod=3)                          # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits(base=3, mod=3)                          # needs sage.libs.pari
             word: 2100002020002221222121022221022122111022...
 
         Sum of digits modulo 2 of the prime numbers written in base 3::
 
-            sage: Word(primes(1000)).sum_digits(base=3, mod=2)                          # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits(base=3, mod=2)                          # needs sage.libs.pari
             word: 0111111111111111111111111111111111111111...
 
         Sum of digits modulo 7 of the prime numbers written in base 10::
 
-            sage: Word(primes(1000)).sum_digits(base=10, mod=7)                         # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits(base=10, mod=7)                         # needs sage.libs.pari
             word: 2350241354435041006132432241353546006304...
 
         Negative entries::

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Torsion subgroups of modular abelian varieties
 
@@ -176,11 +177,11 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         subgroup.
 
         The computation of the rational torsion order of J1(p) is conjectural
-        and will only be used if proof=False. See Section 6.2.3 of [CES2003]_.
+        and will only be used if ``proof=False``. See Section 6.2.3 of [CES2003]_.
 
         INPUT:
 
-        - ``proof`` -- a boolean (default: True)
+        - ``proof`` -- a boolean (default: ``True``)
 
         OUTPUT:
 
@@ -202,13 +203,14 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             sage: J.rational_torsion_subgroup().order()
             19
 
-        Sometimes the order can only be computed with proof=False. ::
+        Sometimes the order can only be computed with ``proof=False``. ::
 
             sage: J = J1(23)
             sage: J.rational_torsion_subgroup().order()
             Traceback (most recent call last):
             ...
-            RuntimeError: Unable to compute order of torsion subgroup (it is in [408991, 9406793])
+            RuntimeError: Unable to compute order of torsion subgroup
+            (it is in [408991, 9406793])
 
             sage: J.rational_torsion_subgroup().order(proof=False)
             408991
@@ -219,7 +221,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             n = O[0]
             self._order = n
             return n
-        raise RuntimeError("Unable to compute order of torsion subgroup (it is in %s)"%O)
+        raise RuntimeError("Unable to compute order of torsion subgroup (it is in %s)" % O)
 
     def lattice(self):
         """
@@ -249,7 +251,8 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             sage: T.lattice()
             Traceback (most recent call last):
             ...
-            NotImplementedError: unable to compute the rational torsion subgroup in this case (there is no known general algorithm yet)
+            NotImplementedError: unable to compute the rational torsion subgroup
+            in this case (there is no known general algorithm yet)
 
         The problem is that the multiple of the order obtained by counting
         points over finite fields is twice the divisor of the order got
@@ -278,14 +281,14 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         INPUT:
 
-        - ``proof`` -- a boolean (default: True)
+        - ``proof`` -- a boolean (default: ``True``)
 
         OUTPUT:
 
         - an array of positive integers
 
         The computation of the rational torsion order of J1(p) is conjectural
-        and will only be used if proof=False. See Section 6.2.3 of [CES2003]_.
+        and will only be used if ``proof=False``. See Section 6.2.3 of [CES2003]_.
 
         EXAMPLES::
 
@@ -431,7 +434,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         performance. ::
 
             sage: J = J1(23)
-            sage: J.rational_torsion_subgroup().multiple_of_order() # long time (2s)
+            sage: J.rational_torsion_subgroup().multiple_of_order()  # long time (2s)
             9406793
             sage: J.rational_torsion_subgroup().multiple_of_order(proof=False)
             408991
@@ -680,7 +683,7 @@ class QQbarTorsionSubgroup(Module):
         EXAMPLES::
 
             sage: A = J0(23)
-            sage: A.qbar_torsion_subgroup()
+            sage: A.qbar_torsion_subgroup()                                             # needs sage.rings.number_field
             Group of all torsion points in QQbar on Abelian variety J0(23) of dimension 2
         """
         self.__abvar = abvar
@@ -694,10 +697,10 @@ class QQbarTorsionSubgroup(Module):
 
         EXAMPLES::
 
-            sage: J0(23).qbar_torsion_subgroup()._repr_()
+            sage: J0(23).qbar_torsion_subgroup()._repr_()                               # needs sage.rings.number_field
             'Group of all torsion points in QQbar on Abelian variety J0(23) of dimension 2'
         """
-        return 'Group of all torsion points in QQbar on %s'%self.__abvar
+        return 'Group of all torsion points in QQbar on %s' % self.__abvar
 
     def field_of_definition(self):
         """
@@ -709,7 +712,7 @@ class QQbarTorsionSubgroup(Module):
 
         EXAMPLES::
 
-            sage: J0(23).qbar_torsion_subgroup().field_of_definition()
+            sage: J0(23).qbar_torsion_subgroup().field_of_definition()                  # needs sage.rings.number_field
             Rational Field
         """
         return self.__abvar.base_field()
@@ -726,9 +729,9 @@ class QQbarTorsionSubgroup(Module):
 
         EXAMPLES::
 
-            sage: P = J0(23).qbar_torsion_subgroup()([1,1/2,3/4,2]); P
+            sage: P = J0(23).qbar_torsion_subgroup()([1,1/2,3/4,2]); P                  # needs sage.rings.number_field
             [(1, 1/2, 3/4, 2)]
-            sage: P.order()
+            sage: P.order()                                                             # needs sage.rings.number_field
             4
         """
         v = self.__abvar.vector_space()(x)
@@ -743,7 +746,7 @@ class QQbarTorsionSubgroup(Module):
 
         EXAMPLES::
 
-            sage: J0(23).qbar_torsion_subgroup().abelian_variety()
+            sage: J0(23).qbar_torsion_subgroup().abelian_variety()                      # needs sage.rings.number_field
             Abelian variety J0(23) of dimension 2
         """
         return self.__abvar

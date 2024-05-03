@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Examples of a Lie algebra with basis
 """
@@ -99,6 +99,7 @@ class AbelianLieAlgebra(CombinatorialFreeModule):
             UEA = self.parent().universal_enveloping_algebra()
             I = UEA._indices
             return UEA.sum_of_terms((I.gen(t), c) for t, c in self)
+
 
 Example = AbelianLieAlgebra
 

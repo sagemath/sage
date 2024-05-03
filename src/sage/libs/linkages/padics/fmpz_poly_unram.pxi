@@ -32,6 +32,8 @@ from sage.rings.finite_rings.integer_mod_ring import Zmod
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
 
 DEF CELEMENT_IS_PY_OBJECT = False
 
@@ -668,7 +670,7 @@ cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime
     return ans
 
 cdef int cteichmuller(celement out, celement value, long prec, PowComputer_ prime_pow) except -1:
-    """
+    r"""
     Teichmuller lifting.
 
     INPUT:
@@ -848,7 +850,7 @@ cdef inline int cconv_mpz_t_out(mpz_t out, celement x, long valshift, long prec,
 ## Extra functions ##
 
 cdef cmatrix_mod_pn(celement a, long aprec, long valshift, PowComputer_ prime_pow):
-    """
+    r"""
     Returns the matrix of right multiplication by the element on
     the power basis `1, x, x^2, \ldots, x^{d-1}` for this
     extension field.  Thus the *rows* of this matrix give the

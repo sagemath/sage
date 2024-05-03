@@ -185,11 +185,11 @@ class Subsets_s(Parent):
          {1, 2, 3}, {1, 2, 4}, {1, 3, 4}, {2, 3, 4},
          {1, 2, 3, 4}]
 
-        sage: S = Subsets(Subsets(Subsets(GF(3)))); S                                   # optional - sage.rings.finite_rings
+        sage: S = Subsets(Subsets(Subsets(GF(3)))); S
         Subsets of Subsets of Subsets of Finite Field of size 3
-        sage: S.cardinality()                                                           # optional - sage.rings.finite_rings
+        sage: S.cardinality()
         115792089237316195423570985008687907853269984665640564039457584007913129639936
-        sage: S.unrank(3149254230)  # random                                            # optional - sage.rings.finite_rings
+        sage: S.unrank(3149254230)  # random
         {{{1}, {0, 2}}, {{0, 1, 2}, {0, 1}, {1}, {1, 2}},
          {{2}, {1, 2}, {0, 1, 2}, {0, 2}, {1}, {}},
          {{1, 2}, {0}},
@@ -247,7 +247,7 @@ class Subsets_s(Parent):
 
         EXAMPLES::
 
-            sage: Subsets(GF(13)).underlying_set()                                      # optional - sage.rings.finite_rings
+            sage: Subsets(GF(13)).underlying_set()
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
         """
         return self.element_class(self._s)
@@ -535,7 +535,7 @@ class Subsets_s(Parent):
             sage: Subsets([2,4,5]).an_element()
             {2, 4}
 
-         Check that :trac:`33988` is fixed::
+         Check that :issue:`33988` is fixed::
 
             sage: Subsets([1,2,3]).an_element() == Subsets([1,2,3])._an_element_()
             True
@@ -549,10 +549,10 @@ class Subsets_s(Parent):
         EXAMPLES::
 
             sage: X = Subsets([7,8,9])
-            sage: X.lattice()                                                           # optional - sage.combinat sage.graphs
+            sage: X.lattice()                                                           # needs sage.combinat sage.graphs
             Finite lattice containing 8 elements
             sage: Y = Subsets(0)
-            sage: Y.lattice()                                                           # optional - sage.combinat sage.graphs
+            sage: Y.lattice()                                                           # needs sage.combinat sage.graphs
             Finite lattice containing 1 elements
 
         """
@@ -741,7 +741,8 @@ class Subsets_sk(Subsets_s):
         if self._k > self._s.cardinality():
             raise EmptySetError
 
-        return self.element_class([i for i in itertools.islice(reversed(self._s), int(self._k))])
+        return self.element_class(list(itertools.islice(reversed(self._s),
+                                                        int(self._k))))
 
     def _fast_iterator(self):
         r"""
@@ -1184,7 +1185,7 @@ class SubMultiset_sk(SubMultiset_s):
         [3, 3]
         sage: [sub for sub in S]
         [[1, 2], [1, 3], [2, 3], [3, 3]]
-        """
+    """
 
     def __init__(self, s, k):
         """
@@ -1318,7 +1319,7 @@ class SubMultiset_sk(SubMultiset_s):
             sage: S.list()
             [[1, 2], [1, 3], [2, 2], [2, 3]]
 
-        Check that :trac:`28588` is fixed::
+        Check that :issue:`28588` is fixed::
 
             sage: Subsets([3,2,2], submultiset=True).list()
             [[], [3], [2], [3, 2], [2, 2], [3, 2, 2]]

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Virasoro Algebra and Related Lie Algebras
 
@@ -80,6 +79,19 @@ class LieAlgebraRegularVectorFields(InfinitelyGeneratedLieAlgebra, IndexedGenera
             The Lie algebra of regular vector fields over Rational Field
         """
         return "The Lie algebra of regular vector fields over {}".format(self.base_ring())
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = lie_algebras.regular_vector_fields(QQ)
+            sage: latex(g)
+            \mathcal{W}_{\Bold{Q}}
+        """
+        from sage.misc.latex import latex
+        return r"\mathcal{{W}}_{{{}}}".format(latex(self.base_ring()))
 
     # For compatibility with CombinatorialFreeModuleElement
     _repr_term = IndexedGenerators._repr_generator
@@ -217,6 +229,19 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
             The 15-Witt Lie algebra over Ring of integers modulo 5
         """
         return "The {}-Witt Lie algebra over {}".format(self._p, self.base_ring())
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = lie_algebras.pwitt(GF(3), 15)
+            sage: latex(g)
+            \mathcal{W}(15)_{\Bold{F}_{3}}
+        """
+        from sage.misc.latex import latex
+        return r"\mathcal{{W}}({})_{{{}}}".format(latex(self._p), latex(self.base_ring()))
 
     # For compatibility with CombinatorialFreeModuleElement
     _repr_term = IndexedGenerators._repr_generator
@@ -444,6 +469,19 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
             The Virasoro algebra over Rational Field
         """
         return "The Virasoro algebra over {}".format(self.base_ring())
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = lie_algebras.VirasoroAlgebra(QQ)
+            sage: latex(g)
+            \mathcal{V}_{\Bold{Q}}
+        """
+        from sage.misc.latex import latex
+        return r"\mathcal{{V}}_{{{}}}".format(latex(self.base_ring()))
 
     @cached_method
     def lie_algebra_generators(self):

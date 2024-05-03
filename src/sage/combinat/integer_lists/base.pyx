@@ -61,7 +61,7 @@ cdef class IntegerListsBackend():
 
             sage: from sage.combinat.integer_lists.base import IntegerListsBackend
             sage: C = IntegerListsBackend(2, length=3)
-            sage: C = IntegerListsBackend(min_sum=1.4)
+            sage: C = IntegerListsBackend(min_sum=1.4)                                  # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: Attempt to coerce non-integral RealNumber to Integer
@@ -163,7 +163,7 @@ cdef class IntegerListsBackend():
             left.floor == right.floor and
             left.ceiling == right.ceiling)
         if equal:
-            return (op == Py_EQ or op == Py_LE or op == Py_GE)
+            return op == Py_EQ or op == Py_LE or op == Py_GE
         if op == Py_EQ:
             return False
         if op == Py_NE:
@@ -481,7 +481,7 @@ cdef class Envelope():
             left.min_slope == right.min_slope and
             left.max_slope == right.max_slope)
         if equal:
-            return (op == Py_EQ or op == Py_LE or op == Py_GE)
+            return op == Py_EQ or op == Py_LE or op == Py_GE
         if op == Py_EQ:
             return False
         if op == Py_NE:

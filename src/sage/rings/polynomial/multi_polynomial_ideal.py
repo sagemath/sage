@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.singular
+# sage.doctest: needs sage.libs.singular
 r"""
 Ideals in multivariate polynomial rings
 
@@ -166,11 +166,11 @@ when the system has no solutions over the rationals.
         sage: factor(164878)
         2 * 7 * 11777
 
-        sage: I.change_ring(P.change_ring(GF(2))).groebner_basis()                      # optional - sage.rings.finite_rings
+        sage: I.change_ring(P.change_ring(GF(2))).groebner_basis()                      # needs sage.rings.finite_rings
         [x + y + z, y^2 + y, y*z + y, z^2 + 1]
-        sage: I.change_ring(P.change_ring(GF(7))).groebner_basis()                      # optional - sage.rings.finite_rings
+        sage: I.change_ring(P.change_ring(GF(7))).groebner_basis()                      # needs sage.rings.finite_rings
         [x - 1, y + 3, z - 2]
-        sage: I.change_ring(P.change_ring(GF(11777))).groebner_basis()                  # optional - sage.rings.finite_rings
+        sage: I.change_ring(P.change_ring(GF(11777))).groebner_basis()                  # needs sage.rings.finite_rings
         [x + 5633, y - 3007, z - 2626]
 
     The Groebner basis modulo any product of the prime factors is also non-trivial::
@@ -181,7 +181,7 @@ when the system has no solutions over the rationals.
     Modulo any other prime the Groebner basis is trivial so there are
     no other solutions. For example::
 
-        sage: I.change_ring(P.change_ring(GF(3))).groebner_basis()                      # optional - sage.rings.finite_rings
+        sage: I.change_ring(P.change_ring(GF(3))).groebner_basis()                      # needs sage.rings.finite_rings
         [1]
 
 TESTS::
@@ -234,36 +234,41 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.interfaces.singular import singular as singular_default
-from sage.interfaces.magma import magma as magma_default
-
-from sage.interfaces.expect import StdOutContext
-
-from sage.rings.ideal import Ideal_generic
-from sage.rings.noncommutative_ideals import Ideal_nc
-from sage.rings.integer import Integer
-from sage.structure.sequence import Sequence
-from sage.structure.richcmp import (richcmp_method, op_EQ, op_NE,
-                                    op_LT, op_GT, op_LE, op_GE, rich_to_bool)
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
-from sage.misc.verbose import verbose, get_verbose
-from sage.misc.method_decorator import MethodDecorator
-
-from sage.rings.integer_ring import ZZ
-import sage.rings.abc
-import sage.rings.polynomial.toy_buchberger as toy_buchberger
-import sage.rings.polynomial.toy_variety as toy_variety
-import sage.rings.polynomial.toy_d_basis as toy_d_basis
-
 from warnings import warn
 
+import sage.rings.abc
+import sage.rings.polynomial.toy_buchberger as toy_buchberger
+import sage.rings.polynomial.toy_d_basis as toy_d_basis
+import sage.rings.polynomial.toy_variety as toy_variety
+from sage.misc.cachefunc import cached_method
+from sage.misc.method_decorator import MethodDecorator
+from sage.misc.misc_c import prod
+from sage.misc.verbose import get_verbose, verbose
+from sage.rings.ideal import Ideal_generic
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
+from sage.structure.richcmp import (op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE,
+                                    rich_to_bool, richcmp_method)
+from sage.structure.sequence import Sequence
 
-from sage.interfaces.magma import magma_gb_standard_options
-from sage.interfaces.singular import singular_gb_standard_options
-from sage.libs.singular.standard_options import libsingular_gb_standard_options
+try:
+    from sage.interfaces.expect import StdOutContext
+    from sage.interfaces.singular import singular as singular_default
+    from sage.interfaces.singular import singular_gb_standard_options
+    from sage.libs.singular.standard_options import \
+        libsingular_gb_standard_options
+except ImportError:
+    singular_default = None
+    singular_gb_standard_options = libsingular_gb_standard_options = MethodDecorator
+
+try:
+    from sage.interfaces.magma import magma as magma_default
+    from sage.interfaces.magma import magma_gb_standard_options
+except ImportError:
+    magma_default = None
+    magma_gb_standard_options = MethodDecorator
 
 
 class RequireField(MethodDecorator):
@@ -296,12 +301,14 @@ class RequireField(MethodDecorator):
         """
         R = self._instance.ring()
         if not R.base_ring().is_field():
-            raise ValueError("Coefficient ring must be a field for function '%s'."%(self.f.__name__))
+            raise ValueError("Coefficient ring must be a field for function '%s'." % (self.f.__name__))
         return self.f(self._instance, *args, **kwds)
+
 
 require_field = RequireField
 
-def is_MPolynomialIdeal(x):
+
+def is_MPolynomialIdeal(x) -> bool:
     """
     Return ``True`` if the provided argument ``x`` is an ideal in a
     multivariate polynomial ring.
@@ -331,6 +338,7 @@ def is_MPolynomialIdeal(x):
     """
     return isinstance(x, MPolynomialIdeal)
 
+
 class MPolynomialIdeal_magma_repr:
     def _magma_init_(self, magma):
         """
@@ -343,9 +351,10 @@ class MPolynomialIdeal_magma_repr:
 
         EXAMPLES::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127),10)                  # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Cyclic(R,4) # indirect doctest                   # optional - sage.rings.finite_rings
-            sage: magma(I)    # optional - magma                                        # optional - sage.rings.finite_rings
+            sage: # optional - magma
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
+            sage: I = sage.rings.ideal.Cyclic(R,4)  # indirect doctest
+            sage: magma(I)
             Ideal of Polynomial ring of rank 10 over GF(127)
             Order: Graded Reverse Lexicographical
             Variables: a, b, c, d, e, f, g, h, i, j
@@ -359,7 +368,7 @@ class MPolynomialIdeal_magma_repr:
         """
         P = magma(self.ring())
         G = magma(self.gens())
-        return 'ideal<%s|%s>'%(P.name(), G._ref())
+        return 'ideal<%s|%s>' % (P.name(), G._ref())
 
     @magma_gb_standard_options
     def _groebner_basis_magma(self, deg_bound=None, prot=False, magma=magma_default):
@@ -380,25 +389,27 @@ class MPolynomialIdeal_magma_repr:
 
         EXAMPLES::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)                 # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Cyclic(R, 6)                                     # optional - sage.rings.finite_rings
-            sage: gb = I.groebner_basis('magma:GroebnerBasis')  # indirect doctest; optional - magma sage.rings.finite_rings
-            sage: len(gb)                                       # optional - magma      # optional - sage.rings.finite_rings
+            sage: # optional - magma
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
+            sage: I = sage.rings.ideal.Cyclic(R, 6)
+            sage: gb = I.groebner_basis('magma:GroebnerBasis')
+            sage: len(gb)
             45
 
          We may also pass a degree bound to Magma::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)                 # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Cyclic(R, 6)                                     # optional - sage.rings.finite_rings
-            sage: gb = I.groebner_basis('magma:GroebnerBasis', deg_bound=4) # indirect doctest; optional - magma        # optional - sage.rings.finite_rings
-            sage: len(gb)                                      # optional - magma                                       # optional - sage.rings.finite_rings
+            sage: # optional - magma
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
+            sage: I = sage.rings.ideal.Cyclic(R, 6)
+            sage: gb = I.groebner_basis('magma:GroebnerBasis', deg_bound=4)
+            sage: len(gb)
             5
         """
-        R   = self.ring()
+        R = self.ring()
         if not deg_bound:
             mself = magma(self)
         else:
-            mself = magma(list(self.gens())) # PolynomialSequence converts to a Magma Ideal too, so we force a list
+            mself = magma(list(self.gens()))  # PolynomialSequence converts to a Magma Ideal too, so we force a list
 
         if get_verbose() >= 2:
             prot = True
@@ -406,7 +417,7 @@ class MPolynomialIdeal_magma_repr:
         from sage.interfaces.magma import MagmaGBLogPrettyPrinter
 
         if prot:
-            log_parser = MagmaGBLogPrettyPrinter(verbosity=get_verbose()+ 1, style="sage" if prot=="sage" else "magma")
+            log_parser = MagmaGBLogPrettyPrinter(verbosity=get_verbose() + 1, style="sage" if prot == "sage" else "magma")
         else:
             log_parser = None
 
@@ -429,7 +440,8 @@ class MPolynomialIdeal_magma_repr:
             a = str(R.base_ring().gen())
             mgb = [e.replace("$.1",a) for e in mgb]
 
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
 
         B = PolynomialSequence([R(e) for e in mgb], R, immutable=True)
         return B
@@ -508,7 +520,7 @@ class MPolynomialIdeal_singular_base_repr:
 
         TESTS:
 
-        We check that :trac:`17676` is fixed::
+        We check that :issue:`17676` is fixed::
 
             sage: R.<x,y,z> = PolynomialRing(ZZ, 3, order='lex')
             sage: I = Ideal(13*x*y*z+6*x*y+78*x*z+36*x-11*y^2*z-66*y*z,
@@ -521,14 +533,14 @@ class MPolynomialIdeal_singular_base_repr:
             sage: len(gI.gens())
             3
         """
-        from sage.rings.polynomial.multi_polynomial_ideal_libsingular import std_libsingular, slimgb_libsingular
         from sage.libs.singular.function import singular_function
-        from sage.libs.singular.option import opt
-
         from sage.libs.singular.function_factory import ff
+        from sage.libs.singular.option import opt
+        from sage.rings.polynomial.multi_polynomial_ideal_libsingular import (
+            slimgb_libsingular, std_libsingular)
         groebner = ff.groebner
 
-        if get_verbose()>=2:
+        if get_verbose() >= 2:
             opt['prot'] = True
         for name, value in kwds.items():
             if value is not None:
@@ -545,7 +557,7 @@ class MPolynomialIdeal_singular_base_repr:
                 fnc = singular_function(algorithm)
                 S = fnc(self)
             except NameError:
-                raise NameError("Algorithm '%s' unknown"%algorithm)
+                raise NameError("Algorithm '%s' unknown" % algorithm)
         return S
 
     @libsingular_gb_standard_options
@@ -582,19 +594,19 @@ class MPolynomialIdeal_singular_base_repr:
             [[1], [1], [[[(2*a + 3)], [[1]]]]]]
         """
         from sage.rings.fraction_field import FractionField_generic
-        from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+        from sage.rings.polynomial.multi_polynomial_ring_base import \
+            is_MPolynomialRing
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         F = self.base_ring()
         if (not isinstance(F, FractionField_generic) or
             (not is_MPolynomialRing(F.ring()) and not is_PolynomialRing(F.ring()))):
             raise TypeError("the base ring must be a field with parameters")
-        from sage.libs.singular.function import singular_function, lib
         from sage.arith.functions import lcm
+        from sage.libs.singular.function import lib, singular_function
         lib("grobcov.lib")
         grobcov = singular_function("grobcov")
-        polynomials = []
-        for f in self.gens():
-            polynomials.append(f * lcm([c.denominator() for c in f.coefficients()]))
+        polynomials = [f * lcm([c.denominator() for c in f.coefficients()])
+                       for f in self.gens()]
         return grobcov(self.ring().ideal(polynomials))
 
 
@@ -799,7 +811,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that :trac:`15745` is fixed::
+        Check that :issue:`15745` is fixed::
 
             sage: R.<x,y>= QQ[]
             sage: I = Ideal(R(1))
@@ -991,7 +1003,7 @@ class MPolynomialIdeal_singular_repr(
             sage: (I * J).is_prime()
             False
 
-        The following is :trac:`5982`.  Note that the quotient ring
+        The following is :issue:`5982`.  Note that the quotient ring
         is not recognized as being a field at this time, so the
         fraction field is not the quotient ring itself::
 
@@ -1046,38 +1058,38 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: P.<e,d,c,b,a> = PolynomialRing(QQ, 5, order='lex'); P.rename("P")
+            sage: P.<e,d,c,b,a> = PolynomialRing(QQ, 5, order='lex')
             sage: I = sage.rings.ideal.Cyclic(P)
             sage: GB = Ideal(I.groebner_basis('libsingular:stdfglm'))
             sage: GB.triangular_decomposition('singular:triangLfak')
-            [Ideal (a - 1, b - 1, c - 1, d^2 + 3*d + 1, e + d + 3) of P,
-             Ideal (a - 1, b - 1, c^2 + 3*c + 1, d + c + 3, e - 1) of P,
-             Ideal (a - 1, b^2 + 3*b + 1, c + b + 3, d - 1, e - 1) of P,
+            [Ideal (a - 1, b - 1, c - 1, d^2 + 3*d + 1, e + d + 3) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
+             Ideal (a - 1, b - 1, c^2 + 3*c + 1, d + c + 3, e - 1) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
+             Ideal (a - 1, b^2 + 3*b + 1, c + b + 3, d - 1, e - 1) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
              Ideal (a - 1, b^4 + b^3 + b^2 + b + 1, -c + b^2, -d + b^3,
-                    e + b^3 + b^2 + b + 1) of P,
-             Ideal (a^2 + 3*a + 1, b - 1, c - 1, d - 1, e + a + 3) of P,
-             Ideal (a^2 + 3*a + 1, b + a + 3, c - 1, d - 1, e - 1) of P,
+                    e + b^3 + b^2 + b + 1) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
+             Ideal (a^2 + 3*a + 1, b - 1, c - 1, d - 1, e + a + 3) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
+             Ideal (a^2 + 3*a + 1, b + a + 3, c - 1, d - 1, e - 1) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
              Ideal (a^4 - 4*a^3 + 6*a^2 + a + 1,
                     -11*b^2 + 6*b*a^3 - 26*b*a^2 + 41*b*a - 4*b - 8*a^3 + 31*a^2 - 40*a - 24,
                     11*c + 3*a^3 - 13*a^2 + 26*a - 2, 11*d + 3*a^3 - 13*a^2 + 26*a - 2,
-                    -11*e - 11*b + 6*a^3 - 26*a^2 + 41*a - 4) of P,
+                    -11*e - 11*b + 6*a^3 - 26*a^2 + 41*a - 4) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
              Ideal (a^4 + a^3 + a^2 + a + 1,
-                    b - 1, c + a^3 + a^2 + a + 1, -d + a^3, -e + a^2) of P,
+                    b - 1, c + a^3 + a^2 + a + 1, -d + a^3, -e + a^2) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
              Ideal (a^4 + a^3 + a^2 + a + 1,
-                    b - a, c - a, d^2 + 3*d*a + a^2, e + d + 3*a) of P,
+                    b - a, c - a, d^2 + 3*d*a + a^2, e + d + 3*a) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
              Ideal (a^4 + a^3 + a^2 + a + 1,
-                    b - a, c^2 + 3*c*a + a^2, d + c + 3*a, e - a) of P,
+                    b - a, c^2 + 3*c*a + a^2, d + c + 3*a, e - a) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
              Ideal (a^4 + a^3 + a^2 + a + 1,
-                    b^2 + 3*b*a + a^2, c + b + 3*a, d - a, e - a) of P,
+                    b^2 + 3*b*a + a^2, c + b + 3*a, d - a, e - a) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
              Ideal (a^4 + a^3 + a^2 + a + 1,
                     b^3 + b^2*a + b^2 + b*a^2 + b*a + b + a^3 + a^2 + a + 1,
                     c + b^2*a^3 + b^2*a^2 + b^2*a + b^2,
                     -d + b^2*a^2 + b^2*a + b^2 + b*a^2 + b*a + a^2,
-                    -e + b^2*a^3 - b*a^2 - b*a - b - a^2 - a) of P,
+                    -e + b^2*a^3 - b*a^2 - b*a - b - a^2 - a) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field,
              Ideal (a^4 + a^3 + 6*a^2 - 4*a + 1,
                     -11*b^2 + 6*b*a^3 + 10*b*a^2 + 39*b*a + 2*b + 16*a^3 + 23*a^2 + 104*a - 24,
                     11*c + 3*a^3 + 5*a^2 + 25*a + 1, 11*d + 3*a^3 + 5*a^2 + 25*a + 1,
-                    -11*e - 11*b + 6*a^3 + 10*a^2 + 39*a + 2) of P]
+                    -11*e - 11*b + 6*a^3 + 10*a^2 + 39*a + 2) of Multivariate Polynomial Ring in e, d, c, b, a over Rational Field]
 
             sage: R.<x1,x2> = PolynomialRing(QQ, 2, order='lex')
             sage: f1 = 1/2*((x1^2 + 2*x1 - 4)*x2^2 + 2*(x1^2 + x1)*x2 + x1^2)
@@ -1097,11 +1109,11 @@ class MPolynomialIdeal_singular_repr(
             sage: J.triangular_decomposition()
             [Ideal (y^2 - 1, x^2 - 1) of Multivariate Polynomial Ring in x, y over Rational Field]
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
-            sage: J = Ideal(x^2 + y^2 - 2, y^2 - 1)                                     # optional - sage.rings.number_field
-            sage: J.triangular_decomposition()                                          # optional - sage.rings.number_field
+            sage: R.<x,y> = QQbar[]                                                     # needs sage.rings.number_field
+            sage: J = Ideal(x^2 + y^2 - 2, y^2 - 1)                                     # needs sage.rings.number_field
+            sage: J.triangular_decomposition()                                          # needs sage.rings.number_field
             [Ideal (y^2 - 1, x^2 - 1) of Multivariate Polynomial Ring in x, y over Algebraic Field]
         """
         P = self.ring()
@@ -1120,20 +1132,20 @@ class MPolynomialIdeal_singular_repr(
                 I = MPolynomialIdeal(P, self.interreduced_basis()[::-1])
             else:
                 I = self
-                I = MPolynomialIdeal(P, I.transformed_basis('fglm')[::-1]) # -> 'lex'
-                I = I.change_ring(Q) # transform to 'lex' GB
+                I = MPolynomialIdeal(P, I.transformed_basis('fglm')[::-1])  # -> 'lex'
+                I = I.change_ring(Q)  # transform to 'lex' GB
         else:
             if Q == P:
                 I = MPolynomialIdeal(P, self.groebner_basis()[::-1])
             else:
-                I = self.change_ring(Q) # transform to 'lex' GB
+                I = self.change_ring(Q)  # transform to 'lex' GB
                 I = MPolynomialIdeal(Q, I.groebner_basis()[::-1])
 
         if I.dimension() != 0:
             raise TypeError("dimension must be zero")
 
-        from sage.libs.singular.function import singular_function
         from sage.libs.singular.function import lib as singular_lib
+        from sage.libs.singular.function import singular_function
 
         singular_lib('triang.lib')
 
@@ -1144,7 +1156,7 @@ class MPolynomialIdeal_singular_repr(
             f = singular_function(algorithm[9:])
             Tbar = f(I, attributes={I:{'isSB':1}})
         else:
-            raise TypeError("algorithm '%s' unknown"%algorithm)
+            raise TypeError("algorithm '%s' unknown" % algorithm)
 
         T = Sequence([ MPolynomialIdeal(Q,t) for t in Tbar])
         return sorted(T, key=lambda x: x.gens())
@@ -1157,9 +1169,9 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(32003), order='degrevlex')              # optional - sage.rings.finite_rings
-            sage: I = ideal(x^2 - y, x^3)                                               # optional - sage.rings.finite_rings
-            sage: I.dimension()                                                         # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(32003), order='degrevlex')              # needs sage.rings.finite_rings
+            sage: I = ideal(x^2 - y, x^3)                                               # needs sage.rings.finite_rings
+            sage: I.dimension()                                                         # needs sage.rings.finite_rings
             1
 
         If the ideal is the total ring, the dimension is `-1` by convention.
@@ -1171,22 +1183,23 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')               # optional - sage.rings.finite_rings
-            sage: I = R.ideal([x*y, x*y + 1])                                           # optional - sage.rings.finite_rings
-            sage: I.dimension()                                                         # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')
+            sage: I = R.ideal([x*y, x*y + 1])
+            sage: I.dimension()
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             -1
-            sage: I=ideal([x*(x*y+1), y*(x*y+1)])                                       # optional - sage.rings.finite_rings
-            sage: I.dimension()                                                         # optional - sage.rings.finite_rings
+            sage: I=ideal([x*(x*y+1), y*(x*y+1)])
+            sage: I.dimension()
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             1
-            sage: I = R.ideal([x^3*y, x*y^2])                                           # optional - sage.rings.finite_rings
-            sage: I.dimension()                                                         # optional - sage.rings.finite_rings
+            sage: I = R.ideal([x^3*y, x*y^2])
+            sage: I.dimension()
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             1
-            sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')               # optional - sage.rings.finite_rings
-            sage: I = R.ideal(0)                                                        # optional - sage.rings.finite_rings
-            sage: I.dimension()                                                         # optional - sage.rings.finite_rings
+            sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')
+            sage: I = R.ideal(0)
+            sage: I.dimension()
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             2
 
@@ -1196,11 +1209,11 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: P.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
-            sage: I = ideal(x^2-y, x^3-QQbar(-1))                                       # optional - sage.rings.number_field
-            sage: I.dimension()                                                         # optional - sage.rings.number_field
+            sage: P.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
+            sage: I = ideal(x^2-y, x^3-QQbar(-1))                                       # needs sage.rings.number_field
+            sage: I.dimension()                                                         # needs sage.rings.number_field
             1
 
         .. NOTE::
@@ -1297,21 +1310,22 @@ class MPolynomialIdeal_singular_repr(
             sage: I.vector_space_dimension()
             +Infinity
 
-        Due to integer overflow, the result is correct only modulo ``2^32``, see :trac:`8586`::
+        Due to integer overflow, the result is correct only modulo ``2^32``, see :issue:`8586`::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(32003), 3)                              # optional - sage.rings.finite_rings
-            sage: sage.rings.ideal.FieldIdeal(P).vector_space_dimension()  # known bug  # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(32003), 3)                              # needs sage.rings.finite_rings
+            sage: sage.rings.ideal.FieldIdeal(P).vector_space_dimension()       # known bug, needs sage.rings.finite_rings
             32777216864027
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: P.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
-            sage: I = ideal(x^2-y,x^3-QQbar(-1),z-y)                                    # optional - sage.rings.number_field
-            sage: I.dimension()                                                         # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P.<x,y,z> = QQbar[]
+            sage: I = ideal(x^2-y,x^3-QQbar(-1),z-y)
+            sage: I.dimension()
             0
-            sage: I.vector_space_dimension()                                            # optional - sage.rings.number_field
+            sage: I.vector_space_dimension()
             3
 
         """
@@ -1346,14 +1360,14 @@ class MPolynomialIdeal_singular_repr(
 
         Currently, only `\GF{p}` and `\QQ` are supported as base fields::
 
-            sage: P.<x,y,z> = PolynomialRing(QQ,order='degrevlex')
+            sage: # optional - ginv
+            sage: P.<x,y,z> = PolynomialRing(QQ, order='degrevlex')
             sage: I = sage.rings.ideal.Katsura(P)
-            sage: I.groebner_basis(algorithm='ginv')            # optional - ginv
+            sage: I.groebner_basis(algorithm='ginv')
             [z^3 - 79/210*z^2 + 1/30*y + 1/70*z, y^2 - 3/5*z^2 - 1/5*y + 1/5*z, y*z + 6/5*z^2 - 1/10*y - 2/5*z, x + 2*y + 2*z - 1]
-
-            sage: P.<x,y,z> = PolynomialRing(GF(127), order='degrevlex')                # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
-            sage: I.groebner_basis(algorithm='ginv') # optional - ginv                  # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(127), order='degrevlex')
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: I.groebner_basis(algorithm='ginv')
             ...
             [z^3 + 22*z^2 - 55*y + 49*z, y^2 - 26*z^2 - 51*y + 51*z, y*z + 52*z^2 + 38*y + 25*z, x + 2*y + 2*z - 1]
 
@@ -1369,11 +1383,7 @@ class MPolynomialIdeal_singular_repr(
         T = P.term_order()
         K = P.base_ring()
 
-        try:
-            import ginv
-        except ImportError:
-            from sage.misc.package import PackageNotFoundError
-            raise PackageNotFoundError("ginv")
+        import ginv
 
         st = ginv.SystemType("Polynomial")
 
@@ -1381,7 +1391,7 @@ class MPolynomialIdeal_singular_repr(
         try:
             im = ginv.MonomInterface(term_order_map[T.name()], st, list(P.variable_names()))
         except KeyError:
-            raise NotImplementedError("Term order '%s' not supported by Sage's GINV interface or GINV"%T.term_order())
+            raise NotImplementedError("Term order '%s' not supported by Sage's GINV interface or GINV" % T.term_order())
 
         from sage.rings.rational_field import QQ
         if K is QQ:
@@ -1389,7 +1399,7 @@ class MPolynomialIdeal_singular_repr(
         elif K.order() <= 2**16 and K.order().is_prime():
             ic = ginv.CoeffInterface("ModularShort", st, modularShort=K.order())
         else:
-            raise NotImplementedError("GINV interface for base ring '%s' is not implemented."%K)
+            raise NotImplementedError("GINV interface for base ring '%s' is not implemented." % K)
 
         ip = ginv.PolyInterface("PolyList", st, im, ic)
         iw = ginv.WrapInterface(criteria, ip)
@@ -1459,7 +1469,8 @@ class MPolynomialIdeal_singular_repr(
             This method is called by the :meth:`.groebner_basis` method
             and the user usually doesn't need to bother with this one.
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
 
         R = self.ring()
         S = self._groebner_basis_singular_raw(algorithm=algorithm, *args, **kwds)
@@ -1485,7 +1496,7 @@ class MPolynomialIdeal_singular_repr(
 
             sage: R.<a,b,c,d> = PolynomialRing(QQ, 4, order='lex')
             sage: I = sage.rings.ideal.Cyclic(R,4)
-            sage: I._groebner_basis_singular() # indirect doctest
+            sage: I._groebner_basis_singular()  # indirect doctest
             [c^2*d^6 - c^2*d^2 - d^4 + 1, c^3*d^2 + c^2*d^3 - c - d,
              b*d^4 - b + d^5 - d, b*c - b*d + c^2*d^4 + c*d - 2*d^2,
              b^2 + 2*b*d + d^2, a + b + c + d]
@@ -1507,7 +1518,7 @@ class MPolynomialIdeal_singular_repr(
             o = _options_py_to_singular.get(o,o)
             if v:
                 if o in ['degBound','multBound']:
-                    singular.eval(o+'=%d'%v)
+                    singular.eval(o+'=%d' % v)
                 else:
                     singular.option(o)
             else:
@@ -1542,7 +1553,7 @@ class MPolynomialIdeal_singular_repr(
             elif algorithm == "stdfglm":
                 S = obj.stdfglm()
             else:
-                raise TypeError("algorithm '%s' unknown"%algorithm)
+                raise TypeError("algorithm '%s' unknown" % algorithm)
         self.__gb_singular = S
         if prot == "sage":
             print("")
@@ -1554,13 +1565,20 @@ class MPolynomialIdeal_singular_repr(
     @handle_AA_and_QQbar
     def genus(self):
         r"""
-        Return the genus of the projective curve defined by this ideal,
-        which must be 1 dimensional.
+        Return the geometric genus of the projective curve defined by this
+        ideal.
+
+        OUTPUT:
+
+        If the ideal is homogeneous and defines a curve in a projective space,
+        then the genus of the curve is returned. If the ideal is not
+        homogeneous and defines a curve in an affine space, the genus of the
+        projective closure of the curve is returned.
 
         EXAMPLES:
 
-        Consider the hyperelliptic curve `y^2 = 4x^5 - 30x^3 + 45x -
-        22` over `\QQ`, it has genus 2::
+        Consider the hyperelliptic curve `y^2 = 4x^5 - 30x^3 + 45x - 22` over
+        `\QQ`, it has genus 2::
 
             sage: P.<x> = QQ[]
             sage: f = 4*x^5 - 30*x^3 + 45*x - 22
@@ -1577,28 +1595,36 @@ class MPolynomialIdeal_singular_repr(
             sage: I.genus()
             2
 
-        TESTS:
-
-        Check that the answer is correct for reducible curves::
+        Geometric genus is only defined for geometrically irreducible curves.
+        You may get a nonsensical answer if the condition is not met.  A curve
+        reducible over a quadratic extension of `\QQ`::
 
             sage: R.<x, y, z> = QQ[]
             sage: C = Curve(x^2 - 2*y^2)
-            sage: C.is_singular()
-            True
             sage: C.genus()
             -1
-            sage: Ideal(x^4+y^2*x+x).genus()
+
+        TESTS:
+
+        An ideal that does not define a curve but we get a result! ::
+
+            sage: R.<x, y, z> = QQ[]
+            sage: Ideal(x^4 + y^2*x + x).genus()
             0
+
+        An ideal that defines a geometrically reducible affine curve::
+
             sage: T.<t1,t2,u1,u2> = QQ[]
             sage: TJ = Ideal([t1^2 + u1^2 - 1,t2^2 + u2^2 - 1, (t1-t2)^2 + (u1-u2)^2 -1])
             sage: TJ.genus()
             -1
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: P.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
-            sage: I = ideal(y^3*z + x^3*y + x*z^3)                                      # optional - sage.rings.number_field
-            sage: I.genus()                                                             # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P.<x,y> = QQbar[]
+            sage: I = ideal(y^3*z + x^3*y + x*z^3)
+            sage: I.genus()
             3
         """
         from sage.libs.singular.function_factory import ff
@@ -1655,12 +1681,13 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
-            sage: I = x*R                                                               # optional - sage.rings.number_field
-            sage: J = y*R                                                               # optional - sage.rings.number_field
-            sage: I.intersection(J)                                                     # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y> = QQbar[]
+            sage: I = x*R
+            sage: J = y*R
+            sage: I.intersection(J)
             Ideal (x*y) of Multivariate Polynomial Ring in x, y over Algebraic Field
         """
         R = self.ring()
@@ -1741,10 +1768,11 @@ class MPolynomialIdeal_singular_repr(
 
         ::
 
-            sage: R.<x,y,z> = PolynomialRing(GF(37), 3)                                 # optional - sage.rings.finite_rings
-            sage: p = z^2 + 1; q = z^3 + 2                                              # optional - sage.rings.finite_rings
-            sage: I = (p*q^2, y - z^2) * R                                              # optional - sage.rings.finite_rings
-            sage: I.radical()                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y,z> = PolynomialRing(GF(37), 3)
+            sage: p = z^2 + 1; q = z^3 + 2
+            sage: I = (p*q^2, y - z^2) * R
+            sage: I.radical()
             Ideal (z^2 - y, y^2*z + y*z + 2*y + 2)
              of Multivariate Polynomial Ring in x, y, z over Finite Field of size 37
         """
@@ -1792,7 +1820,8 @@ class MPolynomialIdeal_singular_repr(
 
         Uses libSINGULAR.
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
 
         R = self.ring()
         from sage.libs.singular.function_factory import ff
@@ -1827,18 +1856,19 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
-            sage: f = 2*x^2 + y                                                         # optional - sage.rings.number_field
-            sage: g = y                                                                 # optional - sage.rings.number_field
-            sage: h = 2*f + g                                                           # optional - sage.rings.number_field
-            sage: I = Ideal([f,g,h])                                                    # optional - sage.rings.number_field
-            sage: M = I.syzygy_module(); M                                              # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y> = QQbar[]
+            sage: f = 2*x^2 + y
+            sage: g = y
+            sage: h = 2*f + g
+            sage: I = Ideal([f,g,h])
+            sage: M = I.syzygy_module(); M
             [       -2        -1         1]
             [       -y 2*x^2 + y         0]
-            sage: G = vector(I.gens())                                                  # optional - sage.rings.number_field
-            sage: M*G                                                                   # optional - sage.rings.number_field
+            sage: G = vector(I.gens())
+            sage: M*G
             (0, 0)
         """
         from sage.libs.singular.function_factory import ff
@@ -1880,9 +1910,11 @@ class MPolynomialIdeal_singular_repr(
             ...
             NotImplementedError: the ring must be a polynomial ring using Singular
         """
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+        from sage.rings.polynomial.multi_polynomial_libsingular import \
+            MPolynomialRing_libsingular
         if isinstance(self.ring(), MPolynomialRing_libsingular):
-            from sage.homology.free_resolution import FiniteFreeResolution_singular
+            from sage.homology.free_resolution import \
+                FiniteFreeResolution_singular
             return FiniteFreeResolution_singular(self, *args, **kwds)
         raise NotImplementedError("the ring must be a polynomial ring using Singular")
 
@@ -1919,9 +1951,11 @@ class MPolynomialIdeal_singular_repr(
             ...
             NotImplementedError: the ring must be a polynomial ring using Singular
         """
-        from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
+        from sage.rings.polynomial.multi_polynomial_libsingular import \
+            MPolynomialRing_libsingular
         if isinstance(self.ring(), MPolynomialRing_libsingular):
-            from sage.homology.graded_resolution import GradedFiniteFreeResolution_singular
+            from sage.homology.graded_resolution import \
+                GradedFiniteFreeResolution_singular
             return GradedFiniteFreeResolution_singular(self, *args, **kwds)
         raise NotImplementedError("the ring must be a polynomial ring using Singular")
 
@@ -1967,8 +2001,8 @@ class MPolynomialIdeal_singular_repr(
 
         The interreduced basis of 0 is 0::
 
-            sage: P.<x,y,z> = GF(2)[]                                                   # optional - sage.rings.finite_rings
-            sage: Ideal(P(0)).interreduced_basis()                                      # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = GF(2)[]
+            sage: Ideal(P(0)).interreduced_basis()
             [0]
 
         ALGORITHM:
@@ -1979,11 +2013,11 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
-            sage: I = Ideal([z*x + y^3, z + y^3, z + x*y])                              # optional - sage.rings.number_field
-            sage: I.interreduced_basis()                                                # optional - sage.rings.number_field
+            sage: R.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
+            sage: I = Ideal([z*x + y^3, z + y^3, z + x*y])                              # needs sage.rings.number_field
+            sage: I.interreduced_basis()                                                # needs sage.rings.number_field
             [y^3 + z, x*y + z, x*z - z]
         """
         return self.basis.reduced()
@@ -2011,18 +2045,19 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)                 # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Cyclic(R, 4)                                     # optional - sage.rings.finite_rings
-            sage: I.basis_is_groebner()                                                 # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
+            sage: I = sage.rings.ideal.Cyclic(R, 4)
+            sage: I.basis_is_groebner()
             False
-            sage: I2 = Ideal(I.groebner_basis())                                        # optional - sage.rings.finite_rings
-            sage: I2.basis_is_groebner()                                                # optional - sage.rings.finite_rings
+            sage: I2 = Ideal(I.groebner_basis())
+            sage: I2.basis_is_groebner()
             True
 
         A more complicated example::
 
-            sage: R.<U6,U5,U4,U3,U2, u6,u5,u4,u3,u2, h> = PolynomialRing(GF(7583))      # optional - sage.rings.finite_rings
-            sage: l = [u6 + u5 + u4 + u3 + u2 - 3791*h,                                 # optional - sage.rings.finite_rings
+            sage: R.<U6,U5,U4,U3,U2, u6,u5,u4,u3,u2, h> = PolynomialRing(GF(7583))      # needs sage.rings.finite_rings
+            sage: l = [u6 + u5 + u4 + u3 + u2 - 3791*h,                                 # needs sage.rings.finite_rings
             ....:      U6 + U5 + U4 + U3 + U2 - 3791*h,
             ....:      U2*u2 - h^2, U3*u3 - h^2, U4*u4 - h^2,
             ....:      U5*u4 + U5*u3 + U4*u3 + U5*u2 + U4*u2 + U3*u2 - 3791*U5*h
@@ -2064,10 +2099,10 @@ class MPolynomialIdeal_singular_repr(
             ....:        - 2*U5*U4*U2^2*h^2 - 2*U5*U3*U2^2*h^2 - 2*U4*U3*U2^2*h^2
             ....:        - U5*U4*U3*h^3 - U5*U4*U2*h^3 - U5*U3*U2*h^3 - U4*U3*U2*h^3]
 
-            sage: Ideal(l).basis_is_groebner()                                          # optional - sage.rings.finite_rings
+            sage: Ideal(l).basis_is_groebner()                                          # needs sage.rings.finite_rings
             False
-            sage: gb = Ideal(l).groebner_basis()                                        # optional - sage.rings.finite_rings
-            sage: Ideal(gb).basis_is_groebner()                                         # optional - sage.rings.finite_rings
+            sage: gb = Ideal(l).groebner_basis()                                        # needs sage.rings.finite_rings
+            sage: Ideal(gb).basis_is_groebner()                                         # needs sage.rings.finite_rings
             True
 
         .. NOTE::
@@ -2083,19 +2118,20 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<a,b,c,d,e,f,g,h,i,j> = QQbar[]                                     # optional - sage.rings.number_field
-            sage: I = sage.rings.ideal.Cyclic(R,4)                                      # optional - sage.rings.number_field
-            sage: I.basis_is_groebner()                                                 # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<a,b,c,d,e,f,g,h,i,j> = QQbar[]
+            sage: I = sage.rings.ideal.Cyclic(R,4)
+            sage: I.basis_is_groebner()
             False
-            sage: I2 = Ideal(I.groebner_basis())                                        # optional - sage.rings.number_field
-            sage: I2.basis_is_groebner()                                                # optional - sage.rings.number_field
+            sage: I2 = Ideal(I.groebner_basis())
+            sage: I2.basis_is_groebner()
             True
         """
-        from sage.matrix.constructor import matrix
-        from sage.libs.singular.option import opt_verb_ctx
         from sage.libs.singular.function_factory import ff
+        from sage.libs.singular.option import opt_verb_ctx
+        from sage.matrix.constructor import matrix
         sing_reduce = ff.reduce
         syz = ff.syz
 
@@ -2123,7 +2159,7 @@ class MPolynomialIdeal_singular_repr(
             M = (F * LTF.syz()).reduce(self._singular_())
 
             for i in range(M.ncols()):
-                if int(singular.eval("%s[1,%s+1]!=0"%(M.name(),i))):
+                if int(singular.eval("%s[1,%s+1]!=0" % (M.name(),i))):
                     return False
             self._singular_().attrib('isSB',1)
         return True
@@ -2173,9 +2209,9 @@ class MPolynomialIdeal_singular_repr(
 
         ::
 
-            sage: R.<z,y,x> = PolynomialRing(GF(32003), 3, order='lex')                 # optional - sage.rings.finite_rings
-            sage: I = Ideal([y^3 + x*y*z + y^2*z + x*z^3, 3 + x*y + x^2*y + y^2*z])     # optional - sage.rings.finite_rings
-            sage: I.transformed_basis('gwalk')                                          # optional - sage.rings.finite_rings
+            sage: R.<z,y,x> = PolynomialRing(GF(32003), 3, order='lex')                 # needs sage.rings.finite_rings
+            sage: I = Ideal([y^3 + x*y*z + y^2*z + x*z^3, 3 + x*y + x^2*y + y^2*z])     # needs sage.rings.finite_rings
+            sage: I.transformed_basis('gwalk')                                          # needs sage.rings.finite_rings
             [z*y^2 + y*x^2 + y*x + 3,
              z*x + 8297*y^8*x^2 + 8297*y^8*x + 3556*y^7 - 8297*y^6*x^4 + 15409*y^6*x^3
                - 8297*y^6*x^2 - 8297*y^5*x^5 + 15409*y^5*x^4 - 8297*y^5*x^3 + 3556*y^5*x^2
@@ -2192,17 +2228,19 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`).  We are not currently
+        Check that this method works over QQbar (:issue:`25351`).  We are not currently
         able to specify other_ring, due to the limitations of @handle_AA_and_QQbar::
 
-            sage: R.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
-            sage: I = Ideal([y^3 + x^2, x^2*y + x^2, x^3 - x^2, z^4 - x^2 - y])         # optional - sage.rings.number_field
-            sage: I = Ideal(I.groebner_basis())                                         # optional - sage.rings.number_field
-            sage: S.<z,x,y> = PolynomialRing(QQbar, 3, order='lex')                     # optional - sage.rings.number_field
-            sage: J = Ideal(I.transformed_basis('fglm', other_ring=S))  # known bug     # optional - sage.rings.number_field
-            sage: J                                                     # known bug     # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y,z> = QQbar[]
+            sage: I = Ideal([y^3 + x^2, x^2*y + x^2, x^3 - x^2, z^4 - x^2 - y])
+            sage: I = Ideal(I.groebner_basis())
+            sage: S.<z,x,y> = PolynomialRing(QQbar, 3, order='lex')
+            sage: J = Ideal(I.transformed_basis('fglm', other_ring=S))  # known bug
+            sage: J                                                     # known bug
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
         R = self.ring()
 
         if self.basis_is_groebner():
@@ -2211,8 +2249,7 @@ class MPolynomialIdeal_singular_repr(
             I = R.ideal(self.groebner_basis())
 
         if algorithm in ("gwalk","awalk1","awalk2","twalk","fwalk"):
-            from sage.libs.singular.function import lib
-            from sage.libs.singular.function import singular_function
+            from sage.libs.singular.function import lib, singular_function
             lib("grwalk.lib")
             gb = singular_function(algorithm)(I)
             return PolynomialSequence(R, sorted(gb,reverse=True), immutable=True)
@@ -2285,19 +2322,20 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<x,y,t,s,z> = QQbar[]                                               # optional - sage.rings.number_field
-            sage: I = R * [x - t, y - t^2, z - t^3, s - x + y^3]                        # optional - sage.rings.number_field
-            sage: J = I.elimination_ideal([t, s]); J                                    # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y,t,s,z> = QQbar[]
+            sage: I = R * [x - t, y - t^2, z - t^3, s - x + y^3]
+            sage: J = I.elimination_ideal([t, s]); J
             Ideal (y^2 - x*z, x*y - z, x^2 - y) of Multivariate
             Polynomial Ring in x, y, t, s, z over Algebraic Field
-            sage: print("possible output from giac", flush=True); I.elimination_ideal([t, s], algorithm="giac") == J    # optional - sage.rings.number_field
+            sage: print("possible output from giac", flush=True); I.elimination_ideal([t, s], algorithm="giac") == J
             possible output...
             True
 
         Check that the passed variables are actually variables of the ring
-        (:trac:`31414`)::
+        (:issue:`31414`)::
 
             sage: R.<x,y,z> = QQ[]
             sage: I = R.ideal(x-y, z)
@@ -2362,20 +2400,21 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: R.<x,y,z> = PolynomialRing(GF(181), 3)                                # optional - sage.rings.finite_rings
-            sage: I = Ideal([x^2 + x*y*z, y^2 - z^3*y, z^3 + y^5*x*z])                  # optional - sage.rings.finite_rings
-            sage: J = Ideal([x])                                                        # optional - sage.rings.finite_rings
-            sage: Q = I.quotient(J)                                                     # optional - sage.rings.finite_rings
-            sage: y*z + x in I                                                          # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y,z> = PolynomialRing(GF(181), 3)
+            sage: I = Ideal([x^2 + x*y*z, y^2 - z^3*y, z^3 + y^5*x*z])
+            sage: J = Ideal([x])
+            sage: Q = I.quotient(J)
+            sage: y*z + x in I
             False
-            sage: x in J                                                                # optional - sage.rings.finite_rings
+            sage: x in J
             True
-            sage: x * (y*z + x) in I                                                    # optional - sage.rings.finite_rings
+            sage: x * (y*z + x) in I
             True
 
         TESTS:
 
-        This example checks :trac:`16301`::
+        This example checks :issue:`16301`::
 
             sage: R.<x,y,z> = ZZ[]
             sage: I = Ideal(R(2), x*y, x*z + x)
@@ -2383,15 +2422,16 @@ class MPolynomialIdeal_singular_repr(
             sage: I.quotient(eD).gens()
             [2, x*z + x, x*y]
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
-            sage: I = ideal(x, z)                                                       # optional - sage.rings.number_field
-            sage: J = ideal(R(1))                                                       # optional - sage.rings.number_field
-            sage: I.quotient(J)                                                         # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y,z> = QQbar[]
+            sage: I = ideal(x, z)
+            sage: J = ideal(R(1))
+            sage: I.quotient(J)
             Ideal (z, x) of Multivariate Polynomial Ring in x, y, z over Algebraic Field
 
-        Check that :trac:`12803` is fixed::
+        Check that :issue:`12803` is fixed::
 
             sage: R.<xe,xv> = ZZ[]
             sage: J = ideal(4*xv^3 + 3*xv^2, 3*xe*xv^2 + xe - 2*xv)
@@ -2437,16 +2477,22 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<x, y, z> = QQbar[]                                                 # optional - sage.rings.number_field
-            sage: I = R.ideal(x^5*z^3, x*y*z, y*z^4)                                    # optional - sage.rings.number_field
-            sage: J = R.ideal(z)                                                        # optional - sage.rings.number_field
-            sage: I.saturation(other = J)                                               # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x, y, z> = QQbar[]
+            sage: I = R.ideal(x^5*z^3, x*y*z, y*z^4)
+            sage: J = R.ideal(z)
+            sage: I.saturation(other = J)
             (Ideal (y, x^5) of Multivariate Polynomial Ring in x, y, z over Algebraic Field, 4)
         """
         from sage.libs.singular.function_factory import ff
-        sat = ff.elim__lib.sat
+
+        # function renamed in singular > 4.3.2p4, see issue #35980
+        try:
+            sat = ff.elim__lib.sat_with_exp
+        except NameError:
+            sat = ff.elim__lib.sat
         R = self.ring()
         ideal, expo = sat(self, other)
         return (R.ideal(ideal), ZZ(expo))
@@ -2492,10 +2538,11 @@ class MPolynomialIdeal_singular_repr(
 
         EXAMPLES::
 
-            sage: K.<w> = GF(27)  # this example is from the MAGMA handbook             # optional - sage.rings.finite_rings
-            sage: P.<x, y> = PolynomialRing(K, 2, order='lex')                          # optional - sage.rings.finite_rings
-            sage: I = Ideal([x^8 + y + 2, y^6 + x*y^5 + x^2])                           # optional - sage.rings.finite_rings
-            sage: I = Ideal(I.groebner_basis()); I                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<w> = GF(27)  # this example is from the MAGMA handbook
+            sage: P.<x, y> = PolynomialRing(K, 2, order='lex')
+            sage: I = Ideal([x^8 + y + 2, y^6 + x*y^5 + x^2])
+            sage: I = Ideal(I.groebner_basis()); I
             Ideal (x - y^47 - y^45 + y^44 - y^43 + y^41 - y^39 - y^38 - y^37 - y^36
                      + y^35 - y^34 - y^33 + y^32 - y^31 + y^30 + y^28 + y^27 + y^26
                      + y^25 - y^23 + y^22 + y^21 - y^19 - y^18 - y^16 + y^15 + y^13
@@ -2503,20 +2550,19 @@ class MPolynomialIdeal_singular_repr(
                    y^48 + y^41 - y^40 + y^37 - y^36 - y^33 + y^32 - y^29 + y^28
                      - y^25 + y^24 + y^2 + y + 1)
             of Multivariate Polynomial Ring in x, y over Finite Field in w of size 3^3
-
-            sage: V = I.variety();                                                      # optional - sage.rings.finite_rings
-            sage: sorted(V, key=str)                                                    # optional - sage.rings.finite_rings
+            sage: V = I.variety();
+            sage: sorted(V, key=str)
             [{y: w^2 + 2*w, x: 2*w + 2}, {y: w^2 + 2, x: 2*w}, {y: w^2 + w, x: 2*w + 1}]
-            sage: [f.subs(v)                      # check that all polynomials vanish   # optional - sage.rings.finite_rings
+            sage: [f.subs(v)                      # check that all polynomials vanish
             ....:  for f in I.gens() for v in V]
             [0, 0, 0, 0, 0, 0]
-            sage: [I.subs(v).is_zero() for v in V]  # same test, but nicer syntax       # optional - sage.rings.finite_rings
+            sage: [I.subs(v).is_zero() for v in V]  # same test, but nicer syntax
             [True, True, True]
 
         However, we only account for solutions in the ground field and not
         in the algebraic closure::
 
-            sage: I.vector_space_dimension()                                            # optional - sage.rings.finite_rings
+            sage: I.vector_space_dimension()                                            # needs sage.rings.finite_rings
             48
 
         Here we compute the points of intersection of a hyperbola and a
@@ -2538,7 +2584,7 @@ class MPolynomialIdeal_singular_repr(
             sage: sorted(I.variety(ring=RR), key=str)
             [{y: 0.361103080528647, x: 2.76929235423863},
              {y: 1.00000000000000, x: 1.00000000000000}]
-            sage: I.variety(ring=AA)                                                    # optional - sage.rings.number_field
+            sage: I.variety(ring=AA)                                                    # needs sage.rings.number_field
             [{y: 1, x: 1},
              {y: 0.3611030805286474?, x: 2.769292354238632?}]
 
@@ -2551,7 +2597,7 @@ class MPolynomialIdeal_singular_repr(
               x: 0.11535382288068... + 0.58974280502220...*I},
              {y: 0.36110308052864..., x: 2.7692923542386...},
              {y: 1.00000000000000, x: 1.00000000000000}]
-            sage: sorted(I.variety(ring=QQbar), key=str)                                # optional - sage.rings.number_field
+            sage: sorted(I.variety(ring=QQbar), key=str)                                # needs sage.rings.number_field
             [{y: 0.3194484597356763? + 1.633170240915238?*I,
               x: 0.11535382288068429? - 0.5897428050222055?*I},
              {y: 0.3194484597356763? - 1.633170240915238?*I,
@@ -2559,7 +2605,7 @@ class MPolynomialIdeal_singular_repr(
              {y: 0.3611030805286474?, x: 2.769292354238632?},
              {y: 1, x: 1}]
 
-        We can also use the `optional package msolve <../spkg/msolve.html>`_
+        We can also use the :ref:`optional package msolve <spkg_msolve>`
         to compute the variety.
         See :mod:`~sage.rings.polynomial.msolve` for more information. ::
 
@@ -2586,9 +2632,10 @@ class MPolynomialIdeal_singular_repr(
         If the ground field's characteristic is too large for
         Singular, we resort to a toy implementation::
 
-            sage: R.<x,y> = PolynomialRing(GF(2147483659^3), order='lex')               # optional - sage.rings.finite_rings
-            sage: I = ideal([x^3 - 2*y^2, 3*x + y^4])                                   # optional - sage.rings.finite_rings
-            sage: I.variety()                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = PolynomialRing(GF(2147483659^3), order='lex')
+            sage: I = ideal([x^3 - 2*y^2, 3*x + y^4])
+            sage: I.variety()
             verbose 0 (...: multi_polynomial_ideal.py, groebner_basis) Warning: falling back to very slow toy implementation.
             verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             verbose 0 (...: multi_polynomial_ideal.py, variety) Warning: falling back to very slow toy implementation.
@@ -2599,22 +2646,23 @@ class MPolynomialIdeal_singular_repr(
         But the mapping will also accept generators of the original ring,
         or even generator names as strings, when provided as keys::
 
+            sage: # needs sage.rings.number_field
             sage: K.<x,y> = QQ[]
             sage: I = ideal([x^2 + 2*y - 5, x + y + 3])
-            sage: v = I.variety(AA)[0]; v[x], v[y]                                      # optional - sage.rings.number_field
+            sage: v = I.variety(AA)[0]; v[x], v[y]
             (4.464101615137755?, -7.464101615137755?)
-            sage: list(v)[0].parent()                                                   # optional - sage.rings.number_field
+            sage: list(v)[0].parent()
             Multivariate Polynomial Ring in x, y over Algebraic Real Field
-            sage: v[x]                                                                  # optional - sage.rings.number_field
+            sage: v[x]
             4.464101615137755?
-            sage: v["y"]                                                                # optional - sage.rings.number_field
+            sage: v["y"]
             -7.464101615137755?
 
         ``msolve`` also works over finite fields::
 
-            sage: R.<x, y> = PolynomialRing(GF(536870909), 2, order='lex')              # optional - sage.rings.finite_rings
-            sage: I = Ideal([x^2 - 1, y^2 - 1])                                         # optional - sage.rings.finite_rings
-            sage: sorted(I.variety(algorithm='msolve',             # optional - msolve  # optional - sage.rings.finite_rings
+            sage: R.<x, y> = PolynomialRing(GF(536870909), 2, order='lex')              # needs sage.rings.finite_rings
+            sage: I = Ideal([x^2 - 1, y^2 - 1])                                         # needs sage.rings.finite_rings
+            sage: sorted(I.variety(algorithm='msolve',          # optional - msolve, needs sage.rings.finite_rings
             ....:                  proof=False),
             ....:        key=str)
             [{x: 1, y: 1},
@@ -2625,9 +2673,9 @@ class MPolynomialIdeal_singular_repr(
         but may fail in small characteristic, especially with ideals of high
         degree with respect to the characteristic::
 
-            sage: R.<x, y> = PolynomialRing(GF(3), 2, order='lex')                      # optional - sage.rings.finite_rings
-            sage: I = Ideal([x^2 - 1, y^2 - 1])                                         # optional - sage.rings.finite_rings
-            sage: I.variety(algorithm='msolve', proof=False)       # optional - msolve  # optional - sage.rings.finite_rings
+            sage: R.<x, y> = PolynomialRing(GF(3), 2, order='lex')
+            sage: I = Ideal([x^2 - 1, y^2 - 1])
+            sage: I.variety(algorithm='msolve', proof=False)    # optional - msolve
             Traceback (most recent call last):
             ...
             NotImplementedError: characteristic 3 too small
@@ -2639,7 +2687,7 @@ class MPolynomialIdeal_singular_repr(
           on a toy implementation otherwise.
 
         - With ``algorithm`` = ``"msolve"``, uses the
-          `optional package msolve <../spkg/msolve.html>`_.
+          :ref:`optional package msolve <spkg_msolve>`.
           Note that msolve uses heuristics and therefore
           requires setting the ``proof`` flag to ``False``. See
           :mod:`~sage.rings.polynomial.msolve` for more information.
@@ -2662,20 +2710,20 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS::
 
-            sage: K.<w> = GF(27)                                                        # optional - sage.rings.finite_rings
-            sage: P.<x, y> = PolynomialRing(K, 2, order='lex')                          # optional - sage.rings.finite_rings
-            sage: I = Ideal([ x^8 + y + 2, y^6 + x*y^5 + x^2 ])                         # optional - sage.rings.finite_rings
+            sage: K.<w> = GF(27)                                                        # needs sage.rings.finite_rings
+            sage: P.<x, y> = PolynomialRing(K, 2, order='lex')                          # needs sage.rings.finite_rings
+            sage: I = Ideal([ x^8 + y + 2, y^6 + x*y^5 + x^2 ])                         # needs sage.rings.finite_rings
 
         Testing the robustness of the Singular interface::
 
-            sage: T = I.triangular_decomposition('singular:triangLfak')                 # optional - sage.rings.finite_rings
-            sage: sorted(I.variety(), key=str)                                          # optional - sage.rings.finite_rings
+            sage: T = I.triangular_decomposition('singular:triangLfak')                 # needs sage.rings.finite_rings
+            sage: sorted(I.variety(), key=str)                                          # needs sage.rings.finite_rings
             [{y: w^2 + 2*w, x: 2*w + 2}, {y: w^2 + 2, x: 2*w}, {y: w^2 + w, x: 2*w + 1}]
 
         Testing that a bug is indeed fixed ::
 
-            sage: R = PolynomialRing(GF(2), 30, ['x%d'%(i+1) for i in range(30)], order='lex')      # optional - sage.rings.finite_rings
-            sage: R.inject_variables()                                                  # optional - sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(2), 30, ['x%d'%(i+1) for i in range(30)], order='lex')
+            sage: R.inject_variables()
             Defining...
             sage: I = Ideal([x1 + 1, x2, x3 + 1, x5*x10 + x10 + x18, x5*x11 + x11, \
                              x5*x18, x6, x7 + 1, x9, x10*x11 + x10 + x18, x10*x18 + x18, \
@@ -2686,10 +2734,10 @@ class MPolynomialIdeal_singular_repr(
                              x11^2 + x11, x12^2 + x12, x13^2 + x13, x14^2 + x14, x15^2 + x15, \
                              x16^2 + x16, x17^2 + x17, x18^2 + x18, x19^2 + x19, x20^2 + x20, \
                              x21^2 + x21, x22^2 + x22, x23^2 + x23, x24^2 + x24, x25^2 + x25, \
-                             x26^2 + x26, x27^2 + x27, x28^2 + x28, x29^2 + x29, x30^2 + x30])                          # optional - sage.rings.finite_rings
+                             x26^2 + x26, x27^2 + x27, x28^2 + x28, x29^2 + x29, x30^2 + x30])
             sage: I.basis_is_groebner()
             True
-            sage: sorted("".join(str(V[g]) for g in R.gens()) for V in I.variety())  # long time (6s on sage.math, 2011)                    # optional - sage.rings.finite_rings
+            sage: sorted("".join(str(V[g]) for g in R.gens()) for V in I.variety())  # long time (6s on sage.math, 2011)
             ['101000100000000110001000100110',
              '101000100000000110001000101110',
              '101000100100000101001000100110',
@@ -2711,7 +2759,7 @@ class MPolynomialIdeal_singular_repr(
              '101110100110000110001000100110',
              '101110100110000110001000101110']
 
-        Check that the issue at :trac:`7425` is fixed::
+        Check that the issue at :issue:`7425` is fixed::
 
             sage: R.<x, y, z> = QQ[]
             sage: I = R.ideal([x^2-y^3*z, x+y*z])
@@ -2722,41 +2770,42 @@ class MPolynomialIdeal_singular_repr(
             ...
             ValueError: The dimension of the ideal is 1, but it should be 0
 
-        Check that the issue at :trac:`7425` is fixed::
+        Check that the issue at :issue:`7425` is fixed::
 
-            sage: S.<t>=PolynomialRing(QQ)
-            sage: F.<q>=QQ.extension(t^4+1)
-            sage: R.<x,y>=PolynomialRing(F)
-            sage: I=R.ideal(x,y^4+1)
+            sage: S.<t> = PolynomialRing(QQ)
+            sage: F.<q> = QQ.extension(t^4 + 1)
+            sage: R.<x,y> = PolynomialRing(F)
+            sage: I = R.ideal(x, y^4 + 1)
             sage: I.variety()
             [...{y: -q^3, x: 0}...]
 
-        Check that computing the variety of the ``[1]`` ideal is allowed (:trac:`13977`)::
+        Check that computing the variety of the ``[1]`` ideal is allowed (:issue:`13977`)::
 
             sage: R.<x,y> = QQ[]
             sage: I = R.ideal(1)
             sage: I.variety()
             []
 
-        Check that the issue at :trac:`16485` is fixed::
+        Check that the issue at :issue:`16485` is fixed::
 
             sage: R.<a,b,c> = PolynomialRing(QQ, order='lex')
-            sage: I = R.ideal(c^2-2, b-c, a)
-            sage: I.variety(QQbar)                                                      # optional - sage.rings.number_field
+            sage: I = R.ideal(c^2 - 2, b - c, a)
+            sage: I.variety(QQbar)                                                      # needs sage.rings.number_field
             [...a: 0...]
 
-        An early version of :trac:`25351` broke this method by adding the
+        An early version of :issue:`25351` broke this method by adding the
         @handle_AA_and_QQbar decorator to it.  To check for this bug, verify
         that this circle and this hyperbola have two real intersections and
         two more complex ones::
 
-            sage: K.<x, y> = PolynomialRing(AA)                                         # optional - sage.rings.number_field
-            sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])                          # optional - sage.rings.number_field
-            sage: len(I.variety())                                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<x, y> = PolynomialRing(AA)
+            sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
+            sage: len(I.variety())
             2
-            sage: K.<x, y> = PolynomialRing(QQbar)                                      # optional - sage.rings.number_field
-            sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])                          # optional - sage.rings.number_field
-            sage: len(I.variety())                                                      # optional - sage.rings.number_field
+            sage: K.<x, y> = PolynomialRing(QQbar)
+            sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
+            sage: len(I.variety())
             4
 
         """
@@ -2792,7 +2841,7 @@ class MPolynomialIdeal_singular_repr(
 
         d = self.dimension()
         if d > 0:
-            raise ValueError("The dimension of the ideal is %s, but it should be 0"%d)
+            raise ValueError("The dimension of the ideal is %s, but it should be 0" % d)
         if d == -1:
             return []
 
@@ -2814,10 +2863,8 @@ class MPolynomialIdeal_singular_repr(
         from sage.misc.converting_dict import KeyConvertingDict
         V = []
         for t in T:
-            Vbar = _variety([P(f) for f in t], [])
-
-            for v in Vbar:
-                V.append(KeyConvertingDict(P, v))
+            V.extend(KeyConvertingDict(P, v)
+                     for v in _variety([P(f) for f in t], []))
         return V
 
     @require_field
@@ -2842,7 +2889,7 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
-            sage: I.hilbert_polynomial()                                                # optional - sage.libs.flint
+            sage: I.hilbert_polynomial()                                                # needs sage.libs.flint
             5*t - 5
 
         Of course, the Hilbert polynomial of a zero-dimensional ideal
@@ -2853,14 +2900,14 @@ class MPolynomialIdeal_singular_repr(
             sage: J = P*[m.lm() for m in J0.groebner_basis()]
             sage: J.dimension()
             0
-            sage: J.hilbert_polynomial()                                                # optional - sage.libs.flint
+            sage: J.hilbert_polynomial()                                                # needs sage.libs.flint
             0
 
         It is possible to request a computation using the Singular library::
 
-            sage: I.hilbert_polynomial(algorithm='singular') == I.hilbert_polynomial()  # optional - sage.libs.flint sage.libs.singular
+            sage: I.hilbert_polynomial(algorithm='singular') == I.hilbert_polynomial()  # needs sage.libs.flint
             True
-            sage: J.hilbert_polynomial(algorithm='singular') == J.hilbert_polynomial()  # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_polynomial(algorithm='singular') == J.hilbert_polynomial()  # needs sage.libs.flint
             True
 
         Here is a bigger examples::
@@ -2868,7 +2915,7 @@ class MPolynomialIdeal_singular_repr(
             sage: n = 4; m = 11; P = PolynomialRing(QQ, n * m, "x"); x = P.gens()
             sage: M = Matrix(n, x)
             sage: Minors = P.ideal(M.minors(2))
-            sage: hp = Minors.hilbert_polynomial(); hp                                  # optional - sage.libs.flint
+            sage: hp = Minors.hilbert_polynomial(); hp                                  # needs sage.libs.flint
             1/21772800*t^13 + 61/21772800*t^12 + 1661/21772800*t^11
              + 26681/21772800*t^10 + 93841/7257600*t^9 + 685421/7257600*t^8
              + 1524809/3110400*t^7 + 39780323/21772800*t^6 + 6638071/1360800*t^5
@@ -2877,9 +2924,9 @@ class MPolynomialIdeal_singular_repr(
 
         Because Singular uses 32-bit integers, the above example would fail
         with Singular. We don't test it here, as it has a side-effect on
-        other tests that is not understood yet (see :trac:`26300`)::
+        other tests that is not understood yet (see :issue:`26300`)::
 
-            sage: Minors.hilbert_polynomial(algorithm='singular')    # not tested       # optional - sage.libs.singular
+            sage: Minors.hilbert_polynomial(algorithm='singular')       # not tested
             Traceback (most recent call last):
             ...
             RuntimeError: error in Singular function call 'hilbPoly':
@@ -2891,34 +2938,34 @@ class MPolynomialIdeal_singular_repr(
         coefficients of the Hilbert-Poincaré series in all degrees::
 
             sage: P = PowerSeriesRing(QQ, 't', default_prec=50)
-            sage: hs = Minors.hilbert_series()                                          # optional - sage.libs.flint
-            sage: list(P(hs.numerator()) / P(hs.denominator())) == [hp(t=k)             # optional - sage.libs.flint
+            sage: hs = Minors.hilbert_series()                                          # needs sage.libs.flint
+            sage: list(P(hs.numerator()) / P(hs.denominator())) == [hp(t=k)             # needs sage.libs.flint
             ....:                                                   for k in range(50)]
             True
 
         TESTS:
 
-        Check that :trac:`27483` and :trac:`28110` are fixed::
+        Check that :issue:`27483` and :issue:`28110` are fixed::
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3, x*y^2, y^4, x^2*y*z, y^3*z, x^2*z^2, x*y*z^2, x*z^3])
-            sage: I.hilbert_polynomial(algorithm='singular')                            # optional - sage.libs.singular
+            sage: I.hilbert_polynomial(algorithm='singular')
             3
-            sage: I.hilbert_polynomial()                                                # optional - sage.libs.flint
+            sage: I.hilbert_polynomial()                                                # needs sage.libs.flint
             3
 
-        Check that this method works over ``QQbar`` (:trac:`25351`)::
+        Check that this method works over ``QQbar`` (:issue:`25351`)::
 
-            sage: P.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
-            sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                    # optional - sage.rings.number_field
-            sage: I.hilbert_polynomial()                                                # optional - sage.rings.number_field
+            sage: P.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
+            sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                    # needs sage.rings.number_field
+            sage: I.hilbert_polynomial()                                                # needs sage.rings.number_field
             5*t - 5
 
-        Check for :trac:`33597`::
+        Check for :issue:`33597`::
 
             sage: R.<X, Y, Z> = QQ[]
             sage: I = R.ideal([X^2*Y^3, X*Z])
-            sage: I.hilbert_polynomial()                                                # optional - sage.libs.flint
+            sage: I.hilbert_polynomial()                                                # needs sage.libs.flint
             t + 5
         """
         if not self.is_homogeneous():
@@ -2981,48 +3028,49 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
-            sage: I.hilbert_series()                                                    # optional - sage.libs.flint
+            sage: I.hilbert_series()                                                    # needs sage.libs.flint
             (t^4 + t^3 + t^2 + t + 1)/(t^2 - 2*t + 1)
             sage: R.<a,b> = PolynomialRing(QQ)
             sage: J = R.ideal([a^2*b, a*b^2])
-            sage: J.hilbert_series()                                                    # optional - sage.libs.flint
+            sage: J.hilbert_series()                                                    # needs sage.libs.flint
             (t^3 - t^2 - t - 1)/(t - 1)
-            sage: J.hilbert_series(grading=(10,3))                                      # optional - sage.libs.flint
+            sage: J.hilbert_series(grading=(10,3))                                      # needs sage.libs.flint
             (t^25 + t^24 + t^23 - t^15 - t^14 - t^13 - t^12 - t^11
              - t^10 - t^9 - t^8 - t^7 - t^6 - t^5 - t^4 - t^3 - t^2
              - t - 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
 
             sage: K = R.ideal([a^2*b^3, a*b^4 + a^3*b^2])
-            sage: K.hilbert_series(grading=[1,2])                                       # optional - sage.libs.flint
+            sage: K.hilbert_series(grading=[1,2])                                       # needs sage.libs.flint
             (t^11 + t^8 - t^6 - t^5 - t^4 - t^3 - t^2 - t - 1)/(t^2 - 1)
-            sage: K.hilbert_series(grading=[2,1])                                       # optional - sage.libs.flint
+            sage: K.hilbert_series(grading=[2,1])                                       # needs sage.libs.flint
             (2*t^7 - t^6 - t^4 - t^2 - 1)/(t - 1)
 
         TESTS::
 
-            sage: I.hilbert_series() == I.hilbert_series(algorithm='singular')          # optional - sage.libs.flint sage.libs.singular
+            sage: # needs sage.libs.flint
+            sage: I.hilbert_series() == I.hilbert_series(algorithm='singular')
             True
-            sage: J.hilbert_series() == J.hilbert_series(algorithm='singular')          # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_series() == J.hilbert_series(algorithm='singular')
             True
-            sage: J.hilbert_series(grading=(10,3)) == J.hilbert_series(grading=(10,3), algorithm='singular')            # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_series(grading=(10,3)) == J.hilbert_series(grading=(10,3), algorithm='singular')
             True
-            sage: K.hilbert_series(grading=(1,2)) == K.hilbert_series(grading=(1,2), algorithm='singular')              # optional - sage.libs.flint sage.libs.singular
+            sage: K.hilbert_series(grading=(1,2)) == K.hilbert_series(grading=(1,2), algorithm='singular')
             True
-            sage: K.hilbert_series(grading=(2,1)) == K.hilbert_series(grading=(2,1), algorithm='singular')              # optional - sage.libs.flint sage.libs.singular
+            sage: K.hilbert_series(grading=(2,1)) == K.hilbert_series(grading=(2,1), algorithm='singular')
             True
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
-            sage: I.hilbert_series(grading=5)                                                                           # optional - sage.libs.flint
+            sage: I.hilbert_series(grading=5)                                                                           # needs sage.libs.flint
             Traceback (most recent call last):
             ...
             TypeError: grading must be a list or a tuple of integers
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: P.<x,y,z> = QQbar[]                                                                                   # optional - sage.rings.number_field
-            sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                                                    # optional - sage.rings.number_field
-            sage: I.hilbert_series()                                                                                    # optional - sage.rings.number_field
+            sage: P.<x,y,z> = QQbar[]                                                                                   # needs sage.rings.number_field
+            sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                                                    # needs sage.rings.number_field
+            sage: I.hilbert_series()                                                                                    # needs sage.rings.number_field
             (t^4 + t^3 + t^2 + t + 1)/(t^2 - 2*t + 1)
         """
         if not self.is_homogeneous():
@@ -3080,42 +3128,54 @@ class MPolynomialIdeal_singular_repr(
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])
-            sage: I.hilbert_numerator()                                                 # optional - sage.libs.flint
+            sage: I.hilbert_numerator()                                                 # needs sage.libs.flint
             -t^5 + 1
             sage: R.<a,b> = PolynomialRing(QQ)
             sage: J = R.ideal([a^2*b, a*b^2])
-            sage: J.hilbert_numerator()                                                 # optional - sage.libs.flint
+            sage: J.hilbert_numerator()                                                 # needs sage.libs.flint
             t^4 - 2*t^3 + 1
-            sage: J.hilbert_numerator(grading=(10,3))                                   # optional - sage.libs.flint
+            sage: J.hilbert_numerator(grading=(10,3))                                   # needs sage.libs.flint
             t^26 - t^23 - t^16 + 1
 
         TESTS::
 
-            sage: I.hilbert_numerator() == I.hilbert_numerator(algorithm='singular')                                    # optional - sage.libs.flint sage.libs.singular
+            sage: I.hilbert_numerator() == I.hilbert_numerator(algorithm='singular')                                    # needs sage.libs.flint
             True
-            sage: J.hilbert_numerator() == J.hilbert_numerator(algorithm='singular')                                    # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_numerator() == J.hilbert_numerator(algorithm='singular')                                    # needs sage.libs.flint
             True
-            sage: J.hilbert_numerator(grading=(10,3)) == J.hilbert_numerator(grading=(10,3), algorithm='singular')      # optional - sage.libs.flint sage.libs.singular
+            sage: J.hilbert_numerator(grading=(10,3)) == J.hilbert_numerator(grading=(10,3), algorithm='singular')      # needs sage.libs.flint
             True
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: P.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
-            sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                    # optional - sage.rings.number_field
-            sage: I.hilbert_numerator()                                                 # optional - sage.rings.number_field
+            sage: P.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
+            sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                    # needs sage.rings.number_field
+            sage: I.hilbert_numerator()                                                 # needs sage.rings.number_field
             -t^5 + 1
 
-        Our two algorithms should always agree; not tested until
-        :trac:`33178` is fixed::
+        This example returns a wrong answer in singular < 4.3.2p4 due to an integer overflow::
 
-            sage: m = ZZ.random_element(2,8)                      # not tested
-            sage: nvars = m^2                                     # not tested
-            sage: R = PolynomialRing(QQ, "x", nvars)              # not tested
-            sage: M = matrix(R, m, R.gens())                      # not tested
-            sage: I = R.ideal(M.minors(2))                        # not tested
-            sage: n1 = I.hilbert_numerator()                      # not tested
-            sage: n2 = I.hilbert_numerator(algorithm='singular')  # not tested
-            sage: n1 == n2                                        # not tested
+            sage: n=4; m=11; P = PolynomialRing(QQ, n*m, "x"); x = P.gens(); M = Matrix(n, x)
+            sage: I = P.ideal(M.minors(2))
+            sage: J = P * [m.lm() for m in I.groebner_basis()]
+            sage: J.hilbert_numerator(algorithm='singular') # known bug
+            Traceback (most recent call last):
+            ....
+            RuntimeError: error in Singular function call 'hilb':
+            overflow at t^22
+
+        Our two algorithms should always agree; not tested until
+        :issue:`33178` is fixed::
+
+            sage: # not tested
+            sage: m = ZZ.random_element(2,8)
+            sage: nvars = m^2
+            sage: R = PolynomialRing(QQ, "x", nvars)
+            sage: M = matrix(R, m, R.gens())
+            sage: I = R.ideal(M.minors(2))
+            sage: n1 = I.hilbert_numerator()
+            sage: n2 = I.hilbert_numerator(algorithm='singular')
+            sage: n1 == n2
             True
 
         """
@@ -3173,7 +3233,7 @@ class MPolynomialIdeal_singular_repr(
 
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: I = R.ideal(x^2-2*x*z+5, x*y^2+y*z+1, 3*y^2-8*x*z)
-            sage: I.normal_basis() #indirect doctest
+            sage: I.normal_basis()  # indirect doctest
             [z^2, y*z, x*z, z, x*y, y, x, 1]
             sage: J = R.ideal(x^2-2*x*z+5)
             sage: J.normal_basis(3)  # indirect doctest
@@ -3191,7 +3251,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I._normal_basis_libsingular(5)
             []
 
-        Check what happens with weights but no degree (:trac:`34789`)::
+        Check what happens with weights but no degree (:issue:`34789`)::
 
             sage: TO = TermOrder('wdegrevlex', (2,))
             sage: R = PolynomialRing(QQ, 1, ['k'], order=TO)
@@ -3200,8 +3260,10 @@ class MPolynomialIdeal_singular_repr(
             sage: I.normal_basis()
             [k, 1]
         """
-        from sage.rings.polynomial.multi_polynomial_ideal_libsingular import kbase_libsingular
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_ideal_libsingular import \
+            kbase_libsingular
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
         gb = self._groebner_basis_libsingular()
         J = self.ring().ideal(gb)
         if weights is None or degree is None:
@@ -3270,24 +3332,26 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: R.<x,y,z> = QQbar[]                                                   # optional - sage.rings.number_field
-            sage: I = R.ideal(x^2+y^2+z^2-4, x^2+2*y^2-5, x*z-1)                        # optional - sage.rings.number_field
-            sage: I.normal_basis()                                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y,z> = QQbar[]
+            sage: I = R.ideal(x^2+y^2+z^2-4, x^2+2*y^2-5, x*z-1)
+            sage: I.normal_basis()
             [y*z^2, z^2, y*z, z, x*y, y, x, 1]
-            sage: J = R.ideal(x^2+y^2+z^2-4, x^2+2*y^2-5)                               # optional - sage.rings.number_field
-            sage: [J.normal_basis(d) for d in (0..3)]                                   # optional - sage.rings.number_field
+            sage: J = R.ideal(x^2+y^2+z^2-4, x^2+2*y^2-5)
+            sage: [J.normal_basis(d) for d in (0..3)]
             [[1], [z, y, x], [z^2, y*z, x*z, x*y], [z^3, y*z^2, x*z^2, x*y*z]]
 
         Check the option ``algorithm="singular"`` with a weighted term order::
 
             sage: T = TermOrder('wdegrevlex', (1, 2, 3))
-            sage: S.<x,y,z> = PolynomialRing(GF(2), order=T)                            # optional - sage.rings.finite_rings
-            sage: S.ideal(x^6 + y^3 + z^2).normal_basis(6, algorithm='singular')        # optional - sage.rings.finite_rings
+            sage: S.<x,y,z> = PolynomialRing(GF(2), order=T)                            # needs sage.rings.finite_rings
+            sage: S.ideal(x^6 + y^3 + z^2).normal_basis(6, algorithm='singular')        # needs sage.rings.finite_rings
             [x^4*y, x^2*y^2, y^3, x^3*z, x*y*z, z^2]
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
 
         weights = tuple(x.degree() for x in self.ring().gens())
         if all(w == 1 for w in weights):
@@ -3364,14 +3428,15 @@ class MPolynomialIdeal_macaulay2_repr:
         Over finite fields, Macaulay2 supports different algorithms to compute
         Gröbner bases::
 
-            sage: R = PolynomialRing(GF(101), 'x', 4)                                   # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Cyclic(R)                                        # optional - sage.rings.finite_rings
-            sage: gb1 = I.groebner_basis('macaulay2:gb')  # optional - macaulay2        # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Cyclic(R)                                        # optional - sage.rings.finite_rings
-            sage: gb2 = I.groebner_basis('macaulay2:mgb')  # optional - macaulay2       # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Cyclic(R)                                        # optional - sage.rings.finite_rings
-            sage: gb3 = I.groebner_basis('macaulay2:f4')  # optional - macaulay2        # optional - sage.rings.finite_rings
-            sage: gb1 == gb2 == gb3  # optional - macaulay2                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(101), 'x', 4)
+            sage: I = sage.rings.ideal.Cyclic(R)
+            sage: gb1 = I.groebner_basis('macaulay2:gb')        # optional - macaulay2
+            sage: I = sage.rings.ideal.Cyclic(R)
+            sage: gb2 = I.groebner_basis('macaulay2:mgb')       # optional - macaulay2
+            sage: I = sage.rings.ideal.Cyclic(R)
+            sage: gb3 = I.groebner_basis('macaulay2:f4')        # optional - macaulay2
+            sage: gb1 == gb2 == gb3             # optional - macaulay2
             True
 
         TESTS::
@@ -3383,7 +3448,8 @@ class MPolynomialIdeal_macaulay2_repr:
             ...
             ValueError: unsupported Macaulay2 strategy
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
 
         I = self._macaulay2_()
         if strategy == "gb" or strategy is None:
@@ -3414,7 +3480,7 @@ class MPolynomialIdeal_macaulay2_repr:
         """
         I = self._macaulay2_()
         M2 = I.parent()
-        k = M2('(%r) %% %s'%(f, I.name()))
+        k = M2('(%r) %% %s' % (f, I.name()))
         R = self.ring()
         return R(k)
 
@@ -3435,26 +3501,27 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})             # optional - sage.combinat sage.modules
-            sage: H.inject_variables()                                                  # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2 - H.one()],             # indirect doctest # optional - sage.combinat sage.modules
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()],             # indirect doctest
             ....:             coerce=False)
-            sage: I  # random                                                           # optional - sage.combinat sage.modules
+            sage: I  # random
             Left Ideal (y^2, x^2, z^2 - 1) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(I.gens(), key=str)                                             # optional - sage.combinat sage.modules
+            sage: sorted(I.gens(), key=str)
             [x^2, y^2, z^2 - 1]
-            sage: H.ideal([y^2, x^2, z^2 - H.one()], side="twosided")  # random         # optional - sage.combinat sage.modules
+            sage: H.ideal([y^2, x^2, z^2 - H.one()], side="twosided")  # random
             Twosided Ideal (y^2, x^2, z^2 - 1) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(H.ideal([y^2, x^2, z^2 - H.one()], side="twosided").gens(),    # optional - sage.combinat sage.modules
+            sage: sorted(H.ideal([y^2, x^2, z^2 - H.one()], side="twosided").gens(),
             ....:        key=str)
             [x^2, y^2, z^2 - 1]
-            sage: H.ideal([y^2, x^2, z^2 - H.one()], side="right")                      # optional - sage.combinat sage.modules
+            sage: H.ideal([y^2, x^2, z^2 - H.one()], side="right")
             Traceback (most recent call last):
             ...
             ValueError: Only left and two-sided ideals are allowed.
@@ -3479,15 +3546,16 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})             # optional - sage.combinat sage.modules
-            sage: H.inject_variables()                                                  # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
             Defining x, y, z
-            sage: id = H.ideal(x + y, y + z)                                            # optional - sage.combinat sage.modules
-            sage: id.std()  # indirect doctest # random                                 # optional - sage.combinat sage.modules
+            sage: id = H.ideal(x + y, y + z)
+            sage: id.std()  # indirect doctest  # random
             Left Ideal (z, y, x) of Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(id.std().gens(), key=str)                                      # optional - sage.combinat sage.modules
+            sage: sorted(id.std().gens(), key=str)
             [x, y, z]
         """
         from sage.libs.singular.function import singular_function
@@ -3504,16 +3572,17 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})             # optional - sage.combinat sage.modules
-            sage: H.inject_variables()                                                  # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)                  # optional - sage.combinat sage.modules
-            sage: I.std()  #random                                                      # optional - sage.combinat sage.modules
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)
+            sage: I.std()  #random
             Left Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(I.std().gens(), key=str)                                       # optional - sage.combinat sage.modules
+            sage: sorted(I.std().gens(), key=str)
             [2*x*y - z - 1, x*z + x, x^2, y*z - y, y^2, z^2 - 1]
 
 
@@ -3521,42 +3590,43 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         Groebner basis. But if it is a two-sided ideal, then
         the output of :meth:`std` and :meth:`twostd` coincide::
 
-            sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])                                   # optional - sage.combinat sage.modules
-            sage: JL  #random                                                           # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])
+            sage: JL  #random
             Left Ideal (x^3, y^3, z^3 - 4*z) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(JL.gens(), key=str)                                            # optional - sage.combinat sage.modules
+            sage: sorted(JL.gens(), key=str)
             [x^3, y^3, z^3 - 4*z]
-            sage: JL.std()  # random                                                    # optional - sage.combinat sage.modules
+            sage: JL.std()  # random
             Left Ideal (z^3 - 4*z, y*z^2 - 2*y*z,
                         x*z^2 + 2*x*z, 2*x*y*z - z^2 - 2*z, y^3, x^3) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(JL.std().gens(), key=str)                                      # optional - sage.combinat sage.modules
+            sage: sorted(JL.std().gens(), key=str)
             [2*x*y*z - z^2 - 2*z, x*z^2 + 2*x*z, x^3, y*z^2 - 2*y*z, y^3, z^3 - 4*z]
-            sage: JT = H.ideal([x^3, y^3, z^3 - 4*z], side='twosided')                  # optional - sage.combinat sage.modules
-            sage: JT  #random                                                           # optional - sage.combinat sage.modules
+            sage: JT = H.ideal([x^3, y^3, z^3 - 4*z], side='twosided')
+            sage: JT  #random
             Twosided Ideal (x^3, y^3, z^3 - 4*z) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(JT.gens(), key=str)                                            # optional - sage.combinat sage.modules
+            sage: sorted(JT.gens(), key=str)
             [x^3, y^3, z^3 - 4*z]
-            sage: JT.std()  #random                                                     # optional - sage.combinat sage.modules
+            sage: JT.std()  #random
             Twosided Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z,
                             y^2*z - 2*y^2, 2*x*y*z - z^2 - 2*z, x^2*z + 2*x^2,
                             y^3, x*y^2 - y*z, x^2*y - x*z - 2*x, x^3) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(JT.std().gens(), key=str)                                      # optional - sage.combinat sage.modules
+            sage: sorted(JT.std().gens(), key=str)
             [2*x*y*z - z^2 - 2*z, x*y^2 - y*z, x*z^2 + 2*x*z, x^2*y - x*z - 2*x,
              x^2*z + 2*x^2, x^3, y*z^2 - 2*y*z, y^2*z - 2*y^2, y^3, z^3 - 4*z]
-            sage: JT.std() == JL.twostd()                                               # optional - sage.combinat sage.modules
+            sage: JT.std() == JL.twostd()
             True
 
         ALGORITHM: Uses Singular's ``std`` command
         """
-        if self.side()  == 'twosided':
+        if self.side() == 'twosided':
             return self.twostd()
         return self.ring().ideal( self.__call_singular('std'), side=self.side())
 #        return self.__call_singular('std')
@@ -3568,20 +3638,21 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})             # optional - sage.combinat sage.modules
-            sage: H.inject_variables()                                                  # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)                  # optional - sage.combinat sage.modules
-            sage: I.elimination_ideal([x, z])                                           # optional - sage.combinat sage.modules
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)
+            sage: I.elimination_ideal([x, z])
             Left Ideal (y^2) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {...}
-            sage: J = I.twostd(); J                                                     # optional - sage.combinat sage.modules
+            sage: J = I.twostd(); J
             Twosided Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {...}
-            sage: J.elimination_ideal([x, z])                                           # optional - sage.combinat sage.modules
+            sage: J.elimination_ideal([x, z])
             Twosided Ideal (y^2) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {...}
@@ -3604,15 +3675,16 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})             # optional - sage.combinat sage.modules
-            sage: H.inject_variables()                                                  # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)                  # optional - sage.combinat sage.modules
-            sage: I.twostd()  #random                                                   # optional - sage.combinat sage.modules
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()], coerce=False)
+            sage: I.twostd()  #random
             Twosided Ideal (z^2 - 1, y*z - y, x*z + x, y^2, 2*x*y - z - 1, x^2) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field...
-            sage: sorted(I.twostd().gens(), key=str)                                    # optional - sage.combinat sage.modules
+            sage: sorted(I.twostd().gens(), key=str)
             [2*x*y - z - 1, x*z + x, x^2, y*z - y, y^2, z^2 - 1]
 
         ALGORITHM: Uses Singular's ``twostd`` command
@@ -3631,10 +3703,11 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-           sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                         # optional - sage.combinat sage.modules
-           sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})      # optional - sage.combinat sage.modules
-           sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                     # optional - sage.combinat sage.modules
-           sage: I._groebner_strategy()  # random                                       # optional - sage.combinat sage.modules
+           sage: # needs sage.combinat sage.modules
+           sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+           sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+           sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)
+           sage: I._groebner_strategy()  # random
            Groebner Strategy for ideal generated by 6 elements over
             Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
             nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
@@ -3655,27 +3728,28 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})     # optional - sage.combinat sage.modules
-            sage: I = H.ideal([y^2, x^2, z^2 - H.one()],                                # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: I = H.ideal([y^2, x^2, z^2 - H.one()],
             ....:             coerce=False, side='twosided')
-            sage: Q = H.quotient(I); Q  #random                                         # optional - sage.combinat sage.modules
+            sage: Q = H.quotient(I); Q  #random
             Quotient of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
              by the ideal (y^2, x^2, z^2 - 1)
-            sage: Q.2^2 == Q.one()   # indirect doctest                                 # optional - sage.combinat sage.modules
+            sage: Q.2^2 == Q.one()   # indirect doctest
             True
 
         Here, we see that the relation that we just found in the quotient
         is actually a consequence of the given relations::
 
-            sage: H.2^2 - H.one() in I.std().gens()                                     # optional - sage.combinat sage.modules
+            sage: H.2^2 - H.one() in I.std().gens()                                     # needs sage.combinat sage.modules
             True
 
         Here is the corresponding direct test::
 
-            sage: I.reduce(z^2)                                                         # optional - sage.combinat sage.modules
+            sage: I.reduce(z^2)                                                         # needs sage.combinat sage.modules
             1
 
         """
@@ -3687,15 +3761,16 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         We define a left and a two-sided ideal::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})     # optional - sage.combinat sage.modules
-            sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])                                   # optional - sage.combinat sage.modules
-            sage: JL.std()  #random                                                     # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H.<x,y,z> = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: JL = H.ideal([x^3, y^3, z^3 - 4*z])
+            sage: JL.std()  #random
             Left Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, 2*x*y*z - z^2 - 2*z, y^3, x^3) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: JT = H.ideal([x^3, y^3, z^3 - 4*z], side='twosided')                  # optional - sage.combinat sage.modules
-            sage: JT.std()  #random                                                     # optional - sage.combinat sage.modules
+            sage: JT = H.ideal([x^3, y^3, z^3 - 4*z], side='twosided')
+            sage: JT.std()  #random
             Twosided Ideal (z^3 - 4*z, y*z^2 - 2*y*z, x*z^2 + 2*x*z, y^2*z - 2*y^2, 2*x*y*z - z^2 - 2*z,
                             x^2*z + 2*x^2, y^3, x*y^2 - y*z, x^2*y - x*z - 2*x, x^3) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
@@ -3704,9 +3779,9 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         Apparently, ``x*y^2-y*z`` should be in the two-sided, but not
         in the left ideal::
 
-            sage: x*y^2-y*z in JL   #indirect doctest                                   # optional - sage.combinat sage.modules
+            sage: x*y^2-y*z in JL   #indirect doctest                                   # needs sage.combinat sage.modules
             False
-            sage: x*y^2-y*z in JT                                                       # optional - sage.combinat sage.modules
+            sage: x*y^2-y*z in JT                                                       # needs sage.combinat sage.modules
             True
 
         """
@@ -3726,12 +3801,13 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})             # optional - sage.combinat sage.modules
-            sage: H.inject_variables()                                                  # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                    # optional - sage.combinat sage.modules
-            sage: G = vector(I.gens()); G                                               # optional - sage.combinat sage.modules
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)
+            sage: G = vector(I.gens()); G
             d...: UserWarning: You are constructing a free module
             over a noncommutative ring. Sage does not have a concept
             of left/right and both sided modules, so be careful.
@@ -3743,7 +3819,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
             It's also not guaranteed that all multiplications are
             done from the right side.
             (y^2, x^2, z^2 - 1)
-            sage: M = I.syzygy_module(); M                                              # optional - sage.combinat sage.modules
+            sage: M = I.syzygy_module(); M
             [                                                                         -z^2 - 8*z - 15                                                                                        0                                                                                      y^2]
             [                                                                                       0                                                                          -z^2 + 8*z - 15                                                                                      x^2]
             [                                                              x^2*z^2 + 8*x^2*z + 15*x^2                                                              -y^2*z^2 + 8*y^2*z - 15*y^2                                                                   -4*x*y*z + 2*z^2 + 2*z]
@@ -3754,7 +3830,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
             [                                                                           x^4*z + 4*x^4    -x^2*y^2*z + 4*x^2*y^2 - 4*x*y*z^2 + 32*x*y*z - 6*z^3 - 64*x*y + 66*z^2 - 240*z + 288                                                                                        0]
             [x^3*y^2*z + 4*x^3*y^2 + 18*x^2*y*z - 36*x*z^3 + 66*x^2*y - 432*x*z^2 - 1656*x*z - 2052*x                                      -x*y^4*z + 4*x*y^4 - 8*y^3*z^2 + 62*y^3*z - 114*y^3                                                                        48*y*z^2 - 36*y*z]
 
-            sage: M*G                                                                   # optional - sage.combinat sage.modules
+            sage: M*G                                                                   # needs sage.combinat sage.modules
             (0, 0, 0, 0, 0, 0, 0, 0, 0)
 
         ALGORITHM: Uses Singular's ``syz`` command
@@ -3781,12 +3857,13 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})             # optional - sage.combinat sage.modules
-            sage: H.inject_variables()                                                  # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: H = A.g_algebra({y*x: x*y-z, z*x: x*z+2*x, z*y: y*z-2*y})
+            sage: H.inject_variables()
             Defining x, y, z
-            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)                    # optional - sage.combinat sage.modules
-            sage: I.res(3)                                                              # optional - sage.combinat sage.modules
+            sage: I = H.ideal([y^2, x^2, z^2-H.one()], coerce=False)
+            sage: I.res(3)
             <Resolution>
         """
         if self.side() == 'twosided':
@@ -3816,8 +3893,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: R.<x,y> = PolynomialRing(IntegerRing(), 2, order='lex')
             sage: R.ideal([x, y])
             Ideal (x, y) of Multivariate Polynomial Ring in x, y over Integer Ring
-            sage: R.<x0,x1> = GF(3)[]                                                   # optional - sage.rings.finite_rings
-            sage: R.ideal([x0^2, x1^3])                                                 # optional - sage.rings.finite_rings
+            sage: R.<x0,x1> = GF(3)[]
+            sage: R.ideal([x0^2, x1^3])
             Ideal (x0^2, x1^3) of Multivariate Polynomial Ring in x0, x1 over Finite Field of size 3
         """
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
@@ -3848,8 +3925,9 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
            Ideal (x, y + 1) of Multivariate Polynomial Ring in x, y over Rational Field
            sage: I.gens()
            [x, y + 1]
-         """
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        """
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
         return PolynomialSequence(self.ring(), Ideal_generic.gens(self), immutable=True)
 
     @property
@@ -3903,22 +3981,24 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         ::
 
-            sage: R.<x,y> = GF(32003)[]                                                 # optional - sage.rings.finite_rings
-            sage: I = R*[x^2 + x, y]                                                    # optional - sage.rings.finite_rings
-            sage: J = R*[x + 1, y]                                                      # optional - sage.rings.finite_rings
-            sage: J < I                                                                 # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = GF(32003)[]
+            sage: I = R*[x^2 + x, y]
+            sage: J = R*[x + 1, y]
+            sage: J < I
             False
-            sage: I < J                                                                 # optional - sage.rings.finite_rings
+            sage: I < J
             True
 
         ::
 
-            sage: R.<x,y> = GF(32003)[]                                                 # optional - sage.rings.finite_rings
-            sage: I = R*[x^2 + x, y]                                                    # optional - sage.rings.finite_rings
-            sage: J = R*[x + 1, y]                                                      # optional - sage.rings.finite_rings
-            sage: J > I                                                                 # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = GF(32003)[]
+            sage: I = R*[x^2 + x, y]
+            sage: J = R*[x + 1, y]
+            sage: J > I
             True
-            sage: I > J                                                                 # optional - sage.rings.finite_rings
+            sage: I > J
             False
 
         ::
@@ -3956,15 +4036,16 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         We test to make sure that pickling works with the cached
         Groebner basis::
 
-            sage: R.<x,y> = GF(32003)[]                                                 # optional - sage.rings.finite_rings
-            sage: I = R*[x^2 + x, y]                                                    # optional - sage.rings.finite_rings
-            sage: J = R*[x + 1, y]                                                      # optional - sage.rings.finite_rings
-            sage: J >= I                                                                # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = GF(32003)[]
+            sage: I = R*[x^2 + x, y]
+            sage: J = R*[x + 1, y]
+            sage: J >= I
             True
-            sage: I >= J                                                                # optional - sage.rings.finite_rings
+            sage: I >= J
             False
 
-            sage: loads(dumps(I)).__getstate__()                                        # optional - sage.rings.finite_rings
+            sage: loads(dumps(I)).__getstate__()                                        # needs sage.rings.finite_rings
             (Monoid of ideals of Multivariate Polynomial Ring in x, y over Finite Field of size 32003,
              {'_Ideal_generic__gens': (x^2 + x, y),
               '_Ideal_generic__ring': Multivariate Polynomial Ring in x, y over Finite Field of size 32003,
@@ -3973,7 +4054,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
               'gens': Pickle of the cached method "gens",
               'groebner_basis': Pickle of the cached method "groebner_basis"})
 
-        This example checks :trac:`12802`::
+        This example checks :issue:`12802`::
 
             sage: R.<x,y> = ZZ[]
             sage: I = R * [ x^2 + y, 2*y ]
@@ -3981,7 +4062,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I == J
             True
 
-        Another good test from the discussion in :trac:`12802`::
+        Another good test from the discussion in :issue:`12802`::
 
             sage: Rx = PolynomialRing(QQ, 2, "x")
             sage: Ix = Rx.ideal(Rx.0)
@@ -4217,8 +4298,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             Macaulay2's ``GroebnerBasis`` command with the strategy "MGB" (if available)
 
         ``'msolve'``
-            `optional package msolve <../spkg/msolve.html>`_ (degrevlex order,
-            prime fields)
+            :ref:`optional package msolve <spkg_msolve>` (degrevlex order)
 
         ``'magma:GroebnerBasis'``
             Magma's ``Groebnerbasis`` command (if available)
@@ -4250,52 +4330,52 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         ::
 
             sage: P.<a,b,c> = PolynomialRing(QQ,3, order='lex')
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: I.groebner_basis()
             [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
 
         ::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: I.groebner_basis('libsingular:groebner')
             [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
 
         ::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: I.groebner_basis('libsingular:std')
             [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
 
         ::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: I.groebner_basis('libsingular:stdhilb')
             [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
 
         ::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: I.groebner_basis('libsingular:stdfglm')
             [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
 
         ::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: I.groebner_basis('libsingular:slimgb')
             [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
 
         Although Giac does support lexicographical ordering, we use degree
         reverse lexicographical ordering here, in order to test against
-        :trac:`21884`::
+        :issue:`21884`::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: J = I.change_ring(P.change_ring(order='degrevlex'))
-            sage: gb = J.groebner_basis('giac') # random
+            sage: gb = J.groebner_basis('giac')  # random
             sage: gb
             [c^3 - 79/210*c^2 + 1/30*b + 1/70*c, b^2 - 3/5*c^2 - 1/5*b + 1/5*c, b*c + 6/5*c^2 - 1/10*b - 2/5*c, a + 2*b + 2*c - 1]
 
             sage: J.groebner_basis.set_cache(gb)
-            sage: ideal(J.transformed_basis()).change_ring(P).interreduced_basis()  # testing trac 21884
+            sage: ideal(J.transformed_basis()).change_ring(P).interreduced_basis()  # testing issue #21884
             ...[a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
 
         Giac's gbasis over `\QQ` can benefit from a probabilistic lifting and
@@ -4303,7 +4383,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             sage: A9 = PolynomialRing(QQ, 9, 'x')
             sage: I9 = sage.rings.ideal.Katsura(A9)
-            sage: print("possible output from giac", flush=True); I9.groebner_basis("giac", proba_epsilon=1e-7) # long time (3s)
+            sage: print("possible output from giac", flush=True); I9.groebner_basis("giac", proba_epsilon=1e-7)  # long time (3s)
             possible output...
             Polynomial Sequence with 143 Polynomials in 9 Variables
 
@@ -4312,7 +4392,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         Note that ``toy:buchberger`` does not return the reduced Groebner
         basis, ::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: gb = I.groebner_basis('toy:buchberger')
             sage: gb.is_groebner()
             True
@@ -4321,7 +4401,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         but that ``toy:buchberger2`` does. ::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: gb = I.groebner_basis('toy:buchberger2'); gb
             [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
             sage: gb == gb.reduced()
@@ -4330,32 +4410,36 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         Here we use Macaulay2 with three different strategies over a finite
         field. ::
 
-            sage: R.<a,b,c> = PolynomialRing(GF(101), 3)                                # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Katsura(R,3) # regenerate to prevent caching     # optional - sage.rings.finite_rings
-            sage: I.groebner_basis('macaulay2:gb')  # optional - macaulay2              # optional - sage.rings.finite_rings
-            [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c, b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
-
-            sage: I = sage.rings.ideal.Katsura(R,3) # regenerate to prevent caching     # optional - sage.rings.finite_rings
-            sage: I.groebner_basis('macaulay2:f4')  # optional - macaulay2              # optional - sage.rings.finite_rings
-            [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c, b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
-
-            sage: I = sage.rings.ideal.Katsura(R,3) # regenerate to prevent caching     # optional - sage.rings.finite_rings
-            sage: I.groebner_basis('macaulay2:mgb') # optional - macaulay2              # optional - sage.rings.finite_rings
-            [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c, b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
+            sage: # optional - macaulay2
+            sage: R.<a,b,c> = PolynomialRing(GF(101), 3)
+            sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('macaulay2:gb')
+            [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c,
+             b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
+            sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('macaulay2:f4')
+            [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c,
+             b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
+            sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('macaulay2:mgb')
+            [c^3 + 28*c^2 - 37*b + 13*c, b^2 - 41*c^2 + 20*b - 20*c,
+             b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
 
         Over prime fields of small characteristic, we can also use the
-        `optional package msolve <../spkg/msolve.html>`_::
+        :ref:`optional package msolve <spkg_msolve>`::
 
-            sage: R.<a,b,c> = PolynomialRing(GF(101), 3)                                # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Katsura(R,3) # regenerate to prevent caching     # optional - sage.rings.finite_rings
-            sage: I.groebner_basis('msolve')  # optional - msolve                       # optional - sage.rings.finite_rings
-            [a + 2*b + 2*c - 1, b*c - 19*c^2 + 10*b + 40*c, b^2 - 41*c^2 + 20*b - 20*c, c^3 + 28*c^2 - 37*b + 13*c]
+            sage: R.<a,b,c> = PolynomialRing(GF(101), 3)
+            sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('msolve')                    # optional - msolve
+            [a + 2*b + 2*c - 1, b*c - 19*c^2 + 10*b + 40*c,
+             b^2 - 41*c^2 + 20*b - 20*c, c^3 + 28*c^2 - 37*b + 13*c]
 
         ::
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.finite_rings
-            sage: I.groebner_basis('magma:GroebnerBasis') # optional - magma            # optional - sage.rings.finite_rings
-            [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('magma:GroebnerBasis')       # optional - magma
+            [a - 60*c^3 + 158/7*c^2 + 8/7*c - 1,
+             b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
 
         Singular and libSingular can compute Groebner basis with degree
         restrictions. ::
@@ -4416,7 +4500,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         ::
 
-            sage: I.groebner_basis('macaulay2') # optional - macaulay2
+            sage: I.groebner_basis('macaulay2')                 # optional - macaulay2
             [b^3 + b*c^2 + 12*c^3 + b^2 + b*c - 4*c^2,
              2*b*c^2 - 6*c^3 + b^2 + 5*b*c + 8*c^2 - b - 2*c,
              42*c^3 + b^2 + 2*b*c - 14*c^2 + b,
@@ -4425,7 +4509,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         Groebner bases over `\ZZ/n\ZZ` are also supported::
 
-            sage: P.<a,b,c> = PolynomialRing(Zmod(1000),3)
+            sage: P.<a,b,c> = PolynomialRing(Zmod(1000), 3)
             sage: I = P * (a + 2*b + 2*c - 1, a^2 - a + 2*b^2 + 2*c^2, 2*a*b + 2*b*c - b)
             sage: I.groebner_basis()
             [b*c^2 + 732*b*c + 808*b,
@@ -4458,11 +4542,11 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I = P * ( x*y*z + z^5, 2*x^2 + y^3 + z^7, 3*z^5 + y^5 )
             sage: J = Ideal(I.groebner_basis())
             sage: f = sum(P.random_element(terms=2)*f for f in I.gens())
-            sage: f                       # random
+            sage: f                        # random
             1/2*y^2*z^7 - 1/4*y*z^8 + 2*x*z^5 + 95*z^6 + 1/2*y^5 - 1/4*y^4*z + x^2*y^2 + 3/2*x^2*y*z + 95*x*y*z^2
-            sage: f.lift(I.gens())        # random
+            sage: f.lift(I.gens())         # random
             [2*x + 95*z, 1/2*y^2 - 1/4*y*z, 0]
-            sage: l = f.lift(J.gens()); l # random
+            sage: l = f.lift(J.gens()); l  # random
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1/2*y^2 + 1/4*y*z, 1/2*y^2*z^2 - 1/4*y*z^3 + 2*x + 95*z]
             sage: sum(map(mul, zip(l,J.gens()))) == f
             True
@@ -4477,7 +4561,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             True
 
         In cases where a characteristic cannot be determined, we use a toy implementation of Buchberger's algorithm
-        (see :trac:`6581`)::
+        (see :issue:`6581`)::
 
             sage: R.<a,b> = QQ[]; I = R.ideal(a^2+b^2-1)
             sage: Q = QuotientRing(R,I); K = Frac(Q)
@@ -4493,7 +4577,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         TESTS:
 
-        Check :trac:`27445`::
+        Check :issue:`27445`::
 
             sage: P = PolynomialRing(QQ, 't', 0)
             sage: P.ideal([P(2)]).groebner_basis()
@@ -4525,62 +4609,60 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: P.ideal([P(3)]).groebner_basis()
             [1]
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: P.<a,b,c> = PolynomialRing(QQbar, 3, order='lex')                     # optional - sage.rings.number_field
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis()                                                    # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P.<a,b,c> = PolynomialRing(QQbar, 3, order='lex')
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis()
+            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('libsingular:groebner')
+            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('libsingular:std')
+            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('libsingular:stdhilb')
+            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('libsingular:stdfglm')
+            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('libsingular:slimgb')
             [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis('libsingular:groebner')                              # optional - sage.rings.number_field
-            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
-
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis('libsingular:std')                                   # optional - sage.rings.number_field
-            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
-
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis('libsingular:stdhilb')                               # optional - sage.rings.number_field
-            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
-
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis('libsingular:stdfglm')                               # optional - sage.rings.number_field
-            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
-
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis('libsingular:slimgb')                                # optional - sage.rings.number_field
-            [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
-
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: J = I.change_ring(P.change_ring(order='degrevlex'))                   # optional - sage.rings.number_field
-            sage: gb = J.groebner_basis('giac') # random                                # optional - sage.rings.number_field
-            sage: gb                                                                    # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: J = I.change_ring(P.change_ring(order='degrevlex'))
+            sage: gb = J.groebner_basis('giac')  # random
+            sage: gb
             [c^3 + (-79/210)*c^2 + 1/30*b + 1/70*c, b^2 + (-3/5)*c^2 + (-1/5)*b + 1/5*c, b*c + 6/5*c^2 + (-1/10)*b + (-2/5)*c, a + 2*b + 2*c - 1]
 
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis('toy:buchberger2')                                   # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('toy:buchberger2')
             [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
-
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis('macaulay2:gb') # optional - macaulay2               # optional - sage.rings.number_field
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('macaulay2:gb')      # optional - macaulay2
             [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
-
-            sage: I = sage.rings.ideal.Katsura(P,3) # regenerate to prevent caching     # optional - sage.rings.number_field
-            sage: I.groebner_basis('magma:GroebnerBasis') # optional - magma            # optional - sage.rings.number_field
+            sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('magma:GroebnerBasis')       # optional - magma
             [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
 
         msolve currently supports the degrevlex order only::
 
-            sage: R.<a,b,c> = PolynomialRing(GF(101), 3, order='lex')                   # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching    # optional - sage.rings.finite_rings
-            sage: I.groebner_basis('msolve')  # optional - msolve                       # optional - sage.rings.finite_rings
+            sage: R.<a,b,c> = PolynomialRing(GF(101), 3, order='lex')
+            sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching
+            sage: I.groebner_basis('msolve')                    # optional - msolve
             Traceback (most recent call last):
             ...
             NotImplementedError: msolve only supports the degrevlex order (use transformed_basis())
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.polynomial.multi_polynomial_sequence import \
+            PolynomialSequence
+        from sage.rings.polynomial.polynomial_ring_constructor import \
+            PolynomialRing
 
         if algorithm.lower() == "magma":
             algorithm = "magma:GroebnerBasis"
@@ -4598,10 +4680,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         if not algorithm:
             try:
                 gb = self._groebner_basis_libsingular("groebner", deg_bound=deg_bound, mult_bound=mult_bound, *args, **kwds)
-            except (TypeError, NameError): # conversion to Singular not supported
+            except (TypeError, NameError, ImportError):  # conversion to Singular not supported
                 try:
                     gb = self._groebner_basis_singular("groebner", deg_bound=deg_bound, mult_bound=mult_bound, *args, **kwds)
-                except (TypeError, NameError, NotImplementedError): # conversion to Singular not supported
+                except (TypeError, NameError, NotImplementedError, ImportError):  # conversion to Singular not supported
                     R = self.ring()
                     B = R.base_ring()
                     if R.ngens() == 0:
@@ -4659,7 +4741,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                 ginv,alg = algorithm.split(":")
                 gb = self._groebner_basis_ginv(algorithm=alg,*args, **kwds)
             else:
-                raise NameError("Algorithm '%s' unknown."%algorithm)
+                raise NameError("Algorithm '%s' unknown." % algorithm)
         elif algorithm == 'giac:gbasis':
             from sage.libs.giac import groebner_basis as groebner_basis_libgiac
             gb = groebner_basis_libgiac(self, prot=prot, *args, **kwds)
@@ -4672,7 +4754,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             from . import msolve
             return msolve.groebner_basis_degrevlex(self, *args, **kwds)
         else:
-            raise NameError("Algorithm '%s' unknown."%algorithm)
+            raise NameError("Algorithm '%s' unknown." % algorithm)
 
         gb = sorted(gb, reverse=True)
         if self.ring().base_ring().is_field():
@@ -4706,18 +4788,22 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: R.<x,y,z> = F[]
             sage: I = R.ideal([-x+3*y+z-5,2*x+a*z+4,4*x-3*z-1/a])
             sage: I.groebner_cover()
-            {Quasi-affine subscheme X - Y of Affine Space of dimension 1 over Rational Field, where X is defined by:
-               0
-             and Y is defined by:
-               2*a^2 + 3*a: [(2*a^2 + 3*a)*z + (8*a + 1), (12*a^2 + 18*a)*y + (-20*a^2 - 35*a - 2), (4*a + 6)*x + 11],
-             Quasi-affine subscheme X - Y of Affine Space of dimension 1 over Rational Field, where X is defined by:
-               ...
-             and Y is defined by:
-               1: [1],
-             Quasi-affine subscheme X - Y of Affine Space of dimension 1 over Rational Field, where X is defined by:
-               ...
-             and Y is defined by:
-               1: [1]}
+            {Quasi-affine subscheme X - Y of Affine Space of dimension 1 over Rational Field,
+               where X is defined by:
+                 0
+               and Y is defined by:
+                 2*a^2 + 3*a: [(2*a^2 + 3*a)*z + (8*a + 1),
+                               (12*a^2 + 18*a)*y + (-20*a^2 - 35*a - 2), (4*a + 6)*x + 11],
+             Quasi-affine subscheme X - Y of Affine Space of dimension 1 over Rational Field,
+               where X is defined by:
+                 ...
+               and Y is defined by:
+                 1: [1],
+             Quasi-affine subscheme X - Y of Affine Space of dimension 1 over Rational Field,
+               where X is defined by:
+                 ...
+               and Y is defined by:
+                 1: [1]}
         """
         from sage.schemes.affine.affine_space import AffineSpace
         gc = self._groebner_cover()
@@ -4828,9 +4914,9 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: T.<t> = PolynomialRing(QQ)
             sage: I.subs(a=t, b=t)
             Principal ideal (t^2 + 1) of Univariate Polynomial Ring in t over Rational Field
-            sage: var("z")
+            sage: var("z")                                                              # needs sage.symbolic
             z
-            sage: I.subs(a=z, b=z)
+            sage: I.subs(a=z, b=z)                                                      # needs sage.symbolic
             Principal ideal (2*z^2 + 2) of Symbolic Ring
 
         Variables that are not substituted remain unchanged::
@@ -4899,7 +4985,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             sage: R.<x,y> = QQ[]
             sage: I = (x^3 + y, y) * R
-            sage: x in I # indirect doctest
+            sage: x in I  # indirect doctest
             False
             sage: y in I
             True
@@ -4927,28 +5013,28 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = PolynomialRing(GF(2))                                     # optional - sage.rings.finite_rings
-            sage: I = Ideal([x^2*y + z + 1, x + y^2 + 1]); I                            # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = PolynomialRing(GF(2))
+            sage: I = Ideal([x^2*y + z + 1, x + y^2 + 1]); I
             Ideal (x^2*y + z + 1, y^2 + x + 1) of Multivariate
             Polynomial Ring in x, y, z over Finite Field of size 2
 
         ::
 
-            sage: I.homogenize()                                                        # optional - sage.rings.finite_rings
+            sage: I.homogenize()
             Ideal (x^2*y + z*h^2 + h^3, y^2 + x*h + h^2) of
             Multivariate Polynomial Ring in x, y, z, h over Finite
             Field of size 2
 
         ::
 
-            sage: I.homogenize(y)                                                       # optional - sage.rings.finite_rings
+            sage: I.homogenize(y)
             Ideal (x^2*y + y^3 + y^2*z, x*y) of Multivariate
             Polynomial Ring in x, y, z over Finite Field of size 2
 
         ::
 
-            sage: I = Ideal([x^2*y + z^3 + y^2*x, x + y^2 + 1])                         # optional - sage.rings.finite_rings
-            sage: I.homogenize()                                                        # optional - sage.rings.finite_rings
+            sage: I = Ideal([x^2*y + z^3 + y^2*x, x + y^2 + 1])
+            sage: I.homogenize()
             Ideal (x^2*y + x*y^2 + z^3, y^2 + x*h + h^2) of
             Multivariate Polynomial Ring in x, y, z, h over Finite
             Field of size 2
@@ -5024,51 +5110,51 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         We consider a homogeneous example::
 
             sage: n = 8
-            sage: K = GF(127)                                                           # optional - sage.rings.finite_rings
-            sage: P = PolynomialRing(K, n, 'x')                                         # optional - sage.rings.finite_rings
-            sage: s = [K.random_element() for _ in range(n)]                            # optional - sage.rings.finite_rings
-            sage: L = []                                                                # optional - sage.rings.finite_rings
-            sage: for i in range(2 * n):                                                # optional - sage.rings.finite_rings
+            sage: K = GF(127)
+            sage: P = PolynomialRing(K, n, 'x')
+            sage: s = [K.random_element() for _ in range(n)]
+            sage: L = []
+            sage: for i in range(2 * n):
             ....:     f = P.random_element(degree=2, terms=binomial(n, 2))
             ....:     f -= f(*s)
             ....:     L.append(f.homogenize())
-            sage: I = Ideal(L)                                                          # optional - sage.rings.finite_rings
-            sage: I.degree_of_semi_regularity()                                         # optional - sage.rings.finite_rings
+            sage: I = Ideal(L)
+            sage: I.degree_of_semi_regularity()
             4
 
         From this, we expect a Groebner basis computation to reach at
         most degree 4. For homogeneous systems this is equivalent to
         the largest degree in the Groebner basis::
 
-            sage: max(f.degree() for f in I.groebner_basis())                           # optional - sage.rings.finite_rings
+            sage: max(f.degree() for f in I.groebner_basis())
             4
 
         We increase the number of polynomials and observe a decrease
         the degree of regularity::
 
-            sage: for i in range(2 * n):                                                # optional - sage.rings.finite_rings
+            sage: for i in range(2 * n):
             ....:     f = P.random_element(degree=2, terms=binomial(n, 2))
             ....:     f -= f(*s)
             ....:     L.append(f.homogenize())
-            sage: I = Ideal(L)                                                          # optional - sage.rings.finite_rings
-            sage: I.degree_of_semi_regularity()                                         # optional - sage.rings.finite_rings
+            sage: I = Ideal(L)
+            sage: I.degree_of_semi_regularity()
             3
 
-            sage: max(f.degree() for f in I.groebner_basis())                           # optional - sage.rings.finite_rings
+            sage: max(f.degree() for f in I.groebner_basis())
             3
 
         The degree of regularity approaches 2 for quadratic systems as
         the number of polynomials approaches `n^2`::
 
-            sage: for i in range((n-4) * n):                                            # optional - sage.rings.finite_rings
+            sage: for i in range((n-4) * n):
             ....:     f = P.random_element(degree=2, terms=binomial(n, 2))
             ....:     f -= f(*s)
             ....:     L.append(f.homogenize())
-            sage: I = Ideal(L)                                                          # optional - sage.rings.finite_rings
-            sage: I.degree_of_semi_regularity()                                         # optional - sage.rings.finite_rings
+            sage: I = Ideal(L)
+            sage: I.degree_of_semi_regularity()
             2
 
-            sage: max(f.degree() for f in I.groebner_basis())                           # optional - sage.rings.finite_rings
+            sage: max(f.degree() for f in I.groebner_basis())
             2
 
         .. NOTE::
@@ -5078,14 +5164,14 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             semi-regular sequences. For more details about
             semi-regular sequences see [BFS2004]_.
         """
-        degs = [f.degree() for f in self.gens() if f!=0] # we ignore zeroes
+        degs = [f.degree() for f in self.gens() if f != 0]  # we ignore zeroes
         m, n = self.ngens(), len(set(sum([f.variables() for f in self.gens()],())))
         if m <= n:
             raise ValueError("This function requires an overdefined system of polynomials.")
 
-        from sage.rings.rational_field import QQ
         from sage.misc.misc_c import prod
         from sage.rings.power_series_ring import PowerSeriesRing
+        from sage.rings.rational_field import QQ
 
         z = PowerSeriesRing(QQ, 'z', default_prec=sum(degs)).gen()
         s = prod([1-z**d for d in degs]) / (1-z)**n
@@ -5117,50 +5203,50 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: I = R.ideal([y^3 - x^2])
-            sage: I.plot()                         # cusp                               # optional - sage.plot
+            sage: I.plot()                         # cusp                               # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: I = R.ideal([y^2 - x^2 - 1])
-            sage: I.plot((x,-3, 3), (y, -2, 2))    # hyperbola                          # optional - sage.plot
+            sage: I.plot((x,-3, 3), (y, -2, 2))    # hyperbola                          # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: I = R.ideal([y^2 + x^2*(1/4) - 1])
-            sage: I.plot()                         # ellipse                            # optional - sage.plot
+            sage: I.plot()                         # ellipse                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: I = R.ideal([y^2-(x^2-1)*(x-2)])
-            sage: I.plot()                         # elliptic curve                     # optional - sage.plot
+            sage: I.plot()                         # elliptic curve                     # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: f = ((x+3)^3 + 2*(x+3)^2 - y^2)*(x^3 - y^2)*((x-3)^3-2*(x-3)^2-y^2)
             sage: I = R.ideal(f)
-            sage: I.plot()                         # the Singular logo                  # optional - sage.plot
+            sage: I.plot()                         # the Singular logo                  # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: I = R.ideal([x - 1])
-            sage: I.plot((y, -2, 2))               # vertical line                      # optional - sage.plot
+            sage: I.plot((y, -2, 2))               # vertical line                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
 
             sage: I = R.ideal([-x^2*y + 1])
-            sage: I.plot()                         # blow up                            # optional - sage.plot
+            sage: I.plot()                         # blow up                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         """
-        from sage.rings.real_mpfr import RR
         from sage.plot.all import implicit_plot
+        from sage.rings.real_mpfr import RR
 
         K = self.base_ring()
         if not RR.has_coerce_map_from(K):
@@ -5177,7 +5263,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             V = [(variables[0], None, None), (variables[1], None, None)]
 
             if len(args) > 2:
-                raise TypeError("Expected up to 2 optional parameters but got %d."%len(args))
+                raise TypeError("Expected up to 2 optional parameters but got %d." % len(args))
 
             # first check whether user supplied boundaries
             for e in args:
@@ -5234,12 +5320,12 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         We compute a uniformly random element up to the provided degree. ::
 
-            sage: P.<x,y,z> = GF(127)[]                                                 # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
-            sage: f = I.random_element(degree=4, compute_gb=True, terms=infinity)       # optional - sage.rings.finite_rings
-            sage: f.degree() <= 4                                                       # optional - sage.rings.finite_rings
+            sage: P.<x,y,z> = GF(127)[]
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: f = I.random_element(degree=4, compute_gb=True, terms=infinity)
+            sage: f.degree() <= 4
             True
-            sage: len(list(f)) <= 35                                                    # optional - sage.rings.finite_rings
+            sage: len(list(f)) <= 35
             True
 
         Note that sampling uniformly at random from the ideal at some large enough degree is
@@ -5247,45 +5333,47 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         basis if we can sample uniformly at random from an ideal::
 
             sage: n = 3; d = 4
-            sage: P = PolynomialRing(GF(127), n, 'x')                                   # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Cyclic(P)                                        # optional - sage.rings.finite_rings
+            sage: P = PolynomialRing(GF(127), n, 'x')
+            sage: I = sage.rings.ideal.Cyclic(P)
 
         1. We sample `n^d` uniformly random elements in the ideal::
 
-               sage: F = Sequence(I.random_element(degree=d, compute_gb=True,           # optional - sage.rings.finite_rings
+               sage: F = Sequence(I.random_element(degree=d, compute_gb=True,
                ....:                               terms=infinity)
                ....:              for _ in range(n^d))
 
         2. We linearize and compute the echelon form::
 
-               sage: A, v = F.coefficient_matrix()                                      # optional - sage.rings.finite_rings
-               sage: A.echelonize()                                                     # optional - sage.rings.finite_rings
+               sage: A, v = F.coefficients_monomials()
+               sage: A.echelonize()
 
         3. The result is the desired Gröbner basis::
 
-               sage: G = Sequence((A * v).list())                                       # optional - sage.rings.finite_rings
-               sage: G.is_groebner()                                                    # optional - sage.rings.finite_rings
+               sage: G = Sequence((A * v).list())
+               sage: G.is_groebner()
                True
-               sage: Ideal(G) == I                                                      # optional - sage.rings.finite_rings
+               sage: Ideal(G) == I
                True
 
         We return some element in the ideal with no guarantee on the distribution::
 
-            sage: P = PolynomialRing(GF(127), 10, 'x')                                  # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
-            sage: f = I.random_element(degree=3)                                        # optional - sage.rings.finite_rings
-            sage: f  # random                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P = PolynomialRing(GF(127), 10, 'x')
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: f = I.random_element(degree=3)
+            sage: f  # random
             -25*x0^2*x1 + 14*x1^3 + 57*x0*x1*x2 + ... + 19*x7*x9 + 40*x8*x9 + 49*x1
-            sage: f.degree()                                                            # optional - sage.rings.finite_rings
+            sage: f.degree()
             3
 
         We show that the default method does not sample uniformly at random from the ideal::
 
-            sage: P.<x,y,z> = GF(127)[]                                                 # optional - sage.rings.finite_rings
-            sage: G = Sequence([x + 7, y - 2, z + 110])                                 # optional - sage.rings.finite_rings
-            sage: I = Ideal([sum(P.random_element() * g for g in G)                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = GF(127)[]
+            sage: G = Sequence([x + 7, y - 2, z + 110])
+            sage: I = Ideal([sum(P.random_element() * g for g in G)
             ....:            for _ in range(4)])
-            sage: all(I.random_element(degree=1) == 0 for _ in range(100))              # optional - sage.rings.finite_rings
+            sage: all(I.random_element(degree=1) == 0 for _ in range(100))
             True
 
         If ``degree`` equals the degree of the generators, a random linear
@@ -5350,33 +5438,33 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^2)                                                       # optional - sage.rings.finite_rings
-            sage: P.<x,y> = PolynomialRing(k, 2)                                        # optional - sage.rings.finite_rings
-            sage: I = Ideal([x*y + 1, a*x + 1])                                         # optional - sage.rings.finite_rings
-            sage: I.variety()                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(2^2)
+            sage: P.<x,y> = PolynomialRing(k, 2)
+            sage: I = Ideal([x*y + 1, a*x + 1])
+            sage: I.variety()
             [{y: a, x: a + 1}]
-            sage: J = I.weil_restriction()                                              # optional - sage.rings.finite_rings
-            sage: J                                                                     # optional - sage.rings.finite_rings
+            sage: J = I.weil_restriction()
+            sage: J
             Ideal (x0*y0 + x1*y1 + 1, x1*y0 + x0*y1 + x1*y1, x1 + 1, x0 + x1) of
              Multivariate Polynomial Ring in x0, x1, y0, y1 over Finite Field of size 2
-            sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal    # optional - sage.rings.finite_rings
-            sage: J.variety()                                                           # optional - sage.rings.finite_rings
+            sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal
+            sage: J.variety()
             [{y1: 1, y0: 0, x1: 1, x0: 1}]
-
-            sage: J.weil_restriction() # returns J                                      # optional - sage.rings.finite_rings
+            sage: J.weil_restriction()  # returns J
             Ideal (x0*y0 + x1*y1 + 1, x1*y0 + x0*y1 + x1*y1, x1 + 1, x0 + x1,
              x0^2 + x0, x1^2 + x1, y0^2 + y0, y1^2 + y1) of Multivariate
              Polynomial Ring in x0, x1, y0, y1 over Finite Field of size 2
 
-            sage: k.<a> = GF(3^5)                                                       # optional - sage.rings.finite_rings
-            sage: P.<x,y,z> = PolynomialRing(k)                                         # optional - sage.rings.finite_rings
-            sage: I = sage.rings.ideal.Katsura(P)                                       # optional - sage.rings.finite_rings
-            sage: I.dimension()                                                         # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(3^5)
+            sage: P.<x,y,z> = PolynomialRing(k)
+            sage: I = sage.rings.ideal.Katsura(P)
+            sage: I.dimension()
             0
-            sage: I.variety()                                                           # optional - sage.rings.finite_rings
+            sage: I.variety()
              [{z: 0, y: 0, x: 1}]
-
-            sage: J = I.weil_restriction(); J                                           # optional - sage.rings.finite_rings
+            sage: J = I.weil_restriction(); J
             Ideal (x0 - y0 - z0 - 1,
                    x1 - y1 - z1, x2 - y2 - z2, x3 - y3 - z3, x4 - y4 - z4,
                    x0^2 + x2*x3 + x1*x4 - y0^2 - y2*y3 - y1*y4 - z0^2 - z2*z3 - z1*z4 - x0,
@@ -5401,9 +5489,9 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                                       - y4*z0 - y3*z1 - y2*z2 - y1*z3 - y0*z4 - y4*z4 - y4)
              of Multivariate Polynomial Ring in x0, x1, x2, x3, x4, y0, y1, y2, y3, y4,
              z0, z1, z2, z3, z4 over Finite Field of size 3
-            sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal    # optional - sage.rings.finite_rings
+            sage: J += sage.rings.ideal.FieldIdeal(J.ring())  # ensure radical ideal
             sage: from sage.doctest.fixtures import reproducible_repr
-            sage: print(reproducible_repr(J.variety()))                                 # optional - sage.rings.finite_rings
+            sage: print(reproducible_repr(J.variety()))
             [{x0: 1, x1: 0, x2: 0, x3: 0, x4: 0,
               y0: 0, y1: 0, y2: 0, y3: 0, y4: 0,
               z0: 0, z1: 0, z2: 0, z3: 0, z4: 0}]
@@ -5412,15 +5500,15 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         Weil restrictions are often used to study elliptic curves over
         extension fields so we give a simple example involving those::
 
-            sage: K.<a> = QuadraticField(1/3)                                           # optional - sage.rings.number_field
-            sage: E = EllipticCurve(K, [1,2,3,4,5])                                     # optional - sage.rings.number_field
+            sage: K.<a> = QuadraticField(1/3)                                           # needs sage.rings.number_field
+            sage: E = EllipticCurve(K, [1,2,3,4,5])                                     # needs sage.rings.number_field
 
         We pick a point on ``E``::
 
-            sage: p = E.lift_x(1); p                                                    # optional - sage.rings.number_field
+            sage: p = E.lift_x(1); p                                                    # needs sage.rings.number_field
             (1 : -6 : 1)
 
-            sage: I = E.defining_ideal(); I                                             # optional - sage.rings.number_field
+            sage: I = E.defining_ideal(); I                                             # needs sage.rings.number_field
             Ideal (-x^3 - 2*x^2*z + x*y*z + y^2*z - 4*x*z^2 + 3*y*z^2 - 5*z^3)
              of Multivariate Polynomial Ring in x, y, z
               over Number Field in a with defining polynomial x^2 - 1/3
@@ -5428,20 +5516,19 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         Of course, the point ``p`` is a root of all generators of ``I``::
 
-            sage: I.subs(x=1, y=2, z=1)                                                 # optional - sage.rings.number_field
+            sage: I.subs(x=1, y=2, z=1)                                                 # needs sage.rings.number_field
             Ideal (0) of Multivariate Polynomial Ring in x, y, z
              over Number Field in a with defining polynomial x^2 - 1/3
               with a = 0.5773502691896258?
 
         ``I`` is also radical::
 
-            sage: I.radical() == I                                                      # optional - sage.rings.number_field
+            sage: I.radical() == I                                                      # needs sage.rings.number_field
             True
 
         So we compute its Weil restriction::
 
-            sage: J = I.weil_restriction()                                              # optional - sage.rings.number_field
-            sage: J                                                                     # optional - sage.rings.number_field
+            sage: J = I.weil_restriction(); J                                           # needs sage.rings.number_field
             Ideal (-x0^3 - x0*x1^2 - 2*x0^2*z0 - 2/3*x1^2*z0 + x0*y0*z0 + y0^2*z0
                      + 1/3*x1*y1*z0 + 1/3*y1^2*z0 - 4*x0*z0^2 + 3*y0*z0^2 - 5*z0^3
                      - 4/3*x0*x1*z1 + 1/3*x1*y0*z1 + 1/3*x0*y1*z1 + 2/3*y0*y1*z1
@@ -5454,19 +5541,20 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         We can check that the point ``p`` is still a root of all generators of ``J``::
 
-            sage: J.subs(x0=1, y0=2, z0=1, x1=0, y1=0, z1=0)                            # optional - sage.rings.number_field
+            sage: J.subs(x0=1, y0=2, z0=1, x1=0, y1=0, z1=0)                            # needs sage.rings.number_field
             Ideal (0, 0) of Multivariate Polynomial Ring in x0, x1, y0, y1, z0, z1
              over Rational Field
 
         Example for relative number fields::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^5 - 2)                                          # optional - sage.rings.number_field
-            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
-            sage: L.<v> = K.extension(x^2 + 1)                                          # optional - sage.rings.number_field
-            sage: S.<x,y> = L[]                                                         # optional - sage.rings.number_field
-            sage: I = S.ideal([y^2 - x^3 - 1])                                          # optional - sage.rings.number_field
-            sage: I.weil_restriction()                                                  # optional - sage.rings.number_field
+            sage: K.<w> = NumberField(x^5 - 2)
+            sage: R.<x> = K[]
+            sage: L.<v> = K.extension(x^2 + 1)
+            sage: S.<x,y> = L[]
+            sage: I = S.ideal([y^2 - x^3 - 1])
+            sage: I.weil_restriction()
             Ideal (-x0^3 + 3*x0*x1^2 + y0^2 - y1^2 - 1, -3*x0^2*x1 + x1^3 + 2*y0*y1) of
              Multivariate Polynomial Ring in x0, x1, y0, y1
               over Number Field in w with defining polynomial x^5 - 2
@@ -5475,7 +5563,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             Based on a Singular implementation by Michael Brickenstein
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import \
+            PolynomialRing
 
         R = self.ring()
         nvars = R.ngens()
@@ -5505,8 +5594,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         map_ideal = [a]
 
         variables = iter(intermediate_ring.gens()[1:])
-        for _ in range(nvars):
-            map_ideal.append(sum([a**i * next(variables) for i in range(r)]))
+        map_ideal.extend(sum([a**i * next(variables) for i in range(r)])
+                         for _ in range(nvars))
 
         myminpoly = myminpoly(*map_ideal)
         l = [f(*map_ideal).reduce([myminpoly]) for f in l]
@@ -5571,7 +5660,7 @@ class MPolynomialIdeal_quotient(MPolynomialIdeal):
         gb = self.groebner_basis()
         # In quotient rings, gb is not a Gröbner basis of self, but gb0 is
         # a (possibly non-reduced) Gröbner basis of the preimage of self in
-        # the cover ring (see :trac:`33217`). We only use Gröbner bases of
+        # the cover ring (see :issue:`33217`). We only use Gröbner bases of
         # pre-existing ideals to potentially take advantage of caching.
         gb0 = Q.defining_ideal().groebner_basis() + [g.lift() for g in gb]
         f0 = f.lift().reduce(gb0)

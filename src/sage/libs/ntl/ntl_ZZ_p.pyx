@@ -44,6 +44,7 @@ from sage.misc.randstate cimport current_randstate
 
 ZZ_sage = IntegerRing()
 
+
 def ntl_ZZ_p_random_element(v):
     """
     Return a random number modulo p.
@@ -127,7 +128,7 @@ cdef class ntl_ZZ_p():
                 mpz_to_ZZ(&den, (<Integer>v.denominator()).value)
                 ZZ_p_div(self.x, ZZ_to_ZZ_p(num), ZZ_to_ZZ_p(den))
             else:
-                str_v = str(v)  # can cause modulus to change  trac #25790
+                str_v = str(v)  # can cause modulus to change; Issue #25790
                 self.c.restore_c()
                 ccreadstr(self.x, str_v)
 
@@ -348,7 +349,7 @@ cdef class ntl_ZZ_p():
         """
         return self.get_as_int()
 
-    cdef int get_as_int(ntl_ZZ_p self):
+    cdef int get_as_int(ntl_ZZ_p self) noexcept:
         r"""
         Returns value as C int.
         Return value is only valid if the result fits into an int.
@@ -375,7 +376,7 @@ cdef class ntl_ZZ_p():
         self.c.restore_c()
         return self.get_as_int()
 
-    cdef void set_from_int(ntl_ZZ_p self, int value):
+    cdef void set_from_int(ntl_ZZ_p self, int value) noexcept:
         r"""
         Sets the value from a C int.
 

@@ -1,1 +1,1 @@
-dev-lisp/ecls
+dev-lisp/ecl

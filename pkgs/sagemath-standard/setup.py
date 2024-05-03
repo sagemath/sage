@@ -24,6 +24,11 @@ try:
 except ImportError:
     pass
 
+# Different workaround: disable `walk_revctrl` in setuptools
+# This is needed for setuptools_scm >= 8, should work for any version
+import setuptools.command.egg_info
+setuptools.command.egg_info.walk_revctrl = lambda: ()
+
 #########################################################
 ### Set source directory
 #########################################################
@@ -55,20 +60,11 @@ cmdclass = dict(build_cython=sage_build_cython,
                 install=sage_install_and_clean)
 
 #########################################################
-### Testing related stuff
-#########################################################
-
-# Remove (potentially invalid) star import caches
-import sage.misc.lazy_import_cache
-if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
-    os.unlink(sage.misc.lazy_import_cache.get_cache_file())
-
-#########################################################
 ### Discovering Sources
 #########################################################
 
 if any(x in sys.argv
-       for x in ['build', 'bdist_wheel', 'install']):
+       for x in ['build', 'build_ext', 'bdist_wheel', 'install']):
     log.info("Generating auto-generated sources")
     from sage_setup.autogen import autogen_all
     autogen_all()
@@ -76,15 +72,14 @@ if any(x in sys.argv
 # TODO: This should be quiet by default
 print("Discovering Python/Cython source code....")
 t = time.time()
-distributions = ['']
 from sage.misc.package import is_package_installed_and_updated
-optional_packages_with_extensions = ['mcqd', 'bliss', 'tdlib',
-                                     'coxeter3', 'sirocco', 'meataxe']
+distributions = ['']
+optional_packages_with_extensions = os.environ.get('SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS', '').split(',')
 distributions += ['sagemath-{}'.format(pkg)
                   for pkg in optional_packages_with_extensions
                   if is_package_installed_and_updated(pkg)]
 log.warn('distributions = {0}'.format(distributions))
-from sage_setup.find import find_python_sources, find_extra_files
+from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
     SAGE_SRC, ['sage'], distributions=distributions)
 

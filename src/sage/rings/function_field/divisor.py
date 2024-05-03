@@ -871,9 +871,10 @@ class FunctionFieldDivisor(ModuleElement):
         # invariants of M.
         basis = []
         for j in range(n):
-            i,ideg = pivot_row[j][0]
-            for k in range( den.degree() - ideg + 1 ):
-                basis.append(one.shift(k) * gens[i])
+            i, ideg = pivot_row[j][0]
+            gi = gens[i]
+            basis.extend(one.shift(k) * gi
+                         for k in range(den.degree() - ideg + 1))
         # Done!
         return basis
 
@@ -1023,7 +1024,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
             sage: F.divisor_group()
             Divisor group of Function field in y defined by y^2 + 4*x^3 + 4
         """
-        return "Divisor group of %s"%(self._field,)
+        return "Divisor group of %s" % (self._field,)
 
     def _element_constructor_(self, x):
         """

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Pieri Factors
 """
@@ -13,6 +14,7 @@ Pieri Factors
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.call import attrcall
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
@@ -24,9 +26,10 @@ from sage.arith.misc import binomial
 import sage.combinat.ranker
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.combinat.root_system.root_system import RootSystem
-from sage.combinat.root_system.dynkin_diagram import DynkinDiagram
 from sage.combinat.root_system.weyl_group import WeylGroup
-from sage.graphs.digraph import DiGraph
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.root_system.dynkin_diagram', 'DynkinDiagram')
 
 
 class PieriFactors(UniqueRepresentation, Parent):
@@ -697,7 +700,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         if len(support) < len(red):  # There should be no repetitions
             return False
 
-        if not(self._min_length <= len(support) and
+        if not (self._min_length <= len(support) and
                len(support) <= self._max_length and
                self._min_support.issubset(support) and
                support.issubset(self._max_support)):
@@ -752,7 +755,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             sage: WeylGroup(["A", 3, 1]).pieri_factors().cardinality()
             15
         """
-        if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) -1:
+        if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) - 1:
             return Integer(2**(len(self._extra_support)) - 1)
         else:
             return self.generating_series(weight=ConstantFunction(1))

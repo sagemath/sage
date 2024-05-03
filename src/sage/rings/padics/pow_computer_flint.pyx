@@ -59,7 +59,7 @@ cdef class PowComputer_flint(PowComputer_class):
         finally:
             sig_off()
 
-        self.__allocated = 4
+        self._allocated = 4
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
@@ -69,7 +69,7 @@ cdef class PowComputer_flint(PowComputer_class):
 
             sage: from sage.rings.padics.pow_computer_flint import PowComputer_flint_maker
             sage: R.<x> = ZZ[]; f = x^3 - 8*x - 2
-            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel') # indirect doctest
+            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel')  # indirect doctest
             sage: TestSuite(A).run()
 
         """
@@ -87,7 +87,7 @@ cdef class PowComputer_flint(PowComputer_class):
             sage: A = PowComputer_flint(5, 20, 20, 20, False)
             sage: del A
         """
-        if self.__allocated >= 4:
+        if self._allocated >= 4:
             fmpz_clear(self.fprime)
             fmpz_clear(self.half_prime)
             fmpz_clear(self._fpow_variable)
@@ -103,8 +103,8 @@ cdef class PowComputer_flint(PowComputer_class):
 
             sage: from sage.rings.padics.pow_computer_flint import PowComputer_flint_maker
             sage: R.<x> = ZZ[]; f = x^3 - 8*x - 2
-            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel') # indirect doctest
-            sage: A._test_pickling() # indirect doctest
+            sage: A = PowComputer_flint_maker(5, 20, 20, 20, False, f, 'capped-rel')  # indirect doctest
+            sage: A._test_pickling()  # indirect doctest
 
         """
         return PowComputer_flint_maker, (self.prime, self.cache_limit, self.prec_cap, self.ram_prec_cap, self.in_field, self.polynomial(), self._prec_type)
@@ -149,14 +149,14 @@ cdef class PowComputer_flint(PowComputer_class):
         fmpz_get_mpz(self.temp_m, self.pow_fmpz_t_tmp(n)[0])
         return self.temp_m
 
-    cdef mpz_srcptr pow_mpz_t_top(self):
+    cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
         Returns a pointer to an ``mpz_t`` holding `p^N`, where `N` is
         the precision cap.
         """
         return self.top_power
 
-    cdef unsigned long capdiv(self, unsigned long n):
+    cdef unsigned long capdiv(self, unsigned long n) noexcept:
         """
         Returns ceil(n / e).
         """
@@ -208,7 +208,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
 
         """
         cdef Polynomial_integer_dense_flint poly = _poly
-        cdef long length = fmpz_poly_length(poly.__poly)
+        cdef long length = fmpz_poly_length(poly._poly)
 
         cdef Py_ssize_t i
 
@@ -251,7 +251,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         finally:
             sig_off()
 
-        self.__allocated = 8
+        self._allocated = 8
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, _poly, shift_seed=None):
         """
@@ -268,10 +268,10 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         PowComputer_flint.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, _poly, shift_seed)
 
         cdef Polynomial_integer_dense_flint poly = _poly
-        cdef long length = fmpz_poly_length(poly.__poly)
+        cdef long length = fmpz_poly_length(poly._poly)
         self.deg = length - 1
 
-        fmpz_poly_set(self.modulus, poly.__poly)
+        fmpz_poly_set(self.modulus, poly._poly)
 
         cdef Py_ssize_t i
         cdef fmpz* coeffs = self.modulus.coeffs
@@ -296,7 +296,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         """
         cdef Py_ssize_t i
 
-        if self.__allocated >= 8:
+        if self._allocated >= 8:
             fmpz_clear(self.q)
             fmpz_poly_clear(self.modulus)
             fmpz_poly_clear(self.powhelper_oneunit)
@@ -367,7 +367,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
             return NotImplemented
         return False
 
-    cdef fmpz_poly_t* get_modulus(self, unsigned long k):
+    cdef fmpz_poly_t* get_modulus(self, unsigned long k) noexcept:
         """
         Return the defining polynomial reduced modulo `p^k`.
 
@@ -385,7 +385,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
                                       self.pow_fmpz_t_tmp(k)[0])
             return &(self._moduli[c])
 
-    cdef fmpz_poly_t* get_modulus_capdiv(self, unsigned long k):
+    cdef fmpz_poly_t* get_modulus_capdiv(self, unsigned long k) noexcept:
         """
         Returns the defining polynomial reduced modulo `p^a`, where
         `a` is the ceiling of `k/e`.
@@ -427,9 +427,9 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         x = R.gen()
         cdef Polynomial_integer_dense_flint ans = (<Polynomial_integer_dense_flint?>x)._new()
         if _n is None:
-            fmpz_poly_set(ans.__poly, self.modulus)
+            fmpz_poly_set(ans._poly, self.modulus)
         else:
-            fmpz_poly_set(ans.__poly, self.get_modulus(_n)[0])
+            fmpz_poly_set(ans._poly, self.get_modulus(_n)[0])
         return ans
 
     cdef _new_fmpz_poly(self, fmpz_poly_t value, var='x'):
@@ -440,7 +440,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         R = ZZ[var]
         x = R.gen()
         cdef Polynomial_integer_dense_flint ans = (<Polynomial_integer_dense_flint?>x)._new()
-        fmpz_poly_set(ans.__poly, value)
+        fmpz_poly_set(ans._poly, value)
         return ans
 
 cdef class PowComputer_flint_unram(PowComputer_flint_1step):
@@ -501,7 +501,7 @@ cdef class PowComputer_flint_unram(PowComputer_flint_1step):
         mpz_init(self.mpz_matmod)
         sig_off()
 
-        self.__allocated = 16
+        self._allocated = 16
 
     def __dealloc__(self):
         """
@@ -515,7 +515,7 @@ cdef class PowComputer_flint_unram(PowComputer_flint_1step):
             sage: del A
 
         """
-        if self.__allocated >= 16:
+        if self._allocated >= 16:
             fmpz_clear(self.fmpz_ccmp)
             fmpz_clear(self.fmpz_cval)
             fmpz_clear(self.fmpz_cinv)
@@ -641,13 +641,13 @@ def PowComputer_flint_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field
 
     """
     if prec_type == 'capped-rel':
-        from .qadic_flint_CR import PowComputer_
+        from sage.rings.padics.qadic_flint_CR import PowComputer_
     elif prec_type == 'capped-abs':
-        from .qadic_flint_CA import PowComputer_
+        from sage.rings.padics.qadic_flint_CA import PowComputer_
     elif prec_type == 'fixed-mod':
-        from .qadic_flint_FM import PowComputer_
+        from sage.rings.padics.qadic_flint_FM import PowComputer_
     elif prec_type == 'floating-point':
-        from .qadic_flint_FP import PowComputer_
+        from sage.rings.padics.qadic_flint_FP import PowComputer_
     else:
         raise ValueError("unknown prec_type `%s`" % prec_type)
     return PowComputer_(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly)

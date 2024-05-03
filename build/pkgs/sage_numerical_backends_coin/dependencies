@@ -1,4 +1,4 @@
-cbc cysignals $(SAGE_SRC)/sage/numerical/backends/generic_backend.pxd $(SAGE_SRC)/sage/cpython/string.pxd $(SAGE_SRC)/sage/cpython/string_impl.h | $(SAGERUNTIME) $(PYTHON_TOOLCHAIN) cython ipywidgets
+cbc cysignals $(SAGE_SRC)/sage/numerical/backends/generic_backend.pxd $(SAGE_SRC)/sage/cpython/string.pxd $(SAGE_SRC)/sage/cpython/string_impl.h | $(SAGERUNTIME) $(PYTHON_TOOLCHAIN) cython ipywidgets $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

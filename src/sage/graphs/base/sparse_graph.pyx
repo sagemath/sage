@@ -207,7 +207,7 @@ cdef enum:
     # or three nodes.
 
 
-cdef inline int compare(int a, int b):
+cdef inline int compare(int a, int b) noexcept:
     # Here we rely on the fact that C performs arithmetic on unsigned
     # ints modulo 2^wordsize.
     cdef unsigned int aa = a, bb = b  # signed ints lead to badness like a>b>c>a...
@@ -459,7 +459,7 @@ cdef class SparseGraph(CGraph):
         # self.active_vertices
         bitset_realloc(self.active_vertices, s_total)
 
-    cpdef inline bint is_directed(self):
+    cpdef inline bint is_directed(self) noexcept:
         r"""
         Return whether the graph is directed.
 
@@ -610,7 +610,7 @@ cdef class SparseGraph(CGraph):
     # Neighbor functions
     ###################################
 
-    cdef int out_neighbors_BTNode_unsafe(self, int u, SparseGraphBTNode *** p_pointers):
+    cdef int out_neighbors_BTNode_unsafe(self, int u, SparseGraphBTNode *** p_pointers) noexcept:
         """
         List the out-neighbors of a vertex as BTNodes
 
@@ -667,7 +667,7 @@ cdef class SparseGraph(CGraph):
         else:
             return -1
 
-    cdef inline SparseGraphBTNode* next_neighbor_BTNode_unsafe(self, SparseGraphBTNode** vertices, int u, int v):
+    cdef inline SparseGraphBTNode* next_neighbor_BTNode_unsafe(self, SparseGraphBTNode** vertices, int u, int v) noexcept:
         """
         Return the next neighbor of ``u`` that is greater than ``v``.
 
@@ -710,7 +710,7 @@ cdef class SparseGraph(CGraph):
             return temp
         return NULL
 
-    cpdef int out_degree(self, int u):
+    cpdef int out_degree(self, int u) noexcept:
         """
         Returns the out-degree of ``v``
 
@@ -732,7 +732,7 @@ cdef class SparseGraph(CGraph):
         """
         return self.out_degrees[u]
 
-    cdef int in_neighbors_BTNode_unsafe(self, int v, SparseGraphBTNode *** p_pointers):
+    cdef int in_neighbors_BTNode_unsafe(self, int v, SparseGraphBTNode *** p_pointers) noexcept:
         """
         List the in-neighbors of a vertex as BTNodes
 
@@ -789,7 +789,7 @@ cdef class SparseGraph(CGraph):
         else:
             return -1
 
-    cpdef int in_degree(self, int v):
+    cpdef int in_degree(self, int v) noexcept:
         """
         Returns the in-degree of ``v``
 
@@ -995,7 +995,7 @@ cdef class SparseGraph(CGraph):
             return -1
         return num_arcs
 
-    cdef SparseGraphLLNode* arc_labels_unsafe(self, int u, int v):
+    cdef SparseGraphLLNode* arc_labels_unsafe(self, int u, int v) noexcept:
         """
         Return the first label of arcs (u, v) or ``NULL`` if there are none.
 
@@ -1024,7 +1024,7 @@ cdef class SparseGraph(CGraph):
             return NULL
         return temp.labels
 
-    cdef inline int _del_arc_label_unsafe(self, int u, int v, int l, SparseGraphBTNode **parent):
+    cdef inline int _del_arc_label_unsafe(self, int u, int v, int l, SparseGraphBTNode **parent) noexcept:
         """
         .. WARNING::
 

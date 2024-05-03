@@ -17,12 +17,5 @@ if ! (sdh_configure --enable-interfaces=c,c++ $SAGE_CONFIGURE_GMP \
     sdh_configure --enable-interfaces=c++ $SAGE_CONFIGURE_GMP $PPL_CONFIGURE
 fi
 
-# Workaround to disable PPL's "watchdog timer", preventing it from clobbering
-# Cysignals' SIGALRM handler on Cygwin; see
-# https://github.com/sagemath/sage/issues/21190
-if [ "$UNAME" = "CYGWIN" ]; then
-    sed -i 's/#define HAVE_DECL_SETITIMER 1/#define HAVE_DECL_SETITIMER 0/' config.h
-fi
-
 sdh_make
 sdh_make_install

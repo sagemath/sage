@@ -2,7 +2,7 @@
 Cremona matrices
 """
 
-from ..eclib cimport scalar, addscalar
+from sage.libs.eclib cimport scalar, addscalar
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ

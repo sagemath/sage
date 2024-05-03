@@ -17,7 +17,7 @@ This provides two functions:
 
 TESTS::
 
-    sage: cython(                               # optional - sage.misc.cython
+    sage: cython(                                                                       # needs sage.misc.cython
     ....: '''
     ....: from sage.rings.integer_fake cimport Integer_AS_MPZ, is_Integer
     ....: from sage.rings.integer cimport Integer
@@ -46,7 +46,7 @@ cdef extern from "integer_fake.h":
     bint unlikely(bint c)       # Defined by Cython
 
 
-cdef inline bint is_Integer(x):
+cdef inline bint is_Integer(x) noexcept:
     global Integer
     if unlikely(Integer is NULL):
         import sage.rings.integer

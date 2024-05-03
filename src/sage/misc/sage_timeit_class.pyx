@@ -6,7 +6,7 @@ The ``timeit`` command
 This uses the function :func:`~sage.misc.sage_timeit.sage_timeit`.
 """
 
-from . import sage_timeit
+from sage.misc import sage_timeit
 
 
 class SageTimeit:
@@ -40,7 +40,7 @@ class SageTimeit:
 
     The input can contain newlines::
 
-        sage: timeit("a = 2\nb=131\nfactor(a^b-1)", number=25)
+        sage: timeit("a = 2\nb=131\nfactor(a^b-1)", number=25)                          # needs sage.libs.pari
         25 loops, best of 3: ... per loop
 
     .. SEEALSO:: :func:`runsnake`

@@ -21,7 +21,7 @@ other classes implementing solvers.
 #*****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from .generic_sdp_backend cimport GenericSDPBackend
+from sage.numerical.backends.generic_sdp_backend cimport GenericSDPBackend
 
 cdef class MatrixSDPBackend(GenericSDPBackend):
 
@@ -317,7 +317,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
                                        name=None if names is None else names[i])
 
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -335,7 +335,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         return len(self.objective_function)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -354,7 +354,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         return len(self.matrices_dim)
 
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 

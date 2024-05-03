@@ -66,8 +66,8 @@ class LatticePosets(Category):
 
             EXAMPLES::
 
-                sage: D = LatticePoset((divisors(30), attrcall("divides")))             # optional - sage.combinat
-                sage: D.meet( D(6), D(15) )                                             # optional - sage.combinat
+                sage: D = LatticePoset((divisors(30), attrcall("divides")))             # needs sage.graphs sage.modules
+                sage: D.meet( D(6), D(15) )                                             # needs sage.graphs sage.modules
                 3
             """
 
@@ -82,7 +82,7 @@ class LatticePosets(Category):
 
             EXAMPLES::
 
-                sage: D = LatticePoset((divisors(60), attrcall("divides")))             # optional - sage.combinat
-                sage: D.join( D(6), D(10) )                                             # optional - sage.combinat
+                sage: D = LatticePoset((divisors(60), attrcall("divides")))             # needs sage.graphs sage.modules
+                sage: D.join( D(6), D(10) )                                             # needs sage.graphs sage.modules
                 30
             """

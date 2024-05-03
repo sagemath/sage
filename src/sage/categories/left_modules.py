@@ -8,8 +8,9 @@ Left modules
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_over_base_ring
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+
 
 #?class LeftModules(Category_over_base_rng):
 class LeftModules(Category_over_base_ring):

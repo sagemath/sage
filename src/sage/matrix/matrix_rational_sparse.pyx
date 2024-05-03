@@ -35,8 +35,8 @@ from cpython.sequence cimport *
 
 from sage.rings.rational cimport Rational
 from sage.rings.integer  cimport Integer
-from .matrix cimport Matrix
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix cimport Matrix
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
@@ -51,8 +51,8 @@ cimport sage.structure.element
 
 import sage.matrix.matrix_space
 
-from .matrix_integer_sparse cimport Matrix_integer_sparse
-from .matrix_rational_dense cimport Matrix_rational_dense
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
@@ -268,7 +268,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_clear(s)
         return ans
 
-
     ########################################################################
     # def _pickle(self):
     # def _unpickle(self, data, int version):   # use version >= 0
@@ -281,20 +280,21 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _multiply_classical(left, matrix.Matrix _right):
     # def _list(self):
 
-# TODO
-##     cpdef _lmul_(self, Element right):
-##         """
-##         EXAMPLES::
-##
-##             sage: a = matrix(QQ,2,range(6))
-##             sage: (3/4) * a
-##             [   0  3/4  3/2]
-##             [ 9/4    3 15/4]
-##         """
+    # TODO
+    ##     cpdef _lmul_(self, Element right):
+    ##         """
+    ##         EXAMPLES::
+    ##
+    ##             sage: a = matrix(QQ,2,range(6))
+    ##             sage: (3/4) * a
+    ##             [   0  3/4  3/2]
+    ##             [ 9/4    3 15/4]
+    ##         """
 
     def _dict(self):
         """
         Unsafe version of the dict method, mainly for internal use.
+
         This may return the dict of elements, but as an *unsafe*
         reference to the underlying dict of the object.  It might
         be dangerous if you change entries of the returned dict.
@@ -303,16 +303,15 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         if d is not None:
             return d
 
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         d = {}
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 x = Rational()
                 mpq_set((<Rational>x).value, self._matrix[i].entries[j])
-                d[(int(i),int(self._matrix[i].positions[j]))] = x
+                d[(int(i), int(self._matrix[i].positions[j]))] = x
         self.cache('dict', d)
         return d
-
 
     ########################################################################
     # LEVEL 3 functionality (Optional)
@@ -325,7 +324,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _nonzero_positions_by_row(self, copy=True):
         """
-        Returns the list of pairs (i,j) such that self[i,j] != 0.
+        Return the list of pairs (i,j) such that self[i,j] != 0.
 
         It is safe to change the resulting list (unless you give the option copy=False).
 
@@ -397,17 +396,15 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         return 0
 
     cdef int mpz_denom(self, mpz_t d) except -1:
-        mpz_set_si(d,1)
+        mpz_set_si(d, 1)
         cdef Py_ssize_t i, j
-        cdef mpq_vector *v
 
         sig_on()
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._matrix[i].num_nonzero:
+        for i in range(self._nrows):
+            for j in range(self._matrix[i].num_nonzero):
                 mpz_lcm(d, d, mpq_denref(self._matrix[i].entries[j]))
         sig_off()
         return 0
-
 
     def denominator(self):
         """
@@ -415,7 +412,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         OUTPUT:
 
-            -- Sage Integer
+        - Sage Integer
 
         EXAMPLES::
 
@@ -510,7 +507,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
 
-        :trac:`10319` has been fixed::
+        :issue:`10319` has been fixed::
 
             sage: m = Matrix(QQ, [1], sparse=True); m.echelonize()
             sage: m = Matrix(QQ, [1], sparse=True); m.echelonize(); m
@@ -586,7 +583,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - height_guess -- integer or None
         - proof -- boolean (default: True)
         """
-        from .misc import matrix_rational_echelon_form_multimodular
+        from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
         E, pivots = matrix_rational_echelon_form_multimodular(self,
                                  height_guess=height_guess, proof=proof)

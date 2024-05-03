@@ -325,7 +325,7 @@ class QuiverRepHom(CallMorphism):
             sage: h(S.gens()[1]) == y
             True
 
-        The following was an issue during work on :trac:`12630`::
+        The following was an issue during work on :issue:`12630`::
 
             sage: Q = DiGraph({1: {}}).path_semigroup()
             sage: M = Q.I(GF(3), 1)
@@ -616,7 +616,7 @@ class QuiverRepHom(CallMorphism):
 
     def _assert_valid_hom(self):
         """
-        Raise a ``ValueError`` if the homomorphism is not well defined.
+        Raise a :class:`ValueError` if the homomorphism is not well defined.
 
         Specifically it checks that the domain and codomains of the maps are
         correct and that the edge diagrams commute.

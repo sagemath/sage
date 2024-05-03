@@ -16,10 +16,10 @@ import sage.structure.sequence
 
 
 cdef class Matrix_dense(matrix.Matrix):
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
 
     def __copy__(self):
@@ -32,7 +32,7 @@ cdef class Matrix_dense(matrix.Matrix):
             A.subdivide(*self.subdivisions())
         return A
 
-    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         self.set_unsafe(i, j, value)
 
     def _pickle(self):
@@ -72,8 +72,9 @@ cdef class Matrix_dense(matrix.Matrix):
 
         TESTS:
 
-        Check :trac:`27629`::
+        Check :issue:`27629`::
 
+            sage: # needs sage.symbolic
             sage: var('x')
             x
             sage: assume(x, 'real')
@@ -270,8 +271,8 @@ cdef class Matrix_dense(matrix.Matrix):
 
         EXAMPLES::
 
-            sage: m = matrix(2, [x^i for i in range(4)])
-            sage: m._derivative(x)
+            sage: m = matrix(2, [x^i for i in range(4)])                                # needs sage.symbolic
+            sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
         """

@@ -184,7 +184,7 @@ def test_add_commutes(trials, verbose=False):
         b = QQ.random_element()
         if verbose:
             print("a == {}, b == {} ...".format(a, b))
-        assert(a + b == b + a)
+        assert a + b == b + a
         if verbose:
             print("Passes!")
 
@@ -258,6 +258,6 @@ def test_add_is_mul(trials, verbose=False):
         b = QQ.random_element()
         if verbose:
             print("a == {}, b == {} ...".format(a, b))
-        assert(a + b == a * b)
+        assert a + b == a * b
         if verbose:
             print("Passes!")

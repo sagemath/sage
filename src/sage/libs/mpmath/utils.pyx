@@ -16,7 +16,7 @@ from sage.libs.gmp.all cimport *
 
 from sage.rings.real_mpfr cimport RealField
 
-cpdef int bitcount(n):
+cpdef int bitcount(n) noexcept:
     """
     Bitcount of a Sage Integer or Python int/long.
 
@@ -211,6 +211,7 @@ cdef mpfr_to_mpfval(mpfr_t value):
     bc = mpz_sizeinbase(man.value, 2)
     return (sign, man, int(exp), bc)
 
+
 def mpmath_to_sage(x, prec):
     """
     Convert any mpmath number (mpf or mpc) to a Sage RealNumber or
@@ -280,6 +281,7 @@ def mpmath_to_sage(x, prec):
     else:
         raise TypeError("cannot convert %r to Sage", x)
 
+
 def sage_to_mpmath(x, prec):
     """
     Convert any Sage number that can be coerced into a RealNumber
@@ -339,6 +341,7 @@ def sage_to_mpmath(x, prec):
     if isinstance(x, dict):
         return dict([(k, sage_to_mpmath(v, prec)) for (k, v) in x.items()])
     return x
+
 
 def call(func, *args, **kwargs):
     """
@@ -409,12 +412,12 @@ def call(func, *args, **kwargs):
         sage: type(_)
         <class 'sage.rings.real_double...RealDoubleElement...'>
 
-    Check that :trac:`11885` is fixed::
+    Check that :issue:`11885` is fixed::
 
         sage: a.call(a.ei, 1.0r, parent=float)
         1.8951178163559366
 
-    Check that :trac:`14984` is fixed::
+    Check that :issue:`14984` is fixed::
 
         sage: a.call(a.log, -1.0r, parent=float)
         3.141592653589793j

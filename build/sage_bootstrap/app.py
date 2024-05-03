@@ -24,6 +24,8 @@ import os
 import logging
 log = logging.getLogger()
 
+from collections import defaultdict
+
 from sage_bootstrap.package import Package
 from sage_bootstrap.tarball import Tarball, FileNotMirroredError
 from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
@@ -53,20 +55,20 @@ class Application(object):
         """
         Print a list of all available packages
 
-        $ sage --package list | sort
+        $ sage --package list
         4ti2
-        arb
-        autotools
+        _bootstrap
+        _develop
         [...]
         zlib
 
         $ sage -package list --has-file=spkg-configure.m4 :experimental:
         perl_term_readline_gnu
 
-        $ sage -package list --has-file=spkg-configure.m4 --has-file=distros/debian.txt | sort
-        arb
-        boost_cropped
-        brial
+        $ sage -package list --has-file=spkg-configure.m4 --has-file=distros/debian.txt
+        4ti2
+        _develop
+        _prereq
         [...]
         zlib
         """
@@ -74,6 +76,111 @@ class Application(object):
         pc = PackageClass(*package_classes, **filters)
         for pkg_name in pc.names:
             print(pkg_name)
+
+    def properties(self, *package_classes, **kwds):
+        """
+        Show the properties of given packages
+
+        $ sage --package properties --format shell maxima
+        path_maxima='........./build/pkgs/maxima'
+        version_with_patchlevel_maxima='5.46.0'
+        type_maxima='standard'
+        source_maxima='normal'
+        trees_maxima='SAGE_LOCAL'
+        """
+        props = kwds.pop('props', ['path', 'version_with_patchlevel', 'type', 'source', 'trees'])
+        format = kwds.pop('format', 'plain')
+        log.debug('Looking up properties')
+        pc = PackageClass(*package_classes)
+        for package_name in pc.names:
+            package = Package(package_name)
+            if len(pc.names) > 1:
+                if format == 'plain':
+                    print("{0}:".format(package_name))
+            for p in props:
+                value = getattr(package, p)
+                if value is None:
+                    if p.startswith('version'):
+                        value = 'none'
+                    else:
+                        value = ''
+                if format == 'plain':
+                    print("        {0:28} {1}".format(p + ":", value))
+                else:
+                    print("{0}_{1}='{2}'".format(p, package_name, value))
+
+    def dependencies(self, *package_classes, **kwds):
+        """
+        Find the dependencies given package names
+
+        $ sage --package dependencies maxima --runtime --order-only --format=shell
+        order_only_deps_maxima='info'
+        runtime_deps_maxima='ecl'
+        """
+        types = kwds.pop('types', None)
+        format = kwds.pop('format', 'plain')
+        log.debug('Looking up dependencies')
+        pc = PackageClass(*package_classes)
+        if format in ['plain', 'rst']:
+            if types is None:
+                typesets = [['order_only', 'runtime']]
+            else:
+                typesets = [[t] for t in types]
+        elif format == 'shell':
+            if types is None:
+                types = ['order_only', 'optional', 'runtime', 'check']
+            typesets = [[t] for t in types]
+        else:
+            raise ValueError('format must be one of "plain", "rst", and "shell"')
+
+        for package_name in pc.names:
+            package = Package(package_name)
+            if len(pc.names) > 1:
+                if format == 'plain':
+                    print("{0}:".format(package_name))
+                    indent1 = "        "
+                elif format == 'rst':
+                    print("\n{0}\n{1}\n".format(package_name, "~" * len(package_name)))
+                    indent1 = ""
+            else:
+                indent1 = ""
+
+            for typeset in typesets:
+                if len(typesets) > 1:
+                    if format == 'plain':
+                        print(indent1 + "{0}: ".format('/'.join(typeset)))
+                        indent2 = indent1 + "        "
+                    elif format == 'rst':
+                        print("\n" + indent1 + ".. tab:: {0}\n".format('/'.join(typeset)))
+                        indent2 = indent1 + "    "
+                else:
+                    indent2 = indent1
+
+                deps = []
+                for t in typeset:
+                    deps.extend(getattr(package, 'dependencies_' + t))
+                deps = sorted(set(deps))
+
+                if format in ['plain', 'rst']:
+                    for dep in deps:
+                        if '/' in dep:
+                            # Suppress dependencies on source files, e.g. of the form $(SAGE_ROOT)/..., $(SAGE_SRC)/...
+                            continue
+                        if dep == 'FORCE':
+                            # Suppress FORCE
+                            continue
+                        if dep.startswith('$('):
+                            # Dependencies like $(BLAS)
+                            print(indent2 + "- {0}".format(dep))
+                        elif format == 'rst' and Package(dep).has_file('SPKG.rst'):
+                            # This RST label is set in src/doc/bootstrap
+                            print(indent2 + "- :ref:`spkg_{0}`".format(dep))
+                        else:
+                            print(indent2 + "- {0}".format(dep))
+                elif format == 'shell':
+                    # We single-quote the values because dependencies
+                    # may contain Makefile variable substitutions
+                    print("{0}_deps_{1}='{2}'".format(t, package_name, ' '.join(deps)))
 
     def name(self, tarball_filename):
         """
@@ -151,7 +258,7 @@ class Application(object):
         pkg = Package(package_name)
         dist_name = pkg.distribution_name
         if dist_name is None:
-            log.debug('%s does not have Python distribution info in install-requires.txt' % pkg)
+            log.debug('%s does not have Python distribution info in version_requirements.txt' % pkg)
             return
         if pkg.tarball_pattern.endswith('.whl'):
             source = 'wheel'
@@ -172,7 +279,7 @@ class Application(object):
             'cypari'   # Name conflict
         ]
         # Restrict to normal Python packages
-        pc = PackageClass(package_name_or_class, has_files=['checksums.ini', 'install-requires.txt'])
+        pc = PackageClass(package_name_or_class, has_files=['checksums.ini', 'version_requirements.txt'])
         if not pc.names:
             log.warn('nothing to do (does not name a normal Python package)')
         for package_name in sorted(pc.names):
@@ -273,7 +380,7 @@ class Application(object):
             update.fix_checksum()
 
     def create(self, package_name, version=None, tarball=None, pkg_type=None, upstream_url=None,
-               description=None, license=None, upstream_contact=None, pypi=False, source='normal'):
+               description=None, license=None, upstream_contact=None, pypi=False, source=None):
         """
         Create a package
 
@@ -288,6 +395,14 @@ class Application(object):
         if '-' in package_name:
             raise ValueError('package names must not contain dashes, use underscore instead')
         if pypi:
+            if source is None:
+                try:
+                    if PyPiVersion(package_name, source='wheel').tarball.endswith('-none-any.whl'):
+                        source = 'wheel'
+                    else:
+                        source = 'normal'
+                except PyPiError:
+                    source = 'normal'
             pypi_version = PyPiVersion(package_name, source=source)
             if source == 'normal':
                 if not tarball:
@@ -312,6 +427,10 @@ class Application(object):
                 license = pypi_version.license
             if not upstream_contact:
                 upstream_contact = pypi_version.package_url
+        if upstream_url and not tarball:
+            tarball = upstream_url.rpartition('/')[2]
+        if tarball and source is None:
+            source = 'normal'
         if tarball and not pkg_type:
             # If we set a tarball, also make sure to create a "type" file,
             # so that subsequent operations (downloading of tarballs) work.
@@ -354,3 +473,63 @@ class Application(object):
                     os.remove(filepath)
                     count += 1
         print('{} files were removed from the {} directory'.format(count, SAGE_DISTFILES))
+
+    def metrics_cls(self, *package_classes):
+        """
+        Show the metrics of given packages
+
+        $ sage --package metrics :standard:
+        has_file_distros_arch_txt=131
+        has_file_distros_conda_txt=216
+        has_file_distros_debian_txt=125
+        has_file_distros_fedora_txt=138
+        has_file_distros_gentoo_txt=181
+        has_file_distros_homebrew_txt=61
+        has_file_distros_macports_txt=129
+        has_file_distros_nix_txt=51
+        has_file_distros_opensuse_txt=146
+        has_file_distros_slackware_txt=25
+        has_file_distros_void_txt=184
+        has_file_patches=35
+        has_file_spkg_check=59
+        has_file_spkg_configure_m4=222
+        has_file_spkg_install=198
+        has_tarball_upstream_url=231
+        line_count_file_patches=22561
+        line_count_file_spkg_check=402
+        line_count_file_spkg_configure_m4=2792
+        line_count_file_spkg_install=2960
+        packages=272
+        type_standard=272
+        """
+        log.debug('Computing metrics')
+        metrics = defaultdict(int)
+        pc = PackageClass(*package_classes)
+        for package_name in pc.names:
+            package = Package(package_name)
+            metrics['packages'] += 1
+            metrics['type_' + package.type] += 1
+            for filenames in [['spkg-configure.m4'],
+                              ['spkg-install', 'spkg-install.in'],
+                              ['spkg-check', 'spkg-check.in'],
+                              ['distros/arch.txt'],
+                              ['distros/conda.txt'],
+                              ['distros/debian.txt'],
+                              ['distros/fedora.txt'],
+                              ['distros/gentoo.txt'],
+                              ['distros/homebrew.txt'],
+                              ['distros/macports.txt'],
+                              ['distros/nix.txt'],
+                              ['distros/opensuse.txt'],
+                              ['distros/slackware.txt'],
+                              ['distros/void.txt'],
+                              ['patches']]:
+                key = filenames[0].replace('.', '_').replace('-', '_').replace('/', '_')
+                metrics['has_file_' + key] += int(any(package.has_file(filename)
+                                                      for filename in filenames))
+                if not key.startswith('distros_'):
+                    metrics['line_count_file_' + key] += sum(package.line_count_file(filename)
+                                                             for filename in filenames)
+            metrics['has_tarball_upstream_url'] += int(bool(package.tarball_upstream_url))
+        for key, value in sorted(metrics.items()):
+            print('{0}={1}'.format(key, value))

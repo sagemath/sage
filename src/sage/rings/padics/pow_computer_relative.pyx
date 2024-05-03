@@ -41,6 +41,7 @@ cdef class PowComputer_relative(PowComputer_class):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
         sage: R.<a> = ZqFM(25)
         sage: S.<x> = R[]
@@ -52,7 +53,7 @@ cdef class PowComputer_relative(PowComputer_class):
     TESTS::
 
         sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative
-        sage: isinstance(PC, PowComputer_relative)
+        sage: isinstance(PC, PowComputer_relative)                                      # needs sage.libs.flint
         True
 
     """
@@ -60,6 +61,7 @@ cdef class PowComputer_relative(PowComputer_class):
         r"""
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]
@@ -69,18 +71,19 @@ cdef class PowComputer_relative(PowComputer_class):
             sage: PC = PowComputer_relative_maker(3, 20, 20, 60, False, f, shift_seed, 'fixed-mod')
 
         """
-        self.__allocated = 4
+        self._allocated = 4
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed):
         r"""
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
             sage: RFP = R.change(field=False, show_prec=False, type='floating-point')
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
-            sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod') # indirect doctest
+            sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')  # indirect doctest
             sage: TestSuite(PC).run()
 
         """
@@ -105,6 +108,7 @@ cdef class PowComputer_relative(PowComputer_class):
         r"""
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]
@@ -122,13 +126,14 @@ cdef class PowComputer_relative(PowComputer_class):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]
             sage: f = x^3 - 5*x - 5*a
             sage: RFP = R.change(field=False, show_prec=False, type='floating-point')
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
-            sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod') # indirect doctest
+            sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')  # indirect doctest
             sage: loads(dumps(PC)) == PC
             True
         """
@@ -140,24 +145,27 @@ cdef class PowComputer_relative(PowComputer_class):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25,print_pos=False,show_prec=False)
             sage: S.<x> = R[]
             sage: f = x^3 + 5*x + 5*a
             sage: RFP = R.change(field=False, show_prec=False, type='floating-point')
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
-            sage: PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod') # indirect doctest
+            sage: PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')  # indirect doctest
             Relative PowComputer for modulus x^3 + 5*x + a*5
 
         """
-        return "Relative PowComputer for modulus %s"%(self.modulus,)
+        return "Relative PowComputer for modulus %s" % (self.modulus,)
 
-    cdef unsigned long capdiv(self, unsigned long n):
+    cdef unsigned long capdiv(self, unsigned long n) noexcept:
         r"""
         Return `\lceil n/e \rceil`.
         """
-        if self.e == 1: return n
-        if n == 0: return 0
+        if self.e == 1:
+            return n
+        if n == 0:
+            return 0
         return (n - 1)/self.e + 1
 
     def polynomial(self, n=None, var='x'):
@@ -167,12 +175,13 @@ cdef class PowComputer_relative(PowComputer_class):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
             sage: RFP = R.change(field=False, show_prec=False, type='floating-point')
             sage: shift_seed = (-f[:3] // 5).change_ring(RFP)
-            sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod') # indirect doctest
+            sage: PC = PowComputer_relative_maker(5, 20, 20, 60, False, f, shift_seed, 'fixed-mod')  # indirect doctest
             sage: PC.polynomial() is f
             True
 
@@ -188,6 +197,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_eis, PowComputer_relative_maker
         sage: R.<a> = ZqFM(25)
         sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
@@ -197,7 +207,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
     TESTS::
 
-        sage: isinstance(PC, PowComputer_relative_eis)
+        sage: isinstance(PC, PowComputer_relative_eis)                                  # needs sage.libs.flint
         True
 
     """
@@ -205,6 +215,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
         r"""
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
@@ -234,6 +245,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
             sage: R.<a> = ZqFM(25,3)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
@@ -281,6 +293,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(25, prec=3)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
             sage: W.<w> = R.ext(f)
@@ -313,6 +326,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(25, prec=3)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
             sage: W.<w> = R.ext(f)
@@ -346,6 +360,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(25, prec=3)
             sage: S.<x> = R[]; f = x^3 - 5*x - 5*a
             sage: W.<w> = R.ext(f)
@@ -403,6 +418,7 @@ def PowComputer_relative_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_fi
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
         sage: R.<a> = ZqFM(25, prec=2)
         sage: S.<x> = R[]

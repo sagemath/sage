@@ -328,7 +328,7 @@ class PuncturedCode(AbstractLinearCode):
         C = self.original_code()
         pts = copy(self.punctured_positions())
         list_pts = list(pts)
-        while(isinstance(C, PuncturedCode)):
+        while isinstance(C, PuncturedCode):
             cur_pts = list(C.punctured_positions())
             list_len = len(list_pts)
             for p in cur_pts:
@@ -708,6 +708,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
             return diff // 2
         elif "error-erasure" in D.decoder_type() and number_erasures is None:
             raise ValueError("You must provide the number of erasures")
+
 
 ####################### registration ###############################
 

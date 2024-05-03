@@ -10,10 +10,10 @@ Algebra ideals
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from .algebra_modules import AlgebraModules
-from .algebras import Algebras
-from .rings import Rings
-from .category_types import Category_ideal
+from sage.categories.algebra_modules import AlgebraModules
+from sage.categories.algebras import Algebras
+from sage.categories.category_types import Category_ideal
+from sage.categories.rings import Rings
 
 
 class AlgebraIdeals(Category_ideal):
@@ -81,8 +81,8 @@ class AlgebraIdeals(Category_ideal):
             sage: AlgebraIdeals(QQ['x']).super_categories()
             [Category of algebra modules
               over Univariate Polynomial Ring in x over Rational Field]
-            sage: C = AlgebraIdeals(FreeAlgebra(QQ, 2, 'a,b'))                          # optional - sage.combinat sage.modules
-            sage: C.super_categories()                                                  # optional - sage.combinat sage.modules
+            sage: C = AlgebraIdeals(FreeAlgebra(QQ, 2, 'a,b'))                          # needs sage.combinat sage.modules
+            sage: C.super_categories()                                                  # needs sage.combinat sage.modules
             []
 
         """

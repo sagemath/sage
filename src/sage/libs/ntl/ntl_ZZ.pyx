@@ -269,7 +269,7 @@ cdef class ntl_ZZ():
         """
         return int(self._integer_())
 
-    cdef int get_as_int(ntl_ZZ self):
+    cdef int get_as_int(ntl_ZZ self) noexcept:
         r"""
         Returns value as C int.
 
@@ -312,7 +312,7 @@ cdef class ntl_ZZ():
         ZZ_to_mpz(ans.value, &self.x)
         return ans
 
-    cdef void set_from_int(ntl_ZZ self, int value):
+    cdef void set_from_int(ntl_ZZ self, int value) noexcept:
         r"""
         Sets the value from a C int.
 
@@ -420,6 +420,7 @@ def unpickle_class_value(cls, x):
     """
     return cls(x)
 
+
 def unpickle_class_args(cls, x):
     """
     Here for unpickling.
@@ -432,6 +433,7 @@ def unpickle_class_args(cls, x):
         <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
     """
     return cls(*x)
+
 
 # Random-number generation
 def ntl_setSeed(x=None):
@@ -509,6 +511,7 @@ def randomBnd(q):
     sig_off()
     return ans
 
+
 def randomBits(long n):
     r"""
     Return a pseudo-random number in the range `[0, 2^n)`.
@@ -523,7 +526,8 @@ def randomBits(long n):
         True
 
     AUTHOR:
-        -- Didier Deshommes <dfdeshom@gmail.com>
+
+    - Didier Deshommes <dfdeshom@gmail.com>
     """
     current_randstate().set_seed_ntl(False)
 

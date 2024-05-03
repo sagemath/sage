@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integer compositions
 
@@ -45,6 +44,9 @@ from .integer_lists import IntegerListsLex
 from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.misc.persist import register_unpickle_override
+
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.combinat.partition", "Partition")
 
 
 class Composition(CombinatorialElement):
@@ -172,18 +174,19 @@ class Composition(CombinatorialElement):
         """
         TESTS::
 
-            sage: ascii_art(Compositions(4).list())                                     # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: ascii_art(Compositions(4).list())
             [ *                                  ]
             [ *  **   *        *                 ]
             [ *  *   **  ***   *   **    *       ]
             [ *, * , * , *  , **, ** , ***, **** ]
-            sage: Partitions.options(diagram_str='#', convention="French")              # optional - sage.combinat
-            sage: ascii_art(Compositions(4).list())                                     # optional - sage.combinat
+            sage: Partitions.options(diagram_str='#', convention="French")
+            sage: ascii_art(Compositions(4).list())
             [ #                                  ]
             [ #  #   #        ##                 ]
             [ #  #   ##  #     #  ##   ###       ]
             [ #, ##,  #, ###,  #,  ##,   #, #### ]
-            sage: Partitions.options._reset()                                           # optional - sage.combinat
+            sage: Partitions.options._reset()
         """
         from sage.typeset.ascii_art import ascii_art
         return ascii_art(self.to_skew_partition())
@@ -192,20 +195,21 @@ class Composition(CombinatorialElement):
         """
         TESTS::
 
-            sage: unicode_art(Compositions(4).list())                                   # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: unicode_art(Compositions(4).list())
             ⎡ ┌┐                                         ⎤
             ⎢ ├┤  ┌┬┐   ┌┐         ┌┐                    ⎥
             ⎢ ├┤  ├┼┘  ┌┼┤  ┌┬┬┐   ├┤   ┌┬┐    ┌┐        ⎥
             ⎢ ├┤  ├┤   ├┼┘  ├┼┴┘  ┌┼┤  ┌┼┼┘  ┌┬┼┤  ┌┬┬┬┐ ⎥
             ⎣ └┘, └┘ , └┘ , └┘  , └┴┘, └┴┘ , └┴┴┘, └┴┴┴┘ ⎦
-            sage: Partitions.options(diagram_str='#', convention="French")              # optional - sage.combinat
-            sage: unicode_art(Compositions(4).list())                                   # optional - sage.combinat
+            sage: Partitions.options(diagram_str='#', convention="French")
+            sage: unicode_art(Compositions(4).list())
             ⎡ ┌┐                                         ⎤
             ⎢ ├┤  ┌┐   ┌┐         ┌┬┐                    ⎥
             ⎢ ├┤  ├┤   ├┼┐  ┌┐    └┼┤  ┌┬┐   ┌┬┬┐        ⎥
             ⎢ ├┤  ├┼┐  └┼┤  ├┼┬┐   ├┤  └┼┼┐  └┴┼┤  ┌┬┬┬┐ ⎥
             ⎣ └┘, └┴┘,  └┘, └┴┴┘,  └┘,  └┴┘,   └┘, └┴┴┴┘ ⎦
-            sage: Partitions.options._reset()                                           # optional - sage.combinat
+            sage: Partitions.options._reset()
         """
         from sage.typeset.unicode_art import unicode_art
         return unicode_art(self.to_skew_partition())
@@ -254,7 +258,7 @@ class Composition(CombinatorialElement):
         The ribbon shape of the conjugate of `I` is the conjugate of
         the ribbon shape of `I`::
 
-            sage: all( I.conjugate().to_skew_partition()                                # optional - sage.combinat
+            sage: all( I.conjugate().to_skew_partition()                                # needs sage.combinat
             ....:      == I.to_skew_partition().conjugate()
             ....:      for I in Compositions(4) )
             True
@@ -1178,14 +1182,13 @@ class Composition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Composition([2,1,3]).to_partition()                                   # optional - sage.combinat
+            sage: Composition([2,1,3]).to_partition()                                   # needs sage.combinat
             [3, 2, 1]
-            sage: Composition([4,2,2]).to_partition()                                   # optional - sage.combinat
+            sage: Composition([4,2,2]).to_partition()                                   # needs sage.combinat
             [4, 2, 2]
-            sage: Composition([]).to_partition()                                        # optional - sage.combinat
+            sage: Composition([]).to_partition()                                        # needs sage.combinat
             []
         """
-        from sage.combinat.partition import Partition
         return Partition(sorted(self, reverse=True))
 
     def to_skew_partition(self, overlap=1):
@@ -1202,15 +1205,16 @@ class Composition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Composition([3,4,1]).to_skew_partition()                              # optional - sage.combinat
+            sage: # needs sage.combinat
+            sage: Composition([3,4,1]).to_skew_partition()
             [6, 6, 3] / [5, 2]
-            sage: Composition([3,4,1]).to_skew_partition(overlap=0)                     # optional - sage.combinat
+            sage: Composition([3,4,1]).to_skew_partition(overlap=0)
             [8, 7, 3] / [7, 3]
-            sage: Composition([]).to_skew_partition()                                   # optional - sage.combinat
+            sage: Composition([]).to_skew_partition()
             [] / []
-            sage: Composition([1,2]).to_skew_partition()                                # optional - sage.combinat
+            sage: Composition([1,2]).to_skew_partition()
             [2, 1] / []
-            sage: Composition([2,1]).to_skew_partition()                                # optional - sage.combinat
+            sage: Composition([2,1]).to_skew_partition()
             [2, 2] / [1]
         """
         from sage.combinat.skew_partition import SkewPartition
@@ -1264,9 +1268,9 @@ class Composition(CombinatorialElement):
 
             sage: alph = Composition([2,2])
             sage: beta = Composition([1,1,3])
-            sage: S = alph.shuffle_product(beta); S                                     # optional - sage.combinat
+            sage: S = alph.shuffle_product(beta); S                                     # needs sage.combinat
             Shuffle product of [2, 2] and [1, 1, 3]
-            sage: S.list()                                                              # optional - sage.combinat
+            sage: S.list()                                                              # needs sage.combinat
             [[2, 2, 1, 1, 3], [2, 1, 2, 1, 3], [2, 1, 1, 2, 3], [2, 1, 1, 3, 2],
              [1, 2, 2, 1, 3], [1, 2, 1, 2, 3], [1, 2, 1, 3, 2], [1, 1, 2, 2, 3],
              [1, 1, 2, 3, 2], [1, 1, 3, 2, 2]]
@@ -1275,9 +1279,9 @@ class Composition(CombinatorialElement):
 
             sage: alph = Composition([2,2])
             sage: beta = Composition([1,1,3])
-            sage: O = alph.shuffle_product(beta, overlap=True); O                       # optional - sage.combinat
+            sage: O = alph.shuffle_product(beta, overlap=True); O                       # needs sage.combinat
             Overlapping shuffle product of [2, 2] and [1, 1, 3]
-            sage: O.list()                                                              # optional - sage.combinat
+            sage: O.list()                                                              # needs sage.combinat
             [[2, 2, 1, 1, 3], [2, 1, 2, 1, 3], [2, 1, 1, 2, 3], [2, 1, 1, 3, 2],
              [1, 2, 2, 1, 3], [1, 2, 1, 2, 3], [1, 2, 1, 3, 2], [1, 1, 2, 2, 3],
              [1, 1, 2, 3, 2], [1, 1, 3, 2, 2],
@@ -1290,20 +1294,21 @@ class Composition(CombinatorialElement):
         composition more than once since a composition can be a shuffle of two
         compositions in several ways. For example::
 
+            sage: # needs sage.combinat
             sage: w1 = Composition([1])
-            sage: S = w1.shuffle_product(w1); S                                         # optional - sage.combinat
+            sage: S = w1.shuffle_product(w1); S
             Shuffle product of [1] and [1]
-            sage: S.list()                                                              # optional - sage.combinat
+            sage: S.list()
             [[1, 1], [1, 1]]
-            sage: O = w1.shuffle_product(w1, overlap=True); O                           # optional - sage.combinat
+            sage: O = w1.shuffle_product(w1, overlap=True); O
             Overlapping shuffle product of [1] and [1]
-            sage: O.list()                                                              # optional - sage.combinat
+            sage: O.list()
             [[1, 1], [1, 1], [2]]
 
         TESTS::
 
             sage: empty = Composition([])
-            sage: empty.shuffle_product(empty).list()                                   # optional - sage.combinat
+            sage: empty.shuffle_product(empty).list()                                   # needs sage.combinat
             [[]]
         """
         if overlap:
@@ -1400,10 +1405,10 @@ class Composition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: SM = Composition([1,2,2]).specht_module(QQ); SM                       # optional - sage.combinat sage.modules
+            sage: SM = Composition([1,2,2]).specht_module(QQ); SM                       # needs sage.combinat sage.modules
             Specht module of [(0, 0), (1, 0), (1, 1), (2, 0), (2, 1)] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()                                        # optional - sage.combinat sage.modules
-            sage: s(SM.frobenius_image())                                               # optional - sage.combinat sage.modules
+            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.combinat sage.modules
+            sage: s(SM.frobenius_image())                                               # needs sage.combinat sage.modules
             s[2, 2, 1]
         """
         from sage.combinat.specht_module import SpechtModule
@@ -1412,10 +1417,7 @@ class Composition(CombinatorialElement):
             from sage.rings.rational_field import QQ
             base_ring = QQ
         R = SymmetricGroupAlgebra(base_ring, sum(self))
-        cells = []
-        for i, row in enumerate(self):
-            for j in range(row):
-                cells.append((i, j))
+        cells = [(i, j) for i, row in enumerate(self) for j in range(row)]
         return SpechtModule(R, cells)
 
     def specht_module_dimension(self, base_ring=None):
@@ -1428,13 +1430,14 @@ class Composition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Composition([1,2,2]).specht_module_dimension()                        # optional - sage.combinat sage.modules
+            sage: Composition([1,2,2]).specht_module_dimension()                        # needs sage.combinat sage.modules
             5
-            sage: Composition([1,2,2]).specht_module_dimension(GF(2))                   # optional - sage.combinat sage.modules sage.rings.finite_rings
+            sage: Composition([1,2,2]).specht_module_dimension(GF(2))                   # needs sage.combinat sage.modules sage.rings.finite_rings
             5
         """
         from sage.combinat.specht_module import specht_module_rank
         return specht_module_rank(self, base_ring)
+
 
 Sequence.register(Composition)
 ##############################################################
@@ -1749,8 +1752,10 @@ class Compositions(UniqueRepresentation, Parent):
             sage: P = Compositions()
             sage: P([3,3,1]) # indirect doctest
             [3, 3, 1]
+            sage: P(Partition([5,2,1]))
+            [5, 2, 1]
         """
-        if isinstance(lst, Composition):
+        if isinstance(lst, (Composition, Partition)):
             lst = list(lst)
         elt = self.element_class(self, lst)
         if elt not in self:
@@ -1770,7 +1775,7 @@ class Compositions(UniqueRepresentation, Parent):
             sage: [0,0] in Compositions()
             True
         """
-        if isinstance(x, Composition):
+        if isinstance(x, (Composition, Partition)):
             return True
         elif isinstance(x, list):
             for i in x:

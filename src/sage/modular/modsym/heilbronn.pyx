@@ -34,11 +34,11 @@ cdef extern from "<math.h>":
     float roundf(float x)
 
 cimport sage.modular.modsym.p1list as p1list
-from . import p1list
+from sage.modular.modsym import p1list
 cdef p1list.export export
 export = p1list.export()
 
-from .apply cimport Apply
+from sage.modular.modsym.apply cimport Apply
 cdef Apply PolyApply= Apply()
 
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
@@ -46,7 +46,7 @@ from sage.matrix.matrix_cyclo_dense cimport Matrix_cyclo_dense
 
 ctypedef long long llong
 
-cdef int llong_prod_mod(int a, int b, int N):
+cdef int llong_prod_mod(int a, int b, int N) noexcept:
     cdef int c
     c = <int> (((<llong> a) * (<llong> b)) % (<llong> N))
     if c < 0:
@@ -83,10 +83,10 @@ cdef int list_append4(list* L, int a, int b, int c, int d) except -1:
     list_append(L, c)
     list_append(L, d)
 
-cdef void list_clear(list L):
+cdef void list_clear(list L) noexcept:
     sig_free(L.v)
 
-cdef void list_init(list* L):
+cdef void list_init(list* L) noexcept:
     L.n = 16
     L.i = 0
     L.v = expand(<int*>0, 0, L.n)
@@ -111,7 +111,8 @@ cdef class Heilbronn:
 
         EXAMPLES::
 
-            sage: H = sage.modular.modsym.heilbronn.Heilbronn()
+            sage: from sage.modular.modsym.heilbronn import Heilbronn
+            sage: H = Heilbronn()
             sage: H._initialize_list()
             Traceback (most recent call last):
             ...
@@ -343,6 +344,7 @@ cdef class HeilbronnCremona(Heilbronn):
 
         EXAMPLES::
 
+            sage: from sage.modular.modsym.heilbronn import HeilbronnCremona
             sage: H = HeilbronnCremona.__new__(HeilbronnCremona)
             sage: H.p = 5
             sage: H
@@ -457,6 +459,7 @@ cdef class HeilbronnMerel(Heilbronn):
 
         EXAMPLES::
 
+            sage: from sage.modular.modsym.heilbronn import HeilbronnMerel
             sage: H = HeilbronnMerel.__new__(HeilbronnMerel)
             sage: H.n = 5
             sage: H

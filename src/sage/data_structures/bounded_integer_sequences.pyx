@@ -94,7 +94,7 @@ cimported in Cython modules:
 
 AUTHORS:
 
-- Simon King, Jeroen Demeyer (2014-10): initial version (:trac:`15820`)
+- Simon King, Jeroen Demeyer (2014-10): initial version (:issue:`15820`)
 
 """
 # ****************************************************************************
@@ -110,7 +110,7 @@ AUTHORS:
 from cysignals.signals cimport sig_check, sig_on, sig_off
 from sage.data_structures.bitset_base cimport *
 
-from cpython.int cimport PyInt_FromSize_t
+from cpython.long cimport PyLong_FromSize_t
 from cpython.slice cimport PySlice_GetIndicesEx
 from sage.libs.flint.flint cimport FLINT_BIT_COUNT as BIT_COUNT
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
@@ -142,7 +142,7 @@ cdef bint biseq_init(biseq_t R, mp_size_t l, mp_bitcnt_t itemsize) except -1:
     R.itembitsize = itemsize
     R.mask_item = limb_lower_bits_up(itemsize)
 
-cdef inline void biseq_dealloc(biseq_t S):
+cdef inline void biseq_dealloc(biseq_t S) noexcept:
     """
     Deallocate the memory used by ``S``.
     """
@@ -199,10 +199,10 @@ cdef bint biseq_init_list(biseq_t R, list data, size_t bound) except -1:
         biseq_inititem(R, index, item_c)
         index += 1
 
-cdef inline Py_hash_t biseq_hash(biseq_t S):
+cdef inline Py_hash_t biseq_hash(biseq_t S) noexcept:
     return S.itembitsize*(<Py_hash_t>1073807360)+bitset_hash(S.data)
 
-cdef inline bint biseq_richcmp(biseq_t S1, biseq_t S2, int op):
+cdef inline bint biseq_richcmp(biseq_t S1, biseq_t S2, int op) noexcept:
     if S1.itembitsize != S2.itembitsize:
         return richcmp_not_equal(S1.itembitsize, S2.itembitsize, op)
     if S1.length != S2.length:
@@ -271,7 +271,7 @@ cdef mp_size_t biseq_index(biseq_t S, size_t item, mp_size_t start) except -2:
     return -1
 
 
-cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index):
+cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index) noexcept:
     """
     Get item ``S[index]``, without checking margins.
 
@@ -295,9 +295,9 @@ cdef biseq_getitem_py(biseq_t S, mp_size_t index):
 
     """
     cdef size_t out = biseq_getitem(S, index)
-    return PyInt_FromSize_t(out)
+    return PyLong_FromSize_t(out)
 
-cdef inline void biseq_inititem(biseq_t S, mp_size_t index, size_t item):
+cdef inline void biseq_inititem(biseq_t S, mp_size_t index, size_t item) noexcept:
     """
     Set ``S[index] = item``, without checking margins.
 
@@ -314,7 +314,7 @@ cdef inline void biseq_inititem(biseq_t S, mp_size_t index, size_t item):
         # Our item is stored using 2 limbs, add the part from the upper limb
         S.data.bits[limb_index+1] |= (item >> (GMP_LIMB_BITS - bit_index))
 
-cdef inline void biseq_clearitem(biseq_t S, mp_size_t index):
+cdef inline void biseq_clearitem(biseq_t S, mp_size_t index) noexcept:
     """
     Set ``S[index] = 0``, without checking margins.
 
@@ -736,7 +736,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following is a good test::
+        The discussion at :issue:`15820` explains why the following is a good test::
 
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
@@ -837,7 +837,7 @@ cdef class BoundedIntegerSequence:
             sage: list(BoundedIntegerSequence(1, []))
             []
 
-        The discussion at :trac:`15820` explains why this is a good test::
+        The discussion at :issue:`15820` explains why this is a good test::
 
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
@@ -995,7 +995,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following are good tests::
+        The discussion at :issue:`15820` explains why the following are good tests::
 
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
@@ -1058,7 +1058,7 @@ cdef class BoundedIntegerSequence:
             sage: S.list() == list(S) == L
             True
 
-        The discussion at :trac:`15820` explains why the following is a good test::
+        The discussion at :issue:`15820` explains why the following is a good test::
 
             sage: (BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])).list()
             [0, 0, 0, 0]
@@ -1067,7 +1067,7 @@ cdef class BoundedIntegerSequence:
         cdef mp_size_t i
         return [biseq_getitem_py(self.data, i) for i in range(self.data.length)]
 
-    cpdef bint startswith(self, BoundedIntegerSequence other):
+    cpdef bint startswith(self, BoundedIntegerSequence other) noexcept:
         """
         Tells whether ``self`` starts with a given bounded integer sequence
 
@@ -1215,7 +1215,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following are good tests::
+        The discussion at :issue:`15820` explains why the following are good tests::
 
             sage: BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])
             <0, 0, 0, 0>

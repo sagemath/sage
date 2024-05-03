@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Functional notation support for common calculus methods
 
@@ -214,8 +215,8 @@ def integral(f, *args, **kwds):
     symbolically::
 
         sage: f(x) = 1/(sqrt(2*pi)) * e^(-x^2/2)
-        sage: P = plot(f, -4, 4, hue=0.8, thickness=2)
-        sage: P.show(ymin=0, ymax=0.4)
+        sage: P = plot(f, -4, 4, hue=0.8, thickness=2)                                  # needs sage.plot
+        sage: P.show(ymin=0, ymax=0.4)                                                  # needs sage.plot
         sage: numerical_integral(f, -4, 4)                    # random output
         (0.99993665751633376, 1.1101527003413533e-14)
         sage: integrate(f, x)
@@ -242,7 +243,7 @@ def integral(f, *args, **kwds):
         0
         sage: restore('x,y')   # restore the symbolic variables x and y
 
-    Sage is now (:trac:`27958`) able to compute the following integral::
+    Sage is now (:issue:`27958`) able to compute the following integral::
 
         sage: integral(exp(-x^2)*log(x), x)  # long time
         1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)

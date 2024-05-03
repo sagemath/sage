@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Hadamard matrices
 
@@ -30,21 +31,23 @@ matrix of order `n` exists if and only if `n= 1, 2` or `n` is a multiple
 of `4`.
 
 The module below implements constructions of Hadamard and skew Hadamard matrices
-for all known orders `\le 1000`, plus some more greater than `1000`. It also
+for all known orders `\le 1200`, plus some more greater than `1200`. It also
 allows you to pull a Hadamard matrix from the database at [SloaHada]_.
 
 The following code will test that a construction for all known orders `\le 4k`
-is implemented. The assertion above can be verified by setting ``k=250``
+is implemented. The assertion above can be verified by setting ``k=300``
 (note that it will take a long time to run)::
 
     sage: from sage.combinat.matrices.hadamard_matrix import (hadamard_matrix,
     ....:                               skew_hadamard_matrix, is_hadamard_matrix,
     ....:                               is_skew_hadamard_matrix)
     sage: k = 20
-    sage: unknown_hadamard = [668, 716, 892]
+    sage: unknown_hadamard = [668, 716, 892, 1132]
     sage: unknown_skew_hadamard = [356, 404, 428, 476, 596, 612, 668, 708, 712, 716,
     ....:                         764, 772, 804, 808, 820, 836, 856, 892, 900, 916,
-    ....:                         932, 940, 952, 980, 996]
+    ....:                         932, 940, 952, 980, 996, 1004, 1012, 1028, 1036,
+    ....:                         1044, 1060, 1076, 1100, 1108, 1132, 1140, 1148,
+    ....:                         1156, 1180, 1192, 1196]
     sage: for n in range(1, k+1):
     ....:   if 4*n not in unknown_hadamard:
     ....:       H = hadamard_matrix(4*n, check=False)
@@ -57,7 +60,7 @@ AUTHORS:
 
 - David Joyner (2009-05-17): initial version
 - Matteo Cati (2023-03-18): implemented more constructions for Hadamard and skew
-  Hadamard matrices, to cover all known orders up to 1000.
+  Hadamard matrices, to cover all known orders up to 1200.
 
 REFERENCES:
 
@@ -66,6 +69,8 @@ REFERENCES:
 - [HadaWiki]_
 
 - [Hora]_
+
+- [CP2023]_
 """
 
 # *****************************************************************************
@@ -319,7 +324,7 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
     r"""
     Construct Hadamard matrix using the Miyamoto construction.
 
-    If `q = n/4` is a prime power, and there exists an Hadamard matrix of order
+    If `q = n/4` is a prime power, and there exists a Hadamard matrix of order
     `q-1`, then a Hadamard matrix of order `n` can be constructed (see [Miy1991]_).
 
     INPUT:
@@ -437,7 +442,7 @@ def hadamard_matrix_williamson_type(a, b, c, d, check=True):
     - ``d`` -- (1,-1) list; the 1st row of `C`
     - ``c`` -- (1,-1) list; the 1st row of `D`
     - ``check`` -- boolean (default: ``True``); whether to check that the output
-      is an Hadamard matrix before returning it
+      is a Hadamard matrix before returning it
 
     EXAMPLES::
 
@@ -587,7 +592,7 @@ def williamson_type_quadruples_smallcases(n, existence=False):
     if n not in db:
         raise ValueError("The Williamson type quadruple of order %s is not yet implemented." % n)
 
-    a, b, c, d = map(lambda s: vector(pmtoZ(s)), db[n])
+    a, b, c, d = (vector(pmtoZ(s)) for s in db[n])
     return a, b, c, d
 
 
@@ -635,7 +640,7 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
 
 def hadamard_matrix_156():
     r"""
-    Construct an Hadamard matrix of order 156.
+    Construct a Hadamard matrix of order 156.
 
     The matrix is created using the construction detailed in [BH1965]_.
     This uses four circulant matrices of size `13\times 13`,
@@ -731,7 +736,7 @@ def construction_four_symbol_delta_code_I(X, Y, Z, W):
     def autocorrelation(seq, j):
         return sum([seq[i]*seq[i+j] for i in range(len(seq)-j)])
     for j in range(1, n):
-        assert sum(map(lambda seq: autocorrelation(seq, j), [X, Y, Z, W])) == 0
+        assert sum(autocorrelation(seq, j) for seq in [X, Y, Z, W]) == 0
 
     T1 = X + Z
     T2 = X + [-z for z in Z]
@@ -807,7 +812,7 @@ def construction_four_symbol_delta_code_II(X, Y, Z, W):
         return sum([seq[i]*seq[i+j] for i in range(len(seq)-j)])
 
     for j in range(1, n):
-        assert sum(map(lambda seq: autocorrelation(seq, j), [X, Y, Z, W])) == 0
+        assert sum(autocorrelation(seq, j) for seq in [X, Y, Z, W]) == 0
 
     def alternate(seq1, seq2):
         return [seq1[i//2] if i % 2 == 0 else seq2[(i-1)//2] for i in range(len(seq1)+len(seq2))]
@@ -993,12 +998,12 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
         sage: hadamard_matrix_from_sds(14)
         Traceback (most recent call last):
         ...
-        ValueError: n must be a positive multiple of four.
+        ValueError: n must be a positive multiple of four
     """
     from sage.combinat.designs.difference_family import supplementary_difference_set_hadamard
 
     if n <= 0 or n % 4 != 0:
-        raise ValueError(f'n must be a positive multiple of four.')
+        raise ValueError('n must be a positive multiple of four')
     t = n // 4
 
     if existence:
@@ -1025,13 +1030,13 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
 def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check=True):
     r"""
-    Create an Hadamard matrix using the contruction detailed in [CW1972]_.
+    Create a Hadamard matrix using the contruction detailed in [CW1972]_.
 
     Given four circulant matrices `X_1`, X_2, X_3, X_4` of order `n` with entries (0, 1, -1)
     such that the entrywise product of two distinct matrices is always equal to `0` and that
     `\sum_{i=1}^{4}X_iX_i^\top = nI_n` holds, and four matrices `A, B, C, D` of order `m` with
     elements (1, -1) such that `MN^\top = NM^\top` for all distinct `M`, `N` and
-    `AA^\top + BB^\top + CC^\top + DD^\top =  4mI_n` holds, we construct an Hadamard matrix
+    `AA^\top + BB^\top + CC^\top + DD^\top =  4mI_n` holds, we construct a Hadamard matrix
     of order `4nm`.
 
     INPUT:
@@ -1120,7 +1125,7 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
 
     - ``n`` -- integer; the order of the matrix to be constructed
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
-      is an Hadamard matrix before returning
+      is a Hadamard matrix before returning
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists.
 
@@ -1293,7 +1298,7 @@ def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
     - ``e3`` -- Matrix; the third Baumert-Hall unit
     - ``e4`` -- Matrix; the fourth Baumert-Hall unit
     - ``check`` -- boolean (default: ``True``); whether to check that the output
-      is an Hadamard matrix before returning it
+      is a Hadamard matrix before returning it
 
     EXAMPLES::
 
@@ -1347,11 +1352,11 @@ def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
 
 def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
     r"""
-    Construct an Hadamard matrix of order `n` from available 4-symbol `\delta` codes and Williamson quadruples.
+    Construct a Hadamard matrix of order `n` from available 4-symbol `\delta` codes and Williamson quadruples.
 
     The function looks for Baumert-Hall units and Williamson type matrices from
     :func:`four_symbol_delta_code_smallcases` and :func:`williamson_type_quadruples_smallcases`
-    and use them to construct an Hadamard matrix with the Turyn construction
+    and use them to construct a Hadamard matrix with the Turyn construction
     defined in :func:`hadamard_matrix_turyn_type`.
 
     INPUT:
@@ -1360,7 +1365,7 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
     - ``existence`` -- boolean (default: ``False``): if ``True``, only check if
       the matrix exists
     - ``check`` -- boolean (default: ``True``): if ``True``, check that the matrix
-      is an Hadamard matrix before returning
+      is a Hadamard matrix before returning
 
     EXAMPLES::
 
@@ -1402,7 +1407,7 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
 
 def hadamard_matrix_spence_construction(n, existence=False, check=True):
     r"""
-    Create an Hadamard matrix of order `n` using the Spence construction.
+    Create a Hadamard matrix of order `n` using the Spence construction.
 
     This construction (detailed in [Spe1975]_), uses supplementary difference sets implemented in
     :func:`sage.combinat.designs.difference_family.supplementary_difference_set_from_rel_diff_set` to create the
@@ -1414,7 +1419,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists
     - ``check`` -- bolean (default: ``True``); if ``True``, check that the matrix
-      is an Hadamard matrix before returning
+      is a Hadamard matrix before returning
 
     OUTPUT:
 
@@ -1640,8 +1645,8 @@ def hadamard_matrix(n, existence=False, check=True):
     r"""
     Tries to construct a Hadamard matrix using the available methods.
 
-    Currently all orders `\le 1000` for which a construction is
-    known are implemented. For `n > 1000`, only some orders are available.
+    Currently all orders `\le 1200` for which a construction is
+    known are implemented. For `n > 1200`, only some orders are available.
 
     INPUT:
 
@@ -2963,7 +2968,7 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
     - ``existence`` -- boolean (default:  ``False``); If ``True``, only return
       whether the Hadamard matrix can be constructed
     - ``check`` -- boolean (default: ``True``): if ``True``, check that the matrix
-      is an Hadamard matrix before returning it
+      is a Hadamard matrix before returning it
 
     OUTPUT:
 
@@ -3054,8 +3059,8 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
     Tries to construct a skew Hadamard matrix.
 
     A Hadamard matrix `H` is called skew if `H=S-I`, for `I` the identity matrix
-    and `-S=S^\top`. Currently all orders `\le 1000` for which a construction is
-    known are implemented. For `n > 1000`, only some orders are available.
+    and `-S=S^\top`. Currently all orders `\le 1200` for which a construction is
+    known are implemented. For `n > 1200`, only some orders are available.
 
     INPUT:
 
@@ -3117,7 +3122,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
         sage: skew_hadamard_matrix(356,existence=True)
         Unknown
 
-    Check that :trac:`28526` is fixed::
+    Check that :issue:`28526` is fixed::
 
         sage: skew_hadamard_matrix(0)
         Traceback (most recent call last):

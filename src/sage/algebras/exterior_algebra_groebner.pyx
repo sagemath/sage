@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 r"""
 Exterior algebras Gröbner bases
 
@@ -29,7 +30,7 @@ from sage.structure.richcmp cimport richcmp, rich_to_bool
 from sage.data_structures.blas_dict cimport iaxpy
 from copy import copy
 
-cdef inline long degree(FrozenBitset X):
+cdef inline long degree(FrozenBitset X) noexcept:
     """
     Compute the degree of ``X``.
     """
@@ -204,7 +205,7 @@ cdef class GroebnerStrategy:
         cdef FrozenBitset ls = <FrozenBitset> f.ls._union(t)
         return GBElement(<CliffordAlgebraElement> ret, ls, self.bitset_to_int(ls))
 
-    cdef inline bint build_S_poly(self, GBElement f, GBElement g):
+    cdef inline bint build_S_poly(self, GBElement f, GBElement g) noexcept:
         r"""
         Check to see if we should build the `S`-polynomial.
 
@@ -476,13 +477,30 @@ cdef class GroebnerStrategy:
             0
             sage: I._groebner_strategy.reduce(E.zero())
             0
+
+        Check :issue:`37108` is fixed::
+
+            sage: E = ExteriorAlgebra(QQ, 6)
+            sage: E.inject_variables(verbose=False)
+            sage: gens = [-e0*e1*e2 + e0*e1*e5 - e0*e2*e3 - e0*e3*e5 + e1*e2*e3 + e1*e3*e5,
+            ....:         e1*e2 - e1*e5 + e2*e5, e0*e2 - e0*e4 + e2*e4,
+            ....:         e3*e4 - e3*e5 + e4*e5, e0*e1 - e0*e3 + e1*e3]
+            sage: I = E.ideal(gens)
+            sage: S = E.quo(I)
+            sage: I.reduce(e1*e3*e4*e5)
+            0
         """
         if not f:
             return f
         # Make a copy to mutate
         f = type(f)(f._parent, copy(f._monomial_coefficients))
-        for g in self.groebner_basis:
-            self.reduce_single(f, g)
+        was_reduced = True
+        while was_reduced:
+            was_reduced = False
+            for g in self.groebner_basis:
+                was_reduced = self.reduce_single(f, g)
+                if was_reduced:
+                    break
         return f
 
     cdef bint reduce_single(self, CliffordAlgebraElement f, CliffordAlgebraElement g) except -1:

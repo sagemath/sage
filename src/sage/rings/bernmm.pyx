@@ -139,7 +139,7 @@ def bernmm_bern_modp(long p, long k):
     TESTS:
 
     Check that bernmm works with the new NTL single precision modular
-    arithmetic from :trac:`19874`::
+    arithmetic from :issue:`19874`::
 
         sage: from sage.rings.bernmm import bernmm_bern_modp
         sage: bernmm_bern_modp(7, 128) == bernoulli(128) % 7

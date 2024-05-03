@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Signed Tensor Product Functorial Construction
 

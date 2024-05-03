@@ -20,16 +20,15 @@ cdef class FreeAlgebra_letterplace_libsingular():
     cdef ring* _lp_ring
     cdef MPolynomialRing_libsingular _commutative_ring
     cdef MPolynomialRing_libsingular _lp_ring_internal
-    cdef object __ngens
+    cdef object _ngens
 
 cdef class FreeAlgebra_letterplace(Algebra):
     cdef MPolynomialRing_libsingular _commutative_ring
     cdef MPolynomialRing_libsingular _current_ring
     cdef int _degbound
-    cdef int __ngens
+    cdef int _ngens
     cdef int _nb_slackvars
     cdef object __monoid
-    cdef public object __custom_name
     cdef str exponents_to_string(self, E)
     cdef str exponents_to_latex(self, E)
     cdef tuple _degrees

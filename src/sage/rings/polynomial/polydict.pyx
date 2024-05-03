@@ -44,7 +44,7 @@ from pprint import pformat
 from sage.misc.latex import latex
 
 
-cpdef int gen_index(PolyDict x):
+cpdef int gen_index(PolyDict x) noexcept:
     r"""
     Return the index of the variable represented by ``x`` or ``-1`` if ``x``
     is not a monomial of degree one.
@@ -102,7 +102,7 @@ cdef class PolyDict:
 
     No arithmetic operation on :class:`PolyDict` clear zero coefficients as of
     now there is no reliable way of testing it in the most general setting, see
-    :trac:`35319`. For removing zero coefficients from a :class:`PolyDict` you
+    :issue:`35319`. For removing zero coefficients from a :class:`PolyDict` you
     can use the method :meth:`remove_zeros` which can be parametrized by a zero
     test.
     """
@@ -133,7 +133,7 @@ cdef class PolyDict:
             sage: PolyDict({(2, 3): 0, (1, 2): 3, (2, 1): 4})
             PolyDict with representation {(1, 2): 3, (2, 1): 4, (2, 3): 0}
 
-            sage: PolyDict({(0, 0): RIF(-1,1)})
+            sage: PolyDict({(0, 0): RIF(-1,1)})                                         # needs sage.rings.real_interval_field
             PolyDict with representation {(0, 0): 0.?}
 
         TESTS::
@@ -770,7 +770,7 @@ cdef class PolyDict:
 
         TESTS:
 
-        We check that the issue on :trac:`9478` is resolved::
+        We check that the issue on :issue:`9478` is resolved::
 
             sage: R2.<a> = QQ[]
             sage: R3.<xi, x> = R2[]
@@ -779,9 +779,9 @@ cdef class PolyDict:
 
         TESTS:
 
-        Check that :trac:`29604` is fixed::
+        Check that :issue:`29604` is fixed::
 
-            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])                        # optional - sage.rings.finite_rings
+            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])
             'x'
         """
         if not self:
@@ -869,16 +869,18 @@ cdef class PolyDict:
 
         We make sure that intervals are correctly represented. ::
 
-            sage: f = PolyDict({(2, 3): RIF(1/2,3/2), (1, 2): RIF(-1,1)})
-            sage: f.poly_repr(['x', 'y'])
+            sage: f = PolyDict({(2, 3): RIF(1/2,3/2), (1, 2): RIF(-1,1)})               # needs sage.rings.real_interval_field
+            sage: f.poly_repr(['x', 'y'])                                               # needs sage.rings.real_interval_field
             '1.?*x^2*y^3 + 0.?*x*y^2'
 
         TESTS:
 
-        Check that :trac:`29604` is fixed::
+        Check that :issue:`29604` is fixed::
 
-            sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])
+            sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])                    # needs sage.rings.finite_rings
             'x'
+
+            sage: # needs sage.modules
             sage: P.<x,y> = LaurentPolynomialRing(GF(2), 2)
             sage: P.gens()
             (x, y)
@@ -1001,9 +1003,9 @@ cdef class PolyDict:
             sage: f + g
             PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4, (2, 3): 0}
 
-            sage: K = GF(2)                                                             # optional - sage.rings.finite_rings
-            sage: f = PolyDict({(1, 1): K(1)})                                          # optional - sage.rings.finite_rings
-            sage: f + f                                                                 # optional - sage.rings.finite_rings
+            sage: K = GF(2)
+            sage: f = PolyDict({(1, 1): K(1)})
+            sage: f + f
             PolyDict with representation {(1, 1): 0}
         """
         cdef dict D = self.__repn
@@ -1071,14 +1073,16 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.scalar_rmult(y)                                                     # optional - sage.groups
+
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.combinat
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.combinat
+            sage: f.scalar_rmult(y)                                                     # needs sage.combinat
             PolyDict with representation {(2, 3): x*y}
+
             sage: f = PolyDict({(2,3):2, (1, 2): 3, (2, 1): 4})
             sage: f.scalar_rmult(-2)
             PolyDict with representation {(1, 2): -6, (2, 1): -8, (2, 3): -4}
-            sage: f.scalar_rmult(RIF(-1,1))
+            sage: f.scalar_rmult(RIF(-1,1))                                             # needs sage.rings.real_interval_field
             PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         cdef dict v = {}
@@ -1093,14 +1097,16 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2,3):x})                                               # optional - sage.groups
-            sage: f.scalar_lmult(y)                                                     # optional - sage.groups
+
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.combinat
+            sage: f = PolyDict({(2,3):x})                                               # needs sage.combinat
+            sage: f.scalar_lmult(y)                                                     # needs sage.combinat
             PolyDict with representation {(2, 3): y*x}
+
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.scalar_lmult(-2)
             PolyDict with representation {(1, 2): -6, (2, 1): -8, (2, 3): -4}
-            sage: f.scalar_lmult(RIF(-1,1))
+            sage: f.scalar_lmult(RIF(-1,1))                                             # needs sage.rings.real_interval_field
             PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         cdef dict v = {}
@@ -1122,9 +1128,10 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.term_lmult(ETuple((1, 2)), y)                                       # optional - sage.groups
+
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.combinat
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.combinat
+            sage: f.term_lmult(ETuple((1, 2)), y)                                       # needs sage.combinat
             PolyDict with representation {(3, 5): y*x}
 
             sage: f = PolyDict({(2,3): 2, (1,2): 3, (2,1): 4})
@@ -1151,9 +1158,10 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.term_rmult(ETuple((1, 2)), y)                                       # optional - sage.groups
+
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.combinat
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.combinat
+            sage: f.term_rmult(ETuple((1, 2)), y)                                       # needs sage.combinat
             PolyDict with representation {(3, 5): x*y}
 
             sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
@@ -1360,7 +1368,7 @@ cdef class PolyDict:
         else:
             return None
 
-cdef inline bint dual_etuple_iter(ETuple self, ETuple other, size_t *ind1, size_t *ind2, size_t *index, int *exp1, int *exp2):
+cdef inline bint dual_etuple_iter(ETuple self, ETuple other, size_t *ind1, size_t *ind2, size_t *index, int *exp1, int *exp2) noexcept:
     """
     This function is a crucial helper function for a number of methods of
     the ETuple class.
@@ -1609,7 +1617,7 @@ cdef class ETuple:
         else:
             return self.get_exp(i)
 
-    cdef size_t get_position(self, size_t i, size_t start, size_t end):
+    cdef size_t get_position(self, size_t i, size_t start, size_t end) noexcept:
         r"""
         Return where to insert ``i`` in the data between ``start`` and ``end``.
         """
@@ -1634,7 +1642,7 @@ cdef class ETuple:
                 left = mid
         return right
 
-    cdef int get_exp(self, size_t i):
+    cdef int get_exp(self, size_t i) noexcept:
         """
         Return the exponent for the ``i``-th variable.
         """
@@ -1781,7 +1789,7 @@ cdef class ETuple:
             sage: list(e)
             [4, 0, 0, 2, 0]
 
-        Check that :trac:`28178` is fixed::
+        Check that :issue:`28178` is fixed::
 
             sage: it = iter(e)
             sage: iter(it) is it
@@ -1837,7 +1845,7 @@ cdef class ETuple:
 
     # additional methods
 
-    cpdef int unweighted_degree(self) except *:
+    cdef int _unweighted_degree(self) except *:
         r"""
         Return the sum of entries.
 
@@ -1854,6 +1862,20 @@ cdef class ETuple:
         for i in range(self._nonzero):
             degree += self._data[2 * i + 1]
         return degree
+
+    cpdef int unweighted_degree(self) except *:
+        r"""
+        Return the sum of entries.
+
+        EXAMPLES::
+
+             sage: from sage.rings.polynomial.polydict import ETuple
+             sage: ETuple([1, 1, 0, 2, 0]).unweighted_degree()
+             4
+             sage: ETuple([-1, 1]).unweighted_degree()
+             0
+        """
+        return self._unweighted_degree()
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -1979,8 +2001,9 @@ cdef class ETuple:
             sage: e.eadd(f)
             (1, 1, 3)
 
-        Verify that :trac:`6428` has been addressed::
+        Verify that :issue:`6428` has been addressed::
 
+            sage: # needs sage.libs.singular
             sage: R.<y, z> = Frac(QQ['x'])[]
             sage: type(y)
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
@@ -2043,7 +2066,7 @@ cdef class ETuple:
 
         TESTS:
 
-        Test segmentation faults occurring as described in :trac:`34000`::
+        Test segmentation faults occurring as described in :issue:`34000`::
 
             sage: ETuple([0, 1, 1]).eadd_p(1, 0)
             (1, 1, 1)
@@ -2494,7 +2517,7 @@ cdef class ETuple:
 
         return True
 
-    cpdef bint is_constant(self):
+    cpdef bint is_constant(self) noexcept:
         """
         Return if all exponents are zero in the tuple.
 

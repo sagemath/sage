@@ -84,7 +84,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
     EXAMPLES::
 
         sage: xsrange(10)
-        <generator object at 0x...>
+        <...generator object at 0x...>
         sage: for i in xsrange(1,5):
         ....:     print(i)
         1
@@ -96,7 +96,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
 
     TESTS:
 
-    Ranges can be very large, see :trac:`20094`::
+    Ranges can be very large, see :issue:`20094`::
 
         sage: it = xsrange(10^30, 10^100)
         sage: for i in range(5):
@@ -244,8 +244,8 @@ def srange(*args, **kwds):
         [1.00000000000000]
         sage: srange(1.0, 1.0)
         []
-        sage: V = VectorSpace(QQ, 2)
-        sage: srange(V([0,0]), V([5,5]), step=V([2,2]))
+        sage: V = VectorSpace(QQ, 2)                                                    # needs sage.modules
+        sage: srange(V([0,0]), V([5,5]), step=V([2,2]))                                 # needs sage.modules
         [(0, 0), (2, 2), (4, 4)]
 
     Including the endpoint::
@@ -289,14 +289,14 @@ def srange(*args, **kwds):
 
     TESTS:
 
-    These are doctests from :trac:`6409`::
+    These are doctests from :issue:`6409`::
 
         sage: srange(1,QQ(0),include_endpoint=True)
         []
         sage: srange(1,QQ(0),-1,include_endpoint=True)
         [1, 0]
 
-    Test :trac:`11753`::
+    Test :issue:`11753`::
 
         sage: srange(1,1,0)
         Traceback (most recent call last):

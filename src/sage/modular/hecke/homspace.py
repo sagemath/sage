@@ -1,7 +1,8 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Hom spaces between Hecke modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,9 +14,8 @@ Hom spaces between Hecke modules
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.categories.homset import HomsetWithBase
@@ -25,7 +25,7 @@ from .module import is_HeckeModule
 
 def is_HeckeModuleHomspace(x):
     r"""
-    Return True if x is a space of homomorphisms in the category of Hecke modules.
+    Return ``True`` if x is a space of homomorphisms in the category of Hecke modules.
 
     EXAMPLES::
 
@@ -120,7 +120,7 @@ class HeckeModuleHomspace(HomsetWithBase):
         TESTS:
 
         Make sure that the element is created correctly when the codomain is
-        not the full module (related to :trac:`21497`)::
+        not the full module (related to :issue:`21497`)::
 
             sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
             sage: S = M.cuspidal_subspace()
@@ -182,6 +182,7 @@ class HeckeModuleHomspace(HomsetWithBase):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: M = ModularSymbols(Gamma0(2), weight=12, sign=1)
             sage: S = M.cuspidal_subspace()
             sage: S.Hom(S).an_element()

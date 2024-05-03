@@ -93,7 +93,7 @@ cdef class GroebnerStrategy(SageObject):
             ...
             NotImplementedError: Only coefficient fields are implemented so far.
 
-        Check that :trac:`27508` is fixed::
+        Check that :issue:`27508` is fixed::
 
             sage: R2.<x,y> = PolynomialRing(QQ, 2, order="lex")
             sage: I2 = R2.ideal(["x^2 - x", "y^2 - y"])
@@ -542,6 +542,7 @@ cdef class NCGroebnerStrategy(SageObject):
             _p = redtailBba(_p, max_ind, self._strat)
         return new_NCP(self._parent, _p)
 
+
 def unpickle_NCGroebnerStrategy0(I):
     """
     EXAMPLES::
@@ -555,6 +556,7 @@ def unpickle_NCGroebnerStrategy0(I):
         True
     """
     return NCGroebnerStrategy(I)
+
 
 def unpickle_GroebnerStrategy0(I):
     """

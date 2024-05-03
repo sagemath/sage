@@ -1,7 +1,7 @@
 from sage.data_structures.bitset cimport bitset_t
-from .matroid cimport Matroid
-from .basis_exchange_matroid cimport BasisExchangeMatroid
-from .set_system cimport SetSystem
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.set_system cimport SetSystem
 
 cdef class BasisMatroid(BasisExchangeMatroid):
     cdef bitset_t _bb
@@ -25,7 +25,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cpdef truncation(self)
     cpdef _extension(self, e, H)
     cpdef _with_coloop(self, e)
-    cpdef relabel(self, l)
+    # cpdef relabel(self, mapping)
 
     cpdef _bases_invariant(self)
     cpdef _bases_partition(self)
@@ -34,7 +34,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cpdef _bases_invariant3(self)
     cpdef _bases_partition3(self)
     cdef _reset_invariants(self)
-    cpdef  bint is_distinguished(self, e)
+    cpdef  bint is_distinguished(self, e) noexcept
     cpdef _is_relaxation(self, M, morphism)
     cpdef _is_isomorphism(self, M, morphism)
     cpdef _isomorphism(self, other)
@@ -42,5 +42,5 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
 
 cdef  binom_init(long n, long k)
-cdef  long set_to_index(bitset_t S)
+cdef  long set_to_index(bitset_t S) noexcept
 cdef  index_to_set(bitset_t, long, long, long)

@@ -1,5 +1,5 @@
 
-from .matroid cimport Matroid
+from sage.matroids.matroid cimport Matroid
 
 
 cdef class MatroidUnion(Matroid):
@@ -21,8 +21,8 @@ cdef class MatroidUnion(Matroid):
         {}
         Matroid of rank 1 on 2 elements with 2 bases
         sage: M.bases()
-        Iterator over a system of subsets
-        sage: M.circuits()
+        SetSystem of 2 sets over 5 elements
+        sage: list(M.circuits())
         [frozenset({3, 4})]
 
     INPUT:
@@ -99,7 +99,6 @@ cdef class MatroidUnion(Matroid):
         ALGORITHM:
 
             Matroid intersection of a matroid sum and partition matroid.
-
         """
         summands = []
         for e in self.matroids:

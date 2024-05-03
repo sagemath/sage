@@ -260,10 +260,11 @@ Now the representative of the Euler class with respect to the connection
 
 Let us check whether this form represents the Euler class correctly::
 
-    sage: expr = e_class_form[2][[1,2]].expr() # long time
-    sage: expr = integrate(expr, x, -infinity, infinity) # long time
-    sage: expr = expr.simplify_full() # long time
-    sage: integrate(expr, y, -infinity, infinity) # long time
+    sage: # long time
+    sage: expr = e_class_form[2][[1,2]].expr()
+    sage: expr = integrate(expr, x, -infinity, infinity)
+    sage: expr = expr.simplify_full()
+    sage: integrate(expr, y, -infinity, infinity)
     2
 
 As we can see, the integral coincides with the Euler characteristic of `S^2` so

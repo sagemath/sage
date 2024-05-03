@@ -814,7 +814,7 @@ class DifferentiableManifold(TopologicalManifold):
             sage: U.default_chart() is X.restrict(U)
             True
 
-        An point in ``U``::
+        A point in ``U``::
 
             sage: p = U.an_element(); p
             Point on the 2-dimensional differentiable manifold M
@@ -1904,7 +1904,7 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         resu = vmodule.tensor((k, l), name=name, latex_name=latex_name,
                               sym=sym, antisym=antisym)
-        if len(args)>2:
+        if len(args) > 2:
             # Some components are to be initialized
             resu._init_components(args[2], **kwargs)
         return resu
@@ -2173,7 +2173,7 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         resu = vmodule.alternating_contravariant_tensor(degree, name=name,
                                                         latex_name=latex_name)
-        if len(args)>1:
+        if len(args) > 1:
             # Some components are to be initialized
             resu._init_components(args[1], **kwargs)
         return resu
@@ -2277,7 +2277,7 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         resu = vmodule.alternating_form(degree, name=name,
                                         latex_name=latex_name)
-        if len(args)>1:
+        if len(args) > 1:
             # Some components are to be initialized
             resu._init_components(args[1], **kwargs)
         return resu
@@ -4187,7 +4187,7 @@ class DifferentiableManifold(TopologicalManifold):
         """
         vmodule = self.vector_field_module(dest_map)
         dim = vmodule.ambient_domain().dimension()
-        if signature=='positive':
+        if signature == 'positive':
             signat = dim - 2
         else:
             signat = 2 - dim

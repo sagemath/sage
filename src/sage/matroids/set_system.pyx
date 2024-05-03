@@ -38,9 +38,9 @@ cdef class SetSystem:
     contents. One is most likely to encounter these as output from some
     Matroid methods::
 
-        sage: M = matroids.named_matroids.Fano()                                        # optional - sage.rings.finite_rings
-        sage: M.circuits()                                                              # optional - sage.rings.finite_rings
-        Iterator over a system of subsets
+        sage: M = matroids.catalog.Fano()
+        sage: M.circuits()
+        SetSystem of 14 sets over 7 elements
 
     To access the sets in this structure, simply iterate over them. The
     simplest way must be::
@@ -75,7 +75,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
         """
         cdef long i
         if not isinstance(groundset, tuple):
@@ -110,14 +110,13 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: sorted(S[1])
             [3, 4]
             sage: for s in S: print(sorted(s))
             [1, 2]
             [3, 4]
             [1, 2, 4]
-
         """
         if subsets is not None:
             for e in subsets:
@@ -139,7 +138,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: len(S)
             3
         """
@@ -197,10 +196,9 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: repr(S)  # indirect doctest
-            'Iterator over a system of subsets'
-
+            'SetSystem of 3 sets over 4 elements'
         """
-        return "Iterator over a system of subsets"
+        return f'SetSystem of {self._len} sets over {self._groundset_size} elements'
 
     cdef copy(self):
         cdef SetSystem S
@@ -209,25 +207,23 @@ cdef class SetSystem:
             S._append(self._subsets[i])
         return S
 
-    cdef _relabel(self, l):
+    cdef _relabel(self, mapping):
         """
-        Relabel each element `e` of the ground set as `l(e)`, where `l` is a
-        given injective map.
+        Relabel each element ``e`` of the ground set as ``mapping[e]``, where
+        ``mapping`` is a given injective map.
 
         INPUT:
 
-        - ``l`` -- a python object such that `l[e]` is the new label of e.
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
 
-        OUTPUT:
-
-        ``None``.
-
+        OUTPUT: ``None``
         """
         cdef long i
         E = []
         for i in range(self._groundset_size):
-            if self._groundset[i] in l:
-                E.append(l[self._E[i]])
+            if self._groundset[i] in mapping:
+                E.append(mapping[self._E[i]])
             else:
                 E.append(self._E[i])
         self._groundset = E
@@ -249,7 +245,6 @@ cdef class SetSystem:
             [3, 4]
             [1, 2]
             [3]
-
         """
         cdef SetSystem S
         if self._groundset_size == 0:
@@ -346,7 +341,6 @@ cdef class SetSystem:
             sage: S = SetSystem([1], [])
             sage: S.is_connected()
             True
-
         """
         if self._groundset_size <= 1:
             return True
@@ -437,7 +431,7 @@ cdef class SetSystem:
                         bitset_discard(P._subsets[i], v)
                     P._append(self._temp)
 
-    cdef long subset_characteristic(self, SetSystem P, long e):
+    cdef long subset_characteristic(self, SetSystem P, long e) noexcept:
         """
         Helper method for partition methods below.
         """
@@ -591,7 +585,7 @@ cdef class SetSystem:
 
     cpdef _heuristic_partition(self, SetSystem P=None, EP=None):
         """
-        Return an heuristic ordered partition into singletons of the ground
+        Return a heuristic ordered partition into singletons of the ground
         set of the hypergraph whose edges are the subsets in this SetSystem.
 
         This partition obtained as follows: make an equitable
@@ -727,13 +721,13 @@ cdef class SetSystem:
             sage: S._equivalence(lambda self, other, morph:True, T)
             {1: 'c', 2: 'd', 3: 'b', 4: 'a'}
 
-        Check that :trac:`15189` is fixed::
+        Check that :issue:`15189` is fixed::
 
-            sage: M = Matroid(ring=GF(5), reduced_matrix=[[1,0,3],[0,1,1],[1,1,0]])     # optional - sage.rings.finite_rings
-            sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])     # optional - sage.rings.finite_rings
-            sage: M.is_field_isomorphic(N)                                              # optional - sage.rings.finite_rings
+            sage: M = Matroid(ring=GF(5), reduced_matrix=[[1,0,3],[0,1,1],[1,1,0]])
+            sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])
+            sage: M.is_field_isomorphic(N)
             False
-            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))     # optional - sage.combinat sage.rings.finite_rings
+            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))     # needs sage.combinat
             False
         """
         cdef long v

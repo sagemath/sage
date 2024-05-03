@@ -172,7 +172,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         if isinstance(x, Polynomial):
             if x.parent() is self.parent():
                 # copy with NTL assignment operator
-                self.__poly = (<Polynomial_integer_dense_ntl>x).__poly
+                self._poly = (<Polynomial_integer_dense_ntl>x)._poly
                 return
             else:
                 # coerce coefficients into Sage integers
@@ -191,17 +191,17 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
                     degree = i
             if degree >= NTL_OVFBND:
                 raise OverflowError("Dense NTL integer polynomials have a maximum degree of %s" % (NTL_OVFBND-1))
-            ZZX_SetCoeff_long(self.__poly, degree, 1)
+            ZZX_SetCoeff_long(self._poly, degree, 1)
             # now fill them in
             for ii, a in x:
                 i = ii[0] if type(ii) is tuple else ii
                 if type(a) is int:
-                    ZZX_SetCoeff_long(self.__poly, i, a)
+                    ZZX_SetCoeff_long(self._poly, i, a)
                 else:
                     if not isinstance(a, Integer):
                         a = ZZ(a)
                     mpz_to_ZZ(&y, (<Integer>a).value)
-                    ZZX_SetCoeff(self.__poly, i, y)
+                    ZZX_SetCoeff(self._poly, i, y)
             return
 
         elif isinstance(x, pari_gen):
@@ -210,14 +210,14 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         elif isinstance(x, ntl_ZZX):    # coercion from ntl.pyx object
             # copy with NTL assignment operator
-            self.__poly = (<ntl_ZZX>x).x
+            self._poly = (<ntl_ZZX>x).x
             return
 
         elif isinstance(x, FractionFieldElement) and \
                  isinstance(x.numerator(), Polynomial_integer_dense_ntl):
             if x.denominator() == 1:
                 # fraction of the form f(x)/1
-                self.__poly = (<Polynomial_integer_dense_ntl>x.numerator()).__poly
+                self._poly = (<Polynomial_integer_dense_ntl>x.numerator())._poly
                 return
 
         elif not isinstance(x, (list, tuple)):
@@ -229,12 +229,12 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         for i from 0 <= i < len(x):
             a = x[i]
             if type(a) is int:
-                ZZX_SetCoeff_long(self.__poly, i, a)
+                ZZX_SetCoeff_long(self._poly, i, a)
             else:
                 if not isinstance(a, Integer):
                     a = ZZ(a)
                 mpz_to_ZZ(&y, (<Integer>a).value)
-                ZZX_SetCoeff(self.__poly, i, y)
+                ZZX_SetCoeff(self._poly, i, y)
 
 
     def content(self):
@@ -259,7 +259,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         """
         cdef ZZ_c y
         cdef Integer z = Integer.__new__(Integer)
-        ZZX_content(y, self.__poly)
+        ZZX_content(y, self._poly)
         ZZ_to_mpz(z.value, &y)
         return z
 
@@ -288,7 +288,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         """
         cdef RealNumber res = a._new()
         sig_on()
-        ZZX_evaluation_mpfr(res.value, self.__poly, a.value)
+        ZZX_evaluation_mpfr(res.value, self._poly, a.value)
         sig_off()
         return res
 
@@ -312,13 +312,13 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             1
 
             sage: p = x^3 - x^2 - x - 1
-            sage: r = p.roots(RIF, multiplicities=False)[0]
-            sage: p._eval_mpfi_(r)
+            sage: r = p.roots(RIF, multiplicities=False)[0]                             # needs sage.libs.linbox
+            sage: p._eval_mpfi_(r)                                                      # needs sage.libs.linbox
             0.?e-27
         """
         cdef RealIntervalFieldElement res = a._new()
         sig_on()
-        ZZX_evaluation_mpfi(res.value, self.__poly, a.value)
+        ZZX_evaluation_mpfi(res.value, self._poly, a.value)
         sig_off()
         return res
 
@@ -363,7 +363,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             5*x^5 + 4*x^4 + 3*x^3 + 2*x^2 + x + 1
         """
         cdef Integer z = Integer.__new__(Integer)
-        ZZ_to_mpz(z.value, &self.__poly.rep.elts()[n])
+        ZZ_to_mpz(z.value, &self._poly.rep.elts()[n])
         return z
 
     def _repr(self, name=None, bint latex=False):
@@ -380,15 +380,15 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             name = self.parent().variable_name()
         cdef long i
         cdef list all = []
-        for i from ZZX_deg(self.__poly) >= i >= 0:
-            sign = ZZ_sign(ZZX_coeff(self.__poly, i))
+        for i from ZZX_deg(self._poly) >= i >= 0:
+            sign = ZZ_sign(ZZX_coeff(self._poly, i))
             if sign:
                 if sign > 0:
                     sign_str = '+'
-                    coeff_str = ccrepr(self.__poly.rep.elts()[i])
+                    coeff_str = ccrepr(self._poly.rep.elts()[i])
                 else:
                     sign_str = '-'
-                    coeff_str = ccrepr(self.__poly.rep.elts()[i])[1:]
+                    coeff_str = ccrepr(self._poly.rep.elts()[i])[1:]
                 if i > 0:
                     if coeff_str == '1':
                         coeff_str = ''
@@ -441,8 +441,8 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             -3*x^2 + 2*x + 7
         """
         cdef Polynomial_integer_dense_ntl x = self._new()
-        ZZX_add(x.__poly, self.__poly,
-                (<Polynomial_integer_dense_ntl>right).__poly)
+        ZZX_add(x._poly, self._poly,
+                (<Polynomial_integer_dense_ntl>right)._poly)
         return x
 
 
@@ -459,8 +459,8 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             3*x^2 + 2*x - 5
         """
         cdef Polynomial_integer_dense_ntl x = self._new()
-        ZZX_sub(x.__poly, self.__poly,
-                (<Polynomial_integer_dense_ntl>right).__poly)
+        ZZX_sub(x._poly, self._poly,
+                (<Polynomial_integer_dense_ntl>right)._poly)
         return x
 
 
@@ -476,7 +476,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             -2*x + 1
         """
         cdef Polynomial_integer_dense_ntl x = self._new()
-        ZZX_negate(x.__poly, self.__poly)
+        ZZX_negate(x._poly, self._poly)
         return x
 
 
@@ -533,10 +533,10 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         """
         cdef Polynomial_integer_dense_ntl _right = <Polynomial_integer_dense_ntl> right
 
-        if ZZX_IsZero(_right.__poly):
+        if ZZX_IsZero(_right._poly):
             raise ArithmeticError("division by zero polynomial")
 
-        if ZZX_IsZero(self.__poly):
+        if ZZX_IsZero(self._poly):
             return self, self
 
         cdef ZZX_c *q
@@ -545,19 +545,19 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         cdef Polynomial_integer_dense_ntl rr = self._new()
         cdef int divisible
 
-        if ZZ_IsOne(ZZX_LeadCoeff(_right.__poly)):
+        if ZZ_IsOne(ZZX_LeadCoeff(_right._poly)):
             # divisor is monic. Just do the division and remainder
-            ZZX_quo_rem(&self.__poly, &_right.__poly, &r, &q)
-            ZZX_swap(qq.__poly, q[0])
-            ZZX_swap(rr.__poly, r[0])
+            ZZX_quo_rem(&self._poly, &_right._poly, &r, &q)
+            ZZX_swap(qq._poly, q[0])
+            ZZX_swap(rr._poly, r[0])
             del q
             del r
         else:
             # Non-monic divisor. Check whether it divides exactly.
-            q = ZZX_div(&self.__poly, &_right.__poly, &divisible)
+            q = ZZX_div(&self._poly, &_right._poly, &divisible)
             if divisible:
                 # exactly divisible
-                ZZX_swap(q[0], qq.__poly)
+                ZZX_swap(q[0], qq._poly)
                 del q
             else:
                 # division failed: clean up and raise exception
@@ -584,8 +584,8 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         """
         # todo: we're doing an unnecessary copy here
         cdef Polynomial_integer_dense_ntl x = self._new()
-        cdef ZZX_c* temp = ZZX_gcd(&self.__poly, &(<Polynomial_integer_dense_ntl>right).__poly)
-        x.__poly = temp[0]
+        cdef ZZX_c* temp = ZZX_gcd(&self._poly, &(<Polynomial_integer_dense_ntl>right)._poly)
+        x._poly = temp[0]
         del temp
         return x
 
@@ -607,7 +607,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         TESTS:
 
-        Check that :trac:`32033` has been fixed::
+        Check that :issue:`32033` has been fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
             sage: R(0).lcm(R(0))
@@ -658,13 +658,13 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         cdef ZZX_c *t
         cdef ZZ_c *r
 
-        ZZX_xgcd(&self.__poly, &(<Polynomial_integer_dense_ntl>right).__poly, &r, &s, &t, 1)    # proof = 1
+        ZZX_xgcd(&self._poly, &(<Polynomial_integer_dense_ntl>right)._poly, &r, &s, &t, 1)    # proof = 1
         cdef Integer rr = Integer.__new__(Integer)
         ZZ_to_mpz(rr.value, r)
         cdef Polynomial_integer_dense_ntl ss = self._new()
         cdef Polynomial_integer_dense_ntl tt = self._new()
-        ss.__poly = s[0]
-        tt.__poly = t[0]
+        ss._poly = s[0]
+        tt._poly = t[0]
         del r
         del s
         del t
@@ -691,8 +691,8 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             x^3 - 10*x^2 + 32*x - 32
         """
         cdef Polynomial_integer_dense_ntl x = self._new()
-        ZZX_mul(x.__poly, self.__poly,
-                (<Polynomial_integer_dense_ntl>right).__poly)
+        ZZX_mul(x._poly, self._poly,
+                (<Polynomial_integer_dense_ntl>right)._poly)
         return x
 
     cpdef _lmul_(self, Element right):
@@ -711,7 +711,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         cdef ZZ_c _right
 
         mpz_to_ZZ(&_right, (<Integer>right).value)
-        ZZX_mul_ZZ(x.__poly, self.__poly, _right)
+        ZZX_mul_ZZ(x._poly, self._poly, _right)
         return x
 
     cpdef _rmul_(self, Element right):
@@ -730,7 +730,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         cdef ZZ_c _right
 
         mpz_to_ZZ(&_right, (<Integer>right).value)
-        ZZX_mul_ZZ(x.__poly, self.__poly, _right)
+        ZZX_mul_ZZ(x._poly, self._poly, _right)
         return x
 
 
@@ -783,7 +783,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         value = Integer(value)
         cdef ZZ_c y
         mpz_to_ZZ(&y, (<Integer>value).value)
-        ZZX_SetCoeff(self.__poly, n, y)
+        ZZX_SetCoeff(self._poly, n, y)
 
 
     def real_root_intervals(self):
@@ -795,7 +795,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
             sage: f = 1 - x^2 - x^3 - x^4 + x^6
-            sage: f.real_root_intervals()
+            sage: f.real_root_intervals()                                               # needs sage.libs.linbox
             [((1/2, 3/4), 1), ((1, 3/2), 1)]
         """
 
@@ -805,7 +805,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
 ##     def __copy__(self):
 ##         f = Polynomial_integer_dense(self.parent())
-##         f.__poly = self.__poly.copy()
+##         f._poly = self._poly.copy()
 ##         return f
 
 
@@ -826,7 +826,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: R(0).degree()
             -1
         """
-        return ZZX_deg(self.__poly)
+        return ZZX_deg(self._poly)
 
     def discriminant(self, proof=True):
         r"""
@@ -849,7 +849,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: f.discriminant(proof=False)
             -339
         """
-        cdef ZZ_c* temp = ZZX_discriminant(&self.__poly, proof)
+        cdef ZZ_c* temp = ZZX_discriminant(&self._poly, proof)
         cdef Integer x = Integer.__new__(Integer)
         ZZ_to_mpz(x.value, temp)
         del temp
@@ -887,7 +887,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         TESTS:
 
-        Verify that :trac:`13053` has been resolved::
+        Verify that :issue:`13053` has been resolved::
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
             sage: f = -x^2
@@ -904,11 +904,11 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         cdef long* e
         cdef long i, n
         cdef Polynomial_integer_dense_ntl z
-        ZZX_squarefree_decomposition(&v, &e, &n, &p.__poly)
+        ZZX_squarefree_decomposition(&v, &e, &n, &p._poly)
         F = []
         for i from 0 <= i < n:
             z = self._new()
-            z.__poly = v[i][0]
+            z._poly = v[i][0]
             F.append((z, e[i]))
             del v[i]
         sig_free(v)
@@ -950,24 +950,24 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         cdef ZZ_c content
         cdef vec_pair_ZZX_long_c factors
         cdef long i
-        cdef int sig_me = ZZX_deg(self.__poly)
+        cdef int sig_me = ZZX_deg(self._poly)
         if sig_me > 10:
             sig_on()
-        ZZX_factor(content, factors, self.__poly, 0, 0)
+        ZZX_factor(content, factors, self._poly, 0, 0)
         if sig_me > 10:
             sig_off()
         results = []
         unit = None
         if not ZZ_IsOne(content):
             fac_py = self._new()
-            ZZX_SetCoeff(fac_py.__poly, 0, content)
-            if ZZX_deg(fac_py.__poly) == 0 and ZZ_to_int(fac_py.__poly.rep.elts())==-1:
+            ZZX_SetCoeff(fac_py._poly, 0, content)
+            if ZZX_deg(fac_py._poly) == 0 and ZZ_to_int(fac_py._poly.rep.elts())==-1:
                 unit = fac_py
             else:
                 results.append( (fac_py,1) )
         for i from 0 <= i < factors.length():
             fac_py = self._new()
-            fac_py.__poly = factors.RawGet(i).a
+            fac_py._poly = factors.RawGet(i).a
             results.append( (fac_py,factors.RawGet(i).b) )
         return Factorization(results, unit = unit)
 
@@ -996,7 +996,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             sage: f = -30*x; f.factor()
             (-1) * 2 * 3 * 5 * x
         """
-        cdef int deg = ZZX_deg(self.__poly)
+        cdef int deg = ZZX_deg(self._poly)
         # it appears that pari has a window from about degrees 30 and 300
         # in which it beats NTL.
         c = self.content()
@@ -1131,7 +1131,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             True
         """
         cdef Polynomial_integer_dense_ntl _other = <Polynomial_integer_dense_ntl>(self.parent().coerce(other))
-        cdef ZZ_c* temp = ZZX_resultant(&self.__poly, &_other.__poly, proof)
+        cdef ZZ_c* temp = ZZX_resultant(&self._poly, &_other._poly, proof)
         cdef Integer x = Integer.__new__(Integer)
         ZZ_to_mpz(x.value, temp)
         del temp

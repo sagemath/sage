@@ -218,11 +218,11 @@ def taylor_polynomial(title, f, order: int):
           f: EvalText(value='e^(-x)*sin(x)', description='$f(x)=$', layout=Layout(max_width='81em'))
           order: SelectionSlider(description='order', options=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), value=1)
     """
-    x0  = 0
-    p   = plot(f,(x,-1,5), thickness=2)
-    dot = point((x0,f(x=x0)),pointsize=80,rgbcolor=(1,0,0))
-    ft = f.taylor(x,x0,order)
-    pt = plot(ft,(-1, 5), color='green', thickness=2)
+    x0 = 0
+    p = plot(f, (x, -1, 5), thickness=2)
+    dot = point((x0, f(x=x0)), pointsize=80, rgbcolor=(1, 0, 0))
+    ft = f.taylor(x, x0, order)
+    pt = plot(ft, (-1, 5), color='green', thickness=2)
     html(r'$f(x)\;=\;%s$' % latex(f))
     html(r'$\hat{f}(x;%s)\;=\;%s+\mathcal{O}(x^{%s})$' % (x0, latex(ft),
                                                           order + 1))
@@ -429,7 +429,7 @@ def difference_quotient(title, f, interval, a, x0):
     html('<h2>Difference Quotient</h2>')
     show(fplot + tanplot + points + dashline + measure, xmin=interval[0], xmax=interval[1], ymin=fmin-0.2*f_height, ymax=fmax)
     html(r"<br>$\text{Line's equation:}$")
-    html(r"$y = %s$<br>"%tanf(x))
+    html(r"$y = %s$<br>" % tanf(x))
     html(r"$\text{Slope:}$")
     html(r"$k = \frac{f(x_0)-f(a)}{x_0-a} = %s$<br>" % (N(derivative(tanf(x), x), digits=5)))
 
@@ -941,7 +941,7 @@ def bisection_method(title, f, interval, d, maxn):
             elif fc*fb < 0:
                 a, b = c, b
             else:
-                raise ValueError("f must have a sign change in the interval (%s,%s)"%(a,b))
+                raise ValueError("f must have a sign change in the interval (%s,%s)" % (a,b))
             intervals.append((a,b))
             round += 1
         return c, intervals
@@ -956,12 +956,12 @@ def bisection_method(title, f, interval, d, maxn):
         print("f must have opposite sign at the endpoints of the interval")
         show(plot(f, a, b, color='red'), xmin=a, xmax=b)
     else:
-        html(r"$\text{Precision }h = 10^{-d}=10^{-%s}=%.5f$"%(d, float(h)))
-        html(r"${c = }%s$"%latex(c))
-        html(r"${f(c) = }%s"%latex(f(c)))
-        html(r"$%s \text{ iterations}"%len(intervals))
+        html(r"$\text{Precision }h = 10^{-d}=10^{-%s}=%.5f$" % (d, float(h)))
+        html(r"${c = }%s$" % latex(c))
+        html(r"${f(c) = }%s" % latex(f(c)))
+        html(r"$%s \text{ iterations}" % len(intervals))
         P = plot(f, a, b, color='red')
-        k = (P.ymax() - P.ymin())/ (1.5*len(intervals))
+        k = (P.ymax() - P.ymin()) / (1.5*len(intervals))
         L = sum(line([(c,k*i), (d,k*i)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(c,k*i-k/4), (c,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(d,k*i-k/4), (d,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
@@ -1024,12 +1024,12 @@ def secant_method(title, f, interval, d, maxn):
         show(plot(f, a, b, color='red'), xmin=a, xmax=b)
     else:
         c, intervals = _secant_method(f, float(a), float(b), maxn, h)
-        html(r"$\text{Precision }h = 10^{-d}=10^{-%s}=%.5f$"%(d, float(h)))
-        html(r"${c = }%s$"%latex(c))
-        html(r"${f(c) = }%s"%latex(f(c)))
-        html(r"$%s \text{ iterations}"%len(intervals))
+        html(r"$\text{Precision }h = 10^{-d}=10^{-%s}=%.5f$" % (d, float(h)))
+        html(r"${c = }%s$" % latex(c))
+        html(r"${f(c) = }%s" % latex(f(c)))
+        html(r"$%s \text{ iterations}" % len(intervals))
         P = plot(f, a, b, color='red')
-        k = (P.ymax() - P.ymin())/ (1.5*len(intervals))
+        k = (P.ymax() - P.ymin()) / (1.5*len(intervals))
         L = sum(line([(c,k*i), (d,k*i)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(c,k*i-k/4), (c,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(d,k*i-k/4), (d,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
@@ -1094,10 +1094,10 @@ def newton_method(title, f, c, d, maxn, interval, list_steps):
     a, b = interval
     h = 10**(-d)
     c, midpoints = _newton_method(f, float(c), maxn, 0.5 * h)
-    html(r"$\text{Precision } 2h = %s$"%latex(float(h)))
-    html(r"${c = }%s$"%c)
-    html(r"${f(c) = }%s"%latex(f(c)))
-    html(r"$%s \text{ iterations}"%len(midpoints))
+    html(r"$\text{Precision } 2h = %s$" % latex(float(h)))
+    html(r"${c = }%s$" % c)
+    html(r"${f(c) = }%s" % latex(f(c)))
+    html(r"$%s \text{ iterations}" % len(midpoints))
     if list_steps:
         s = [["$n$", "$x_n$", "$f(x_n)$", r"$f(x_n-h)\,f(x_n+h)$"]]
         for i, c in enumerate(midpoints):
@@ -1183,26 +1183,26 @@ def trapezoid_integration(
     xs.append(xi + h)
     ys.append(f(xi + h))
 
-    html(r'Function $f(x)=%s$'%latex(f(x)))
+    html(r'Function $f(x)=%s$' % latex(f(x)))
     show(plot(f, interval[0], interval[1]) + trapezoids,
          xmin=interval[0], xmax=interval[1])
 
     numeric_value = integral_numerical(f, interval[0], interval[1])[0]
-    approx = h *(ys[0]/2 + sum([ys[i] for i in range(1,n)]) + ys[n]/2)
+    approx = h * (ys[0]/2 + sum([ys[i] for i in range(1,n)]) + ys[n]/2)
 
-    html(r'Integral value to seven decimal places is: $\displaystyle\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x} = %.6f$'%(
+    html(r'Integral value to seven decimal places is: $\displaystyle\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x} = %.6f$' % (
             interval[0], interval[1], N(numeric_value, digits=7))
          )
 
     if output_form == 'traditional':
         sum_formula_html = r"\frac {d}{2} \cdot \left[f(x_0) + %s + f(x_{%s})\right]" % (
-            ' + '.join([ "2 f(x_{%s})"%i for i in range(1,n)]),
+            ' + '.join([ "2 f(x_{%s})" % i for i in range(1,n)]),
             n
             )
         sum_placement_html = r"\frac{%.2f}{2} \cdot \left[f(%.2f) + %s + f(%.2f)\right]" % (
             h,
             N(xs[0], digits=5),
-            ' + '.join([ "2 f(%.2f)" %N(i, digits=5) for i in xs[1:-1]]),
+            ' + '.join([ "2 f(%.2f)" % N(i, digits=5) for i in xs[1:-1]]),
             N(xs[n], digits=5)
             )
         sum_values_html = r"\frac{%.2f}{2} \cdot \left[%.2f + %s + %.2f\right]" % (
@@ -1230,7 +1230,7 @@ def trapezoid_integration(
     elif output_form == 'table':
         s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
         for i in range(0,n+1):
-            if i==0 or i==n:
+            if i == 0 or i == n:
                 j = 1
             else:
                 j = 2
@@ -1305,7 +1305,7 @@ def simpson_integration(
     def parabola(a, b, c):
         from sage.symbolic.relation import solve
         A, B, C = SR.var("A, B, C")
-        K = solve([A*a[0]**2+B*a[0]+C==a[1], A*b[0]**2+B*b[0]+C==b[1], A*c[0]**2+B*c[0]+C==c[1]], [A, B, C], solution_dict=True)[0]
+        K = solve([A*a[0]**2+B*a[0]+C == a[1], A*b[0]**2+B*b[0]+C == b[1], A*c[0]**2+B*c[0]+C == c[1]], [A, B, C], solution_dict=True)[0]
         f = K[A]*x**2+K[B]*x+K[C]
         return f
     xs = []
@@ -1327,36 +1327,39 @@ def simpson_integration(
 
     lines += line([(xs[-1],ys[-1]), (xs[-1],0)], color="red")
 
-    html(r'Function $f(x)=%s$'%latex(f(x)))
+    html(r'Function $f(x)=%s$' % latex(f(x)))
 
     show(plot(f(x), x, interval[0], interval[1]) + parabolas + lines,
          xmin=interval[0], xmax=interval[1])
 
     numeric_value = integral_numerical(f,interval[0],interval[1])[0]
-    approx = dx/3 *(ys[0] + sum([4*ys[i] for i in range(1,n,2)]) + sum([2*ys[i] for i in range(2,n,2)]) + ys[n])
+    approx = dx/3 * (ys[0] + sum([4*ys[i] for i in range(1,n,2)]) + sum([2*ys[i] for i in range(2,n,2)]) + ys[n])
 
-    html(r'Integral value to seven decimal places is: $\displaystyle\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x} = %.6f$'%
+    html(r'Integral value to seven decimal places is: $\displaystyle\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x} = %.6f$' %
          (interval[0],interval[1],
-         N(numeric_value,digits=7)))
+          N(numeric_value,digits=7)))
 
     if output_form == 'traditional':
         sum_formula_html = r"\frac{d}{3} \cdot \left[ f(x_0) + %s + f(x_{%s})\right]" % (
-            ' + '.join([ r"%s \cdot f(x_{%s})" %(i%2*(-2)+4, i+1) for i in range(0,n-1)]),
+            ' + '.join(r"%s \cdot f(x_{%s})" % (i % 2 * (-2) + 4, i + 1)
+                       for i in range(0,n-1)),
             n
             )
 
         sum_placement_html = r"\frac{%.2f}{3} \cdot \left[ f(%.2f) +  %s + f(%.2f)\right]" % (
             dx,
             N(xs[0],digits=5),
-            ' + '.join([ r"%s \cdot f(%.2f)" %(i%2*(-2)+4, N(xk, digits=5)) for i, xk in enumerate(xs[1:-1])]),
+            ' + '.join(r"%s \cdot f(%.2f)" % (i % 2 * (-2) + 4, N(xk, digits=5))
+                       for i, xk in enumerate(xs[1:-1])),
             N(xs[n],digits=5)
             )
 
-        sum_values_html = r"\frac{%.2f}{3} \cdot \left[ %s %s %s\right]" %(
+        sum_values_html = r"\frac{%.2f}{3} \cdot \left[ %s %s %s\right]" % (
             dx,
-            "%.2f + "%N(ys[0],digits=5),
-            ' + '.join([ r"%s \cdot %.2f" %(i%2*(-2)+4, N(yk, digits=5)) for i, yk in enumerate(ys[1:-1])]),
-            " + %.2f"%N(ys[n],digits=5)
+            "%.2f + " % N(ys[0],digits=5),
+            ' + '.join(r"%s \cdot %.2f" % (i % 2 * (-2) + 4, N(yk, digits=5))
+                       for i, yk in enumerate(ys[1:-1])),
+            " + %.2f" % N(ys[n],digits=5)
             )
 
         html(r'''
@@ -1376,15 +1379,15 @@ def simpson_integration(
                 ))
     elif output_form == 'table':
         s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
-        for i in range(0,n+1):
-            if i==0 or i==n:
+        for i in range(n + 1):
+            if i == 0 or i == n:
                 j = 1
             else:
-                j = (i+1)%2*(-2)+4
-            s.append([i, xs[i], ys[i],j,N(j*ys[i])])
+                j = (i + 1) % 2 * (-2) + 4
+            s.append([i, xs[i], ys[i], j, N(j*ys[i])])
         s.append(['', '', '', r'$\sum$', '$%s$' % latex(3/dx*approx)])
         pretty_print(table(s, header_row=True))
-        html(r'$\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x}\approx\frac {%.2f}{3}\cdot %s=%s$'%
+        html(r'$\int_{%.2f}^{%.2f} {f(x) \, \mathrm{d}x}\approx\frac {%.2f}{3}\cdot %s=%s$' %
              (interval[0], interval[1],dx,latex(3/dx*approx),latex(approx)))
 
 
@@ -1466,18 +1469,18 @@ def riemann_sum(
     ys = [func(x_val) for x_val in xs]
     rects = Graphics()
     for i in range(n):
-        body=[[division[i],0],[division[i],ys[i]],[division[i+1],ys[i]],[division[i+1],0]]
-        if ys[i].n()>0:
-            color_rect='green'
+        body = [[division[i],0],[division[i],ys[i]],[division[i+1],ys[i]],[division[i+1],0]]
+        if ys[i].n() > 0:
+            color_rect = 'green'
         else:
-            color_rect='red'
+            color_rect = 'red'
         rects = rects + polygon2d(body, rgbcolor=color_rect, alpha=0.1)\
          + point((xs[i], ys[i]), rgbcolor=(1, 0, 0))\
          + line(body, rgbcolor='black', zorder=-1)
     html('<small>Adjust your data and click Update button. Click repeatedly for another random values.</small>')
 
     show(plot(func(x),(x,a,b),zorder=5) + rects)
-    delka_intervalu=[division[i+1]-division[i] for i in range(n)]
+    delka_intervalu = [division[i+1]-division[i] for i in range(n)]
     if list_table:
         pretty_print(table([
             ["$i$", "$[x_{i-1},x_i]$", r"$\eta_i$", r"$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
@@ -1485,9 +1488,9 @@ def riemann_sum(
             [i+1,[division[i],division[i+1]],xs[i],ys[i],delka_intervalu[i]] for i in range(n)
         ],  header_row=True))
 
-    html(r'Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ '%
+    html(r'Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ ' %
          (latex(n),latex(sum([ys[i]*delka_intervalu[i] for i in range(n)]))))
-    html(r'Exact value of the integral $\displaystyle\int_{%s}^{%s}%s\,\mathrm{d}x=%s$'%
+    html(r'Exact value of the integral $\displaystyle\int_{%s}^{%s}%s\,\mathrm{d}x=%s$' %
          (latex(a),latex(b),latex(func(x)),latex(integral_numerical(func(x),a,b)[0])))
 
 
@@ -1633,9 +1636,9 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     elif action == 'f(g)':
         h = f(g)
         lbl = 'f(g)'
-    html('<center><font color="red">$f = %s$</font></center>'%latex(f))
-    html('<center><font color="green">$g = %s$</font></center>'%latex(g))
-    html('<center><font color="blue"><b>$h = %s = %s$</b></font></center>'%(lbl, latex(h)))
+    html('<center><font color="red">$f = %s$</font></center>' % latex(f))
+    html('<center><font color="green">$g = %s$</font></center>' % latex(g))
+    html('<center><font color="blue"><b>$h = %s = %s$</b></font></center>' % (lbl, latex(h)))
     if do_plot:
         P = plot(f, xrange, color='red', thickness=2) +  \
             plot(g, xrange, color='green', thickness=2) + \
@@ -1789,7 +1792,7 @@ def cellular_automaton(N, rule_number, size):
     binary_digits = Integer(rule_number).digits(base=2)
     rule = binary_digits + [0]*(8-len(binary_digits))
 
-    html('<h2>Cellular Automaton</h2>'+
+    html('<h2>Cellular Automaton</h2>' +
          '<div style="white-space: normal;">"A cellular automaton is a collection of "colored" cells \
          on a grid of specified shape that evolves through a number of \
          discrete time steps according to a set of rules based on the \
@@ -1923,7 +1926,7 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
             m = SR.var('m')
             g = symbolic_expression(a*m**2+b*m+c).function(m)
             r = symbolic_expression(sqrt(g(m))).function(m)
-            theta = symbolic_expression(r(m)- m*sqrt(a)).function(m)
+            theta = symbolic_expression(r(m) - m*sqrt(a)).function(m)
             S1 = parametric_plot(((r(t))*cos(2*pi*(theta(t))),(r(t))*sin(2*pi*(theta(t)))),
                                  (begin_curve, ceil(sqrt(end-start))),
                                  color=hue(0.8), thickness=.3)  # pink line
@@ -1932,7 +1935,7 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
             c = c2
             g = symbolic_expression(a*m**2+b*m+c).function(m)
             r = symbolic_expression(sqrt(g(m))).function(m)
-            theta = symbolic_expression(r(m)- m*sqrt(a)).function(m)
+            theta = symbolic_expression(r(m) - m*sqrt(a)).function(m)
             S2 = parametric_plot(((r(t))*cos(2*pi*(theta(t))),(r(t))*sin(2*pi*(theta(t)))),
                                  (begin_curve, ceil(sqrt(end-start))),
                                  color=hue(0.6), thickness=.3)  # green line

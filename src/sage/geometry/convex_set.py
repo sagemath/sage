@@ -411,7 +411,7 @@ class ConvexSet_base(SageObject, Set_base):
             Relative interior of a 1-dimensional polyhedron in QQ^1 defined as the convex hull of 2 vertices
             sage: ri_P_aff.closure() == P_aff
             True
-         """
+        """
         if as_convex_set is None:
             as_convex_set = not as_affine_map
         if not as_affine_map and not as_convex_set:

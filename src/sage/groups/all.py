@@ -8,7 +8,7 @@ from .abelian_gps.all import *
 from .perm_gps.all import *
 
 from .generic import (discrete_log, discrete_log_rho, discrete_log_lambda,
-                      linear_relation, multiple, multiples)
+                      linear_relation, multiple, multiples, order_from_multiple)
 
 lazy_import('sage.groups.class_function', 'ClassFunction')
 

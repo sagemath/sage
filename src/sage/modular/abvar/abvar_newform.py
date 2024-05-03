@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Abelian varieties attached to newforms
 

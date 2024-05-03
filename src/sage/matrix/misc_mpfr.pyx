@@ -9,7 +9,7 @@ cimport sage.rings.abc
 from sage.libs.mpfr cimport *
 from sage.rings.real_mpfr cimport RealNumber
 
-from .matrix0 cimport Matrix
+from sage.matrix.matrix0 cimport Matrix
 
 
 def hadamard_row_bound_mpfr(Matrix A):

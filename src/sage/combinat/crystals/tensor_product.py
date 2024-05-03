@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Tensor Products of Crystals
 
@@ -280,7 +281,7 @@ class TensorProductOfCrystals(CrystalOfWords):
         ([2, 1, 1], [1, 2, 1])
 
     Examples with non-regular and infinite crystals (these did not work
-    before :trac:`14402`)::
+    before :issue:`14402`)::
 
         sage: B = crystals.infinity.Tableaux(['D',10])
         sage: T = crystals.TensorProduct(B,B)
@@ -351,7 +352,7 @@ class TensorProductOfCrystals(CrystalOfWords):
             Category of infinite tensor products of highest weight crystals
 
         Check that we get a tensor product of super crystals when given
-        a super Cartan type (:trac:`33518`)::
+        a super Cartan type (:issue:`33518`)::
 
             sage: L = crystals.Letters(['A',[1,2]])
             sage: type(crystals.TensorProduct(L, L))
@@ -582,8 +583,6 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         for x in self.cartesian_product:
             yield self(*x)
 
-#    list = CombinatorialClass._CombinatorialClass__list_from_iterator
-
     def cardinality(self):
         """
         Return the cardinality of ``self``.
@@ -654,7 +653,7 @@ class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
         pass
 
 
-class QueerSuperCrystalsMixin():
+class QueerSuperCrystalsMixin:
     """
     Mixin class with methods for a finite queer supercrystal.
     """
@@ -969,7 +968,7 @@ class CrystalOfTableaux(CrystalOfWords):
             S = CrystalOfSpins(cartan_type)
         B = CrystalOfTableaux(cartan_type, shapes=shapes)
         T = TensorProductOfCrystals(S, B, generators=[[S.module_generators[0],x] for x in B.module_generators])
-        T.rename("The crystal of tableaux of type %s and shape(s) %s"%(cartan_type, list(list(shape) for shape in spin_shapes)))
+        T.rename("The crystal of tableaux of type %s and shape(s) %s" % (cartan_type, list(list(shape) for shape in spin_shapes)))
         T.shapes = spin_shapes
         return T
 

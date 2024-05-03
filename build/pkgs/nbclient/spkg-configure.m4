@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([nbclient], [SAGE_PYTHON_PACKAGE_CHECK([nbclient])])

@@ -8,9 +8,8 @@ A group of isometries is a subgroup of `GL(M)` consisting of isometries.
 
 EXAMPLES::
 
-    sage: L = IntegralLattice("D4")
-    sage: O = L.orthogonal_group()
-    sage: O
+    sage: L = IntegralLattice("D4")                                                     # needs sage.graphs
+    sage: O = L.orthogonal_group(); O                                                   # needs sage.graphs
     Group of isometries with 3 generators (
     [0 0 0 1]  [ 1  1  0  0]  [ 1  0  0  0]
     [0 1 0 0]  [ 0  0  1  0]  [-1 -1 -1 -1]
@@ -20,9 +19,9 @@ EXAMPLES::
 
 Basic functionality is provided by GAP::
 
-    sage: O.cardinality()
+    sage: O.cardinality()                                                               # needs sage.graphs
     1152
-    sage: len(O.conjugacy_classes_representatives())
+    sage: len(O.conjugacy_classes_representatives())                                    # needs sage.graphs
     25
 
 AUTHORS:
@@ -47,8 +46,9 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
     r"""
     A base class for Orthogonal matrix groups with a gap backend.
 
-    Main difference to :class:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_gap` is that we can
-    specify generators and a bilinear form. Following gap the group action is from the right.
+    Main difference to :class:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_gap`
+    is that we can specify generators and a bilinear form. Following GAP, the group action is
+    from the right.
 
     INPUT:
 
@@ -60,10 +60,10 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
     - ``check`` -- bool (default: ``True``) check if the generators
       preserve the bilinear form
     - ``invariant_submodule`` -- a submodule preserved by the group action
-      (default: ``None``) registers an action on this submodule.
+      (default: ``None``) registers an action on this submodule
     - ``invariant_quotient_module`` -- a quotient module preserved by
       the group action (default: ``None``)
-      registers an action on this quotient module.
+      registers an action on this quotient module
 
     EXAMPLES::
 
@@ -135,7 +135,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
         r"""
         Return the string representation of this matrix group.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -152,15 +152,15 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
         n = self.ngens()
         from sage.repl.display.util import format_list
         if n > 5:
-            return 'Group of isometries with %s generators '%n
+            return 'Group of isometries with %s generators ' % n
         elif n == 1:
-            return 'Group of isometries with %s generator %s'%(n, format_list(self.gens()))
+            return 'Group of isometries with %s generator %s' % (n, format_list(self.gens()))
         else:
-            return 'Group of isometries with %s generators %s'%(n, format_list(self.gens()))
+            return 'Group of isometries with %s generators %s' % (n, format_list(self.gens()))
 
     def __reduce__(self):
         r"""
-        Implements pickling.
+        Implement pickling.
 
         EXAMPLES::
 
@@ -359,7 +359,7 @@ class GroupActionOnQuotientModule(Action):
     - ``MatrixGroup`` --  the group acting
       :class:`GroupOfIsometries`
     - ``submodule`` -- an invariant quotient module
-    - ``is_left`` -- bool (default: ``False``)
+    - ``is_left`` -- boolean (default: ``False``)
 
     EXAMPLES::
 
@@ -377,7 +377,7 @@ class GroupActionOnQuotientModule(Action):
     """
     def __init__(self, MatrixGroup, quotient_module, is_left=False):
         r"""
-        Initialize the action
+        Initialize the action.
 
         TESTS::
 

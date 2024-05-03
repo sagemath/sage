@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs
 """
 Dynkin diagrams
 
@@ -28,10 +29,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import is_Matrix
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
-from sage.combinat.root_system.cartan_matrix import CartanMatrix
+
+lazy_import('sage.combinat.root_system.cartan_matrix', 'CartanMatrix')
 
 
 def DynkinDiagram(*args, **kwds):
@@ -157,7 +160,7 @@ def DynkinDiagram(*args, **kwds):
 
     TESTS:
 
-    Check that :trac:`15277` is fixed by not having edges from 0's::
+    Check that :issue:`15277` is fixed by not having edges from 0's::
 
         sage: CM = CartanMatrix([[2,-1,0,0],[-3,2,-2,-2],[0,-1,2,-1],[0,-1,-1,2]])
         sage: CM
@@ -186,7 +189,7 @@ def DynkinDiagram(*args, **kwds):
                 return mat.cartan_type().dynkin_diagram()
             except AttributeError:
                 ct = CartanType(*args)
-                raise ValueError("Dynkin diagram data not yet hardcoded for type %s"%ct)
+                raise ValueError("Dynkin diagram data not yet hardcoded for type %s" % ct)
         if len(args) > 1:
             index_set = tuple(args[1])
         elif "index_set" in kwds:
@@ -202,7 +205,7 @@ def DynkinDiagram(*args, **kwds):
     try:
         return ct.dynkin_diagram()
     except AttributeError:
-        raise ValueError("Dynkin diagram data not yet hardcoded for type %s"%ct)
+        raise ValueError("Dynkin diagram data not yet hardcoded for type %s" % ct)
 
 
 class DynkinDiagram_class(DiGraph, CartanType_abstract):
@@ -237,7 +240,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         sage: type(copy(d))
         <class 'sage.combinat.root_system.dynkin_diagram.DynkinDiagram_class'>
 
-    We check that :trac:`14655` is fixed::
+    We check that :issue:`14655` is fixed::
 
         sage: cd = copy(d)
         sage: cd.add_vertex(4)
@@ -287,7 +290,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             G2
         """
         ct = self.cartan_type()
-        result = ct.ascii_art() +"\n" if hasattr(ct, "ascii_art") else ""
+        result = ct.ascii_art() + "\n" if hasattr(ct, "ascii_art") else ""
 
         if ct is None or isinstance(ct, CartanMatrix):
             return result+"Dynkin diagram of rank %s" % self.rank()
@@ -299,7 +302,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         Rich Output Magic Method
 
         Override rich output because :meth:`_repr_` outputs ascii
-        art. The proper fix will be in :trac:`18328`.
+        art. The proper fix will be in :issue:`18328`.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -714,7 +717,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
         TESTS:
 
-        We check that :trac:`15740` is fixed::
+        We check that :issue:`15740` is fixed::
 
             sage: d = DynkinDiagram()
             sage: d.add_edge(1,2,3)
@@ -875,23 +878,23 @@ def precheck(t, letter=None, length=None, affine=None, n_ge=None, n=None):
     """
     if letter is not None:
         if t[0] != letter:
-            raise ValueError("t[0] must be = '%s'"%letter)
+            raise ValueError("t[0] must be = '%s'" % letter)
 
     if length is not None:
         if len(t) != length:
-            raise ValueError("len(t) must be = %s"%length)
+            raise ValueError("len(t) must be = %s" % length)
 
     if affine is not None:
         try:
             if t[2] != affine:
-                raise ValueError("t[2] must be = %s"%affine)
+                raise ValueError("t[2] must be = %s" % affine)
         except IndexError:
-            raise ValueError("t[2] must be = %s"%affine)
+            raise ValueError("t[2] must be = %s" % affine)
 
     if n_ge is not None:
         if t[1] < n_ge:
-            raise ValueError("t[1] must be >= %s"%n_ge)
+            raise ValueError("t[1] must be >= %s" % n_ge)
 
     if n is not None:
         if t[1] != n:
-            raise ValueError("t[1] must be = %s"%n)
+            raise ValueError("t[1] must be = %s" % n)

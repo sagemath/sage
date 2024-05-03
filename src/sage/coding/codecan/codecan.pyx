@@ -190,20 +190,20 @@ cdef class InnerGroup:
         """
         OP_dealloc(self.row_partition)
 
-    cdef int get_rep(self, int pos):
+    cdef int get_rep(self, int pos) noexcept:
         """
         Get the index of the cell of ``self.row_partition`` containing ``pos``.
         """
         return OP_find(self.row_partition, pos)
 
-    cdef bint has_semilinear_action(self):
+    cdef bint has_semilinear_action(self) noexcept:
         """
         Returns ``True`` iff the field automorphism group component of ``self``
         is non-trivial.
         """
         return (self.frob_pow > 0)
 
-    cdef int join_rows(self, int rep1, int rep2):
+    cdef int join_rows(self, int rep1, int rep2) noexcept:
         """
         Join the cells with unique representatives
         ``rep1`` and ``rep2`` of ``self.row_partition``.
@@ -212,7 +212,7 @@ cdef class InnerGroup:
         OP_join(self.row_partition, rep1, rep2)
         return self.get_rep(rep1)
 
-    cdef void copy_from(self, InnerGroup other):
+    cdef void copy_from(self, InnerGroup other) noexcept:
         """
         Copy the group ``other`` to ``self``.
         """
@@ -330,7 +330,7 @@ cdef class InnerGroup:
             self.rank += 1
         return m
 
-    cdef void gaussian_elimination(self, object m, int pos, int pivot, list nz_pos):
+    cdef void gaussian_elimination(self, object m, int pos, int pivot, list nz_pos) noexcept:
         r"""
         Minimize the column at position ``pos`` of the matrix ``m`` by the
         action of ``self``. We know that there is some nonzero entry of this
@@ -380,7 +380,7 @@ cdef class InnerGroup:
             "with rank = %s, frobenius power = %s and partition =%s" % (self.rank,
             self.frob_pow, OP_string(self.row_partition))
 
-    cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow):
+    cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow) noexcept:
         r"""
         Minimize the vector ``v \in \GF{q}^k`` by the
         action of the field automorphism component of ``self``.
@@ -417,7 +417,7 @@ cdef class InnerGroup:
                 stab_pow[0] = 0
                 break  # for
 
-    cpdef int get_frob_pow(self):
+    cpdef int get_frob_pow(self) noexcept:
         r"""
         Return the power of the Frobenius automorphism which generates
         the corresponding component of ``self``.
@@ -811,7 +811,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         self._hyp_refine_vals = _BestValStore(self._hyp_part.degree)
 
-    cdef bint _minimization_allowed_on_col(self, int pos):
+    cdef bint _minimization_allowed_on_col(self, int pos) noexcept:
         r"""
         Decide if we are allowed to perform the inner minimization on position
         ``pos`` which is supposed to be a singleton. For linear codes over finite
@@ -819,7 +819,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         """
         return True
 
-    cdef bint _inner_min_(self, int pos, bint *inner_group_changed):
+    cdef bint _inner_min_(self, int pos, bint *inner_group_changed) noexcept:
         r"""
         Minimize the node by the action of the inner group on the ``pos``-th position.
         Sets ``inner_group_changed`` to ``True`` if and only if the inner group
@@ -850,7 +850,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         return True
 
     cdef bint _refine(self, bint *part_changed,
-                      bint inner_group_changed, bint first_step):
+                      bint inner_group_changed, bint first_step) noexcept:
         """
         Refine the partition ``self.part``. Set  ``part_changed`` to ``True``
         if and only if ``self.part`` was refined.
@@ -900,7 +900,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         return True
 
 
-    cdef bint _inner_min_refine(self, bint *inner_stab_changed, bint *changed_partition):
+    cdef bint _inner_min_refine(self, bint *inner_stab_changed, bint *changed_partition) noexcept:
         """
         Refine the partition ``self.part`` by computing the orbit (respectively
         the hash of a canonical form) of each column vector under the inner group.
@@ -920,8 +920,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         if self._inner_group.rank < 2:
             return True
 
-        lower = iter(self._matrix[ : self._inner_group.rank  ].columns())
-        upper = iter(self._matrix[ self._inner_group.rank :  ].columns())
+        lower = iter(self._matrix[ : self._inner_group.rank].columns())
+        upper = iter(self._matrix[self._inner_group.rank : ].columns())
 
         for i in range(self._n):
             l = next(lower)
@@ -953,7 +953,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         return self._one_refinement(best_vals, 0, self._n, inner_stab_changed,
                                     changed_partition, "supp_refine")
 
-    cdef bint _point_refine(self, bint *inner_stab_changed, bint *changed_partition):
+    cdef bint _point_refine(self, bint *inner_stab_changed, bint *changed_partition) noexcept:
         """
         Refine the partition ``self.part`` by counting
         (colored) neighbours in the point-hyperplane graph.
@@ -999,7 +999,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
             self._part.depth -= 1
         return ret_val
 
-    cdef bint _hyp_refine(self, bint *changed_partition):
+    cdef bint _hyp_refine(self, bint *changed_partition) noexcept:
         """
         Refine the partition of the hyperplanes by counting
         (colored) neighbours in the point-hyperplane graph.
@@ -1054,7 +1054,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
                 self._nr_of_point_refine_calls, self._nr_of_hyp_refine_calls,
                 self._hyp_part.depth)
 
-    cdef void _restore_state_(self, tuple act_state):
+    cdef void _restore_state_(self, tuple act_state) noexcept:
         r"""
         The inverse of :meth:`_store_state_`.
         """
@@ -1064,13 +1064,13 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         self._nr_of_hyp_refine_calls = act_state[3]
         self._hyp_part.depth = act_state[4]
 
-    cdef void _store_best_(self):
+    cdef void _store_best_(self) noexcept:
         """
         Store this node as the actual best candidate for the canonical form.
         """
         self._best_candidate = copy(self._matrix)
 
-    cdef void _latex_act_node(self, str comment="", int printlvl=0):
+    cdef void _latex_act_node(self, str comment="", int printlvl=0) noexcept:
         """
         Print the actual status as latex (tikz) commands to
         ``self._latex_debug_string``. Only needed if one wants to visualize

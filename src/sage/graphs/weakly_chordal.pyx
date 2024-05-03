@@ -43,7 +43,7 @@ from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport out_degree
 
 
-cdef inline int has_edge(bitset_t bs, int u, int v, int n):
+cdef inline int has_edge(bitset_t bs, int u, int v, int n) noexcept:
     return bitset_in(bs, u * n + v)
 
 
@@ -204,14 +204,13 @@ def is_long_hole_free(g, certificate=False):
     if g.order() < 5:
         return (True, []) if certificate else True
 
-    cdef int a, b, c, d, i, u, v, w, vv, ww
+    cdef int u, v, w, vv, ww
 
     # Make a copy of the graph as a short_digraph. This data structure is well
     # documented in the module sage.graphs.base.static_sparse_graph.
     # Vertices are relabeled in 0..n-1
     cdef int n = g.order()
     cdef list id_label = list(g)
-    cdef dict label_id = {label: i for i, label in enumerate(id_label)}
     cdef short_digraph sd
     init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
 
@@ -228,7 +227,6 @@ def is_long_hole_free(g, certificate=False):
     # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* path = <int*> mem.allocarray(n, sizeof(int))
-    cdef int path_top
     cdef int* InPath = <int*> mem.allocarray(n, sizeof(int))
     for u in range(n):
         InPath[u] = -1
@@ -263,8 +261,7 @@ def is_long_hole_free(g, certificate=False):
 
                         if certificate:
                             return False, hole
-                        else:
-                            return False
+                        return False
 
             InPath[v] = -1
         InPath[u] = -1
@@ -275,8 +272,7 @@ def is_long_hole_free(g, certificate=False):
 
     if certificate:
         return True, []
-    else:
-        return True
+    return True
 
 
 cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_graph,
@@ -435,14 +431,13 @@ def is_long_antihole_free(g, certificate=False):
     if g.order() < 5:
         return (True, []) if certificate else True
 
-    cdef int a, b, c, d, i, u, v, w, vv, ww
+    cdef int u, v, w, vv, ww
 
     # Make a copy of the graph as a short_digraph. This data structure is well
     # documented in the module sage.graphs.base.static_sparse_graph.
     # Vertices are relabeled in 0..n-1
     cdef int n = g.order()
     cdef list id_label = list(g)
-    cdef dict label_id = {label: i for i, label in enumerate(id_label)}
     cdef short_digraph sd
     init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
 
@@ -459,7 +454,6 @@ def is_long_antihole_free(g, certificate=False):
     # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* path = <int*> mem.allocarray(n, sizeof(int))
-    cdef int path_top
     cdef int* InPath = <int*> mem.allocarray(n, sizeof(int))
     for u in range(n):
         InPath[u] = -1
@@ -495,8 +489,7 @@ def is_long_antihole_free(g, certificate=False):
 
                         if certificate:
                             return False, antihole
-                        else:
-                            return False
+                        return False
 
             InPath[v] = -1
         InPath[u] = -1
@@ -507,8 +500,7 @@ def is_long_antihole_free(g, certificate=False):
 
     if certificate:
         return True, []
-    else:
-        return True
+    return True
 
 
 def is_weakly_chordal(g, certificate=False):
@@ -562,5 +554,5 @@ def is_weakly_chordal(g, certificate=False):
             return False, forbid_subgr
 
         return g.is_long_antihole_free(certificate=True)
-    else:
-        return g.is_long_hole_free() and g.is_long_antihole_free()
+
+    return g.is_long_hole_free() and g.is_long_antihole_free()
