@@ -29,7 +29,7 @@ REFERENCES:
 
 from sage.categories.homset import Homset
 from sage.misc.classcall_metaclass import ClasscallMetaclass
-from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleMorphism
+from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleEndomorphism, FiniteRankFreeModuleMorphism
 from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 
@@ -441,7 +441,7 @@ class FreeModuleEndset(FreeModuleHomset):
         [ 0  0  1]
     """
 
-    Element = FiniteRankFreeModuleMorphism
+    Element = FiniteRankFreeModuleEndomorphism
 
     def __init__(self, fmodule, name, latex_name):
         r"""

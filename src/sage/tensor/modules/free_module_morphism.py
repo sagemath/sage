@@ -4,6 +4,9 @@ Free module morphisms
 The class :class:`FiniteRankFreeModuleMorphism` implements homomorphisms
 between two free modules of finite rank over the same commutative ring.
 
+The subclass :class:`FiniteRankFreeModuleEndomorphism` implements the
+special case of endomorphisms.
+
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
@@ -166,31 +169,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
         34 f_0 - 51 f_1
         sage: phi(3*u + v) == 3*phi(u) + phi(v)
         True
-
-    The identity endomorphism::
-
-        sage: Id = End(M).one() ; Id
-        Identity endomorphism of Rank-3 free module M over the Integer Ring
-        sage: Id.parent()
-        Set of Morphisms from Rank-3 free module M over the Integer Ring
-         to Rank-3 free module M over the Integer Ring
-         in Category of finite dimensional modules over Integer Ring
-        sage: Id.parent() is End(M)
-        True
-
-    The matrix of Id with respect to the basis e is of course the identity
-    matrix::
-
-        sage: Id.matrix(e)
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
-
-    The identity acting on a module element::
-
-        sage: Id(v) is v
-        True
-
     """
     def __init__(self, parent, matrix_rep, bases=None, name=None,
                  latex_name=None, is_identity=False):
@@ -1355,3 +1333,64 @@ class FiniteRankFreeModuleMorphism(Morphism):
                               left_border=basis2_names)
         resu_latex = latex(matrix)
         return FormattedExpansion(resu_txt, resu_latex)
+
+
+class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
+    r"""
+
+    EXAMPLES::
+
+    The identity endomorphism::
+
+        sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+        sage: e = M.basis('e')
+        sage: Id = End(M).one(); Id
+        Identity endomorphism of Rank-3 free module M over the Integer Ring
+        sage: Id.parent()
+        Set of Morphisms from Rank-3 free module M over the Integer Ring
+         to Rank-3 free module M over the Integer Ring
+         in Category of finite dimensional modules over Integer Ring
+        sage: Id.parent() is End(M)
+        True
+
+    The matrix of Id with respect to the basis e is of course the identity
+    matrix::
+
+        sage: Id.matrix(e)
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+
+    The identity acting on a module element::
+
+        sage: v = M([-2,1,4], basis=e, name='v'); v.display()
+        v = -2 e_0 + e_1 + 4 e_2
+        sage: Id(v) is v
+        True
+    """
+
+    def _some_matrix(self):
+        r"""
+        Return the matrix of the endomorphism ``self`` w.r.t. some basis.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi._some_matrix()
+            [1 2 3]
+            [4 5 6]
+            [7 8 9]
+        """
+        for (basis1, basis2), matrix in self._matrices.items():
+            if basis1 == basis2:
+                return matrix
+        for basis in self.domain().bases():
+            try:
+                return self.matrix(basis)
+            except ValueError:
+                pass
+        return self.matrix()
