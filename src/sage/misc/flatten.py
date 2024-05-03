@@ -23,7 +23,7 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
        [1, 1, 1, 2]
        sage: flatten([[1,2,3], (4,5), [[[1],[2]]]])
        [1, 2, 3, 4, 5, 1, 2]
-       sage: flatten([[1,2,3], (4,5), [[[1],[2]]]],max_level=1)
+       sage: flatten([[1,2,3], (4,5), [[[1],[2]]]], max_level=1)
        [1, 2, 3, 4, 5, [[1], [2]]]
        sage: flatten([[[3],[]]],max_level=0)
        [[[3], []]]

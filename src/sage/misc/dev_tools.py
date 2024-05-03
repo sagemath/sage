@@ -260,7 +260,7 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     :class:`~sage.misc.lazy_import.LazyImport` objects that are resolving to the
     same object may be included in the output::
 
-        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)
+        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)                # needs sage.rings.real_mpfr
         [Real Field with 53 bits of precision,
          ...
          Real Field with 53 bits of precision,
