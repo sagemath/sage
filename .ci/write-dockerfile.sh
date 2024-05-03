@@ -271,7 +271,7 @@ RUN if [ -d /sage ]; then                                               \
     fi
 WORKDIR /sage
 
-ARG BOOTSTRAP=${BOOTSTRAP-./bootstrap}
+ARG BOOTSTRAP="${BOOTSTRAP-./bootstrap}"
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN $THEN_SAVE_STATUS
 
 FROM bootstrapped as configured
