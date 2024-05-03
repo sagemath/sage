@@ -2663,7 +2663,7 @@ cdef class Matroid(SageObject):
 
             sage: M = matroids.catalog.Vamos()
             sage: M.dependent_r_sets(3)
-            []
+            SetSystem of 0 sets over 8 elements
             sage: sorted([sorted(X) for X in
             ....: matroids.catalog.Vamos().dependent_r_sets(4)])
             [['a', 'b', 'c', 'd'], ['a', 'b', 'e', 'f'], ['a', 'b', 'g', 'h'],
@@ -2673,12 +2673,13 @@ cdef class Matroid(SageObject):
 
         Test all subsets of the groundset of cardinality ``r``
         """
-        res = []
-        for X in combinations(self.groundset(), r):
-            X = frozenset(X)
-            if self._rank(X) < len(X):
-                res.append(X)
-        return res
+        cdef set D = set()
+        cdef frozenset X
+        for XX in combinations(self.groundset(), r):
+            X = frozenset(XX)
+            if not self._is_independent(X):
+                D.add(X)
+        return SetSystem(list(self.groundset()), D)
 
     def dependent_r_sets_iterator(self, long r):
         r"""
@@ -2853,11 +2854,10 @@ cdef class Matroid(SageObject):
 
             sage: M = matroids.catalog.Pappus()
             sage: M.independent_r_sets(4)
-            []
-            sage: S = M.independent_r_sets(3)
-            sage: len(S)
-            75
-            sage: frozenset({'a', 'c', 'e'}) in S
+            SetSystem of 0 sets over 9 elements
+            sage: M.independent_r_sets(3)
+            SetSystem of 75 sets over 9 elements
+            sage: frozenset({'a', 'c', 'e'}) in _
             True
 
         .. SEEALSO::
@@ -2865,12 +2865,13 @@ cdef class Matroid(SageObject):
             :meth:`M.independent_sets() <sage.matroids.matroid.Matroid.independent_sets>`
             :meth:`M.bases() <sage.matroids.matroid.Matroid.bases>`
         """
-        cdef list res = []
-        for X in combinations(self.groundset(), r):
-            X = frozenset(X)
-            if self._rank(X) == len(X):
-                res.append(X)
-        return res
+        cdef set I = set()
+        cdef frozenset X
+        for XX in combinations(self.groundset(), r):
+            X = frozenset(XX)
+            if self._is_independent(X):
+                I.add(X)
+        return SetSystem(list(self.groundset()), I)
 
     def independent_r_sets_iterator(self, r):
         r"""
@@ -3269,7 +3270,7 @@ cdef class Matroid(SageObject):
                 if is_indep:
                     B.append(frozenset(H))
                     next_level.extend(Ht)
-        return B
+        return SetSystem(list(self.groundset()), B)
 
     def no_broken_circuits_sets_iterator(self, ordering=None):
         r"""
@@ -8292,6 +8293,15 @@ cdef class Matroid(SageObject):
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
 
+        For a matroid with loops, the broken circuit complex is not defined,
+        and the method yields an error::
+
+            sage: M = Matroid(flats={0:['a'], 1:['ab', 'ac'], 2:['abc']})
+            sage: M.broken_circuit_complex()
+            Traceback (most recent call last):
+            ...
+            ValueError: broken circuit complex of matroid with loops is not defined
+
         TESTS::
 
             sage: for M in matroids.AllMatroids(5):  # optional - matroid_database
@@ -8305,6 +8315,10 @@ cdef class Matroid(SageObject):
         from sage.topology.simplicial_complex import SimplicialComplex
         cdef int r = self.rank()
         cdef list facets = []
+        if self.loops():
+            raise ValueError("broken circuit complex of matroid with loops is not defined")
+        if ordering is None:
+            ordering = sorted(self.groundset(), key=cmp_elements_key)
         for S in self.no_broken_circuits_sets_iterator(ordering):
             if len(S) == r:
                 facets.append(S)
