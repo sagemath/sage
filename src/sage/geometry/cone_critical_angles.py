@@ -436,7 +436,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     - ``multiplicity`` is the dimension of the eigenspace associated
       with ``eigenvalue``
 
-    Note that we don't return a basis for each eigenspace along with
+    Note that we do not return a basis for each eigenspace along with
     its eigenvalue. For the application we have in mind, an eigenspace
     of dimension greater than one (so, ``multiplicity > 1``) is an
     error. As such, our return value is optimized for convenience in
