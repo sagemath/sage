@@ -7,11 +7,12 @@ problem for a single cone was introduced in [IS2005]_, and was later
 extended in [SS2016]_ to two cones as a generalization of the
 principal angle between two vector subspaces.
 
-Seeger and Sossa proposed an algorithm to find maximal angles, and
-[Or2020]_ elaborates on that algorithm. It is this latest improvement
-that is implemented (more or less) by this module. The fact that
-perturbations of pointed cones may not change the answer too much
-[Or2024]_ is taken into consideration to avoid pathological cases.
+Seeger and Sossa proposed an algorithm in [SS2016]_ to find maximal
+angles, and [Or2020]_ elaborates on that algorithm. It is this latest
+improvement that is implemented (more or less) by this module. The
+fact that perturbations of pointed cones may not change the answer too
+much [Or2024]_ is taken into consideration to avoid pathological
+cases.
 
 This module is internal to SageMath; the interface presented to users
 consists of a public method,
