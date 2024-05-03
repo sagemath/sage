@@ -24,7 +24,6 @@ from sage.misc.decorators import options, suboptions
 from sage.plot.colors import rgbcolor, get_cmap
 from sage.arith.srange import xsrange
 
-
 class ContourPlot(GraphicPrimitive):
     """
     Primitive class for the contour plot graphics type.
@@ -62,7 +61,7 @@ class ContourPlot(GraphicPrimitive):
         ....:              plot_points=121, cmap='hsv')
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, xy_data_array, xrange, yrange, options):
+    def __init__(self, xy_data_array, xrange, yrange, subtype, options):
         """
         Initialize base class ``ContourPlot``.
 
@@ -81,6 +80,7 @@ class ContourPlot(GraphicPrimitive):
         self.xy_data_array = xy_data_array
         self.xy_array_row = len(xy_data_array)
         self.xy_array_col = len(xy_data_array[0])
+        self.subtype = subtype
         GraphicPrimitive.__init__(self, options)
 
     def get_minmax_data(self):
@@ -156,6 +156,7 @@ class ContourPlot(GraphicPrimitive):
             Graphics object consisting of 1 graphics primitive
         """
         from sage.rings.integer import Integer
+        plot_subtype = self.subtype
         options = self.options()
         fill = options['fill']
         contours = options['contours']
@@ -207,6 +208,14 @@ class ContourPlot(GraphicPrimitive):
             CS = subplot.contour(self.xy_data_array, contours, cmap=cmap,
                                  extent=(x0, x1, y0, y1),
                                  linewidths=linewidths, linestyles=linestyles)
+
+        if options.get('legend_label',None):
+            if plot_subtype == 'implicit':
+                        CSartists, CSlabels = CS.legend_elements()
+                        CSartists[0].set_label(options['legend_label'])
+                        subplot.add_line(CSartists[0])
+                        subplot.legend()
+            
         if options.get('labels', False):
             label_options = options['label_options']
             label_options['fontsize'] = int(label_options['fontsize'])
@@ -886,6 +895,7 @@ def contour_plot(f, xrange, yrange, **options):
     from sage.plot.misc import setup_for_eval_on_grid
 
     region = options.pop('region')
+    plot_subtype = options.pop('_subtype', 'contour')
     ev = [f] if region is None else [f, region]
 
     F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
@@ -1026,7 +1036,7 @@ def contour_plot(f, xrange, yrange, **options):
 
         xy_data_array[mask] = numpy.ma.masked
 
-    g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, options))
+    g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, plot_subtype, options))
 
     return g
 
@@ -1368,6 +1378,8 @@ def implicit_plot(f, xrange, yrange, **options):
     elif 'rgbcolor' in options:
         options['cmap'] = [rgbcolor(options.pop('rgbcolor', None))]
 
+    options['_subtype'] = 'implicit'
+
     if options['fill'] is True:
         options.pop('fill')
         options.pop('contours', None)
@@ -1665,6 +1677,7 @@ def region_plot(f, xrange, yrange, **options):
     borderstyle = options.pop('borderstyle')
     borderwidth = options.pop('borderwidth')
     alpha = options.pop('alpha')
+    plot_subtype = options.pop('_subtype', 'region')
 
     if not isinstance(f, (list, tuple)):
         f = [f]
@@ -1730,7 +1743,7 @@ def region_plot(f, xrange, yrange, **options):
                                                       ignore=['xmin', 'xmax']))
 
     if neqs == 0:
-        g.add_primitive(ContourPlot(xy_data_array, xrange, yrange,
+        g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, 'region',
                                     dict(contours=[-1e-20, 0, 1e-20],
                                          cmap=cmap,
                                          fill=True, **options)))
@@ -1750,6 +1763,8 @@ def region_plot(f, xrange, yrange, **options):
         linestyles = [borderstyle] if borderstyle else None
         linewidths = [borderwidth] if borderwidth else None
         g.add_primitive(ContourPlot(xy_data_array, xrange, yrange,
+                                    'region_border' if neqs == 0 and
+                                    plot_subtype == 'region' else 'implicit',
                                     dict(linestyles=linestyles,
                                          linewidths=linewidths,
                                          contours=[0], cmap=[bordercol],
