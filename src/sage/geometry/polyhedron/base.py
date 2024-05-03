@@ -74,10 +74,15 @@ def is_Polyhedron(X):
         sage: p = polytopes.hypercube(2)
         sage: from sage.geometry.polyhedron.base import is_Polyhedron
         sage: is_Polyhedron(p)
+        doctest:warning...
+        DeprecationWarning: is_Polyhedron is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         True
         sage: is_Polyhedron(123456)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_Polyhedron is deprecated, use isinstance instead")
     return isinstance(X, Polyhedron_base)
 
 
