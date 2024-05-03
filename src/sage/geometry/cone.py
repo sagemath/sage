@@ -6236,10 +6236,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         OUTPUT:
 
-        A triple `\left( \theta_{\text{max}}, u, v \right)`
-        containing,
+        A triple `\left( \theta_{max}, u, v \right)`
+        containing:
 
-        - the maximal angle `\theta_{\text{max}}` between ``self`` and
+        - the maximal angle `\theta_{max}` between ``self`` and
           ``other``
 
         - a vector `u` in ``self`` that achieves the maximal angle
