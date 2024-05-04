@@ -380,8 +380,9 @@ def solve_gevp_zero(M, I, J):
     # A Cartesian product would be more appropriate here, but Sage
     # isn't smart enough to figure out a basis for the product. So,
     # we use the direct sum and then chop it up.
-    xi_space = (M.transpose()[J,I]).right_kernel()
-    eta_space = (M[I,J]).right_kernel()
+    M_IJ = M[I,J]
+    xi_space = M_IJ.left_kernel()
+    eta_space = M_IJ.right_kernel()
 
     fake_cartprod = xi_space.direct_sum(eta_space)
     multiplicity = fake_cartprod.dimension()
@@ -576,8 +577,9 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
                     for (l, eta, xi, m)
                     in solve_gevp_nonzero(HH, GG, M.transpose(), J, I))
     else:
-        G_I_pinv_H_J = GG[I,I].inverse_positive_definite()*M[I,J]
-        H_J_pinv_G_I = HH[J,J].inverse_positive_definite()*M.transpose()[J,I]
+        M_IJ = M[I,J]
+        G_I_pinv_H_J = GG[I,I].inverse_positive_definite() * M_IJ
+        H_J_pinv_G_I = HH[J,J].inverse_positive_definite() * M_IJ.transpose()
         L = (G_I_pinv_H_J * H_J_pinv_G_I)
 
         for (sigma, xis, m) in L.eigenvectors_right():
