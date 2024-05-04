@@ -3601,8 +3601,6 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         # integers to encode degrees of extensions.
         from sage.rings.integer import Integer
         kwds_self = dict(self.kwds.items())
-        if 'implementation' in kwds_self:
-            del kwds_self['implementation']
         kwds_other = dict(other.kwds.items())
         if (isinstance(self.polys[0], Integer)
                 and isinstance(other.polys[0], Integer)
