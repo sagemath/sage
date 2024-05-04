@@ -168,7 +168,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
     if use_fe:
         bound = d // 2 if deg is None else min(d // 2, deg)
     else:
-        bound = deg
+        bound = d if deg is None else min(d, deg)
     if len(traces) < bound:
         raise ValueError('not enough traces were given')
     if i % 2 and d % 2 and use_fe:
@@ -1422,8 +1422,6 @@ class HypergeometricData:
             raise ValueError('p not prime')
         if not all(x.denominator() % p for x in self._alpha + self._beta):
             raise NotImplementedError('p is wild')
-        if (t.numerator()*t.denominator() % p == 0):
-            raise NotImplementedError('p is tame')
 
         if 0 in alpha:
             return self._swap.padic_H_value(p, f, ~t, prec)
@@ -1457,10 +1455,39 @@ class HypergeometricData:
             trcoeffs = hgm_coeffs(p, f, prec, gamma, m, D, gtab, prec, use_longs)
         sigma = trcoeffs[p - 2]
         p_ring = sigma.parent()
-        teich = p_ring.teichmuller(M / t)
-        for i in range(p - 3, -1, -1):
-            sigma = sigma * teich + trcoeffs[i]
-        resu = ZZ(-1) ** m[0] * sigma / (1 - q)
+
+        if t.numerator() % p == 0 or t.denominator() % p == 0:
+            e = t.valuation(p)
+            t0 = t / p**e
+            teich = p_ring.teichmuller(M / t0)
+            resu = p_ring.zero()
+            flip = (f == 1 and prec == 1)
+            index = 1 if t.numerator() % p == 0 else 0
+            for mo in set(self.cyclotomic_data()[index]):
+                if (q-1)%mo == 0 and e%mo == 0:
+                    k = (q-1)//mo
+                    for j in range(mo):
+                        if gcd(j,mo) == 1:
+                            r = j*k
+                            term = teich**r
+                            ct = 0
+                            for v, gv in gamma.items():
+                                r1 = v*r%(q-1)
+                                ct += gv*sum(r1.digits(p))
+                                gv = -gv if flip else gv
+                                tmp = p_ring(gtab[r])
+                                if gv < 0:
+                                    tmp = 1/tmp
+                                for _ in range(abs(gv)):
+                                    term *= tmp
+                            term *= ZZ(-1) ** m[0]
+                            ct //= (p-1)
+                            resu += term * p**(ct+f*(D + m[0] - m[r]))
+        else:
+            teich = p_ring.teichmuller(M / t)
+            for i in range(p - 3, -1, -1):
+                sigma = sigma * teich + trcoeffs[i]
+            resu = ZZ(-1) ** m[0] * sigma / (1 - q)
         return IntegerModRing(p**prec)(resu).lift_centered()
 
     trace = padic_H_value
@@ -1791,31 +1818,34 @@ class HypergeometricData:
         t = QQ(t)
         if t in [0, 1]:
             raise ValueError('invalid t')
-        alpha = self._alpha
-        if 0 in alpha:
-            return self._swap.euler_factor(~t, p)
-
         if not is_prime(p):
             raise ValueError('p not prime')
         if not all(x.denominator() % p for x in self._alpha + self._beta):
             raise NotImplementedError('p is wild')
-        e = t.valuation(p)
-        if (t.numerator()*t.denominator() % p == 0):
-            raise NotImplementedError('p is tame')
+        if 0 in self._alpha:
+            return self._swap.euler_factor(~t, p)
+        if t.numerator() % p == 0 or t.denominator() % p == 0:
+            typ = "tame"
+            d = 0
+            e = t.valuation(p)
+            index = 1 if t.numerator() % p == 0 else 0
+            for m in set(self.cyclotomic_data()[index]):
+                if e%m == 0:
+                    d += euler_phi(m)
+            if d == 0:
+                return PolynomialRing(ZZ, 'T').one()
         # now p is good, or p is tame and t is a p-adic unit
-        if (t-1) % p == 0:
-            d = self.degree()-1
-            bound = d
-            if deg is not None:
-                bound = min(deg, bound)
-            deg = bound
-            use_fe = False
+        elif (t-1) % p == 0:
+            typ = "mult"
+            d = self.degree() - 1
         else:
+            typ = "good"
             d = self.degree()
-            bound = d // 2
-            if deg is not None:
-                bound = min(deg, bound)
-            use_fe = True
+        use_fe = (typ == "good")
+        bound = d // 2 if use_fe else d
+        if deg is not None:
+            bound = min(deg, bound)
+       
         if p ** bound > 2 ** 31:
             raise ValueError("p^f cannot exceed 2^31")
 
@@ -1827,7 +1857,7 @@ class HypergeometricData:
         ans = characteristic_polynomial_from_traces(traces, d, p, w, sign, deg=deg, use_fe=use_fe)
 
         # Add an extra factor when w is even and t-1 has nonzero even valuation.
-        if (w % 2 == 0 and (t-1) % p == 0 and (t-1).valuation(p) % 2 == 0):
+        if (w % 2 == 0 and typ == "mult" and (t-1).valuation(p) % 2 == 0):
             m1 = self.cyclotomic_data()[1].count(1)
             K = (-1)**((m1-1)//2)*2*prod(abs(x) for x in self.gamma_list())
             t0 = (~t-1)/p**((t-1).valuation(p))
