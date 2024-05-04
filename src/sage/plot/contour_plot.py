@@ -61,7 +61,7 @@ class ContourPlot(GraphicPrimitive):
         ....:              plot_points=121, cmap='hsv')
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, xy_data_array, xrange, yrange, subtype, options):
+    def __init__(self, xy_data_array, xrange, yrange, options, subtype=None):
         """
         Initialize base class ``ContourPlot``.
 
@@ -1036,7 +1036,7 @@ def contour_plot(f, xrange, yrange, **options):
 
         xy_data_array[mask] = numpy.ma.masked
 
-    g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, plot_subtype, options))
+    g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, options, plot_subtype))
 
     return g
 
@@ -1743,10 +1743,10 @@ def region_plot(f, xrange, yrange, **options):
                                                       ignore=['xmin', 'xmax']))
 
     if neqs == 0:
-        g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, 'region',
+        g.add_primitive(ContourPlot(xy_data_array, xrange, yrange,
                                     dict(contours=[-1e-20, 0, 1e-20],
                                          cmap=cmap,
-                                         fill=True, **options)))
+                                         fill=True, **options), 'region'))
     else:
         mask = numpy.asarray([[elt > 0 for elt in rows]
                               for rows in xy_data_array],
@@ -1763,12 +1763,12 @@ def region_plot(f, xrange, yrange, **options):
         linestyles = [borderstyle] if borderstyle else None
         linewidths = [borderwidth] if borderwidth else None
         g.add_primitive(ContourPlot(xy_data_array, xrange, yrange,
-                                    'region_border' if neqs == 0 and
-                                    plot_subtype == 'region' else 'implicit',
                                     dict(linestyles=linestyles,
                                          linewidths=linewidths,
                                          contours=[0], cmap=[bordercol],
-                                         fill=False, **options)))
+                                         fill=False, **options),
+                                    'region_border' if neqs == 0 and
+                                    plot_subtype == 'region' else 'implicit'))
 
     return g
 
