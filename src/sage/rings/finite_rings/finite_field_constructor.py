@@ -530,21 +530,21 @@ class FiniteFieldFactory(UniqueFactory):
         Moreover, ``repr`` and ``elem_cache`` are ignored when not
         using givaro::
 
-            sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', repr='poly')        # needs sage.libs.ntl
+            sage: GF.create_key_and_extra_args(16, 'a', implementation='ntl', repr='poly')        # needs sage.libs.ntl
             ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
-            sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', elem_cache=False)   # needs sage.libs.ntl
+            sage: GF.create_key_and_extra_args(16, 'a', implementation='ntl', elem_cache=False)   # needs sage.libs.ntl
             ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
-            sage: GF(16, impl='ntl') is GF(16, impl='ntl', repr='foo')                  # needs sage.libs.ntl
+            sage: GF(16, implementation='ntl') is GF(16, implementation='ntl', repr='foo')                  # needs sage.libs.ntl
             True
 
         We handle extra arguments for the givaro finite field and
         create unique objects for their defaults::
 
-            sage: GF(25, impl='givaro') is GF(25, impl='givaro', repr='poly')           # needs sage.libs.linbox
+            sage: GF(25, implementation='givaro') is GF(25, implementation='givaro', repr='poly')           # needs sage.libs.linbox
             True
-            sage: GF(25, impl='givaro') is GF(25, impl='givaro', elem_cache=True)       # needs sage.libs.linbox
+            sage: GF(25, implementation='givaro') is GF(25, implementation='givaro', elem_cache=True)       # needs sage.libs.linbox
             True
-            sage: GF(625, impl='givaro') is GF(625, impl='givaro', elem_cache=False)    # needs sage.libs.linbox
+            sage: GF(625, implementation='givaro') is GF(625, implementation='givaro', elem_cache=False)    # needs sage.libs.linbox
             True
 
         We explicitly take ``structure``, ``implementation`` and ``prec`` attributes
@@ -687,10 +687,10 @@ class FiniteFieldFactory(UniqueFactory):
 
         We try to create finite fields with various implementations::
 
-            sage: k = GF(2, impl='modn')
-            sage: k = GF(2, impl='givaro')                                              # needs sage.libs.linbox
-            sage: k = GF(2, impl='ntl')                                                 # needs sage.libs.ntl
-            sage: k = GF(2, impl='pari')
+            sage: k = GF(2, implementation='modn')
+            sage: k = GF(2, implementation='givaro')                                              # needs sage.libs.linbox
+            sage: k = GF(2, implementation='ntl')                                                 # needs sage.libs.ntl
+            sage: k = GF(2, implementation='pari')
             Traceback (most recent call last):
             ...
             ValueError: the degree must be at least 2
@@ -702,18 +702,18 @@ class FiniteFieldFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: the 'modn' implementation requires a prime order
-            sage: k.<a> = GF(2^15, impl='givaro')                                       # needs sage.libs.linbox
-            sage: k.<a> = GF(2^15, impl='ntl')                                          # needs sage.libs.ntl
-            sage: k.<a> = GF(2^15, impl='pari')
-            sage: k.<a> = GF(3^60, impl='modn')
+            sage: k.<a> = GF(2^15, implementation='givaro')                                       # needs sage.libs.linbox
+            sage: k.<a> = GF(2^15, implementation='ntl')                                          # needs sage.libs.ntl
+            sage: k.<a> = GF(2^15, implementation='pari')
+            sage: k.<a> = GF(3^60, implementation='modn')
             Traceback (most recent call last):
             ...
             ValueError: the 'modn' implementation requires a prime order
-            sage: k.<a> = GF(3^60, impl='givaro')                                       # needs sage.libs.linbox
+            sage: k.<a> = GF(3^60, implementation='givaro')                                       # needs sage.libs.linbox
             Traceback (most recent call last):
             ...
             ValueError: q must be < 2^16
-            sage: k.<a> = GF(3^60, impl='ntl')                                          # needs sage.libs.ntl
+            sage: k.<a> = GF(3^60, implementation='ntl')                                          # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             ValueError: q must be a 2-power

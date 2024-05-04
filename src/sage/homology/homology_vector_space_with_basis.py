@@ -1447,7 +1447,7 @@ def is_GF2(R):
         sage: from sage.homology.homology_vector_space_with_basis import is_GF2
         sage: is_GF2(GF(2))
         True
-        sage: is_GF2(GF(2, impl='ntl'))
+        sage: is_GF2(GF(2, implementation='ntl'))
         True
         sage: is_GF2(GF(3))
         False

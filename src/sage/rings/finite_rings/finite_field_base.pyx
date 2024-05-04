@@ -339,11 +339,11 @@ cdef class FiniteField(Field):
 
             sage: L = []
             sage: from sage.rings.finite_rings.finite_field_base import FiniteField
-            sage: print(list(FiniteField.__iter__(GF(8, impl="givaro", names="z"))))    # needs sage.libs.linbox
+            sage: print(list(FiniteField.__iter__(GF(8, implementation="givaro", names="z"))))    # needs sage.libs.linbox
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            sage: print(list(FiniteField.__iter__(GF(8, impl="pari", names="z"))))
+            sage: print(list(FiniteField.__iter__(GF(8, implementation="pari", names="z"))))
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            sage: print(list(FiniteField.__iter__(GF(8, impl="ntl", names="z"))))       # needs sage.libs.ntl
+            sage: print(list(FiniteField.__iter__(GF(8, implementation="ntl", names="z"))))       # needs sage.libs.ntl
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
         """
         cdef Py_ssize_t n = self.degree()
