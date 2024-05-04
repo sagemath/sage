@@ -669,8 +669,8 @@ def compute_gevp_M(gs, hs):
         sage: G = matrix.column(gs)
         sage: H = matrix.column(hs)
         sage: def _test_indexing(I,J):
-        ....:      G_I = G[range(n), I]
-        ....:      H_J = H[range(n), J]
+        ....:      G_I = G.matrix_from_columns(I)
+        ....:      H_J = H.matrix_from_columns(J)
         ....:      return (G_I.transpose()*H_J == M[I,J]
         ....:              and
         ....:              H_J.transpose()*G_I == M.transpose()[J,I])
@@ -945,14 +945,14 @@ def max_angle(P, Q, exact, epsilon):
     big_eigenspaces = []
 
     for I in G_index_sets:
-        G_I = G[range(n),I]
+        G_I = G.matrix_from_columns(I)
         I_complement = [i for i in range(P.nrays()) if i not in I]
-        G_I_c_T = G[range(n),I_complement].transpose()
+        G_I_c_T = G.matrix_from_columns(I_complement).transpose()
 
         for J in H_index_sets:
             J_complement = [j for j in range(Q.nrays()) if j not in J]
-            H_J = H[range(n),J]
-            H_J_c_T = H[range(n),J_complement].transpose()
+            H_J = H.matrix_from_columns(J)
+            H_J_c_T = H.matrix_from_columns(J_complement).transpose()
 
             for (cos_theta,xi,eta,mult) in solve_gevp_nonzero(GG, HH, M, I, J):
 
