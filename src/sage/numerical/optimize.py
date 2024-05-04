@@ -346,7 +346,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
         sage: vars = var('x y z')                                                       # needs sage.symbolic
         sage: f = 100*(y-x^2)^2 + (1-x)^2 + 100*(z-y^2)^2 + (1-y)^2                     # needs sage.symbolic
-        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6                                    # needs sage.symbolic
+        sage: minimize(f, [.1,.3,.4])  # abs tol 1e-6                                   # needs sage.symbolic
         (1.0, 1.0, 1.0)
 
     Try the newton-conjugate gradient method; the gradient and hessian are

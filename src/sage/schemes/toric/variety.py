@@ -2660,7 +2660,7 @@ class ToricVariety_field(AmbientSpace):
         # TODO: make the following work nicely.
         # if x in cone.lattice():
         # return quot(x)
-        # assert is_Cone(x)
+        # assert x is ConvexRationalPolyhedralCone object
         # return Cone(x.rays(), lattice=quot)
 
     def orbit_closure(self, cone):

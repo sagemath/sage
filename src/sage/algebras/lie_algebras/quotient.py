@@ -218,8 +218,10 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         index_set = [i for i in sorted_indices if i not in I_supp]
 
         if names is None:
-            amb_names = dict(zip(sorted_indices, ambient.variable_names()))
-            names = [amb_names[i] for i in index_set]
+            if ambient._names is not None:
+                # ambient has assigned variable names, so use those
+                amb_names = dict(zip(sorted_indices, ambient.variable_names()))
+                names = [amb_names[i] for i in index_set]
         elif isinstance(names, str):
             if len(index_set) == 1:
                 names = [names]
@@ -252,7 +254,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         B = L.basis()
         sm = L.module().submodule_with_basis([I.reduce(B[i]).to_vector()
                                               for i in index_set])
-        SB = sm.basis()
+        SB = [L.from_vector(b) for b in sm.basis()]
 
         # compute and normalize structural coefficients for the quotient
         s_coeff = {}
@@ -260,7 +262,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             for j in range(i + 1, len(index_set)):
                 ind_j = index_set[j]
 
-                brkt = I.reduce(L.bracket(SB[i], SB[j]))
+                brkt = I.reduce(SB[i].bracket(SB[j]))
                 brktvec = sm.coordinate_vector(brkt.to_vector())
                 s_coeff[(ind_i, ind_j)] = dict(zip(index_set, brktvec))
         s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(
@@ -291,11 +293,26 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             L: General linear Lie algebra of rank 2 over Rational Field
             I: Ideal ([0 0]
             [0 1])
+
+            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+            sage: a,b,c = L.gens()
+            sage: I = L.ideal([a + 2*b, b + 3*c])
+            sage: Q = L.quotient(I)
+            sage: Q
+            Lie algebra quotient L/I of dimension 1 over Rational Field where
+            L: An example of a finite dimensional Lie algebra with basis:
+                the 3-dimensional abelian Lie algebra over Rational Field
+            I: Ideal ((1, 0, -6), (0, 1, 3))
         """
+        try:
+            ideal_repr = self._I._repr_short()
+        except AttributeError:
+            ideal_repr = repr(tuple(self._I.gens()))
+
         return ("Lie algebra quotient L/I of dimension %s"
                 " over %s where\nL: %s\nI: Ideal %s" % (
                     self.dimension(), self.base_ring(),
-                    self.ambient(), self._I._repr_short()))
+                    self.ambient(), ideal_repr))
 
     def _repr_generator(self, i):
         r"""

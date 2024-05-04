@@ -1381,7 +1381,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             t = t.bump(k)
         if isinstance(self, StandardTableau):
             return StandardTableau(list(t))
-        elif isinstance(self, SemistandardTableau):
+        if isinstance(self, SemistandardTableau):
             return SemistandardTableau(list(t))
         return t
 
@@ -1910,7 +1910,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self.is_rectangular():
             raise TypeError("the tableau must be rectangular to use vertical_flip()")
 
-        return Tableau([row for row in reversed(self)])
+        return Tableau(list(reversed(self)))
 
     def rotate_180(self):
         """
@@ -1926,7 +1926,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self.is_rectangular():
             raise TypeError("the tableau must be rectangular to use rotate_180()")
 
-        return Tableau([[rline for rline in reversed(row)] for row in reversed(self)])
+        return Tableau([list(reversed(row)) for row in reversed(self)])
 
     def cells(self):
         """
@@ -2447,7 +2447,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [[1, 3], [2, 5], [4]]
         """
         if left:
-            w = [i for i in reversed(w)]
+            w = list(reversed(w))
         res = self
         for i in w:
             res = res.schensted_insert(i, left=left)
@@ -3891,7 +3891,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         for s in S:
             if (s[0][0] != len(self)-1 and s[1] == len(self[s[0][0]+1])
                 and self[s[0][0]+1][-1] <= s[0][1]) \
-              or (s[0][0] == len(self)-1 and s[1] == 0):
+                    or (s[0][0] == len(self)-1 and s[1] == 0):
                 f += 1
             else:
                 for t in S:
@@ -4491,7 +4491,7 @@ class SemistandardTableau(Tableau):
         """
         if isinstance(t, SemistandardTableau):
             return t
-        elif t in SemistandardTableaux():
+        if t in SemistandardTableaux():
             return SemistandardTableaux_all().element_class(SemistandardTableaux_all(), t)
 
         # t is not a semistandard tableau so we give an appropriate error message
@@ -4676,9 +4676,9 @@ class RowStandardTableau(Tableau):
         super().check()
         # We have checked that t is tableau, so it remains to check that
         #   the entries of t are positive integers that increase along rows.
-        flatx = sorted(sum((list(row) for row in self), []))
+        flatx = sorted(c for row in self for c in row)
         if (flatx != list(range(1, len(flatx)+1))
-            or any(row[i] >= row[i+1] for row in self for i in range(len(row)-1))):
+                or any(row[i] >= row[i+1] for row in self for i in range(len(row)-1))):
             raise ValueError("the entries in a row standard tableau must increase"
                              " along rows and contain the numbers 1,2,...,n")
 
@@ -5657,13 +5657,13 @@ class Tableaux(UniqueRepresentation, Parent):
                    alias=dict(array="diagram", ferrers_diagram="diagram", young_diagram="diagram"),
                    case_sensitive=False)
         convention = dict(default="English",
-                        description='Sets the convention used for displaying tableaux and partitions',
-                        values=dict(
-                            English='use the English convention',
-                            French='use the French convention',
-                            Russian='use the Russian convention',
-                        ),
-                        case_sensitive=False)
+                          description='Sets the convention used for displaying tableaux and partitions',
+                          values=dict(
+                              English='use the English convention',
+                              French='use the French convention',
+                              Russian='use the Russian convention',
+                          ),
+                          case_sensitive=False)
         notation = dict(alt_name="convention")
 
     def _element_constructor_(self, t):
@@ -5726,7 +5726,7 @@ class Tableaux(UniqueRepresentation, Parent):
         from sage.combinat.partition import _Partitions
         if isinstance(x, Tableau):
             return True
-        elif isinstance(x, list):
+        if isinstance(x, list):
             try:
                 for row in x:
                     iter(row)
@@ -6062,7 +6062,7 @@ class SemistandardTableaux(Tableaux):
         if size is not None:
             if not isinstance(size, (int, Integer)):
                 raise ValueError("size must be an integer")
-            elif size < 0:
+            if size < 0:
                 raise ValueError("size must be non-negative")
 
         if shape is not None:
@@ -6269,9 +6269,9 @@ class SemistandardTableaux(Tableaux):
             return (self.max_entry is None or
                     len(t) == 0 or
                     max(max(row) for row in t) <= self.max_entry)
-        elif not t:
+        if not t:
             return True
-        elif Tableaux.__contains__(self, t):
+        if Tableaux.__contains__(self, t):
             for row in t:
                 if not all(c > 0 for c in row):
                     return False
@@ -6648,7 +6648,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
             tot += weights[pos]
         # we now have pos elements over the diagonal and n - 2 * pos on it
         m = diagonal_matrix(list(IntegerVectors(self.size - 2 * pos,
-                                                 self.max_entry).random_element()))
+                                                self.max_entry).random_element()))
         above_diagonal = list(IntegerVectors(pos, kchoose2m1 + 1).random_element())
         index = 0
         for i in range(self.max_entry - 1):
@@ -7309,10 +7309,10 @@ class RowStandardTableaux(Tableaux):
         """
         if isinstance(x, RowStandardTableau):
             return True
-        elif Tableaux.__contains__(self, x):
-            flatx = sorted(sum((list(row) for row in x), []))
+        if Tableaux.__contains__(self, x):
+            flatx = sorted(c for row in x for c in row)
             return (flatx == list(range(1, len(flatx)+1))
-                     and all(row[i] < row[i+1] for row in x for i in range(len(row)-1)))
+                    and all(row[i] < row[i+1] for row in x for i in range(len(row)-1)))
         return False
 
 
@@ -7561,7 +7561,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
             sage: RowStandardTableaux([]).cardinality()
             1
         """
-        return Integer(multinomial([m for m in self.shape]))
+        return Integer(multinomial(list(self.shape)))
 
 
 ########################
@@ -7710,12 +7710,12 @@ class StandardTableaux(SemistandardTableaux):
         if isinstance(x, StandardTableau):
             return True
         elif Tableaux.__contains__(self, x):
-            flatx = sorted(sum((list(row) for row in x), []))
+            flatx = sorted(c for row in x for c in row)
             return flatx == list(range(1, len(flatx)+1)) and (len(x) == 0 or
                      (all(row[i] < row[i+1] for row in x for i in range(len(row)-1)) and
-                       all(x[r][c] < x[r+1][c] for r in range(len(x)-1)
-                                              for c in range(len(x[r+1])))
-                     ))
+                      all(x[r][c] < x[r+1][c] for r in range(len(x)-1)
+                          for c in range(len(x[r+1])))
+                      ))
         return False
 
 
@@ -7936,7 +7936,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
             # We add the number of involutions with ``fixed_point_number``
             # fixed points.
             partial_sum += binomial(self.size, fixed_point_number) * \
-                           prod(range(1, self.size - fixed_point_number, 2))
+                prod(range(1, self.size - fixed_point_number, 2))
             # If the partial sum is greater than the involution index,
             # then the random involution that we want to generate has
             # ``fixed_point_number`` fixed points.
@@ -7954,7 +7954,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
         matching = PerfectMatchings(set(range(1, self.size + 1))
                                     - set(fixed_point_positions)).random_element()
         permutation_cycle_rep = ([(fixed_point,) for fixed_point in fixed_point_positions]
-                                 + [(a, b) for a, b in matching])
+                                 + [tuple(ab) for ab in matching])
         return from_cycles(self.size, permutation_cycle_rep).robinson_schensted()[0]
 
 
@@ -8198,7 +8198,7 @@ class StandardTableaux_shape(StandardTableaux):
              [[1, 2, 4], [3, 5], [6]],
              [[1, 2, 3], [4, 5], [6]]]
         """
-        return [y for y in self]
+        return list(self)
 
     def random_element(self):
         """
