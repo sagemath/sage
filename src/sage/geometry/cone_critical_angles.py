@@ -847,12 +847,12 @@ def check_gevp_feasibility(cos_theta, xi, eta, G_I, G_I_c_T,
     v = H_J * eta_hat
     rhs = v - cos_theta*G_I*xi_hat
 
-    if any(x < -epsilon for x in G_I_c_T*rhs):
+    if any(x < -epsilon for x in G_I_c_T * rhs):
         return infeasible_result
 
     u = G_I * xi_hat
     rhs = u - cos_theta*H_J*eta_hat
-    if any(x < -epsilon for x in H_J_c_T*rhs):
+    if any(x < -epsilon for x in H_J_c_T * rhs):
         return infeasible_result
 
     return (True, u, v)
