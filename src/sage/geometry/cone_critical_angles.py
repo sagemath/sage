@@ -370,7 +370,7 @@ def solve_gevp_zero(M, I, J):
         sage: GG = G.transpose() * G
         sage: I = [0]
         sage: J = [1]
-        sage: list(solve_gevp_zero(GG,I,J))
+        sage: list(solve_gevp_zero(GG, I, J))
         [(0, (1), (0), 2), (0, (0), (1), 2)]
     """
     # A Cartesian product would be more appropriate here, but Sage
@@ -474,8 +474,8 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         ....:     _normalize_gevp_solution(s)
         ....:     for s in
         ....:     chain(
-        ....:       solve_gevp_zero(GG,I,J),
-        ....:       solve_gevp_nonzero(GG,GG,GG,I,J)
+        ....:       solve_gevp_zero(GG, I, J),
+        ....:       solve_gevp_nonzero(GG, GG, GG, I, J)
         ....:     )
         ....:   )
         ....:   ==
@@ -520,15 +520,15 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         ....:     _normalize_gevp_solution(s)
         ....:     for s in
         ....:     chain(
-        ....:       solve_gevp_zero(M,I,J),
-        ....:       solve_gevp_nonzero(GG,HH,M,I,J)
+        ....:       solve_gevp_zero(M, I, J),
+        ....:       solve_gevp_nonzero(GG, HH, M, I, J)
         ....:     )
         ....:   )
         ....:   ==
         ....:   set(
         ....:     _normalize_gevp_solution(s)
         ....:     for s in
-        ....:     _solve_gevp_naive(GG,HH,M,I,J)
+        ....:     _solve_gevp_naive(GG, HH, M, I, J)
         ....:   )
         ....:   for I in G_index_sets
         ....:   for J in H_index_sets
@@ -557,7 +557,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: from itertools import product
         sage: all(
         ....:  (v in [-1,0,1]
-        ....:   for (v,_,_,_) in solve_gevp_nonzero(GG,HH,M,I,J))
+        ....:   for (v,_,_,_) in solve_gevp_nonzero(GG, HH, M, I, J))
         ....:   for (I,J) in product(gevp_licis(G),gevp_licis(H))
         ....:   if len(I) == n or len(J) == n )
         True
@@ -942,7 +942,7 @@ def max_angle(P, Q, exact, epsilon):
             H_J = H[range(n),J]
             H_J_c_T = H[range(n),J_complement].transpose()
 
-            for (cos_theta,xi,eta,mult) in solve_gevp_nonzero(GG,HH,M,I,J):
+            for (cos_theta,xi,eta,mult) in solve_gevp_nonzero(GG, HH, M, I, J):
 
                 if cos_theta >= min_ip:
                     # This potential critical angle is smaller than or
