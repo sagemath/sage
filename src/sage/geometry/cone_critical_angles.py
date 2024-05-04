@@ -581,10 +581,18 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         L = (G_I_pinv_H_J * H_J_pinv_G_I)
 
         for (sigma, xis, m) in L.eigenvectors_right():
-            for xi in xis:
-                if sigma > 0:
-                    for l in [-sigma.sqrt(), sigma.sqrt()]:
-                        eta = ~l * H_J_pinv_G_I*xi
+            if sigma > 0:
+                # Avoid recomputing these for each xi in xis
+                sigma_sqrt = sigma.sqrt()
+                inv_sqrt = ~sigma_sqrt
+                pm_sqrt_inv_pairs = [
+                    (-sigma_sqrt, -inv_sqrt),
+                    (sigma_sqrt, inv_sqrt)
+                ]
+
+                for xi in xis:
+                    for l, li in pm_sqrt_inv_pairs:
+                        eta = li * H_J_pinv_G_I*xi
                         eta.set_immutable()
                         yield (l, xi, eta, m)
 
