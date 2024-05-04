@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 r"""
 Noncommutative polynomials via libSINGULAR/Plural
 

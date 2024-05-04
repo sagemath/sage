@@ -1211,14 +1211,14 @@ class Singular(ExtraTabCompletion, Expect):
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 3
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
             sage: singular.current_ring()
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 3
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
         """
@@ -1402,6 +1402,14 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         if self._name in s:
             if self.get_custom_name() is None and self.type() == 'matrix':
                 s = self.parent().eval('pmat(%s,20)' % (self.name()))
+        # compatibility for singular 4.3.2p10 and before
+        if s.startswith("polynomial ring,"):
+            from sage.rings.polynomial.term_order import singular_name_mapping
+            from sage.repl.rich_output import get_display_manager
+            # this is our cue that singular uses `rp` instead of `ip`
+            if singular_name_mapping['invlex'] == 'rp' and 'doctest' in str(get_display_manager()):
+                s = re.sub('^(// .*block.* : ordering )rp$', '\\1ip',
+                           s, 0, re.MULTILINE);
         return s
 
     def __copy__(self):
@@ -2025,6 +2033,10 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: type(singular(int(5)).sage())
             <class 'sage.rings.integer.Integer'>
 
+        Test that bigintvec can be coerced::
+
+            sage: singular('hilb((ideal(x)), 1)').sage()
+            (1, -1, 0, 0, -1, 1, 0)
         """
         typ = self.type()
         if typ == 'poly':
@@ -2040,6 +2052,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         elif typ == 'intvec':
             from sage.modules.free_module_element import vector
             return vector([sage.rings.integer.Integer(str(e)) for e in self])
+        elif typ == 'bigintvec':
+            from sage.modules.free_module_element import vector
+            return vector([sage.rings.rational.Rational(str(e)) for e in self])
         elif typ == 'intmat':
             from sage.matrix.constructor import matrix
             from sage.rings.integer_ring import ZZ

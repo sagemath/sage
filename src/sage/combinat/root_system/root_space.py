@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Root lattices and root spaces
 """
@@ -444,7 +443,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
         word = []
         while self != Qvee.zero():
             beta = self.max_coroot_le()
-            word += [x for x in beta.associated_reflection()]
+            word += list(beta.associated_reflection())
             self = self - beta.associated_coroot()
         W = self.parent().weyl_group()
         return (W.demazure_product(word)).reduced_word()

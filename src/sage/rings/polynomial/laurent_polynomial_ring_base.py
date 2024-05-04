@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules
 r"""
 Ring of Laurent Polynomials (base class)

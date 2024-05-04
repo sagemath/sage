@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 # sage.doctest: needs sage.groups sage.modules
 """
 Weyl Groups

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Categories
 
@@ -2598,6 +2597,7 @@ def category_sample():
          Category of Hecke modules over Rational Field,
          Category of Hopf algebras over Rational Field,
          Category of Hopf algebras with basis over Rational Field,
+         Category of Jacobians over Rational Field,
          Category of Lie algebras over Rational Field,
          Category of Weyl groups,
          Category of abelian varieties over Rational Field,

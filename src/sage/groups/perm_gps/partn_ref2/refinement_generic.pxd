@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 #*******************************************************************************
 #       Copyright (C) 2012 Thomas Feulner <thomas.feulner@uni-bayreuth.de>
 #

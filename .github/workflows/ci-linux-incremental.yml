@@ -19,7 +19,12 @@ on:
   pull_request:
     paths:
       - 'build/pkgs/**'
-      - 'pkgs/**'
+      - '!build/pkgs/sage_conf/**'
+      - '!build/pkgs/sage_docbuild/**'
+      - '!build/pkgs/sage_setup/**'
+      - '!build/pkgs/sage_sws2rst/**'
+      - '!build/pkgs/sagelib/**'
+      - '!build/pkgs/sagemath_*/**'
   workflow_dispatch:
 
 concurrency:

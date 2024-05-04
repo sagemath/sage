@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Vectors with integer entries
 

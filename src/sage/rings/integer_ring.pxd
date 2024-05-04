@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 from sage.rings.ring cimport CommutativeRing
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.types cimport mpz_t

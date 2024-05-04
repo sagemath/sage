@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 r"""
 Graphics arrays and insets
@@ -152,7 +151,7 @@ class MultiGraphics(WithEqualityById, SageObject):
             else:
                 if not isinstance(ins, (list, tuple)) or len(ins) != 2:
                     raise TypeError("a pair (Graphics, position) is "
-                                    "expected, not {}".format(ins))
+                                    f"expected, not {ins}")
                 self.append(ins[0], pos=ins[1])
 
     def _repr_(self):
@@ -491,7 +490,7 @@ class MultiGraphics(WithEqualityById, SageObject):
                 # tight_layout adjusts the *subplot* parameters so ticks aren't
                 # cut off, etc.
                 figure.tight_layout()
-            opts = dict(dpi=dpi, transparent=transparent)
+            opts = {"dpi": dpi, "transparent": transparent}
             if fig_tight is True:
                 opts['bbox_inches'] = 'tight'
             figure.savefig(filename, **opts)
@@ -546,7 +545,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         """
         tmpfilename = tmp_filename(ext='.pgf')
         self.save(filename=tmpfilename, **kwds)
-        with open(tmpfilename, "r") as tmpfile:
+        with open(tmpfilename) as tmpfile:
             latex_list = tmpfile.readlines()
         return ''.join(latex_list)
 
@@ -742,8 +741,8 @@ class MultiGraphics(WithEqualityById, SageObject):
         """
         n = len(self._glist)
         if n <= 1:
-            return "Multigraphics with {} element".format(n)
-        return "Multigraphics with {} elements".format(n)
+            return f"Multigraphics with {n} element"
+        return f"Multigraphics with {n} elements"
 
     def _add_subplot(self, figure, index, **options):
         r"""
@@ -911,7 +910,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         from matplotlib import rcParams
         if not isinstance(graphics, Graphics):
             raise TypeError("a Graphics object is expected, "
-                            "not {}".format(graphics))
+                            f"not {graphics}")
         if pos is None:
             # Default position:
             left = rcParams['figure.subplot.left']
@@ -920,7 +919,7 @@ class MultiGraphics(WithEqualityById, SageObject):
             height = rcParams['figure.subplot.top'] - bottom
             pos = (left, bottom, width, height)
         elif not isinstance(pos, (list, tuple)) or len(pos) != 4:
-            raise TypeError("pos must be a 4-tuple, not {}".format(pos))
+            raise TypeError(f"pos must be a 4-tuple, not {pos}")
         pos = tuple(float(p) for p in pos)
         self._glist.append(graphics)
         self._positions.append(pos)
@@ -1143,7 +1142,7 @@ class GraphicsArray(MultiGraphics):
         MultiGraphics.__init__(self, [])
         if not isinstance(array, (list, tuple)):
             raise TypeError("array must be a list of lists of Graphics "
-                            "objects, not {}".format(array))
+                            f"objects, not {array}")
         array = list(array)
         self._rows = len(array)
         if self._rows > 0:
@@ -1156,7 +1155,7 @@ class GraphicsArray(MultiGraphics):
         for row in array:  # basically flatten the list
             if not isinstance(row, (list, tuple)) or len(row) != self._cols:
                 raise TypeError("array must be a list of equal-size lists of "
-                                "Graphics objects, not {}".format(array))
+                                f"Graphics objects, not {array}")
             for g in row:
                 if not isinstance(g, Graphics):
                     raise TypeError("every element of array must be a "
@@ -1180,7 +1179,7 @@ class GraphicsArray(MultiGraphics):
             'Graphics Array of size 2 x 3'
 
         """
-        return "Graphics Array of size {} x {}".format(self._rows, self._cols)
+        return f"Graphics Array of size {self._rows} x {self._cols}"
 
     def _add_subplot(self, figure, index, **options):
         r"""

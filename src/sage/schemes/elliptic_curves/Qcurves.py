@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Testing whether elliptic curves over number fields are `\QQ`-curves
 
