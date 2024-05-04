@@ -243,7 +243,7 @@ def gevp_licis(G):
     # There's a fast implementation of this for matroids, but we need
     # to drop the empty set from its output and convert the rest to
     # lists that are all sorted in the same order.
-    return map(sorted, filter(bool,LinearMatroid(G).independent_sets()))
+    return map(sorted, filter(bool, LinearMatroid(G).independent_sets()))
 
 
 def _solve_gevp_naive(GG, HH, M, I, J):
