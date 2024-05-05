@@ -1661,7 +1661,7 @@ class HypergeometricData:
         - ``p`` -- prime number of good reduction
 
         - ``mo`` -- integer
-        
+
         - ``deg`` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
