@@ -188,6 +188,7 @@ def Matroid(groundset=None, data=None, **kwds):
       ``reduced_matrix = A``
       then the matroid is represented by `[I\ \ A]` where `I` is an
       appropriately sized identity matrix.
+    - ``morphism`` -- A morphism representation of the matroid.
     - ``rank_function`` -- A function that computes the rank of each subset.
       Can only be provided together with a groundset.
     - ``circuit_closures`` -- Either a list of tuples ``(k, C)`` with ``C``
