@@ -7,7 +7,7 @@ with `1/t` to match the classical literature on hypergeometric series.
 (E.g., see [BeukersHeckman]_)
 
 The computation of Euler factors is currently only supported for primes `p`
-for which `v_p(t) = 0`.
+of good or tame reduction.
 
 AUTHORS:
 
@@ -1650,7 +1650,11 @@ class HypergeometricData:
     def euler_factor_tame_contribution(self, t, p, mo):
         """
         Return a contribution to the Euler factor of the motive `H_t` at a tame prime.
-        
+
+        The output is only nontrivial when `t` has nonzero `p`-adic valuation.
+        The recipe is described in section 11.4.1 of [Watkins]_.
+
+
         INPUT:
 
         - `t` -- rational number, not 0 or 1
@@ -1744,7 +1748,7 @@ class HypergeometricData:
 
         - `p` -- prime number of good reduction
         
-        - `deg` -- integer or None
+        - ``deg`` -- integer or ``None``
 
         OUTPUT:
 
@@ -1753,7 +1757,7 @@ class HypergeometricData:
         See [Benasque2009]_ for explicit examples of Euler factors.
 
         For odd weight, the sign of the functional equation is +1. For even
-        weight, the sign is computed by a recipe found in 11.1 of [Watkins]_.
+        weight, the sign is computed by a recipe found in section 11.1 of [Watkins]_.
         
         If ``deg`` is specified, then the polynomial is only computed up to degree
         ``deg`` (inclusive).
@@ -1927,7 +1931,7 @@ class HypergeometricData:
         ans = characteristic_polynomial_from_traces(traces, d, p, w, sign, deg=deg, use_fe=use_fe)
 
         # Add an extra factor when w is even and t-1 has nonzero even valuation.
-        if (w % 2 == 0 and typ == "mult" and (t-1).valuation(p) % 2 == 0):
+        if w % 2 == 0 and typ == "mult" and (t-1).valuation(p) % 2 == 0:
             m1 = self.cyclotomic_data()[1].count(1)
             K = (-1)**((m1-1)//2)*2*prod(abs(x) for x in self.gamma_list())
             t0 = (~t-1)/p**((t-1).valuation(p))
