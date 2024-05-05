@@ -117,7 +117,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
 
     - ``deg`` -- an integer or None
 
-    - ``use_fe`` -- a boolean (default True)
+    - ``use_fe`` -- a boolean (default: ``True``)
 
     OUTPUT:
 
@@ -932,7 +932,7 @@ class HypergeometricData:
 
         INPUT:
 
-        - ``vars`` -- optional pair of variables (default `u,v`)
+        - ``vars`` -- optional pair of variables (default: `u,v`)
 
         REFERENCES:
 
@@ -1087,7 +1087,7 @@ class HypergeometricData:
 
         INPUT:
 
-        - ``prec`` -- precision (default 53)
+        - ``prec`` -- precision (default: 53)
 
         EXAMPLES::
 
@@ -1481,7 +1481,7 @@ class HypergeometricData:
 
         - `t` -- a rational parameter
 
-        - ``ring`` -- optional (default :class:`UniversalCyclotomicfield`)
+        - ``ring`` -- optional (default: :class:`UniversalCyclotomicfield`)
 
         The ring could be also ``ComplexField(n)`` or ``QQbar``.
 
