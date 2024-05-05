@@ -115,7 +115,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
 
     - ``sign`` -- integer, the sign
 
-    - ``deg`` -- an integer or None
+    - ``deg`` -- an integer or ``None``
 
     - ``use_fe`` -- a boolean (default: ``True``)
 
@@ -183,7 +183,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
     coeffs += [0] * max(0, bound + 1 - len(coeffs))
 
     fulldeg = d if deg is None else deg
-    data = [0 for _ in range(fulldeg + 1)]
+    data = [0] * fulldeg
     for k in range(bound + 1):
         data[k] = coeffs[k]
     for k in range(bound + 1, fulldeg + 1):
