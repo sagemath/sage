@@ -1149,6 +1149,11 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: 1 / CIF(RIF(-1,1),0)
             [.. NaN ..] + [.. NaN ..]*I
 
+        Test that the bug reported in :issue:`37927` is fixed::
+
+            sage: (961 * (1 / CIF(0, 31))**2 + 1).contains_zero()
+            True
+
         REFERENCES:
 
         - [RL1971]_
