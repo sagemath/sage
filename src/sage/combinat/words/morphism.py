@@ -883,18 +883,15 @@ class WordMorphism(SageObject):
         A = self.domain().alphabet()
         latex_layout = self.latex_layout()
         if latex_layout == 'oneliner':
-            L = [r"%s \mapsto %s" % (a, self.image(a)) for a in A]
-            return LatexExpr(r','.join(L))
-        elif latex_layout == 'array':
+            lines = (fr"{a} \mapsto {self.image(a)}" for a in A)
+            return LatexExpr(r','.join(lines))
+        if latex_layout == 'array':
             s = r"\begin{array}{l}" + '\n'
-            lines = []
-            for a in A:
-                lines.append(r"%s \mapsto %s" % (a, self.image(a)))
+            lines = (fr"{a} \mapsto {self.image(a)}" for a in A)
             s += '\\\\\n'.join(lines)
             s += '\n' + r"\end{array}"
             return LatexExpr(s)
-        else:
-            raise ValueError('unknown latex_layout(=%s)' % latex_layout)
+        raise ValueError('unknown latex_layout(=%s)' % latex_layout)
 
     def __mul__(self, other):
         r"""
@@ -1693,8 +1690,7 @@ class WordMorphism(SageObject):
             TypeError: codomain of self must be an instance of Words
         """
         if letter not in self.domain().alphabet():
-            raise TypeError("letter (=%s) is not in the domain alphabet (=%s)"
-                            % (letter, self.domain().alphabet()))
+            raise TypeError("letter (={}) is not in the domain alphabet (={})".format(letter, self.domain().alphabet()))
         image = self.image(letter)
         return not image.is_empty() and letter == image[0]
 
@@ -1893,11 +1889,9 @@ class WordMorphism(SageObject):
             []
 
         """
-        L = []
-        for letter in self.domain().alphabet():
-            if self.is_prolongable(letter=letter):
-                L.append(self.fixed_point(letter=letter))
-        return L
+        return [self.fixed_point(letter=letter)
+                for letter in self.domain().alphabet()
+                if self.is_prolongable(letter=letter)]
 
     def periodic_point(self, letter):
         r"""

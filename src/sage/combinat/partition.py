@@ -713,7 +713,7 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()
-        return '%s' % ', '.join('%s%s' % (m+1, '' if e == 1 else '^%s' % e)
+        return '%s' % ', '.join('{}{}'.format(m+1, '' if e == 1 else '^%s' % e)
                                  for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_exp_high(self):
@@ -733,7 +733,7 @@ class Partition(CombinatorialElement):
             return '-'
         exp = self.to_exp()[::-1]         # reversed list of exponents
         M = max(self)
-        return ', '.join('%s%s' % (M - m, '' if e == 1 else '^%s' % e)
+        return ', '.join('{}{}'.format(M - m, '' if e == 1 else '^%s' % e)
                          for m, e in enumerate(exp) if e > 0)
 
     def _repr_compact_low(self):
@@ -751,7 +751,7 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()
-        return '%s' % ','.join('%s%s' % (m+1, '' if e == 1 else '^%s' % e)
+        return '%s' % ','.join('{}{}'.format(m+1, '' if e == 1 else '^%s' % e)
                                  for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_compact_high(self):
@@ -770,7 +770,7 @@ class Partition(CombinatorialElement):
             return '-'
         exp = self.to_exp()[::-1]         # reversed list of exponents
         M = max(self)
-        return '%s' % ','.join('%s%s' % (M-m, '' if e == 1 else '^%s' % e)
+        return '%s' % ','.join('{}{}'.format(M-m, '' if e == 1 else '^%s' % e)
                                  for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_diagram(self):
@@ -945,7 +945,7 @@ class Partition(CombinatorialElement):
         if not self._list:
             return "{\\emptyset}"
         exp = self.to_exp()
-        return '%s' % ','.join('%s%s' % (m+1, '' if e == 1 else '^{%s}' % e)
+        return '%s' % ','.join('{}{}'.format(m+1, '' if e == 1 else '^{%s}' % e)
                                  for (m,e) in enumerate(exp) if e > 0)
 
     def _latex_exp_high(self):
@@ -963,7 +963,7 @@ class Partition(CombinatorialElement):
             return "{\\emptyset}"
         exp = self.to_exp()[::-1]  # reversed list of exponents
         M = max(self)
-        return '%s' % ','.join('%s%s' % (M-m, '' if e == 1 else '^{%s}' % e)
+        return '%s' % ','.join('{}{}'.format(M-m, '' if e == 1 else '^{%s}' % e)
                                  for (m,e) in enumerate(exp) if e > 0)
 
     def ferrers_diagram(self):
@@ -2339,11 +2339,7 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2]).cells()
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1)]
         """
-        res = []
-        for i in range(len(self)):
-            for j in range(self[i]):
-                res.append( (i,j) )
-        return res
+        return [(i, j) for i, si in enumerate(self) for j in range(si)]
 
     def generalized_pochhammer_symbol(self, a, alpha):
         r"""
@@ -2925,7 +2921,7 @@ class Partition(CombinatorialElement):
         """
         (row,col) = cell
         if row+1 >= len(self) or col >= self[row+1]:
-            raise ValueError('(%s,%s)=(row+1,col) must be inside the diagram' % (row+1,col))
+            raise ValueError(f'({row+1},{col})=(row+1,col) must be inside the diagram')
 
         g = self.garnir_tableau(cell)   # start with the Garnir tableau and modify
 
@@ -3336,16 +3332,16 @@ class Partition(CombinatorialElement):
         attacking_pairs = []
         for i, r in enumerate(self):
             for j in range(r):
-                #c is in position (i,j)
-                #Find the d that satisfy condition 1
-                for k in range(j+1, r):
-                    attacking_pairs.append( ((i,j),(i,k)) )
+                # c is in position (i,j)
+                # Find the d that satisfy condition 1
+                attacking_pairs.extend(((i, j), (i, k))
+                                       for k in range(j + 1, r))
 
-                #Find the d that satisfy condition 2
+                # Find the d that satisfy condition 2
                 if i == 0:
                     continue
-                for k in range(j):
-                    attacking_pairs.append( ((i,j),(i-1,k)) )
+                attacking_pairs.extend(((i, j), (i - 1, k))
+                                       for k in range(j))
 
         return attacking_pairs
 
@@ -4017,7 +4013,7 @@ class Partition(CombinatorialElement):
         return (not self
                 or ( self[-1] < e and all(self[r]-self[r+1] < e for r in range(len(self)-1)) ))
 
-    def is_regular(self, e, multicharge=(0,)):
+    def is_regular(self, e, multicharge=(0,)) -> bool:
         """
         Return ``True`` is this is an ``e``-regular partition.
 
@@ -4049,9 +4045,9 @@ class Partition(CombinatorialElement):
             sage: Partition([2,1,1]).conjugacy_class_size()
             6
         """
-        return factorial(sum(self))/self.centralizer_size()
+        return factorial(sum(self)) / self.centralizer_size()
 
-    def corners(self):
+    def corners(self) -> list:
         r"""
         Return a list of the corners of the partition ``self``.
 
@@ -4224,9 +4220,8 @@ class Partition(CombinatorialElement):
         p = self
         res = []
         prevLen = 1
-        for i in range(len(p)-1, -1, -1):
-            for c in range(prevLen-1, p[i]):
-                res.append((i,c))
+        for i in range(len(p) - 1, -1, -1):
+            res.extend((i, c) for c in range(prevLen-1, p[i]))
             prevLen = p[i]
         return res
 
@@ -4263,9 +4258,8 @@ class Partition(CombinatorialElement):
         p = self
         res = []
         prevLen = 0
-        for i in range(len(p)-1, -1, -1):
-            for c in range(prevLen, p[i]+1):
-                res.append((i+1,c))
+        for i in range(len(p) - 1, -1, -1):
+            res.extend((i + 1, c) for c in range(prevLen, p[i] + 1))
             prevLen = p[i]
         res.append((0, prevLen))
         return res
@@ -4316,7 +4310,7 @@ class Partition(CombinatorialElement):
             sage: all(Partitions().from_zero_one(mu.zero_one_sequence()) == mu for n in range(10) for mu in Partitions(n))
             True
         """
-        tmp = set(self[i] - i for i in range(len(self)))
+        tmp = {si - i for i, si in enumerate(self)}
         return [Integer(i not in tmp)
                 for i in range(-len(self) + 1, self.get_part(0) + 1)]
 
@@ -4958,7 +4952,7 @@ class Partition(CombinatorialElement):
              [(3, 0), (3, 1)]]
         """
         if k == 0:
-            return list()
+            return []
 
         L = self._list
         shelf = [k]  # the number of boxes which will fit in a row
@@ -5099,11 +5093,8 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2,1]).atom()
             [[[1, 2, 3, 6], [4, 5]], [[1, 2, 3], [4, 5], [6]]]
         """
-        res = []
-        for tab in tableau.StandardTableaux_size(self.size()):
-            if tab.atom() == self:
-                res.append(tab)
-        return res
+        return [tab for tab in tableau.StandardTableaux_size(self.size())
+                if tab.atom() == self]
 
     def k_atom(self, k):
         r"""
@@ -6059,7 +6050,7 @@ class Partitions(UniqueRepresentation, Parent):
                 return RestrictedPartitions_n(n, kwargs['restricted'])
 
             # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
-            kwargs['name'] = "Partitions of the integer %s satisfying constraints %s" % (n, ", ".join( ["%s=%s" % (key, kwargs[key]) for key in sorted(kwargs)] ))
+            kwargs['name'] = "Partitions of the integer {} satisfying constraints {}".format(n, ", ".join( ["{}={}".format(key, kwargs[key]) for key in sorted(kwargs)] ))
 
             # min_part is at least 1, and it is 1 by default
             kwargs['min_part'] = max(1, kwargs.get('min_part', 1))
@@ -6195,34 +6186,34 @@ class Partitions(UniqueRepresentation, Parent):
         """
         NAME = 'Partitions'
         module = 'sage.combinat.partition'
-        display = dict(default="list",
-                     description='Specifies how partitions should be printed',
-                     values=dict(list='displayed as a list',
-                               exp_low='in exponential form (lowest first)',
-                               exp_high='in exponential form (highest first)',
-                               diagram='as a Ferrers diagram',
-                               compact_low='compact form of ``exp_low``',
-                               compact_high='compact form of ``exp_high``'),
-                     alias=dict(exp="exp_low", compact="compact_low", array="diagram",
-                               ferrers_diagram="diagram", young_diagram="diagram"),
-                     case_sensitive=False)
-        latex = dict(default="young_diagram",
-                   description='Specifies how partitions should be latexed',
-                   values=dict(diagram='latex as a Ferrers diagram',
-                               young_diagram='latex as a Young diagram',
-                               list='latex as a list',
-                               exp_high='latex as a list in exponential notation (highest first)',
-                               exp_low='as a list latex in exponential notation (lowest first)'),
-                   alias=dict(exp="exp_low", array="diagram", ferrers_diagram="diagram"),
-                   case_sensitive=False)
-        diagram_str = dict(default="*",
-                         description='The character used for the cells when printing Ferrers diagrams',
-                         checker=lambda char: isinstance(char,str))
-        latex_diagram_str = dict(default="\\ast",
-                         description='The character used for the cells when latexing Ferrers diagrams',
-                         checker=lambda char: isinstance(char,str))
-        convention = dict(link_to=(tableau.Tableaux.options,'convention'))
-        notation = dict(alt_name='convention')
+        display = {'default': "list",
+                     'description': 'Specifies how partitions should be printed',
+                     'values': {'list': 'displayed as a list',
+                               'exp_low': 'in exponential form (lowest first)',
+                               'exp_high': 'in exponential form (highest first)',
+                               'diagram': 'as a Ferrers diagram',
+                               'compact_low': 'compact form of ``exp_low``',
+                               'compact_high': 'compact form of ``exp_high``'},
+                     'alias': {'exp': "exp_low", 'compact': "compact_low", 'array': "diagram",
+                               'ferrers_diagram': "diagram", 'young_diagram': "diagram"},
+                     'case_sensitive': False}
+        latex = {'default': "young_diagram",
+                   'description': 'Specifies how partitions should be latexed',
+                   'values': {'diagram': 'latex as a Ferrers diagram',
+                               'young_diagram': 'latex as a Young diagram',
+                               'list': 'latex as a list',
+                               'exp_high': 'latex as a list in exponential notation (highest first)',
+                               'exp_low': 'as a list latex in exponential notation (lowest first)'},
+                   'alias': {'exp': "exp_low", 'array': "diagram", 'ferrers_diagram': "diagram"},
+                   'case_sensitive': False}
+        diagram_str = {'default': "*",
+                         'description': 'The character used for the cells when printing Ferrers diagrams',
+                         'checker': lambda char: isinstance(char,str)}
+        latex_diagram_str = {'default': "\\ast",
+                         'description': 'The character used for the cells when latexing Ferrers diagrams',
+                         'checker': lambda char: isinstance(char,str)}
+        convention = {'link_to': (tableau.Tableaux.options,'convention')}
+        notation = {'alt_name': 'convention'}
 
     def __reversed__(self):
         """
@@ -6282,7 +6273,7 @@ class Partitions(UniqueRepresentation, Parent):
             # trailing zeros are removed in Partition.__init__
             return self.element_class(self, lst)
 
-        raise ValueError('%s is not an element of %s' % (lst, self))
+        raise ValueError(f'{lst} is not an element of {self}')
 
     def __contains__(self, x):
         """
@@ -7122,7 +7113,7 @@ class Partitions_nk(Partitions):
             sage: Partitions(5, length=2) # indirect doctest
             Partitions of the integer 5 of length 2
         """
-        return "Partitions of the integer {} of length {}".format(self.n, self.k)
+        return f"Partitions of the integer {self.n} of length {self.k}"
 
     def _an_element_(self):
         """
@@ -7344,7 +7335,7 @@ class Partitions_parts_in(Partitions):
             sage: Partitions(5, parts_in=[1,2,3]) # indirect doctest
             Partitions of the integer 5 with parts in [1, 2, 3]
         """
-        return "Partitions of the integer %s with parts in %s" % (self.n, self.parts)
+        return f"Partitions of the integer {self.n} with parts in {self.parts}"
 
     def cardinality(self):
         r"""
@@ -7877,7 +7868,7 @@ class PartitionsInBox(Partitions):
             sage: PartitionsInBox(2,2) # indirect doctest
             Integer partitions which fit in a 2 x 2 box
         """
-        return "Integer partitions which fit in a %s x %s box" % (self.h, self.w)
+        return f"Integer partitions which fit in a {self.h} x {self.w} box"
 
     def __contains__(self, x):
         """
@@ -8161,7 +8152,7 @@ class RegularPartitions_all(RegularPartitions):
             sage: RegularPartitions_all(3)
             3-Regular Partitions
         """
-        return "{}-Regular Partitions".format(self._ell)
+        return f"{self._ell}-Regular Partitions"
 
     def __iter__(self):
         """
@@ -8251,7 +8242,7 @@ class RegularPartitions_truncated(RegularPartitions):
             sage: RegularPartitions_truncated(4, 3)
             4-Regular Partitions with max length 3
         """
-        return "{}-Regular Partitions with max length {}".format(self._ell, self._max_len)
+        return f"{self._ell}-Regular Partitions with max length {self._max_len}"
 
     def __iter__(self):
         """
@@ -8369,7 +8360,7 @@ class RegularPartitions_bounded(RegularPartitions):
             sage: RegularPartitions_bounded(4, 3)
             4-Regular 3-Bounded  Partitions
         """
-        return "{}-Regular {}-Bounded Partitions".format(self._ell, self.k)
+        return f"{self._ell}-Regular {self.k}-Bounded Partitions"
 
     def __iter__(self):
         """
@@ -8432,7 +8423,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
             sage: RegularPartitions_n(3, 5)
             5-Regular Partitions of the integer 3
         """
-        return "{}-Regular Partitions of the integer {}".format(self._ell, self.n)
+        return f"{self._ell}-Regular Partitions of the integer {self.n}"
 
     def __contains__(self, x):
         """
@@ -8724,7 +8715,7 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
             sage: PartitionsGreatestLE(10, 2) # indirect doctest
             Partitions of 10 having parts less than or equal to 2
         """
-        return "Partitions of %s having parts less than or equal to %s" % (self.n, self.k)
+        return f"Partitions of {self.n} having parts less than or equal to {self.k}"
 
     def cardinality(self):
         """
@@ -8814,7 +8805,7 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
             sage: PartitionsGreatestEQ(10, 2) # indirect doctest
             Partitions of 10 having greatest part equal to 2
         """
-        return "Partitions of %s having greatest part equal to %s" % (self.n, self.k)
+        return f"Partitions of {self.n} having greatest part equal to {self.k}"
 
     def cardinality(self):
         """
@@ -8996,7 +8987,7 @@ class RestrictedPartitions_all(RestrictedPartitions_generic):
             sage: RestrictedPartitions_all(3)
             3-Restricted Partitions
         """
-        return "{}-Restricted Partitions".format(self._ell)
+        return f"{self._ell}-Restricted Partitions"
 
     def __iter__(self):
         """
@@ -9051,7 +9042,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
             sage: RestrictedPartitions_n(3, 5)
             5-Restricted Partitions of the integer 3
         """
-        return "{}-Restricted Partitions of the integer {}".format(self._ell, self.n)
+        return f"{self._ell}-Restricted Partitions of the integer {self.n}"
 
     def __contains__(self, x):
         """
