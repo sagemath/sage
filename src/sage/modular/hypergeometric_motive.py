@@ -183,7 +183,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
     coeffs += [0] * max(0, bound + 1 - len(coeffs))
 
     fulldeg = d if deg is None else deg
-    data = [0] * fulldeg
+    data = [0] * (fulldeg+1)
     for k in range(bound + 1):
         data[k] = coeffs[k]
     for k in range(bound + 1, fulldeg + 1):
@@ -1647,13 +1647,12 @@ class HypergeometricData:
             sign = kronecker_symbol(t * (t - 1) * self._sign_param, p)
         return sign
 
-    def euler_factor_tame_contribution(self, t, p, mo):
+    def euler_factor_tame_contribution(self, t, p, mo, deg=None):
         """
         Return a contribution to the Euler factor of the motive `H_t` at a tame prime.
 
         The output is only nontrivial when `t` has nonzero `p`-adic valuation.
         The recipe is described in section 11.4.1 of [Watkins]_.
-
 
         INPUT:
 
@@ -1662,6 +1661,8 @@ class HypergeometricData:
         - `p` -- prime number of good reduction
 
         - `mo` -- integer
+        
+        - `deg` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
 
@@ -1675,6 +1676,8 @@ class HypergeometricData:
             1
             sage: H.euler_factor_tame_contribution(11^20, 11, 4)
             1331*T^2 + 1
+            sage: H.euler_factor_tame_contribution(11^20, 11, 4, deg=1)
+            1
             sage: H.euler_factor_tame_contribution(11^20, 11, 5)
             1771561*T^4 + 161051*T^3 + 6171*T^2 + 121*T + 1
             sage: H.euler_factor_tame_contribution(11^20, 11, 6)
@@ -1703,9 +1706,11 @@ class HypergeometricData:
         else:
             return 1
         d = euler_phi(mo)
-        prec = ceil(d*(self.weight()+1-mul)/2 + log(2*d + 1, p))
         f = IntegerModRing(mo)(p).multiplicative_order()
+        if deg is not None and deg < f:
+            return 1
         q = p**f
+        prec = ceil(d*(self.weight()+1-mul)/2 + log(2*d + 1, p))
         k = (q-1)//mo
         flip = (f == 1 and prec == 1)
         gtab_prec, gtab = self.gauss_table(p, f, prec)
@@ -1868,13 +1873,15 @@ class HypergeometricData:
             2401*T^4 - 392*T^3 + 46*T^2 - 8*T + 1
             sage: H.euler_factor(50, 7)
             16807*T^5 - 343*T^4 - 70*T^3 - 10*T^2 - T + 1
-            sage: H = Hyp(cyclotomic=[[3,7],[4,5,6]])
+            sage: H = Hyp(cyclotomic=[[3,7], [4,5,6]])
             sage: H.euler_factor(11, 11)
             1
             sage: H.euler_factor(11**4, 11)
             1331*T^2 + 1
             sage: H.euler_factor(11**5, 11)
             1771561*T^4 + 161051*T^3 + 6171*T^2 + 121*T + 1
+            sage: H.euler_factor(11**5, 11, deg=3)
+            161051*T^3 + 6171*T^2 + 121*T + 1
             sage: H.euler_factor(11**-3, 11)
             1331*T^2 + 1
             sage: H.euler_factor(11**-7, 11)
@@ -1906,7 +1913,9 @@ class HypergeometricData:
         if t.numerator() % p == 0 or t.denominator() % p == 0:
             ans = PolynomialRing(ZZ, 'T').one()
             for m in set(j for i in self.cyclotomic_data() for j in i):
-                ans *= self.euler_factor_tame_contribution(t, p, m)
+                ans *= self.euler_factor_tame_contribution(t, p, m, deg)
+            if deg is not None:
+                ans = ans.truncate(deg+1)
             return ans
         # now p is good, or p is tame and t is a p-adic unit
         elif (t-1) % p == 0:
