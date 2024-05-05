@@ -2050,21 +2050,23 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: graphs.CubeGraph(8).adjacency_matrix().parent()                       # needs sage.modules
+            sage: # needs sage.modules
+            sage: graphs.CubeGraph(8).adjacency_matrix().parent()
             Full MatrixSpace of 256 by 256 dense matrices over Integer Ring
-            sage: graphs.CubeGraph(9).adjacency_matrix().parent()                       # needs sage.modules
+            sage: graphs.CubeGraph(9).adjacency_matrix().parent()
             Full MatrixSpace of 512 by 512 sparse matrices over Integer Ring
-            sage: Graph([(i, i+1) for i in range(500)] + [(0,1),],                      # needs sage.modules
+            sage: Graph([(i, i+1) for i in range(500)] + [(0,1),],
             ....:       multiedges=True).adjacency_matrix().parent()
             Full MatrixSpace of 501 by 501 dense matrices over Integer Ring
-            sage: graphs.PathGraph(5).adjacency_matrix(vertices=[0,0,0,0,0])            # needs sage.modules
+            sage: graphs.PathGraph(5).adjacency_matrix(vertices=[0,0,0,0,0])
             Traceback (most recent call last):
             ...
             ValueError: parameter vertices must be a permutation of the vertices
-            sage: graphs.PathGraph(5).adjacency_matrix(vertices=[1,2,3])                # needs sage.modules
+            sage: graphs.PathGraph(5).adjacency_matrix(vertices=[1,2,3])
             Traceback (most recent call last):
             ...
             ValueError: parameter vertices must be a permutation of the vertices
+
             sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix()
             Traceback (most recent call last):
             ...
