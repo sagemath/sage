@@ -1872,11 +1872,11 @@ class HypergeometricData:
             sage: H.euler_factor(11, 11)
             1
             sage: H.euler_factor(11**4, 11)
-            -1331*T^2 + 1
+            1331*T^2 + 1
             sage: H.euler_factor(11**5, 11)
             1771561*T^4 + 161051*T^3 + 6171*T^2 + 121*T + 1
             sage: H.euler_factor(11**-3, 11)
-            -1331*T^2 + 1
+            1331*T^2 + 1
             sage: H.euler_factor(11**-7, 11)
             2357947691*T^6 - 58564*T^3 + 1
 
@@ -1905,7 +1905,7 @@ class HypergeometricData:
             return self._swap.euler_factor(~t, p)
         if t.numerator() % p == 0 or t.denominator() % p == 0:
             ans = PolynomialRing(ZZ, 'T').one()
-            for m in set(flatten(self.cyclotomic_data())):
+            for m in set(j for i in self.cyclotomic_data() for j in i):
                 ans *= self.euler_factor_tame_contribution(t, p, m)
             return ans
         # now p is good, or p is tame and t is a p-adic unit
