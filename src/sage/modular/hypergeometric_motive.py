@@ -114,17 +114,17 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
     - ``i`` -- integer, the weight in the motivic sense
 
     - ``sign`` -- integer, the sign
-    
+
     - ``deg`` -- an integer or None
-    
+
     - ``use_fe`` -- a boolean (default True)
 
     OUTPUT:
 
     a polynomial
-    
+
     If ``deg`` is specified, only the coefficients up to this degree (inclusive) are computed.
-    
+
     If ``use_fe`` is False, we ignore the local functional equation.
 
     EXAMPLES::
@@ -1660,7 +1660,7 @@ class HypergeometricData:
         - `t` -- rational number, not 0 or 1
 
         - `p` -- prime number of good reduction
-        
+
         - `mo` -- integer
 
         OUTPUT:
@@ -1668,7 +1668,7 @@ class HypergeometricData:
         a polynomial
 
         EXAMPLES::
-        
+
             sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
             sage: H = Hyp(cyclotomic=[[3,7],[4,5,6]])
             sage: H.euler_factor_tame_contribution(11^2, 11, 4)
@@ -1690,7 +1690,7 @@ class HypergeometricData:
 
         e = t.valuation(p)
         t0 = t / p**e
-        if e%mo:
+        if e % mo:
             return 1
         if e > 0:
             mul = self.cyclotomic_data()[1].count(mo)
@@ -1725,14 +1725,14 @@ class HypergeometricData:
                 term = teich**r * ZZ(-1)**m[0]
                 ct = 0
                 for v, gv in gamma.items():
-                    r1 = v*r%(q-1)
+                    r1 = v * r % (q-1)
                     ct += gv*sum(r1.digits(p))
                     term *= p_ring(gtab[r1])**(-gv if flip else gv)
                 ct //= (p-1)
                 term *= ZZ(-1)**ct
                 ct += f * (D + m[0] - m[r])
                 l.append(term * p**ct)
-        traces = [0 if j%f else sum(i**(j//f) for i in l) for j in range(1,d+1)]
+        traces = [0 if j % f else sum(i**(j//f) for i in l) for j in range(1,d+1)]
         R = IntegerModRing(p**prec)
         traces = [R(i).lift_centered() for i in traces]
         return characteristic_polynomial_from_traces(traces, d, p, 0, 1, deg=d, use_fe=False)
@@ -1747,7 +1747,7 @@ class HypergeometricData:
         - `t` -- rational number, not 0 or 1
 
         - `p` -- prime number of good reduction
-        
+
         - ``deg`` -- integer or ``None``
 
         OUTPUT:
@@ -1758,10 +1758,10 @@ class HypergeometricData:
 
         For odd weight, the sign of the functional equation is +1. For even
         weight, the sign is computed by a recipe found in section 11.1 of [Watkins]_.
-        
+
         If ``deg`` is specified, then the polynomial is only computed up to degree
         ``deg`` (inclusive).
-        
+
         The prime `p` may be tame, but not wild. When `v_p(t-1)` is nonzero and even,
         the Euler factor includes a linear term described in 11.2 of [Watkins]_.
 
@@ -1862,7 +1862,7 @@ class HypergeometricData:
             p^f cannot exceed 2^31
 
         Check handling of some tame cases::
-        
+
             sage: H = Hyp(cyclotomic=[[4,2,2,2], [3,1,1,1]])
             sage: H.euler_factor(8, 7)
             2401*T^4 - 392*T^3 + 46*T^2 - 8*T + 1
@@ -1919,7 +1919,7 @@ class HypergeometricData:
         bound = d // 2 if use_fe else d
         if deg is not None:
             bound = min(deg, bound)
-       
+
         if p ** bound > 2 ** 31:
             raise ValueError("p^f cannot exceed 2^31")
 
