@@ -22882,7 +22882,7 @@ class GenericGraph(GenericGraph_pyx):
     # alias, consistent with linear algebra code
     charpoly = characteristic_polynomial
 
-    def eigenvectors(self, laplacian=False):
+    def eigenvectors(self, laplacian=False, vertices=None):
         r"""
         Return the *right* eigenvectors of the adjacency matrix of the graph.
 
@@ -22994,7 +22994,7 @@ class GenericGraph(GenericGraph_pyx):
             M = self.adjacency_matrix(vertices=list(self))
         return M.right_eigenvectors()
 
-    def eigenspaces(self, laplacian=False):
+    def eigenspaces(self, laplacian=False, vertices=None):
         r"""
         Return the *right* eigenspaces of the adjacency matrix of the graph.
 
