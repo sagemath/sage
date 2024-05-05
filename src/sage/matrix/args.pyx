@@ -390,10 +390,14 @@ cdef class MatrixArgs:
             if argi == argc:
                 return
 
-        # check nrows and ncols argument
+        # check positional nrows and ncols argument
+        # even if redundant with row_keys, column_keys given as keywords;
+        # but do not check for positional row_keys, column_keys arguments
+        # -- we do not allow those, as they would be too easy to
+        # confuse with entries
         cdef int k
         cdef long v
-        if self.nrows == -1 and self.ncols == -1 and self.row_keys is None and self.column_keys is None:
+        if self.nrows == -1 and self.ncols == -1:
             for k in range(2):
                 arg = args[argi]
                 if is_numpy_type(type(arg)):
@@ -410,7 +414,8 @@ cdef class MatrixArgs:
                     else:
                         self.set_ncols(v)
                     argi += 1
-                    if argi == argc: return
+                    if argi == argc:
+                        return
 
         # check for entries argument
         if self.entries is None:
