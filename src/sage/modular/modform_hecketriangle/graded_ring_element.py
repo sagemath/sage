@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Elements of graded rings of modular forms for Hecke triangle groups
@@ -144,7 +143,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import MeromorphicModularFormsRing
-            sage: (x,y,z,d) = MeromorphicModularFormsRing().pol_ring().gens()
+            sage: x, y, z, d = MeromorphicModularFormsRing().pol_ring().gens()
             sage: MeromorphicModularFormsRing(n=3)(x) == MeromorphicModularFormsRing(n=4)(x)
             False
             sage: MeromorphicModularFormsRing()(-1/x) is MeromorphicModularFormsRing()(1/(-x))
@@ -1250,7 +1249,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         Return the (overall) order of ``self`` at ``tau`` if easily possible:
         Namely if ``tau`` is ``infinity`` or congruent to ``i`` resp. ``rho``.
 
-        It is possible to determine the order of points from ``HyperbolicPlane()``.
+        It is possible to determine the order of points from :class:`HyperbolicPlane`.
         In this case the coordinates of the upper half plane model are used.
 
         If ``self`` is homogeneous and modular then the rational function
@@ -1835,7 +1834,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         (and fail) for certain (many) choices of
         (``base_ring``, ``tau.parent()``).
 
-        It is possible to evaluate at points of ``HyperbolicPlane()``.
+        It is possible to evaluate at points of :class:`HyperbolicPlane`.
         In this case the coordinates of the upper half plane model are used.
 
         To obtain a precise and fast result the parameters
@@ -2124,7 +2123,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: (f.q_expansion_fixed_d().polynomial())(exp((2*pi*i).n(1000)*az/G.lam()))    # long time
             -140.471170232432551196978... + 469.079369280804086032719...*I
 
-        It is possible to evaluate at points of ``HyperbolicPlane()``::
+        It is possible to evaluate at points of :class:`HyperbolicPlane`::
 
             sage: # needs sage.symbolic
             sage: p = HyperbolicPlane().PD().get_point(-I/2)

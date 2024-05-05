@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Subsets whose elements satisfy a predicate pairwise
 """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Ring `\ZZ/n\ZZ` of integers modulo `n`
 

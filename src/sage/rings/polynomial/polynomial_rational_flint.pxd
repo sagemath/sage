@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 ###############################################################################
 #          Copyright (C) 2010 Sebastian Pancratz <sfp@pancratz.org>           #
 #                                                                             #

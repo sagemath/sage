@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.stats.time_series cimport TimeSeries
 
 cdef class HMM_Util:

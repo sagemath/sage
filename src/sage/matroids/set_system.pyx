@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Set systems
 
@@ -41,7 +40,7 @@ cdef class SetSystem:
 
         sage: M = matroids.catalog.Fano()
         sage: M.circuits()
-        Iterator over a system of subsets
+        SetSystem of 14 sets over 7 elements
 
     To access the sets in this structure, simply iterate over them. The
     simplest way must be::
@@ -76,7 +75,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
         """
         cdef long i
         if not isinstance(groundset, tuple):
@@ -111,7 +110,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: sorted(S[1])
             [3, 4]
             sage: for s in S: print(sorted(s))
@@ -139,7 +138,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: len(S)
             3
         """
@@ -197,9 +196,9 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: repr(S)  # indirect doctest
-            'Iterator over a system of subsets'
+            'SetSystem of 3 sets over 4 elements'
         """
-        return "Iterator over a system of subsets"
+        return f'SetSystem of {self._len} sets over {self._groundset_size} elements'
 
     cdef copy(self):
         cdef SetSystem S
@@ -208,24 +207,23 @@ cdef class SetSystem:
             S._append(self._subsets[i])
         return S
 
-    cdef _relabel(self, l):
+    cdef _relabel(self, mapping):
         """
-        Relabel each element `e` of the ground set as `l(e)`, where `l` is a
-        given injective map.
+        Relabel each element ``e`` of the ground set as ``mapping[e]``, where
+        ``mapping`` is a given injective map.
 
         INPUT:
 
-        - ``l`` -- a python object such that `l[e]` is the new label of e.
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
 
-        OUTPUT:
-
-        ``None``.
+        OUTPUT: ``None``
         """
         cdef long i
         E = []
         for i in range(self._groundset_size):
-            if self._groundset[i] in l:
-                E.append(l[self._E[i]])
+            if self._groundset[i] in mapping:
+                E.append(mapping[self._E[i]])
             else:
                 E.append(self._E[i])
         self._groundset = E
