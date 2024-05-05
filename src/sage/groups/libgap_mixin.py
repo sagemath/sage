@@ -968,18 +968,17 @@ class GroupMixinLibGAP():
         """
         return self.gap().IsomorphismGroups(H.gap()) != libgap.fail
 
-
-def minimum_generating_set(G) -> list:
-    """
-    Return a list of the minimum generating set of ``G``.
+def minimum_generating_set(G: GapElement) -> list:
+    r"""
+    returns a list with minimum length of elements of `G` that generate `G`.
 
     INPUT:
 
-    - ``G`` -- a group
+        - ``G`` -- a group
 
     OUTPUT:
 
-    A list of GAP objects that generate the group.
+        - a minimum generating set of ``G`` as a list
 
     .. SEEALSO::
 
@@ -987,113 +986,166 @@ def minimum_generating_set(G) -> list:
 
     ALGORITHM:
 
-    We follow the algorithm described in the research paper "A New Algorithm for Finding the Minimum Generating Set of a Group" by John Doe (:doi:`10.1016/j.jalgebra.2023.11.012`).
+    First we cover the cases when we can use the ``MinimalGeneratingSet``
+    method of GAP directly. This happens when `G` is either Simple,
+    or Solvable, or Nilpotent. Then, if ``libgap.MinimalGeneratingSet``
+    fails, we proceed assuming that `G` is not a simple group.
+    So, we are guaranteed to find a chief series of length at least 2.
 
-    The algorithm checks two base cases:
+    `S := ChiefSeries(G) = [G,G_1,G_2 \dots G_l]` where `G_l = \{ e \}`
 
-    1. If G is a cyclic group, it returns the cyclic generator.
-    2. If G is a simple group, it returns a combination of two elements that generate G.
+    Let `g` be the set of representatives of the minimum generating set
+    of `G/G_1`. This can be found easily (since `G/G_1` is simple group)
+    as ``g = libgap.MinimalGeneratingSet(GbyG1)``
 
-    If the above two cases fail, the algorithm finds the minimal normal subgroup N of G.
-    It then finds the quotient group G/N and recursively finds the minimum generating set of G/N.
-    Let S be the minimum generating set of G/N. The algorithm finds representatives g of S in G.
+    for k = 2 to `l` , compute `G/G_k` , `G_{k-1}/G_k` and set
+    `g := lift( g, (G_{k-1}/G_k) , (G/G_k) )`
 
-    If N is abelian, the algorithm checks if any case of the form g_1, g_2, ..., g_i*s_j, g_i+1, ..., g_lg
-    (where lg is the length of g) is able to generate G. If not, it uses the set g_1, g_2, ..., g_lg, s_j
-    as the minimum generating set of G.
+    return `g`
 
-    If N is non-abelian, the algorithm checks if any case of the form g_1*n_1, g_2*n_2, ..., g_lg*n_lg
-    is able to generate G, where n_1, n_2, ..., n_lg can be any elements of N. If not, it checks if any
-    case of the form g_1*n_1, g_2*n_2, ..., g_lg*n_lg, n_lg+1 is able to generate G.
+    #### `lift` function details:
 
-    The algorithm guarantees that one of the above cases will generate G.
+    It computes the minimum generating set (as representative elements) of
+    a quotient group `G/G_i` in a chief series, given the
+    minimum generating set (as representatives) of `G/G_{i-1}`, namely `g`
+    (what we are calling ``G_by_Gim1_mingen_reps`` in the code).
+    the factor group `G_{i-1}/G_i` and the quotient group `G/G_i` itself.
+    The function does these steps:
 
-    TESTS:
+    First, we compute some essential quantities:
 
-    Test that the resultant list is able to generate the original group::
+    `\bold{n} :=\{ n_1,n_2 \dots n_k \}`
+    where `\{ n_1 G_i,n_2 G_i \dots n_k G_i \}` is any generating set of
+    `G_{i-1}/G_i , i.e. it's the representative elements of any prefferably
+    small, but not necessarily minimal generating set of `G_{i-1}/G_i`
 
-        sage: from sage.groups.libgap_mixin import minimum_generating_set
-        sage: p = libgap.eval("DirectProduct(AlternatingGroup(5),AlternatingGroup(5))")
-        sage: s = minimum_generating_set(p); s
-        [(1,2,3,4,5)(8,9,10), (3,4,5)(6,7,8)]
-        sage: set(p.AsList()) == set(libgap.GroupByGenerators(s).AsList())
+    `\bold{N} := \{ N_1,N_2 \dots N_m \}` where
+    `G_{i-1}/G_i = \{N_1 G_i,N_2 G_2 \dots N_m G_m \}`.
+    This is simply a list of representative elements of `G_{i-1}/G_i`.
+
+    We wish to find the representatives of a minimum generating set of `G/G_i`.
+    Here, we have two cases to consider.
+
+    First, if `G_{i-1}/G_i` is abelian :
+
+    if `\braket{gG_i}= G/G_i`, return `g`
+
+    for `1 \le p \le s`  and `n_j \in \bold{n}`, we calculate
+    `g^* := \{ g_1,g_2 \dots g_{p-1} ,g_p n_j,g_{p_1}, \dots \}`.
+    If `\braket{g^* G_i} = G/G_i` , return `g^*`
+
+    Second, if `G_{i-1}` is not abelian:
+
+    First, for all combinations of (not necessarily distinct) elements
+    `N_{i_1},N_{i_2}\dots N_{i_t} \in \bold{N}`, compute
+    `g^* = \{g_1N_{i_1},g_{i_2}N_{i_3}\dots g_{i_t}N_t,g_{t+1}\dots g_s\}`
+    (This is done using the ``gen_combinations`` generator).
+    If `\{x G_i | x \in g^* \}` generates `G/G_i`, return `g^*`
+
+    Then, for all combinations of (not necessarily distinct) elements
+    `N_{i_1},N_{i_2}\dots N_{i_t} N_{i_{t+1}} \in \bold{N}`, compute
+    `g^* = \{g_1N_{i_1},g_{i_2}N_{i_3}\dots g_{i_t}N_t,g_{t+1}\dots g_s\}`
+    (This is done using the ``gen_combinations`` generator).
+    If `\{x G_i | x \in g^* \}` generates `G/G_i`, return `g^*`
+
+    By now, we must have exhausted our search.
+
+    EXAMPLES::
+
+        sage: A5 = AlternatingGroup(5).gap()
+        sage: G = A5.DirectProduct(A5)
+        sage: g = minimum_generating_set(G)
+        sage: G == libgap.GroupByGenerators(g)
         True
+        sage: len(g)
+        2
 
-    Test that elements of resultant list are GAP objects::
-
-        sage: from sage.groups.libgap_mixin import minimum_generating_set
-        sage: G = PermutationGroup([(1,2,3), (2,3), (4,5)])
-        sage: s = minimum_generating_set(G); s
-        [(2,3), (1,3,2)(4,5)]
-        sage: s[0].parent()
-        C library interface to GAP
     """
-    if not isinstance(G, GapElement):
-        try:
-            G = G.gap()
-        except (AttributeError, ValueError, TypeError):
-            raise NotImplementedError("only implemented for groups that can construct a gap group")
-
+    assert isinstance(G, GapElement)
     if not G.IsFinite().sage():
         raise NotImplementedError("only implemented for finite groups")
+    if (G.IsSimple().sage()
+            or G.IsSolvable().sage()
+            or G.IsNilpotentGroup().sage()):
+        try:
+            return list(libgap.MinimalGeneratingSet(G))
+        except Exception as ex:
+            pass
 
-    def is_group_by_gens(group, gens):
-        return set(group.AsList()) == set(libgap.GroupByGenerators(gens).AsList())
+    def lift(
+            G_by_Gim1_mingen_reps: list,
+            Gim1_by_Gi: GapElement, G_by_Gi: GapElement,
+            phi_G_by_Gi: GapElement, phi_Gim1_by_Gi: GapElement
+    ) -> list:
 
-    group_elements = G.AsList()
+        def gen_combinations(g: list, N: list, t: int):
+            if t == 0:
+                yield g
+                return
+            for gm in gen_combinations(g, N, t-1):
+                for n in N:
+                    old = gm[t-1]
+                    gm[t-1] = old * n
+                    yield gm
+                    gm[t-1] = old
 
-    if G.IsCyclic().sage():
-        for ele in group_elements:
-            if is_group_by_gens(G, [ele]):
-                return [ele]
+        s = len(G_by_Gim1_mingen_reps)
+        Gim1_by_Gi_L = list(Gim1_by_Gi.AsList())
+        Gim1_by_Gi_elem_reps = [
+            phi_Gim1_by_Gi.PreImagesRepresentative(x) for x in Gim1_by_Gi_L]
+        Gim1_by_Gi_gen = list(libgap.SmallGeneratingSet(Gim1_by_Gi))
+        Gim1_by_Gi_gen_reps = [
+            phi_Gim1_by_Gi.PreImagesRepresentative(x) for x in Gim1_by_Gi_gen]
+        if Gim1_by_Gi.IsAbelian().sage():
+            if (G_by_Gi == libgap.GroupByGenerators(
+                [phi_G_by_Gi.ImagesRepresentative(x)
+                 for x in G_by_Gim1_mingen_reps])):
+                return G_by_Gim1_mingen_reps
 
-    if G.IsSimple().sage():
-        n = len(group_elements)
-        for i in range(n):
-            for j in range(i+1, n):
-                if is_group_by_gens(G, [group_elements[i], group_elements[j]]):
-                    return [group_elements[i], group_elements[j]]
+            for i in range(s):
+                for j in range(len(Gim1_by_Gi_gen_reps)):
+                    temp = G_by_Gim1_mingen_reps[i]
+                    G_by_Gim1_mingen_reps[i] = G_by_Gim1_mingen_reps[i] * \
+                        Gim1_by_Gi_gen_reps[j]
 
-    N = G.MinimalNormalSubgroups()[0]
-    S = N.SmallGeneratingSet()
+                    if (G_by_Gi == libgap.GroupByGenerators(
+                        [phi_G_by_Gi.ImagesRepresentative(x)
+                         for x in G_by_Gim1_mingen_reps])):
+                        return G_by_Gim1_mingen_reps
+                    G_by_Gim1_mingen_reps[i] = temp
 
-    phi = G.NaturalHomomorphismByNormalSubgroup(N)
-    GbyN = phi.ImagesSource()
-    GbyN_mingenset = minimum_generating_set(GbyN)
+            return G_by_Gim1_mingen_reps + [Gim1_by_Gi_gen_reps[0]]
 
-    g = [phi.PreImagesRepresentative(g) for g in GbyN_mingenset]
-    lg = len(g)
+        for raw_gens in gen_combinations(
+                G_by_Gim1_mingen_reps,
+                Gim1_by_Gi_elem_reps, s):
+            if (G_by_Gi == libgap.GroupByGenerators(
+                [phi_G_by_Gi.ImagesRepresentative(x)
+                 for x in raw_gens])):
+                return raw_gens
 
-    if N.IsAbelian().sage():
-        if is_group_by_gens(G, g):
-            return g
+        for raw_gens in gen_combinations(
+                G_by_Gim1_mingen_reps+[Gim1_by_Gi_elem_reps[0]],
+                Gim1_by_Gi_elem_reps, s+1):
+            if (G_by_Gi == libgap.GroupByGenerators(
+                [phi_G_by_Gi.ImagesRepresentative(x)
+                 for x in raw_gens])):
+                return raw_gens
 
-        for i in range(lg):
-            for j in range(len(S)):
-                temp = g[i]
-                g[i] *= S[j]
-                if is_group_by_gens(G, g):
-                    return g
-                g[i] = temp
+    cs = G.ChiefSeries()
+    phi_GbyG1 = G.NaturalHomomorphismByNormalSubgroup(cs[1])
+    GbyG1 = phi_GbyG1.ImagesSource()
+    mingenset_k_reps = [phi_GbyG1.PreImagesRepresentative(x) for x in list(
+        libgap.SmallGeneratingSet(GbyG1))]  # k=1 initially
 
-        return g + [S[0]]
+    for k in range(2, len(cs)):
+        mingenset_km1_reps = mingenset_k_reps
+        Gk, Gkm1 = cs[k], cs[k-1]
+        phi_GbyGk = G.NaturalHomomorphismByNormalSubgroup(Gk)
+        GbyGk = phi_GbyGk.ImagesSource()
+        phi_Gkm1byGk = Gkm1.NaturalHomomorphismByNormalSubgroup(Gk)
+        Gkm1byGk = phi_Gkm1byGk.ImagesSource()
+        mingenset_k_reps = lift(
+            mingenset_km1_reps, Gkm1byGk, GbyGk, phi_GbyGk, phi_Gkm1byGk)
 
-    # A function to generate some combinations of the generators
-    # of the group according to the algorithm. Here it is considered that
-    # the first element of the group N is the identity element.
-    def gen_combinations(g, N, lg):
-        for iter in product(N, repeat=lg):
-            yield [g[i] * iter[lg-i-1] for i in range(lg)]
-
-    N_list = list(N.AsList())
-
-    for raw_gens in gen_combinations(g, N_list, lg):
-        if is_group_by_gens(G, raw_gens):
-            return raw_gens
-
-    for raw_gens in gen_combinations(g, N_list, lg):
-        for nl in N_list[1:]:
-            if is_group_by_gens(G, raw_gens+[nl]):
-                return raw_gens + [nl]
-
-    assert False, "The code should never reach here"
+    return mingenset_k_reps
