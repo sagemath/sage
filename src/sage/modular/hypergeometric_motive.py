@@ -125,7 +125,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
 
     If ``deg`` is specified, only the coefficients up to this degree (inclusive) are computed.
 
-    If ``use_fe`` is False, we ignore the local functional equation.
+    If ``use_fe`` is ``False``, we ignore the local functional equation.
 
     EXAMPLES::
 
