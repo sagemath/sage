@@ -79,6 +79,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Zp
 from sage.rings.padics.padic_generic_element import gauss_table
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -1422,6 +1423,8 @@ class HypergeometricData:
             raise ValueError('p not prime')
         if not all(x.denominator() % p for x in self._alpha + self._beta):
             raise NotImplementedError('p is wild')
+        if t.numerator() % p == 0 or t.denominator() % p == 0:
+            raise NotImplementedError('p is tame')
 
         if 0 in alpha:
             return self._swap.padic_H_value(p, f, ~t, prec)
@@ -1456,38 +1459,10 @@ class HypergeometricData:
         sigma = trcoeffs[p - 2]
         p_ring = sigma.parent()
 
-        if t.numerator() % p == 0 or t.denominator() % p == 0:
-            e = t.valuation(p)
-            t0 = t / p**e
-            teich = p_ring.teichmuller(M / t0)
-            resu = p_ring.zero()
-            flip = (f == 1 and prec == 1)
-            index = 1 if t.numerator() % p == 0 else 0
-            for mo in set(self.cyclotomic_data()[index]):
-                if (q-1)%mo == 0 and e%mo == 0:
-                    k = (q-1)//mo
-                    for j in range(mo):
-                        if gcd(j,mo) == 1:
-                            r = j*k
-                            term = teich**r
-                            ct = 0
-                            for v, gv in gamma.items():
-                                r1 = v*r%(q-1)
-                                ct += gv*sum(r1.digits(p))
-                                gv = -gv if flip else gv
-                                tmp = p_ring(gtab[r])
-                                if gv < 0:
-                                    tmp = 1/tmp
-                                for _ in range(abs(gv)):
-                                    term *= tmp
-                            term *= ZZ(-1) ** m[0]
-                            ct //= (p-1)
-                            resu += term * p**(ct+f*(D + m[0] - m[r]))
-        else:
-            teich = p_ring.teichmuller(M / t)
-            for i in range(p - 3, -1, -1):
-                sigma = sigma * teich + trcoeffs[i]
-            resu = ZZ(-1) ** m[0] * sigma / (1 - q)
+        teich = p_ring.teichmuller(M / t)
+        for i in range(p - 3, -1, -1):
+            sigma = sigma * teich + trcoeffs[i]
+        resu = ZZ(-1) ** m[0] * sigma / (1 - q)
         return IntegerModRing(p**prec)(resu).lift_centered()
 
     trace = padic_H_value
@@ -1672,6 +1647,56 @@ class HypergeometricData:
             sign = kronecker_symbol(t * (t - 1) * self._sign_param, p)
         return sign
 
+    def euler_factor_tame_contribution(self, t, p, mo):
+        e = t.valuation(p)
+        t0 = t / p**e
+        if e%mo:
+            return 1
+        if e > 0:
+            mul = self.cyclotomic_data()[1].count(mo)
+            if not mul:
+                return 1
+        elif e < 0:
+            mul = self.cyclotomic_data()[0].count(mo)
+            if not mul:
+                return 1
+        else:
+            return 1
+        d = euler_phi(mo)
+        prec = ceil(d*(self.weight()+1-mul)/2 + log(2*d + 1, p))
+        f = IntegerModRing(mo)(p).multiplicative_order()
+        q = p**f
+        k = (q-1)//mo
+        flip = (f == 1 and prec == 1)
+        gtab_prec, gtab = self.gauss_table(p, f, prec)
+        try:
+            p_ring = gtab[0].parent()
+        except AttributeError:
+            p_ring = Zp(p, prec, 'fixed-mod')
+        M = self.M_value()
+        teich = p_ring.teichmuller(M / t0)
+        m = {r: self._beta.count(QQ((r, q - 1))) for r in range(q - 1)}
+        D = -min(self.zigzag(x, flip_beta=True) for x in self._alpha + self._beta)
+        gamma = self.gamma_array()
+        l = []
+        for j in range(mo):
+            if gcd(j, mo) == 1:
+                r = j*k
+                term = teich**r * ZZ(-1)**m[0]
+                ct = 0
+                for v, gv in gamma.items():
+                    r1 = v*r%(q-1)
+                    ct += gv*sum(r1.digits(p))
+                    term *= p_ring(gtab[r1])**(-gv if flip else gv)
+                ct //= (p-1)
+                term *= ZZ(-1)**ct
+                ct += f * (D + m[0] - m[r])
+                l.append(term * p**ct)
+        traces = [0 if j%f else sum(i**(j//f) for i in l) for j in range(1,d+1)]
+        R = IntegerModRing(p**prec)
+        traces = [R(i).lift_centered() for i in traces]
+        return characteristic_polynomial_from_traces(traces, d, p, 0, 1, deg=d, use_fe=False)
+
     @cached_method
     def euler_factor(self, t, p, deg=None, cache_p=False):
         """
@@ -1789,14 +1814,25 @@ class HypergeometricData:
             sage: H.euler_factor(8, 7)
             -7*T^3 + 7*T^2 - T + 1
             sage: H.euler_factor(50, 7)
-            -7*T^3 + 7*T^2 - T + 1
+            -7*T^3 +H 7*T^2 - T + 1
             sage: H = Hyp(cyclotomic=[[4,2,2,2],[3,1,1,1]])
             sage: H.euler_factor(8, 7)
             2401*T^4 - 392*T^3 + 46*T^2 - 8*T + 1
             sage: H.euler_factor(50, 7)
             16807*T^5 - 343*T^4 - 70*T^3 - 10*T^2 - T + 1
+            sage: H = Hyp(cyclotomic=[[3,7],[4,5,6]])
+            sage: H.euler_factor(11, 11)
+            1
+            sage: H.euler_factor(11**4, 11)
+            -1331*T^2 + 1
+            sage: H.euler_factor(11**5, 11)
+            1771561*T^4 + 161051*T^3 + 6171*T^2 + 121*T + 1
+            sage: H.euler_factor(11**-3, 11)
+            -1331*T^2 + 1
+            sage: H.euler_factor(11**-7, 11)
+            2357947691*T^6 - 58564*T^3 + 1
 
-        Check error handling for wild and tame primes::
+        Check error handling for wild primes::
 
             sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
             sage: try:
@@ -1804,11 +1840,6 @@ class HypergeometricData:
             ....: except NotImplementedError as s:
             ....:     print(s)
             p is wild
-            sage: try:
-            ....:     print(H.euler_factor(3, 3))
-            ....: except NotImplementedError as s:
-            ....:     print(s)
-            p is tame
 
         REFERENCES:
 
@@ -1826,14 +1857,11 @@ class HypergeometricData:
             return self._swap.euler_factor(~t, p)
         if t.numerator() % p == 0 or t.denominator() % p == 0:
             typ = "tame"
-            d = 0
-            e = t.valuation(p)
             index = 1 if t.numerator() % p == 0 else 0
+            ans = PolynomialRing(ZZ, 'T').one()
             for m in set(self.cyclotomic_data()[index]):
-                if e%m == 0:
-                    d += euler_phi(m)
-            if d == 0:
-                return PolynomialRing(ZZ, 'T').one()
+                ans *= self.euler_factor_tame_contribution(t, p, m)
+            return ans
         # now p is good, or p is tame and t is a p-adic unit
         elif (t-1) % p == 0:
             typ = "mult"
