@@ -50,8 +50,8 @@ REFERENCES:
 
 """
 # ****************************************************************************
-#       Copyright (C) 2017     Frédéric Chapoton
-#                              Kiran S. Kedlaya <kskedl@gmail.com>
+#       Copyright (C) 2017--2024     Frédéric Chapoton
+#                                    Kiran S. Kedlaya <kskedl@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -1081,9 +1081,9 @@ class HypergeometricData:
 
     def lfunction(self, t, prec=53):
         """
-        Return the L-function of ``self``.
+        Return the `L`-function of ``self``.
 
-        The result is a wrapper around a PARI L-function.
+        The result is a wrapper around a PARI `L`-function.
 
         INPUT:
 
@@ -1330,11 +1330,11 @@ class HypergeometricData:
 
         INPUT:
 
-        - `p` -- a prime number
+        - ``p`` -- a prime number
 
-        - `f` -- an integer such that `q = p^f`
+        - ``f`` -- an integer such that `q = p^f`
 
-        - `t` -- a rational parameter
+        - ``t`` -- a rational parameter
 
         - ``prec`` -- precision (optional)
 
@@ -1475,11 +1475,11 @@ class HypergeometricData:
 
         INPUT:
 
-        - `p` -- a prime number
+        - ``p`` -- a prime number
 
-        - `f` -- an integer such that `q = p^f`
+        - ``f`` -- an integer such that `q = p^f`
 
-        - `t` -- a rational parameter
+        - ``t`` -- a rational parameter
 
         - ``ring`` -- optional (default: :class:`UniversalCyclotomicfield`)
 
@@ -1656,13 +1656,13 @@ class HypergeometricData:
 
         INPUT:
 
-        - `t` -- rational number, not 0 or 1
+        - ``t`` -- rational number, not 0 or 1
 
-        - `p` -- prime number of good reduction
+        - ``p`` -- prime number of good reduction
 
-        - `mo` -- integer
+        - ``mo`` -- integer
         
-        - `deg` -- integer or ``None`` (default: ``None``)
+        - ``deg`` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
 
@@ -1707,10 +1707,12 @@ class HypergeometricData:
             return 1
         d = euler_phi(mo)
         f = IntegerModRing(mo)(p).multiplicative_order()
-        if deg is not None and deg < f:
+        if deg is None:
+            deg = d
+        if deg < f:
             return 1
         q = p**f
-        prec = ceil(d*(self.weight()+1-mul)/2 + log(2*d + 1, p))
+        prec = ceil(deg*(self.weight()+1-mul)/2 + log(2*d + 1, p))
         k = (q-1)//mo
         flip = (f == 1 and prec == 1)
         gtab_prec, gtab = self.gauss_table(p, f, prec)
@@ -1749,9 +1751,9 @@ class HypergeometricData:
 
         INPUT:
 
-        - `t` -- rational number, not 0 or 1
+        - ``t`` -- rational number, not 0 or 1
 
-        - `p` -- prime number of good reduction
+        - ``p`` -- prime number of good reduction
 
         - ``deg`` -- integer or ``None``
 
