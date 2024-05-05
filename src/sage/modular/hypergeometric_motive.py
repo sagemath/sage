@@ -1886,6 +1886,13 @@ class HypergeometricData:
             1331*T^2 + 1
             sage: H.euler_factor(11**-7, 11)
             2357947691*T^6 - 58564*T^3 + 1
+            sage: H = Hyp(cyclotomic=[[7], [5,1,1]])
+            sage: H.euler_factor(2, 2)
+            -T + 1
+            sage: H.euler_factor(2^-7, 2)
+            8*T^6 - 2*T^3 + 1
+            sage: H.euler_factor(3, 2)
+            4*T^5 + 4*T^4 + 2*T^3 + 2*T^2 + T + 1
 
         Check error handling for wild primes::
 
