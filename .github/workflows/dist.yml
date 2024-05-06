@@ -47,6 +47,11 @@ jobs:
           ./configure && make dist
         env:
           MAKE: make -j8
+      - name: Download optional/experimental tarballs
+        run: |
+          make -k download
+        env:
+          MAKE: make -j8
       - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
