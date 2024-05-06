@@ -1,1 +1,1 @@
-python-sphinxcontrib-jsmath
+python3-sphinxcontrib-jsmath
