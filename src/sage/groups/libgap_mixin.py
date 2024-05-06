@@ -969,7 +969,7 @@ class GroupMixinLibGAP():
         return self.gap().IsomorphismGroups(H.gap()) != libgap.fail
 
 def minimum_generating_set(G) -> list:
-    """
+    r"""
     Return a list of the minimum generating set of ``G``.
 
     INPUT:
