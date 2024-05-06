@@ -1667,7 +1667,7 @@ class HypergeometricData:
         OUTPUT:
 
         a polynomial
-        
+
         If ``deg`` is specified, the output is truncated to that degree (inclusive).
 
         EXAMPLES::
@@ -1839,7 +1839,7 @@ class HypergeometricData:
             T + 1
             sage: H.euler_factor(1/7^4, 7)
             7*T^3 + 7*T^2 + T + 1
-            
+
         TESTS::
 
              sage: H1 = Hyp(alpha_beta=([1,1,1], [1/2,1/2,1/2]))
@@ -2013,4 +2013,3 @@ class HypergeometricData:
             if deg is not None:
                 ans = ans.truncate(deg+1)
         return ans
-
