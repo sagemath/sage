@@ -687,14 +687,15 @@ def compute_gevp_M(gs, hs):
     min_ip = min_u.inner_product(min_v)
 
     M = []
-    for i in range(len(gs)):
+    for g in gs:
         M_i = []
-        for j in range(len(hs)):
-            M_i.append(gs[i].inner_product(hs[j]))
-            if (M_i[j] < min_ip):
-                min_ip = M_i[j]
-                min_u = gs[i]
-                min_v = hs[j]
+        for h in hs:
+            val = g.inner_product(h)
+            M_i.append(val)
+            if (val < min_ip):
+                min_ip = val
+                min_u = g
+                min_v = h
         M.append(M_i)
 
     return (matrix(M), min_ip, min_u, min_v)
