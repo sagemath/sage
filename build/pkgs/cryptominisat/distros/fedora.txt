@@ -1,0 +1,3 @@
+cryptominisat
+cryptominisat-devel
+cryptominisat-libs
