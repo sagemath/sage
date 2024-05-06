@@ -1662,11 +1662,13 @@ class HypergeometricData:
 
         - ``mo`` -- integer
 
-        - ``deg`` -- integer or ``None`` (default: ``None``)
+        - ``deg`` -- integer (optional)
 
         OUTPUT:
 
         a polynomial
+        
+        If ``deg`` is specified, the output is truncated to that degree (inclusive).
 
         EXAMPLES::
 
@@ -1837,7 +1839,7 @@ class HypergeometricData:
             T + 1
             sage: H.euler_factor(1/7^4, 7)
             7*T^3 + 7*T^2 + T + 1
-
+            
         TESTS::
 
              sage: H1 = Hyp(alpha_beta=([1,1,1], [1/2,1/2,1/2]))
@@ -1896,6 +1898,22 @@ class HypergeometricData:
             sage: H.euler_factor(3, 2)
             4*T^5 + 4*T^4 + 2*T^3 + 2*T^2 + T + 1
 
+        More examples of tame primes from [Watkins]_::
+
+            sage: H = Hyp(cyclotomic=[[3,12], [6,6,1,1]])
+            sage: H.euler_factor(1/8, 7).factor()
+            (-1) * (7*T - 1) * (117649*T^4 + 2744*T^3 + 105*T^2 + 8*T + 1)
+            sage: H.euler_factor(1/12, 11).factor()
+            (11*T + 1) * (1771561*T^4 - 18634*T^3 + 22*T^2 - 14*T + 1)
+            sage: H = Hyp(cyclotomic=[[4,4,4],[6,2,1,1,1]])
+            sage: H.euler_factor(1/8, 7).factor()
+            (49*T + 1) * (5764801*T^4 - 86436*T^3 + 2758*T^2 - 36*T + 1)
+            sage: H.euler_factor(1/12, 11).factor()
+            (-1) * (121*T - 1) * (214358881*T^4 - 527076*T^3 + 12694*T^2 - 36*T + 1)
+            sage: H = Hyp(cyclotomic=[[10,4,2], [18,1]])
+            sage: H.euler_factor(1/14, 13)
+            -4826809*T^6 + 114244*T^5 + 2197*T^4 - 13*T^2 - 4*T + 1
+
         Check error handling for wild primes::
 
             sage: H = Hyp(cyclotomic=[[5,5], [4,7]])
@@ -1919,8 +1937,9 @@ class HypergeometricData:
             raise NotImplementedError('p is wild')
         if 0 in self._alpha:
             return self._swap.euler_factor(~t, p)
+        P = PolynomialRing(ZZ, 'T')
         if t.numerator() % p == 0 or t.denominator() % p == 0:
-            ans = PolynomialRing(ZZ, 'T').one()
+            ans = P.one()
             for m in set(j for i in self.cyclotomic_data() for j in i):
                 ans *= self.euler_factor_tame_contribution(t, p, m, deg)
             if deg is not None:
@@ -1929,12 +1948,11 @@ class HypergeometricData:
         # now p is good, or p is tame and t is a p-adic unit
         elif (t-1) % p == 0:
             typ = "mult"
-            d = self.degree() - 1
+            d = (self.degree() - 1) // 2 * 2
         else:
             typ = "good"
             d = self.degree()
-        use_fe = (typ == "good")
-        bound = d // 2 if use_fe else d
+        bound = d // 2
         if deg is not None:
             bound = min(deg, bound)
 
@@ -1945,14 +1963,54 @@ class HypergeometricData:
                   for i in range(bound)]
 
         w = self.weight()
-        sign = self.sign(t, p)
-        ans = characteristic_polynomial_from_traces(traces, d, p, w, sign, deg=deg, use_fe=use_fe)
+        m1 = self.cyclotomic_data()[1].count(1)
 
-        # Add an extra factor when w is even and t-1 has nonzero even valuation.
-        if w % 2 == 0 and typ == "mult" and (t-1).valuation(p) % 2 == 0:
-            m1 = self.cyclotomic_data()[1].count(1)
-            K = (-1)**((m1-1)//2)*2*prod(abs(x) for x in self.gamma_list())
-            t0 = (~t-1)/p**((t-1).valuation(p))
-            c = kronecker_symbol(K*t0, p)*p**(w//2)
-            ans *= 1 - c*ans.parent().gen()
+        # In the multiplicative case, we sometimes need to pull out a linear factor
+        # in order to apply the functional equation.
+        if typ == "mult":
+            if self.degree() % 2 == 0:
+                sign = 1
+                if w % 2:
+                    assert m1 % 2 == 0
+                    u = (-1) ** (m1//2)
+                    u *= prod(v**gv for v, gv in self.gamma_array().items())
+                    c = kronecker_symbol(u, p) * p**((w-1)//2)
+                else:
+                    u = (-1) ** (1 + self.degree()//2 + (m1-1)//2)
+                    num, den = self.defining_polynomials()
+                    x = num.parent().gen()
+                    num = num(-x)
+                    num /= (x-1) ** num.valuation(x-1)
+                    den /= (x-1) ** den.valuation(x-1)
+                    u *= 2 * num(1) / den(1)
+                    c = kronecker_symbol(u, p) * p**(w//2)
+                for j in range(len(traces)):
+                    traces[j] -= c ** (j+1)
+                tmp = 1 - c*P.gen()
+            else:
+                u = (-1) ** (1+(self.degree()-1)//2)
+                num, den = self.defining_polynomials()
+                x = num.parent().gen()
+                den = den(-x)
+                num /= (x-1) ** num.valuation(x-1)
+                den /= (x-1) ** den.valuation(x-1)
+                u *= num(1) / den(1)
+                sign = kronecker_symbol(u, p)
+        else:
+            sign = self.sign(t, p)
+
+        ans = characteristic_polynomial_from_traces(traces, d, p, w, sign, deg=deg)
+
+        # In the multiplicative case, we sometimes need to add extra factors.
+        if typ == "mult":
+            if self.degree() % 2 == 0:
+                ans *= tmp
+            if w % 2 == 0 and (t-1).valuation(p) % 2 == 0:
+                K = (-1) ** ((m1-1)//2)*2*prod(abs(x) for x in self.gamma_list())
+                t0 = (~t-1) / p**((t-1).valuation(p))
+                c = kronecker_symbol(K*t0, p) * p**(w//2)
+                ans *= 1 - c*P.gen()
+            if deg is not None:
+                ans = ans.truncate(deg+1)
         return ans
+
