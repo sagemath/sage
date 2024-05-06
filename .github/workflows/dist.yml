@@ -45,7 +45,7 @@ jobs:
       - name: make download (--disable-download-from-upstream-url)
         id: make_download
         run: |
-          make -k download
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
         env:
           MAKE: make -j8
       - name: Reconfigure with --enable-download-from-upstream-url
@@ -61,9 +61,13 @@ jobs:
       - name: make download (--enable-download-from-upstream-url)
         if: (success() || failure()) && steps.make_download.outcome != 'success'
         run: |
-          make -k download
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
         env:
           MAKE: make -j8
+      - name: Remove what cannot be distributed
+        if: success() || failure()
+        run: |
+          rm -f upstream/*do-not-distribute*
       - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
