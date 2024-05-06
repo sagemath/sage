@@ -80,6 +80,7 @@ cdef class CircuitsMatroid(Matroid):
             except KeyError:
                 self._k_C[len(C)] = set()
                 self._k_C[len(C)].add(C)
+        self._sorted_C_lens = sorted(self._k_C)
         self._matroid_rank = self.rank(self._groundset)
         self._nsc_defined = nsc_defined
 
@@ -160,7 +161,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         cdef set XX = set(X)
         cdef int i, l = len(XX)
-        for i in sorted(self._k_C):
+        for i in self._sorted_C_lens:
             if i > l:
                 break
             for C in self._k_C[i]:
@@ -220,7 +221,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         cdef set XX = set(X)
         cdef int i, l = len(XX)
-        for i in sorted(self._k_C):
+        for i in self._sorted_C_lens:
             if i > l:
                 break
             for C in self._k_C[i]:
@@ -249,8 +250,9 @@ cdef class CircuitsMatroid(Matroid):
         cdef set XX = set(X)
         cdef frozenset S
         cdef int i
-        for i in sorted(self._k_C):
-            if i > len(XX) + 1: break
+        for i in self._sorted_C_lens:
+            if i > len(XX) + 1:
+                break
             for C in self._k_C[i]:
                 S = C - XX
                 if len(S) == 1:
@@ -569,7 +571,7 @@ cdef class CircuitsMatroid(Matroid):
             SetSystem of 0 sets over 8 elements
             sage: sorted([sorted(X) for X in M.dependent_r_sets(4)])
             [['a', 'b', 'c', 'd'], ['a', 'b', 'e', 'f'], ['a', 'b', 'g', 'h'],
-            ['c', 'd', 'e', 'f'], ['e', 'f', 'g', 'h']]
+             ['c', 'd', 'e', 'f'], ['e', 'f', 'g', 'h']]
         """
         cdef int i
         cdef set NB = set()
@@ -578,7 +580,8 @@ cdef class CircuitsMatroid(Matroid):
             if i in self._k_C:
                 for S in self._k_C[i]:
                     NB.add(S)
-            if i == r: break
+            if i == r:
+                break
             for S in NB.copy():
                 NB.remove(S)
                 for e in S ^ self._groundset:
@@ -770,27 +773,27 @@ cdef class CircuitsMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: M = Matroid(circuits=[[1, 2, 3], [3, 4, 5], [1, 2, 4, 5]])
             sage: SimplicialComplex(M.no_broken_circuits_sets())
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5)}
-            sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))
+            sage: SimplicialComplex(M.no_broken_circuits_sets([5, 4, 3, 2, 1]))
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
 
         ::
 
-            sage: M = Matroid(circuits=[[1,2,3], [1,4,5], [2,3,4,5]])
-            sage: SimplicialComplex(M.no_broken_circuits_sets([5,4,3,2,1]))
+            sage: M = Matroid(circuits=[[1, 2, 3], [1, 4, 5], [2, 3, 4, 5]])
+            sage: SimplicialComplex(M.no_broken_circuits_sets([5, 4, 3, 2, 1]))
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (2, 3, 5), (2, 4, 5), (3, 4, 5)}
 
         TESTS::
 
-            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: M = Matroid(circuits=[[1, 2, 3], [3, 4, 5], [1, 2, 4, 5]])
             sage: C1 = SimplicialComplex(M.no_broken_circuits_sets())
             sage: from sage.matroids.basis_matroid import BasisMatroid
-            sage: M = BasisMatroid(Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]]))
+            sage: M = BasisMatroid(Matroid(circuits=[[1, 2, 3], [3, 4, 5], [1, 2, 4, 5]]))
             sage: C2 = SimplicialComplex(M.no_broken_circuits_sets())
             sage: C1 == C2
             True
@@ -820,21 +823,21 @@ cdef class CircuitsMatroid(Matroid):
 
         EXAMPLES::
 
-            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: M = Matroid(circuits=[[1, 2, 3], [3, 4, 5], [1, 2, 4, 5]])
             sage: M.broken_circuit_complex()
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5)}
-            sage: M.broken_circuit_complex([5,4,3,2,1])
+            sage: M.broken_circuit_complex([5, 4, 3, 2, 1])
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
-            sage: M.broken_circuit_complex([5,4,3,2,1], reduced=True)
+            sage: M.broken_circuit_complex([5, 4, 3, 2, 1], reduced=True)
             Simplicial complex with vertex set (1, 2, 3, 4)
              and facets {(1, 3), (1, 4), (2, 3), (2, 4)}
 
         For a matroid with loops, the broken circuit complex is not defined,
         and the method yields an error::
 
-            sage: M = Matroid(groundset=[0,1,2], circuits=[[0]])
+            sage: M = Matroid(groundset=[0, 1, 2], circuits=[[0]])
             sage: M.broken_circuit_complex()
             Traceback (most recent call last):
             ...
@@ -899,15 +902,15 @@ cdef class CircuitsMatroid(Matroid):
             sage: M = Matroid(circuits=C)
             sage: M.is_valid()
             True
-            sage: C = [[1,2], [1, 2, 3], [3, 4, 5], [1, 2, 4, 5]]
+            sage: C = [[1, 2], [1, 2, 3], [3, 4, 5], [1, 2, 4, 5]]
             sage: M = Matroid(circuits=C)
             sage: M.is_valid()
             False
-            sage: C = [[3,6], [1, 2, 3], [3, 4, 5], [1, 2, 4, 5]]
+            sage: C = [[3, 6], [1, 2, 3], [3, 4, 5], [1, 2, 4, 5]]
             sage: M = Matroid(circuits=C)
             sage: M.is_valid()
             False
-            sage: C = [[3,6], [1, 2, 3], [3, 4, 5], [1, 2, 6], [6, 4, 5], [1, 2, 4, 5]]
+            sage: C = [[3, 6], [1, 2, 3], [3, 4, 5], [1, 2, 6], [6, 4, 5], [1, 2, 4, 5]]
             sage: M = Matroid(circuits=C)
             sage: M.is_valid()
             True
@@ -921,10 +924,9 @@ cdef class CircuitsMatroid(Matroid):
             False
         """
         from itertools import combinations_with_replacement
-        cdef int i, j, k
-        cdef frozenset C1, C2, C3, I12, U12
-        cdef bint flag
-        for (i, j) in combinations_with_replacement(sorted(self._k_C), 2):
+        cdef int i, j
+        cdef frozenset C1, C2, I12, U12
+        for (i, j) in combinations_with_replacement(self._sorted_C_lens, 2):
             # loop through all circuit length pairs (i, j) with i <= j
             for C1 in self._k_C[i]:
                 if not C1:  # the empty set can't be a circuit
@@ -941,7 +943,6 @@ cdef class CircuitsMatroid(Matroid):
                     # check circuit elimination axiom
                     U12 = C1 | C2
                     for e in I12:
-                        flag = False
                         S = U12 - {e}
                         if self._is_independent(S):
                             return False

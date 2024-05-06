@@ -2,10 +2,11 @@ from sage.matroids.matroid cimport Matroid
 from sage.matroids.set_system cimport SetSystem
 
 cdef class CircuitsMatroid(Matroid):
-    cdef frozenset _groundset  # _E
-    cdef int _matroid_rank  # _R
+    cdef frozenset _groundset
+    cdef int _matroid_rank
     cdef set _C  # circuits
     cdef dict _k_C  # k-circuits (k=len)
+    cdef list _sorted_C_lens
     cdef bint _nsc_defined
     cpdef groundset(self)
     cpdef _rank(self, X)
