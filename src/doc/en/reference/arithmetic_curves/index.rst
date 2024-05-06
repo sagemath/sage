@@ -11,6 +11,7 @@ Elliptic curves
    sage/schemes/elliptic_curves/ell_field
    sage/schemes/elliptic_curves/ell_finite_field
    sage/schemes/elliptic_curves/formal_group
+   sage/schemes/elliptic_curves/kummer_line
 
 Maps between them
 
