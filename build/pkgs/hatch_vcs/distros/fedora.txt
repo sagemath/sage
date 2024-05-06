@@ -1,1 +1,1 @@
-python-hatch-vcs
+python3-hatch-vcs
