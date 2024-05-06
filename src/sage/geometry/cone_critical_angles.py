@@ -1,6 +1,13 @@
 r"""
 Find maximal angles between polyhedral convex cones
 
+.. WARNING::
+
+    This module is considered internal and its contents are subject to
+    change at any time without (deprecation) warning. The stable
+    interface is
+    :meth:`sage.geometry.cone.ConvexRationalPolyhedralCone.max_angle`.
+
 Finding the maximal (or equivalently, the minimal) angle between two
 polyhedral convex cones is a hard nonconvex optimization problem. The
 problem for a single cone was introduced in [IS2005]_, and was later
