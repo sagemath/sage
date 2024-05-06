@@ -212,7 +212,7 @@ def isclassinstance(obj):
         sage: isclassinstance(myclass2)
         False
     """
-    builtin_mods = set(['__builtin__', 'builtins', 'exceptions'])
+    builtin_mods = {'__builtin__', 'builtins', 'exceptions'}
 
     return (not inspect.isclass(obj) and
             hasattr(obj, '__class__') and
@@ -625,10 +625,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             [[], ['s', 't', 'u'], [['e'], [], ['pi']]]
 
         """
-        t = []
-        for n in node.elts:
-            t.append(self.visit(n))
-        return t
+        return [self.visit(n) for n in node.elts]
 
     def visit_Tuple(self, node):
         """
@@ -649,10 +646,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             [(), ('x', 'y'), ('Au', 'Al', 'Cu')]
 
         """
-        t = []
-        for n in node.elts:
-            t.append(self.visit(n))
-        return tuple(t)
+        return tuple(self.visit(n) for n in node.elts)
 
     def visit_Dict(self, node):
         """
@@ -2335,13 +2329,13 @@ def sage_getsourcelines(obj):
         (<class 'sage.misc.test_nested_class.TestNestedParent.Element'>,
          <class 'sage.categories.sets_cat.Sets.element_class'>)
         sage: print(sage_getsource(E))
-            class Element():
+            class Element:
                 "This is a dummy element class"
                 pass
         sage: print(sage_getsource(P))
         class TestNestedParent(UniqueRepresentation, Parent):
             ...
-            class Element():
+            class Element:
                 "This is a dummy element class"
                 pass
 

@@ -776,7 +776,7 @@ def format(s, embedded=False):
     except ImportError:
         pass
 
-    docs = set([])
+    docs = set()
     if 'noreplace' not in directives:
         i_0 = 0
         while True:
@@ -843,7 +843,7 @@ def format_src(s):
     """
     if not isinstance(s, str):
         raise TypeError("s must be a string")
-    docs = set([])
+    docs = set()
 
     try:
         import sage.all
@@ -1372,7 +1372,7 @@ def format_search_as_html(what, results, search):
     if not isinstance(results, list):
         results = results.splitlines()
 
-    files = set([])
+    files = set()
     for L in results:
         filename = L.strip().split(':', 1)[0]
         if filename:
