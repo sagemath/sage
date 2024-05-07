@@ -6187,31 +6187,31 @@ class Partitions(UniqueRepresentation, Parent):
         NAME = 'Partitions'
         module = 'sage.combinat.partition'
         display = {'default': "list",
-                     'description': 'Specifies how partitions should be printed',
-                     'values': {'list': 'displayed as a list',
-                               'exp_low': 'in exponential form (lowest first)',
-                               'exp_high': 'in exponential form (highest first)',
-                               'diagram': 'as a Ferrers diagram',
-                               'compact_low': 'compact form of ``exp_low``',
-                               'compact_high': 'compact form of ``exp_high``'},
-                     'alias': {'exp': "exp_low", 'compact': "compact_low", 'array': "diagram",
-                               'ferrers_diagram': "diagram", 'young_diagram': "diagram"},
-                     'case_sensitive': False}
-        latex = {'default': "young_diagram",
-                   'description': 'Specifies how partitions should be latexed',
-                   'values': {'diagram': 'latex as a Ferrers diagram',
-                               'young_diagram': 'latex as a Young diagram',
-                               'list': 'latex as a list',
-                               'exp_high': 'latex as a list in exponential notation (highest first)',
-                               'exp_low': 'as a list latex in exponential notation (lowest first)'},
-                   'alias': {'exp': "exp_low", 'array': "diagram", 'ferrers_diagram': "diagram"},
+                   'description': 'Specifies how partitions should be printed',
+                   'values': {'list': 'displayed as a list',
+                              'exp_low': 'in exponential form (lowest first)',
+                              'exp_high': 'in exponential form (highest first)',
+                              'diagram': 'as a Ferrers diagram',
+                              'compact_low': 'compact form of ``exp_low``',
+                              'compact_high': 'compact form of ``exp_high``'},
+                   'alias': {'exp': "exp_low", 'compact': "compact_low", 'array': "diagram",
+                             'ferrers_diagram': "diagram", 'young_diagram': "diagram"},
                    'case_sensitive': False}
+        latex = {'default': "young_diagram",
+                 'description': 'Specifies how partitions should be latexed',
+                 'values': {'diagram': 'latex as a Ferrers diagram',
+                            'young_diagram': 'latex as a Young diagram',
+                            'list': 'latex as a list',
+                            'exp_high': 'latex as a list in exponential notation (highest first)',
+                            'exp_low': 'as a list latex in exponential notation (lowest first)'},
+                 'alias': {'exp': "exp_low", 'array': "diagram", 'ferrers_diagram': "diagram"},
+                 'case_sensitive': False}
         diagram_str = {'default': "*",
-                         'description': 'The character used for the cells when printing Ferrers diagrams',
-                         'checker': lambda char: isinstance(char,str)}
+                       'description': 'The character used for the cells when printing Ferrers diagrams',
+                       'checker': lambda char: isinstance(char,str)}
         latex_diagram_str = {'default': "\\ast",
-                         'description': 'The character used for the cells when latexing Ferrers diagrams',
-                         'checker': lambda char: isinstance(char,str)}
+                             'description': 'The character used for the cells when latexing Ferrers diagrams',
+                             'checker': lambda char: isinstance(char,str)}
         convention = {'link_to': (tableau.Tableaux.options,'convention')}
         notation = {'alt_name': 'convention'}
 
