@@ -23,7 +23,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         EXAMPLES::
 
-            sage: M = ModularForms(23,2,base_ring=GF(7)) # indirect doctest
+            sage: M = ModularForms(23, 2, base_ring=GF(7)) # indirect doctest
             sage: M
             Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23)
              of weight 2 over Finite Field of size 7
@@ -46,9 +46,10 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
             sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
-            sage: chi = DirichletGroup(5, base_ring = K).0
+            sage: chi = DirichletGroup(5, base_ring=K).0
+            sage: x = polygen(ZZ, 'x')
             sage: L.<c> = K.extension(x^2 - 402*i)
-            sage: M = ModularForms(chi, 7, base_ring = L)
+            sage: M = ModularForms(chi, 7, base_ring=L)
             sage: symbs = M.modular_symbols()
             sage: symbs.character() == chi
             True

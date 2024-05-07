@@ -178,16 +178,16 @@ def pip_installed_packages(normalization=None):
         sage: # optional - sage_spkg
         sage: from sage.misc.package import pip_installed_packages
         sage: d = pip_installed_packages()
-        sage: 'scipy' in d or 'SciPy' in d
+        sage: 'scipy' in d or 'SciPy' in d                                              # needs scipy
         True
-        sage: d['beautifulsoup4']                               # optional - beautifulsoup4
-        '...'
-        sage: d['prompt-toolkit']
-        '...'
+        sage: 'beautifulsoup4' in d                             # needs beautifulsoup4
+        True
+        sage: 'prompt-toolkit' in d or 'prompt_toolkit' in d    # whether - or _ appears in the name depends on the setuptools version used for building the package
+        True
         sage: d = pip_installed_packages(normalization='spkg')
         sage: d['prompt_toolkit']
         '...'
-        sage: d['scipy']
+        sage: d['scipy']                                                                # needs scipy
         '...'
     """
     with open(os.devnull, 'w') as devnull:
@@ -227,34 +227,6 @@ class PackageInfo(NamedTuple):
         Whether the package is installed in the system.
         """
         return self.installed_version is not None
-
-    def __getitem__(self, key: Union[int, str]):
-        r"""
-        Only for backwards compatibility to allow dict-like access.
-
-        TESTS::
-
-            sage: from sage.misc.package import PackageInfo
-            sage: package = PackageInfo("test_package")
-            sage: package["name"]
-            doctest:warning...
-            dict-like access is deprecated, use pkg.name instead of pkg['name'], for example
-            See https://github.com/sagemath/sage/issues/31013 for details.
-            'test_package'
-            sage: package[0]
-            'test_package'
-        """
-        if isinstance(key, str):
-            from sage.misc.superseded import deprecation
-
-            if key == "installed":
-                deprecation(31013, "dict-like access via 'installed' is deprecated, use method is_installed instead")
-                return self.is_installed()
-            else:
-                deprecation(31013, "dict-like access is deprecated, use pkg.name instead of pkg['name'], for example")
-                return self.__getattribute__(key)
-        else:
-            return tuple.__getitem__(self, key)
 
 
 def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 'script'],
@@ -547,109 +519,6 @@ def package_versions(package_type, local=False):
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 
 
-def standard_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed standard packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed standard packages (as a list)
-
-    - NOT installed standard packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import standard_packages
-        sage: installed, not_installed = standard_packages()  # optional - sage_spkg
-        doctest:...: DeprecationWarning: ...
-        sage: 'numpy' in installed                            # optional - sage_spkg
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('standard', local=True).values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
-
-
-def optional_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed optional packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed optional packages (as a list)
-
-    - NOT installed optional packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: # optional - sage_spkg
-        sage: from sage.misc.package import optional_packages
-        sage: installed, not_installed = optional_packages()
-        doctest:...: DeprecationWarning: ...
-        sage: 'biopython' in installed + not_installed
-        True
-        sage: 'biopython' in installed          # optional - biopython
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('optional', local=True)
-    pkgs = pkgs.values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
-
-
-def experimental_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed experimental packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed experimental packages (as a list)
-
-    - NOT installed experimental packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import experimental_packages
-        sage: installed, not_installed = experimental_packages()  # optional - sage_spkg
-        doctest:...: DeprecationWarning: ...
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('experimental', local=True).values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
-
 def package_manifest(package):
     """
     Return the manifest for ``package``.
@@ -691,68 +560,10 @@ def package_manifest(package):
             pass
     raise RuntimeError('package manifest directory changed at runtime')
 
-class PackageNotFoundError(RuntimeError):
-    """
-    This class defines the exception that should be raised when a
-    function, method, or class cannot detect a Sage package that it
-    depends on.
 
-    This exception should be raised with a single argument, namely
-    the name of the package.
-
-    When a ``PackageNotFoundError`` is raised, this means one of the
-    following:
-
-    - The required optional package is not installed.
-
-    - The required optional package is installed, but the relevant
-      interface to that package is unable to detect the package.
-
-    Raising a ``PackageNotFoundError`` is deprecated.  Use
-    :class:`sage.features.FeatureNotPresentError` instead.
-
-    User code can continue to catch ``PackageNotFoundError`` exceptions
-    for compatibility with older versions of the Sage library.
-    This does not cause deprecation warnings.
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import PackageNotFoundError
-        sage: try:
-        ....:     pass
-        ....: except PackageNotFoundError:
-        ....:     pass
-
-    """
-
-    def __init__(self, *args):
-        """
-        TESTS::
-
-            sage: from sage.misc.package import PackageNotFoundError
-            sage: raise PackageNotFoundError("my_package")
-            Traceback (most recent call last):
-            ...
-            PackageNotFoundError: the package 'my_package' was not found. You can install it by running 'sage -i my_package' in a shell
-        """
-        super().__init__(*args)
-        # We do not deprecate the whole class because we want
-        # to allow user code to handle this exception without causing
-        # a deprecation warning.
-        from sage.misc.superseded import deprecation
-        deprecation(30607, "Instead of raising PackageNotFoundError, raise sage.features.FeatureNotPresentError")
-
-    def __str__(self):
-        """
-        Return the actual error message.
-
-        EXAMPLES::
-
-            sage: from sage.misc.package import PackageNotFoundError
-            sage: str(PackageNotFoundError("my_package"))
-            doctest:warning...
-            "the package 'my_package' was not found. You can install it by running 'sage -i my_package' in a shell"
-        """
-        return ("the package {0!r} was not found. "
-            "You can install it by running 'sage -i {0}' in a shell"
-            .format(self.args[0]))
+# PackageNotFoundError used to be an exception class.
+# It was deprecated in #30607 and removed afterwards.
+# User code can continue to use PackageNotFoundError in
+# try...except statements using this definition, which
+# catches no exception.
+PackageNotFoundError = ()

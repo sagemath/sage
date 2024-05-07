@@ -205,7 +205,7 @@ cdef class FlatsMatroid(Matroid):
             Matroid of rank 6 on 6 elements with 64 flats
         """
         flats_num = sum(1 for i in self._F for F in self._F[i])
-        return Matroid._repr_(self) + " with " + str(flats_num) + " flats"
+        return f'{Matroid._repr_(self)} with {flats_num} flats'
 
     # comparison
 
@@ -299,6 +299,52 @@ cdef class FlatsMatroid(Matroid):
         data = (self._groundset, self._F, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_flats_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: from sage.matroids.flats_matroid import FlatsMatroid
+            sage: M = FlatsMatroid(matroids.catalog.RelaxedNonFano())
+            sage: sorted(M.groundset())
+            [0, 1, 2, 3, 4, 5, 6]
+            sage: N = M.relabel({'g': 'x', 0: 'z'})  # 'g': 'x' is ignored
+            sage: from sage.matroids.utilities import cmp_elements_key
+            sage: sorted(N.groundset(), key=cmp_elements_key)
+            [1, 2, 3, 4, 5, 6, 'z']
+            sage: M.is_isomorphic(N)
+            True
+
+        TESTS::
+
+            sage: from sage.matroids.flats_matroid import FlatsMatroid
+            sage: M = FlatsMatroid(matroids.catalog.RelaxedNonFano())
+            sage: f = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g'}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self._groundset]
+        F = {}
+        for i in self._F:
+            F[i] = []
+            F[i] += [[d[y] for y in x] for x in self._F[i]]
+        M = FlatsMatroid(groundset=E, flats=F)
+        return M
 
     # enumeration
 

@@ -14,6 +14,8 @@ slopes (and hence a last infinite slope).
 #                  https://www.gnu.org/licenses/
 #############################################################################
 
+import sage.geometry.abc
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -22,7 +24,6 @@ from sage.misc.cachefunc import cached_method
 
 from sage.rings.infinity import Infinity
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.polyhedron.base import is_Polyhedron
 
 
 class NewtonPolygon_element(Element):
@@ -716,7 +717,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
             sage: NewtonPolygon(1)
             Finite Newton polygon with 1 vertex: (0, 0)
         """
-        if is_Polyhedron(arg):
+        if isinstance(arg, sage.geometry.abc.Polyhedron):
             return self.element_class(arg, parent=self)
         if arg == 0:
             polyhedron = Polyhedron(base_ring=self.base_ring(), ambient_dim=2)

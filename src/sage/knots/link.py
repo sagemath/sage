@@ -3606,36 +3606,57 @@ class Link(SageObject):
         # such that the resulting regions are in fact closed regions
         # with straight angles, and using the minimal number of bends.
         regions = sorted(self.regions(), key=len)
-        regions = regions[:-1]
         edges = list(set(flatten(pd_code)))
         edges.sort()
         MLP = MixedIntegerLinearProgram(maximization=False, solver=solver)
         # v will be the list of variables in the MLP problem. There will be
-        # two variables for each edge: number of right bendings and number of
-        # left bendings (at the end, since we are minimizing the total, only one
-        # of each will be nonzero
+        # two variables for each edge counting the number of bendings needed.
+        # The one with even index corresponds to the flow of this number from
+        # the left-hand-side region to the right-hand-side region if the edge
+        # is positive oriented. The one with odd index corresponds to the
+        # flow in the opposite direction. For a negative oriented edge the
+        # same is true but with exchanged directions. At the end, since we
+        # are minimizing the total, only one of each will be nonzero.
         v = MLP.new_variable(nonnegative=True, integer=True)
+
+        def flow_from_source(e):
+            r"""
+            Return the flow variable from the source.
+            """
+            if e > 0:
+                return v[2*edges.index(e)]
+            else:
+                return v[2*edges.index(-e)+1]
+
+        def flow_to_sink(e):
+            r"""
+            Return the flow variable to the sink.
+            """
+            return flow_from_source(-e)
+
         # one condition for each region
-        for i in range(len(regions)):
-            cond = 0
+        lr = len(regions)
+        for i in range(lr):
             r = regions[i]
-            for e in r:
-                if e > 0:
-                    cond = cond + v[2*edges.index(e)] - v[2*edges.index(e) + 1]
-                else:
-                    cond = cond - v[2*edges.index(-e)] + v[2*edges.index(-e) + 1]
-            MLP.add_constraint(cond == 4 - len(r))
+            if i < lr - 1:
+                # capacity of interior region, sink if positive, source if negative
+                capacity = len(r) - 4
+            else:
+                # capacity of exterior region, only sink (added to fix :issue:`37587`).
+                capacity = len(r) + 4
+            flow = sum(flow_to_sink(e) - flow_from_source(e) for e in r)
+            MLP.add_constraint(flow == capacity)  # exterior region only sink
+
         MLP.set_objective(MLP.sum(v.values()))
         MLP.solve()
         # we store the result in a vector s packing right bends as negative left ones
         values = MLP.get_values(v, convert=ZZ, tolerance=1e-3)
-        s = [values[2*i] - values[2*i + 1]
-             for i in range(len(edges))]
+        s = [values[2*i] - values[2*i + 1] for i in range(len(edges))]
         # segments represents the different parts of the previous edges after bending
         segments = {e: [(e,i) for i in range(abs(s[edges.index(e)])+1)] for e in edges}
         pieces = {tuple(i): [i] for j in segments.values() for i in j}
         nregions = []
-        for r in regions:
+        for r in regions[:-1]:  # interior regions
             nregion = []
             for e in r:
                 if e > 0:
@@ -3688,16 +3709,16 @@ class Link(SageObject):
                 pieces[tuple(badregion[b][0])].append(N2)
 
             if a < b:
-                r1 = badregion[:a] + [[badregion[a][0],0], [N1,1]] + badregion[b:]
-                r2 = badregion[a+1:b] + [[N2,1],[N1,1]]
+                r1 = badregion[:a] + [[badregion[a][0], 0], [N1, 1]] + badregion[b:]
+                r2 = badregion[a + 1:b] + [[N2, 1],[N1, 1]]
             else:
-                r1 = badregion[b:a] + [[badregion[a][0],0], [N1,1]]
-                r2 = badregion[:b] + [[N2,1],[N1,1]] + badregion[a+1:]
+                r1 = badregion[b:a] + [[badregion[a][0], 0], [N1, 1]]
+                r2 = badregion[:b] + [[N2, 1],[N1, 1]] + badregion[a + 1:]
 
             if otherregion:
                 c = [x for x in otherregion if badregion[b][0] == x[0]]
                 c = otherregion.index(c[0])
-                otherregion.insert(c+1, [N2,otherregion[c][1]])
+                otherregion.insert(c + 1, [N2,otherregion[c][1]])
                 otherregion[c][1] = 0
             nregions.remove(badregion)
             nregions.append(r1)

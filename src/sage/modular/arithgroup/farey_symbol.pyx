@@ -897,7 +897,6 @@ cdef class Farey:
         sig_off()
         return result
 
-    @rename_keyword(rgbcolor='color')
     @options(alpha=1, fill=True, thickness=1, color='lightgray',
              color_even='white',
              zorder=2, linestyle='solid', show_pairing=True,

@@ -1851,7 +1851,7 @@ class Partition(CombinatorialElement):
             sage: Partition([]).down_list()  #checks :issue:`11435`
             []
         """
-        return [p for p in self.down()]
+        return list(self.down())
 
     @combinatorial_map(name="cell poset")
     def cell_poset(self, orientation="SE"):

@@ -422,7 +422,7 @@ class Derangements(UniqueRepresentation, Parent):
             R = PolynomialRing(QQ, 'x', len(A))
             S = sum(R.gens())
             e = prod((S - x)**y for (x, y) in zip(R.gens(), A))
-            return Integer(e.coefficient(dict([(x, y) for (x, y) in zip(R.gens(), A)])))
+            return Integer(e.coefficient(dict(zip(R.gens(), A))))
         return self._count_der(len(self._set))
 
     def _rand_der(self):

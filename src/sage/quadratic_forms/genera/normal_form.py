@@ -539,7 +539,7 @@ def _homogeneous_normal_form(G, w):
         e1 = D[-2, -2].unit_part()
         e2 = D[-1, -1].unit_part()
         e = {e1, e2}
-        E = [{3, 3}, {3, 5}, {5, 5}, {5, 7}]
+        E = [{3}, {3, 5}, {5}, {5, 7}]
         if e in E:
             B[-2:, :] = _relations(D[-2:, -2:], 1) * B[-2:, :]
             D = B * G * B.T

@@ -269,9 +269,9 @@ cdef class CircuitsMatroid(Matroid):
             NonDesargues: Matroid of rank 3 on 10 elements with 9 nonspanning circuits
         """
         if self._nsc_defined:
-            return Matroid._repr_(self) + " with " + str(len(self.nonspanning_circuits())) + " nonspanning circuits"
+            return f'{Matroid._repr_(self)} with {len(self.nonspanning_circuits())} nonspanning circuits'
         else:
-            return Matroid._repr_(self) + " with " + str(len(self._C)) + " circuits"
+            return f'{Matroid._repr_(self)} with {len(self._C)} circuits'
 
     # comparison
 
@@ -337,55 +337,6 @@ cdef class CircuitsMatroid(Matroid):
 
     # copying, loading, saving
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
-            sage: M = CircuitsMatroid(matroids.catalog.Vamos())
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            True
-        """
-        N = CircuitsMatroid(groundset=[], circuits=[])
-        N._groundset = self._groundset
-        N._C = self._C
-        N._k_C = self._k_C
-        N._nsc_defined = self._nsc_defined
-        N._matroid_rank = self._matroid_rank
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo=None):
-        """
-        Create a deep copy.
-
-        .. NOTE::
-
-            Since matroids are immutable, a shallow copy normally suffices.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
-            sage: M = CircuitsMatroid(matroids.catalog.Vamos())
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            False
-        """
-        if memo is None:
-            memo = {}
-        from copy import deepcopy
-        # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
-        N = CircuitsMatroid(groundset=deepcopy(self._groundset, memo), circuits=deepcopy(frozenset(self._C), memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -412,6 +363,51 @@ cdef class CircuitsMatroid(Matroid):
         data = (self._groundset, frozenset(self._C), self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_circuits_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
+            sage: M = CircuitsMatroid(matroids.catalog.RelaxedNonFano())
+            sage: sorted(M.groundset())
+            [0, 1, 2, 3, 4, 5, 6]
+            sage: N = M.relabel({'g': 'x', 0: 'z'})  # 'g': 'x' is ignored
+            sage: from sage.matroids.utilities import cmp_elements_key
+            sage: sorted(N.groundset(), key=cmp_elements_key)
+            [1, 2, 3, 4, 5, 6, 'z']
+            sage: M.is_isomorphic(N)
+            True
+
+        TESTS::
+
+            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
+            sage: M = CircuitsMatroid(matroids.catalog.RelaxedNonFano())
+            sage: f = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g'}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self._groundset]
+        C = []
+        for i in self._k_C:
+            C += [[d[y] for y in x] for x in self._k_C[i]]
+        M = CircuitsMatroid(groundset=E, circuits=C)
+        return M
 
     # enumeration
 
@@ -485,7 +481,7 @@ cdef class CircuitsMatroid(Matroid):
             sage: from sage.matroids.circuits_matroid import CircuitsMatroid
             sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
             sage: M.circuits()
-            Iterator over a system of subsets
+            SetSystem of 4 sets over 4 elements
             sage: list(M.circuits(0))
             []
             sage: sorted(M.circuits(3), key=str)
@@ -548,7 +544,7 @@ cdef class CircuitsMatroid(Matroid):
             sage: from sage.matroids.circuits_matroid import CircuitsMatroid
             sage: M = CircuitsMatroid(matroids.Uniform(2, 4))
             sage: M.nonspanning_circuits()
-            Iterator over a system of subsets
+            SetSystem of 0 sets over 4 elements
         """
         cdef list NSC = []
         for i in self._k_C:

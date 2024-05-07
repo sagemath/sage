@@ -215,8 +215,8 @@ def integral(f, *args, **kwds):
     symbolically::
 
         sage: f(x) = 1/(sqrt(2*pi)) * e^(-x^2/2)
-        sage: P = plot(f, -4, 4, hue=0.8, thickness=2)
-        sage: P.show(ymin=0, ymax=0.4)
+        sage: P = plot(f, -4, 4, hue=0.8, thickness=2)                                  # needs sage.plot
+        sage: P.show(ymin=0, ymax=0.4)                                                  # needs sage.plot
         sage: numerical_integral(f, -4, 4)                    # random output
         (0.99993665751633376, 1.1101527003413533e-14)
         sage: integrate(f, x)

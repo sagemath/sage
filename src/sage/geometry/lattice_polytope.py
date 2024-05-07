@@ -482,6 +482,9 @@ def is_LatticePolytope(x):
 
         sage: from sage.geometry.lattice_polytope import is_LatticePolytope
         sage: is_LatticePolytope(1)
+        doctest:warning...
+        DeprecationWarning: is_LatticePolytope is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         False
         sage: p = LatticePolytope([(1,0), (0,1), (-1,-1)])
         sage: p                                                                         # needs palp
@@ -489,6 +492,8 @@ def is_LatticePolytope(x):
         sage: is_LatticePolytope(p)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_LatticePolytope is deprecated, use isinstance instead")
     return isinstance(x, LatticePolytopeClass)
 
 @richcmp_method
@@ -989,7 +994,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: o = lattice_polytope.cross_polytope(3)
             sage: o._palp("poly.x -f")                                                  # needs palp
             'M:7 6 N:27 8 Pic:17 Cor:0\n'
-            sage: print(o._palp("nef.x -f -N -p")) # random time information            # needs palp
+            sage: print(o._palp("nef.x -f -N -p"))  # random time information           # needs palp
             M:27 8 N:7 6  codim=2 #part=5
             H:[0] P:0 V:2 4 5       0sec  0cpu
             H:[0] P:2 V:3 4 5       0sec  0cpu
@@ -1234,7 +1239,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: s = o.nef_x("-p -N -Lv")                                              # needs palp
-            sage: print(s) # random time values                                         # needs palp
+            sage: print(s)  # random time values                                        # needs palp
             M:27 8 N:7 6  codim=2 #part=5
             3 6 Vertices in N-lattice:
                 1    0    0   -1    0    0
@@ -3139,7 +3144,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 12, -1, -9, -6,  6),
             M( 12, -1, -6, -3,  3)
             in 5-d lattice M
-            sage: P.normal_form(algorithm="palp_modified")  # not tested (22s; MemoryError on 32 bit), needs sage.groups
+            sage: P.normal_form(algorithm="palp_modified")      # not tested (22s; MemoryError on 32 bit), needs sage.groups
             M(  6,  0,  0,  0,  0),
             M( -6,  0,  0,  0,  0),
             M(  0,  1,  0,  0,  0),
@@ -5264,7 +5269,7 @@ def _read_nef_x_partitions(data):
 
         sage: o = lattice_polytope.cross_polytope(3)
         sage: s = o.nef_x("-N -p")                                                      # needs palp
-        sage: print(s) # random                                                         # needs palp
+        sage: print(s)  # random                                                        # needs palp
         M:27 8 N:7 6  codim=2 #part=5
          P:0 V:2 4 5       0sec  0cpu
          P:2 V:3 4 5       0sec  0cpu
