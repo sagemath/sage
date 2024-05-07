@@ -217,7 +217,7 @@ class PiecewiseFunction(BuiltinFunction):
             if hasattr(point, 'pyobject'):
                 # unwrap any numeric values
                 point = point.pyobject()
-        elif point == x:  # this innocent-looking comparison takes a second
+        elif point == x:  # this comparison may be very slow (see #37925)
             # substitution only in auxiliary variables
             new_params = []
             for domain, func in parameters:
