@@ -1900,6 +1900,23 @@ class GenericGraph(GenericGraph_pyx):
 
         return d
 
+    def _vertices_keys(self, vertices=None, *, sort=None):
+        n = self.order()
+        keys = None
+        if vertices is True:
+            vertices = self.vertices(sort=sort if sort is not None else False)
+            keys = tuple(vertices)  # tuple to make it hashable
+        elif vertices is None:
+            try:
+                vertices = self.vertices(sort=sort if sort is not None else True)
+            except TypeError:
+                raise TypeError("Vertex labels are not comparable. You must "
+                                "specify an ordering using parameter 'vertices'")
+        elif (len(vertices) != n or
+              set(vertices) != set(self.vertex_iterator())):
+            raise ValueError("parameter 'vertices' must be a permutation of the vertices")
+        return vertices, keys
+
     def adjacency_matrix(self, sparse=None, vertices=None, *, base_ring=None, **kwds):
         r"""
         Return the adjacency matrix of the (di)graph.
@@ -2060,16 +2077,16 @@ class GenericGraph(GenericGraph_pyx):
             sage: graphs.PathGraph(5).adjacency_matrix(vertices=[0,0,0,0,0])
             Traceback (most recent call last):
             ...
-            ValueError: parameter vertices must be a permutation of the vertices
+            ValueError: parameter 'vertices' must be a permutation of the vertices
             sage: graphs.PathGraph(5).adjacency_matrix(vertices=[1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: parameter vertices must be a permutation of the vertices
+            ValueError: parameter 'vertices' must be a permutation of the vertices
 
             sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix()
             Traceback (most recent call last):
             ...
-            TypeError: Vertex labels are not comparable. You must specify an ordering using parameter ``vertices``
+            TypeError: Vertex labels are not comparable. You must specify an ordering using parameter 'vertices'
             sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix(vertices=['John', 42, 0])
             [0 1 0]
             [1 0 0]
@@ -2080,23 +2097,10 @@ class GenericGraph(GenericGraph_pyx):
             sparse = True
             if self.has_multiple_edges() or n <= 256 or self.density() > 0.05:
                 sparse = False
-
-        row_column_keys = None
-        if vertices is True:
-            vertices = self.vertices(sort=False)
+        vertices, keys = self._vertices_keys(vertices)
+        if keys is not None:
             kwds = copy(kwds)
-            kwds['row_keys'] = kwds['column_keys'] = tuple(vertices)  # tuple to make it hashable
-        elif vertices is None:
-            try:
-                vertices = self.vertices(sort=True)
-            except TypeError:
-                raise TypeError("Vertex labels are not comparable. You must "
-                                "specify an ordering using parameter "
-                                "``vertices``")
-        elif (len(vertices) != n or
-              set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("parameter vertices must be a permutation of the vertices")
-
+            kwds['row_keys'] = kwds['column_keys'] = keys
         new_indices = {v: i for i, v in enumerate(vertices)}
         D = {}
         directed = self._directed
@@ -2327,7 +2331,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: P5.incidence_matrix(vertices=[1] * P5.order())                        # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: parameter vertices must be a permutation of the vertices
+            ValueError: parameter 'vertices' must be a permutation of the vertices
             sage: P5.incidence_matrix(edges=[(0, 1)] * P5.size())                       # needs sage.modules
             Traceback (most recent call last):
             ...
@@ -2342,15 +2346,7 @@ class GenericGraph(GenericGraph_pyx):
         if oriented is None:
             oriented = self.is_directed()
 
-        row_keys = None
-        if vertices is True:
-            vertices = self.vertices(sort=False)
-            row_keys = tuple(vertices)  # because a list is not hashable
-        elif vertices is None:
-            vertices = self.vertices(sort=False)
-        elif (len(vertices) != self.num_verts() or
-              set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("parameter vertices must be a permutation of the vertices")
+        vertices, row_keys = self._vertices_keys(vertices, sort=False)
 
         column_keys = None
         verts = {v: i for i, v in enumerate(vertices)}
