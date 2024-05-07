@@ -334,11 +334,10 @@ Here is a BibTeX entry for Sage:
     }
 
 Adjust version/year as needed.  You might also like to use DOI for Sage,
-as the note entry in the above record, or directly as DOI record.
-The DOI 10.5281/zenodo.8042260 represents all Zenodo DOIs for Sage;
-clicking on :doi:`10.5281/zenodo.8042260` will show DOI for the latest
-Sage version, presently 10.3, see :doi:`10.5281/zenodo.10841614`.
-
+as the ``note`` entry in the above record, or directly as DOI record.
+The DOI :doi:`10.5281/zenodo.8042260` represents all versions of Sage;
+clicking on it will show the DOI for the latest Sage version
+(at the time of writing, 10.3, see :doi:`10.5281/zenodo.10841614`).
 
 If you happen to use the Sage interface to PARI, GAP or Singular,
 you should definitely reference them as well. Likewise, if you use
