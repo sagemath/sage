@@ -627,7 +627,10 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``valuation`` -- integer; a lower bound for the valuation of the series
+        - ``valuation`` -- integer; a lower bound for the valuation
+          of the series
+        - ``name`` -- string; a name that refers to the undefined
+          stream in error messages
 
         Power series can be defined recursively (see
         :meth:`sage.rings.lazy_series.LazyModuleElement.define` for
@@ -652,6 +655,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: f.define(z^-1 + z^2*f^2)
             sage: f
             z^-1 + 1 + 2*z + 5*z^2 + 14*z^3 + 42*z^4 + 132*z^5 + O(z^6)
+
         """
         if valuation is None:
             valuation = self._minimal_valuation
@@ -673,10 +677,18 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         If ``self`` is a lazy symmetric function, this is the list
         of basis elements of total degree ``n``.
+
+        EXAMPLES::
+
+            sage: # needs sage.modules
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: m = L._terms_of_degree(3, ZZ); m
+            [s[3], s[2, 1], s[1, 1, 1]]
         """
         raise NotImplementedError
 
-    def define_implicitly(self, series, equations):
+    def define_implicitly(self, series, equations, max_lookahead=1):
         r"""
         Define series by solving functional equations.
 
@@ -684,8 +696,11 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         - ``series`` -- list of undefined series or pairs each
           consisting of a series and its initial values
-
         - ``equations`` -- list of equations defining the series
+        - ``max_lookahead``-- (default: ``1``); a positive integer
+          specifying how many elements beyond the currently known
+          (i.e., approximate) order of each equation to extract
+          linear equations from
 
         EXAMPLES::
 
@@ -1028,6 +1043,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             equation 1:
                 coefficient [0]: 2*series[2] + series[1] == 0
 
+            sage: A = L.undefined()
+            sage: eq1 = diff(A, x) + diff(A, x, 2)
+            sage: eq2 = A + diff(A, x) + diff(A, x, 2)
+            sage: L.define_implicitly([A], [eq1, eq2], max_lookahead=2)
+            sage: A
+            O(x^7)
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
@@ -1040,7 +1061,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             f.define_implicitly(s, ic, eqs,
                                 self.base_ring(),
                                 self._internal_poly_ring.base_ring(),
-                                self._terms_of_degree)
+                                self._terms_of_degree,
+                                max_lookahead=max_lookahead)
 
     class options(GlobalOptions):
         r"""
@@ -1121,7 +1143,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
             sage: L.one()                                                               # needs sage.modules
             m[]
-
         """
         R = self.base_ring()
         coeff_stream = Stream_exact([R.one()], constant=R.zero(), order=0)

@@ -4547,7 +4547,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
           constants for the integrals of ``self`` (the last constant
           corresponds to the first integral)
 
-        If the first argument is a list, then this method iterprets it as
+        If the first argument is a list, then this method interprets it as
         integration constants. If it is a positive integer, the method
         interprets it as the number of times to integrate the function.
         If ``variable`` is not the variable of the Laurent series, then
@@ -5711,7 +5711,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         specified; the integration constant is taken to be `0`.
 
         Now we assume the series is univariate. If the first argument is a
-        list, then this method iterprets it as integration constants. If it
+        list, then this method interprets it as integration constants. If it
         is a positive integer, the method interprets it as the number of times
         to integrate the function. If ``variable`` is not the variable of
         the power series, then the coefficients are integrated with respect
