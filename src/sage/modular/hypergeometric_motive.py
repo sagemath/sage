@@ -1607,7 +1607,7 @@ class HypergeometricData:
         Return the sign of the functional equation for the Euler factor of the motive `H_t` at the prime `p`.
 
         For odd weight, the sign of the functional equation is +1. For even
-        weight, the sign is computed by a recipe found in 11.1 of [Watkins]_
+        weight, the sign is computed by a recipe found in Section 11.1 of [Watkins]_
         (when 0 is not in alpha).
 
         EXAMPLES::
@@ -1652,7 +1652,7 @@ class HypergeometricData:
         Return a contribution to the Euler factor of the motive `H_t` at a tame prime.
 
         The output is only nontrivial when `t` has nonzero `p`-adic valuation.
-        The recipe is described in section 11.4.1 of [Watkins]_.
+        The algorithm is described in Section 11.4.1 of [Watkins]_.
 
         INPUT:
 
@@ -1673,7 +1673,7 @@ class HypergeometricData:
         EXAMPLES::
 
             sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
-            sage: H = Hyp(cyclotomic=[[3,7],[4,5,6]])
+            sage: H = Hyp(cyclotomic=[[3,7], [4,5,6]])
             sage: H.euler_factor_tame_contribution(11^2, 11, 4)
             1
             sage: H.euler_factor_tame_contribution(11^20, 11, 4)
@@ -1682,6 +1682,8 @@ class HypergeometricData:
             1
             sage: H.euler_factor_tame_contribution(11^20, 11, 5)
             1771561*T^4 + 161051*T^3 + 6171*T^2 + 121*T + 1
+            sage: H.euler_factor_tame_contribution(11^20, 11, 5, deg=3)
+            161051*T^3 + 6171*T^2 + 121*T + 1
             sage: H.euler_factor_tame_contribution(11^20, 11, 6)
             1
         """
@@ -1695,27 +1697,23 @@ class HypergeometricData:
 
         e = t.valuation(p)
         t0 = t / p**e
-        if e % mo:
-            return 1
         if e > 0:
             mul = self.cyclotomic_data()[1].count(mo)
-            if not mul:
-                return 1
         elif e < 0:
             mul = self.cyclotomic_data()[0].count(mo)
-            if not mul:
-                return 1
         else:
-            return 1
+            mul = None
+        if e % mo or not mul:
+            return ZZ.one()
         d = euler_phi(mo)
         f = IntegerModRing(mo)(p).multiplicative_order()
         if deg is None:
             deg = d
         if deg < f:
-            return 1
-        q = p**f
+            return ZZ.one()
+        q = p ** f
         prec = ceil(deg*(self.weight()+1-mul)/2 + log(2*d + 1, p))
-        k = (q-1)//mo
+        k = (q-1) // mo
         flip = (f == 1 and prec == 1)
         gtab_prec, gtab = self.gauss_table(p, f, prec)
         try:
@@ -1730,21 +1728,21 @@ class HypergeometricData:
         l = []
         for j in range(mo):
             if gcd(j, mo) == 1:
-                r = j*k
+                r = j * k
                 term = teich**r * ZZ(-1)**m[0]
                 ct = 0
                 for v, gv in gamma.items():
                     r1 = v * r % (q-1)
-                    ct += gv*sum(r1.digits(p))
-                    term *= p_ring(gtab[r1])**(-gv if flip else gv)
-                ct //= (p-1)
-                term *= ZZ(-1)**ct
+                    ct += gv * sum(r1.digits(p))
+                    term *= p_ring(gtab[r1]) ** (-gv if flip else gv)
+                ct //= p - 1
+                term *= ZZ(-1) ** ct
                 ct += f * (D + m[0] - m[r])
                 l.append(term * p**ct)
-        traces = [0 if j % f else sum(i**(j//f) for i in l) for j in range(1,d+1)]
+        traces = [0 if j % f else sum(i ** (j//f) for i in l) for j in range(1,d+1)]
         R = IntegerModRing(p**prec)
         traces = [R(i).lift_centered() for i in traces]
-        return characteristic_polynomial_from_traces(traces, d, p, 0, 1, deg=d, use_fe=False)
+        return characteristic_polynomial_from_traces(traces, d, p, 0, 1, deg, use_fe=False)
 
     @cached_method
     def euler_factor(self, t, p, deg=None, cache_p=False):
@@ -1766,7 +1764,7 @@ class HypergeometricData:
         See [Benasque2009]_ for explicit examples of Euler factors.
 
         For odd weight, the sign of the functional equation is +1. For even
-        weight, the sign is computed by a recipe found in section 11.1 of [Watkins]_.
+        weight, the sign is computed by a recipe found in Section 11.1 of [Watkins]_.
 
         If ``deg`` is specified, then the polynomial is only computed up to degree
         ``deg`` (inclusive).
