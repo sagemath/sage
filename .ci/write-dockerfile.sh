@@ -277,8 +277,9 @@ $ADD .upstream.d /new/.upstream.d
 RUN if [ -d /sage ]; then                                               \
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
         if command -v git; then                                         \
+            printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
             (cd /new &&                                                 \
-             echo /src >> .gitignore &&                                 \
+             printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> .gitignore &&           \
              ./.ci/retrofit-worktree.sh worktree-image /sage);          \
         else                                                            \
             for a in local logs; do                                     \
