@@ -6952,7 +6952,7 @@ class Graph(GenericGraph):
 
     @doc_index("Clique-related methods")
     def cliques_get_max_clique_graph(self):
-        """
+        r"""
         Return the clique graph.
 
         Vertices of the result are the maximal cliques of the graph, and edges
@@ -6968,18 +6968,42 @@ class Graph(GenericGraph):
 
         EXAMPLES::
 
-            sage: MCG = graphs.ChvatalGraph().cliques_get_max_clique_graph(); MCG       # needs networkx
+            sage: MCG = graphs.ChvatalGraph().cliques_get_max_clique_graph(); MCG
             Graph on 24 vertices
-            sage: MCG.show(figsize=[2,2], vertex_size=20, vertex_labels=False)          # needs networkx sage.plot
+            sage: MCG.show(figsize=[2,2], vertex_size=20, vertex_labels=False)          # needs sage.plot
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])                                                 # needs sage.plot
-            sage: G.cliques_get_max_clique_graph()                                      # needs networkx
+            sage: G.cliques_get_max_clique_graph()
             Graph on 2 vertices
-            sage: G.cliques_get_max_clique_graph().show(figsize=[2,2])                  # needs networkx sage.plot
+            sage: G.cliques_get_max_clique_graph().show(figsize=[2,2])                  # needs sage.plot
+
+        TESTS::
+
+            sage: # needs networkx
+            sage: import networkx
+            sage: CG = graphs.ChvatalGraph()
+            sage: S = CG.cliques_get_max_clique_graph()
+            sage: N = Graph(networkx.make_max_clique_graph(CG.networkx_graph(),
+            ....:                                          create_using=networkx.MultiGraph()),
+            ....:           multiedges=False)
+            sage: S.is_isomorphic(N)
+            True
         """
-        import networkx
-        return Graph(networkx.make_max_clique_graph(self.networkx_graph(), create_using=networkx.MultiGraph()),
-                     multiedges=False)
+        # Associate each maximal clique an integer index and record for each
+        # vertex of self the cliques it belongs to.
+        # We use IndependentSets to avoid the construction of the list of
+        # cliques as currently done by method cliques_maximal.
+        cliques_of_vertex = {u: [] for u in self}
+        for n, clique in enumerate(IndependentSets(self, maximal=True, complement=True)):
+            for u in clique:
+                cliques_of_vertex[u].append(n)
+
+        # Build a graph with one vertex per maximal clique and an edge between
+        # cliques sharing a vertex of self
+        G = Graph(n, multiedges=False)
+        for block in cliques_of_vertex.values():
+            G.add_clique(block)
+        return G
 
     @doc_index("Clique-related methods")
     def cliques_get_clique_bipartite(self, **kwds):
