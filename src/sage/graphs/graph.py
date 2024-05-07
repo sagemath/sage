@@ -6917,27 +6917,29 @@ class Graph(GenericGraph):
         EXAMPLES::
 
             sage: C = Graph('DJ{')
-            sage: C.cliques_number_of()                                                 # needs networkx
+            sage: C.cliques_number_of()
             {0: 1, 1: 1, 2: 1, 3: 1, 4: 2}
             sage: E = C.cliques_maximal()
             sage: E
             [[0, 4], [1, 2, 3, 4]]
-            sage: C.cliques_number_of(cliques=E)                                        # needs networkx
+            sage: C.cliques_number_of(cliques=E)
             {0: 1, 1: 1, 2: 1, 3: 1, 4: 2}
             sage: F = graphs.Grid2dGraph(2,3)
-            sage: F.cliques_number_of()                                                 # needs networkx
+            sage: F.cliques_number_of()
             {(0, 0): 2, (0, 1): 3, (0, 2): 2, (1, 0): 2, (1, 1): 3, (1, 2): 2}
-            sage: F.cliques_number_of(vertices=[(0, 1), (1, 2)])                        # needs networkx
+            sage: F.cliques_number_of(vertices=[(0, 1), (1, 2)])
             {(0, 1): 3, (1, 2): 2}
             sage: F.cliques_number_of(vertices=(0, 1))
             3
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])                                                 # needs sage.plot
-            sage: G.cliques_number_of()                                                 # needs networkx
+            sage: G.cliques_number_of()
             {0: 2, 1: 2, 2: 1, 3: 1}
         """
         if cliques is None:
-            cliques = self.cliques_maximal()
+            # We use IndependentSets to avoid the construction of the list of
+            # cliques as currently done by method cliques_maximal.
+            cliques = IndependentSets(self, maximal=True, complement=True)
 
         if vertices in self:  # single vertex
             return sum(1 for c in cliques if vertices in c)
