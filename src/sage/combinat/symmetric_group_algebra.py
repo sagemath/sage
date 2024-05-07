@@ -1294,7 +1294,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
              + 2*[3, 4, 1, 2] + [3, 4, 2, 1] + [4, 3, 1, 2] + 2*[4, 3, 2, 1]
 
         When `p = 0`, these idempotents will generate all of the simple
-        modules (which are the :meth:`specht_modules` and also projective)::
+        modules (which are the :meth:`Specht modules <specht_module>`
+        and also projective modules)::
 
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: for la in Partitions(SGA.n):
@@ -1313,7 +1314,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         REFERENCES:
 
-        - [Ryo2015]_
+        - [Ryom2015]_
         """
         R = self.base_ring()
         p = R.characteristic()
