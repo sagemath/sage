@@ -1075,10 +1075,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         sage: H.eigenvalues(extend=False)                                           # needs sage.libs.pari
                         []
                     """
-                    if self.base_ring().is_field():
-                        return self.matrix().eigenvalues(extend=extend)
-                    else:
-                        raise NotImplementedError("module must be a vector space")
+                    return self.matrix().eigenvalues(extend=extend)
 
                 def eigenvectors(self, extend=True):
                     """
@@ -1124,24 +1121,21 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         [(1, [ (0, 1) ], 2)]
                     """
                     from sage.structure.sequence import Sequence
-                    if self.base_ring().is_field():
-                        try:
-                            side = self.side()  # defined only by MatrixMorphism
-                        except AttributeError:
+                    try:
+                        side = self.side()  # defined only by MatrixMorphism
+                    except AttributeError:
+                        seigenvec = self.matrix().eigenvectors_right(extend=extend)
+                    else:
+                        if side == "right":
                             seigenvec = self.matrix().eigenvectors_right(extend=extend)
                         else:
-                            if side == "right":
-                                seigenvec = self.matrix().eigenvectors_right(extend=extend)
-                            else:
-                                seigenvec = self.matrix().eigenvectors_left(extend=extend)
-                        resu = []
-                        for i in seigenvec:
-                            V = self.domain().base_extend(i[0].parent())
-                            svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
-                            resu.append((i[0], svectors, i[2]))
-                        return resu
-                    else:
-                        raise NotImplementedError("module must be a vector space")
+                            seigenvec = self.matrix().eigenvectors_left(extend=extend)
+                    resu = []
+                    for i in seigenvec:
+                        V = self.domain().base_extend(i[0].parent())
+                        svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
+                        resu.append((i[0], svectors, i[2]))
+                    return resu
 
                 def eigenspaces(self, extend=True):
                     """
