@@ -22988,11 +22988,16 @@ class GenericGraph(GenericGraph_pyx):
               [(1, -0.5000000000... + 0.8660254037...*I, -0.5000000000... - 0.8660254037...*I)],
               1)]
         """
+        from sage.matrix.constructor import matrix
+        vertices, keys = self._vertices_keys(vertices, sort=False)
         if laplacian:
-            M = self.kirchhoff_matrix(vertices=list(self))
+            M = self.kirchhoff_matrix(vertices=vertices)
         else:
-            M = self.adjacency_matrix(vertices=list(self))
-        return M.right_eigenvectors()
+            M = self.adjacency_matrix(vertices=vertices)
+        if keys is None:
+            return M.right_eigenvectors()
+        M = matrix(M, row_keys=keys, column_keys=keys)
+        return M.eigenvectors()
 
     def eigenspaces(self, laplacian=False, vertices=None):
         r"""
@@ -23099,13 +23104,18 @@ class GenericGraph(GenericGraph_pyx):
                  [      1      a1 -a1 - 1])
             ]
         """
+        from sage.matrix.constructor import matrix
+        vertices, keys = self._vertices_keys(vertices, sort=False)
         if laplacian:
-            M = self.kirchhoff_matrix(vertices=list(self))
+            M = self.kirchhoff_matrix(vertices=vertices)
         else:
-            M = self.adjacency_matrix(vertices=list(self))
+            M = self.adjacency_matrix(vertices=vertices)
         # could pass format='all' to get QQbar eigenvalues and eigenspaces
         # which would be a change in default behavior
-        return M.right_eigenspaces(format='galois', algebraic_multiplicity=False)
+        if keys is None:
+            return M.right_eigenspaces(format='galois', algebraic_multiplicity=False)
+        M = matrix(M, row_keys=keys, column_keys=keys)
+        return M.eigenspaces(format='galois', algebraic_multiplicity=False)
 
     # Automorphism and isomorphism
 
