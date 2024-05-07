@@ -42,6 +42,7 @@ TESTS::
 
 import sage.modules.free_module as free_module
 
+from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism
 from sage.structure.richcmp import rich_to_bool, richcmp
@@ -70,7 +71,7 @@ def is_FreeModuleMorphism(x):
     return isinstance(x, FreeModuleMorphism)
 
 
-class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
+class FreeModuleMorphism(matrix_morphism.MatrixMorphism, FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods):
 
     def __init__(self, parent, A, side='left'):
         """
