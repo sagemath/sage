@@ -22987,6 +22987,15 @@ class GenericGraph(GenericGraph_pyx):
              (-0.5000000000... + 0.8660254037...*I,
               [(1, -0.5000000000... + 0.8660254037...*I, -0.5000000000... - 0.8660254037...*I)],
               1)]
+
+        Eigenvectors as elements of a :class:`CombinatorialFreeModule`::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.relabel('12345ABCDE')
+            sage: G.eigenvectors(vertices=True)
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'CombinatorialFreeModule_with_category' object has no attribute 'basis_matrix'
         """
         from sage.matrix.constructor import matrix
         vertices, keys = self._vertices_keys(vertices, sort=False)
