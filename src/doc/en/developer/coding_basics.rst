@@ -193,8 +193,8 @@ included in one of the following places:
   This practice is deprecated, see :issue:`33037`.
 
 In all cases, the files must be listed (explicitly or via wildcards) in
-the section ``[tool.setuptools.package-data]`` of the file
-:sage_root:`SAGE_ROOT/pkgs/sagemath-standard/pyproject.toml.m4` (or the corresponding
+the section ``options.package_data`` of the file
+:sage_root:`pkgs/sagemath-standard/setup.cfg.m4` (or the corresponding
 file of another distribution).
 
 Large data files should not be added to the Sage source tree. Instead, it
@@ -1303,11 +1303,11 @@ framework. Here is a comprehensive list:
         that is, commas, hyphens, semicolons, ..., after the
         first word ends the list of packages.  Hyphens or colons between the
         word ``optional`` and the first package name are allowed.  Therefore,
-        you should not write ``# optional - depends on package CHomP`` but simply
-        ``# optional - CHomP``.
+        you should not write ``# optional - depends on package bliss`` but simply
+        ``# optional - bliss``.
 
       - Optional tags are case-insensitive, so you could also write ``# optional -
-        chOMP``.
+        Bliss``.
 
   If ``# optional`` or ``# needs`` is placed right after the ``sage:`` prompt,
   it is a block-scoped tag, which applies to all doctest lines until

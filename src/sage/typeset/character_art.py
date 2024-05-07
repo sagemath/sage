@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-categories
+# -*- coding: utf-8 -*-
 r"""
 Base Class for Character-Based Art
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Magics for each of the Sage interfaces
 
