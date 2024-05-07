@@ -7036,7 +7036,7 @@ class Graph(GenericGraph):
             sage: # needs networkx
             sage: import networkx
             sage: CG = graphs.ChvatalGraph()
-            sage: S = B.cliques_get_clique_bipartite()
+            sage: S = CG.cliques_get_clique_bipartite()
             sage: N = BipartiteGraph(networkx.make_clique_bipartite(CG.networkx_graph()))
             sage: S.is_isomorphic(N)
             True
