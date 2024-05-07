@@ -64,6 +64,7 @@ gap-pkg-spinsym
 gap-pkg-standardff
 gap-pkg-tomlib
 gap-pkg-transgrp
+gap-pkg-transgrp-data
 gap-pkg-utils
 gap-pkg-uuid
 gap-pkg-xmod
