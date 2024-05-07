@@ -556,7 +556,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M == N
             True
 
-        The keywords `morphism` and `reduced_morphism` are also available::
+        The keywords ``morphism`` and ``reduced_morphism`` are also available::
 
             sage: M = matroids.catalog.RelaxedNonFano("abcdefg")
             sage: A = M.representation(order=True, reduced=True); A
@@ -776,7 +776,8 @@ def Matroid(groundset=None, data=None, **kwds):
             Graph = ()
         if isinstance(data, Graph):
             key = 'graph'
-        elif is_Matrix(data):
+        elif is_Matrix(data) or (
+             isinstance(data, tuple) and is_Matrix(data[0])):
             key = 'matrix'
         elif isinstance(data, sage.modules.with_basis.morphism.ModuleMorphism) or (
              isinstance(data, tuple) and
@@ -907,9 +908,14 @@ def Matroid(groundset=None, data=None, **kwds):
     elif key in ['matrix', 'reduced_matrix', 'morphism', 'reduced_morphism']:
         A = data
         is_reduced = (key == 'reduced_matrix' or key == 'reduced_morphism')
+        if isinstance(data, tuple):
+            A = data[0]
+            if key == 'matrix' or key == 'reduced_matrix':
+                if groundset is None:
+                    groundset = data[1]
+                    if is_reduced:
+                        groundset += data[2]
         if key == 'morphism' or key == 'reduced_morphism':
-            if isinstance(data, tuple):
-                A = data[0]
             if groundset is None:
                 groundset = list(A.domain().basis().keys())
                 if is_reduced:
