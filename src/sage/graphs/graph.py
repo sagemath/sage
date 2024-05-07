@@ -7007,11 +7007,13 @@ class Graph(GenericGraph):
 
     @doc_index("Clique-related methods")
     def cliques_get_clique_bipartite(self, **kwds):
-        """
-        Return a bipartite graph constructed such that maximal cliques are the
-        right vertices and the left vertices are retained from the given
-        graph. Right and left vertices are connected if the bottom vertex
-        belongs to the clique represented by a top vertex.
+        r"""
+        Return the vertex-clique bipartite graph of ``self``.
+
+        In the returned bipartite graph, the ``left`` vertices are the vertices
+        of ``self`` and the ``right`` vertices represent the maximal cliques of
+        ``self``.  There is an edge from vertex `v` to clique `C` in the
+        bipartite graph if and only if `v` belongs to `C`.
 
         .. NOTE::
 
@@ -7020,18 +7022,32 @@ class Graph(GenericGraph):
 
         EXAMPLES::
 
-            sage: CBG = graphs.ChvatalGraph().cliques_get_clique_bipartite(); CBG       # needs networkx
+            sage: CBG = graphs.ChvatalGraph().cliques_get_clique_bipartite(); CBG
             Bipartite graph on 36 vertices
-            sage: CBG.show(figsize=[2,2], vertex_size=20, vertex_labels=False)          # needs networkx sage.plot
+            sage: CBG.show(figsize=[2,2], vertex_size=20, vertex_labels=False)          # needs sage.plot
             sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
             sage: G.show(figsize=[2,2])                                                 # needs sage.plot
-            sage: G.cliques_get_clique_bipartite()                                      # needs networkx
+            sage: G.cliques_get_clique_bipartite()
             Bipartite graph on 6 vertices
-            sage: G.cliques_get_clique_bipartite().show(figsize=[2,2])                  # needs networkx sage.plot
+            sage: G.cliques_get_clique_bipartite().show(figsize=[2,2])                  # needs sage.plot
+
+        TESTS::
+
+            sage: # needs networkx
+            sage: import networkx
+            sage: CG = graphs.ChvatalGraph()
+            sage: S = B.cliques_get_clique_bipartite()
+            sage: N = BipartiteGraph(networkx.make_clique_bipartite(CG.networkx_graph()))
+            sage: S.is_isomorphic(N)
+            True
         """
-        from .bipartite_graph import BipartiteGraph
-        import networkx
-        return BipartiteGraph(networkx.make_clique_bipartite(self.networkx_graph(), **kwds))
+        from sage.graphs.bipartite_graph import BipartiteGraph
+        B = BipartiteGraph(partition=[self, []], check=False)
+        for i, clique in enumerate(IndependentSets(self, maximal=True, complement=True)):
+            idx = - i - 1
+            B.add_vertex(name=idx, right=True)
+            B.add_edges((u, idx) for u in clique)
+        return B
 
     @doc_index("Algorithmically hard stuff")
     def independent_set(self, algorithm="Cliquer", value_only=False, reduction_rules=True,
