@@ -129,10 +129,10 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         [Chart (M, (t, r, th, ph))]
         sage: K.metric().display()
         g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt⊗dt
-         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt⊗dph
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt⊗dph
          + (a^2*cos(th)^2 + r^2)/(a^2 - 2*m*r + r^2) dr⊗dr
          + (a^2*cos(th)^2 + r^2) dth⊗dth
-         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph⊗dt
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph⊗dt
          + (2*a^2*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) + a^2 + r^2)*sin(th)^2 dph⊗dph
 
         sage: K.<t, r, th, ph> = manifolds.Kerr()
@@ -205,7 +205,7 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         g[0, 0], g[1, 1], g[2, 2], g[3, 3] = -(1-2*m*r/rho**2), \
             rho**2/(r**2-2*m*r+a**2), rho**2, \
             (r**2+a**2+2*m*r*a**2/rho**2*sin(th)**2)*sin(th)**2
-        g[0, 3] = 2*m*r*a*sin(th)**2/rho**2
+        g[0, 3] = -2*m*r*a*sin(th)**2/rho**2
         return M
 
     raise NotImplementedError("coordinates system not implemented, see help"
