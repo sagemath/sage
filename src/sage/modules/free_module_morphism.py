@@ -45,7 +45,6 @@ import sage.modules.free_module as free_module
 from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism
 from sage.structure.richcmp import rich_to_bool, richcmp
-from sage.structure.sequence import Sequence
 
 
 def is_FreeModuleMorphism(x):

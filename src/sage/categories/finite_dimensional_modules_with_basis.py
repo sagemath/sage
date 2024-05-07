@@ -1076,10 +1076,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         []
                     """
                     if self.base_ring().is_field():
-                        if self.is_endomorphism():
-                            return self.matrix().eigenvalues(extend=extend)
-                        else:
-                            raise TypeError("not an endomorphism")
+                        return self.matrix().eigenvalues(extend=extend)
                     else:
                         raise NotImplementedError("module must be a vector space")
 
@@ -1089,7 +1086,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     INPUT:
 
-                    - ``extend`` -- boolean (default: True) decides if base field
+                    - ``extend`` -- boolean (default: ``True``) decides if base field
                       extensions should be considered or not.
 
                     OUTPUT:
@@ -1126,20 +1123,23 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         sage: V.hom(m).eigenvectors()                                               # needs sage.rings.number_field
                         [(1, [ (0, 1) ], 2)]
                     """
+                    from sage.structure.sequence import Sequence
                     if self.base_ring().is_field():
-                        if self.is_endomorphism():
-                            if self.side() == "right":
+                        try:
+                            side = self.side()  # defined only by MatrixMorphism
+                        except AttributeError:
+                            seigenvec = self.matrix().eigenvectors_right(extend=extend)
+                        else:
+                            if side == "right":
                                 seigenvec = self.matrix().eigenvectors_right(extend=extend)
                             else:
                                 seigenvec = self.matrix().eigenvectors_left(extend=extend)
-                            resu = []
-                            for i in seigenvec:
-                                V = self.domain().base_extend(i[0].parent())
-                                svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
-                                resu.append((i[0], svectors, i[2]))
-                            return resu
-                        else:
-                            raise TypeError("not an endomorphism")
+                        resu = []
+                        for i in seigenvec:
+                            V = self.domain().base_extend(i[0].parent())
+                            svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
+                            resu.append((i[0], svectors, i[2]))
+                        return resu
                     else:
                         raise NotImplementedError("module must be a vector space")
 
@@ -1205,10 +1205,10 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                               Basis matrix:
                               [0 1])]
                     """
+                    from sage.structure.sequence import Sequence
                     ev = self.eigenvectors(extend)
                     return [(vec[0], Sequence(vec[1]).universe().subspace(vec[1]))
                             for vec in ev]
-
 
     class TensorProducts(TensorProductsCategory):
 
