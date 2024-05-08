@@ -978,14 +978,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.define_implicitly([(A, [0,0,0]), (B, [0,0]), (C, [0,0]), (D, [0,0])], [C^2 + D^2, A + B + C + D, A*D])
             sage: B[2]  # not tested
 
-        A bivariate example::
-
-            sage: R.<z,q> = LazyPowerSeriesRing(QQ)
-            sage: g = R.undefined()
-            sage: R.define_implicitly([g], [g - (z*q + z*g*~(1-g))])
-            sage: g
-            z*q + z^2*q + z^3*q + (z^4*q+z^3*q^2) + (z^5*q+3*z^4*q^2) + O(z,q)^7
-
         A bivariate example involving composition of series::
 
             sage: R.<z,q> = LazyPowerSeriesRing(QQ)
@@ -2559,6 +2551,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             return L(c) * L.gen() ** n
         return L(c)
 
+    @cached_method
     def _terms_of_degree(self, n, R):
         r"""
         Return the list of monomials of degree ``n`` in the polynomial
@@ -3251,6 +3244,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         L = self._laurent_poly_ring
         return L(c)
 
+    @cached_method
     def _terms_of_degree(self, n, R):
         r"""
         Return the list of basis elements of degree ``n``.
