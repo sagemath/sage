@@ -1286,7 +1286,7 @@ class VariablePool(UniqueRepresentation):
         self._gen = ring.gen(0)  # alternatively, make :class:`InfinitePolynomialGen` inherit from `UniqueRepresentation`.
         self._pool = dict()   # dict of variables actually used to names
 
-    def new_variable(self, name=None):
+    def new_variable(self, data=None):
         """
         Return an unused variable.
 
@@ -1311,10 +1311,7 @@ class VariablePool(UniqueRepresentation):
         for i in range(len(self._pool) + 1):
             v = self._gen[i]
             if v not in self._pool:
-                if name is None:
-                    self._pool[v] = v
-                else:
-                    self._pool[v] = name
+                self._pool[v] = data
                 return v
 
     def del_variable(self, v):
@@ -1337,7 +1334,7 @@ class VariablePool(UniqueRepresentation):
 
     def variables(self):
         """
-        Return the dictionary mapping variables to names.
+        Return the dictionary mapping variables to data.
 
         EXAMPLES::
 
@@ -1347,7 +1344,7 @@ class VariablePool(UniqueRepresentation):
             sage: P.new_variable("my new variable")
             a_2
             sage: P.variables()
-            {a_0: a_0, a_1: a_1, a_2: 'my new variable'}
+            {a_0: None, a_1: None, a_2: 'my new variable'}
         """
         return self._pool
 
@@ -1401,6 +1398,45 @@ class Stream_uninitialized(Stream):
         self._initializing = False
         self._is_sparse = False
         self._name = name
+
+    def __del__(self):
+        """
+        Remove variables from the pool on destruction.
+
+        TESTS::
+
+            sage: import gc
+            sage: L.<x,y,t> = LazyPowerSeriesRing(ZZ)
+            sage: A = L.undefined(name="A")
+            sage: B = L.undefined(name="B")
+            sage: eq0 = t*x*y*B(0, 0, t) + (t - x*y)*A(x, y, t) + x*y - t*A(0, y, t)
+            sage: eq1 = (t*x-t)*B(0, y, t) + (t - x*y)*B(x, y, t)
+            sage: L.define_implicitly([A, B], [eq0, eq1], max_lookahead=2)
+            sage: A[1]
+            0
+            sage: pool = A._coeff_stream._pool
+            sage: len(pool.variables())
+            17
+            sage: del A
+            sage: del B
+            sage: del eq0
+            sage: del eq1
+            sage: gc.collect()
+            ...
+            sage: len(pool.variables())
+            0
+        """
+        if hasattr(self, '_pool'):
+            # self._good_cache[0] is a lower bound
+            if self._coefficient_ring == self._base_ring:
+                for c in self._cache[self._good_cache[0]:]:
+                    if c.parent() is self._PF:
+                        self._pool.del_variable(c.numerator())
+            else:
+                for c in self._cache[self._good_cache[0]:]:
+                    for c0 in c.coefficients():
+                        if c0.parent() is self._PF:
+                            self._pool.del_variable(c0.numerator())
 
     def input_streams(self):
         r"""
@@ -1590,8 +1626,8 @@ class Stream_uninitialized(Stream):
             else:
                 vals = c._cache
             i = 0
-            for v in vals:
-                if v not in self._coefficient_ring:
+            for val in vals:
+                if val not in self._coefficient_ring:
                     break
                 i += 1
             g.append(i)
@@ -1987,10 +2023,10 @@ class Stream_uninitialized(Stream):
 
         """
         s = repr(eq)
-        d = self._pool.variables()
-        # we have to replace longer variables first
-        for v in sorted(d, key=lambda v: -len(str(v))):
-            s = s.replace(repr(v), d[v])
+        p = self._pool.variables()
+        # we have to replace variables with longer names first
+        for v in sorted(p, key=lambda v: -len(str(v))):
+            s = s.replace(repr(v), p[v])
         return "coefficient " + repr([idx]) + ": " + s + " == 0"
 
     def iterate_coefficients(self):
