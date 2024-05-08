@@ -18,6 +18,7 @@ import sys
 from sage.graphs.graph import Graph
 from sage.misc.randstate import current_randstate
 from sage.misc.randstate import set_random_seed
+from sage.misc.prandom import getrandbits
 from sage.misc.prandom import random
 from sage.misc.prandom import randint
 
@@ -657,6 +658,96 @@ def RandomBoundedToleranceGraph(n, seed=None):
         tolrep.append((left, right, randint(1, right - left)))
 
     return ToleranceGraph(tolrep)
+
+
+def RandomCoGraph(n, seed=None):
+    r"""
+    Return a random cograph of order `n`.
+
+    A cograph is a `P_4`-free graph, that is a graph without induced
+    path of order 4. Any cograph may be constructed, starting from
+    the single vertex graph, by a sequence of
+    :meth:`sage.graphs.graph.Graph.join` and
+    :meth:`sage.graphs.graph.Graph.disjoint_union` operations.
+    See the :wikipedia:`Cograph` for more details.
+
+    ALGORITHM:
+
+    This method proceeds as follows: to build a random cograph of order `n > 1`,
+    it first build a random cograph `A` of order `r` and a random cograph `B` of
+    order `n - r`. Then it randomly selects to apply
+    :meth:`sage.graphs.graph.Graph.join` or
+    :meth:`sage.graphs.graph.Graph.disjoint_union` operation on `A` and `B` to
+    get `G`.
+
+    In practice, we use a stack to avoid the recursive calls.
+
+    INPUT:
+
+    - ``n`` -- integer; the number of vertices in the random cograph
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
+
+    EXAMPLES::
+
+        sage: G = graphs.RandomCoGraph(17)
+        sage: G.is_cograph()
+        True
+
+    TESTS::
+
+        sage: graphs.RandomCoGraph(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: a cograph has at least one vertex
+    """
+    if n < 1:
+        raise ValueError("a cograph has at least one vertex")
+    if n == 1:
+        return Graph(1, name="Random cograph")
+    if seed is None:
+        seed = int(current_randstate().long_seed() % sys.maxsize)
+
+    g_one = Graph(1)
+    # We need n - 1 bits for the random choices of operations
+    bits = getrandbits(n - 1)
+
+    i = randint(1, n - 1)
+    stack = [[bits % 2, i, n - i, 0]]
+    bits >>= 1
+    while stack:
+        op, left, right, parent = stack[-1]
+        if not isinstance(left, Graph):
+            # We build a cograph of order left
+            if left == 1:
+                left = stack[-1][1] = g_one
+            else:
+                i =  randint(1, left - 1)
+                stack.append([bits % 2, i, left - i, 1])
+                bits >>= 1
+                continue
+        if  not isinstance(right, Graph):
+            # We build a cograph of order right
+            if right == 1:
+                right = stack[-1][2] = g_one
+            else:
+                i =  randint(1, right - 1)
+                stack.append([bits % 2, i, right - i, 2])
+                bits >>= 1
+                continue
+
+        # We combine the two graphs and store the result in parent
+        stack.pop()
+        if op:
+            G = left.join(right, labels="integers", immutable=False)
+        else:
+            G = left.disjoint_union(right, labels="integers", immutable=False)
+        if stack:
+            stack[-1][parent] = G
+
+    G.name("Random cograph")
+    return G
 
 
 def RandomGNM(n, m, dense=False, seed=None):
