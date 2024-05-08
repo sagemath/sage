@@ -1833,16 +1833,20 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         TESTS:
 
-        Check that the original Sage implementation still works::
+        Check that the original Sage implementation still works and
+        that the result coincides with the PARI implementation::
 
             sage: # needs sage.rings.finite_rings
             sage: GF(65537^2).inject_variables()
             Defining z2
             sage: E = EllipticCurve(GF(65537^2), [0,1])
-            sage: P = E(22, 28891)
-            sage: Q = E(-93, 40438*z2 + 31573)
-            sage: P.weil_pairing(Q, 7282, algorithm='sage')
-            19937*z2 + 65384
+            sage: R, S = E.torsion_basis(7282)
+            sage: a, b = ZZ.random_element(), ZZ.random_element()
+            sage: P = a*R + b*S
+            sage: c, d = ZZ.random_element(), ZZ.random_element()
+            sage: Q = c*R + d*S
+            sage: P.weil_pairing(Q, 7282, algorithm='sage') == P.weil_pairing(Q, 7282, algorithm='pari')
+            True
 
         Passing an unknown ``algorithm=`` argument should fail::
 
@@ -2048,17 +2052,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             True
 
         TESTS:
-
-        Check that the PARI output matches the original Sage implementation::
-
-            sage: # needs sage.rings.finite_rings
-            sage: GF(65537^2).inject_variables()
-            Defining z2
-            sage: E = EllipticCurve(GF(65537^2), [0,1])
-            sage: P = E(22, 28891)
-            sage: Q = E(-93, 40438*z2 + 31573)
-            sage: P.tate_pairing(Q, 7282, 2)
-            34585*z2 + 4063
 
         The point ``P (self)`` must have ``n`` torsion::
 
