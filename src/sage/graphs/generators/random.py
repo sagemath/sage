@@ -723,16 +723,16 @@ def RandomCoGraph(n, seed=None):
             if left == 1:
                 left = stack[-1][1] = g_one
             else:
-                i =  randint(1, left - 1)
+                i = randint(1, left - 1)
                 stack.append([bits % 2, i, left - i, 1])
                 bits >>= 1
                 continue
-        if  not isinstance(right, Graph):
+        if not isinstance(right, Graph):
             # We build a cograph of order right
             if right == 1:
                 right = stack[-1][2] = g_one
             else:
-                i =  randint(1, right - 1)
+                i = randint(1, right - 1)
                 stack.append([bits % 2, i, right - i, 2])
                 bits >>= 1
                 continue
