@@ -493,10 +493,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
         sage: MatrixSpace(ZZ, 10, 5).category()
         Category of infinite enumerated finite dimensional modules with basis over
          (Dedekind domains and euclidean domains
+          and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ, 10, 10).category()
         Category of infinite enumerated finite dimensional algebras with basis over
          (Dedekind domains and euclidean domains
+          and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ, 10).category()
         Category of infinite finite dimensional algebras with basis over
