@@ -1900,7 +1900,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return d
 
-    def _vertices_keys(self, vertices=None, *, sort=None):
+    def _vertex_indices_and_keys(self, vertices=None, *, sort=None):
         r"""
         Process a ``vertices`` parameter.
 
@@ -1921,7 +1921,7 @@ class GenericGraph(GenericGraph_pyx):
 
         OUTPUT: pair of:
 
-        - ``vertices`` -- a list of vertices;
+        - ``vertex_indices`` -- a dictionary mapping vertices to numerical indices,
         - ``keys`` -- either a tuple of basis keys (when using a
           :class:`CombinatorialFreeModule`) or ``None`` (when using a
           :class:`FreeModule`, :func:`matrix`).
@@ -1930,20 +1930,20 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = graphs.PathGraph(5)
             sage: G.relabel(['o....', '.o...', '..o..', '...o.', '....o'])
-            sage: G._vertices_keys(None)
-            (['....o', '...o.', '..o..', '.o...', 'o....'],
+            sage: G._vertex_indices_and_keys(None)
+            ({'....o': 0, '...o.': 1, '..o..': 2, '.o...': 3, 'o....': 4},
              None)
-            sage: G._vertices_keys(None, sort=False)
-            (['o....', '.o...', '..o..', '...o.', '....o'],
+            sage: G._vertex_indices_and_keys(None, sort=False)
+            ({'....o': 4, '...o.': 3, '..o..': 2, '.o...': 1, 'o....': 0},
              None)
-            sage: G._vertices_keys(['..o..', '.o...', '...o.', 'o....', '....o'])
-            (['..o..', '.o...', '...o.', 'o....', '....o'],
+            sage: G._vertex_indices_and_keys(['..o..', '.o...', '...o.', 'o....', '....o'])
+            ({'....o': 4, '...o.': 2, '..o..': 0, '.o...': 1, 'o....': 3},
              None)
-            sage: G._vertices_keys(True)
-            (['o....', '.o...', '..o..', '...o.', '....o'],
+            sage: G._vertex_indices_and_keys(True)
+            ({'....o': 4, '...o.': 3, '..o..': 2, '.o...': 1, 'o....': 0},
              ('o....', '.o...', '..o..', '...o.', '....o'))
-            sage: G._vertices_keys(True, sort=True)
-            (['....o', '...o.', '..o..', '.o...', 'o....'],
+            sage: G._vertex_indices_and_keys(True, sort=True)
+            ({'....o': 0, '...o.': 1, '..o..': 2, '.o...': 3, 'o....': 4},
              ('....o', '...o.', '..o..', '.o...', 'o....'))
         """
         n = self.order()
@@ -1960,7 +1960,7 @@ class GenericGraph(GenericGraph_pyx):
         elif (len(vertices) != n or
               set(vertices) != set(self.vertex_iterator())):
             raise ValueError("parameter 'vertices' must be a permutation of the vertices")
-        return vertices, keys
+        return {v: i for i, v in enumerate(vertices)}, keys
 
     def adjacency_matrix(self, sparse=None, vertices=None, *, base_ring=None, **kwds):
         r"""
@@ -2142,17 +2142,17 @@ class GenericGraph(GenericGraph_pyx):
             sparse = True
             if self.has_multiple_edges() or n <= 256 or self.density() > 0.05:
                 sparse = False
-        vertices, keys = self._vertices_keys(vertices)
+        vertex_indices, keys = self._vertex_indices_and_keys(vertices)
         if keys is not None:
             kwds = copy(kwds)
             kwds['row_keys'] = kwds['column_keys'] = keys
-        new_indices = {v: i for i, v in enumerate(vertices)}
+
         D = {}
         directed = self._directed
         multiple_edges = self.allows_multiple_edges()
         for u, v, l in self.edge_iterator():
-            i = new_indices[u]
-            j = new_indices[v]
+            i = vertex_indices[u]
+            j = vertex_indices[v]
             if multiple_edges and (i, j) in D:
                 D[i, j] += 1
                 if not directed and i != j:
@@ -2391,10 +2391,9 @@ class GenericGraph(GenericGraph_pyx):
         if oriented is None:
             oriented = self.is_directed()
 
-        vertices, row_keys = self._vertices_keys(vertices, sort=False)
+        vertex_indices, row_keys = self._vertex_indices_and_keys(vertices, sort=False)
 
         column_keys = None
-        verts = {v: i for i, v in enumerate(vertices)}
         use_edge_labels = kwds.pop('use_edge_labels', False)
         if edges is True:
             edges = self.edges(labels=use_edge_labels)
@@ -2406,13 +2405,13 @@ class GenericGraph(GenericGraph_pyx):
         else:
             # We check that we have the same set of unlabeled edges
             if oriented:
-                i_edges = [(verts[e[0]], verts[e[1]]) for e in edges]
-                s_edges = [(verts[u], verts[v]) for u, v in self.edge_iterator(labels=False)]
+                i_edges = [(vertex_indices[e[0]], vertex_indices[e[1]]) for e in edges]
+                s_edges = [(vertex_indices[u], vertex_indices[v]) for u, v in self.edge_iterator(labels=False)]
             else:
                 def reorder(u, v):
                     return (u, v) if u <= v else (v, u)
-                i_edges = [reorder(verts[e[0]], verts[e[1]]) for e in edges]
-                s_edges = [reorder(verts[u], verts[v]) for u, v in self.edge_iterator(labels=False)]
+                i_edges = [reorder(vertex_indices[e[0]], vertex_indices[e[1]]) for e in edges]
+                s_edges = [reorder(vertex_indices[u], vertex_indices[v]) for u, v in self.edge_iterator(labels=False)]
             if sorted(i_edges) != sorted(s_edges):
                 raise ValueError("parameter edges must be a permutation of the edges")
 
@@ -2425,12 +2424,12 @@ class GenericGraph(GenericGraph_pyx):
         if oriented:
             for i, e in enumerate(edges):
                 if e[0] != e[1]:
-                    m[verts[e[0]], i] = -1
-                    m[verts[e[1]], i] = +1
+                    m[vertex_indices[e[0]], i] = -1
+                    m[vertex_indices[e[1]], i] = +1
         else:
             for i, e in enumerate(edges):
-                m[verts[e[0]], i] += 1
-                m[verts[e[1]], i] += 1
+                m[vertex_indices[e[0]], i] += 1
+                m[vertex_indices[e[1]], i] += 1
 
         if row_keys is not None or column_keys is not None:
             m.set_immutable()
@@ -2703,7 +2702,7 @@ class GenericGraph(GenericGraph_pyx):
         if self.has_multiple_edges():
             raise NotImplementedError("don't know how to represent weights for a multigraph")
 
-        vertices, row_column_keys = self._vertices_keys(vertices)
+        vertex_indices, row_column_keys = self._vertex_indices_and_keys(vertices)
         if row_column_keys is not None:
             kwds = copy(kwds)
             kwds['row_keys'] = kwds['column_keys'] = row_column_keys
@@ -2721,18 +2720,16 @@ class GenericGraph(GenericGraph_pyx):
                     return default_weight
                 return label
 
-        new_indices = {v: i for i,v in enumerate(vertices)}
-
         D = {}
         if self._directed:
             for u, v, label in self.edge_iterator():
-                i = new_indices[u]
-                j = new_indices[v]
+                i = vertex_indices[u]
+                j = vertex_indices[v]
                 D[i, j] = func(u, v, label)
         else:
             for u, v, label in self.edge_iterator():
-                i = new_indices[u]
-                j = new_indices[v]
+                i = vertex_indices[u]
+                j = vertex_indices[v]
                 label = func(u, v, label)
                 D[i, j] = label
                 D[j, i] = label
@@ -2916,15 +2913,15 @@ class GenericGraph(GenericGraph_pyx):
 
         set_immutable = kwds.pop('immutable', False)
 
-        vertices, keys = self._vertices_keys(kwds.pop('vertices', None))
+        vertex_indices, keys = self._vertex_indices_and_keys(kwds.pop('vertices', None))
 
         if weighted is None:
             weighted = self._weighted
 
         if weighted:
-            M = self.weighted_adjacency_matrix(vertices=vertices, immutable=True, **kwds)
+            M = self.weighted_adjacency_matrix(vertices=list(vertex_indices), immutable=True, **kwds)
         else:
-            M = self.adjacency_matrix(vertices=vertices, immutable=True, **kwds)
+            M = self.adjacency_matrix(vertices=list(vertex_indices), immutable=True, **kwds)
 
         D = M.parent(0)
 
