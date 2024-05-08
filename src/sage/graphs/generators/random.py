@@ -664,11 +664,10 @@ def RandomCoGraph(n, seed=None):
     r"""
     Return a random cograph of order `n`.
 
-    A cograph is a `P_4`-free graph, that is a graph without induced
-    path of order 4. Any cograph may be constructed, starting from
-    the single vertex graph, by a sequence of
-    :meth:`sage.graphs.graph.Graph.join` and
-    :meth:`sage.graphs.graph.Graph.disjoint_union` operations.
+    A cograph is a `P_4`-free graph, that is a graph without induced path of
+    order 4. Any cograph may be constructed, starting from the single vertex
+    graph, by a sequence of :meth:`sage.graphs.graph.Graph.join` and
+    :meth:`sage.graphs.generic_graph.GenericGraph.disjoint_union` operations.
     See the :wikipedia:`Cograph` for more details.
 
     ALGORITHM:
@@ -677,8 +676,8 @@ def RandomCoGraph(n, seed=None):
     it first build a random cograph `A` of order `r` and a random cograph `B` of
     order `n - r`. Then it randomly selects to apply
     :meth:`sage.graphs.graph.Graph.join` or
-    :meth:`sage.graphs.graph.Graph.disjoint_union` operation on `A` and `B` to
-    get `G`.
+    :meth:`sage.graphs.generic_graph.GenericGraph.disjoint_union` operation on
+    `A` and `B` to get `G`.
 
     In practice, we use a stack to avoid the recursive calls.
 
