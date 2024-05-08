@@ -1904,6 +1904,10 @@ class GenericGraph(GenericGraph_pyx):
         r"""
         Process a ``vertices`` parameter.
 
+        This is a helper function for :meth:`adjacency_matrix`,
+        :meth:`incidence_matrix`, :meth:`weighted_adjacency_matrix`,
+        and :meth:`kirchhoff_matrix`.
+
         INPUT:
 
         - ``vertices`` -- list, ``None``, or ``True`` (default: ``None``)
