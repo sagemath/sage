@@ -3919,6 +3919,22 @@ class LPDictionary(LPAbstractDictionary):
         self._AbcvBNz = [A, b, c, objective_value, B, N, polygen(ZZ, objective_name)]
 
     def __copy__(self):
+        r"""
+        TESTS::
+            sage: A = ([1, 1], [3, 1])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: D = P.initial_dictionary()
+            sage: D_2 = copy(D)
+            sage: D is D_2
+            False
+            sage: D.enter('x1')
+            sage: D.leave('x3')
+            sage: D.update()
+            sage: D_2 == D
+            False
+        """
         return type(self)(*self._AbcvBNz)
 
     @staticmethod
