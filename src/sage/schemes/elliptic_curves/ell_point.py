@@ -1818,6 +1818,17 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: z.multiplicative_order()
             360
 
+        Another larger example::
+
+            sage: F = GF(65537^2, modulus=[3,-1,1], name='a')
+            sage: F.inject_variables()
+            Defining a
+            sage: E = EllipticCurve(F, [0,1])
+            sage: P = E(22, 28891)
+            sage: Q = E(-93, 2728*a + 64173)
+            sage: P.weil_pairing(Q, 7282, algorithm='sage')
+            53278*a + 36700
+
         An example over a number field::
 
             sage: # needs sage.rings.number_field
@@ -2050,6 +2061,17 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             25575
             sage: Px.weil_pairing(Qx, 41)^e == num/den
             True
+
+        An example over a large base field::
+
+            sage: F = GF(65537^2, modulus=[3,46810,1], name='z2')
+            sage: F.inject_variables()
+            Defining z2
+            sage: E = EllipticCurve(F, [0,1])
+            sage: P = E(22, 28891)
+            sage: Q = E(-93, 40438*z2 + 31573)
+            sage: P.tate_pairing(Q, 7282, 2)
+            34585*z2 + 4063
 
         TESTS:
 
