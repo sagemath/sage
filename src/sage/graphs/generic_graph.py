@@ -1925,6 +1925,26 @@ class GenericGraph(GenericGraph_pyx):
         - ``keys`` -- either a tuple of basis keys (when using a
           :class:`CombinatorialFreeModule`) or ``None`` (when using a
           :class:`FreeModule`, :func:`matrix`).
+
+        EXAMPLES::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G.relabel(['o....', '.o...', '..o..', '...o.', '....o'])
+            sage: G._vertices_keys(None)
+            (['....o', '...o.', '..o..', '.o...', 'o....'],
+             None)
+            sage: G._vertices_keys(None, sort=False)
+            (['o....', '.o...', '..o..', '...o.', '....o'],
+             None)
+            sage: G._vertices_keys(['..o..', '.o...', '...o.', 'o....', '....o'])
+            (['..o..', '.o...', '...o.', 'o....', '....o'],
+             None)
+            sage: G._vertices_keys(True)
+            (['o....', '.o...', '..o..', '...o.', '....o'],
+             ('o....', '.o...', '..o..', '...o.', '....o'))
+            sage: G._vertices_keys(True, sort=True)
+            (['....o', '...o.', '..o..', '.o...', 'o....'],
+             ('....o', '...o.', '..o..', '.o...', 'o....'))
         """
         n = self.order()
         keys = None
