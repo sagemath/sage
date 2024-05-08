@@ -666,7 +666,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             True
         """
         dct = self._h(self.monomial(lam_even)).monomial_coefficients(copy=False)
-        eelt = self._e.element_class(self._e, {mu: c for mu, c in dct.items()})
+        eelt = self._e.element_class(self._e, dict(dct.items()))
         return self(eelt)
 
     class Element(multiplicative.SymmetricFunctionAlgebra_multiplicative.Element):

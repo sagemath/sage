@@ -1040,8 +1040,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: b.display()
             b = y^2 ∂/∂x∧∂/∂y + (x + z) ∂/∂x∧∂/∂z + z^2 ∂/∂y∧∂/∂z
             sage: s = a.wedge(b); s
-            3-vector field a∧b on the 3-dimensional differentiable
-             manifold M
+            3-vector field a∧b on the 3-dimensional differentiable manifold M
             sage: s.display()
             a∧b = (-x^2 + (y^3 - x - 1)*z + 2*z^2 - x) ∂/∂x∧∂/∂y∧∂/∂z
 

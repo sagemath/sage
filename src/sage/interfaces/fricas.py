@@ -647,7 +647,8 @@ http://fricas.sourceforge.net.
         def explicitly_not_implemented(*args):
             raise NotImplementedError("the translation of the FriCAS Expression '%s' to sage is not yet implemented" % args)
 
-        register_symbol(lambda *args: explicitly_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'}, 2)
+        register_symbol(lambda *args: explicitly_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'}, 2) # to be removed once we fully on FriCAS 1.3.10+
+        register_symbol(lambda *args: explicitly_not_implemented("FEseries"), {'fricas': 'FEseries'}, 2)
         register_symbol(lambda *args: explicitly_not_implemented("rootOfRec"), {'fricas': 'rootOfRec'}, 2)
 
     def set(self, var, value):
@@ -802,7 +803,7 @@ http://fricas.sourceforge.net.
             '(1..3)$Segment(PositiveInteger())'
 
         """
-        return self.get_string('unparse((%s)::InputForm)' % str(var))
+        return self.get_string('unparse((%s)::InputForm)' % var)
 
     def get_InputForm(self, var):
         """
@@ -1184,7 +1185,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             \frac{{{\log \left( {{e+1}} \right)} \  {\sin \left( {{y+x}} \right)}}}{{{e} ^{z}}}
 
             sage: latex(fricas("matrix([[1,2],[3,4]])"))
-            \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4\end{array} \right]
+            \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4...\end{array}...\right]
 
             sage: latex(fricas("integrate(sin(x+1/x),x)"))
             \int ^{\displaystyle x} {{\sin \left( {{\frac{{{{ \%...} ^{2}}+1}}{ \%...}}} \right)} \  {d \%...}}
@@ -1715,7 +1716,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             sage: f[1].sage()
             -1/2*sqrt(1/3)*sqrt((3*(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(2/3) + 4)/(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(1/3)) + 1/2*sqrt(-(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(1/3) + 6*sqrt(1/3)/sqrt((3*(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(2/3) + 4)/(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(1/3)) - 4/3/(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(1/3))
-
         """
         # a FriCAS expressions may contain implicit references to a
         # rootOf expression within itself, as for example in the
@@ -1836,7 +1836,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas(x+3).sage()
             x + 3
             sage: fricas(x+3).domainOf()
-            Polynomial(Integer())
+            Polynomial(Integer...)
 
             sage: fricas(matrix([[2,3],[4,x+5]])).diagonal().sage()
             (2, x + 5)
@@ -1904,7 +1904,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: s.sage()
             Traceback (most recent call last):
             ...
-            NotImplementedError: the translation of the FriCAS Expression 'rootOfADE' to sage is not yet implemented
+            NotImplementedError: the translation of the FriCAS Expression 'FEseries' to sage is not yet implemented
 
             sage: s = fricas("series(sqrt(1+x), x=0)"); s
                   1     1  2    1  3    5   4    7   5    21   6    33   7    429   8
@@ -1994,19 +1994,24 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return R([self.coefficient(i).sage()
                       for i in range(ZZ(self.degree()) + 1)])
 
-        # finally translate domains with InputForm
-        try:
-            unparsed_InputForm = P.get_unparsed_InputForm(self._name)
-        except RuntimeError as error:
-            raise NotImplementedError("the translation of the FriCAS object\n\n%s\n\nto sage is not yet implemented:\n%s" % (self, error))
+        # finally translate domains with InputForm - we do this
+        # lazily, because sometimes we can use unparse, sometimes we
+        # need our custom sageprint
+
+        def unparsed_InputForm():
+            try:
+                return P.get_unparsed_InputForm(self._name)
+            except RuntimeError as error:
+                raise NotImplementedError("the translation of the FriCAS object\n\n%s\n\nto sage is not yet implemented:\n%s" % (self, error))
+
         if head == "Boolean":
-            return unparsed_InputForm == "true"
+            return unparsed_InputForm() == "true"
 
         if head in ["Integer", "NonNegativeInteger", "PositiveInteger"]:
-            return ZZ(unparsed_InputForm)
+            return ZZ(unparsed_InputForm())
 
         if head == "String":
-            return unparsed_InputForm
+            return unparsed_InputForm()
 
         if head == "Float":
             # Warning: precision$Float gives the current precision,
@@ -2014,22 +2019,28 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             # self.
             prec = max(P.new("length mantissa(%s)" % self._name).sage(), 53)
             R = RealField(prec)
-            x, e, b = unparsed_InputForm.lstrip('float(').rstrip(')').split(',')
+            x, e, b = unparsed_InputForm().lstrip('float(').rstrip(')').split(',')
             return R(ZZ(x) * ZZ(b)**ZZ(e))
 
         if head == "DoubleFloat":
-            return RDF(unparsed_InputForm)
+            return RDF(unparsed_InputForm())
 
         if head == "AlgebraicNumber":
-            s = unparsed_InputForm[:-len("::AlgebraicNumber()")]
+            s = unparsed_InputForm()[:-len("::AlgebraicNumber()")]
             return sage_eval("QQbar(" + s + ")")
 
         if head == "IntegerMod" or head == "PrimeField":
             # one might be tempted not to go via InputForm here, but
             # it turns out to be safer to do it.
-            n = unparsed_InputForm[len("index("):]
-            n = n[:n.find(")")]
-            return self._get_sage_type(domain)(n)
+            s = unparsed_InputForm()[len("index("):]
+            s = s[:s.find(")")]
+            return self._get_sage_type(domain)(s)
+
+        if head == 'DistributedMultivariatePolynomial':
+            base_ring = self._get_sage_type(domain[2])
+            vars = domain[1].car()
+            R = PolynomialRing(base_ring, vars)
+            return R(unparsed_InputForm())
 
         if head == "Polynomial":
             base_ring = self._get_sage_type(domain[1])
@@ -2039,29 +2050,24 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             # the following is a bad hack, we should be getting a list here
             vars = P.get_unparsed_InputForm("variables(%s)" % self._name)[1:-1]
+            s = unparsed_InputForm()
             if vars == "":
-                return base_ring(unparsed_InputForm)
-            else:
-                R = PolynomialRing(base_ring, vars)
-                return R(unparsed_InputForm)
+                return base_ring(s)
+
+            R = PolynomialRing(base_ring, vars)
+            return R(s)
 
         if head in ["OrderedCompletion", "OnePointCompletion"]:
             # it would be more correct to get the type parameter
             # (which might not be Expression Integer) and recurse
             return FriCASElement._sage_expression(P.get_InputForm(self._name))
 
-        if head == "Expression" or head == "Pi":
+        if head == "Expression" or head == "Pi" or head == "PiDomain":
             # we treat Expression Integer and Expression Complex
             # Integer just the same
             return FriCASElement._sage_expression(P.get_InputForm(self._name))
 
-        if head == 'DistributedMultivariatePolynomial':
-            base_ring = self._get_sage_type(domain[2])
-            vars = domain[1].car()
-            R = PolynomialRing(base_ring, vars)
-            return R(unparsed_InputForm)
-
-        raise NotImplementedError("the translation of the FriCAS object %s to sage is not yet implemented" % (unparsed_InputForm))
+        raise NotImplementedError("the translation of the FriCAS object %s to sage is not yet implemented" % (unparsed_InputForm()))
 
 
 @instancedoc

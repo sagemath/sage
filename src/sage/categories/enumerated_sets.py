@@ -990,8 +990,12 @@ class EnumeratedSets(CategoryWithAxiom):
                 ....:                        '_test_enumerated_set_contains',
                 ....:                        '_test_some_elements'])
             """
-            from sage.combinat.combinat import MapCombinatorialClass
-            return MapCombinatorialClass(self, f, name, is_injective=is_injective)
+            from sage.sets.image_set import ImageSubobject
+
+            image = ImageSubobject(f, self, is_injective=is_injective)
+            if name:
+                image.rename(name)
+            return image
 
 #
 #  Consistency test suite for an enumerated set:

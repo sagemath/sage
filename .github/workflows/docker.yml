@@ -183,8 +183,10 @@ jobs:
           sudo apt-get clean
           df -h
       - name: Update Sage packages from upstream artifact
+        # Handle both the old and new location of write-dockerfile.sh,
+        # because docker.yml is a reusable workflow.
         run: |
-          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore && echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - build/bin/write-dockerfile.sh && git diff)
+          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore; for a in build/bin/write-dockerfile.sh .ci/write-dockerfile.sh; do if [ -r $a ]; then echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - $a; fi; done; git diff)
         if: inputs.upstream_artifact
 
       - name: Try to login to ghcr.io

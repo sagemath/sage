@@ -16,7 +16,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.cpython.string cimport str_to_bytes
+from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 from sage.libs.gmp.types cimport __mpz_struct
 from sage.libs.gmp.mpz cimport mpz_init_set_ui
@@ -24,7 +24,7 @@ from sage.libs.gmp.mpz cimport mpz_init_set_ui
 from sage.libs.singular.decl cimport ring, currRing
 from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
-from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
+from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport prCopyR
 from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
 from sage.libs.singular.decl cimport n_coeffType
@@ -60,7 +60,7 @@ order_dict = {
     "dp": ringorder_dp,
     "Dp": ringorder_Dp,
     "lp": ringorder_lp,
-    "rp": ringorder_rp,
+    "ip": ringorder_ip,
     "ds": ringorder_ds,
     "Ds": ringorder_Ds,
     "ls": ringorder_ls,
@@ -71,6 +71,16 @@ order_dict = {
     "a":  ringorder_a,
 }
 
+cdef extern from "singular/Singular/libsingular.h":
+    cdef char * rSimpleOrdStr(rRingOrder_t)
+
+if bytes_to_str(rSimpleOrdStr(ringorder_ip)) == "rp":
+    # compatibility for singular 4.3.2p10 and before
+    order_dict["rp"] = ringorder_ip
+    # also patch term_order mappings
+    from sage.rings.polynomial import term_order
+    term_order.singular_name_mapping['invlex'] = 'rp'
+    term_order.inv_singular_name_mapping['rp'] = 'invlex'
 
 #############################################################################
 cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:

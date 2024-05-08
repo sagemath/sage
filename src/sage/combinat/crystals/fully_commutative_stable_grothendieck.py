@@ -728,8 +728,8 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
             m = P.factors
             L = list(self.value[m-i-1])
             R = list(self.value[m-i])
-            right_n = [j for j in R]
-            left_n = [j for j in L]
+            right_n = list(R)
+            left_n = list(L)
             left_unbracketed = []
             while left_n:
                 m = max(left_n)
@@ -739,7 +739,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
                     right_n.remove(min(l))
                 else:
                     left_unbracketed += [m]
-            return [[j for j in left_unbracketed], [j for j in right_n]]
+            return [list(left_unbracketed), list(right_n)]
 
 
 ####################
