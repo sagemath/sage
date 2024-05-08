@@ -693,6 +693,8 @@ def RandomCoGraph(n, seed=None):
         sage: G = graphs.RandomCoGraph(17)
         sage: G.is_cograph()
         True
+        sage: G.complement().is_cograph()
+        True
 
     TESTS::
 
