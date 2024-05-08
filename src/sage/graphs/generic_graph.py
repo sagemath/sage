@@ -1901,6 +1901,31 @@ class GenericGraph(GenericGraph_pyx):
         return d
 
     def _vertices_keys(self, vertices=None, *, sort=None):
+        r"""
+        Process a ``vertices`` parameter.
+
+        INPUT:
+
+        - ``vertices`` -- list, ``None``, or ``True`` (default: ``None``)
+
+          - when a list, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering of ``vertices``,
+          - when ``None``, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering given by
+            :meth:`GenericGraph.vertices`
+          - when ``True``, construct an endomorphism of a free module instead of
+            a matrix, where the module's basis is indexed by the vertices.
+
+        - ``sort`` -- boolean or ``None`` (default); passed to :meth:`vertices`
+          when ``vertices`` is not a list.
+
+        OUTPUT: pair of:
+
+        - ``vertices`` -- a list of vertices;
+        - ``keys`` -- either a tuple of basis keys (when using a
+          :class:`CombinatorialFreeModule`) or ``None`` (when using a
+          :class:`FreeModule`, :func:`matrix`).
+        """
         n = self.order()
         keys = None
         if vertices is True:
