@@ -74,6 +74,10 @@ def is_MatrixSpace(x):
         sage: MS = MatrixSpace(QQ,2)
         sage: A = MS.random_element()
         sage: is_MatrixSpace(MS)
+        doctest:warning...
+        DeprecationWarning: the function is_MatrixSpace is deprecated;
+        use 'isinstance(..., MatrixSpace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_MatrixSpace(A)
         False

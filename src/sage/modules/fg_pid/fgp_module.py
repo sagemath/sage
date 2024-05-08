@@ -280,6 +280,10 @@ def is_FGP_Module(x):
         sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
         sage: W = V.span([2*V.0 + 4*V.1, 9*V.0 + 12*V.1, 4*V.2]); Q = V/W
         sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(V)
+        doctest:warning...
+        DeprecationWarning: the function is_FGP_Module is deprecated;
+        use 'isinstance(..., FGP_Module_class)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         False
         sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(Q)
         True

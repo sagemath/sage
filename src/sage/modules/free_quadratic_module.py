@@ -241,6 +241,10 @@ def is_FreeQuadraticModule(M):
         sage: from sage.modules.free_quadratic_module import is_FreeQuadraticModule
         sage: U = FreeModule(QQ,3)
         sage: is_FreeQuadraticModule(U)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeQuadraticModule is deprecated;
+        use 'isinstance(..., FreeQuadraticModule_generic)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         False
         sage: V = FreeModule(QQ,3,inner_product_matrix=diagonal_matrix([1,1,1]))
         sage: is_FreeQuadraticModule(V)

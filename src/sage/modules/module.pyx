@@ -284,6 +284,10 @@ def is_Module(x):
         sage: from sage.modules.module import is_Module
         sage: M = FreeModule(RationalField(),30)                                        # needs sage.modules
         sage: is_Module(M)                                                              # needs sage.modules
+        doctest:warning...
+        DeprecationWarning: the function is_Module is deprecated;
+        use 'isinstance(..., Module)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_Module(10)
         False
@@ -307,6 +311,10 @@ def is_VectorSpace(x):
         sage: from sage.modules.module import is_Module, is_VectorSpace
         sage: M = FreeModule(RationalField(),30)
         sage: is_VectorSpace(M)
+        doctest:warning...
+        DeprecationWarning: the function is_VectorSpace is deprecated;
+        use 'isinstance(..., Module)' and check the base ring instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: M = FreeModule(IntegerRing(),30)
         sage: is_Module(M)
@@ -318,6 +326,6 @@ def is_VectorSpace(x):
     from sage.misc.superseded import deprecation_cython
     deprecation_cython(37924, "the function is_VectorSpace is deprecated; use 'isinstance(..., Module)' and check the base ring instead")
     try:
-        return is_Module(x) and x.base_ring().is_field()
+        return isinstance(x, Module) and x.base_ring().is_field()
     except AttributeError:
         return False
