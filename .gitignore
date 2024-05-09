@@ -204,7 +204,6 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/*/MANIFEST
 /pkgs/*/*.egg-info
 /pkgs/*/.tox
-/pkgs/*/requirements-editable.txt
 
 /pkgs/sage-conf_pypi/sage_root/config.log
 /pkgs/sage-conf_pypi/sage_root/config.status
