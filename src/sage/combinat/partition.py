@@ -713,8 +713,8 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()
-        return '%s' % ', '.join('{}{}'.format(m+1, '' if e == 1 else '^%s' % e)
-                                 for (m,e) in enumerate(exp) if e > 0)
+        return '%s' % ', '.join('{}{}'.format(m + 1, '' if e == 1 else '^%s' % e)
+                                for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_exp_high(self):
         """
@@ -751,8 +751,8 @@ class Partition(CombinatorialElement):
         if not self._list:
             return '-'
         exp = self.to_exp()
-        return '%s' % ','.join('{}{}'.format(m+1, '' if e == 1 else '^%s' % e)
-                                 for (m,e) in enumerate(exp) if e > 0)
+        return '%s' % ','.join('{}{}'.format(m + 1, '' if e == 1 else '^%s' % e)
+                               for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_compact_high(self):
         """
@@ -770,8 +770,8 @@ class Partition(CombinatorialElement):
             return '-'
         exp = self.to_exp()[::-1]         # reversed list of exponents
         M = max(self)
-        return '%s' % ','.join('{}{}'.format(M-m, '' if e == 1 else '^%s' % e)
-                                 for (m,e) in enumerate(exp) if e > 0)
+        return '%s' % ','.join('{}{}'.format(M - m, '' if e == 1 else '^%s' % e)
+                               for (m,e) in enumerate(exp) if e > 0)
 
     def _repr_diagram(self):
         r"""
@@ -945,8 +945,8 @@ class Partition(CombinatorialElement):
         if not self._list:
             return "{\\emptyset}"
         exp = self.to_exp()
-        return '%s' % ','.join('{}{}'.format(m+1, '' if e == 1 else '^{%s}' % e)
-                                 for (m,e) in enumerate(exp) if e > 0)
+        return '%s' % ','.join('{}{}'.format(m + 1, '' if e == 1 else '^{%s}' % e)
+                               for (m,e) in enumerate(exp) if e > 0)
 
     def _latex_exp_high(self):
         r"""
@@ -963,8 +963,8 @@ class Partition(CombinatorialElement):
             return "{\\emptyset}"
         exp = self.to_exp()[::-1]  # reversed list of exponents
         M = max(self)
-        return '%s' % ','.join('{}{}'.format(M-m, '' if e == 1 else '^{%s}' % e)
-                                 for (m,e) in enumerate(exp) if e > 0)
+        return '%s' % ','.join('{}{}'.format(M - m, '' if e == 1 else '^{%s}' % e)
+                               for (m,e) in enumerate(exp) if e > 0)
 
     def ferrers_diagram(self):
         r"""
@@ -4221,7 +4221,7 @@ class Partition(CombinatorialElement):
         res = []
         prevLen = 1
         for i in range(len(p) - 1, -1, -1):
-            res.extend((i, c) for c in range(prevLen-1, p[i]))
+            res.extend((i, c) for c in range(prevLen - 1, p[i]))
             prevLen = p[i]
         return res
 
