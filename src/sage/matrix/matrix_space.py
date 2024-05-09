@@ -468,7 +468,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
       - ``'numpy'`` -- for real and complex floating point numbers
 
-    OUTPUT: a matrix space or, more generally, a homspace between free modules.
+    OUTPUT: a matrix space or, more generally, a homspace between free modules
 
     This factory function creates instances of various specialized classes
     depending on the input.  Not all combinations of options are

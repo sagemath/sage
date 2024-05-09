@@ -18,6 +18,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
 from sage.categories.coxeter_groups import CoxeterGroups
 from sage.categories.category_types import Category_over_base_ring
+from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.element import Element
 from sage.sets.family import Family
@@ -715,7 +716,8 @@ class RootLatticeRealizations(Category_over_base_ring):
                 index_set = tuple(self.cartan_type().index_set())
             return RecursivelyEnumeratedSet([self.simple_root(i) for i in index_set],
                        attrcall('pred', index_set=index_set),
-                       structure='graded', enumeration='breadth')
+                       structure='graded', enumeration='breadth',
+                       category=EnumeratedSets().Finite())
 
         @cached_method
         def nonparabolic_positive_roots(self, index_set=None):
@@ -1229,7 +1231,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             if not self.cartan_type().is_finite():
                 raise ValueError("%s is not a finite Cartan type" % self.cartan_type())
-            return self.positive_roots().map(attrcall('__neg__'))
+            return self.positive_roots().map(attrcall('__neg__'), is_injective=True)
 
         ##########################################################################
         # coroots
@@ -4279,7 +4281,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # TODO, some day: accept an iterator
             if isinstance(element, (tuple, list, range)):
                 # Action by a (reduced) word
-                the_word = [x for x in element]
+                the_word = list(element)
                 I = self.parent().index_set()
                 if not all(i in I for i in the_word):
                     raise ValueError("Not all members of %s are in the index set of the %s" % (element, self.parent()))

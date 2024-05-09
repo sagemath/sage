@@ -246,9 +246,9 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         """
         # TODO: simplify if/once ``_repr_`` method for ``Set`` sorts its elements.
         if self._n:
-            string_parts = map(lambda k: str(sorted(k)), self)
+            string_parts = (str(sorted(k)) for k in self)
         else:
-            string_parts = map(lambda k: str(sorted(k, key=str)), self)
+            string_parts = (str(sorted(k, key=str)) for k in self)
         string_parts = ", ".join(string_parts).replace("[","{").replace("]","}")
         return "[" + string_parts + "]"
 

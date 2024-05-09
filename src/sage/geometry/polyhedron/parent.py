@@ -9,6 +9,8 @@ Parents for Polyhedra
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.geometry.abc
+
 from sage.structure.parent import Parent
 from sage.structure.element import get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
@@ -22,8 +24,6 @@ from sage.rings.real_double import RDF
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
-
-from sage.geometry.polyhedron.base import is_Polyhedron
 from .representation import Inequality, Equation, Vertex, Ray, Line
 
 
@@ -691,7 +691,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             if convert and Vrep:
                 Vrep = [convert_base_ring(_) for _ in Vrep]
             return self.element_class(self, Vrep, Hrep, **kwds)
-        if nargs == 1 and is_Polyhedron(args[0]):
+        if nargs == 1 and isinstance(args[0], sage.geometry.abc.Polyhedron):
             copy = kwds.pop('copy', args[0].parent() is not self)
             mutable = kwds.pop('mutable', False)
 

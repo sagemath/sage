@@ -32,6 +32,7 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.element import MultiplicativeGroupElement
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 
@@ -1054,6 +1055,55 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
                 raise NotImplementedError("basis1 != basis2 not implemented yet")
         return self._matrices[(basis1, basis2)]
 
+    def _some_matrix(self):
+        r"""
+        Return the matrix of ``self`` w.r.t. some basis.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism([[1,1],[0,2]], name='a')
+            sage: a._some_matrix()
+            [1 1]
+            [0 2]
+        """
+        self.matrix()  # forces the update of the matrix in the module's default
+                       # basis, to make sure that the dictionary self._matrices
+                       # is not empty
+        return next(iter(self._matrices.values()))
+
+    @lazy_attribute
+    def characteristic_polynomial(self):
+        r"""
+        Return the characteristic polynomial of ``self``.
+
+        :meth:`characteristic_polynomial` and :meth:`charpoly` are the same method.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism([[1,1],[0,2]], name='a')
+            sage: a.matrix(e)
+            [1 1]
+            [0 2]
+            sage: a.characteristic_polynomial()
+            x^2 - 3*x + 2
+            sage: a.charpoly()
+            x^2 - 3*x + 2
+            sage: a.charpoly('T')
+            T^2 - 3*T + 2
+        """
+        return self._some_matrix().characteristic_polynomial
+
+    charpoly = characteristic_polynomial
+
+    @lazy_attribute
     def det(self):
         r"""
         Return the determinant of ``self``.
@@ -1084,13 +1134,62 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             1
 
         """
-        self.matrix() # forces the update of the matrix in the module's default
-                      # basis, to make sure that the dictionary self._matrices
-                      # is not empty
-        return next(iter(self._matrices.values())).det() # pick a random value in the
-                                                # dictionary self._matrices
-                                                # and compute the determinant
+        return self._some_matrix().det
 
+    determinant = det
+
+    @lazy_attribute
+    def fcp(self):
+        r"""
+        Return the factorization of the characteristic polynomial of ``self``.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism([[1,1],[0,2]], name='a')
+            sage: a.matrix(e)
+            [1 1]
+            [0 2]
+            sage: a.fcp()                                                               # needs sage.libs.pari
+            (x - 2) * (x - 1)
+            sage: a.fcp('T')                                                            # needs sage.libs.pari
+            (T - 2) * (T - 1)
+        """
+        return self._some_matrix().fcp
+
+    @lazy_attribute
+    def minimal_polynomial(self):
+        r"""
+        Return the minimal polynomial of ``self``.
+
+        :meth:`minimal_polynomial` and :meth:`minpoly` are the same method.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(GF(7), 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism([[0,1,2], [-1,0,3], [2,4,1]], name='a')
+            sage: a.minpoly()                                                           # needs sage.libs.pari
+            x^3 + 6*x^2 + 6*x + 1
+            sage: a.minimal_polynomial()                                                # needs sage.libs.pari
+            x^3 + 6*x^2 + 6*x + 1
+            sage: a.minimal_polynomial('T')                                             # needs sage.libs.pari
+            T^3 + 6*T^2 + 6*T + 1
+        """
+        return self._some_matrix().minimal_polynomial
+
+    minpoly = minimal_polynomial
+
+    @lazy_attribute
     def trace(self):
         r"""
         Return the trace of ``self``.
@@ -1117,9 +1216,4 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             2
 
         """
-        self.matrix() # forces the update of the matrix in the module's default
-                      # basis, to make sure that the dictionary self._matrices
-                      # is not empty
-        return next(iter(self._matrices.values())).trace() # pick a random value in the
-                                                  # dictionary self._matrices
-                                                  # and compute the trace
+        return self._some_matrix().trace

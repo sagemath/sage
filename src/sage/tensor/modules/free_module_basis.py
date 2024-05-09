@@ -48,7 +48,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
     :class:`Mapping` subclasses, not the :meth:`keys` but the
     :meth:`values` are considered the elements.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
         sage: e = M.basis('e'); e
@@ -111,8 +111,8 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             sage: e = M.basis('e')
             sage: list(e.values())
             [Element e_0 of the Rank-3 free module M over the Integer Ring,
-            Element e_1 of the Rank-3 free module M over the Integer Ring,
-            Element e_2 of the Rank-3 free module M over the Integer Ring]
+             Element e_1 of the Rank-3 free module M over the Integer Ring,
+             Element e_2 of the Rank-3 free module M over the Integer Ring]
         """
         return self._vec
 

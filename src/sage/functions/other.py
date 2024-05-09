@@ -173,7 +173,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     These do not work but fail gracefully::
 
-        sage: ceil(Infinity)
+        sage: ceil(Infinity)                                                            # needs sage.rings.real_interval_field
         Traceback (most recent call last):
         ...
         ValueError: Calling ceil() on infinity or NaN
@@ -714,9 +714,9 @@ class Function_frac(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: frac(5.4)
+            sage: frac(5.4)                                                             # needs sage.rings.real_mpfr
             0.400000000000000
-            sage: type(frac(5.4))
+            sage: type(frac(5.4))                                                       # needs sage.rings.real_mpfr
             <class 'sage.rings.real_mpfr.RealNumber'>
             sage: frac(456/123)
             29/41
@@ -812,9 +812,9 @@ class Function_real_nth_root(BuiltinFunction):
 
     For numeric input, it gives a numerical approximation. ::
 
-        sage: real_nth_root(2., 3)
+        sage: real_nth_root(2., 3)                                                      # needs sage.rings.real_mpfr
         1.25992104989487
-        sage: real_nth_root(-2., 3)
+        sage: real_nth_root(-2., 3)                                                     # needs sage.rings.real_mpfr
         -1.25992104989487
 
     Some symbolic calculus::
@@ -914,9 +914,9 @@ class Function_real_nth_root(BuiltinFunction):
             sage: real_nth_root(x, 3)                                                   # needs sage.symbolic
             real_nth_root(x, 3)
 
-            sage: real_nth_root(RIF(2), 3)
+            sage: real_nth_root(RIF(2), 3)                                              # needs sage.rings.real_interval_field
             1.259921049894873?
-            sage: real_nth_root(RBF(2), 3)
+            sage: real_nth_root(RBF(2), 3)                                              # needs sage.libs.flint
             [1.259921049894873 +/- 3.92e-16]
         """
         if not isinstance(base, Expression) and not isinstance(exp, Expression):
@@ -1145,9 +1145,9 @@ class Function_real_part(GinacFunction):
             sage: real(5/3)
             5/3
             sage: a = 2.5
-            sage: real(a)
+            sage: real(a)                                                               # needs sage.rings.real_mpfr
             2.50000000000000
-            sage: type(real(a))
+            sage: type(real(a))                                                         # needs sage.rings.real_mpfr
             <class 'sage.rings.real_mpfr.RealLiteral'>
             sage: real(1.0r)
             1.0

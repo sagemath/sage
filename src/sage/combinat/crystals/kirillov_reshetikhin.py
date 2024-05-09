@@ -3138,7 +3138,7 @@ class KR_type_spin(KirillovReshetikhinCrystalFromPromotion):
         ind.remove(1)
         C = T.cartan_type()
         n = C.n
-        sh = [i for i in T.shapes[0]]
+        sh = list(T.shapes[0])
         sh[n-1] = -sh[n-1]
         T_dual = CrystalOfTableaux(C, shape=sh)
         hw = [t for t in T if t.is_highest_weight(index_set=ind)]
@@ -3997,7 +3997,7 @@ def horizontal_dominoes_removed(r, s):
         sage: sage.combinat.crystals.kirillov_reshetikhin.horizontal_dominoes_removed(3,2)
         [[], [2], [2, 2], [2, 2, 2]]
     """
-    ulist = [ [y for y in x] + [0]*(r-x.length()) for x in partitions_in_box(r, s//2) ]
+    ulist = [list(x) + [0]*(r-x.length()) for x in partitions_in_box(r, s//2)]
     two = lambda x : 2 * (x - s // 2) + s
     return [Partition([two(y) for y in x]) for x in ulist]
 

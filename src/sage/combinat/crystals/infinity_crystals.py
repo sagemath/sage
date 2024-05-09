@@ -250,7 +250,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             [[1, 1, 1], [2, 2], [3]]
         """
         n = self._cartan_type.rank()
-        p = Partition([x for x in reversed(range(1, n+1))])
+        p = Partition(list(reversed(range(1, n + 1))))
         # The column canonical tableau, read by columns
         module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(n)])
         return self(list=[self.letters(x) for x in module_generator])
@@ -624,7 +624,7 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
             [[1, 1, 1], [2, 2], [3]]
         """
         n = self._cartan_type.rank()
-        p = Partition([x for x in reversed(range(1, n))])
+        p = Partition(list(reversed(range(1, n))))
         # The column canonical tableau, read by columns
         module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(n-1)])
         return self(list=[self.letters(x) for x in module_generator])
