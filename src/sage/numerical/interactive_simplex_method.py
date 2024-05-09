@@ -3920,7 +3920,10 @@ class LPDictionary(LPAbstractDictionary):
 
     def __copy__(self):
         r"""
-        TESTS::
+        TESTS:
+
+        Test that copies do not share state with the original::
+
             sage: A = ([1, 1], [3, 1])
             sage: b = (1000, 1500)
             sage: c = (10, 5)
