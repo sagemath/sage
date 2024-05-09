@@ -445,24 +445,26 @@ class AvailableSoftware():
             idx = self._indices[item]
         except KeyError:
             return False
-        if not self._hidden[idx]:
-            if self._features[idx].is_hidden():
+        feature = self._features[idx]
+        if feature.is_hidden():
+            if not self._hidden[idx]:
                 self._hidden[idx] = 1
-            else:
-                self._hidden[idx] = -1
-        if not self._seen[idx]:
-            if not self._allow_external and self._features[idx] in self._external_features:
-                self._seen[idx] = -1 # not available
-            elif self._features[idx].is_present():
-                self._seen[idx] = 1 # available
-            else:
-                self._seen[idx] = -1 # not available
-        if self._seen[idx] == 1:
-            return True
-        elif self._seen[idx] == -1:
-            return False
+            available = False  # a hidden feature is considered to be not available
         else:
-            raise AssertionError("Invalid value for self.seen")
+            if not self._allow_external and feature in self._external_features:
+                # an external feature is considered to be not available
+                # if this is not allowed
+                available = False
+            elif feature.is_present():
+                available = True
+            else:
+                available = False
+        if available:
+            if not self._seen[idx]:
+                self._seen[idx] = 1
+            return True
+        else:
+            return False
 
     def issuperset(self, other):
         """
@@ -514,10 +516,10 @@ class AvailableSoftware():
             ....:    if f._spkg_type() == 'standard':
             ....:         test = f.name in available_software
             ....:    f.unhide()
-            sage: available_software.hidden()
-            [...'conway_polynomials',
-             'database_cremona_mini_ellcurve',
-             'database_ellcurves',
+            sage: sorted(available_software.hidden())
+            [...'conway_polynomials',...
+             'database_cremona_mini_ellcurve',...
+             'database_ellcurves',...
              'database_graphs'...]
         """
         return [feature.name
