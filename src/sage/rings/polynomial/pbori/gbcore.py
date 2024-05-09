@@ -1,3 +1,4 @@
+import contextlib
 from copy import copy
 from itertools import chain
 from inspect import getfullargspec as getargspec
@@ -12,7 +13,6 @@ from .heuristics import dense_system, gauss_on_linear
 from .easy_polynomials import easy_linear_polynomials
 from .interpolate import lex_groebner_basis_for_polynomial_via_variety
 from .fglm import _fglm
-import contextlib
 
 
 def get_options_from_function(f):
@@ -632,8 +632,3 @@ Turn off heuristic by setting heuristic=False
 
 
 build_groebner_basis_doc_string()
-
-
-def _test():
-    import doctest
-    doctest.testmod()
