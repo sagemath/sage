@@ -217,6 +217,24 @@ class Divisor_generic(FormalSum):
         # generator being in front of the second one
         terms.sort(key=lambda x: x[1], reverse=True)
         return repr_lincomb([("V(%s)" % v, c) for c,v in terms])
+    
+    def __eq__(self, other) -> bool:
+        """
+        Check if the two divisors are on the same curve, and if so, check that their difference is zero.
+
+        EXAMPLES::
+ 
+            sage: E = EllipticCurve([1, 2])
+            sage: P = E(-1, 0)
+            sage: Q = E(1, 2)
+            sage: Pd = E.divisor(P)
+            sage: Qd = E.divisor(Q)
+            sage: Pd + Qd == Qd + Pd
+            True
+            sage: Pd != Qd
+            True
+        """
+        return type(self) is type(other) and self.parent() == other.parent() and (self - other).is_zero()
 
     def scheme(self):
         """
