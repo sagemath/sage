@@ -283,8 +283,7 @@ class CommutativeRings(CategoryWithAxiom):
         """
         def extra_super_categories(self):
             r"""
-            Let Sage knows that finite commutative rings
-            are Noetherian.
+            Let Sage know that finite commutative rings are Noetherian.
 
             EXAMPLES::
 

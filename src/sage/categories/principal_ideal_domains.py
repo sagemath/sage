@@ -125,7 +125,7 @@ class PrincipalIdealDomains(Category_singleton):
 
         def is_noetherian(self) -> bool:
             """
-            Every principal ideal domain is noetherian, so we return ``True``.
+            Every principal ideal domain is Noetherian, so we return ``True``.
 
             EXAMPLES::
 
