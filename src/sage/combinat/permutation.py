@@ -682,7 +682,7 @@ class Permutation(CombinatorialElement):
                 return self.parent().options.latex_empty_str
             return " ".join(f"{let}_{{{i}}}" for i in redword)
         if display == "twoline":
-            return "\\begin{{pmatrix}} {} \\\\ {} \\end{{pmatrix}}".format(
+            return r"\begin{{pmatrix}} {} \\ {} \end{{pmatrix}}".format(
                     " & ".join("%s" % i for i in range(1, len(self._list)+1)),
                     " & ".join("%s" % i for i in self._list))
         if display == "list":

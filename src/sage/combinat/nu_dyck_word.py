@@ -829,7 +829,7 @@ class NuDyckWord(CombinatorialElement):
         if latex_options['show_grid']:
             grid = [((0, 0), (self.width(), self.height()))]
             for v1, v2 in grid:
-                res += f"  \\draw[dotted] {str(v1)} grid {str(v2)};"
+                res += f"  \\draw[dotted] {v1} grid {v2};"
                 res += "\n"
 
         # Add points if wanted
@@ -839,7 +839,7 @@ class NuDyckWord(CombinatorialElement):
             for v in self.points():
                 res += "  \\draw[line width=2,"
                 res += f"color={pt_color},fill={pt_color}]"
-                res += f"{str(v)} circle ({str(radius)});"
+                res += f"{v} circle ({radius});"
                 res += "\n"
 
         # Add nu if wanted
