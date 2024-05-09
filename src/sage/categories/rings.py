@@ -352,7 +352,7 @@ class Rings(CategoryWithAxiom):
 
             If the parameter ``proof`` is set to ``True``, the returned value is
             correct but the method might throw an error.  Otherwise, if it is set
-            to ``False``, the method returns ``True`` if it can establish that self
+            to ``False``, the method returns ``True`` if it can establish that ``self``
             is an integral domain and ``False`` otherwise.
 
             EXAMPLES::
