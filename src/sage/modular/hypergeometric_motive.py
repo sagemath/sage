@@ -183,7 +183,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
     coeffs += [0] * max(0, bound + 1 - len(coeffs))
 
     fulldeg = d if deg is None else deg
-    data = [0] * (fulldeg+1)
+    data = [0] * (fulldeg + 1)
     for k in range(bound + 1):
         data[k] = coeffs[k]
     for k in range(bound + 1, fulldeg + 1):
@@ -1770,7 +1770,7 @@ class HypergeometricData:
         ``deg`` (inclusive).
 
         The prime `p` may be tame, but not wild. When `v_p(t-1)` is nonzero and even,
-        the Euler factor includes a linear term described in 11.2 of [Watkins]_.
+        the Euler factor includes a linear term described in Section 11.2 of [Watkins]_.
 
         EXAMPLES::
 
@@ -1941,12 +1941,14 @@ class HypergeometricData:
             for m in set(j for i in self.cyclotomic_data() for j in i):
                 ans *= self.euler_factor_tame_contribution(t, p, m, deg)
             if deg is not None:
-                ans = ans.truncate(deg+1)
+                ans = ans.truncate(deg + 1)
             return ans
         # now p is good, or p is tame and t is a p-adic unit
         elif (t-1) % p == 0:
             typ = "mult"
-            d = (self.degree() - 1) // 2 * 2
+            d = self.degree() - 1
+            if d % 2:
+                d -= 1
         else:
             typ = "good"
             d = self.degree()
@@ -1971,7 +1973,7 @@ class HypergeometricData:
                 if w % 2:
                     assert m1 % 2 == 0
                     u = (-1) ** (m1//2)
-                    u *= prod(v**gv for v, gv in self.gamma_array().items())
+                    u *= prod(v ** gv for v, gv in self.gamma_array().items())
                     c = kronecker_symbol(u, p) * p**((w-1)//2)
                 else:
                     u = (-1) ** (1 + self.degree()//2 + (m1-1)//2)
@@ -1982,8 +1984,10 @@ class HypergeometricData:
                     den /= (x-1) ** den.valuation(x-1)
                     u *= 2 * num(1) / den(1)
                     c = kronecker_symbol(u, p) * p**(w//2)
+                cpow = c
                 for j in range(len(traces)):
-                    traces[j] -= c ** (j+1)
+                    traces[j] -= cpow
+                    cpow *= c
                 tmp = 1 - c*P.gen()
             else:
                 u = (-1) ** (1+(self.degree()-1)//2)
@@ -2009,5 +2013,5 @@ class HypergeometricData:
                 c = kronecker_symbol(K*t0, p) * p**(w//2)
                 ans *= 1 - c*P.gen()
             if deg is not None:
-                ans = ans.truncate(deg+1)
+                ans = ans.truncate(deg + 1)
         return ans
