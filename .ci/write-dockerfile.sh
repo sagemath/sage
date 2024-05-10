@@ -276,12 +276,9 @@ $ADD .ci /new/.ci
 $ADD .upstream.d /new/.upstream.d
 RUN if [ -d /sage ]; then                                               \
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
-        if command -v git; then                                         \
-            printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
-            (cd /new &&                                                 \
-             printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> .gitignore &&           \
-             ./.ci/retrofit-worktree.sh worktree-image /sage);          \
-        else                                                            \
+        printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
+        printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \
+        if ! (cd /new && ./.ci/retrofit-worktree.sh worktree-image /sage); then \
             for a in local logs; do                                     \
                 if [ -d /sage/\$a ]; then mv /sage/\$a /new/; fi;       \
             done;                                                       \
@@ -340,13 +337,11 @@ ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
-RUN if command -v git; then                             \
-        cd /new && rm -rf .git &&                       \
-        ./.ci/retrofit-worktree.sh worktree-pre /sage;  \
-    else                                                \
-        rm -rf /sage/src;                               \
-        mv /new/src /sage/src;                          \
-        ./bootstrap && ./config.status;                 \
+RUN cd /new && rm -rf .git && \
+    if ! ./.ci/retrofit-worktree.sh worktree-pre /sage; then \
+        rm -rf /sage/src;                                    \
+        mv src /sage/src;                                    \
+        ./bootstrap && ./config.status;                      \
     fi
 
 ARG TARGETS="build"
