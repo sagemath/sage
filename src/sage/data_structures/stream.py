@@ -1763,10 +1763,11 @@ class Stream_uninitialized(Stream):
             sage: C[3]  # indirect doctest
             2
         """
-        def subs(c, var, val):
-            P = self._P.polynomial_ring()
-            num = P(c.numerator()._p).subs({P(var._p): val})
-            den = P(c.denominator()._p).subs({P(var._p): val})
+        P = self._P.polynomial_ring()
+        var_p = P(var._p)
+        def subs(c):
+            num = P(c.numerator()._p).subs({var_p: val})
+            den = P(c.denominator()._p).subs({var_p: val})
             return self._PF(InfinitePolynomial(self._P, num),
                             InfinitePolynomial(self._P, den))
 
@@ -1801,13 +1802,13 @@ class Stream_uninitialized(Stream):
                 c = s._cache[i]
                 if self._coefficient_ring == self._base_ring:
                     if c.parent() == self._PF:
-                        c = retract(subs(c, var, val))
+                        c = retract(subs(c))
                         if c.parent() is not self._base_ring:
                             good = m - i0 - 1
                 elif c.parent() == self._U:
-                    c = c.map_coefficients(lambda e: subs(e, var, val))
+                    c = c.map_coefficients(subs)
                     try:
-                        c = c.map_coefficients(lambda e: retract(e), self._base_ring)
+                        c = c.map_coefficients(retract, self._base_ring)
                     except TypeError:
                         good = m - i0 - 1
                 s._cache[i] = c
