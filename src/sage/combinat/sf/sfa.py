@@ -412,6 +412,17 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             """
             return self.base_ring().is_integral_domain()
 
+        def fraction_field(self):
+            if not self.is_integral_domain():
+                raise TypeError("self must be an integral domain.")
+            if hasattr(self, "__fraction_field") and self.__fraction_field is not None:
+                return self.__fraction_field
+            else:
+                import sage.rings.fraction_field
+                K = sage.rings.fraction_field.FractionField_generic(self)
+                self.__fraction_field = K
+            return self.__fraction_field
+
         def is_field(self, proof=True):
             """
             Return whether ``self`` is a field. (It is not.)
@@ -1847,6 +1858,9 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
                                          bracket="", prefix=prefix)
 
     _print_style = 'lex'
+
+    def is_prime_field(self):
+        return False
 
     # Todo: share this with ncsf and over algebras with basis indexed by word-like elements
     def __getitem__(self, c):
