@@ -295,7 +295,7 @@ class Stream_inexact(Stream):
         if self._is_sparse:
             self._cache = dict()  # cache of known coefficients
         else:
-            self._cache = list()
+            self._cache = []
             self._iter = self.iterate_coefficients()
 
     def is_nonzero(self):
@@ -384,7 +384,7 @@ class Stream_inexact(Stream):
         """
         self.__dict__ = d
         if not self._is_sparse:
-            self._cache = list()
+            self._cache = []
             self._iter = self.iterate_coefficients()
 
     def __getitem__(self, n):
@@ -1482,7 +1482,7 @@ class Stream_uninitialized(Stream):
         self._target = target
         self._n = self._approximate_order - 1  # the largest index of a coefficient we know
         # we only need this if target does not have a dense cache
-        self._cache = list()
+        self._cache = []
         self._iter = self.iterate_coefficients()
 
     def define_implicitly(self, series, initial_values, equations,
