@@ -10,7 +10,7 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     sdh_pip_editable_install .
     # We expect a subdirectory like build/cp312.
     # Use 'find -newer' to use the one just created/modified by the editable build.
-    find $(pwd -P)/build -maxdepth 1 -newer ${SAGE_DESTDIR}${SAGE_INST_LOCAL} -exec \
+    find $(pwd -P)/build -maxdepth 1 -name "cp*" -newer ${SAGE_DESTDIR}${SAGE_INST_LOCAL} -exec \
          ln -svf {}/html {}/index.html ${SAGE_DESTDIR}${SAGE_INST_LOCAL}/share/doc/sage/ \;
     if [ "$SAGE_WHEELS" = yes ]; then
         sdh_build_and_store_wheel --no-build-isolation .
