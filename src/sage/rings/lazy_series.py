@@ -576,7 +576,6 @@ class LazyModuleElement(Element):
             sage: f = z + z^2 + z^3
             sage: f.map_coefficients(lambda c: c + 1)
             2*z + 2*z^2 + 2*z^3
-
         """
         P = self.parent()
         coeff_stream = self._coeff_stream
@@ -2701,7 +2700,6 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(SR); x = var("x")                       # needs sage.symbolic
             sage: asinh(z)[0:6] == asinh(x).series(x, 6).coefficients(sparse=False)     # needs sage.symbolic
             True
-
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
@@ -2739,7 +2737,6 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(SR); x = var("x")                       # needs sage.symbolic
             sage: atanh(z)[0:6] == atanh(x).series(x, 6).coefficients(sparse=False)     # needs sage.symbolic
             True
-
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
@@ -2774,7 +2771,6 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(SR); x = var("x")                       # needs sage.symbolic
             sage: z.hypergeometric([1,1],[1])[0:6] == hypergeometric([1,1],[1], x).series(x, 6).coefficients(sparse=False)                                      # needs sage.symbolic
             True
-
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         from sage.arith.misc import rising_factorial
@@ -4126,7 +4122,6 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: g = L([2])
             sage: f(g)
             0
-
         """
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
@@ -4807,7 +4802,6 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
             sage: L.zero().polynomial()
             0
-
         """
         S = self.parent()
 
@@ -4977,7 +4971,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f = 1/(1+x*q-t)
             sage: f._im_gens_(S, [s, x*s], base_map=cc)
             1 + 2*x*s + 4*x^2*s^2 + 8*x^3*s^3 + 16*x^4*s^4 + 32*x^5*s^5 + 64*x^6*s^6 + O(s^7)
-
         """
         if base_map is None:
             return codomain(self(*im_gens))
@@ -6642,7 +6635,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         - Andrew Gainer-Dewar
         - Martin Rubey
-
         """
         P = self.parent()
         if P._arity != 1:
@@ -7169,7 +7161,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
             sage: L(s([2])).arithmetic_product(s([1,1,1]))                              # needs sage.modules
             s[2, 2, 1, 1] + s[3, 1, 1, 1] + s[3, 2, 1] + s[3, 3]
-
         """
         if len(args) != self.parent()._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
@@ -7294,7 +7285,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             0
             sage: f4.symmetric_function(0)                                              # needs lrcalc_python
             s[]
-
         """
         S = self.parent()
         R = S._laurent_poly_ring

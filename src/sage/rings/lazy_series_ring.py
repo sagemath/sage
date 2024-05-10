@@ -655,7 +655,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: f.define(z^-1 + z^2*f^2)
             sage: f
             z^-1 + 1 + 2*z + 5*z^2 + 14*z^3 + 42*z^4 + 132*z^5 + O(z^6)
-
         """
         if valuation is None:
             valuation = self._minimal_valuation
@@ -2751,7 +2750,6 @@ class LazyPowerSeriesRing(LazySeriesRing):
             Traceback (most recent call last):
             ...
             ValueError: coefficients must be homogeneous polynomials of the correct degree
-
         """
         if valuation is not None:
             if valuation < 0:
@@ -3509,7 +3507,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: L = S.formal_series_ring()
             sage: L.some_elements()[:4]
             [0, S[], 2*S[] + 2*S[1] + (3*S[1,1]), 2*S[1] + (3*S[1,1])]
-
         """
         elt = self.an_element()
         elts = [self.zero(), self.one(), elt]
@@ -3662,7 +3659,6 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             sage: TestSuite(L).run()                                                    # needs sage.symbolic
 
             sage: LazyDirichletSeriesRing.options._reset()  # reset the options
-
         """
         if base_ring.characteristic() > 0:
             raise ValueError("positive characteristic not allowed for Dirichlet series")
