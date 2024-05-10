@@ -7049,7 +7049,7 @@ class Graph(GenericGraph):
             G.add_vertex(idx)
             G.add_edges((u, idx) for u in clique)
         from sage.graphs.bipartite_graph import BipartiteGraph
-        return BipartiteGraph(G)
+        return BipartiteGraph(G, check=False)
 
     @doc_index("Algorithmically hard stuff")
     def independent_set(self, algorithm="Cliquer", value_only=False, reduction_rules=True,
