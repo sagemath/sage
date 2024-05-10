@@ -67,7 +67,6 @@ TESTS::
 
 from sage.misc.repr import repr_lincomb
 import operator
-from collections import OrderedDict
 
 from sage.modules.module import Module
 from sage.structure.element import ModuleElement
@@ -93,7 +92,7 @@ class FormalSum(ModuleElement):
           coefficients into base ring, which can speed
           up constructing a formal sum.
         - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
-          combine common terms
+          combine common terms. WARNING: setting this to ``False`` can cause commutativity issues when comparing sums that are equal but in different orders.
 
         EXAMPLES::
 
@@ -292,14 +291,22 @@ class FormalSum(ModuleElement):
             sage: a
             0
         """
-        new = OrderedDict()
+        new = dict()
         for coeff, x in self:
             try:
                 coeff += new[x]
             except KeyError:
                 pass
             new[x] = coeff
-        self._data = [(c, x) for (x, c) in new.items() if c]
+        
+        # We sort based on the string representation because some types have
+        # comparison operators that aren't total orders.  There is nothing
+        # special about sorting based on the string representations, we just
+        # need to have some 'canonical representative' for comparisons
+        # to make sense, in particular for commutativity.
+        # Note however that some tests assume this ordering, and will
+        # need to be updated if the sorting here changes.
+        self._data = [(c, x) for (x, c) in sorted(new.items(), key=str) if c]
 
 
 class FormalSums(UniqueRepresentation, Module):

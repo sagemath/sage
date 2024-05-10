@@ -24,13 +24,13 @@ EXAMPLES::
     sage: D1.parent() is D2.parent()
     True
     sage: D = D1 - D2 + D3; D
-    3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
+    10*(x + 2*z, y + z) + 3*(x, y) - (x, z)
     sage: D[1][0]
-    -1
+    3
     sage: D[1][1]
-    Ideal (x, z) of Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
+    Ideal (x, y) of Multivariate Polynomial Ring in x, y, z over Finite Field of size 5
     sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10, pts[5])])
-    3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
+    10*(x + 2*z, y + z) + 3*(x, y) - (x, z)
 """
 #*******************************************************************************
 #  Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
@@ -45,6 +45,7 @@ from sage.misc.latex import latex
 from sage.misc.repr import repr_lincomb
 from sage.misc.search import search
 from sage.rings.integer_ring import ZZ
+from sage.sets.set import Set
 from sage.structure.formal_sum import FormalSum
 
 from .morphism import is_SchemeMorphism
@@ -180,6 +181,15 @@ class Divisor_generic(FormalSum):
             '\\mathrm{V}\\left(x + 2 y\\right)
             + 4 \\mathrm{V}\\left(x\\right)
             - 5 \\mathrm{V}\\left(y\\right)'
+            sage: E = EllipticCurve([1, 2])
+            sage: P = E(-1, 0)
+            sage: Q = E(1, 2)
+            sage: Pd = E.divisor(P)
+            sage: Qd = E.divisor(Q)
+            sage: Pd + Qd == Qd + Pd
+            True
+            sage: Pd != Qd
+            True
         """
         # The code is copied from _repr_ with latex adjustments
         terms = list(self)
@@ -218,24 +228,6 @@ class Divisor_generic(FormalSum):
         terms.sort(key=lambda x: x[1], reverse=True)
         return repr_lincomb([("V(%s)" % v, c) for c,v in terms])
     
-    def __eq__(self, other) -> bool:
-        """
-        Check if the two divisors are on the same curve, and if so, check that their difference is zero.
-
-        EXAMPLES::
- 
-            sage: E = EllipticCurve([1, 2])
-            sage: P = E(-1, 0)
-            sage: Q = E(1, 2)
-            sage: Pd = E.divisor(P)
-            sage: Qd = E.divisor(Q)
-            sage: Pd + Qd == Qd + Pd
-            True
-            sage: Pd != Qd
-            True
-        """
-        return type(self) is type(other) and self.parent() == other.parent() and (self - other).is_zero()
-
     def scheme(self):
         """
         Return the scheme that this divisor is on.
@@ -247,7 +239,7 @@ class Divisor_generic(FormalSum):
             sage: pts = C.rational_points(); pts
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
             sage: D = C.divisor(pts[0])*3 - C.divisor(pts[1]); D
-            3*(x, y) - (x - 2, y - 2)
+            -(x - 2, y - 2) + 3*(x, y) 
             sage: D.scheme()
             Affine Plane Curve over Finite Field of size 5 defined by -x^9 + y^2 - x
         """
@@ -289,7 +281,7 @@ class Divisor_curve(Divisor_generic):
         sage: E.divisor([P, P])
         2*(x, y)
         sage: E.divisor([(3,P), (-4,5*P)])
-        3*(x, y) - 4*(x - 1/4*z, y + 5/8*z)
+        -4*(x - 1/4*z, y + 5/8*z) + 3*(x, y)
     """
     def __init__(self, v, parent=None, check=True, reduce=True):
         """
@@ -381,39 +373,41 @@ class Divisor_curve(Divisor_generic):
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
 
-    def support(self):
+    def support(self) -> Set:
         """
         Return the support of this divisor, which is the set of points that
         occur in this divisor with nonzero coefficients.
 
         EXAMPLES::
 
-            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
+            sage: A = AffineSpace(2, GF(5), names='xy')
+            sage: x, y = A.gens()
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
             sage: D = C.divisor_group()([(3, pts[0]), (-1, pts[1])]); D
-            3*(x, y) - (x - 2, y - 2)
-            sage: D.support()
-            [(0, 0), (2, 2)]
+            -(x - 2, y - 2) + 3*(x, y)
+            sage: D.support() == {A(0, 0), A(2, 2)}
+            True
 
         TESTS:
 
         This checks that :issue:`10732` is fixed::
 
             sage: R.<x, y, z> = GF(5)[]
+            sage: PS = ProjectiveSpace(R)
             sage: C = Curve(x^7 + y^7 + z^7)
             sage: pts = C.rational_points()
             sage: D = C.divisor([(2, pts[0])])
-            sage: D.support()
-            [(0 : 4 : 1)]
-            sage: (D + D).support()
-            [(0 : 4 : 1)]
+            sage: D.support() == {PS(0, 4, 1)}
+            True
+            sage: (D + D).support() == {PS(0, 4, 1)}
+            True
             sage: E = C.divisor([(-3, pts[1]), (1, pts[2])])
-            sage: (D - 2*E).support()
-            [(0 : 4 : 1), (1 : 2 : 1), (2 : 1 : 1)]
+            sage: (D - 2*E).support() == {PS(0, 4, 1), PS(1, 2, 1), PS(2, 1, 1)}
+            True
             sage: (D - D).support()
-            []
+            {}
         """
         try:
             return self._support
@@ -427,7 +421,7 @@ class Divisor_curve(Divisor_generic):
                 # rational points (see trac #16225)
                 self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
                 pts = self._points
-            self._support = [s[1] for s in pts]
+            self._support = Set(s[1] for s in pts)
             return self._support
 
     def coefficient(self, P):
@@ -444,7 +438,7 @@ class Divisor_curve(Divisor_generic):
             sage: D.coefficient(pts[0])
             1
             sage: D = C.divisor([(3, pts[0]), (-1, pts[1])]); D
-            3*(x, y) - (x - 2, y - 2)
+            -(x - 2, y - 2) + 3*(x, y) 
             sage: D.coefficient(pts[0])
             3
             sage: D.coefficient(pts[1])
