@@ -7043,13 +7043,13 @@ class Graph(GenericGraph):
             sage: S.is_isomorphic(N)
             True
         """
-        from sage.graphs.bipartite_graph import BipartiteGraph
-        B = BipartiteGraph(partition=[self, []], check=False)
+        G = Graph([self, []], format='vertices_and_edges')
         for i, clique in enumerate(IndependentSets(self, maximal=True, complement=True)):
             idx = - i - 1
-            B.add_vertex(name=idx, right=True)
-            B.add_edges((u, idx) for u in clique)
-        return B
+            G.add_vertex(idx)
+            G.add_edges((u, idx) for u in clique)
+        from sage.graphs.bipartite_graph import BipartiteGraph
+        return BipartiteGraph(G)
 
     @doc_index("Algorithmically hard stuff")
     def independent_set(self, algorithm="Cliquer", value_only=False, reduction_rules=True,
