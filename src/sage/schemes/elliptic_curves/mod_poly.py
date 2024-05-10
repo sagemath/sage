@@ -12,8 +12,8 @@ AUTHORS:
 """
 
 from sage.structure.element import parent
-
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.libs.pari import pari
 from cypari2.handle_error import PariError
@@ -116,8 +116,9 @@ def classical_modular_polynomial(l, j=None):
         except KeyError:
             pass
 
+        P = PolynomialRing(ZZ, ['X', 'Y'])
         try:
-            Phi = ZZ['X,Y'](_db[l])
+            Phi = P(_db[l])
         except ValueError:
             try:
                 pari_Phi = pari.polmodular(l)
@@ -144,7 +145,7 @@ def classical_modular_polynomial(l, j=None):
         pass
     else:
         if l <= _cache_bound:
-            _cache[l] = ZZ['X,Y'](Phi)
+            _cache[l] = PolynomialRing(ZZ, ['X', 'Y'])(Phi)
         return Phi(j, Y)
 
     # Now try to get the instantiated modular polynomial directly from PARI.

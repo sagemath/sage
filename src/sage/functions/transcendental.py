@@ -30,6 +30,7 @@ lazy_import('sage.combinat.combinat', 'bernoulli_polynomial')
 lazy_import('sage.rings.cc', 'CC')
 lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'is_ComplexNumber'])
 lazy_import('sage.rings.polynomial.polynomial_real_mpfr_dense', 'PolynomialRealDense')
+lazy_import('sage.rings.polynomial.polynomial_ring_constructor', 'PolynomialRing')
 lazy_import('sage.rings.real_double', 'RDF')
 lazy_import('sage.rings.real_mpfr', ['RR', 'RealField', 'is_RealNumber'])
 
@@ -630,7 +631,7 @@ class DickmanRho(BuiltinFunction):
                 R = RealField(abs_prec)
                 neg_three = ZZ(-3)
                 coeffs = [1 - R(1.5).log()] + [neg_three**-k/k for k in range(1, nterms)]
-                f = PolynomialRealDense(R['x'], coeffs)
+                f = PolynomialRealDense(PolynomialRing(R, 'x'), coeffs)
                 if cache_ring is not None:
                     self._f[n] = f.truncate_abs(f[0] >> (cache_ring.prec()+1)).change_ring(cache_ring)
                 return f
