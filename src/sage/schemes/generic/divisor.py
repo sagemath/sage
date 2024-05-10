@@ -122,6 +122,28 @@ def is_Divisor(x):
 class Divisor_generic(FormalSum):
     r"""
     A Divisor.
+
+    TESTS::
+
+        sage: E = EllipticCurve([1, 2])
+        sage: P = E(-1, 0)
+        sage: Q = E(1, 2)
+        sage: Pd = E.divisor(P)
+        sage: Qd = E.divisor(Q)
+        sage: Pd + Qd == Qd + Pd
+        True
+        sage: Pd != Qd
+        True
+        sage: C = EllipticCurve([2, 1])
+        sage: R = C(1, 2)
+        sage: E = EllipticCurve([1, 2])
+        sage: Q = E(1, 2)
+        sage: Qd = E.divisor(Q)
+        sage: Rd = C.divisor(R)
+        sage: Qd == Rd
+        False
+        sage: Rd == Qd
+        False
     """
 
     def __init__(self, v, parent, check=True, reduce=True):
@@ -181,15 +203,6 @@ class Divisor_generic(FormalSum):
             '\\mathrm{V}\\left(x + 2 y\\right)
             + 4 \\mathrm{V}\\left(x\\right)
             - 5 \\mathrm{V}\\left(y\\right)'
-            sage: E = EllipticCurve([1, 2])
-            sage: P = E(-1, 0)
-            sage: Q = E(1, 2)
-            sage: Pd = E.divisor(P)
-            sage: Qd = E.divisor(Q)
-            sage: Pd + Qd == Qd + Pd
-            True
-            sage: Pd != Qd
-            True
         """
         # The code is copied from _repr_ with latex adjustments
         terms = list(self)
@@ -227,6 +240,26 @@ class Divisor_generic(FormalSum):
         # generator being in front of the second one
         terms.sort(key=lambda x: x[1], reverse=True)
         return repr_lincomb([("V(%s)" % v, c) for c,v in terms])
+
+    def _coerce_map_from_(self, other) -> bool:
+        r"""
+        Check if there is a coercion from ``other`` to ``self``.
+        This is used to prevent divisors on different schemes from comparing as equal to each other.
+
+        EXAMPLES::
+
+            sage: C = EllipticCurve([2, 1])
+            sage: R = C(1, 2)
+            sage: E = EllipticCurve([1, 2])
+            sage: Q = E(1, 2)
+            sage: Qd = E.divisor(Q)
+            sage: Rd = C.divisor(R)
+            sage: Qd._coerce_map_from_(Rd)
+            False
+            sage: Rd._coerce_map_from_(Qd)
+            False
+        """
+        return (isinstance(other, type(self)) and self.scheme() == other.scheme() and super()._coerce_map_from_(other))
     
     def scheme(self):
         """
