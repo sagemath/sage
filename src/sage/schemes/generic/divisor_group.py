@@ -190,6 +190,22 @@ class DivisorGroup_generic(FormalSums):
         else:
             return Divisor_generic([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
 
+    def _coerce_map_from_(self, other):
+        r"""
+        Check if there is a coercion from ``other`` to ``self``.
+        This is used to prevent divisors on different schemes from comparing as equal to each other.
+
+        EXAMPLES::
+
+            sage: C = EllipticCurve([2, 1])
+            sage: E = EllipticCurve([1, 2])
+            sage: C.divisor_group()._coerce_map_from_(E.divisor_group())
+            False
+            sage: E.divisor_group()._coerce_map_from_(C.divisor_group())
+            False
+        """
+        return (isinstance(other, type(self)) and self.scheme() == other.scheme() and super()._coerce_map_from_(other))
+
     def scheme(self):
         r"""
         Return the scheme supporting the divisors.

@@ -260,7 +260,7 @@ class Divisor_generic(FormalSum):
             False
         """
         return (isinstance(other, type(self)) and self.scheme() == other.scheme() and super()._coerce_map_from_(other))
-    
+
     def scheme(self):
         """
         Return the scheme that this divisor is on.
@@ -272,7 +272,7 @@ class Divisor_generic(FormalSum):
             sage: pts = C.rational_points(); pts
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
             sage: D = C.divisor(pts[0])*3 - C.divisor(pts[1]); D
-            -(x - 2, y - 2) + 3*(x, y) 
+            -(x - 2, y - 2) + 3*(x, y)
             sage: D.scheme()
             Affine Plane Curve over Finite Field of size 5 defined by -x^9 + y^2 - x
         """
@@ -406,7 +406,7 @@ class Divisor_curve(Divisor_generic):
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
 
-    def support(self) -> Set:
+    def support(self) -> frozenset:
         """
         Return the support of this divisor, which is the set of points that
         occur in this divisor with nonzero coefficients.
@@ -471,7 +471,7 @@ class Divisor_curve(Divisor_generic):
             sage: D.coefficient(pts[0])
             1
             sage: D = C.divisor([(3, pts[0]), (-1, pts[1])]); D
-            -(x - 2, y - 2) + 3*(x, y) 
+            -(x - 2, y - 2) + 3*(x, y)
             sage: D.coefficient(pts[0])
             3
             sage: D.coefficient(pts[1])
