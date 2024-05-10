@@ -509,6 +509,7 @@ class AvailableSoftware():
 
         EXAMPLES::
 
+            sage: # needs conway_polynomials database_cremona_mini_ellcurve database_ellcurves database_graphs
             sage: from sage.doctest.external import available_software
             sage: from sage.features.databases import all_features
             sage: for f in all_features():
