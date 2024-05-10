@@ -522,8 +522,9 @@ def BalancedTree(r, h):
 
         sage: G = graphs.BalancedTree(2, 1); G
         Balanced tree: Graph on 3 vertices
-        sage: G.order(); G.size()
+        sage: G.order()
         3
+        sage: G.size()
         2
         sage: r = 2; h = 1
         sage: v = 1 + r
@@ -534,7 +535,8 @@ def BalancedTree(r, h):
     Plot a balanced tree of height 5, whose root node has degree `r = 3`::
 
         sage: G = graphs.BalancedTree(3, 5)
-        sage: G.show()                          # long time                             # needs sage.plot
+        sage: G.plot()                          # long time                             # needs sage.plot
+        Graphics object consisting of 728 graphics primitives
 
     A tree is bipartite. If its vertex set is finite, then it is planar. ::
 
@@ -580,13 +582,12 @@ def BalancedTree(r, h):
     order = [r**l for l in range(h + 1)]
     # Compute the first index of the vertices of a level
     begin = [0]
-    for level in range(1, h + 2):
-        begin.append(begin[level - 1] + order[level - 1])
+    begin.extend(begin[-1] + val for val in order)
     # The number of vertices of the tree is the first index of level h + 1
     T = Graph(begin[-1], name="Balanced tree")
 
     # Add edges of the r-ary tree
-    for level in range(0, h):
+    for level in range(h):
         start = begin[level + 1]
         for u in range(begin[level], begin[level + 1]):
             T.add_edges((u, v) for v in range(start, start + r))
