@@ -641,7 +641,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
             sage: S.has_coerce_map_from(S)
             True
-            sage: S.has_coerce_map_from(LazyLaurentSeriesRing(QQ, 't'))
+            sage: S.has_coerce_map_from(LazyLaurentSeriesRing(ZZ, 't'))
             True
             sage: S.has_coerce_map_from(LazyPowerSeriesRing(ZZ, 't'))
             True
@@ -667,6 +667,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: R.has_coerce_map_from(ZZ['t']['x'])
             False
             sage: R.has_coerce_map_from(ZZ['x'])
+            True
+            sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ, 't'))
+            True
+            sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ['x'], 't'))
             True
         """
         A = self.base_ring()
