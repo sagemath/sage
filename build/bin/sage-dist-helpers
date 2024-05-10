@@ -215,8 +215,7 @@ sdh_setup_bdist_wheel() {
          "$@" || sdh_die "Error building a wheel for $PKG_NAME"
 }
 
-sdh_pip_install() {
-    echo "Installing $PKG_NAME"
+sdh_build_wheel() {
     mkdir -p dist
     rm -f dist/*.whl
     export PIP_NO_INDEX=1
@@ -282,6 +281,16 @@ sdh_pip_install() {
     unset PIP_FIND_LINKS
     unset PIP_NO_BINARY
     unset PIP_NO_INDEX
+}
+
+sdh_build_and_store_wheel() {
+    sdh_build_wheel "$@"
+    sdh_store_wheel .
+}
+
+sdh_pip_install() {
+    echo "Installing $PKG_NAME"
+    sdh_build_wheel "$@"
     sdh_store_and_pip_install_wheel $install_options .
 }
 
