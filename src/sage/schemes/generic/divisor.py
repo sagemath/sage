@@ -406,7 +406,7 @@ class Divisor_curve(Divisor_generic):
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
 
-    def support(self) -> frozenset:
+    def support(self) -> Set:
         """
         Return the support of this divisor, which is the set of points that
         occur in this divisor with nonzero coefficients.
