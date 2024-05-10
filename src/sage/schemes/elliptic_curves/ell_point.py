@@ -184,9 +184,6 @@ class EllipticCurvePoint(AdditiveGroupElement,
         return self.scheme()
 
 
-# While the class EllipticCurvePoint itself currently provides little
-# functionality, inheritance from EllipticCurvePoint is checked in the
-# __contains__() and __call__() methods of EllipticCurve_generic.
 class EllipticCurvePoint_field(EllipticCurvePoint,
                                SchemeMorphism_point_abelian_variety_field):
     """
