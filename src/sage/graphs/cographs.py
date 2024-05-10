@@ -101,7 +101,6 @@ class CoTree:
         s += last
         return s
 
-
     def add_child(self, node):
         r"""
         Add cotree ``node`` in the list of children of ``self``.
@@ -198,7 +197,7 @@ def next_partition(P):
         [3, 3]
     """
     if len(P) < 2:
-        raise ValueError("the length of the input partition must be at least 2") 
+        raise ValueError("the length of the input partition must be at least 2")
     n = sum(P)
     if P[0] != n//2:
         if P[-1] - P[-2] <= 1:
@@ -212,7 +211,7 @@ def next_partition(P):
             return P[:-2] + [x]*q + [x + r]
         return P[:-2] + [x, y]
 
-    if n == 3 and P[1] != n//2 + n%2:
+    if n == 3 and P[1] != n//2 + n % 2:
         return [1, 2]
     return None
 
@@ -270,7 +269,7 @@ def find_pivot(T):
     # Check if T is a pivot
     i = T.name
     if (i != 1 and ((i//2 != T.children[0].name) or
-                    (i//2 + i%2 != T.children[1].name))): 
+                    (i//2 + i % 2 != T.children[1].name))):
         T.info = 'p'  # pivot mark
         return T
     return None
@@ -314,7 +313,7 @@ def next_tree(T):
             if this_child.info == 'p':
                 is_bigger_sibling = True
             elif is_bigger_sibling:  # true only for bigger siblings of x
-                if x.name == this_child.name: 
+                if x.name == this_child.name:
                     temp = CoTree(x.name)
                     x.copy_tree(temp)
                     ancestor.children[y] = temp  # copy subtree T(x) in T(y)
