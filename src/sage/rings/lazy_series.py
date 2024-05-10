@@ -6071,7 +6071,8 @@ class LazyPowerSeries(LazyCauchyProductSeries):
     def add_bigoh(self, prec):
         r"""
         Return the power series of precision at most ``prec`` obtained by
-        adding `O(q^\text{prec})` to `f`, where `q` is the variable(s).
+        adding `O(q^\text{prec})` to `f`, where `q` is the (tuple of)
+        variable(s).
 
         EXAMPLES::
 
