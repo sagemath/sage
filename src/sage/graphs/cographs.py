@@ -481,7 +481,7 @@ def tree_to_graph(tree, immutable=False):
     EXAMPLES::
 
         sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest
-        ....:     print(t.edges(labels=False, sort=True))  # indirect doctest
+        ....:     print(t.edges(labels=False, sort=True))
         [(0, 1), (0, 2), (1, 2)]
         []
         [(0, 1), (0, 2)]
@@ -502,7 +502,7 @@ def _tree_to_graph_rec(tree, g):
     EXAMPLES::
 
         sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest
-        ....:     print(t.edges(labels=False, sort=True))  # indirect doctest
+        ....:     print(t.edges(labels=False, sort=True))
         [(0, 1), (0, 2), (1, 2)]
         []
         [(0, 1), (0, 2)]
@@ -526,7 +526,7 @@ def _find_neighbors(tree, g):
     EXAMPLES::
 
         sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest
-        ....:     print(t.edges(labels=False, sort=True))  # indirect doctest
+        ....:     print(t.edges(labels=False, sort=True))
         [(0, 1), (0, 2), (1, 2)]
         []
         [(0, 1), (0, 2)]
@@ -558,7 +558,7 @@ def _add_edge(u, v, g):
     EXAMPLES::
 
         sage: for t in graphs.cographs(3, as_graph=True):  # indirect doctest
-        ....:     print(t.edges(labels=False, sort=True))  # indirect doctest
+        ....:     print(t.edges(labels=False, sort=True))
         [(0, 1), (0, 2), (1, 2)]
         []
         [(0, 1), (0, 2)]
