@@ -1802,15 +1802,14 @@ class Stream_uninitialized(Stream):
                 if self._coefficient_ring == self._base_ring:
                     if c.parent() == self._PF:
                         c = retract(subs(c, var, val))
-                        if not c.parent() is self._base_ring:
+                        if c.parent() is not self._base_ring:
                             good = m - i0 - 1
-                else:
-                    if c.parent() == self._U:
-                        c = c.map_coefficients(lambda e: subs(e, var, val))
-                        try:
-                            c = c.map_coefficients(lambda e: retract(e), self._base_ring)
-                        except TypeError:
-                            good = m - i0 - 1
+                elif c.parent() == self._U:
+                    c = c.map_coefficients(lambda e: subs(e, var, val))
+                    try:
+                        c = c.map_coefficients(lambda e: retract(e), self._base_ring)
+                    except TypeError:
+                        good = m - i0 - 1
                 s._cache[i] = c
             self._good_cache[j] += good
             # fix approximate_order and true_order
@@ -1966,7 +1965,6 @@ class Stream_uninitialized(Stream):
         # determine the next linear equations
         lin_coeffs = []
         all_coeffs = []  # only for the error message
-        bad = True  # indicates whether we could not determine any coefficients
         for offset in range(self._max_lookahead):
             new_lin_coeffs, new_all_coeffs = self._collect_equations(offset)
             lin_coeffs.extend(new_lin_coeffs)
@@ -1978,9 +1976,9 @@ class Stream_uninitialized(Stream):
             eq_str = "\n    ".join(self._eq_str(idx, eq)
                                    for idx, eq in all_coeffs[0])
             if lin_coeffs:
-                raise ValueError(f"could not determine any coefficients:\n    "
+                raise ValueError("could not determine any coefficients:\n    "
                                  + eq_str)
-            raise ValueError(f"there are no linear equations:\n    "
+            raise ValueError("there are no linear equations:\n    "
                              + eq_str)
 
         eqs_str = "\n".join(f"equation {i}:\n    "
@@ -1988,9 +1986,9 @@ class Stream_uninitialized(Stream):
                                             for idx, eq in eqs)
                             for i, eqs in enumerate(all_coeffs))
         if lin_coeffs:
-            raise ValueError(f"could not determine any coefficients:\n"
+            raise ValueError("could not determine any coefficients:\n"
                              + eqs_str)
-        raise ValueError(f"there are no linear equations:\n"
+        raise ValueError("there are no linear equations:\n"
                              + eqs_str)
 
     def _eq_str(self, idx, eq):

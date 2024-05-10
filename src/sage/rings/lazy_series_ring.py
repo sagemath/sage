@@ -2872,11 +2872,10 @@ class LazyPowerSeriesRing(LazySeriesRing):
                     coeff_stream = Stream_function(y, self._sparse, valuation)
                 else:
                     coeff_stream = Stream_iterator(map(R, _skip_leading_zeros(x)), valuation)
+            elif callable(x):
+                coeff_stream = Stream_function(lambda i: BR(x(i)), self._sparse, valuation)
             else:
-                if callable(x):
-                    coeff_stream = Stream_function(lambda i: BR(x(i)), self._sparse, valuation)
-                else:
-                    coeff_stream = Stream_iterator(map(BR, _skip_leading_zeros(x)), valuation)
+                coeff_stream = Stream_iterator(map(BR, _skip_leading_zeros(x)), valuation)
             return self.element_class(self, coeff_stream)
         raise ValueError(f"unable to convert {x} into a lazy Taylor series")
 
