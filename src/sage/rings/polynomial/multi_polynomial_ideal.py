@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.singular
 r"""
 Ideals in multivariate polynomial rings
@@ -1384,11 +1383,7 @@ class MPolynomialIdeal_singular_repr(
         T = P.term_order()
         K = P.base_ring()
 
-        try:
-            import ginv
-        except ImportError:
-            from sage.misc.package import PackageNotFoundError
-            raise PackageNotFoundError("ginv")
+        import ginv
 
         st = ginv.SystemType("Polynomial")
 

@@ -1,9 +1,8 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Plane curves
 """
 
-# *****************************************************************************
+#*****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -18,9 +17,17 @@ Plane curves
 #
 #  The full text of the GPL is available at:
 #
-#                  https://www.gnu.org/licenses/
-# *****************************************************************************
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
-from sage.schemes.curves.constructor import Curve
+from .constructor import Curve
 
-from sage.schemes.curves.projective_curve import Hasse_bounds
+from .projective_curve import Hasse_bounds
+
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'PlaneCurveArrangements')
+
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'AffinePlaneCurveArrangements')
+
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'ProjectivePlaneCurveArrangements')

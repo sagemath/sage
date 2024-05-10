@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # cython: wraparound=False, boundscheck=False
 """
 Braid Orbit

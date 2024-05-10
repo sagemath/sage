@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 from sage.libs.singular.decl cimport poly, ring
 
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial_libsingular as MPolynomial_libsingular_base

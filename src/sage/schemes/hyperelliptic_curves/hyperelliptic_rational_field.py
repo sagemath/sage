@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Hyperelliptic curves over the rationals
 """

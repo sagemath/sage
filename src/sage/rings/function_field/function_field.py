@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Function Fields
 
@@ -1367,3 +1366,102 @@ class FunctionField(Field):
         """
         from .extensions import ConstantFieldExtension
         return ConstantFieldExtension(self, k)
+
+    @cached_method
+    def jacobian(self, model=None, base_div=None, **kwds):
+        """
+        Return the Jacobian of the function field.
+
+        INPUT:
+
+        - ``model`` -- (default: ``'hess'``) model to use for arithmetic
+
+        - ``base_div`` -- an effective divisor
+
+        The degree of the base divisor should satisfy certain degree condition
+        corresponding to the model used. The following table lists these
+        conditions. Let `g` be the genus of the function field.
+
+        - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
+
+        - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
+          degree at least `2g + 1`
+
+        - ``km_medium``: Khuri-Makdisi's medium model; requires base divisor of
+          degree at least `2g + 1`
+
+        - ``km_small``: Khuri-Makdisi's small model requires base divisor of
+          degree at least `g + 1`
+
+        We assume the function field has a rational place. If a base divisor is
+        not given, one is constructed using an arbitrary rational place.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(GF(5), 2)
+            sage: C = Curve(y^2*(x^3 - 1) - (x^3 - 2))
+            sage: F = C.function_field()
+            sage: F.jacobian()
+            Jacobian of Function field in y defined by (x^3 + 4)*y^2 + 4*x^3 + 2 (Hess model)
+
+        TESTS:
+
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: C = Curve(y^2 - x^3 - 1, A).projective_closure()
+            sage: C.jacobian(model='hess')
+            Traceback (most recent call last):
+            ...
+            ValueError: failed to obtain a rational place; provide a base divisor
+        """
+        from .place import FunctionFieldPlace
+
+        if model is None:
+            model = 'hess'
+
+        if base_div is None:
+            try:
+                base_place = self.get_place(1)
+            except AttributeError:
+                raise ValueError('failed to obtain a rational place; provide a base divisor')
+            if base_place is None:
+                raise ValueError('the function field has no rational place')
+            # appropriate base divisor is constructed below.
+        else:
+            if isinstance(base_div, FunctionFieldPlace):
+                base_div = base_div.divisor()
+
+        g = self.genus()
+        curve = kwds.get('curve')
+
+        if model.startswith('km'):
+            from .jacobian_khuri_makdisi import Jacobian
+            if model == 'km' or model.endswith('large'):
+                if base_div is None:
+                    base_div = (2*g + 1) * base_place
+                if not base_div.degree() >= 2*g + 1:
+                    raise ValueError("Khuri-Makdisi large model requires base divisor of degree "
+                                     "at least 2*g + 1 for genus g")
+                return Jacobian(self, base_div, model='large', curve=curve)
+            elif model.endswith('medium'):
+                if base_div is None:
+                    base_div = (2*g + 1) * base_place
+                if not base_div.degree() >= 2*g + 1:
+                    raise ValueError("Khuri-Makdisi medium model requires base divisor of degree "
+                                     "at least 2*g + 1 for genus g")
+                return Jacobian(self, base_div, model='medium', curve=curve)
+            elif model.endswith('small'):
+                if base_div is None:
+                    base_div = (g + 1) * base_place
+                if not base_div.degree() >= g + 1:
+                    raise ValueError("Khuri-Makdisi small model requires base divisor of degree "
+                                     "at least g + 1 for genus g")
+                return Jacobian(self, base_div, model='small', curve=curve)
+        elif model == 'hess':
+            from .jacobian_hess import Jacobian
+            if base_div is None:
+                base_div = g * base_place
+            if base_div.degree() != g:
+                raise ValueError("Hess model requires base divisor of degree g for genus g")
+            return Jacobian(self, base_div, curve=curve)
+
+        raise ValueError("unknown model")

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 '''
 Tests for the IPython integration
 

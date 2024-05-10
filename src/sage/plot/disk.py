@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 """
 Disks
 """
@@ -150,7 +149,7 @@ class Disk(GraphicPrimitive):
             sage: p = P[0]; p
             Disk defined by (3.0,3.0) with r=1.0 spanning (0.0, 1.5707963267...) radians
         """
-        return "Disk defined by (%s,%s) with r=%s spanning (%s, %s) radians" % (self.x, self.y, self.r, self.rad1, self.rad2)
+        return "Disk defined by ({},{}) with r={} spanning ({}, {}) radians".format(self.x, self.y, self.r, self.rad1, self.rad2)
 
     def _render_on_subplot(self, subplot):
         """
