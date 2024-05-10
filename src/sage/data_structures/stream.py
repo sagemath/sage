@@ -1270,7 +1270,7 @@ class VariablePool(UniqueRepresentation):
 
     INPUT:
 
-    - ``ring``, an :class:`InfinitePolynomialRing`.
+    - ``ring`` -- :class:`InfinitePolynomialRing`
     """
     def __init__(self, ring):
         """
