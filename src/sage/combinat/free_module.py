@@ -1381,7 +1381,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         """
         self._sets = modules
         indices = CartesianProduct_iters(*[module.basis().keys()
-                                           for module in modules]).map(tuple)
+                                           for module in modules]).map(tuple, is_injective=True)
         CombinatorialFreeModule.__init__(self, modules[0].base_ring(), indices, **options)
         # the following is not the best option, but it's better than nothing.
         if 'tensor_symbol' in options:

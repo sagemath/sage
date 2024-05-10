@@ -3383,6 +3383,195 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         R = self.quaternion_algebra()
         return R.ideal(basis, check=False)
 
+    def pushforward(self, J, side=None):
+        """
+        Compute the ideal which is the pushforward of ``self`` through an ideal ``J``.
+
+        Uses Lemma 2.1.7 of [Ler2022]_. Only works for integral ideals.
+
+        INPUT:
+
+        - ``J`` -- a fractional quaternion ideal with norm coprime to ``self`` and either
+          the same left order or right order as ``self``
+
+        - ``side`` -- string (optional, default ``None``) set to ``"left"`` or ``"right"`` to
+          perform pushforward of left or right ideals respectively. If ``None`` the side
+          is determined by the matching left or right orders
+
+        OUTPUT: a fractional quaternion ideal
+
+        EXAMPLES::
+
+            sage: B = QuaternionAlgebra(419)
+            sage: i,j,k = B.gens()
+            sage: I1 = B.ideal([1/2 + 3/2*j + 2*k, 1/2*i + j + 3/2*k, 3*j, 3*k])
+            sage: I2 = B.ideal([1/2 + 9/2*j, 1/2*i + 9/2*k, 5*j, 5*k])
+            sage: I1.left_order() == I2.left_order()
+            True
+            sage: I1.pushforward(I2, side="left")
+            Fractional ideal (1/2 + 3/2*j + 5*k, 1/10*i + 2*j + 39/10*k, 3*j, 15*k)
+
+        TESTS::
+
+            sage: B = QuaternionAlgebra(419)
+            sage: i,j,k = B.gens()
+            sage: O0 = B.maximal_order()
+            sage: O0.unit_ideal().pushforward(O0.unit_ideal())
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J have same left and right orders, side of pushforward must be specified
+            sage: O0.unit_ideal().pushforward(O0.unit_ideal(), "left")
+            Fractional ideal (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            sage: I1 = B.ideal([1/2 + 3/2*j + 2*k, 1/2*i + j + 3/2*k, 3*j, 3*k])
+            sage: I2 = B.ideal([1/2 + 9/2*j, 1/2*i + 9/2*k, 5*j, 5*k])
+            sage: I1.pushforward(I2)
+            Fractional ideal (1/2 + 3/2*j + 5*k, 1/10*i + 2*j + 39/10*k, 3*j, 15*k)
+            sage: I1.pushforward(I2, side="right")
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J must have the same right orders
+            sage: I1.conjugate().pushforward(I2.conjugate())
+            Fractional ideal (1/2 + 3/2*j + 10*k, 1/10*i + 2*j + 39/10*k, 3*j, 15*k)
+            sage: I1.conjugate().pushforward(I2.conjugate(), side="left")
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J must have the same left orders
+            sage: I1.pushforward(I1, side="left")
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J must have coprime norms
+            sage: I3 = B.ideal([1/2 + 13/2*j + 6*k, 1/2*i + 3*j + 13/2*k, 9*j, 9*k])
+            sage: I3.pushforward(I3*(1/3), side="left")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: quaternion ideal pushforward not implemented for non-integral ideals
+        """
+        if not isinstance(J, QuaternionFractionalIdeal_rational):
+            raise TypeError("can only pushforward through a quaternion ideal")
+
+        if side == "left":
+            if self.left_order() != J.left_order():
+                raise ValueError("self and J must have the same left orders")
+            if not self.is_integral() or not J.is_integral():
+                raise NotImplementedError("quaternion ideal pushforward not implemented for non-integral ideals")
+            Jnorm = J.norm()
+            if gcd(self.norm(), Jnorm) != 1:
+                raise ValueError("self and J must have coprime norms")
+            return (1 / Jnorm) * (J.conjugate() * self.intersection(J))
+
+        if side == "right":
+            if self.right_order() != J.right_order():
+                raise ValueError("self and J must have the same right orders")
+            return self.conjugate().pushforward(J.conjugate(), side="left").conjugate()
+
+        if side is None:
+            same_left_order = bool(self.left_order() == J.left_order())
+            same_right_order = bool(self.right_order() == J.right_order())
+            if not same_left_order and not same_right_order:
+                raise ValueError("self and J must share a left or right order")
+            if same_left_order and same_right_order:
+                raise ValueError("self and J have same left and right orders, side of pushforward must be specified")
+            if same_left_order:
+                return self.pushforward(J, side="left")
+            return self.pushforward(J, side="right")
+
+        raise ValueError('side must be "left", "right" or None')
+
+    def pullback(self, J, side=None):
+        """
+        Compute the ideal which is the pullback of ``self`` through an ideal ``J``.
+
+        Uses Lemma 2.1.7 of [Ler2022]_. Only works for integral ideals.
+
+        INPUT:
+
+        - ``J`` -- a fractional quaternion ideal with norm coprime to ``self`` and either
+          left order equal to the right order of ``self``, or vice versa
+
+        - ``side`` -- string (optional, default ``None``) set to ``"left"`` or ``"right"`` to
+          perform pullback of left or right ideals respectively. If ``None`` the side
+          is determined by the matching left and right orders
+
+        OUTPUT: a fractional quaternion ideal
+
+        EXAMPLES::
+
+            sage: B = QuaternionAlgebra(419)
+            sage: i,j,k = B.gens()
+            sage: I1 = B.ideal([1/2 + 3/2*j + 2*k, 1/2*i + j + 3/2*k, 3*j, 3*k])
+            sage: I2 = B.ideal([1/2 + 9/2*j, 1/2*i + 9/2*k, 5*j, 5*k])
+            sage: I3 = I1.pushforward(I2, side="left")
+            sage: I3.left_order() == I2.right_order()
+            True
+            sage: I3.pullback(I2, side="left") == I1
+            True
+
+        TESTS::
+
+            sage: B = QuaternionAlgebra(419)
+            sage: i,j,k = B.gens()
+            sage: O0 = B.maximal_order()
+            sage: O0.unit_ideal().pullback(O0.unit_ideal())
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J have same left and right orders, side of pullback must be specified
+            sage: O0.unit_ideal().pullback(O0.unit_ideal(), "left")
+            Fractional ideal (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            sage: I1 = B.ideal([1/2 + 3/2*j + 2*k, 1/2*i + j + 3/2*k, 3*j, 3*k])
+            sage: I2 = B.ideal([1/2 + 15/2*j + 2*k, 1/6*i + 43/3*j + 5/2*k, 15*j, 5*k])
+            sage: I2.pullback(I1)
+            Fractional ideal (1/2 + 5/2*j + 2*k, 1/2*i + 3*j + 5/2*k, 5*j, 5*k)
+            sage: I2.pullback(I1, side="right")
+            Traceback (most recent call last):
+            ...
+            ValueError: right order of self should be left order of J
+            sage: I2.conjugate().pullback(I1.conjugate(), side="right")
+            Fractional ideal (1/2 + 5/2*j + 3*k, 1/2*i + 3*j + 5/2*k, 5*j, 5*k)
+            sage: I2.conjugate().pullback(I1.conjugate(), side="left")
+            Traceback (most recent call last):
+            ...
+            ValueError: left order of self should be right order of J
+            sage: I1.pullback(I1.conjugate(), side="left")
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J must have coprime norms
+            sage: I3 = B.ideal([1/2 + 13/2*j + 6*k, 1/2*i + 3*j + 13/2*k, 9*j, 9*k])
+            sage: I3.pullback(I3.conjugate()*(1/3), side="left")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: quaternion ideal pullback not implemented for non-integral ideals
+        """
+        if not isinstance(J, QuaternionFractionalIdeal_rational):
+            raise TypeError("can only pullback through a quaternion ideal")
+
+        if side == "left":
+            if self.left_order() != J.right_order():
+                raise ValueError("left order of self should be right order of J")
+            if not self.is_integral() or not J.is_integral():
+                raise NotImplementedError("quaternion ideal pullback not implemented for non-integral ideals")
+            N = self.norm()
+            if gcd(N, J.norm()) != 1:
+                raise ValueError("self and J must have coprime norms")
+            return J*self + N*J.left_order()
+
+        if side == "right":
+            if self.right_order() != J.left_order():
+                raise ValueError("right order of self should be left order of J")
+            return self.conjugate().pullback(J.conjugate(), side="left").conjugate()
+
+        if side is None:
+            is_side_left = bool(self.left_order() == J.right_order())
+            is_side_right = bool(self.right_order() == J.left_order())
+            if not is_side_left and not is_side_right:
+                raise ValueError("left order of self must equal right order of J, or vice versa")
+            if is_side_left and is_side_right:
+                raise ValueError("self and J have same left and right orders, side of pullback must be specified")
+            if is_side_left:
+                return self.pullback(J, side="left")
+            return self.pullback(J, side="right")
+
+        raise ValueError('side must be "left", "right" or None')
+
     def is_equivalent(self, J, B=10, certificate=False, side=None):
         r"""
         Checks whether ``self`` and ``J`` are equivalent as ideals.

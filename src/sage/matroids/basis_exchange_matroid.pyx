@@ -1923,7 +1923,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: M = matroids.catalog.N1()
             sage: M._characteristic_setsystem()
-            Iterator over a system of subsets
+            SetSystem of 23 sets over 10 elements
             sage: len(M._characteristic_setsystem())
             23
         """

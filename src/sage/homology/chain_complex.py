@@ -1141,58 +1141,6 @@ class ChainComplex_class(Parent):
         """
         return not self == other
 
-    def _homology_chomp(self, deg, base_ring, verbose, generators):
-        """
-        Helper function for :meth:`homology`.
-
-        This function is deprecated.
-
-        INPUT:
-
-        - ``deg`` -- integer (one specific homology group) or ``None``
-          (all of those that can be non-zero)
-
-        - ``base_ring`` -- the base ring (must be the integers
-          or a prime field)
-
-        - ``verbose`` -- boolean, whether to print some messages
-
-        - ``generators`` --  boolean, whether to also return generators
-          for homology
-
-        EXAMPLES::
-
-            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])}, base_ring=GF(2))
-            sage: C._homology_chomp(None, GF(2), False, False)  # optional - chomp, needs sage.rings.finite_rings
-            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://github.com/sagemath/sage/issues/33777 for details.
-            {0: Vector space of dimension 2 over Finite Field of size 2, 1: Vector space of dimension 1 over Finite Field of size 2}
-
-            sage: D = ChainComplex({0: matrix(ZZ,1,0,[]), 1: matrix(ZZ,1,1,[0]),
-            ....:   2: matrix(ZZ,0,1,[])})
-            sage: D._homology_chomp(None, GF(2), False, False)  # optional - chomp, needs sage.rings.finite_rings
-            {1: Vector space of dimension 1 over Finite Field of size 2,
-            2: Vector space of dimension 1 over Finite Field of size 2}
-        """
-        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
-        from sage.interfaces.chomp import homchain
-        H = homchain(self, base_ring=base_ring, verbose=verbose,
-                     generators=generators)
-        if H is None:
-            raise RuntimeError('ran CHomP, but no output')
-        if deg is None:
-            # all the homology groups that could be non-zero
-            # one has to complete the answer of chomp
-            result = H
-            for idx in self.nonzero_degrees():
-                if idx not in H:
-                    result[idx] = HomologyGroup(0, base_ring)
-            return result
-        if deg in H:
-            return H[deg]
-        else:
-            return HomologyGroup(0, base_ring)
-
     def homology(self, deg=None, base_ring=None, generators=False,
                  verbose=False, algorithm='pari'):
         r"""
@@ -1223,7 +1171,6 @@ class ChainComplex_class(Parent):
           * ``'auto'``
           * ``'dhsw'``
           * ``'pari'``
-          * ``'chomp'`` (this option is deprecated)
 
           See below for descriptions.
 
@@ -1253,12 +1200,6 @@ class ChainComplex_class(Parent):
         ``algorithm`` may also be ``'pari'`` or ``'dhsw'``, which
         forces the named algorithm to be used regardless of the size
         of the matrices.
-
-        Finally, if ``algorithm`` is set to ``'chomp'``, then use
-        CHomP. CHomP is available at the web page
-        http://chomp.rutgers.edu/, although the software has not been
-        tested recently in Sage. The use of this option is deprecated;
-        see :issue:`33777`.
 
         As of this writing, ``'pari'`` is the fastest standard option.
 
@@ -1319,10 +1260,8 @@ class ChainComplex_class(Parent):
         if not (base_ring.is_field() or base_ring is ZZ):
             raise NotImplementedError('can only compute homology if the base ring is the integers or a field')
 
-        if algorithm not in ['dhsw', 'pari', 'auto', 'no_chomp', 'chomp']:
+        if algorithm not in ['dhsw', 'pari', 'auto', 'no_chomp']:
             raise NotImplementedError('algorithm not recognized')
-        if algorithm == 'chomp':
-            return self._homology_chomp(deg, base_ring, verbose, generators)
 
         if deg is None:
             deg = self.nonzero_degrees()
@@ -1685,76 +1624,6 @@ class ChainComplex_class(Parent):
         sgn = (-1)**n
         return ChainComplex({k-shift: sgn * self._diff[k] for k in self._diff},
                             degree_of_differential=deg)
-
-    def _chomp_repr_(self):
-        r"""
-        String representation of ``self`` suitable for use by the CHomP
-        program.
-
-        This function is deprecated.
-
-        Since CHomP can only handle chain complexes, not cochain
-        complexes, and since it likes its complexes to start in degree
-        0, flip the complex over if necessary, and shift it to start
-        in degree 0.  Note also that CHomP only works over the
-        integers or a finite prime field.
-
-        EXAMPLES::
-
-            sage: C = ChainComplex({-2: matrix(ZZ, 1, 3, [3, 0, 0])}, degree=-1)
-            sage: C._chomp_repr_()
-            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://github.com/sagemath/sage/issues/33777 for details.
-            'chain complex\n\nmax dimension = 1\n\ndimension 0\n   boundary a1 = 0\n\ndimension 1\n   boundary a1 = + 3 * a1 \n   boundary a2 = 0\n   boundary a3 = 0\n\n'
-            sage: C = ChainComplex({-2: matrix(ZZ, 1, 3, [3, 0, 0])}, degree=1)
-            sage: C._chomp_repr_()
-            'chain complex\n\nmax dimension = 1\n\ndimension 0\n   boundary a1 = 0\n\ndimension 1\n   boundary a1 = + 3 * a1 \n   boundary a2 = 0\n   boundary a3 = 0\n\n'
-        """
-        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
-        deg = self.degree_of_differential()
-        if (self.grading_group() != ZZ or
-                (deg != 1 and deg != -1)):
-            raise ValueError('CHomP only works on Z-graded chain complexes with '
-                             'differential of degree 1 or -1')
-        base_ring = self.base_ring()
-        if (base_ring == QQ) or (base_ring != ZZ and not (base_ring.is_prime_field())):
-            raise ValueError('CHomP doesn\'t compute over the rationals, only over Z or F_p')
-        if deg == -1:
-            diffs = self.differential()
-        else:
-            diffs = self._flip_().differential()
-
-        if len(diffs) == 0:
-            diffs = {0: matrix(ZZ, 0, 0)}
-
-        maxdim = max(diffs)
-        mindim = min(diffs)
-        # will shift chain complex by subtracting mindim from
-        # dimensions, so its bottom dimension is zero.
-        s = "chain complex\n\nmax dimension = %s\n\n" % (maxdim - mindim - 1,)
-
-        for i in range(0, maxdim - mindim):
-            s += "dimension %s\n" % i
-            mat = diffs.get(i + mindim, matrix(base_ring, 0, 0))
-            for idx in range(mat.ncols()):
-                s += "   boundary a%s = " % (idx + 1)
-                # construct list of bdries
-                col = mat.column(idx)
-                nonzero_pos = col.nonzero_positions()
-                if nonzero_pos:
-                    for j in nonzero_pos:
-                        entry = col[j]
-                        if entry > 0:
-                            sgn = "+"
-                        else:
-                            sgn = "-"
-                            entry = -entry
-                        s += "%s %s * a%s " % (sgn, entry, j+1)
-                else:
-                    s += "0"
-                s += "\n"
-            s += "\n"
-        return s
 
     def _repr_(self):
         """

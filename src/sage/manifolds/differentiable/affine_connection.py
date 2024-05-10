@@ -149,10 +149,10 @@ class AffineConnection(SageObject):
 
     Unset components are initialized to zero::
 
-        sage: nab[:] # list of coefficients relative to the manifold's default vector frame
+        sage: nab[:]  # list of coefficients relative to the manifold's default vector frame
         [[[0, x^2, 0], [0, 0, 0], [0, 0, 0]],
-        [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-        [[0, 0, 0], [0, 0, y*z], [0, 0, 0]]]
+         [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+         [[0, 0, 0], [0, 0, y*z], [0, 0, 0]]]
 
     The treatment of connection coefficients in a given vector frame is similar
     to that of tensor components; see therefore the class
@@ -2377,7 +2377,7 @@ class AffineConnection(SageObject):
             2-form curvature (1,1) of connection nabla w.r.t. Vector frame
              (M, (e_1,e_2,e_3)) on the 3-dimensional differentiable manifold M
             sage: nab.curvature_form(1,1,e).display(e)  # long time (if above is skipped)
-             curvature (1,1) of connection nabla w.r.t. Vector frame
+            curvature (1,1) of connection nabla w.r.t. Vector frame
              (M, (e_1,e_2,e_3)) =
               (y^3*z^4 + 2*x*y*z + (x*y^4 - x*y)*z^2) e^1∧e^2
               + (x^4*y*z^2 - x^2*y^2) e^1∧e^3 + (x^5*y*z^3 - x*z^2) e^2∧e^3

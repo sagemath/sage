@@ -87,6 +87,14 @@ download:
 dist: build/make/Makefile
 	./sage --sdist
 
+ci-build-with-fallback:
+	$(MAKE) build && $(MAKE) SAGE_CHECK=no pypi-wheels; 	\
+	if [ $$? != 0 ]; then					\
+            echo "Incremental build failed, falling back";	\
+	    $(MAKE) doc-clean doc-uninstall sagelib-clean;	\
+	    $(MAKE) build && $(MAKE) SAGE_CHECK=no pypi-wheels;	\
+	fi
+
 ###############################################################################
 # Cleaning up
 ###############################################################################
@@ -167,9 +175,19 @@ bootstrap-clean:
 	rm -rf src/doc/en/reference/spkg/*.rst
 	for a in environment environment-optional src/environment src/environment-dev src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
 	rm -f src/Pipfile
-	rm -f src/pyproject.toml
 	rm -f src/requirements.txt
 	rm -f src/setup.cfg
+	rm -f build/pkgs/cypari/version_requirements.txt
+	rm -f build/pkgs/cysignals/version_requirements.txt
+	rm -f build/pkgs/cython/version_requirements.txt
+	rm -f build/pkgs/gmpy2/version_requirements.txt
+	rm -f build/pkgs/jupyter_core/version_requirements.txt
+	rm -f build/pkgs/memory_allocator/version_requirements.txt
+	rm -f build/pkgs/numpy/version_requirements.txt
+	rm -f build/pkgs/pkgconfig/version_requirements.txt
+	rm -f build/pkgs/pplpy/version_requirements.txt
+	rm -f build/pkgs/setuptools/version_requirements.txt
+	rm -f build/pkgs/wheel/version_requirements.txt
 
 # Remove absolutely everything which isn't part of the git repo
 maintainer-clean: distclean bootstrap-clean

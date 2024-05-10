@@ -768,7 +768,7 @@ class TensorBundle(DifferentiableVectorBundle):
           :class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: True) -- if set to True, the inverse
+        - ``compute_inverse`` (default: ``True``) -- if set to ``True``, the inverse
           automorphism is computed and the change from basis `(f_i)` to `(e_i)`
           is set to it in the internal dictionary ``self._frame_changes``
 
@@ -1476,7 +1476,7 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: Phi.display()
             Phi: R → M
                t ↦ (x, y) = (cos(t), sin(t))
-                sage: PhiT11 = R.tensor_bundle(1, 1, dest_map=Phi)
+            sage: PhiT11 = R.tensor_bundle(1, 1, dest_map=Phi)
             sage: PhiT11.ambient_domain()
             2-dimensional differentiable manifold M
 
@@ -1724,15 +1724,15 @@ class TensorBundle(DifferentiableVectorBundle):
             []
             sage: T11.set_orientation([c_xy.frame(), c_uv.frame()])
             sage: T11.orientation()
-            [Coordinate frame (U, (∂/∂x,∂/∂y)), Coordinate frame
-             (V, (∂/∂u,∂/∂v))]
+            [Coordinate frame (U, (∂/∂x,∂/∂y)),
+             Coordinate frame (V, (∂/∂u,∂/∂v))]
 
         If the destination map is the identity, the orientation is
         automatically set for the manifold, too::
 
             sage: M.orientation()
-            [Coordinate frame (U, (∂/∂x,∂/∂y)), Coordinate frame
-             (V, (∂/∂u,∂/∂v))]
+            [Coordinate frame (U, (∂/∂x,∂/∂y)),
+             Coordinate frame (V, (∂/∂u,∂/∂v))]
 
         Conversely, if one sets an orientation on the manifold,
         the orientation on its tensor bundles is set accordingly::
@@ -1740,8 +1740,8 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: c_tz.<t,z> = U.chart()
             sage: M.set_orientation([c_tz, c_uv])
             sage: T11.orientation()
-            [Coordinate frame (U, (∂/∂t,∂/∂z)), Coordinate frame
-             (V, (∂/∂u,∂/∂v))]
+            [Coordinate frame (U, (∂/∂t,∂/∂z)),
+             Coordinate frame (V, (∂/∂u,∂/∂v))]
 
         """
         if self._dest_map.is_identity():
