@@ -1045,12 +1045,8 @@ class Stream_function(Stream_inexact):
         closure = self.get_coefficient.__closure__
         if closure is None:
             return []
-        l = []
-        for cell in closure:
-            content = cell.cell_contents
-            if isinstance(content, Stream):
-                l.append(content)
-        return l
+        return [cell.cell_contents for cell in closure
+                if isinstance(cell.cell_contents, Stream)]
 
     def __hash__(self):
         """
