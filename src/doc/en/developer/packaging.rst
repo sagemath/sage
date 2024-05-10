@@ -640,6 +640,8 @@ and upper bounds).  The constraints are in the format of the
 <https://setuptools.readthedocs.io/en/latest/userguide/declarative_config.html>`_
 or `setup.py
 <https://packaging.python.org/discussions/install-requires-vs-requirements/#id5>`_.
+An exception are build time dependencies of Sage library, which should instead
+be declared in the ``requires`` block of ``pyproject.toml``.
 
 Sage uses these version constraints for two purposes:
 

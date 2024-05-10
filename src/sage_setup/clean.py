@@ -80,6 +80,7 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
     course. We check that when the doctest is being run, that is,
     after installation, there are no stale files::
 
+        sage: # needs SAGE_SRC
         sage: from sage.env import SAGE_SRC, SAGE_LIB, SAGE_ROOT
         sage: from sage_setup.find import _cythonized_dir
         sage: cythonized_dir = _cythonized_dir(SAGE_SRC)
@@ -98,6 +99,7 @@ def _find_stale_files(site_packages, python_packages, python_modules, ext_module
 
     TODO: Also check extension modules::
 
+        sage: # needs SAGE_SRC
         sage: stale_iter = _find_stale_files(SAGE_LIB, python_packages, python_modules, [], extra_files)
         sage: from importlib.machinery import EXTENSION_SUFFIXES
         sage: skip_extensions = tuple(EXTENSION_SUFFIXES)

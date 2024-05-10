@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.graphs sage.groups sage.modules
 """
 Weyl Character Rings

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 The set of prime numbers
 

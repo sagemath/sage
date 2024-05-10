@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 cdef class Envelope():
     cdef readonly sign
     cdef f

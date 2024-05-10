@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Cartesian Products
 """
@@ -112,6 +111,16 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
                                            name=name,
                                            category=category,
                                            cache=False)
+
+    def __hash__(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.combinat.cartesian_product import CartesianProduct_iters
+            sage: cp = CartesianProduct_iters((1,2), (3,4))
+            sage: hash(cp) == CartesianProduct_iters((1,2), (3,4))
+        """
+        return hash(tuple(self.iters))
 
     def __contains__(self, x):
         """

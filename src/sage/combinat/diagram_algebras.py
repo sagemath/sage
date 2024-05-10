@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Diagram and Partition Algebras
@@ -1070,7 +1069,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: elm2.bijection_on_free_nodes(two_line=True)
             [[1, 2, 3], [-2, -3, -1]]
         """
-        terms = sorted(sorted(list(v), reverse=True) for v in self.diagram()
+        terms = sorted(sorted(v, reverse=True) for v in self.diagram()
                        if max(v) > 0 and min(v) < 0)
         if two_line:
             terms = [[t[i] for t in terms] for i in range(2)]

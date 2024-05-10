@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Posets
 
@@ -37,10 +36,8 @@ If you are looking for Poset-related :mod:`categories
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
-from sage.combinat.posets.posets import Poset
+from .posets import Poset
 
-from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice, JoinSemilattice
+from .lattices import LatticePoset, MeetSemilattice, JoinSemilattice
 
-from sage.combinat.posets.poset_examples import posets, Posets
-
-del install_doc
+from .poset_examples import posets, Posets

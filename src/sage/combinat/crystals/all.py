@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 Crystals
 
@@ -29,5 +28,3 @@ install_doc(__package__, __doc__)
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.combinat.crystals', 'catalog', 'crystals')
-del lazy_import
-del install_doc

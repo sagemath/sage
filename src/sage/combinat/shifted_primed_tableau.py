@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Shifted primed tableaux
@@ -358,7 +357,7 @@ class ShiftedPrimedTableau(ClonableArray,
             sage: ShiftedPrimedTableau([['2p',3],[2,2]], skew=[2])._repr_list()
             "[(None, None, 2', 3), (2, 2)]"
         """
-        return repr([row for row in self])
+        return repr(list(self))
 
     def _repr_tab(self):
         """

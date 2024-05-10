@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
 Local Representation Conditions

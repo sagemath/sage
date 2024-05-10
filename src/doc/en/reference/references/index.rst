@@ -1826,6 +1826,10 @@ REFERENCES:
 .. [Com2019] Camille Combe, *Réalisation cubique du poset des
              intervalles de Tamari*, preprint :arxiv:`1904.00658`
 
+.. [Com1974] Comtet Louis, *Identities and Expansions*.
+             In: Advanced Combinatorics. 1974. pp. 127-175
+             :doi:`10.1007/978-94-010-2196-8_3`
+
 .. [Con] Keith Conrad, *Groups of order 12*,
          http://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf,
          accessed 21 October 2009.
@@ -3192,6 +3196,9 @@ REFERENCES:
             Cryptanalysis* ; 2002' available at
             http://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf
 
+.. [Hes2004] Florian Hess, "Computing relations in divisor class groups of
+              algebraic curves over finite fields," Preprint, 2004.
+
 .. [Hes2002] Florian Hess, "Computing Riemann-Roch spaces in algebraic
              function fields and related topics," J. Symbolic
              Comput. 33 (2002), no. 4, 425--445.
@@ -3787,6 +3794,9 @@ REFERENCES:
             block cipher*, Lightweight Cryptography Workshop, 2016.
             https://www.nist.gov/sites/default/files/documents/2016/10/18/karpman-paper-lwc2016.pdf
 
+.. [Khu2004] \K. Khuri-Makdisi. *Linear algebra algorithms for divisors on an algebraic curve*,
+             Mathematics of Computation 73, no. 245 (2004) pp. 333-357.
+
 .. [Kin1992] Nancy G. Kinnersley, *The vertex separation number of a graph
              equals its path-width*, Information Processing Letters
              42(6):345-350, 1992. :doi:`10.1016/0020-0190(92)90234-M`.
@@ -4217,6 +4227,10 @@ REFERENCES:
 
 .. [Lei2013] Tom Leinster, *The magnitude of metric spaces*.
              Doc. Math. 18 (2013), 857-905.
+
+.. [Ler2022] Antonin Leroux: *Quaternion algebras and isogeny-based cryptography*,
+             PhD Thesis, 2022.
+             https://www.lix.polytechnique.fr/Labo/Antonin.LEROUX/manuscrit_these.pdf
 
 .. [Lev2014] Lionel Levine. *Threshold state and a conjecture of
              Poghosyan, Poghosyan, Priezzhev and Ruelle*,
@@ -4999,6 +5013,11 @@ REFERENCES:
 
 .. [Nie] Johan S. R. Nielsen, Codinglib,
          https://bitbucket.org/jsrn/codinglib/.
+
+.. [Niez1998] Marek Niezgoda.
+              Group majorization and Schur type inequalities.
+              Linear Algebra and its Applications, 268(1):9-30, 1998.
+              :doi:`10.1016/S0024-3795(97)89322-6`.
 
 .. [NW1978] \A. Nijenhuis and H. Wilf, Combinatorial Algorithms,
             Academic Press (1978).

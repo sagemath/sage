@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Multivariate Polynomial Rings over Generic Rings
 
