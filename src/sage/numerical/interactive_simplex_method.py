@@ -199,6 +199,7 @@ lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "
 from sage.rings.infinity import Infinity
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.rings.integer_ring import ZZ
@@ -1851,7 +1852,7 @@ class InteractiveLPProblem(SageObject):
             c = - c
             constant_term = - constant_term
             objective_name = - objective_name
-        kwds["objective_name"] = objective_name
+        kwds["objective_name"] = objective_name # algebraic object no longer a string
         kwds["problem_type"] = "-max" if is_negative else "max"
         kwds["is_primal"] = self.is_primal()
         kwds["objective_constant_term"] = constant_term
@@ -2018,7 +2019,10 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         if objective_name is None:
             objective_name = default_variable_name(
                 "primal objective" if is_primal else "dual objective")
-        self._objective_name = polygen(ZZ, objective_name)
+        if isinstance(objective_name, Polynomial):
+            self._objective_name = objective_name
+        else:
+            self._objective_name = polygen(ZZ, objective_name)
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2,
