@@ -20,8 +20,10 @@ from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.modular.dirichlet import DirichletGroup
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
+
 
 lazy_import('sage.modular.modform.eis_series_cython', ['eisenstein_series_poly', 'Ek_ZZ'])
 lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')

@@ -275,6 +275,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 Symbolic Ring
             """
             from sage.rings.integer_ring import ZZ
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
             if isinstance(variable, str):
                 variable = PolynomialRing(ZZ, variable).gen()

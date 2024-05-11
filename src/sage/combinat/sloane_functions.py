@@ -135,6 +135,7 @@ from sage.rings.integer import Integer as Integer_class
 import sage.arith.all as arith
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat import combinat
 from sage.misc.misc_c import prod
 

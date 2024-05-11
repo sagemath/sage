@@ -41,6 +41,7 @@ from sage.sets.set import Set, Set_object_enumerated
 from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from . import combination
 
 ZZ_0 = ZZ.zero()

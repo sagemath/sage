@@ -56,6 +56,7 @@ from . import sfa
 from sage.combinat.partition import Partitions_n, _Partitions
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function
 import functools
@@ -559,7 +560,7 @@ class Macdonald(UniqueRepresentation):
         return MacdonaldPolynomials_s(self)
 
 
-QQqt = QQ['q,t'].fraction_field()
+QQqt = PolynomialRing(QQ, ['q', 't']).fraction_field()
 
 ##############################################
 

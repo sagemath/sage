@@ -46,6 +46,7 @@ from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.qqbar import AA, QQbar
 from sage.arith.misc import sort_complex_numbers_for_display
 from sage.rings.polynomial.refine_root import refine_root
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 def interval_roots(p, rts, prec):
@@ -75,7 +76,7 @@ def interval_roots(p, rts, prec):
     """
 
     CIF = ComplexIntervalField(prec)
-    CIFX = CIF['x']
+    CIFX = PolynomialRing(CIF, 'x')
 
     ip = CIFX(p)
     ipd = CIFX(p.derivative())
@@ -268,7 +269,7 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
     prec = 53
     while True:
         CC = ComplexField(prec)
-        CCX = CC['x']
+        CCX = PolynomialRing(CC, 'x')
 
         all_rts = []
         ok = True

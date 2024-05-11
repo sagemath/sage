@@ -3333,7 +3333,7 @@ class AlgebraicGenerator(SageObject):
 
         def find_fn(p, prec):
             ifield = RealIntervalField(prec)
-            if_poly = ifield['x', 'y']
+            if_poly = PolynomialRing(ifield, ['x', 'y'])
             ip = if_poly(p)
             return ip(other._root._interval_fast(prec), self._root._interval_fast(prec))
         my_factor = find_zero_result(find_fn, factors_sage)
@@ -6975,7 +6975,7 @@ class AlgebraicPolynomialTracker(SageObject):
                 self._factors = [fac_exp[0] for fac_exp in self._poly.factor()]
             else:
                 fld = gen.field()
-                fld_poly = fld['y']
+                fld_poly = PolynomialRing(fld, 'y')
 
                 fp = fld_poly(coeffs)
 
@@ -7229,7 +7229,7 @@ class ANRoot(ANDescr):
 
         zero = field.zero()
 
-        poly_ring = field['x']
+        poly_ring = PolynomialRing(field, 'x')
 
         # interval_p = poly_ring(p)
         if p.base_ring() is QQ:
@@ -7385,7 +7385,7 @@ class ANRoot(ANDescr):
 
         zero = field.zero()
 
-        poly_ring = field['x']
+        poly_ring = PolynomialRing(field, 'x')
 
         # interval_p = poly_ring(p)
         if p.base_ring() is QQ:
@@ -7594,7 +7594,7 @@ class ANRoot(ANDescr):
             def find_fn(factor, prec):
                 # XXX
                 ifield = (ComplexIntervalField if self.is_complex() else RealIntervalField)(prec)
-                if_poly = ifield['x']
+                if_poly = PolynomialRing(ifield, 'x')
                 gen_val = gen._interval_fast(prec)
                 self_val = self._interval_fast(prec)
                 v = [c.polynomial()(gen_val) for c in factor]

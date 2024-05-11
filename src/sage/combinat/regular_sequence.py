@@ -2777,6 +2777,7 @@ class RecurrenceParser:
         from sage.functions.log import log
         from sage.rings.integer_ring import ZZ
         from sage.symbolic.operators import add_vararg, mul_vararg, operator
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         k = self.k
         coefficient_ring = self.coefficient_ring

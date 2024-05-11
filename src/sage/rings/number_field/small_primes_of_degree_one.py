@@ -96,6 +96,7 @@ AUTHORS:
 
 from sage.rings.integer_ring import ZZ
 
+
 class Small_primes_of_degree_one_iter():
     r"""
     Iterator that finds primes of a number field of absolute degree
@@ -130,6 +131,8 @@ class Small_primes_of_degree_one_iter():
             sage: K.primes_of_degree_one_list(3) # random
             [Fractional ideal (2*a + 1), Fractional ideal (-a + 4), Fractional ideal (3*a + 2)]
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
         self._field = field
         self._poly = self._field.absolute_field('b').defining_polynomial()
         self._poly = PolynomialRing(ZZ, 'x')(self._poly.denominator() * self._poly()) # make integer polynomial

@@ -183,6 +183,7 @@ from sage.rings.number_field.number_field_element_base import NumberFieldElement
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.rings.qqbar import AA, QQbar
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 libgap = GapElement_Integer = GapElement_Rational = GapElement_Cyclotomic = None
 gap = gap3 = None

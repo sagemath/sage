@@ -2987,6 +2987,7 @@ class MPolynomialIdeal_singular_repr(
                                for n, c in enumerate(numerator))
             return t.parent().zero() + out
         if algorithm == 'singular':
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             from sage.libs.singular.function_factory import ff
             hilbPoly = ff.polylib__lib.hilbPoly
 
@@ -3086,6 +3087,7 @@ class MPolynomialIdeal_singular_repr(
 
             return hilbert_poincare_series(gb, grading)
         elif algorithm == 'singular':
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             t = PolynomialRing(ZZ, 't').gen()
             n = self.ring().ngens()
 
@@ -3192,6 +3194,7 @@ class MPolynomialIdeal_singular_repr(
 
             return first_hilbert_series(gb, grading)
         elif algorithm == 'singular':
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             from sage.libs.singular.function_factory import ff
             hilb = ff.hilb
 

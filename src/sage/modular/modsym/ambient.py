@@ -622,6 +622,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         one = ZZ.one()
         two = ZZ(2)
         if self.weight() > two:
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(ZZ, 'X')
             X = R.gen(0)
             # need to add first two terms, which aren't necessarily

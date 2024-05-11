@@ -18,6 +18,7 @@ from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import parent
 
 
@@ -544,7 +545,7 @@ def qt_catalan_number(n):
         ValueError: argument (-2) must be a nonnegative integer
     """
     if n in ZZ and n >= 0:
-        ZZqt = ZZ['q', 't']
+        ZZqt = PolynomialRing(ZZ, ['q', 't'])
         d = {}
         for dw in DyckWords(n):
             tup = (dw.area(), dw.bounce())

@@ -493,7 +493,8 @@ class WeylGroups(Category_singleton):
             W = self.parent()
             pieri_factors = W.pieri_factors()
             from sage.rings.rational_field import QQ
-            R = QQ[','.join('x%s' % l for l in range(1, pieri_factors.max_length() + 1))]
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            R = PolynomialRing(QQ, ['x%s' % l for l in range(1, pieri_factors.max_length() + 1)])
             x = R.gens()
             if self.is_one():
                 return R.one()

@@ -24,6 +24,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.skew_partition import SkewPartition, SkewPartitions
 from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, SemistandardSkewTableaux

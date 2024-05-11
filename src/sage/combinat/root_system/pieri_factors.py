@@ -22,6 +22,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.misc import binomial
 import sage.combinat.ranker
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
