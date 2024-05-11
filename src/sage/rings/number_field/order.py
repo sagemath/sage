@@ -82,6 +82,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.ring import IntegralDomain
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.rings.abc
 from sage.structure.element import is_Element
 from sage.structure.factory import UniqueFactory
@@ -409,7 +410,7 @@ def EquationOrder(f, names, **kwds):
         ValueError: each generator must be integral
     """
     from .number_field import NumberField
-    R = ZZ['x']
+    R = PolynomialRing(ZZ, 'x')
     if isinstance(f, (list, tuple)):
         for g in f:
             try:
@@ -2966,7 +2967,7 @@ def GaussianIntegers(names="I", latex_name="i"):
     """
     from sage.rings.complex_double import CDF
     from sage.rings.number_field.number_field import NumberField
-    f = ZZ['x']([1, 0, 1])
+    f = PolynomialRing(ZZ, 'x')([1, 0, 1])
     nf = NumberField(f, names, embedding=CDF(0, 1), latex_name=latex_name)
     return nf.ring_of_integers()
 
@@ -2997,6 +2998,6 @@ def EisensteinIntegers(names="omega"):
     """
     from sage.rings.complex_double import CDF
     from sage.rings.number_field.number_field import NumberField
-    f = ZZ['x']([1, 1, 1])
+    f = PolynomialRing(ZZ, 'x')([1, 1, 1])
     nf = NumberField(f, names, embedding=CDF(-0.5, 0.8660254037844386))
     return nf.ring_of_integers()

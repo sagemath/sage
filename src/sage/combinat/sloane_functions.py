@@ -655,7 +655,7 @@ class A000009(SloaneSequence):
             sage: [next(it) for i in range(14)]
             [1, 1, 1, 2, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18]
         """
-        _, x = QQ['x'].objgen()
+        _, x = PolynomialRing(QQ, 'x').objgen()
         k = 0
         yield ZZ.one()
         p = 1

@@ -1819,7 +1819,7 @@ class NumberField_relative(NumberField_generic):
         try:
             return self.__abs_gen
         except AttributeError:
-            self.__abs_gen = self._element_class(self, QQ['x'].gen())
+            self.__abs_gen = self._element_class(self, PolynomialRing(QQ, 'x').gen())
             return self.__abs_gen
 
     def absolute_field(self, names):
@@ -1937,7 +1937,7 @@ class NumberField_relative(NumberField_generic):
             sage: k.pari_relative_polynomial()
             x^2 + Mod(y, y^2 + 1)*x - 1
         """
-        return QQ['x'](self._pari_rnfeq()[0])
+        return PolynomialRing(QQ, 'x')(self._pari_rnfeq()[0])
 
     def relative_polynomial(self):
         """

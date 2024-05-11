@@ -421,7 +421,7 @@ class EllipticCurveHom(Morphism):
             sage: pi.characteristic_polynomial().parent()
             Univariate Polynomial Ring in x over Integer Ring
         """
-        R = ZZ['x']
+        R = PolynomialRing(ZZ, 'x')
         return R([self.degree(), -self.trace(), 1])
 
     def kernel_polynomial(self):

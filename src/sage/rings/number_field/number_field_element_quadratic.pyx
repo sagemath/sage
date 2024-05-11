@@ -62,6 +62,7 @@ from sage.rings.real_mpfi cimport RealIntervalField_class
 from sage.rings.complex_interval cimport ComplexIntervalFieldElement
 from sage.rings.real_arb cimport RealBall
 from sage.rings.complex_arb cimport ComplexBall
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.libs.gmp.pylong cimport mpz_pythonhash
 
@@ -1918,7 +1919,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             # avoid circular import
             if self._parent._embedding is None:
                 from sage.rings.number_field.number_field import NumberField
-                K = NumberField(QQ['x'].gen()**2 - negD, 'sqrt%s' % negD)
+                K = NumberField(PolynomialRing(QQ, 'x').gen()**2 - negD, 'sqrt%s' % negD)
             else:
                 from sage.rings.number_field.number_field import QuadraticField
                 K = QuadraticField(negD, 'sqrt%s' % negD)
@@ -2209,7 +2210,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: f(b)
             0
         """
-        R = QQ[var]
+        R = PolynomialRing(QQ, var)
         return R([self.norm(), -self.trace(), 1])
 
     def minpoly(self, var='x', algorithm=None):
@@ -2234,7 +2235,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             x - 1/2
         """
         if self.is_rational():
-            R = QQ[var]
+            R = PolynomialRing(QQ, var)
             return R([-self._rational_(), 1])
         else:
             return self.charpoly(var)
@@ -2751,7 +2752,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             sage: f(b)
             0
         """
-        R = ZZ[var]
+        R = PolynomialRing(ZZ, var)
         return R([self.norm(), -self.trace(), 1])
 
     def minpoly(self, var='x', algorithm=None):
@@ -2777,7 +2778,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             x - 5
         """
         if self.is_rational():
-            R = ZZ[var]
+            R = PolynomialRing(ZZ, var)
             return R([-self._rational_(), 1])
         else:
             return self.charpoly()

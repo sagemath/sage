@@ -351,6 +351,7 @@ from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
 from sage.misc.superseded import deprecation
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
 
@@ -7946,7 +7947,7 @@ cdef class Matroid(SageObject):
             ....:     if not M.loops():
             ....:         assert (-1)**r * M.characteristic_polynomial(l) == sum(M.broken_circuit_complex().f_vector())
         """
-        R = ZZ['l']
+        R = PolynomialRing(ZZ, 'l')
         cdef list w = self.whitney_numbers()
         w.reverse()
         chi = R(w)

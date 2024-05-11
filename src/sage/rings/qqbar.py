@@ -2893,11 +2893,11 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
 
 
 # Cache some commonly-used polynomial rings
-QQx = QQ['x']
+QQx = PolynomialRing(QQ, 'x')
 QQx_x = QQx.gen()
-QQy = QQ['y']
+QQy = PolynomialRing(QQ, 'y')
 QQy_y = QQy.gen()
-QQxy = QQ['x', 'y']
+QQxy = PolynomialRing(QQ, ['x', 'y'])
 QQxy_x = QQxy.gen(0)
 QQxy_y = QQxy.gen(1)
 
@@ -7626,7 +7626,7 @@ class ANRoot(ANDescr):
             pari_nf = gen.pari_field()
 
             x, y = QQxy.gens()
-            my_factor = QQxy['z']([c.polynomial()(y) for c in my_factor])(x)
+            my_factor = PolynomialRing(QQxy, 'z')([c.polynomial()(y) for c in my_factor])(x)
 
             # XXX much duplicate code with AlgebraicGenerator.union()
 
@@ -8822,7 +8822,7 @@ def _init_qqbar():
 
     QQbar_hash_offset = AlgebraicNumber(ANExtensionElement(QQbar_I_generator, ~ZZ(123456789) + QQbar_I_nf.gen() / ZZ(987654321)))
 
-    ZZX_x = ZZ['x'].gen()
+    ZZX_x = PolynomialRing(ZZ, 'x').gen()
 
 
 # This is used in the _algebraic_ method of the golden_ratio constant,

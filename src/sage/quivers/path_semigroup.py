@@ -997,7 +997,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: len([p for p in S.iter_paths_by_length_and_startpoint(10,1) if p.terminal_vertex()==2])
             341
         """
-        P = ZZ['t']
+        P = PolynomialRing(ZZ, 't')
         t = P.gen()
         M = self._quiver.adjacency_matrix()
         out = ~(1 - M * t)

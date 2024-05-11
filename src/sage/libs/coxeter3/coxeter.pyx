@@ -1069,7 +1069,7 @@ cdef class CoxGroupElement:
         cdef size_t j
         for j in range(result.size()):
             coefficients[result[j].length()] += 1
-        return ZZ['t'](coefficients)
+        return PolynomialRing(ZZ, 't')(coefficients)
 
     def kazhdan_lusztig_polynomial(self, v):
         """

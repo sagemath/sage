@@ -158,7 +158,7 @@ def classical_modular_polynomial(l, j=None):
     except PariError:
         pass
     except TypeError:
-        return R(ZZ['Y'](pari_Phi))
+        return R(PolynomialRing(ZZ, 'Y')(pari_Phi))
 
     # Nothing worked. Fall back to computing the generic modular polynomial
     # and simply evaluating it.

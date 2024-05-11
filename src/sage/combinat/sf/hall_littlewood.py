@@ -27,6 +27,7 @@ from sage.matrix.constructor import matrix
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 # P basis cache
 p_to_s_cache = {}
@@ -35,7 +36,7 @@ s_to_p_cache = {}
 qp_to_s_cache = {}
 s_to_qp_cache = {}
 
-QQt = QQ['t'].fraction_field()
+QQt = PolynomialRing(QQ, 't').fraction_field()
 
 # TODO: optimize! which is the fastest way of computing HL's and kostka-polynomials?
 # Qp basis is computed using symmetrica, while P basis is computed using rigged

@@ -30,6 +30,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ
 from sage.rings.abc import RealField, ComplexField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 from sage.arith.functions import LCM_list
@@ -191,7 +192,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     if proof and not height_bound:
         raise ValueError("height_bound must be given for proof=True")
 
-    R = ZZ['x']
+    R = PolynomialRing(ZZ, 'x')
     x = R.gen()
 
     z = py_scalar_to_element(z)

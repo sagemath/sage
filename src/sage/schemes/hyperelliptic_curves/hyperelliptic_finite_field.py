@@ -369,7 +369,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             coeffs.append(c/i)
         coeffs = coeffs + [coeffs[g-i] * q**(i) for i in range(1, g + 1)]
 
-        return ZZ['x'](coeffs).reverse()
+        return PolynomialRing(ZZ, 'x')(coeffs).reverse()
 
     def frobenius_polynomial_matrix(self, M=None, algorithm='hypellfrob'):
         r"""
@@ -437,7 +437,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         # get a_{2g}, ..., a_{g+1}
         f = [f[g-i] * q**(g-i) for i in range(g)] + f
 
-        return ZZ['x'](f)
+        return PolynomialRing(ZZ, 'x')(f)
 
     def frobenius_polynomial_pari(self):
         r"""
@@ -498,7 +498,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             x^8 + 2*x^7 + 6*x^6 + 9*x^5 + 18*x^4 + 27*x^3 + 54*x^2 + 54*x + 81
         """
         f, h = self.hyperelliptic_polynomials()
-        return ZZ['x'](pari([f, h]).hyperellcharpoly())
+        return PolynomialRing(ZZ, 'x')(pari([f, h]).hyperellcharpoly())
 
     @cached_method
     def frobenius_polynomial(self):

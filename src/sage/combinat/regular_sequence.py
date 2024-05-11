@@ -2820,7 +2820,7 @@ class RecurrenceParser:
                 raise ValueError('Term %s in the equation %s has no argument.'
                                  % (op, eq))
             try:
-                poly = ZZ[var](op.operands()[0])
+                poly = PolynomialRing(ZZ, var)(op.operands()[0])
             except TypeError:
                 raise ValueError('Term %s in the equation %s: '
                                  '%s is not a polynomial in %s with integer coefficients.'
@@ -2860,7 +2860,7 @@ class RecurrenceParser:
                                  "one argument."
                                  % (left_side, eq))
             try:
-                polynomial_left = ZZ[var](left_side.operands()[0])
+                polynomial_left = PolynomialRing(ZZ, var)(left_side.operands()[0])
             except TypeError:
                 raise ValueError("Term %s in the equation %s: "
                                  "%s is not a polynomial in %s with "

@@ -2991,7 +2991,7 @@ class MPolynomialIdeal_singular_repr(
             hilbPoly = ff.polylib__lib.hilbPoly
 
             hp = hilbPoly(self)
-            t = ZZ['t'].gen()
+            t = PolynomialRing(ZZ, 't').gen()
             fp = ZZ(len(hp) - 1).factorial()
             return sum(ZZ(coeff) * t**i for i, coeff in enumerate(hp)) / fp
         raise ValueError("'algorithm' must be 'sage' or 'singular'")
@@ -3086,7 +3086,7 @@ class MPolynomialIdeal_singular_repr(
 
             return hilbert_poincare_series(gb, grading)
         elif algorithm == 'singular':
-            t = ZZ['t'].gen()
+            t = PolynomialRing(ZZ, 't').gen()
             n = self.ring().ngens()
 
             if grading is None:
@@ -3196,7 +3196,7 @@ class MPolynomialIdeal_singular_repr(
             hilb = ff.hilb
 
             gb = self.groebner_basis()
-            t = ZZ['t'].gen()
+            t = PolynomialRing(ZZ, 't').gen()
             gb = MPolynomialIdeal(self.ring(), gb)
             if grading is not None:
                 if not isinstance(grading, (list, tuple)) or any(a not in ZZ for a in grading):

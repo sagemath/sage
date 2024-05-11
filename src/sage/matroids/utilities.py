@@ -718,7 +718,7 @@ def lift_map(target):
         from sage.rings.number_field.number_field import NumberField
 
         R = GF(7)
-        z = ZZ['z'].gen()
+        z = PolynomialRing(ZZ, 'z').gen()
         S = NumberField(z * z - z + 1, 'z')
         z = S(z)
         return {R.one(): S.one(), R(3): z, R(3)**(-1): z**5}
@@ -731,7 +731,7 @@ def lift_map(target):
         from sage.rings.number_field.number_field import NumberField
 
         R = GF(19)
-        t = QQ['t'].gen()
+        t = PolynomialRing(QQ, 't').gen()
         G = NumberField(t * t - t - 1, 't')
         return {R(1): G(1), R(5): G(t),
                 R(1) / R(5): G(1) / G(t), R(-5): G(-t),

@@ -221,7 +221,7 @@ class PieriFactors(UniqueRepresentation, Parent):
             sage: weight(0).parent() == QQ['z']  # todo: not implemented
             True
         """
-        R = QQ['z']
+        R = PolynomialRing(QQ, 'z')
         z = R.gen()
         return lambda i: z**i
 

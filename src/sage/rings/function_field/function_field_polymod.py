@@ -2315,7 +2315,7 @@ class FunctionField_global(FunctionField_simple):
         for j in range(1, g+1):
             a.append(q**j * a[g-j])
 
-        return ZZ[name](a)
+        return PolynomialRing(ZZ, name)(a)
 
     def number_of_rational_places(self, r=1):
         """

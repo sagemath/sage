@@ -52,6 +52,7 @@ from sage.structure.richcmp cimport rich_to_bool
 
 import sage.rings.polynomial.polynomial_element
 from sage.rings.polynomial.evaluation_ntl cimport ZZX_evaluation_mpfi
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.rings.rational_field
 import sage.rings.rational
 import sage.rings.integer_ring
@@ -5153,7 +5154,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
                 algorithm = 'pari'
             else:
                 algorithm = 'sage'
-        R = QQ[var]
+        R = PolynomialRing(QQ, var)
         if algorithm == 'pari':
             return R(self.__pari__().charpoly())
         if algorithm == 'sage':
@@ -5524,7 +5525,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
             Univariate Polynomial Ring in x over Integer Ring
         """
         K = self.parent().number_field()
-        R = ZZ[var]
+        R = PolynomialRing(ZZ, var)
         return R(K(self).absolute_charpoly(var))
 
     def absolute_minpoly(self, var='x'):
@@ -5547,7 +5548,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
             Univariate Polynomial Ring in x over Integer Ring
         """
         K = self.parent().number_field()
-        R = ZZ[var]
+        R = PolynomialRing(ZZ, var)
         return R(K(self).absolute_minpoly(var))
 
 

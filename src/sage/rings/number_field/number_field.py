@@ -101,6 +101,7 @@ from sage.rings.finite_rings.integer_mod import mod
 from sage.categories.number_fields import NumberFields
 
 from sage.rings.ring import Ring
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.latex import latex_variable_name
 
 from .unit_group import UnitGroup
@@ -976,7 +977,7 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
     if check:
         if D.is_square():
             raise ValueError("D must not be a perfect square.")
-    R = QQ['x']
+    R = PolynomialRing(QQ, 'x')
     f = R([-D, 0, 1])
     if embedding is True:
         if D > 0:
@@ -1167,7 +1168,7 @@ class CyclotomicFieldFactory(UniqueFactory):
             if embedding is True:
                 embedding = (CLF, (2 * CLF.pi() * CLF.gen() / n).exp())
             elif embedding is not None:
-                x = number_field_morphisms.root_from_approx(QQ['x'].cyclotomic_polynomial(n), embedding)
+                x = number_field_morphisms.root_from_approx(PolynomialRing(QQ, 'x').cyclotomic_polynomial(n), embedding)
                 embedding = (x.parent(), x)
             if names is None:
                 names = "zeta%s" % n
@@ -2567,7 +2568,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.quadratic_defect(5, p)
             +Infinity
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if a not in self:
             raise TypeError(str(a) + " must be an element of " + str(self))
         if not self == QQ and not p.parent() == self.ideal_monoid():
@@ -8617,8 +8617,9 @@ class NumberField_absolute(NumberField_generic):
         g, alpha = f.polredbest(flag=1)
         beta = alpha.modreverse()
 
-        b = self(QQ['x'](lift(beta)))
-        h = QQ['x'](g)
+        P = PolynomialRing(QQ, 'x')
+        b = self(P(lift(beta)))
+        h = P(g)
 
         embedding = None
         if self.coerce_embedding() is not None:
@@ -9479,7 +9480,7 @@ class NumberField_absolute(NumberField_generic):
         if B is None:
             B = [(self.gen(0))**i for i in range(n)]
 
-        A = ZZ['x']
+        A = PolynomialRing(ZZ, 'x')
         f = A.gen(0)**2 - 2
         sqrt2 = f.roots(R)[1][0]
 
@@ -10839,7 +10840,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: type(CyclotomicField(15).zero())
             <class 'sage.rings.number_field.number_field_element.NumberFieldElement_absolute'>
         """
-        f = QQ['x'].cyclotomic_polynomial(n)
+        f = PolynomialRing(QQ, 'x').cyclotomic_polynomial(n)
         if names[0].startswith('zeta'):
             latex_name = "\\zeta_{%s}" % n
         else:
@@ -12332,7 +12333,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
              + 522*z^6 + 405*z^5 + 261*z^4 + 119*z^3 + 35*z^2 + 7*z + 1
         """
         f = pari(self.discriminant()).quadhilbert()
-        return QQ[name](f)
+        return PolynomialRing(QQ, name)(f)
 
     def hilbert_class_field(self, names):
         r"""
@@ -12384,7 +12385,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
             raise NotImplementedError("Hilbert class polynomial is not implemented for real quadratic fields.")
 
         from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial as HCP
-        return QQ[name](HCP(D))
+        return PolynomialRing(QQ, name)(HCP(D))
 
     def number_of_roots_of_unity(self):
         """

@@ -1116,7 +1116,7 @@ class HypergeometricData:
         [Kat1991]_, section 5.4
         """
         if t is None:
-            t = FractionField(QQ['t']).gen()
+            t = FractionField(PolynomialRing(QQ, 't')).gen()
         basering = t.parent()
         gamma_pos = [u for u in self.gamma_list() if u > 0]
         gamma_neg = [u for u in self.gamma_list() if u < 0]

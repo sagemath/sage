@@ -646,7 +646,7 @@ class RingLindnerPeikert(RingLWE):
         s = sqrt(s_t_bound*floor(q/4))
         # Transform s into stddev
         stddev = s/sqrt(2*pi.n())
-        D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n, stddev)
+        D = DiscreteGaussianDistributionPolynomialSampler(PolynomialRing(ZZ, 'x'), n, stddev)
         RingLWE.__init__(self, N=N, q=q, D=D, poly=None, secret_dist='noise', m=m)
 
 class RingLWEConverter(SageObject):

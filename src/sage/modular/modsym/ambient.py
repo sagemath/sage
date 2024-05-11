@@ -622,7 +622,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         one = ZZ.one()
         two = ZZ(2)
         if self.weight() > two:
-            R = ZZ['X']
+            R = PolynomialRing(ZZ, 'X')
             X = R.gen(0)
             # need to add first two terms, which aren't necessarily
             # zero in this case. we do the first here, and the

@@ -4825,7 +4825,7 @@ class PermutationGroup_generic(FiniteGroup):
                                                   libgap.OnPoints)
         M = pi.MolienSeries()
 
-        R = QQ['x']
+        R = PolynomialRing(QQ, 'x')
         nn = M.NumeratorOfRationalFunction()
         dd = M.DenominatorOfRationalFunction()
         return (R(str(nn).replace("_1", "")) /
@@ -4887,7 +4887,7 @@ class PermutationGroup_generic(FiniteGroup):
             raise ValueError("p must be 0 or prime")
 
         ff = self._libgap_().PoincareSeriesPrimePart(p, n)
-        R = QQ['x']
+        R = PolynomialRing(QQ, 'x')
         nn = ff.NumeratorOfRationalFunction()
         dd = ff.DenominatorOfRationalFunction()
         return (R(str(nn).replace('x_1', 'x')) /

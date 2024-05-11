@@ -641,7 +641,7 @@ def spin_polynomial_square(part, weight, length):
         sage: spin_polynomial_square([[6]*6, [3,3]], [4,4,2], 3)
         3*t^18 + 5*t^16 + 9*t^14 + 6*t^12 + 3*t^10
     """
-    R = ZZ['t']
+    R = PolynomialRing(ZZ, 't')
 
     if part in _Partitions:
         part = SkewPartition([part, _Partitions([])])
@@ -710,7 +710,7 @@ def cospin_polynomial(part, weight, length):
         sage: cospin_polynomial([[6]*6, [3,3]], [4,4,2], 3)
         3*t^4 + 6*t^3 + 9*t^2 + 5*t + 3
     """
-    R = ZZ['t']
+    R = PolynomialRing(ZZ, 't')
 
     # The power in the spin polynomial are all half integers
     # or all integers.  Manipulation of expressions need to

@@ -793,7 +793,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         d = self.digraph()
 
-        Qz = QQ['z'].fraction_field()
+        Qz = PolynomialRing(QQ, 'z').fraction_field()
 
         # Generate the variable names and the corresponding polynomial rings
         var_names = ["node%s" % i for i in range(d.num_verts())]

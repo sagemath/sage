@@ -132,7 +132,7 @@ class Small_primes_of_degree_one_iter():
         """
         self._field = field
         self._poly = self._field.absolute_field('b').defining_polynomial()
-        self._poly = ZZ['x'](self._poly.denominator() * self._poly()) # make integer polynomial
+        self._poly = PolynomialRing(ZZ, 'x')(self._poly.denominator() * self._poly()) # make integer polynomial
         self._lc = self._poly.leading_coefficient()
 
         # this uses that [ O_K : Z[a] ]^2 = | disc(f(x)) / disc(O_K) |

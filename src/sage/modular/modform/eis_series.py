@@ -154,7 +154,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
         ls = Ek_ZZ(k, prec)
         # The following is *dramatically* faster than doing the more natural
         # "R(ls)" would be:
-        E = ZZ[var](ls, prec=prec, check=False).change_ring(QQ)
+        E = PolynomialRing(ZZ, var)(ls, prec=prec, check=False).change_ring(QQ)
         if len(ls) > 0:
             E._unsafe_mutate(0, a0)
         return R(E, prec)

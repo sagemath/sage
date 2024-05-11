@@ -1523,7 +1523,7 @@ class BinaryQF(SageObject):
         """
         if self.discriminant() >= 0:
             raise ValueError("only defined for negative discriminant")
-        Q1 = ZZ['x']([self._c, self._b, self._a])
+        Q1 = PolynomialRing(ZZ, 'x')([self._c, self._b, self._a])
         return [z for z in Q1.complex_roots() if z.imag() > 0][0]
 
     def matrix_action_left(self, M):

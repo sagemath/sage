@@ -1281,7 +1281,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             construct the polynomial.
         """
         gap_p = libgap.MinimalPolynomial(libgap.eval("Rationals"), self._obj)
-        return QQ[var](QQ['x_1'](str(gap_p)))
+        return PolynomialRing(QQ, var)(PolynomialRing(QQ, 'x_1')(str(gap_p)))
 
 
 class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyclotomicField):

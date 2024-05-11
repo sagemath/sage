@@ -152,7 +152,7 @@ def hall_polynomial(nu, mu, la, q=None):
         0
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = PolynomialRing(ZZ, 'q').gen()
     R = q.parent()
 
     # Make sure they are partitions

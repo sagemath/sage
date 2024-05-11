@@ -500,7 +500,7 @@ class pAdicLseries(SageObject):
             self._alpha[prec] = K(a_p)
             return K(a_p)
 
-        R = ZZ['x']
+        R = PolynomialRing(ZZ, 'x')
         f = R([p, -a_p, 1])
         if E.is_ordinary(p):
             G = f.factor_padic(p, prec + 5)

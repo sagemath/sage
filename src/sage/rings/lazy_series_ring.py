@@ -1895,7 +1895,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         - :wikipedia:`Q-exponential`
         """
         if q is None:
-            q = ZZ['q'].fraction_field().gen()
+            q = PolynomialRing(ZZ, 'q').fraction_field().gen()
         if q not in self.base_ring():
             raise ValueError("q must be in the base ring")
         from sage.arith.misc import binomial
