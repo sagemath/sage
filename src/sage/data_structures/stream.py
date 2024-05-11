@@ -1765,6 +1765,7 @@ class Stream_uninitialized(Stream):
         """
         P = self._P.polynomial_ring()
         var_p = P(var._p)
+
         def subs(c):
             num = P(c.numerator()._p).subs({var_p: val})
             den = P(c.denominator()._p).subs({var_p: val})
