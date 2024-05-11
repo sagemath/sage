@@ -1984,14 +1984,12 @@ class VectorFunctor(ConstructionFunctor):
         name = self.name_mapping.get(R, None)
         latex_name = self.latex_name_mapping.get(R, None)
         if name is None:
-            for base_ring, name in self.name_mapping.items():
-                name = f'{name}_base_ext'
-                break
+            name = next(iter(self.name_mapping.values()))
+            name = f'{name}_base_ext'
         if latex_name is None:
             from sage.misc.latex import latex
-            for base_ring, latex_name in self.latex_name_mapping.items():
-                latex_name = fr'{latex_name} \otimes {latex(R)}'
-                break
+            latex_name = next(iter(self.latex_name_mapping.values()))
+            latex_name = fr'{latex_name} \otimes {latex(R)}'
         if name is None and latex_name is None:
             return FreeModule(R, self.n, sparse=self.is_sparse, inner_product_matrix=self.inner_product_matrix,
                               with_basis=self.with_basis, basis_keys=self.basis_keys)
