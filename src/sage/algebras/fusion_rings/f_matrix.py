@@ -591,7 +591,7 @@ class FMatrix(SageObject):
                         idx_map[i] = (a, b, c, d, x, y)
                     i += 1
 
-        return idx_map, ret if output else i
+        return (idx_map, ret) if output else i
 
     def f_from(self, a, b, c, d):
         r"""
