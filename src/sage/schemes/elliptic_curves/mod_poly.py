@@ -125,7 +125,7 @@ def classical_modular_polynomial(l, j=None):
             except PariError:
                 raise NotImplementedError('modular polynomial is not in database and computing it on the fly is not yet implemented')
             d = {(i, j): c for i,f in enumerate(pari_Phi) for j, c in enumerate(f)}
-            Phi = ZZ['X,Y'](d)
+            Phi = P(d)
 
         if l <= _cache_bound:
             _cache[l] = Phi
@@ -145,7 +145,7 @@ def classical_modular_polynomial(l, j=None):
         pass
     else:
         if l <= _cache_bound:
-            _cache[l] = PolynomialRing(ZZ, ['X', 'Y'])(Phi)
+            _cache[l] = P(Phi)
         return Phi(j, Y)
 
     # Now try to get the instantiated modular polynomial directly from PARI.
