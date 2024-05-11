@@ -397,7 +397,7 @@ REFERENCES:
 
 **B**
 
-.. [Bab86] L. Babai. *On Lovász' lattice reduction and the nearest lattice point problem*, 
+.. [Bab86] L. Babai. *On Lovász' lattice reduction and the nearest lattice point problem*,
             Combinatorica, 6(1), 1986, 1-13. :doi:`10.1007/BF02579403`.
 
 .. [Baer2020] Christian Bär. *The Faddeev-LeVerrier algorithm and the Pfaffian*.
@@ -406,11 +406,10 @@ REFERENCES:
 .. [BaKi2001] Bakalov and Kirillov, *Lectures on tensor categories and modular functors*,
             AMS (2001).
 
-.. [BRP2018] Basson D., Breuer F., Pink R., Drinfeld modular forms of
-             arbitrary rank:
-             Part I: :arxiv:`1805.12335`_,
-             Part II: :arxiv:`1805.12337`_,
-             Part III: :arxiv:`1805.12339`_,
+.. [BRP2018] Basson D., Breuer F., Pink R., Drinfeld modular forms of arbitrary rank.
+             Part I: :arxiv:`1805.12335`,
+             Part II: :arxiv:`1805.12337`,
+             Part III: :arxiv:`1805.12339`,
              2018.
 
 .. [Ba1994] Kaushik Basu. *The Traveler's Dilemma: Paradoxes of
