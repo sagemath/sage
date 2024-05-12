@@ -37,16 +37,37 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
       - name: make dist (--disable-download-from-upstream-url)
+        id: make_dist
         run: |
           ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
         env:
           MAKE: make -j8
-      - name: make dist (--enable-download-from-upstream-url)
-        if: failure()
+      - name: make download (--disable-download-from-upstream-url)
+        id: make_download
         run: |
-          ./configure && make dist
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
         env:
           MAKE: make -j8
+      - name: Reconfigure with --enable-download-from-upstream-url
+        if: (success() || failure()) && (steps.make_dist.outcome != 'success' || steps.make_download.outcome != 'success')
+        run: |
+          ./configure
+      - name: make dist (--enable-download-from-upstream-url)
+        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+        run: |
+          make dist
+        env:
+          MAKE: make -j8
+      - name: make download (--enable-download-from-upstream-url)
+        if: (success() || failure()) && steps.make_download.outcome != 'success'
+        run: |
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge --allow-upstream"
+        env:
+          MAKE: make -j8
+      - name: Remove what cannot be distributed
+        if: success() || failure()
+        run: |
+          rm -f upstream/*do-not-distribute*
       - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:

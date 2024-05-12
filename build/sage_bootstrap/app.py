@@ -315,11 +315,14 @@ class Application(object):
         package.tarball.download(allow_upstream=allow_upstream)
         print(package.tarball.upstream_fqn)
 
-    def download_cls(self, package_name_or_class, allow_upstream=False, on_error='stop'):
+    def download_cls(self, *package_classes, **kwds):
         """
         Download a package or a class of packages
         """
-        pc = PackageClass(package_name_or_class, has_files=['checksums.ini'])
+        allow_upstream = kwds.pop('allow_upstream', False)
+        on_error = kwds.pop('on_error', 'stop')
+        has_files = list(kwds.pop('has_files', []))
+        pc = PackageClass(*package_classes, has_files=has_files + ['checksums.ini'], **kwds)
 
         def download_with_args(package):
             try:
