@@ -37,8 +37,8 @@ class DrinfeldModularFormsElement(ModuleElement):
         F = f_{k_1} + f_{k_2} + \cdots + f_{k_n}
 
     where `f_{k_i}` is a Drinfeld modular form of weight `k_i`. We also
-    say that `f_{k_i}` is an *homogeneous component of weight `k_i`*. If
-    `n=1`, then we say that `F` is *homogeneous of weight `k_1`*.
+    say that `f_{k_i}` is an *homogeneous component of weight* `k_i`. If
+    `n=1`, then we say that `F` is *homogeneous of weight* `k_1`.
 
     EXAMPLES: use the ``inject_variable`` method of the parent to
     quickly assign variables names to the generators::
@@ -73,7 +73,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         sage: H.weight()
         80
 
-    You can also construct an element simply by passing a multivariate
+    You can also construct an element by simply passing a multivariate
     polynomial to the parent::
 
         sage: f1, f2 = polygens(K, 2, 'f1, f2')
