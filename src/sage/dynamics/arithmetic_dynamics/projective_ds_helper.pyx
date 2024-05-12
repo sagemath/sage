@@ -178,6 +178,7 @@ def _enum_points(int prime, int dimension):
             yield _get_point_from_hash(value, prime, dimension)
         current_range = current_range * prime
 
+
 cpdef int _hash(list Point, int prime) noexcept:
     """
     Hash point given as list to unique number.
