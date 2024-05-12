@@ -1003,14 +1003,15 @@ def minimum_generating_set(G) -> list:
     quotient group of ``G`` by one of the normal groups in the series, one by one.
     We iterate over the normal subgroups, from largest
     (the index 1 element in series; thus the quotient group is the factor group we found MGS for initially)
-    to the smallest (the group containing identity only;
-    thus the quotient group is essentially the group G and the coset representatives (CR) are a MGS of G).
+    to the smallest (the group containing identity only).
+    Thus the quotient group at the end is essentially the group G,
+    and the coset representatives (CR) are a MGS of G.
 
     lift function details:
 
     It computes the minimum generating set (as CR) of the quotient of ``G`` with a normal subgroup ``Gi``
     in a chief series, given the MGS (as CR) of the quotient of ``G``
-    with the normal group ``Gim1`` just larger than ``Gi``.
+    with the normal group ``Gim1`` ('im1' means 'i-1') just larger than ``Gi``.
     This MGS (as CR) are what we are calling ``G_by_Gim1_mingen_reps`` in the code) and call 'g' here.
     The function does these steps:
 
