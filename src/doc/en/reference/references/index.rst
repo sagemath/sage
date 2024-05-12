@@ -6174,6 +6174,9 @@ REFERENCES:
                     :doi: `10.1017/fms.2022.38`.
                     :arxiv:`2106.11141`.
 
+.. [Ryom2015] Steen Ryom-Hansen. *Projective modules for the symmetric group and
+              Young's seminormal form*. J. Algebra **439** (2015) pp. 515-541.
+
 .. [SV1970] \H. Schneider and M. Vidyasagar. Cross-positive matrices. SIAM
             Journal on Numerical Analysis, 7:508-519, 1970.
 
