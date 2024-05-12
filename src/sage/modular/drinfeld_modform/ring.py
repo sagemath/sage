@@ -133,7 +133,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         sage: M.gens()
         [u, v, w, x]
 
-    Set the keyword parameter `has_type` to `True` in order to create
+    Set the keyword parameter ``has_type`` to ``True`` in order to create
     the ring of Drinfeld modular forms of arbitrary type::
 
         sage: M = DrinfeldModularForms(K, 4, has_type=True)
@@ -172,9 +172,9 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     REFERENCE:
 
-    For a quick introduction to Drinfeld modular forms, see the tutorial
-    :mod:`sage.modular.drinfeld_modform.tutorial`. For more extensive
-    references, see [Gek1988]_ and [BRP2018]_.
+    For a quick introduction to Drinfeld modular forms, see the
+    :ref:`tutorial <sage.modular.drinfeld_modform.tutorial>`. For more
+    extensive references, see [Gek1988]_ and [BRP2018]_.
     """
 
     Element = DrinfeldModularFormsElement
@@ -445,7 +445,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         Return the `i`-th coefficient form of the universal Drinfeld
         module over `\Omega^r(\mathbb{C}_{\infty})`:
 
-        ..MATH::
+        .. MATH::
 
             \phi_{w, a} = a + g_{1, a}\tau + \cdots + g_{r d_a, a}\tau^{r d_a}
 
