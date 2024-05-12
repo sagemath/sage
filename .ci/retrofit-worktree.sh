@@ -42,4 +42,4 @@ git worktree add --detach $WORKTREE_NAME
 rm -rf $WORKTREE_DIRECTORY/.git && mv $WORKTREE_NAME/.git $WORKTREE_DIRECTORY/
 rm -rf $WORKTREE_NAME && ln -s $WORKTREE_DIRECTORY $WORKTREE_NAME
 if [ ! -f $WORKTREE_NAME/.gitignore ]; then cp .gitignore $WORKTREE_NAME/; fi
-(cd $WORKTREE_NAME && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git reset --hard new && git status)
+(cd $WORKTREE_NAME && git add -A && git commit --quiet --allow-empty -m "old" -a && git tag -f old && git checkout new && git status)
