@@ -210,6 +210,7 @@ class Function_tan(GinacFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: tan(3.1415)
             -0.0000926535900581913
             sage: tan(3.1415/4)
@@ -323,20 +324,20 @@ class Function_cot(GinacFunction):
 
         TESTS::
 
-            sage: cot(float(0))                                                         # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))                                                            # needs sage.symbolic
+            sage: cot(SR(0))
             Infinity
-            sage: cot(float(0.1))                                                       # needs sage.symbolic
+            sage: cot(float(0.1))
             9.966644423259238
             sage: type(_)
             <... 'float'>
-
-            sage: cot(float(0))                                                         # needs sage.symbolic
+            sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))                                                            # needs sage.symbolic
+            sage: cot(SR(0))
             Infinity
-            sage: cot(float(0.1))                                                       # needs sage.symbolic
+            sage: cot(float(0.1))
             9.966644423259238
             sage: type(_)
             <... 'float'>
@@ -520,7 +521,7 @@ class Function_arcsin(GinacFunction):
 
         EXAMPLES::
 
-            sage: arcsin(0.5)
+            sage: arcsin(0.5)                                                           # needs sage.rings.real_mpfr
             0.523598775598299
             sage: arcsin(1/2)                                                           # needs sage.symbolic
             1/6*pi
@@ -584,7 +585,7 @@ class Function_arccos(GinacFunction):
 
         EXAMPLES::
 
-            sage: arccos(0.5)
+            sage: arccos(0.5)                                                           # needs sage.rings.real_mpfr
             1.04719755119660
             sage: arccos(1/2)                                                           # needs sage.symbolic
             1/3*pi
@@ -940,7 +941,7 @@ class Function_arctan2(GinacFunction):
 
             sage: maxima.atan2(1, -1)                                                   # needs sage.symbolic
             (3*%pi)/4
-            sage: math.atan2(1,-1)
+            sage: math.atan2(1, -1)
             2.356194490192345
 
         More examples::

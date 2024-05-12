@@ -602,14 +602,11 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             sage: from sage.groups.libgap_group import GroupLibGAP
             sage: G = GroupLibGAP(libgap.FreeGroup('a', 'b'))
             sage: g = G.gen(0) * G.gen(1)
-            sage: g._latex_()
-            "ab%\n"
+            sage: latex(g)
+            \text{\texttt{a*b}}
         """
-        try:
-            return self.gap().LaTeX()
-        except ValueError:
-            from sage.misc.latex import latex
-            return latex(self._repr_())
+        from sage.misc.latex import latex
+        return latex(self._repr_())
 
     cpdef _mul_(left, right):
         """

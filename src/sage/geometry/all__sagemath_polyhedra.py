@@ -16,5 +16,6 @@ lazy_import('sage.geometry', 'toric_plotter')
 lazy_import('sage.geometry.voronoi_diagram', 'VoronoiDiagram')
 lazy_import('sage.geometry.hyperplane_arrangement.arrangement',
             'HyperplaneArrangements')
+lazy_import('sage.geometry.hyperplane_arrangement.ordered_arrangement', 'OrderedHyperplaneArrangements')
 lazy_import('sage.geometry.hyperplane_arrangement.library', 'hyperplane_arrangements')
 del lazy_import

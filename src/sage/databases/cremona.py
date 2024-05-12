@@ -953,13 +953,14 @@ class MiniCremonaDatabase(SQLDatabase):
 
     def elliptic_curve_from_ainvs(self, ainvs):
         """
-        Return the elliptic curve in the database of with minimal
-        ``ainvs``, if it exists, or raises a ``RuntimeError`` exception
-        otherwise.
+        Return the elliptic curve in the database of with minimal ``ainvs``
+        if it exists.
+
+        This raises a :class:`RuntimeError` exception otherwise.
 
         INPUT:
 
-        -  ``ainvs`` - list (5-tuple of int's); the minimal
+        -  ``ainvs`` -- list (5-tuple of int's); the minimal
            Weierstrass model for an elliptic curve
 
         OUTPUT: EllipticCurve

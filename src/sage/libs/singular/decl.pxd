@@ -48,6 +48,13 @@ cdef extern from "factory/factory.h":
     cdef int SW_USE_NTL_SORT
 
 cdef extern from "singular/Singular/libsingular.h":
+    """
+    // compatibility for singular 4.3.2p10 and before
+    #if SINGULAR_VERSION <= 4330
+    #define ringorder_ip ringorder_rp
+    #define BIGINTVEC_CMD INTVEC_CMD
+    #endif
+    """
 
     #
     # OPTIONS
@@ -243,7 +250,7 @@ cdef extern from "singular/Singular/libsingular.h":
         ringorder_s
         ringorder_lp
         ringorder_dp
-        ringorder_rp
+        ringorder_ip
         ringorder_Dp
         ringorder_wp
         ringorder_Wp
@@ -290,6 +297,10 @@ cdef extern from "singular/Singular/libsingular.h":
         int (*get "operator[]")(int i)
         int row
         int col
+
+    cdef cppclass bigintmat:
+        int (*length)()
+        number* (*get)(int i)
 
     # omalloc bins
 
@@ -921,6 +932,7 @@ cdef extern from "singular/Singular/libsingular.h":
     cdef int MATRIX_CMD
     cdef int LIST_CMD
     cdef int INTVEC_CMD
+    cdef int BIGINTVEC_CMD
     cdef int NONE
     cdef int RESOLUTION_CMD
     cdef int PACKAGE_CMD
