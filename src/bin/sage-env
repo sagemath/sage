@@ -386,7 +386,7 @@ if [ -n "$SAGE_LOCAL" ]; then
         LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
     fi
     if [ "$UNAME" = "Linux" ]; then
-        LDFLAGS="-Wl,-rpath-link,$SAGE_LOCAL/lib $LDFLAGS"
+        LDFLAGS="-Wl,-rpath,$SAGE_LOCAL/lib -Wl,-rpath-link,$SAGE_LOCAL/lib $LDFLAGS"
     fi
     export LDFLAGS
 fi
