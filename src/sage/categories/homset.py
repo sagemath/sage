@@ -1245,7 +1245,7 @@ class Homset(Set_generic):
              the principal ideal domain Integer Ring to Ambient free module
              of rank 3 over the principal ideal domain Integer Ring in
              Category of finite dimensional modules with basis over (Dedekind
-             domains and euclidean domains
+             domains and euclidean domains and noetherian rings
              and infinite enumerated sets and metric spaces)
             sage: type(H)
             <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
@@ -1254,7 +1254,7 @@ class Homset(Set_generic):
              the principal ideal domain Integer Ring to Ambient free module
              of rank 2 over the principal ideal domain Integer Ring in
              Category of finite dimensional modules with basis over (Dedekind
-             domains and euclidean domains
+             domains and euclidean domains and noetherian rings
              and infinite enumerated sets and metric spaces)
             sage: type(H.reversed())
             <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>

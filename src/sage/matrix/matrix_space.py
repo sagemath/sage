@@ -493,10 +493,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
         sage: MatrixSpace(ZZ, 10, 5).category()
         Category of infinite enumerated finite dimensional modules with basis over
          (Dedekind domains and euclidean domains
+          and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ, 10, 10).category()
         Category of infinite enumerated finite dimensional algebras with basis over
          (Dedekind domains and euclidean domains
+          and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ, 10).category()
         Category of infinite finite dimensional algebras with basis over
@@ -554,10 +556,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
         sage: MatrixSpace(ZZ, 10, 5).category()
         Category of infinite enumerated finite dimensional modules with basis over
          (Dedekind domains and euclidean domains
+          and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ, 10, 10).category()
         Category of infinite enumerated finite dimensional algebras with basis over
          (Dedekind domains and euclidean domains
+          and noetherian rings
           and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ, 10).category()
         Category of infinite finite dimensional algebras with basis over
@@ -777,6 +781,61 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     def __init__(self, base_ring, nrows, ncols, sparse, implementation):
         r"""
+        INPUT:
+
+        - ``base_ring``
+
+        -  ``nrows`` -- (positive integer) the number of rows
+
+        -  ``ncols`` -- (positive integer, default nrows) the number of
+           columns
+
+        -  ``sparse`` -- (boolean, default ``False``) whether or not matrices
+           are given a sparse representation
+
+        - ``implementation`` -- (optional, a string or a matrix class) a possible
+          implementation. Depending on the base ring the string can be
+
+           - ``'generic'`` -- on any base rings
+
+           - ``'flint'`` -- for integers and rationals
+
+           - ``'meataxe'`` -- finite fields, needs to install the optional package meataxe
+
+           - ``m4ri`` -- for characteristic 2 using M4RI library
+
+           - ``linbox-float`` -- for integer mod rings up to `2^8 = 256`
+
+           - ``linbox-double`` -- for integer mod rings up to
+             `floor(2^26*sqrt(2) + 1/2) = 94906266`
+
+           - ``numpy`` -- for real and complex floating point numbers
+
+        EXAMPLES::
+
+            sage: MatrixSpace(QQ, 2)
+            Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+            sage: MatrixSpace(ZZ, 3, 2)
+            Full MatrixSpace of 3 by 2 dense matrices over Integer Ring
+            sage: MatrixSpace(ZZ, 3, sparse=False)
+            Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
+
+            sage: MatrixSpace(ZZ,10,5)
+            Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
+            sage: MatrixSpace(ZZ,10,5).category()
+            Category of infinite enumerated finite dimensional modules with basis over
+             (Dedekind domains and euclidean domains
+              and noetherian rings
+              and infinite enumerated sets and metric spaces)
+            sage: MatrixSpace(ZZ,10,10).category()
+            Category of infinite enumerated finite dimensional algebras with basis over
+             (Dedekind domains and euclidean domains
+              and noetherian rings
+              and infinite enumerated sets and metric spaces)
+            sage: MatrixSpace(QQ,10).category()
+            Category of infinite finite dimensional algebras with basis over
+             (number fields and quotient fields and metric spaces)
+
         TESTS:
 
         We test that in the real or complex double dense case,

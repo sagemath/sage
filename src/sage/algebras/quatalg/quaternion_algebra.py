@@ -515,7 +515,7 @@ class QuaternionAlgebra_abstract(Parent):
 
     def is_noetherian(self) -> bool:
         """
-        Return ``True`` always, since any quaternion algebra is a noetherian
+        Return ``True`` always, since any quaternion algebra is a Noetherian
         ring (because it is a finitely generated module over a field).
 
         EXAMPLES::
