@@ -44,7 +44,7 @@ jobs:
           - 5000:5000
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v8
+        uses: easimon/maximize-build-space@v10
         with:
           # need space in /var for Docker images
           root-reserve-mb:      30000
