@@ -15719,7 +15719,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: F = graphs.FruchtGraph()
             sage: list(F.cluster_triangles().values())
-            [1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0]
+            [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0]
             sage: F.cluster_triangles()
             {0: 1, 1: 1, 2: 0, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 0, 9: 1, 10: 1, 11: 0}
             sage: F.cluster_triangles(nbunch=[0, 1, 2])
