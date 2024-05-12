@@ -272,7 +272,7 @@ class CoherentSheaf_on_projective_subscheme(CoherentSheaf):
         Return the direct image of this sheaf to the ambient space.
 
         The image is with respect to the inclusion morphism from the base
-        scheme into the projective Space.
+        scheme into the projective space.
 
         INPUT:
 
