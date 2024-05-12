@@ -885,6 +885,15 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A[:4]
             [p[] # p[], 0, p[1] # p[1], p[1] # p[1, 1] + p[1, 1] # p[1]]
 
+        The Frobenius character of labelled Dyck words::
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: L.<t, u> = LazyPowerSeriesRing(h.fraction_field())
+            sage: D = L.undefined()
+            sage: s1 = L.sum(lambda n: h[n]*t^(n+1)*u^(n-1), 1)
+            sage: L.define_implicitly([D], [u*D - u - u*s1*D - t*(D - D(t, 0))])
+            sage: D
+
         TESTS::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
