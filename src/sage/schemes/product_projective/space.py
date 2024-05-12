@@ -256,7 +256,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             Product of projective spaces P^1 x P^1 x P^1 over Integer Ring
         """
         return ''.join(['Product of projective spaces ',
-                        ' x '.join('P^{0}'.format(d) for d in self._dims),
+                        ' x '.join('P^{}'.format(d) for d in self._dims),
                         ' over ', str(self.base_ring())])
 
     def _repr_generic_point(self, v=None):
@@ -1197,8 +1197,8 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
         P = []
         for i in range(m):
             pt = next(iters[i])
-            for j in range(dim[i]):
-                P.append(pt[j]) # initial value of P
+            P.extend(pt[j] for j in range(dim[i]))
+            # initial value of P
         yield self(P)
 
         i = 0
@@ -1248,9 +1248,7 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
              (1 : 0 : 0 , 1 : 0)]
         """
         iters = [iter(T) for T in self._components]
-        L = []
-        for x in iters:
-            L.append(next(x))  # put at zero
+        L = [next(x) for x in iters]  # put at zero
         yield self(L)
         j = 0
         while j < self.num_components():

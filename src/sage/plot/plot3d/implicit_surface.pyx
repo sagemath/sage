@@ -522,7 +522,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    y_vertices[y,z] = v
+                    y_vertices[y,z] = <object>v
                 else:
                     y_vertices[y,z] = None
 
@@ -556,7 +556,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    z_vertices[y,z] = v
+                    z_vertices[y,z] = <object>v
                 else:
                     z_vertices[y,z] = None
 
@@ -631,7 +631,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    x_vertices[y,z] = v
+                    x_vertices[y,z] = <object>v
                 else:
                     x_vertices[y,z] = None
 

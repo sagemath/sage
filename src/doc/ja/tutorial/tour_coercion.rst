@@ -101,6 +101,7 @@ Sageのクラス階層と圏の階層構造にはそれなりに類似が見ら�
     sage: ZZ.category()
     Join of Category of Dedekind domains
         and Category of euclidean domains
+        and Category of noetherian rings
         and Category of infinite enumerated sets
         and Category of metric spaces
     sage: ZZ.category().is_subcategory(Rings())
