@@ -583,7 +583,7 @@ def latex_extra_preamble():
         \newcommand{\dist}{\mathrm{dist}}
         \newcommand{\im}{\mathop{\operatorname{im}}}
         \newcommand{\rank}{\mathop{\operatorname{rank}}}
-        \newcommand{\PP}{\mathbf{P}}
+        \newcommand{\PP}{\Bold{P}}
         \newcommand{\OO}{\mathcal{O}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
