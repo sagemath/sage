@@ -131,6 +131,7 @@ sage =
 [options.extras_require]
 R        = SPKG_INSTALL_REQUIRES_rpy2
 bliss    = SPKG_INSTALL_REQUIRES_sagemath_bliss
+brial    = SPKG_INSTALL_REQUIRES_sagemath_brial
 coxeter3 = SPKG_INSTALL_REQUIRES_sagemath_coxeter3
 mcqd     = SPKG_INSTALL_REQUIRES_sagemath_mcqd
 meataxe  = SPKG_INSTALL_REQUIRES_sagemath_meataxe
