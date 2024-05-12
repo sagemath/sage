@@ -155,7 +155,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         sage: LaurentSeriesRing(ZZ, 'x').category()
         Category of infinite commutative no zero divisors algebras
          over (Dedekind domains and euclidean domains
-         and infinite enumerated sets and metric spaces)
+         and noetherian rings and infinite enumerated sets and metric spaces)
         sage: LaurentSeriesRing(QQ, 'x').category()
         Join of Category of complete discrete valuation fields and Category of commutative algebras
          over (number fields and quotient fields and metric spaces) and Category of infinite sets
@@ -227,7 +227,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: RZZ.category()
             Category of infinite commutative no zero divisors algebras
              over (Dedekind domains and euclidean domains
-             and infinite enumerated sets and metric spaces)
+             and noetherian rings and infinite enumerated sets
+             and metric spaces)
             sage: TestSuite(RZZ).run()
 
             sage: R1 = LaurentSeriesRing(Zmod(1), 't')

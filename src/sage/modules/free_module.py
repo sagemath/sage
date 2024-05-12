@@ -1972,7 +1972,8 @@ class FreeModule_generic(Module_free_ambient):
          (finite enumerated fields and subquotients of monoids and quotients of semigroups)
         sage: FreeModule(ZZ,3).category()
         Category of finite dimensional modules with basis over
-         (Dedekind domains and euclidean domains and infinite enumerated sets
+         (Dedekind domains and euclidean domains
+          and noetherian rings and infinite enumerated sets
           and metric spaces)
         sage: (QQ^0).category()
         Category of finite enumerated finite dimensional vector spaces with basis

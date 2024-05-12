@@ -169,6 +169,10 @@ def is_FreeAbelianMonoid(x):
 
         sage: from sage.monoids.free_abelian_monoid import is_FreeAbelianMonoid
         sage: is_FreeAbelianMonoid(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeAbelianMonoid is deprecated;
+        use 'isinstance(..., FreeAbelianMonoid_class)' instead
+        See https://github.com/sagemath/sage/issues/37897 for details.
         False
         sage: is_FreeAbelianMonoid(FreeAbelianMonoid(7,'a'))
         True
@@ -177,6 +181,8 @@ def is_FreeAbelianMonoid(x):
         sage: is_FreeAbelianMonoid(FreeMonoid(0,''))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37897, "the function is_FreeAbelianMonoid is deprecated; use 'isinstance(..., FreeAbelianMonoid_class)' instead")
     return isinstance(x, FreeAbelianMonoid_class)
 
 

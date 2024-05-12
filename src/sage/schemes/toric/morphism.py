@@ -1537,12 +1537,11 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         dim = []
         fm = self.fan_morphism()
         base_dim = codomain_cone.dim()
-        for c in fm.primitive_preimage_cones(codomain_cone):
-            dim.append(base_dim - c.dim())
+        dim.extend(base_dim - c.dim()
+                   for c in fm.primitive_preimage_cones(codomain_cone))
         if dim:
             return max(dim) + self.domain().dimension() - self.codomain().dimension()
-        else:
-            return ZZ(-1)
+        return ZZ(-1)
 
     def fiber_graph(self, codomain_cone):
         r"""
