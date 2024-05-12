@@ -1268,7 +1268,7 @@ class FMatrix(SageObject):
             self._reset_solver_state()
         # Set up shared memory resource handlers
         n_proc = cpu_count() if processes is None else processes
-        self._pid_list = shared_memory.ShareableList([0] * (n_proc + 1))
+        self._pid_list = shared_memory.ShareableList([0] * (n_proc+1))
         pids_name = self._pid_list.shm.name
         self._solved = shared_memory.ShareableList(self._solved)
         s_name = self._solved.shm.name
