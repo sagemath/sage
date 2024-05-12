@@ -373,7 +373,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         r"""
         Return the type of this graded Drinfeld form.
 
-        Recall that the *type* is the integer `0 \leq m < q-1` such that
+        Recall that the *type* is the integer `0 \leq m \leq q-1` such that
 
         .. MATH::
 
