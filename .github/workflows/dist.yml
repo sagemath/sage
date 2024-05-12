@@ -184,7 +184,7 @@ jobs:
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
       CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9, <3.13"
       # Environment during wheel build
-      CIBW_ENVIRONMENT: "PATH=$(pwd)/local/bin:$PATH CPATH=$(pwd)/local/include:$CPATH LIBRARY_PATH=$(pwd)/local/lib:$LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/local/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal"
+      CIBW_ENVIRONMENT: "PATH=$(pwd)/local/bin:$PATH CPATH=$(pwd)/local/include:$CPATH LIBRARY_PATH=$(pwd)/local/lib:$LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/local/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt"
       # Use 'build', not 'pip wheel'
       CIBW_BUILD_FRONTEND: build
     steps:
@@ -215,7 +215,7 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m pip install pipx
           export PATH=build/bin:$PATH
-          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap && ./configure --enable-build-as-root && MAKE=\"make -j6\" make V=0 $TARGETS_PRE"
+          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap && ./configure --enable-build-as-root && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://$(pwd)/pkgs/sage-setup\") > constraints.txt"
           mkdir -p unpacked
           for pkg in sagemath-objects sagemath-categories sagemath-bliss sagemath-coxeter3 sagemath-mcqd sagemath-meataxe sagemath-sirocco sagemath-tdlib; do
               (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
