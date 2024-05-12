@@ -180,6 +180,7 @@ jobs:
         uses: tj-actions/changed-files@v44
         with:
           files: src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}
+          files_ignore: src/{setup,conftest*}.py
 
       - name: Test changed files (sage -t --new)
         if: steps.changed-files.outputs.all_changed_files
