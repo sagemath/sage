@@ -154,6 +154,8 @@ def is_Parent(x):
         sage: is_Parent(Primes())
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(37922, "the function is_Parent is deprecated; use 'isinstance(..., Parent)' instead")
     return isinstance(x, Parent)
 
 
