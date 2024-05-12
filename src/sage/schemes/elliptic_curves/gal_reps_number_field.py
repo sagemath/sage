@@ -739,9 +739,7 @@ def _exceptionals(E, L, patience=1000):
         if (not D) or (patience == 0):
             break
 
-    for l in D:
-        output.append(l)
-
+    output.extend(D)
     output.sort()
     return output
 

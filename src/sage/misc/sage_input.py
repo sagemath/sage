@@ -1207,7 +1207,7 @@ _prec_funcall = 40
 _prec_atomic = 42
 
 
-class SageInputExpression():
+class SageInputExpression:
     r"""
     Subclasses of this class represent expressions for :func:`sage_input`.
     \sage classes should define a \method{_sage_input_} method, which

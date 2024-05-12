@@ -14,7 +14,7 @@ The installation of packages is done through a bash script located in
 :sage_root:`build/bin/sage-spkg`. This script is typically invoked by
 giving the command::
 
-    [alice@localhost sage]$ sage -i <options> <package name>...
+    [alice@localhost sage]$ ./sage -i <options> <package name>...
 
 options can be:
 
@@ -1049,10 +1049,10 @@ Creating packages
 Assuming that you have downloaded
 ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use::
 
-    [alice@localhost sage]$ sage --package create foo                     \
-                                             --version 1.3                \
-                                             --tarball FoO-VERSION.tar.gz \
-                                             --type experimental
+    [alice@localhost sage]$ ./sage --package create foo                     \
+                                               --version 1.3                \
+                                               --tarball FoO-VERSION.tar.gz \
+                                               --type experimental
 
 to create ``$SAGE_ROOT/build/pkgs/foo/package-version.txt``,
 ``checksums.ini``, and ``type`` in one step.
@@ -1061,36 +1061,47 @@ You can skip the manual downloading of the upstream tarball by using
 the additional argument ``--upstream-url``.  This command will also
 set the ``upstream_url`` field in ``checksums.ini`` described above.
 
-For Python packages available from PyPI, you can use::
+For Python packages available from PyPI, use a PURL (Package URL,
+see `PEP 725 <https://peps.python.org/pep-0725/#concrete-package-specification-through-purl>`_)::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
-                                             --type optional
+    [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
+                                               --type optional
 
-This automatically downloads the most recent version from PyPI and also
-obtains most of the necessary information by querying PyPI. In particular,
-the ``SPKG.rst`` file is created as a copy of the package's README file.
+An equivalent command uses the SPKG name of the new package::
 
+    [alice@localhost sage]$ ./sage --package create scikit_spatial --pypi   \
+                                               --type optional
 
-The ``dependencies`` file may need editing (watch out for warnings regarding
-``--no-deps`` that Sage issues during installation of the package!).
+Either of these two commands automatically downloads the most recent version
+from PyPI and also obtains most of the necessary information by querying PyPI.
+In particular, the ``SPKG.rst`` file is created as a copy of the package's
+README file.
+
+By default, when the package is available as a platform-independent
+wheel, the ``sage --package`` creates a ``wheel`` package. In this case,
+the ``dependencies`` file is automatically generated from the information
+on PyPI, but may still need some manual editing.
+
+For ``normal`` and ``pip`` packages, the ``dependencies`` file is initialized
+to the bare minimum and will need manual editing. (Watch out for warnings
+regarding ``--no-deps`` that Sage issues during installation of the package!)
 
 Also you may want to set lower and upper bounds for acceptable package versions
 in the file ``version_requirements.txt``. (Make sure that the version in
 ``package-version.txt`` falls within this acceptable version range!)
 
-By default, when the package is available as a platform-independent
-wheel, the ``sage --package`` creates a wheel package. To create a normal package
-instead (for example, when the package requires patching), you can use::
+To create a ``normal`` package instead of a ``wheel`` package (for example, when the
+package requires patching), you can use::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
-                                             --source normal              \
-                                             --type optional
+    [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
+                                               --source normal              \
+                                               --type optional
 
-To create a pip package rather than a normal or wheel package, you can use::
+To create a ``pip`` package rather than a ``normal`` or ``wheel`` package, you can use::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
-                                             --source pip                 \
-                                             --type optional
+    [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
+                                               --source pip                 \
+                                               --type optional
 
 When the package already exists, ``sage --package create`` overwrites it.
 
@@ -1101,14 +1112,14 @@ Updating packages to a new version
 A package that has the ``upstream_url`` information can be updated by
 simply typing::
 
-    [alice@localhost sage]$ sage --package update numpy 3.14.59
+    [alice@localhost sage]$ ./sage --package update openblas 0.3.79
 
 which will automatically download the archive and update the
-information in ``build/pkgs/numpy/``.
+information in ``build/pkgs/openblas/``.
 
 For Python packages available from PyPI, there is another shortcut::
 
-    [alice@localhost sage]$ sage --package update-latest matplotlib
+    [alice@localhost sage]$ ./sage --package update-latest pkg:pypi/matplotlib
     Updating matplotlib: 3.3.0 -> 3.3.1
     Downloading tarball to ...matplotlib-3.3.1.tar.bz2
     [...............................................................]
@@ -1122,10 +1133,10 @@ version range!
 If you pass the switch ``--commit``, the script will run ``git commit``
 for you.
 
-If you prefer to make update a package ``foo`` by making manual
+If you prefer to update a package ``foo`` by making manual
 changes to the files in ``build/pkgs/foo``, you will need to run::
 
-    [alice@localhost sage]$ sage --package fix-checksum foo
+    [alice@localhost sage]$ ./sage --package fix-checksum foo
 
 which will modify the ``checksums.ini`` file with the correct
 checksums.
@@ -1138,7 +1149,7 @@ The command ``sage --package metrics`` computes machine-readable
 aggregated metrics for all packages in the Sage distribution or a
 given list of packages::
 
-    [alice@localhost sage]$ sage --package metrics
+    [alice@localhost sage]$ ./sage --package metrics
     has_file_distros_arch_txt=181
     has_file_distros_conda_txt=289
     has_file_distros_debian_txt=172
@@ -1212,20 +1223,20 @@ Sage (``FoO-1.3.tar.gz`` in the example of section
 
 Now you can install the package using::
 
-    [alice@localhost sage]$ sage -i package_name
+    [alice@localhost sage]$ ./sage -i package_name
 
 or::
 
-    [alice@localhost sage]$ sage -f package_name
+    [alice@localhost sage]$ ./sage -f package_name
 
 to force a reinstallation. If your package contains a ``spkg-check``
 script (see :ref:`section-spkg-check`) it can be run with::
 
-    [alice@localhost sage]$ sage -i -c package_name
+    [alice@localhost sage]$ ./sage -i -c package_name
 
 or::
 
-    [alice@localhost sage]$ sage -f -c package_name
+    [alice@localhost sage]$ ./sage -f -c package_name
 
 If all went fine, open a PR with the code under
 :sage_root:`build/pkgs`.
