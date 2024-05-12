@@ -89,9 +89,9 @@ def CongruenceSubgroup_constructor(*args):
         TypeError: Ring of definition must be Z / NZ for some N
     """
     from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-    from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
+    from sage.groups.matrix_gps.matrix_group import MatrixGroup_base
 
-    if is_MatrixGroup(args[0]):
+    if isinstance(args[0], MatrixGroup_base):
         G = args[0]
 
     elif isinstance(args[0], list):

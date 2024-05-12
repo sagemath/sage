@@ -78,6 +78,10 @@ def is_MatrixGroup(x):
 
         sage: from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
         sage: is_MatrixGroup(MatrixSpace(QQ, 3))
+        doctest:warning...
+        DeprecationWarning: the function is_MatrixGroup is deprecated;
+        use 'isinstance(..., MatrixGroup_base)' instead
+        See https://github.com/sagemath/sage/issues/37898 for details.
         False
         sage: is_MatrixGroup(Mat(QQ, 3))
         False
@@ -86,6 +90,8 @@ def is_MatrixGroup(x):
         sage: is_MatrixGroup(MatrixGroup([matrix(2, [1,1,0,1])]))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37898, "the function is_MatrixGroup is deprecated; use 'isinstance(..., MatrixGroup_base)' instead")
     return isinstance(x, MatrixGroup_base)
 
 ###################################################################
@@ -499,7 +505,7 @@ class MatrixGroup_generic(MatrixGroup_base):
             sage: G != H
             False
         """
-        if not is_MatrixGroup(other):
+        if not isinstance(other, MatrixGroup_base):
             return NotImplemented
 
         if self is other:

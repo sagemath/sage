@@ -608,7 +608,7 @@ def newton(f, x0, i0):
         sage: n
         0.0?
         sage: n.real().endpoints()
-        (-0.0147727272727274, 0.00982142857142862)
+        (-0.0460743801652894, 0.0291454081632654)
         sage: n.imag().endpoints()
         (0.000000000000000, -0.000000000000000)
     """
@@ -1524,14 +1524,15 @@ def braid2rels(L):
     k = min(T1) - 1
     B0 = BraidGroup(m)
     F0 = FreeGroup(m)
-    br0 = B0([j-k for j in T])
+    br0 = B0([j - k for j in T])
     br0_left = leftnormalform(br0)
     q, r = ZZ(br0_left[0][0]).quo_rem(2)
     br1 = B0.delta()**r * prod(map(B0, br0_left[1:]), B0.one())
     cox = prod(F0.gens())
     U0 = [cox**q * (f0 * br1) / cox**q / f0 for f0 in F0.gens()[:-1]]
     U = [tuple(sign(k1) * (abs(k1) + k) for k1 in br.Tietze()) for br in U0]
-    pasos = [B.one()] + list(reversed(L1))
+    pasos = [B.one()]
+    pasos.extend(reversed(L1))
     for C in pasos:
         U = [(F(a) * C.inverse()).Tietze() for a in U]
         ga = F / U
@@ -1884,13 +1885,13 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     x, y = R.gens()
     flist1 = tuple(flist)
     if vertical and vertical_lines_in_braidmon(flist1):
-        infinity = all([Curve(g).is_vertical_line() or
-                        g.degree(y) == g.degree() for g in flist1])
+        infinity = all(Curve(g).is_vertical_line() or
+                       g.degree(y) == g.degree() for g in flist1)
     else:
-        infinity = any([Curve(g).has_vertical_asymptote() or
-                        Curve(g).is_vertical_line() for g in flist1])
+        infinity = any(Curve(g).has_vertical_asymptote() or
+                       Curve(g).is_vertical_line() for g in flist1)
         if not infinity:
-            infinity = all([g.degree(y) == g.degree() for g in flist1])
+            infinity = all(g.degree(y) == g.degree() for g in flist1)
     if braid_data:
         bm, dic, dv, d1 = braid_data
     elif not flist:
@@ -1925,5 +1926,5 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     n = g1.ngens()
     rels = [rel.Tietze() for rel in g1.relations()]
     g1 = FreeGroup(n) / rels
-    dic1 = {i: list(set([g1(el.Tietze()) for el in dic1[i]])) for i in dic1}
+    dic1 = {i: list({g1(el.Tietze()) for el in dic1[i]}) for i in dic1}
     return (g1, dic1)

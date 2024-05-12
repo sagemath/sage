@@ -65,6 +65,39 @@ class CommutativeRings(CategoryWithAxiom):
             """
             return True
 
+        def _ideal_class_(self, n=0):
+            r"""
+            Return a callable object that can be used to create ideals in this
+            commutative ring.
+
+            This class can depend on `n`, the number of generators of the ideal.
+            The default input of `n=0` indicates an unspecified number of generators,
+            in which case a class that works for any number of generators is returned.
+
+            EXAMPLES::
+
+                sage: ZZ._ideal_class_()
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: RR._ideal_class_()
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: R.<x,y> = GF(5)[]
+                sage: R._ideal_class_(1)
+                <class 'sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal'>
+                sage: S = R.quo(x^3 - y^2)
+                sage: S._ideal_class_(1)
+                <class 'sage.rings.quotient_ring.QuotientRingIdeal_principal'>
+                sage: S._ideal_class_(2)
+                <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
+                sage: T.<z> = S[]                                                           # needs sage.libs.singular
+                sage: T._ideal_class_(5)                                                    # needs sage.libs.singular
+                <class 'sage.rings.ideal.Ideal_generic'>
+                sage: T._ideal_class_(1)                                                    # needs sage.libs.singular
+                <class 'sage.rings.ideal.Ideal_principal'>
+            """
+            # One might need more than just n
+            from sage.rings.ideal import Ideal_generic, Ideal_principal
+            return Ideal_principal if n == 1 else Ideal_generic
+
         def _test_divides(self, **options):
             r"""
             Run generic tests on the method :meth:`divides`.
@@ -248,6 +281,18 @@ class CommutativeRings(CategoryWithAxiom):
             ....:                    GF(5)]) in Rings().Commutative().Finite()
             True
         """
+        def extra_super_categories(self):
+            r"""
+            Let Sage know that finite commutative rings are Noetherian.
+
+            EXAMPLES::
+
+                sage: CommutativeRings().Finite().extra_super_categories()
+                [Category of noetherian rings]
+            """
+            from sage.categories.noetherian_rings import NoetherianRings
+            return [NoetherianRings()]
+
         class ParentMethods:
             def cyclotomic_cosets(self, q, cosets=None):
                 r"""
@@ -367,7 +412,7 @@ class CommutativeRings(CategoryWithAxiom):
                 try:
                     ~q
                 except ZeroDivisionError:
-                    raise ValueError("%s is not invertible in %s" % (q,self))
+                    raise ValueError("%s is not invertible in %s" % (q, self))
 
                 if cosets is None:
                     rest = set(self)
@@ -378,7 +423,7 @@ class CommutativeRings(CategoryWithAxiom):
                 while rest:
                     x0 = rest.pop()
                     o = [x0]
-                    x = q*x0
+                    x = q * x0
                     while x != x0:
                         o.append(x)
                         rest.discard(x)

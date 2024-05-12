@@ -2270,7 +2270,7 @@ def latex_variable_name(x, is_fname=False):
         return latex_varify(prefix, is_fname)
 
 
-class LatexExamples():
+class LatexExamples:
     r"""
     A catalogue of Sage objects with complicated ``_latex_`` methods.
     Use these for testing :func:`latex`, :func:`view`, the Typeset
