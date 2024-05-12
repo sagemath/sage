@@ -1572,11 +1572,14 @@ def sage_getargspec(obj):
         ....:     cpdef meet(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
         ....: ''')
         sage: sage_getargspec(Foo.join)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(Bar.join)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(Bar.meet)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     Test that :issue:`17009` is fixed::
 
@@ -1589,7 +1592,8 @@ def sage_getargspec(obj):
 
         sage: from sage.misc.nested_class import MainClass
         sage: sage_getargspec(MainClass.NestedClass.NestedSubClass.dummy)
-        FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds', defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds',
+                    defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In :issue:`18249` was decided to return a generic signature for Python
     builtin functions, rather than to raise an error (which is what Python's

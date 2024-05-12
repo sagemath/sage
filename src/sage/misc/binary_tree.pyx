@@ -310,7 +310,7 @@ cdef class BinaryTree:
             sage: t = BinaryTree()
             sage: t.contains(1)
             False
-            sage: t.insert(1,1)
+            sage: t.insert(1, 1)
             sage: t.contains(1)
             True
         """
