@@ -338,10 +338,10 @@ ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
 RUN cd /new && rm -rf .git && \
-    if ! ./.ci/retrofit-worktree.sh worktree-pre /sage; then \
+    if ! /sage/.ci/retrofit-worktree.sh worktree-pre /sage; then \
         rm -rf /sage/src;                                    \
         mv src /sage/src;                                    \
-        ./bootstrap && ./config.status;                      \
+        cd /sage && ./bootstrap && ./config.status;          \
     fi
 
 ARG TARGETS="build"
