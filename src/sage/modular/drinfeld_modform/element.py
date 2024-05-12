@@ -1,4 +1,6 @@
 r"""
+Elements of Drinfeld modular forms rings
+
 This module defines the elements of the class
 :class:`~sage.modular.drinfeld_modform.ring.DrinfeldModularForms`.
 

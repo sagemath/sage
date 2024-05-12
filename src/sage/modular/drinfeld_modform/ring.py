@@ -1,4 +1,6 @@
 r"""
+Graded rings of Drinfeld modular forms
+
 This module defines a class named :class:`DrinfeldModularForms`.
 
 Currently, the implementation only supports the full modular group

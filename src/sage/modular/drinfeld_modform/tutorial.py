@@ -7,7 +7,8 @@ implementation of Drinfeld modular forms in SageMath. We assume that the
 reader has basic knowledge of classical modular forms, as we will often
 make analogies to this setting. We also assume little knowledge of
 Drinfeld modules; for this topic, the interested reader can consult the
-SageMath reference manual: :ref:`Drinfeld modules`.
+SageMath reference manual
+:ref:`Drinfeld modules <sage.rings.function_field.drinfeld_modules.drinfeld_module>`.
 
 .. RUBRIC:: Preliminary notations
 
