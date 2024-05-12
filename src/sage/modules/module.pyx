@@ -318,6 +318,10 @@ def is_VectorSpace(x):
         True
         sage: M = FreeModule(IntegerRing(),30)
         sage: is_Module(M)
+        doctest:warning...
+        DeprecationWarning: the function is_Module is deprecated;
+        use 'isinstance(..., Module)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_VectorSpace(M)
         False
