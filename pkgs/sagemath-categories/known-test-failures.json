@@ -597,6 +597,10 @@
         "failed": true,
         "ntests": 126
     },
+    "sage.categories.noetherian_rings": {
+        "failed": true,
+        "ntests": 19
+    },
     "sage.categories.number_fields": {
         "failed": true,
         "ntests": 41

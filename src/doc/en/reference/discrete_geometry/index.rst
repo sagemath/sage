@@ -80,6 +80,7 @@ Toric geometry
    sage/geometry/toric_lattice
    sage/geometry/cone
    sage/geometry/cone_catalog
+   sage/geometry/cone_critical_angles
    sage/geometry/fan
    sage/geometry/fan_morphism
    sage/geometry/point_collection

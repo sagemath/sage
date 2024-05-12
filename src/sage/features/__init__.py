@@ -158,12 +158,6 @@ class Feature(TrivialUniqueRepresentation):
         self._hidden = False
         self._type = type
 
-        # For multiprocessing of doctests, the data self._num_hidings should be
-        # shared among subprocesses. Thus we use the Value class from the
-        # multiprocessing module (cf. self._seen of class AvailableSoftware)
-        from multiprocessing import Value
-        self._num_hidings = Value('i', 0, lock=False)
-
         try:
             from sage.misc.package import spkg_type
         except ImportError:  # may have been surgically removed in a downstream distribution
@@ -220,10 +214,6 @@ class Feature(TrivialUniqueRepresentation):
             self._cache_is_present = res
 
         if self._hidden:
-            if self._num_hidings.value > 0:
-                self._num_hidings.value += 1
-            elif self._cache_is_present:
-                self._num_hidings.value = 1
             return FeatureTestResult(self, False, reason="Feature `{name}` is hidden.".format(name=self.name))
 
         return self._cache_is_present
@@ -354,7 +344,6 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.databases import DatabaseCremona
             sage: DatabaseCremona().is_standard()
             False
-
         """
         if self.name.startswith('sage.'):
             return True
@@ -369,7 +358,6 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.databases import DatabaseCremona
             sage: DatabaseCremona().is_optional()
             True
-
         """
         return self._spkg_type() == 'optional'
 
@@ -394,17 +382,13 @@ class Feature(TrivialUniqueRepresentation):
             Use method `unhide` to make it available again.
 
             sage: Benzene().unhide()            # optional - benzene, needs sage.graphs
-            1
             sage: len(list(graphs.fusenes(2)))  # optional - benzene, needs sage.graphs
-            1
         """
         self._hidden = True
 
     def unhide(self):
         r"""
         Revert what :meth:`hide` did.
-
-        OUTPUT: The number of events a present feature has been hidden.
 
         EXAMPLES:
 
@@ -413,15 +397,28 @@ class Feature(TrivialUniqueRepresentation):
             sage: sage__plot().is_present()
             FeatureTestResult('sage.plot', False)
             sage: sage__plot().unhide()                                                 # needs sage.plot
-            1
             sage: sage__plot().is_present()                                             # needs sage.plot
             FeatureTestResult('sage.plot', True)
         """
-        num_hidings = self._num_hidings.value
-        self._num_hidings.value = 0
         self._hidden = False
-        return int(num_hidings)
 
+    def is_hidden(self):
+        r"""
+        Return whether ``self`` is present but currently hidden.
+
+        EXAMPLES:
+
+            sage: from sage.features.sagemath import sage__plot
+            sage: sage__plot().hide()
+            sage: sage__plot().is_hidden()                                              # needs sage.plot
+            True
+            sage: sage__plot().unhide()
+            sage: sage__plot().is_hidden()
+            False
+        """
+        if self._hidden and self._is_present():
+            return True
+        return False
 
 class FeatureNotPresentError(RuntimeError):
     r"""

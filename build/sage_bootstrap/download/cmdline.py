@@ -6,7 +6,9 @@ This module handles the main "sage-download-file" commandline utility.
 """
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2015-2016 Volker Braun <vbraun.name@gmail.com>
+#                     2015      Jeroen Demeyer
+#                     2020      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

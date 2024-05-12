@@ -458,10 +458,16 @@ def is_AbelianGroup(x):
         sage: F = AbelianGroup(5,[5,5,7,8,9], names=list("abcde")); F
         Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
         sage: is_AbelianGroup(F)
+        doctest:warning...
+        DeprecationWarning: the function is_AbelianGroup is deprecated;
+        use 'isinstance(..., AbelianGroup_class)' instead
+        See https://github.com/sagemath/sage/issues/37898 for details.
         True
         sage: is_AbelianGroup(AbelianGroup(7, [3]*7))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37898, "the function is_AbelianGroup is deprecated; use 'isinstance(..., AbelianGroup_class)' instead")
     return isinstance(x, AbelianGroup_class)
 
 
@@ -569,7 +575,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: G1.is_isomorphic(G2)
             True
         """
-        if not is_AbelianGroup(right):
+        if not isinstance(right, AbelianGroup_class):
             return False
         return left.elementary_divisors() == right.elementary_divisors()
 
