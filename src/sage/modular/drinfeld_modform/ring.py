@@ -329,8 +329,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         self._poly_ring = PolynomialRing(base_ring, rank, names=names,
                                          order=TermOrder('wdeglex', degs))
         self._assign_names(names)
-
-        super().__init__(base=base_ring, category=GradedAlgebras(base_ring))
+        cat = GradedAlgebras(base_ring).Commutative()
+        super().__init__(base=base_ring, category=cat)
 
     def _an_element_(self):
         r"""
