@@ -202,10 +202,10 @@ cdef class ArgumentFixer:
         EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
-            sage: def sum3(a,b,c=3,*args,**kwargs):
-            ....:     return a+b+c
+            sage: def sum3(a, b, c=3, *args, **kwargs):
+            ....:     return a + b + c
             sage: AF = ArgumentFixer(sum3)
-            sage: AF.fix_to_named(1,2,3,4,5,6,f=14,e=16)
+            sage: AF.fix_to_named(1, 2, 3, 4, 5, 6, f=14, e=16)
             ((4, 5, 6), (('a', 1), ('b', 2), ('c', 3), ('e', 16), ('f', 14)))
             sage: AF.fix_to_named(1,2,f=14)
             ((), (('a', 1), ('b', 2), ('c', 3), ('f', 14)))

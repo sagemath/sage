@@ -123,7 +123,7 @@ def find_replacements(location, package_regex=None, verbose=False):
     pattern = re.compile(regex)
     replacements = []
     global log_messages, interesting_examples
-    with open(location, "r") as fp:
+    with open(location) as fp:
         skip_line = False
         lines = fp.readlines()  # read all lines using readline()
         row_index = 0
@@ -368,7 +368,7 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
         from sage.plot.line import line
     """
     replacements = find_replacements(location, package_regex, verbose)
-    with open(location, "r") as file:
+    with open(location) as file:
         lines = file.readlines()
     replaced_content = ""
     row_index = 0  # keeps track of the line number

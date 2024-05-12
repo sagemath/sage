@@ -50,6 +50,12 @@ case "$SYSTEM" in
         ;;
 esac
 
+case "$SPKGS" in
+    *pkg:*|pypi/*|generic/*)
+        PATH="${SAGE_ROOT}/build/bin:$PATH" SPKGS=$(sage-package list $SPKGS)
+        ;;
+esac
+
 for PKG_BASE in $SPKGS; do
     if [ $FROM_PYPROJECT_TOML -eq 1 ]; then
         if [ -f "$SAGE_ROOT/src/pyproject.toml" ]; then

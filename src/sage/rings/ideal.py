@@ -1077,7 +1077,7 @@ class Ideal_generic(MonoidElement):
         ``self.ngens() * other.ngens()``. So if used repeatedly this method
         will create an ideal with a uselessly large amount of generators.
         Therefore it is advisable to overwrite this method with a method that
-        takes advantage of the structure of the ring your working in.
+        takes advantage of the structure of the ring you are working in.
 
         Example::
 
