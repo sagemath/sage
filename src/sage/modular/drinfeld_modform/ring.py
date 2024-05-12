@@ -2,7 +2,6 @@ r"""
 Graded rings of Drinfeld modular forms
 
 This module defines a class named :class:`DrinfeldModularForms`.
-
 Currently, the implementation only supports the full modular group
 `\mathrm{GL}_r(A)` where `A = \mathbb{F}_q[T]`.
 
@@ -21,7 +20,7 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2022 DAVID AYOTTE <davidayotte94@outlook.com>
+#       Copyright (C) 2022 DAVID AYOTTE <da.ayotte@outlook.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
