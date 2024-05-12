@@ -989,60 +989,58 @@ def minimum_generating_set(G) -> list:
     We follow the algorithm described in the research paper "Algorithms for
     the minimum generating set problem" by Bireswar Das and Dhara Thakkar (:doi:`10.48550/arXiv.2305.08405`).
 
-    When group ``G`` is a simple, solvable or nilpotent then we directly use
-    the MinimalGeneratingSet funtion from GAP which gives us the minimum generating set
+    When group ``G`` is a simple or solvable then we directly use
+    the ``MinimalGeneratingSet`` function from GAP which gives us the minimum generating set
     of that group.
 
-    If the MinimalGeneratingSet function of GAP gives any error, then it is guaranteed
+    If ``libgap.MinimalGeneratingSet`` gives any error, then it is guaranteed
     that the group ``G`` is not a simple group and it will have a cheif series of length 2.
 
-    `S := ChiefSeries(G) = [G,G_1,G_2 \dots G_l]` where `G_l = \{e\}`
+    The minimum generating set (MGS) of first factor group in the chief series can be found easily,
+    since it is a simple group.
 
-    Let `g` be the set of representatives of the minimum generating set of `G/G_1`.
-    This can be found easily (since `G/G_1` is simple group) as 
-    ``g = libgap.MinimalGeneratingSet(GbyG1)``
-
-    for k = 2 to `l` , compute `G/G_k` , `G_{k-1}/G_k` and set `g := lift( g, (G_{k-1}/G_k) , (G/G_k) )`
-
-    return `g`
+    Then using the ``lift`` function we find the MGS of each
+    quotient group of ``G`` by one of the normal groups in the series, one by one.
+    We iterate over the normal subgroups, from largest
+    (the index 1 element in series; thus the quotient group is the factor group we found MGS for initially)
+    to the smallest (the group containing identity only;
+    thus the quotient group is essentially the group G and the coset representatives (CR) are a MGS of G).
 
     lift function details:
 
-    It computes the minimum generating set (as representative elements) of a quotient group `G/G_i`
-    in a chief series, given the minimum generating set (as representatives) of `G/G_{i-1}`, namely `g`
-    (what we are calling ``G_by_Gim1_mingen_reps`` in the code). the factor group `G_{i-1}/G_i`
-    and the quotient group `G/G_i` itself. The function does these steps:
+    It computes the minimum generating set (as CR) of the quotient of ``G`` with a normal subgroup ``Gi``
+    in a chief series, given the MGS (as CR) of the quotient of ``G``
+    with the normal group ``Gim1`` just larger than ``Gi``.
+    This MGS (as CR) are what we are calling ``G_by_Gim1_mingen_reps`` in the code) and call 'g' here.
+    The function does these steps:
 
     First, we compute some essential quantities:
 
-    `{n} :=\{n_1,n_2\dots n_k\}` where `\{n_1 G_i,n_2G_i \dots n_kG_{i}\}` is any generating set of
-    `G_{i-1}/G_i , i.e. it's the representative elements of any prefferably small, but not
-    necessarily minimal generating set of `G_{i-1}/G_i`
+    'n' is a list of CR of any (prefferably small, but not necessarily minimal) generating set of
+    the factor group ``Gim1_by_Gi`` of the two normal subgroups.
 
-    `{N} := \{N_1,N_2\dots N_m\}` where `G_{i-1}/G_i = \{N_1G_i,N_2G_2\dots N_m G_m\}`.
-    This is simply a list of representative elements of `G_{i-1}/G_i`.
+    'N' is simply a list of CR of that factor group.
 
-    We wish to find the representatives of a minimum generating set of `G/G_i`.
     Here, we have two cases to consider.
 
-    First, if `G_{i-1}/G_i` is abelian :
+    First, if the factor group is abelian :
 
-    if `{gG_i}= G/G_i`, return `g`
+    if the cosets of ``G`` with the smaller group (``Gi``) with CR same as g, return 'g'.
+    Otherwise we modiy 'g' by multiplying one of its elements with some elemet from 'n'.
+    We try all variations. One of them is guaranteed to work.
 
-    for `1 \le p \le s`  and `n_j \in {n}`, we calculate 
-    `g^* := \{g_1,g_2 \dots g_{p-1} ,g_p n_j,g_{p_1},\dots\}`. If `{g^* G_i} = G/G_i` , return `g^*`
+    Second, if the factor group is not abelian:
 
-    Second, if `G_{i-1}` is not abelian:
+    First, modify 'g' by multiplying all of its elements by all variations of
+    (not necessarily distinct or non-identity) elements from N.
+    This is done using ``gen_combinations`` generator.
+    If any variation works as CR of MGS of the bigger quotient group ``G_by_Gi``,
+    return that variation.
 
-    First, for all combinations of (not necessarily distinct) elements
-    `N_{i_1},N_{i_2}\dots N_{i_t} \in {N}`, compute
-    `g^* = \{g_1N_{i_1},g_{i_2}N_{i_3}\dots g_{i_t}N_t,g_{t+1}\dots g_s\}`
-    (This is done using the ``gen_combinations`` generator). If `{g^*G_i}; = G/G_i`, return `{g^*}`
-
-    Then, for all combinations of (not necessarily distinct) elements
-    `N_{i_1},N_{i_2}\dots N_{i_t} N_{i_{t+1}} \in {N}`, compute
-    `g^* = \{g_1N_{i_1},g_{i_2}N_{i_3}\dots g_{i_t}N_t,g_{t+1}\dots g_s\}`
-    (This is done using the ``gen_combinations`` generator). If `{g^*G_i}; = G/G_i`, return `{g^*}`
+    Then if above process fails, do the same thing, but add an extra element from N
+    into the modified g before checking if it works as CR of MGS of the factor group.
+    This can be done by first adding the identity element into g and then doing the same
+    procedure as above step.
 
     By now, we must have exhausted our search.
 
@@ -1081,7 +1079,7 @@ def minimum_generating_set(G) -> list:
         return list(G.MinimalGeneratingSet())
     except (AttributeError, ValueError, TypeError):
         pass
-    
+
     def gen_combinations(g, N, t):
         if t == 0:
             yield g
@@ -1122,7 +1120,7 @@ def minimum_generating_set(G) -> list:
                                                      for x in raw_gens])):
                 return raw_gens
 
-        for raw_gens in gen_combinations(G_by_Gim1_mingen_reps+[Gim1_by_Gi_elem_reps[0]], 
+        for raw_gens in gen_combinations(G_by_Gim1_mingen_reps+[Gim1_by_Gi_elem_reps[0]],
                                          Gim1_by_Gi_elem_reps, s+1):
             if (G_by_Gi == libgap.GroupByGenerators([phi_G_by_Gi.ImagesRepresentative(x)
                                                      for x in raw_gens])):
