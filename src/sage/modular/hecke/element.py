@@ -35,10 +35,16 @@ def is_HeckeModuleElement(x):
     EXAMPLES::
 
         sage: sage.modular.hecke.all.is_HeckeModuleElement(0)
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeModuleElement is deprecated;
+        use 'isinstance(..., HeckeModuleElement)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         False
         sage: sage.modular.hecke.all.is_HeckeModuleElement(BrandtModule(37)([1,2,3]))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeModuleElement is deprecated; use 'isinstance(..., HeckeModuleElement)' instead")
     return isinstance(x, HeckeModuleElement)
 
 

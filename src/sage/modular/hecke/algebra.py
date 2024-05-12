@@ -52,10 +52,16 @@ def is_HeckeAlgebra(x) -> bool:
 
         sage: from sage.modular.hecke.algebra import is_HeckeAlgebra
         sage: is_HeckeAlgebra(CuspForms(1, 12).anemic_hecke_algebra())
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeAlgebra is deprecated;
+        use 'isinstance(..., HeckeAlgebra_base)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_HeckeAlgebra(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeAlgebra is deprecated; use 'isinstance(..., HeckeAlgebra_base)' instead")
     return isinstance(x, HeckeAlgebra_base)
 
 
@@ -177,8 +183,8 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
         """
         if isinstance(M, tuple):
             M = M[0]
-        from . import module
-        if not module.is_HeckeModule(M):
+        from .module import HeckeModule_generic
+        if not isinstance(M, HeckeModule_generic):
             msg = f"M (={M}) must be a HeckeModule"
             raise TypeError(msg)
         self.__M = M

@@ -35,10 +35,16 @@ def is_HeckeOperator(x):
         sage: from sage.modular.hecke.hecke_operator import is_HeckeOperator
         sage: M = ModularSymbols(Gamma0(7), 4)
         sage: is_HeckeOperator(M.T(3))
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeOperator is deprecated;
+        use 'isinstance(..., HeckeOperator)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_HeckeOperator(M.T(3) + M.T(5))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeOperator is deprecated; use 'isinstance(..., HeckeOperator)' instead")
     return isinstance(x, HeckeOperator)
 
 
@@ -51,10 +57,16 @@ def is_HeckeAlgebraElement(x):
         sage: from sage.modular.hecke.hecke_operator import is_HeckeAlgebraElement
         sage: M = ModularSymbols(Gamma0(7), 4)
         sage: is_HeckeAlgebraElement(M.T(3))
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeAlgebraElement is deprecated;
+        use 'isinstance(..., HeckeAlgebraElement)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_HeckeAlgebraElement(M.T(3) + M.T(5))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeAlgebraElement is deprecated; use 'isinstance(..., HeckeAlgebraElement)' instead")
     return isinstance(x, HeckeAlgebraElement)
 
 
@@ -72,7 +84,7 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: sage.modular.hecke.hecke_operator.HeckeAlgebraElement(R) # please don't do this!
             Generic element of a structure
         """
-        if not algebra.is_HeckeAlgebra(parent):
+        if not isinstance(parent, algebra.HeckeAlgebra):
             raise TypeError("parent (=%s) must be a Hecke algebra" % parent)
         AlgebraElement.__init__(self, parent)
 

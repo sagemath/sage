@@ -41,6 +41,10 @@ def is_AmbientHeckeModule(x) -> bool:
 
         sage: from sage.modular.hecke.ambient_module import is_AmbientHeckeModule
         sage: is_AmbientHeckeModule(ModularSymbols(6))
+        doctest:warning...
+        DeprecationWarning: the function is_AmbientHeckeModule is deprecated;
+        use 'isinstance(..., AmbientHeckeModule)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_AmbientHeckeModule(ModularSymbols(6).cuspidal_subspace())
         False
@@ -49,6 +53,8 @@ def is_AmbientHeckeModule(x) -> bool:
         sage: is_AmbientHeckeModule(BrandtModule(2, 3))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_AmbientHeckeModule is deprecated; use 'isinstance(..., AmbientHeckeModule)' instead")
     return isinstance(x, AmbientHeckeModule)
 
 
@@ -367,7 +373,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             ...
             ValueError: the characters of the domain and codomain must match
         """
-        if is_AmbientHeckeModule(codomain):
+        if isinstance(codomain, AmbientHeckeModule):
             M = codomain
             level = int(M.level())
         else:

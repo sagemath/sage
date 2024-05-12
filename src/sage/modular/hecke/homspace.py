@@ -20,7 +20,7 @@ from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.categories.homset import HomsetWithBase
 from .morphism import HeckeModuleMorphism_matrix
-from .module import is_HeckeModule
+from .module import HeckeModule_generic
 
 
 def is_HeckeModuleHomspace(x):
@@ -31,10 +31,16 @@ def is_HeckeModuleHomspace(x):
 
         sage: M = ModularForms(Gamma0(7), 4)
         sage: sage.modular.hecke.homspace.is_HeckeModuleHomspace(Hom(M, M))
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeModuleHomspace is deprecated;
+        use 'isinstance(..., HeckeModuleHomspace)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: sage.modular.hecke.homspace.is_HeckeModuleHomspace(Hom(M, QQ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeModuleHomspace is deprecated; use 'isinstance(..., HeckeModuleHomspace)' instead")
     return isinstance(x, HeckeModuleHomspace)
 
 
@@ -66,7 +72,7 @@ class HeckeModuleHomspace(HomsetWithBase):
             sage: H = M.Hom(M)
             sage: TestSuite(H).run(skip='_test_elements')
         """
-        if not is_HeckeModule(X) or not is_HeckeModule(Y):
+        if not isinstance(X, HeckeModule_generic) or not isinstance(Y, HeckeModule_generic):
             raise TypeError("X and Y must be Hecke modules")
         if X.base_ring() != Y.base_ring():
             raise TypeError("X and Y must have the same base ring")
