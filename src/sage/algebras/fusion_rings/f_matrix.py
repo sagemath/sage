@@ -889,7 +889,7 @@ class FMatrix(SageObject):
              100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100)
         """
         nonz = {idx: 100 for idx in self._singles}
-        for idx in self._ks:
+        for idx, _ in self._ks.items():
             nonz[idx] = 100
         return ETuple(nonz, self._poly_ring.ngens())
 
