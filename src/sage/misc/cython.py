@@ -348,7 +348,7 @@ def cython(filename, verbose=0, compile_message=False,
                     libraries=standard_libs,
                     library_dirs=standard_libdirs)
 
-    directives = dict(language_level=3, cdivision=True)
+    directives = {'language_level': 3, 'cdivision': True}
 
     try:
         # Change directories to target_dir so that Cython produces the correct
