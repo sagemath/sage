@@ -37,17 +37,38 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
       - name: make dist (--disable-download-from-upstream-url)
+        id: make_dist
         run: |
           ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
         env:
           MAKE: make -j8
-      - name: make dist (--enable-download-from-upstream-url)
-        if: failure()
+      - name: make download (--disable-download-from-upstream-url)
+        id: make_download
         run: |
-          ./configure && make dist
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
         env:
           MAKE: make -j8
-      - uses: actions/upload-artifact@v3
+      - name: Reconfigure with --enable-download-from-upstream-url
+        if: (success() || failure()) && (steps.make_dist.outcome != 'success' || steps.make_download.outcome != 'success')
+        run: |
+          ./configure
+      - name: make dist (--enable-download-from-upstream-url)
+        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+        run: |
+          make dist
+        env:
+          MAKE: make -j8
+      - name: make download (--enable-download-from-upstream-url)
+        if: (success() || failure()) && steps.make_download.outcome != 'success'
+        run: |
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge --allow-upstream"
+        env:
+          MAKE: make -j8
+      - name: Remove what cannot be distributed
+        if: success() || failure()
+        run: |
+          rm -f upstream/*do-not-distribute*
+      - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
           path: |
@@ -61,10 +82,10 @@ jobs:
     runs-on: ubuntu-latest
     if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: release_dist
-      - uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
           files: |
@@ -91,10 +112,40 @@ jobs:
           make pypi-sdists V=0
           (mkdir dist && mv upstream/sage*.tar.gz dist/)
           ls -l dist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          skip-existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'
+
+  noarch_wheels_for_pypi:
+
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+      - name: make pypi-noarch-wheels
+        run: |
+          ./bootstrap
+          ./configure
+          make pypi-noarch-wheels V=0
+          (mkdir dist && mv venv/var/lib/sage/wheels/sage*-none-any.whl dist/)
+          ls -l dist
+      - uses: actions/upload-artifact@v4
+        with:
+          path: "dist/*.whl"
+          name: noarch-wheels
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
@@ -120,6 +171,7 @@ jobs:
           - os: macos-14
             arch: arm64
     env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
@@ -138,7 +190,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
@@ -170,22 +222,10 @@ jobs:
               "${{ steps.python.outputs.python-path }}" -m pipx run cibuildwheel==2.17.0 unpacked/$pkg*
           done
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: ${{ matrix.os }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl
-
-  upload_wheels:
-    needs: build_wheels
-    runs-on: ubuntu-latest
-    env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
-    steps:
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: wheels
-          path: wheelhouse
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:

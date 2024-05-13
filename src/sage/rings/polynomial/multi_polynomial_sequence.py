@@ -1724,9 +1724,24 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             (x*y, y, z, 1)
             sage: A*v
             (x*y + y + 1, z + 1)
+
+        TESTS:
+
+        Check that :issue:`37837` has been fixed::
+
+            sage: R.<a,b,c> = PolynomialRing(GF(2), ['a', 'b', 'c'])
+            sage: A, v = Sequence([a+b+c]).coefficients_monomials()
+            sage: A
+            [1 1 1]
+            sage: v
+            (a, b, c)
+            sage: A*v
+            (a + b + c)
         """
         from sage.modules.free_module_element import vector
         from sage.matrix.constructor import Matrix
+        from sage.rings.polynomial.multi_polynomial_ring_base import \
+            BooleanPolynomialRing_base
 
         if order is None:
             v = sorted(self.monomials(), reverse=True)
@@ -1736,16 +1751,27 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             else:
                 raise ValueError("order argument can only accept list or tuple")
 
-        R = self.ring().base_ring()
-        one = R.one()
+        R = self.ring()
+        K = R.base_ring()
         y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
-        A = Matrix(R, len(self), len(v), sparse=sparse)
-        for x, poly in enumerate(self):
-            for m in poly:
-                try:
-                    A[x, y[m]] = one
-                except KeyError:
-                    raise ValueError("order argument does not contain all monomials")
+        A = Matrix(K, len(self), len(v), sparse=sparse)
+
+        if isinstance(R, BooleanPolynomialRing_base):
+            one = K.one()
+            for x, poly in enumerate(self):
+                for m in poly:
+                    try:
+                        A[x, y[m]] = one
+                    except KeyError:
+                        raise ValueError("order argument does not contain all monomials")
+        else:
+            for x, poly in enumerate(self):
+                for c, m in poly:
+                    try:
+                        A[x, y[m]] = c
+                    except KeyError:
+                        raise ValueError("order argument does not contain all monomials")
+
         return A, vector(v)
 
 

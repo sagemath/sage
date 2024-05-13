@@ -748,6 +748,13 @@ documentation for more information on its behaviour and optional arguments.
       from sage.misc.superseded import deprecation
       deprecation(666, "Do not use your computer to compute 1+1. Use your brain.")
 
+Note that these decorators only work for (pure) Python. There is no implementation
+of decorators in Cython. Hence, when in need to rename a keyword/function/method/...
+in a Cython (.pyx) file and/or to deprecate something, forget about decorators and
+just use :func:`~sage.misc.superseded.deprecation_cython` instead. The usage of
+:func:`~sage.misc.superseded.deprecation_cython` is exactly the same as
+:func:`~sage.misc.superseded.deprecation`.
+
 
 Experimental/unstable code
 --------------------------

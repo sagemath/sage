@@ -69,14 +69,14 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
     - ``field`` -- field `K` on which the sub manifold is defined; allowed
       values are
 
-        - ``'real'`` or an object of type ``RealField`` (e.g., ``RR``) for
-           a manifold over `\RR`
-        - ``'complex'`` or an object of type ``ComplexField`` (e.g., ``CC``)
-           for a manifold over `\CC`
-        - an object in the category of topological fields (see
-          :class:`~sage.categories.fields.Fields` and
-          :class:`~sage.categories.topological_spaces.TopologicalSpaces`)
-          for other types of manifolds
+      - ``'real'`` or an object of type ``RealField`` (e.g., ``RR``) for
+        a manifold over `\RR`
+      - ``'complex'`` or an object of type ``ComplexField`` (e.g., ``CC``)
+        for a manifold over `\CC`
+      - an object in the category of topological fields (see
+        :class:`~sage.categories.fields.Fields` and
+        :class:`~sage.categories.topological_spaces.TopologicalSpaces`)
+        for other types of manifolds
 
     - ``structure`` -- manifold structure (see
       :class:`~sage.manifolds.structure.TopologicalStructure` or
@@ -136,7 +136,7 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
         sage: phi_inv_t = M.scalar_field({CM: z-x^2-y^2})
         sage: phi_inv_t.display()
         M → ℝ
-        (x, y, z) ↦ -x^2 - y^2 + z
+           (x, y, z) ↦ -x^2 - y^2 + z
 
     `\phi` can then be declared as an embedding `N\to M`::
 

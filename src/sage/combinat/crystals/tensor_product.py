@@ -583,8 +583,6 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         for x in self.cartesian_product:
             yield self(*x)
 
-#    list = CombinatorialClass._CombinatorialClass__list_from_iterator
-
     def cardinality(self):
         """
         Return the cardinality of ``self``.

@@ -123,12 +123,21 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 Universal enveloping algebra of
                  The 6-Witt Lie algebra over Ring of integers modulo 6
                  in the Poincare-Birkhoff-Witt basis
+
+            Corner case for the trivial (0-dimensional) Lie algebra::
+
+                sage: L.<a,b,c> = LieAlgebra(QQ, abelian=True)
+                sage: I = L.product_space(L)
+                sage: I._construct_UEA()
+                Free Algebra on 0 generators () over Rational Field
             """
             from sage.algebras.free_algebra import FreeAlgebra
 
             # Create the UEA relations
             # We need to get names for the basis elements, not just the generators
             I = self._basis_ordering
+            if not I:  # trivial Lie algebra
+                return FreeAlgebra(self.base_ring(), [])
             try:
                 names = [str(x) for x in I]
 
@@ -522,6 +531,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return self.subalgebra(self.centralizer_basis(S))
 
+        @cached_method
         def center(self):
             """
             Return the center of ``self``.
@@ -1065,14 +1075,19 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.combinat sage.modules
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
-                sage: L.derived_series()        # not implemented
+                sage: L.derived_series()
                 (Lie algebra on 2 generators (x, y) over Rational Field,
-                 Subalgebra generated of
-                  Lie algebra on 2 generators (x, y) over Rational Field
-                  with basis: (x,),
-                 Subalgebra generated of
-                  Lie algebra on 2 generators (x, y) over Rational Field
-                  with basis: ())
+                 Ideal (x) of Lie algebra on 2 generators (x, y) over Rational Field,
+                 Ideal () of Lie algebra on 2 generators (x, y) over Rational Field)
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.derived_series()
+                (Lie algebra on 5 generators (a, b, c, d, e) over Rational Field,
+                 Ideal (a, b, c) of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field,
+                 Ideal () of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field)
             """
             L = [self]
             while L[-1].dimension() > 0:
@@ -1135,11 +1150,18 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.combinat sage.modules
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
-                sage: L.lower_central_series()  # not implemented
+                sage: L.lower_central_series()
                 (Lie algebra on 2 generators (x, y) over Rational Field,
-                 Subalgebra generated of
-                  Lie algebra on 2 generators (x, y) over Rational Field
-                  with basis: (x,))
+                 Ideal (x) of Lie algebra on 2 generators (x, y) over Rational Field)
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.lower_central_series()
+                (Lie algebra on 5 generators (a, b, c, d, e) over Rational Field,
+                 Ideal (a, b, c) of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field,
+                 Ideal (a, b) of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field)
             """
             if submodule:
                 L = [self.module()]
@@ -1151,6 +1173,82 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     break
                 L.append(s)
             return tuple(L)
+
+        @cached_method
+        def upper_central_series(self):
+            r"""
+            Return the upper central series `(Z_i(\mathfrak{g}))_i`
+            of ``self`` where the rightmost
+            `Z_k(\mathfrak{g}) = Z_{k+1}(\mathfrak{g}) = \cdots`.
+
+            The *upper central series* of a Lie algebra `\mathfrak{g}` is
+            defined recursively by `Z_0(\mathfrak{g}) := Z(\mathfrak{g})` and
+
+            .. MATH::
+
+                Z_{k+1}(\mathfrak{g}) / Z_k(\mathfrak{g})
+                = Z(\mathfrak{g} / Z_k(\mathfrak{g}),
+
+            and recall that `Z(\mathfrak{g})` is the :meth:`center`
+            of `\mathfrak{g}`.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+                sage: L.upper_central_series()
+                [An example of a finite dimensional Lie algebra with basis:
+                 the 3-dimensional abelian Lie algebra over Rational Field]
+
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
+                sage: L.upper_central_series()
+                [Subalgebra generated by () of Lie algebra on 2 generators (x, y) over Rational Field]
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.upper_central_series()
+                [Subalgebra generated by (c) of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field]
+
+                sage: L = lie_algebras.Heisenberg(QQ, 3)
+                sage: L.upper_central_series()
+                [Subalgebra generated by (z) of Heisenberg algebra of rank 3 over Rational Field,
+                 Heisenberg algebra of rank 3 over Rational Field]
+            """
+            I = self.center()
+            if I.dimension() == 0:
+                return [I]
+            ret = [I]
+            dim = self.dimension()
+            while True:
+                Q = self.quotient(I)
+                Z = Q.center()
+                if not Z.dimension():  # we did not add anything
+                    return ret
+                new_gens = [Q.lift(b.value) for b in Z.basis()]
+                I = self.ideal(list(I.basis()) + new_gens)
+                if I.dimension() == dim:
+                    ret.append(self)
+                    return ret
+                ret.append(I)
+
+        def hypercenter(self):
+            r"""
+            Return the hypercenter of ``self``.
+
+            EXAMPLES::
+
+                sage: SGA3 = SymmetricGroup(3).algebra(QQ)
+                sage: L = LieAlgebra(associative=SGA3)
+                sage: L.hypercenter()
+                Subalgebra generated by ((), (1,2,3) + (1,3,2), (2,3) + (1,2) + (1,3))
+                 of Lie algebra of Symmetric group algebra of order 3 over Rational Field
+
+                sage: L = lie_algebras.Heisenberg(QQ, 3)
+                sage: L.hypercenter()
+                Heisenberg algebra of rank 3 over Rational Field
+            """
+            return self.upper_central_series()[-1]
 
         def is_abelian(self):
             """
@@ -2254,3 +2352,71 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     [   1    0 -1/2]
                     [   0    1    1]
                 """
+
+            def reduce(self, X):
+                r"""
+                Reduce an element of the ambient Lie algebra modulo the
+                ideal ``self``.
+
+                INPUT:
+
+                - ``X`` -- an element of the ambient Lie algebra
+
+                OUTPUT:
+
+                An element `Y` of the ambient Lie algebra that is contained
+                in a fixed complementary submodule `V` to ``self`` such that
+                `X = Y` mod ``self``.
+
+                When the base ring of ``self`` is a field, the complementary
+                submodule `V` is spanned by the elements of the basis that
+                are not the leading supports of the basis of ``self``.
+
+                EXAMPLES:
+
+                An example reduction in a 6 dimensional Lie algebra::
+
+                    sage: sc = {('a','b'): {'d': 1}, ('a','c'): {'e': 1},
+                    ....:       ('b','c'): {'f': 1}}
+                    sage: L.<a,b,c,d,e,f> = LieAlgebra(QQ, sc)
+                    sage: I = L.ideal(c)
+                    sage: I.reduce(a + b + c + d + e + f)
+                    a + b + d
+
+                The reduction of an element is zero if and only if the
+                element belongs to the subalgebra::
+
+                    sage: I.reduce(c + e)
+                    0
+                    sage: c + e in I
+                    True
+
+                Over non-fields, the complementary submodule may not be spanned
+                by a subset of the basis of the ambient Lie algebra::
+
+                    sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
+                    sage: I = L.ideal(Y)
+                    sage: I.basis()
+                    Family (Y, 3*Z)
+                    sage: I.reduce(3*Z)
+                    0
+                    sage: I.reduce(Y + 14*Z)
+                    2*Z
+                """
+                R = self.base_ring()
+                from sage.categories.fields import Fields
+                is_field = R in Fields()
+                for Y in self.basis():
+                    Y = self.lift(Y)
+                    k, c = Y.leading_item(key=self._order)
+
+                    if is_field:
+                        X -= (X[k] / c) * Y
+                    else:
+                        try:
+                            q, _ = X[k].quo_rem(c)
+                            X -= q * Y
+                        except AttributeError:
+                            break
+
+                return X

@@ -1098,11 +1098,11 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         Since Infinite Polynomial Rings must have at least one
         generator, they have infinitely many variables and are thus
-        not noetherian, as a ring.
+        not Noetherian, as a ring.
 
         .. NOTE::
 
-            Infinite Polynomial Rings over a field `F` are noetherian as
+            Infinite Polynomial Rings over a field `F` are Noetherian as
             `F(G)` modules, where `G` is the symmetric group of the
             natural numbers. But this is not what the method
             ``is_noetherian()`` is answering.

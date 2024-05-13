@@ -885,7 +885,8 @@ class Modules(Category_module):
                     sage: M.category()                                                  # needs sage.modules
                     Category of Cartesian products of modules with basis
                      over (Dedekind domains and euclidean domains
-                     and infinite enumerated sets and metric spaces)
+                      and noetherian rings
+                      and infinite enumerated sets and metric spaces)
                     sage: M.base_ring()                                                 # needs sage.modules
                     Integer Ring
 

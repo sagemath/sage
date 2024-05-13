@@ -40,7 +40,7 @@ cdef class SetSystem:
 
         sage: M = matroids.catalog.Fano()
         sage: M.circuits()
-        Iterator over a system of subsets
+        SetSystem of 14 sets over 7 elements
 
     To access the sets in this structure, simply iterate over them. The
     simplest way must be::
@@ -75,7 +75,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
         """
         cdef long i
         if not isinstance(groundset, tuple):
@@ -110,7 +110,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: sorted(S[1])
             [3, 4]
             sage: for s in S: print(sorted(s))
@@ -138,7 +138,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: len(S)
             3
         """
@@ -196,9 +196,9 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: repr(S)  # indirect doctest
-            'Iterator over a system of subsets'
+            'SetSystem of 3 sets over 4 elements'
         """
-        return "Iterator over a system of subsets"
+        return f'SetSystem of {self._len} sets over {self._groundset_size} elements'
 
     cdef copy(self):
         cdef SetSystem S

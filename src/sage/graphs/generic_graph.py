@@ -1900,6 +1900,72 @@ class GenericGraph(GenericGraph_pyx):
 
         return d
 
+    def _vertex_indices_and_keys(self, vertices=None, *, sort=None):
+        r"""
+        Process a ``vertices`` parameter.
+
+        This is a helper function for :meth:`adjacency_matrix`,
+        :meth:`incidence_matrix`, :meth:`weighted_adjacency_matrix`,
+        and :meth:`kirchhoff_matrix`.
+
+        INPUT:
+
+        - ``vertices`` -- list, ``None``, or ``True`` (default: ``None``)
+
+          - when a list, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering of ``vertices``,
+          - when ``None``, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering given by
+            :meth:`GenericGraph.vertices`
+          - when ``True``, construct an endomorphism of a free module instead of
+            a matrix, where the module's basis is indexed by the vertices.
+
+        - ``sort`` -- boolean or ``None`` (default); passed to :meth:`vertices`
+          when ``vertices`` is not a list.
+
+        OUTPUT: pair of:
+
+        - ``vertex_indices`` -- a dictionary mapping vertices to numerical indices,
+        - ``keys`` -- either a tuple of basis keys (when using a
+          :class:`CombinatorialFreeModule`) or ``None`` (when using a
+          :class:`FreeModule`, :func:`matrix`).
+
+        EXAMPLES::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G.relabel(['o....', '.o...', '..o..', '...o.', '....o'])
+            sage: G._vertex_indices_and_keys(None)
+            ({'....o': 0, '...o.': 1, '..o..': 2, '.o...': 3, 'o....': 4},
+             None)
+            sage: G._vertex_indices_and_keys(None, sort=False)
+            ({'....o': 4, '...o.': 3, '..o..': 2, '.o...': 1, 'o....': 0},
+             None)
+            sage: G._vertex_indices_and_keys(['..o..', '.o...', '...o.', 'o....', '....o'])
+            ({'....o': 4, '...o.': 2, '..o..': 0, '.o...': 1, 'o....': 3},
+             None)
+            sage: G._vertex_indices_and_keys(True)
+            ({'....o': 4, '...o.': 3, '..o..': 2, '.o...': 1, 'o....': 0},
+             ('o....', '.o...', '..o..', '...o.', '....o'))
+            sage: G._vertex_indices_and_keys(True, sort=True)
+            ({'....o': 0, '...o.': 1, '..o..': 2, '.o...': 3, 'o....': 4},
+             ('....o', '...o.', '..o..', '.o...', 'o....'))
+        """
+        n = self.order()
+        keys = None
+        if vertices is True:
+            vertices = self.vertices(sort=sort if sort is not None else False)
+            keys = tuple(vertices)  # tuple to make it hashable
+        elif vertices is None:
+            try:
+                vertices = self.vertices(sort=sort if sort is not None else True)
+            except TypeError:
+                raise TypeError("Vertex labels are not comparable. You must "
+                                "specify an ordering using parameter 'vertices'")
+        elif (len(vertices) != n or
+              set(vertices) != set(self.vertex_iterator())):
+            raise ValueError("parameter 'vertices' must be a permutation of the vertices")
+        return {v: i for i, v in enumerate(vertices)}, keys
+
     def adjacency_matrix(self, sparse=None, vertices=None, *, base_ring=None, **kwds):
         r"""
         Return the adjacency matrix of the (di)graph.
@@ -1911,10 +1977,16 @@ class GenericGraph(GenericGraph_pyx):
         - ``sparse`` -- boolean (default: ``None``); whether to represent with a
           sparse matrix
 
-        - ``vertices`` -- list (default: ``None``); the ordering of
-          the vertices defining how they should appear in the
-          matrix. By default, the ordering given by
-          :meth:`GenericGraph.vertices` with ``sort=True`` is used.
+        - ``vertices`` -- list, ``None``, or ``True`` (default: ``None``);
+
+          - when a list, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering of ``vertices``,
+          - when ``None``, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering given by
+            :meth:`GenericGraph.vertices` with ``sort=True``.
+          - when ``True``, construct an endomorphism of a free module instead of
+            a matrix, where the module's basis is indexed by the vertices.
+
           If the vertices are not comparable, the keyword ``vertices`` must be
           used to specify an ordering, or a :class:`TypeError` exception will
           be raised.
@@ -2025,27 +2097,45 @@ class GenericGraph(GenericGraph_pyx):
             ValueError: matrix is immutable; please change a copy instead
             (i.e., use copy(M) to change a copy of M).
 
+        Creating a module endomorphism::
+
+            sage: # needs sage.modules
+            sage: D12 = posets.DivisorLattice(12).hasse_diagram()
+            sage: phi = D12.adjacency_matrix(vertices=True); phi
+            Generic endomorphism of
+             Free module generated by {1, 2, 3, 4, 6, 12} over Integer Ring
+            sage: print(phi._unicode_art_matrix())
+                1  2  3  4  6 12
+             1⎛ 0  1  1  0  0  0⎞
+             2⎜ 0  0  0  1  1  0⎟
+             3⎜ 0  0  0  0  1  0⎟
+             4⎜ 0  0  0  0  0  1⎟
+             6⎜ 0  0  0  0  0  1⎟
+            12⎝ 0  0  0  0  0  0⎠
+
         TESTS::
 
-            sage: graphs.CubeGraph(8).adjacency_matrix().parent()                       # needs sage.modules
+            sage: # needs sage.modules
+            sage: graphs.CubeGraph(8).adjacency_matrix().parent()
             Full MatrixSpace of 256 by 256 dense matrices over Integer Ring
-            sage: graphs.CubeGraph(9).adjacency_matrix().parent()                       # needs sage.modules
+            sage: graphs.CubeGraph(9).adjacency_matrix().parent()
             Full MatrixSpace of 512 by 512 sparse matrices over Integer Ring
-            sage: Graph([(i, i+1) for i in range(500)] + [(0,1),],                      # needs sage.modules
+            sage: Graph([(i, i+1) for i in range(500)] + [(0,1),],
             ....:       multiedges=True).adjacency_matrix().parent()
             Full MatrixSpace of 501 by 501 dense matrices over Integer Ring
-            sage: graphs.PathGraph(5).adjacency_matrix(vertices=[0,0,0,0,0])            # needs sage.modules
+            sage: graphs.PathGraph(5).adjacency_matrix(vertices=[0,0,0,0,0])
             Traceback (most recent call last):
             ...
-            ValueError: parameter vertices must be a permutation of the vertices
-            sage: graphs.PathGraph(5).adjacency_matrix(vertices=[1,2,3])                # needs sage.modules
+            ValueError: parameter 'vertices' must be a permutation of the vertices
+            sage: graphs.PathGraph(5).adjacency_matrix(vertices=[1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: parameter vertices must be a permutation of the vertices
+            ValueError: parameter 'vertices' must be a permutation of the vertices
+
             sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix()
             Traceback (most recent call last):
             ...
-            TypeError: Vertex labels are not comparable. You must specify an ordering using parameter ``vertices``
+            TypeError: Vertex labels are not comparable. You must specify an ordering using parameter 'vertices'
             sage: Graph ([[0, 42, 'John'], [(42, 'John')]]).adjacency_matrix(vertices=['John', 42, 0])
             [0 1 0]
             [1 0 0]
@@ -2056,25 +2146,17 @@ class GenericGraph(GenericGraph_pyx):
             sparse = True
             if self.has_multiple_edges() or n <= 256 or self.density() > 0.05:
                 sparse = False
+        vertex_indices, keys = self._vertex_indices_and_keys(vertices)
+        if keys is not None:
+            kwds = copy(kwds)
+            kwds['row_keys'] = kwds['column_keys'] = keys
 
-        if vertices is None:
-            try:
-                vertices = self.vertices(sort=True)
-            except TypeError:
-                raise TypeError("Vertex labels are not comparable. You must "
-                                "specify an ordering using parameter "
-                                "``vertices``")
-        elif (len(vertices) != n or
-              set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("parameter vertices must be a permutation of the vertices")
-
-        new_indices = {v: i for i, v in enumerate(vertices)}
         D = {}
         directed = self._directed
         multiple_edges = self.allows_multiple_edges()
         for u, v, l in self.edge_iterator():
-            i = new_indices[u]
-            j = new_indices[v]
+            i = vertex_indices[u]
+            j = vertex_indices[v]
             if multiple_edges and (i, j) in D:
                 D[i, j] += 1
                 if not directed and i != j:
@@ -2126,15 +2208,23 @@ class GenericGraph(GenericGraph_pyx):
         - ``sparse`` -- boolean (default: ``True``); whether to use a sparse or
           a dense matrix
 
-        - ``vertices`` -- list (default: ``None``); when specified, the `i`-th
-          row of the matrix corresponds to the `i`-th vertex in the ordering of
-          ``vertices``, otherwise, the `i`-th row of the matrix corresponds to
-          the `i`-th vertex in the ordering given by method :meth:`vertices`.
+        - ``vertices`` -- list, ``None``, or ``True`` (default: ``None``);
 
-        - ``edges`` -- list (default: ``None``); when specified, the `i`-th
-          column of the matrix corresponds to the `i`-th edge in the ordering of
-          ``edges``, otherwise, the `i`-th column of the matrix corresponds to
-          the `i`-th edge in the ordering given by method :meth:`edge_iterator`.
+          - when a list, the `i`-th row of the matrix corresponds to the `i`-th
+            vertex in the ordering of ``vertices``,
+          - when ``None``, the `i`-th row of the matrix corresponds to
+            the `i`-th vertex in the ordering given by method :meth:`vertices`,
+          - when ``True``, construct a morphism of free modules instead of a matrix,
+            where the codomain's basis is indexed by the vertices.
+
+        - ``edges`` -- list, ``None``, or ``True`` (default: ``None``);
+
+          - when a list, the `i`-th column of the matrix corresponds to the `i`-th
+            edge in the ordering of ``edges``,
+          - when ``None``, the `i`-th column of the matrix corresponds to
+            the `i`-th edge in the ordering given by method :meth:`edge_iterator`,
+          - when ``True``, construct a morphism of free modules instead of a matrix,
+            where the domain's basis is indexed by the edges.
 
         - ``base_ring`` -- a ring (default: ``ZZ``); the base ring of the matrix
           space to use.
@@ -2258,13 +2348,39 @@ class GenericGraph(GenericGraph_pyx):
             ValueError: matrix is immutable; please change a copy instead
             (i.e., use copy(M) to change a copy of M).
 
+        Creating a module morphism::
+
+            sage: # needs sage.modules
+            sage: D12 = posets.DivisorLattice(12).hasse_diagram()
+            sage: phi_VE = D12.incidence_matrix(vertices=True, edges=True); phi_VE
+            Generic morphism:
+              From: Free module generated by
+                      {(1, 2), (1, 3), (2, 4), (2, 6), (3, 6), (4, 12), (6, 12)}
+                    over Integer Ring
+              To:   Free module generated by {1, 2, 3, 4, 6, 12} over Integer Ring
+            sage: print(phi_VE._unicode_art_matrix())
+                (1, 2)  (1, 3)  (2, 4)  (2, 6)  (3, 6) (4, 12) (6, 12)
+             1⎛     -1      -1       0       0       0       0       0⎞
+             2⎜      1       0      -1      -1       0       0       0⎟
+             3⎜      0       1       0       0      -1       0       0⎟
+             4⎜      0       0       1       0       0      -1       0⎟
+             6⎜      0       0       0       1       1       0      -1⎟
+            12⎝      0       0       0       0       0       1       1⎠
+            sage: E = phi_VE.domain()
+            sage: P1 = E.monomial((2, 4)) + E.monomial((4, 12)); P1
+            B[(2, 4)] + B[(4, 12)]
+            sage: P2 = E.monomial((2, 6)) + E.monomial((6, 12)); P2
+            B[(2, 6)] + B[(6, 12)]
+            sage: phi_VE(P1 - P2)
+            0
+
         TESTS::
 
             sage: P5 = graphs.PathGraph(5)
             sage: P5.incidence_matrix(vertices=[1] * P5.order())                        # needs sage.modules
             Traceback (most recent call last):
             ...
-            ValueError: parameter vertices must be a permutation of the vertices
+            ValueError: parameter 'vertices' must be a permutation of the vertices
             sage: P5.incidence_matrix(edges=[(0, 1)] * P5.size())                       # needs sage.modules
             Traceback (most recent call last):
             ...
@@ -2279,27 +2395,27 @@ class GenericGraph(GenericGraph_pyx):
         if oriented is None:
             oriented = self.is_directed()
 
-        if vertices is None:
-            vertices = self.vertices(sort=False)
-        elif (len(vertices) != self.num_verts() or
-              set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("parameter vertices must be a permutation of the vertices")
+        vertex_indices, row_keys = self._vertex_indices_and_keys(vertices, sort=False)
 
-        verts = {v: i for i, v in enumerate(vertices)}
-        if edges is None:
-            edges = self.edge_iterator(labels=False)
+        column_keys = None
+        use_edge_labels = kwds.pop('use_edge_labels', False)
+        if edges is True:
+            edges = self.edges(labels=use_edge_labels)
+            column_keys = tuple(edges)  # because an EdgesView is not hashable
+        elif edges is None:
+            edges = self.edge_iterator(labels=use_edge_labels)
         elif len(edges) != self.size():
             raise ValueError("parameter edges must be a permutation of the edges")
         else:
             # We check that we have the same set of unlabeled edges
             if oriented:
-                i_edges = [(verts[e[0]], verts[e[1]]) for e in edges]
-                s_edges = [(verts[u], verts[v]) for u, v in self.edge_iterator(labels=False)]
+                i_edges = [(vertex_indices[e[0]], vertex_indices[e[1]]) for e in edges]
+                s_edges = [(vertex_indices[u], vertex_indices[v]) for u, v in self.edge_iterator(labels=False)]
             else:
                 def reorder(u, v):
                     return (u, v) if u <= v else (v, u)
-                i_edges = [reorder(verts[e[0]], verts[e[1]]) for e in edges]
-                s_edges = [reorder(verts[u], verts[v]) for u, v in self.edge_iterator(labels=False)]
+                i_edges = [reorder(vertex_indices[e[0]], vertex_indices[e[1]]) for e in edges]
+                s_edges = [reorder(vertex_indices[u], vertex_indices[v]) for u, v in self.edge_iterator(labels=False)]
             if sorted(i_edges) != sorted(s_edges):
                 raise ValueError("parameter edges must be a permutation of the edges")
 
@@ -2312,15 +2428,20 @@ class GenericGraph(GenericGraph_pyx):
         if oriented:
             for i, e in enumerate(edges):
                 if e[0] != e[1]:
-                    m[verts[e[0]], i] = -1
-                    m[verts[e[1]], i] = +1
+                    m[vertex_indices[e[0]], i] = -1
+                    m[vertex_indices[e[1]], i] = +1
         else:
             for i, e in enumerate(edges):
-                m[verts[e[0]], i] += 1
-                m[verts[e[1]], i] += 1
+                m[vertex_indices[e[0]], i] += 1
+                m[vertex_indices[e[1]], i] += 1
+
+        if row_keys is not None or column_keys is not None:
+            m.set_immutable()
+            return matrix(m, row_keys=row_keys, column_keys=column_keys)
 
         if immutable:
             m.set_immutable()
+
         return m
 
     def distance_matrix(self, vertices=None, *, base_ring=None, **kwds):
@@ -2476,10 +2597,19 @@ class GenericGraph(GenericGraph_pyx):
         - ``sparse`` -- boolean (default: ``True``); whether to use a sparse or
           a dense matrix
 
-        - ``vertices`` -- list (default: ``None``); when specified, each vertex
-          is represented by its position in the list ``vertices``, otherwise
-          each vertex is represented by its position in the list returned by
-          method :meth:`vertices`
+        - ``vertices`` -- list, ``None``, or ``True`` (default: ``None``);
+
+          - when a list, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering of ``vertices``,
+          - when ``None``, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering given by
+            :meth:`GenericGraph.vertices` with ``sort=True``.
+          - when ``True``, construct an endomorphism of a free module instead of
+            a matrix, where the module's basis is indexed by the vertices.
+
+          If the vertices are not comparable, the keyword ``vertices`` must be
+          used to specify an ordering, or a :class:`TypeError` exception will
+          be raised.
 
         - ``default_weight`` -- (default: ``None``); specifies the weight to
           replace any ``None`` edge label. When not specified an error is raised
@@ -2531,6 +2661,21 @@ class GenericGraph(GenericGraph_pyx):
             ValueError: matrix is immutable; please change a copy instead
             (i.e., use copy(M) to change a copy of M).
 
+        Creating a module morphism::
+
+            sage: # needs sage.modules
+            sage: G = Graph(sparse=True, weighted=True)
+            sage: G.add_edges([('A', 'B', 1), ('B', 'C', 2), ('A', 'C', 3), ('A', 'D', 4)])
+            sage: phi = G.weighted_adjacency_matrix(vertices=True); phi
+            Generic endomorphism of
+             Free module generated by {'A', 'B', 'C', 'D'} over Integer Ring
+            sage: print(phi._unicode_art_matrix())
+              A B C D
+            A⎛0 1 3 4⎞
+            B⎜1 0 2 0⎟
+            C⎜3 2 0 0⎟
+            D⎝4 0 0 0⎠
+
         TESTS:
 
         The following doctest verifies that :issue:`4888` is fixed::
@@ -2561,11 +2706,10 @@ class GenericGraph(GenericGraph_pyx):
         if self.has_multiple_edges():
             raise NotImplementedError("don't know how to represent weights for a multigraph")
 
-        if vertices is None:
-            vertices = self.vertices(sort=True)
-        elif (len(vertices) != self.num_verts() or
-              set(vertices) != set(self.vertex_iterator())):
-            raise ValueError("parameter vertices must be a permutation of the vertices")
+        vertex_indices, row_column_keys = self._vertex_indices_and_keys(vertices)
+        if row_column_keys is not None:
+            kwds = copy(kwds)
+            kwds['row_keys'] = kwds['column_keys'] = row_column_keys
 
         # Method for checking edge weights and setting default weight
         if default_weight is None:
@@ -2580,18 +2724,16 @@ class GenericGraph(GenericGraph_pyx):
                     return default_weight
                 return label
 
-        new_indices = {v: i for i,v in enumerate(vertices)}
-
         D = {}
         if self._directed:
             for u, v, label in self.edge_iterator():
-                i = new_indices[u]
-                j = new_indices[v]
+                i = vertex_indices[u]
+                j = vertex_indices[v]
                 D[i, j] = func(u, v, label)
         else:
             for u, v, label in self.edge_iterator():
-                i = new_indices[u]
-                j = new_indices[v]
+                i = vertex_indices[u]
+                j = vertex_indices[v]
                 label = func(u, v, label)
                 D[i, j] = label
                 D[j, i] = label
@@ -2658,6 +2800,20 @@ class GenericGraph(GenericGraph_pyx):
           - If ``True``, `D+M` is used in calculation of Kirchhoff matrix
 
           - Else, `D-M` is used in calculation of Kirchhoff matrix
+
+        - ``vertices`` -- list, ``None``, or ``True`` (default: ``None``);
+
+          - when a list, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering of ``vertices``,
+          - when ``None``, the `i`-th row and column of the matrix correspond to
+            the `i`-th vertex in the ordering given by
+            :meth:`GenericGraph.vertices` with ``sort=True``.
+          - when ``True``, construct an endomorphism of a free module instead of
+            a matrix, where the module's basis is indexed by the vertices.
+
+          If the vertices are not comparable, the keyword ``vertices`` must be
+          used to specify an ordering, or a :class:`TypeError` exception will
+          be raised.
 
         Note that any additional keywords will be passed on to either the
         :meth:`~GenericGraph.adjacency_matrix` or
@@ -2740,18 +2896,36 @@ class GenericGraph(GenericGraph_pyx):
             sage: M = G.kirchhoff_matrix(vertices=[0, 1], immutable=True)               # needs sage.modules
             sage: M.is_immutable()                                                      # needs sage.modules
             True
+
+        Creating a module morphism::
+
+            sage: # needs sage.modules
+            sage: G = Graph(sparse=True, weighted=True)
+            sage: G.add_edges([('A', 'B', 1), ('B', 'C', 2), ('A', 'C', 3), ('A', 'D', 4)])
+            sage: phi = G.laplacian_matrix(weighted=True, vertices=True); phi
+            Generic endomorphism of
+             Free module generated by {'A', 'B', 'C', 'D'} over Integer Ring
+            sage: print(phi._unicode_art_matrix())
+               A  B  C  D
+            A⎛ 8 -1 -3 -4⎞
+            B⎜-1  3 -2  0⎟
+            C⎜-3 -2  5  0⎟
+            D⎝-4  0  0  4⎠
+
         """
-        from sage.matrix.constructor import diagonal_matrix
+        from sage.matrix.constructor import diagonal_matrix, matrix
 
         set_immutable = kwds.pop('immutable', False)
+
+        vertex_indices, keys = self._vertex_indices_and_keys(kwds.pop('vertices', None))
 
         if weighted is None:
             weighted = self._weighted
 
         if weighted:
-            M = self.weighted_adjacency_matrix(immutable=True, **kwds)
+            M = self.weighted_adjacency_matrix(vertices=list(vertex_indices), immutable=True, **kwds)
         else:
-            M = self.adjacency_matrix(immutable=True, **kwds)
+            M = self.adjacency_matrix(vertices=list(vertex_indices), immutable=True, **kwds)
 
         D = M.parent(0)
 
@@ -2791,6 +2965,8 @@ class GenericGraph(GenericGraph_pyx):
             else:
                 ret = D - M
 
+        if keys is not None:
+            return matrix(ret, row_keys=keys, column_keys=keys)
         if set_immutable:
             ret.set_immutable()
         return ret
@@ -15671,7 +15847,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: F = graphs.FruchtGraph()
             sage: list(F.cluster_triangles().values())
-            [1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0]
+            [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0]
             sage: F.cluster_triangles()
             {0: 1, 1: 1, 2: 0, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 0, 9: 1, 10: 1, 11: 0}
             sage: F.cluster_triangles(nbunch=[0, 1, 2])

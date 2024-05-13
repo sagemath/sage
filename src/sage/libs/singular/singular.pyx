@@ -1544,7 +1544,6 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         sage: P(3)
         3
     """
-    nr2mModul = d.parent().characteristic()
     if _ring != currRing: rChangeCurrRing(_ring)
 
     cdef number *nn
@@ -1697,6 +1696,25 @@ cdef object si2sa_intvec(intvec *v):
     cdef list l = list()
     for r in range(v.length()):
         l.append(v.get(r))
+    return tuple(l)
+
+cdef object si2sa_bigintvec(bigintmat *v):
+    r"""
+    create a sage tuple from a singular vector of big integers
+
+    INPUT:
+
+    - ``v`` -- a (pointer to) singular bigintmat
+
+    OUTPUT:
+
+    a sage tuple
+    """
+    cdef int r
+    cdef list l = list()
+    for r in range(v.length()):
+        n = v.get(r)
+        l.append(si2sa_QQ(n, &n, currRing))
     return tuple(l)
 
 # ==============
