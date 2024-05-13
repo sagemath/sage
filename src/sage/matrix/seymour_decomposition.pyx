@@ -81,7 +81,7 @@ cdef class DecompositionNode(SageObject):
             matrix = self.matrix()
         except:
             raise ValueError('no Matrix_cmr_chr_sparse matrix')
-        base_ring = matrix.parent().base_ring()
+        base_ring = self.base_ring()
         if base_ring.characteristic() not in [0, 2, 3] :
             raise ValueError(f'only defined over binary or ternary, got {base_ring}')
         isTernary = base_ring.characteristic() != 2
@@ -705,6 +705,9 @@ cdef class DecompositionNode(SageObject):
         cdef CMR_MATROID_DEC **pclone = &clone
 
         if self._dec == NULL:
+            base_ring = self.base_ring()
+            if base_ring.characteristic() != 2:
+                raise ValueError(f'only defined over binary, got {base_ring}')
             self._set_root_dec()
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
