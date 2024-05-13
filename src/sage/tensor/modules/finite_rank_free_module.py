@@ -1028,6 +1028,36 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
         morphism = self.isomorphism_with_fixed_basis(basis)
         tester.assertEqual(morphism.codomain().rank(), self.rank())
 
+    def submodule(self, gens, *, name=None, latex_name=None):
+        r"""
+        Construct the submodule of ``self`` spanned by ``gens``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M'); M
+            Rank-3 free module M over the Integer Ring
+            sage: e = M.basis("e"); e
+            Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring
+            sage: S = M.submodule([e[0], e[1]]); S
+            Rank-2 free module over the Integer Ring
+            sage: S.ambient()
+            Rank-3 free module M over the Integer Ring
+        """
+        module_isomorphism = self.isomorphism_with_fixed_basis()
+        module_with_basis = module_isomorphism.codomain()
+        submodule_with_basis = module_with_basis.submodule([module_isomorphism(gen)
+                                                            for gen in gens])
+        submodule = FiniteRankFreeModule(self.base_ring(),
+                                         submodule_with_basis.rank(),
+                                         name=name, latex_name=latex_name,
+                                         ambient=self)
+        submodule_symbol = 'f'  # fixme
+        submodule_basis = submodule.basis(submodule_symbol)
+        submodule_isomorphism = submodule.isomorphism_with_fixed_basis(
+            basis=submodule_basis,
+            codomain=submodule_with_basis)
+        return submodule
+
 
 class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     r"""
