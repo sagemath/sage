@@ -354,7 +354,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             Domain: Modular Symbols subspace of dimension 4 of Modular Symbols space ...
             Codomain: Modular Symbols space of dimension 4 for Gamma_0(5) of weight ...
 
-        We check for a subtle caching bug that came up in work on :trac:`10453`::
+        We check for a subtle caching bug that came up in work on :issue:`10453`::
 
             sage: loads(dumps(J0(33).decomposition()[0].modular_symbols()))
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(33) of weight 2 with sign 0 over Rational Field
@@ -845,7 +845,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             sage: M.old_submodule()
             Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 4 and level 16, weight 3, character [-1, 1], sign 1, over Rational Field
 
-        Illustrate that :trac:`10664` is fixed::
+        Illustrate that :issue:`10664` is fixed::
 
             sage: ModularSymbols(DirichletGroup(42)[7], 6, sign=1).old_subspace(3)
             Modular Symbols subspace of dimension 0 of Modular Symbols space of dimension 40 and level 42, weight 6, character [-1, -1], sign 1, over Rational Field

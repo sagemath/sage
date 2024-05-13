@@ -4,7 +4,9 @@ Third-Party Tarballs
 """
 
 # ****************************************************************************
-#       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014-2015 Volker Braun <vbraun.name@gmail.com>
+#                     2017      Jeroen Demeyer
+#                     2020      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -153,7 +155,7 @@ class Tarball(object):
             else:
                 # Garbage in the upstream directory? Ignore it.
                 # Don't delete it because maybe somebody just forgot to
-                # update the checksum (Trac #23972).
+                # update the checksum (Issue #23972).
                 log.warning('Invalid checksum; ignoring cached file {destination}'
                             .format(destination=destination))
         successful_download = False

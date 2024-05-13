@@ -33,8 +33,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
       to lie within ``xtol`` of the value return. Should be `\geq 0`.
       The routine modifies this to take into account the relative precision
       of doubles. By default, rtol is ``4*numpy.finfo(float).eps``, the
-      minimum allowed value for ``scipy.optimize.brentq``, which is what
-      this method uses underneath. This value is equal to ``2.0**-50`` for
+      minimum allowed value for :func:`scipy:scipy.optimize.brentq`, which is
+      what this method uses underneath. This value is equal to ``2.0**-50`` for
       IEEE-754 double precision floats as used by Python.
 
     - ``maxiter`` -- integer; if convergence is not achieved in
@@ -76,13 +76,13 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         sage: plot(f,2,2.01)
         Graphics object consisting of 1 graphics primitive
 
-    The following example was added due to :trac:`4942` and demonstrates that
+    The following example was added due to :issue:`4942` and demonstrates that
     the function need not be defined at the endpoints::
 
         sage: find_root(x^2*log(x,2)-1,0, 2)  # abs tol 1e-6
         1.41421356237
 
-    The following is an example, again from :trac:`4942` where Brent's method
+    The following is an example, again from :issue:`4942` where Brent's method
     fails. Currently no other method is implemented, but at least we
     acknowledge the fact that the algorithm fails::
 
@@ -140,7 +140,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
             raise RuntimeError("f appears to have no zero on the interval")
         a = s
 
-    # Fixing :trac:`4942` - if the answer on any of the endpoints is NaN,
+    # Fixing :issue:`4942` - if the answer on any of the endpoints is NaN,
     # we restrict to looking between minimum and maximum values in the segment
     # Note - this could be used in all cases, but it requires some more
     # computation
@@ -158,7 +158,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
     g = lambda x: float(f(x))
     brentqRes = scipy.optimize.brentq(g, a, b,
                                  full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
-    # A check following :trac:`4942`, to ensure we actually found a root
+    # A check following :issue:`4942`, to ensure we actually found a root
     # Maybe should use a different tolerance here?
     # The idea is to take roughly the derivative and multiply by estimated
     # value of the root
@@ -246,7 +246,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
         (-9.4772942594..., 9.5293344109...)
 
     Only local minima are found; if you enlarge the interval, the
-    returned minimum may be *larger*! See :trac:`2607`.
+    returned minimum may be *larger*! See :issue:`2607`.
 
     ::
 
@@ -274,9 +274,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
 
     ALGORITHM:
 
-    Uses `scipy.optimize.fminbound
-    <http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fminbound.html>`_
-    which uses Brent's method.
+    Uses :func:`scipy:scipy.optimize.fminbound` which uses Brent's method.
 
 
     AUTHOR:
@@ -338,8 +336,8 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
     .. NOTE::
 
         For additional information on the algorithms implemented in this function,
-        consult SciPy's `documentation on optimization and root
-        finding <https://docs.scipy.org/doc/scipy/reference/optimize.html>`_
+        consult SciPy's :mod:`documentation on optimization and root
+        finding <scipy:scipy.optimize>`.
 
     EXAMPLES:
 
@@ -348,7 +346,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
         sage: vars = var('x y z')                                                       # needs sage.symbolic
         sage: f = 100*(y-x^2)^2 + (1-x)^2 + 100*(z-y^2)^2 + (1-y)^2                     # needs sage.symbolic
-        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6                                    # needs sage.symbolic
+        sage: minimize(f, [.1,.3,.4])  # abs tol 1e-6                                   # needs sage.symbolic
         (1.0, 1.0, 1.0)
 
     Try the newton-conjugate gradient method; the gradient and hessian are
@@ -506,7 +504,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
 
     TESTS:
 
-    Check if :trac:`6592` is fixed::
+    Check if :issue:`6592` is fixed::
 
         sage: # needs sage.symbolic
         sage: x, y = var('x y')
@@ -518,7 +516,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         (805.985..., 1005.985...)
 
     If ``func`` is symbolic, its minimizer should be in the same order
-    as its arguments (:trac:`32511`)::
+    as its arguments (:issue:`32511`)::
 
         sage: # needs sage.symbolic
         sage: x,y = SR.var('x,y')
@@ -650,8 +648,8 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
 
     ALGORITHM:
 
-    Uses ``scipy.optimize.leastsq`` which in turn uses MINPACK's lmdif and
-    lmder algorithms.
+    Uses :func:`scipy:scipy.optimize.leastsq` which in turn uses MINPACK's
+    ``lmdif`` and ``lmder`` algorithms.
     """
     import numpy
 

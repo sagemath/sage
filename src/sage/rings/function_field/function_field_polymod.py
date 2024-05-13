@@ -34,6 +34,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
+from sage.categories.number_fields import NumberFields
 
 from .element import FunctionFieldElement
 from .element_polymod import FunctionFieldElement_polymod
@@ -128,7 +129,7 @@ class FunctionField_polymod(FunctionField):
 
         TESTS:
 
-        Test that :trac:`17033` is fixed::
+        Test that :issue:`17033` is fixed::
 
             sage: K.<t> = FunctionField(QQ)
             sage: R.<x> = QQ[]
@@ -263,7 +264,7 @@ class FunctionField_polymod(FunctionField):
 
         TESTS:
 
-        Verify that :trac:`21872` has been resolved::
+        Verify that :issue:`21872` has been resolved::
 
             sage: R.<z> = L[]
             sage: M.<z> = L.extension(z^2 - y)
@@ -305,7 +306,7 @@ class FunctionField_polymod(FunctionField):
 
         TESTS:
 
-        Verify that :trac:`21872` has been resolved::
+        Verify that :issue:`21872` has been resolved::
 
             sage: L(1) in QQ
             True
@@ -738,46 +739,50 @@ class FunctionField_polymod(FunctionField):
 
         We convert an element of the vector space back to the function field::
 
-            sage: from_V(V.1)                                                                       # needs sage.modules
+            sage: from_V(V.1)                                                           # needs sage.modules
             y
 
         We define an interesting element of the function field::
 
-            sage: a = 1/L.0; a                                                                      # needs sage.modules
+            sage: a = 1/L.0; a                                                          # needs sage.modules
             (x/(x^4 + 1))*y^4 - 2*x^2/(x^4 + 1)
 
         We convert it to the vector space, and get a vector over the base field::
 
-            sage: to_V(a)                                                                           # needs sage.modules
+            sage: to_V(a)                                                               # needs sage.modules
             (-2*x^2/(x^4 + 1), 0, 0, 0, x/(x^4 + 1))
 
         We convert to and back, and get the same element::
 
-            sage: from_V(to_V(a)) == a                                                              # needs sage.modules
+            sage: from_V(to_V(a)) == a                                                  # needs sage.modules
             True
 
         In the other direction::
 
-            sage: v = x*V.0 + (1/x)*V.1                                                             # needs sage.modules
-            sage: to_V(from_V(v)) == v                                                              # needs sage.modules
+            sage: v = x*V.0 + (1/x)*V.1                                                 # needs sage.modules
+            sage: to_V(from_V(v)) == v                                                  # needs sage.modules
             True
 
         And we show how it works over an extension of an extension field::
 
             sage: R2.<z> = L[]; M.<z> = L.extension(z^2 - y)
-            sage: M.free_module()                                                                   # needs sage.modules
-            (Vector space of dimension 2 over Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x, Isomorphism:
+            sage: M.free_module()                                                       # needs sage.modules
+            (Vector space of dimension 2 over Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x,
+             Isomorphism:
               From: Vector space of dimension 2 over Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x
-              To:   Function field in z defined by z^2 - y, Isomorphism:
+              To:   Function field in z defined by z^2 - y,
+             Isomorphism:
               From: Function field in z defined by z^2 - y
               To:   Vector space of dimension 2 over Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x)
 
         We can also get the vector space of ``M`` over ``K``::
 
-            sage: M.free_module(K)                                                                  # needs sage.modules
-            (Vector space of dimension 10 over Rational function field in x over Rational Field, Isomorphism:
+            sage: M.free_module(K)                                                      # needs sage.modules
+            (Vector space of dimension 10 over Rational function field in x over Rational Field,
+             Isomorphism:
               From: Vector space of dimension 10 over Rational function field in x over Rational Field
-              To:   Function field in z defined by z^2 - y, Isomorphism:
+              To:   Function field in z defined by z^2 - y,
+             Isomorphism:
               From: Function field in z defined by z^2 - y
               To:   Vector space of dimension 10 over Rational function field in x over Rational Field)
 
@@ -1270,10 +1275,12 @@ class FunctionField_polymod(FunctionField):
             sage: L.<y> = K.extension(y^2 - x); R.<z> = L[]
             sage: M.<z> = L.extension(z^2 - y)
             sage: M.simple_model()
-            (Function field in z defined by z^4 + x, Function Field morphism:
+            (Function field in z defined by z^4 + x,
+             Function Field morphism:
                From: Function field in z defined by z^4 + x
                To:   Function field in z defined by z^2 + y
-               Defn: z |--> z, Function Field morphism:
+               Defn: z |--> z,
+             Function Field morphism:
                From: Function field in z defined by z^2 + y
                To:   Function field in z defined by z^4 + x
                Defn: z |--> z
@@ -1443,7 +1450,8 @@ class FunctionField_polymod(FunctionField):
             sage: L.separable_model()                                                   # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            NotImplementedError: constructing a separable model is only implemented for function fields over a perfect constant base field
+            NotImplementedError: constructing a separable model is only implemented
+            for function fields over a perfect constant base field
 
         TESTS:
 
@@ -1492,11 +1500,13 @@ class FunctionField_polymod(FunctionField):
             sage: R.<z> = L[]
             sage: M.<z> = L.extension(z^3 - y)
             sage: M.separable_model()
-            (Function field in z_ defined by z_ + x_^6, Function Field morphism:
+            (Function field in z_ defined by z_ + x_^6,
+             Function Field morphism:
                From: Function field in z_ defined by z_ + x_^6
                To:   Function field in z defined by z^3 + y
                Defn: z_ |--> x
-                     x_ |--> z, Function Field morphism:
+                     x_ |--> z,
+             Function Field morphism:
                From: Function field in z defined by z^3 + y
                To:   Function field in z_ defined by z_ + x_^6
                Defn: z |--> x_
@@ -1605,12 +1615,14 @@ class FunctionField_polymod(FunctionField):
                     y |--> y
                     x |--> x)
             sage: M.change_variable_name(('zz','yy'))
-            (Function field in zz defined by zz^2 - yy, Function Field morphism:
+            (Function field in zz defined by zz^2 - yy,
+             Function Field morphism:
               From: Function field in zz defined by zz^2 - yy
               To:   Function field in z defined by z^2 - y
               Defn: zz |--> z
                     yy |--> y
-                    x |--> x, Function Field morphism:
+                    x |--> x,
+             Function Field morphism:
               From: Function field in z defined by z^2 - y
               To:   Function field in zz defined by zz^2 - yy
               Defn: z |--> zz
@@ -1686,7 +1698,8 @@ class FunctionField_simple(FunctionField_polymod):
                        From: Function field in T defined by T^3 + (x^4 + x^2 + 1)/x^6
                        To:   Function field in y defined by y^3 + x^6 + x^4 + x^2
                        Defn: T |--> y
-                             x |--> 1/x, Composite map:
+                             x |--> 1/x,
+             Composite map:
                From: Function field in y defined by y^3 + x^6 + x^4 + x^2
                To:   Function field in s defined by s^3 + x^16 + x^14 + x^12
                Defn:   Function Field morphism:
@@ -1842,11 +1855,27 @@ class FunctionField_simple(FunctionField_polymod):
             sage: L.genus()
             6
 
+            sage: # needs sage.rings.number_field
+            sage: R.<T> = QQ[]
+            sage: N.<a> = NumberField(T^2 + 1)
+            sage: K.<x> = FunctionField(N); K
+            Rational function field in x over Number Field in a with defining polynomial T^2 + 1
+            sage: K.genus()
+            0
+            sage: S.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^2 - x^3 + x)
+            sage: L.genus()
+            1
+
         The genus is computed by the Hurwitz genus formula.
         """
         k, _ = self.exact_constant_field()
+        if k in NumberFields():
+            k_degree = k.relative_degree()
+        else:
+            k_degree = k.degree()
         different_degree = self.different().degree()  # must be even
-        return Integer(different_degree // 2 - self.degree() / k.degree()) + 1
+        return Integer(different_degree // 2 - self.degree() / k_degree) + 1
 
     def residue_field(self, place, name=None):
         """
@@ -1895,6 +1924,50 @@ class FunctionField_simple(FunctionField_polymod):
             [0, 1]
         """
         return place.residue_field(name=name)
+
+    def places_infinite(self, degree=1):
+        """
+        Return a list of the infinite places with ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer (default: `1`)
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.places_infinite(1)
+            [Place (1/x, 1/x^4*y^3)]
+        """
+        return list(self._places_infinite(degree))
+
+    def _places_infinite(self, degree):
+        """
+        Return a generator of *infinite* places with ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L._places_infinite(1)
+            <generator object ...>
+        """
+        Oinf = self.maximal_order_infinite()
+        for prime, _, _ in Oinf.decomposition():
+            place = prime.place()
+            if place.degree() == degree:
+                yield place
 
 
 class FunctionField_char_zero(FunctionField_simple):
@@ -2128,50 +2201,6 @@ class FunctionField_global(FunctionField_simple):
                     place = prime.place()
                     if place.degree() == degree:
                         yield place
-
-    def places_infinite(self, degree=1):
-        """
-        Return a list of the infinite places with ``degree``.
-
-        INPUT:
-
-        - ``degree`` -- positive integer (default: `1`)
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: F.<a> = GF(2)
-            sage: K.<x> = FunctionField(F)
-            sage: R.<t> = PolynomialRing(K)
-            sage: L.<y> = K.extension(t^4 + t - x^5)
-            sage: L.places_infinite(1)
-            [Place (1/x, 1/x^4*y^3)]
-        """
-        return list(self._places_infinite(degree))
-
-    def _places_infinite(self, degree):
-        """
-        Return a generator of *infinite* places with ``degree``.
-
-        INPUT:
-
-        - ``degree`` -- positive integer
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: F.<a> = GF(2)
-            sage: K.<x> = FunctionField(F)
-            sage: R.<t> = PolynomialRing(K)
-            sage: L.<y> = K.extension(t^4 + t - x^5)
-            sage: L._places_infinite(1)
-            <generator object ...>
-        """
-        Oinf = self.maximal_order_infinite()
-        for prime, _, _ in Oinf.decomposition():
-            place = prime.place()
-            if place.degree() == degree:
-                yield place
 
     def gaps(self):
         """

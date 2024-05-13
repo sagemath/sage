@@ -40,7 +40,7 @@ cdef class SetSystem:
 
         sage: M = matroids.catalog.Fano()
         sage: M.circuits()
-        Iterator over a system of subsets
+        SetSystem of 14 sets over 7 elements
 
     To access the sets in this structure, simply iterate over them. The
     simplest way must be::
@@ -75,7 +75,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
         """
         cdef long i
         if not isinstance(groundset, tuple):
@@ -110,7 +110,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: sorted(S[1])
             [3, 4]
             sage: for s in S: print(sorted(s))
@@ -138,7 +138,7 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: S
-            Iterator over a system of subsets
+            SetSystem of 3 sets over 4 elements
             sage: len(S)
             3
         """
@@ -196,35 +196,34 @@ cdef class SetSystem:
             sage: from sage.matroids.set_system import SetSystem
             sage: S = SetSystem([1, 2, 3, 4], [[1, 2], [3, 4], [1, 2, 4]])
             sage: repr(S)  # indirect doctest
-            'Iterator over a system of subsets'
+            'SetSystem of 3 sets over 4 elements'
         """
-        return "Iterator over a system of subsets"
+        return f'SetSystem of {self._len} sets over {self._groundset_size} elements'
 
-    cdef copy(self) noexcept:
+    cdef copy(self):
         cdef SetSystem S
         S = SetSystem(self._groundset, capacity=len(self))
         for i in range(len(self)):
             S._append(self._subsets[i])
         return S
 
-    cdef _relabel(self, l) noexcept:
+    cdef _relabel(self, mapping):
         """
-        Relabel each element `e` of the ground set as `l(e)`, where `l` is a
-        given injective map.
+        Relabel each element ``e`` of the ground set as ``mapping[e]``, where
+        ``mapping`` is a given injective map.
 
         INPUT:
 
-        - ``l`` -- a python object such that `l[e]` is the new label of e.
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
 
-        OUTPUT:
-
-        ``None``.
+        OUTPUT: ``None``
         """
         cdef long i
         E = []
         for i in range(self._groundset_size):
-            if self._groundset[i] in l:
-                E.append(l[self._E[i]])
+            if self._groundset[i] in mapping:
+                E.append(mapping[self._E[i]])
             else:
                 E.append(self._E[i])
         self._groundset = E
@@ -232,7 +231,7 @@ cdef class SetSystem:
         for i in range(self._groundset_size):
             self._idx[self._groundset[i]] = i
 
-    cpdef _complements(self) noexcept:
+    cpdef _complements(self):
         """
         Return a SetSystem containing the complements of each element in the
         groundset.
@@ -256,7 +255,7 @@ cdef class SetSystem:
             S._append(self._temp)
         return S
 
-    cdef inline resize(self, k=None) noexcept:
+    cdef inline resize(self, k=None):
         """
         Change the capacity of the SetSystem.
         """
@@ -269,7 +268,7 @@ cdef class SetSystem:
         self._subsets = <bitset_t*>check_reallocarray(self._subsets, k2, sizeof(bitset_t))
         self._capacity = k2
 
-    cdef inline _append(self, bitset_t X) noexcept:
+    cdef inline _append(self, bitset_t X):
         """
         Append subset in internal, bitset format
         """
@@ -279,7 +278,7 @@ cdef class SetSystem:
         bitset_copy(self._subsets[self._len], X)
         self._len += 1
 
-    cdef inline append(self, X) noexcept:
+    cdef inline append(self, X):
         """
         Append subset.
         """
@@ -291,13 +290,13 @@ cdef class SetSystem:
             bitset_add(self._subsets[self._len], <mp_bitcnt_t> self._idx[x])
         self._len += 1
 
-    cdef inline _subset(self, long k) noexcept:
+    cdef inline _subset(self, long k):
         """
         Return the k-th subset, in index format.
         """
         return bitset_list(self._subsets[k])
 
-    cdef subset(self, k) noexcept:
+    cdef subset(self, k):
         """
         Return the k-th subset.
         """
@@ -309,7 +308,7 @@ cdef class SetSystem:
             i = bitset_next(self._subsets[k], i + 1)
         return frozenset(F)
 
-    cpdef _get_groundset(self) noexcept:
+    cpdef _get_groundset(self):
         """
         Return the ground set of this SetSystem.
 
@@ -322,7 +321,7 @@ cdef class SetSystem:
         """
         return frozenset(self._groundset)
 
-    cpdef is_connected(self) noexcept:
+    cpdef is_connected(self):
         """
         Test if the :class:`SetSystem` is connected.
 
@@ -376,7 +375,7 @@ cdef class SetSystem:
 
     # isomorphism
 
-    cdef list _incidence_count(self, E) noexcept:
+    cdef list _incidence_count(self, E):
         """
         For the sub-collection indexed by ``E``, count how often each element
         occurs.
@@ -391,7 +390,7 @@ cdef class SetSystem:
                 i = bitset_next(self._subsets[e], i + 1)
         return cnt
 
-    cdef SetSystem _groundset_partition(self, SetSystem P, list cnt) noexcept:
+    cdef SetSystem _groundset_partition(self, SetSystem P, list cnt):
         """
         Helper method for partition methods below.
         """
@@ -444,7 +443,7 @@ cdef class SetSystem:
             c += bitset_len(self._temp)
         return c
 
-    cdef subsets_partition(self, SetSystem P=None, E=None) noexcept:
+    cdef subsets_partition(self, SetSystem P=None, E=None):
         """
         Helper method for partition methods below.
         """
@@ -473,7 +472,7 @@ cdef class SetSystem:
         EP.append(ep)
         return EP, hash(tuple(eh))
 
-    cdef _distinguish(self, Py_ssize_t v) noexcept:
+    cdef _distinguish(self, Py_ssize_t v):
         """
         Helper method for partition methods below.
         """
@@ -488,7 +487,7 @@ cdef class SetSystem:
         return S
 
     # partition functions
-    cdef initial_partition(self, SetSystem P=None, E=None) noexcept:
+    cdef initial_partition(self, SetSystem P=None, E=None):
         """
         Helper method for partition methods below.
         """
@@ -503,7 +502,7 @@ cdef class SetSystem:
         self._groundset_partition(P, cnt)
         return P
 
-    cpdef _equitable_partition(self, SetSystem P=None, EP=None) noexcept:
+    cpdef _equitable_partition(self, SetSystem P=None, EP=None):
         r"""
         Return an equitable ordered partition of the ground set of the
         hypergraph whose edges are the subsets in this SetSystem.
@@ -584,7 +583,7 @@ cdef class SetSystem:
 
         return P, EP, h
 
-    cpdef _heuristic_partition(self, SetSystem P=None, EP=None) noexcept:
+    cpdef _heuristic_partition(self, SetSystem P=None, EP=None):
         """
         Return a heuristic ordered partition into singletons of the ground
         set of the hypergraph whose edges are the subsets in this SetSystem.
@@ -632,7 +631,7 @@ cdef class SetSystem:
                 return self._heuristic_partition(P._distinguish(bitset_first(P._subsets[i])), EP)
         return P, EP, h
 
-    cpdef _isomorphism(self, SetSystem other, SetSystem SP=None, SetSystem OP=None) noexcept:
+    cpdef _isomorphism(self, SetSystem other, SetSystem SP=None, SetSystem OP=None):
         """
         Return a groundset isomorphism between this SetSystem and an other.
 
@@ -692,7 +691,7 @@ cdef class SetSystem:
             return None
         return dict([(self._groundset[bitset_first(SP._subsets[i])], other._groundset[bitset_first(OP._subsets[i])]) for i in range(len(SP))])
 
-    cpdef _equivalence(self, is_equiv, SetSystem other, SetSystem SP=None, SetSystem OP=None) noexcept:
+    cpdef _equivalence(self, is_equiv, SetSystem other, SetSystem SP=None, SetSystem OP=None):
         """
         Return a groundset isomorphism that is an equivalence between this
         SetSystem and an other.
@@ -722,7 +721,7 @@ cdef class SetSystem:
             sage: S._equivalence(lambda self, other, morph:True, T)
             {1: 'c', 2: 'd', 3: 'b', 4: 'a'}
 
-        Check that :trac:`15189` is fixed::
+        Check that :issue:`15189` is fixed::
 
             sage: M = Matroid(ring=GF(5), reduced_matrix=[[1,0,3],[0,1,1],[1,1,0]])
             sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])

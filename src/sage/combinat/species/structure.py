@@ -37,8 +37,10 @@ compositions are [3], [2, 1], [1, 2], and [1, 1, 1].
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.combinat.combinat import CombinatorialClass, CombinatorialObject
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.combinat.combinat import CombinatorialObject
 from sage.rings.integer import Integer
+from sage.structure.parent import Parent
 from copy import copy
 
 
@@ -326,7 +328,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
 ##############################################################
 
 
-class SpeciesWrapper(CombinatorialClass):
+class SpeciesWrapper(Parent):
     def __init__(self, species, labels, iterator, generating_series, name, structure_class):
         """
         This is a abstract base class for the set of structures of a
@@ -350,12 +352,53 @@ class SpeciesWrapper(CombinatorialClass):
             sage: S.cardinality()
             1
         """
+        Parent.__init__(self, category=EnumeratedSets().Finite())
         self._species = species
         self._labels = labels
         self._iterator = iterator
         self._generating_series = generating_series
         self._name = "%s for %s with labels %s" % (name, species, labels)
         self._structure_class = structure_class if structure_class is not None else species._default_structure_class
+
+    def __eq__(self, other) -> bool:
+        r"""
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import SpeciesWrapper
+            sage: F = species.SetSpecies()
+            sage: S = SpeciesWrapper(F, [1,2,3], "_structures", "generating_series", 'Structures', None)
+            sage: S == SpeciesWrapper(F, [1,2,3], "_structures", "generating_series", 'Structures', None)
+            True
+        """
+        return ((self._species, self._labels,
+                 self._iterator, self._generating_series,
+                 self._name, self._structure_class) == (other._species, other._labels,
+                                                        other._iterator, other._generating_series,
+                                                        other._name, other._structure_class))
+
+    def __ne__(self, other) -> bool:
+        r"""
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import SpeciesWrapper
+            sage: F = species.SetSpecies()
+            sage: S = SpeciesWrapper(F, [1,2,3], "_structures", "generating_series", 'Structures', None)
+            sage: S != SpeciesWrapper(F, [1,2,3], "_structures", "generating_series", 'Structures', None)
+            False
+        """
+        return not (self == other)
+
+    def _repr_(self) -> str:
+        """
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import SpeciesWrapper
+            sage: F = species.SetSpecies()
+            sage: S = SpeciesWrapper(F, [1,2,3], "_structures", "generating_series", 'Structures', None)
+            sage: repr(S)   # indirect doctest
+            'Structures for Set species with labels [1, 2, 3]'
+        """
+        return self._name
 
     def labels(self):
         """

@@ -552,7 +552,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: b.display(format_spec=10)  # 10 bits of precision
             b = 0.33 e^1∧e^2 + 2.5 e^1∧e^3 + 4.0 e^2∧e^3
 
-        Check that the bug reported in :trac:`22520` is fixed::
+        Check that the bug reported in :issue:`22520` is fixed::
 
             sage: # needs sage.symbolic
             sage: M = FiniteRankFreeModule(SR, 2, name='M')

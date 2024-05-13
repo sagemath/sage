@@ -1,4 +1,6 @@
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
+# distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 # sage.doctest: needs sage.libs.pari
 r"""
 Farey symbol for arithmetic subgroups of `\PSL_2(\ZZ)`
@@ -418,13 +420,13 @@ cdef class Farey:
             sage: g == g1
             True
 
-        Check that it works for GammaH as well (:trac:`19660`)::
+        Check that it works for GammaH as well (:issue:`19660`)::
 
             sage: G = GammaH(147, [8])
             sage: G.farey_symbol().word_problem(G([1,1,0,1]))
             (1,)
 
-        Check that :trac:`20347` is solved::
+        Check that :issue:`20347` is solved::
 
             sage: from sage.misc.misc_c import prod
             sage: G = ArithmeticSubgroup_Permutation(S2="(1,2)(3,4)",S3="(1,2,3)")
@@ -895,7 +897,6 @@ cdef class Farey:
         sig_off()
         return result
 
-    @rename_keyword(rgbcolor='color')
     @options(alpha=1, fill=True, thickness=1, color='lightgray',
              color_even='white',
              zorder=2, linestyle='solid', show_pairing=True,
@@ -1038,26 +1039,26 @@ cdef public long convert_to_long(n) noexcept:
     cdef long m = n
     return m
 
-cdef public object convert_to_Integer(mpz_class a) noexcept:
+cdef public object convert_to_Integer(mpz_class a):
     A = Integer()
     A.set_from_mpz(a.get_mpz_t())
     return A
 
-cdef public object convert_to_rational(mpq_class r) noexcept:
+cdef public object convert_to_rational(mpq_class r):
     a = Integer()
     a.set_from_mpz(r.get_num_mpz_t())
     b = Integer()
     b.set_from_mpz(r.get_den_mpz_t())
     return a/b
 
-cdef public object convert_to_cusp(mpq_class r) noexcept:
+cdef public object convert_to_cusp(mpq_class r):
     a = Integer()
     a.set_from_mpz(r.get_num_mpz_t())
     b = Integer()
     b.set_from_mpz(r.get_den_mpz_t())
     return Cusp(a/b)
 
-cdef public object convert_to_SL2Z(cpp_SL2Z M) noexcept:
+cdef public object convert_to_SL2Z(cpp_SL2Z M):
     a = convert_to_Integer(M.a())
     b = convert_to_Integer(M.b())
     c = convert_to_Integer(M.c())

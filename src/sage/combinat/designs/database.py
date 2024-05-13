@@ -3663,18 +3663,18 @@ def DM_51_6_1():
         [  34,  32,  36,  26,  20]
         ]
 
-    Mb = [[0,0,0,0,0]]
+    Mb = [[0, 0, 0, 0, 0]]
 
     for R in zip(*M):
         for i in range(5):
-            for RR in [list(R), [-x for x in R]]:
-                Mb.append(RR)
-            R = cyclic_shift(R,1)
+            Mb.extend([list(R), [-x for x in R]])
+            R = cyclic_shift(R, 1)
 
     for R in Mb:
         R.append(0)
 
-    return G,Mb
+    return G, Mb
+
 
 def DM_52_6_1():
     r"""
@@ -4118,7 +4118,7 @@ def RBIBD_120_8_1():
             if p in B:
                 equiv.append([x for x in B if x not in hyperoval])
         else:
-            new_BIBD.append([x for x in B])
+            new_BIBD.append(list(B))
 
     BIBD = new_BIBD
 
@@ -4658,7 +4658,7 @@ def BIBD_79_13_2():
 
     permAction = libgap.Action(G, points, action)
 
-    baseBlocks = [libgap.Set(list(map(lambda p: libgap.Position(points, p), B))) for B in [B1, B2, B3, B4]]
+    baseBlocks = [libgap.Set([libgap.Position(points, p) for p in B]) for B in [B1, B2, B3, B4]]
 
     B3Orbit = libgap.Orbit(permAction, baseBlocks[2], libgap.OnSets)
     B4Orbit = libgap.Orbit(permAction, baseBlocks[3], libgap.OnSets)

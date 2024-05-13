@@ -251,6 +251,7 @@ cdef class ntl_GF2():
         cdef long l = GF2_conv_to_long(self.x)
         return int(l)
 
+
 def unpickle_class_value(cls, x):
     """
     Here for unpickling.

@@ -63,12 +63,14 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.dynamic_class import DynamicMetaclass
 
 
-cpdef inline check_default_category(default_category, category) noexcept:
-    ## The resulting category is guaranteed to be
-    ## a sub-category of the default.
+cpdef inline check_default_category(default_category, category):
+    """
+    The resulting category is guaranteed to be
+    a sub-category of the default.
+    """
     if category is None:
         return default_category
-    return default_category.join([default_category,category])
+    return default_category.join([default_category, category])
 
 
 cdef class CategoryObject(SageObject):
@@ -212,6 +214,7 @@ cdef class CategoryObject(SageObject):
             sage: ZZ.categories()
             [Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces,
              Category of Dedekind domains,
@@ -220,7 +223,7 @@ cdef class CategoryObject(SageObject):
              Category of unique factorization domains,
              Category of gcd domains,
              Category of integral domains,
-             Category of domains,
+             Category of domains, ...
              Category of commutative rings, ...
              Category of monoids, ...,
              Category of commutative additive groups, ...,
@@ -352,7 +355,7 @@ cdef class CategoryObject(SageObject):
             Univariate Polynomial Ring in x over Rational Field
 
         For orders, we correctly use the ring generator, see
-        :trac:`15348`::
+        :issue:`15348`::
 
             sage: A.<i> = ZZ.extension(x^2 + 1)                                         # needs sage.rings.number_field
             sage: i                                                                     # needs sage.rings.number_field
@@ -367,7 +370,12 @@ cdef class CategoryObject(SageObject):
             sage: z.minpoly()                                                           # needs sage.rings.number_field
             x^2 + 3
         """
-        return self._defining_names()[:n]
+        names = self._defining_names()
+        if isinstance(names, (list, tuple)):
+            return names[:n]
+        # case of Family
+        it = iter(names)
+        return tuple(next(it) for i in range(n))
 
     @cached_method
     def _defining_names(self):
@@ -390,7 +398,7 @@ cdef class CategoryObject(SageObject):
             (x,)
 
         For orders, we correctly use the ring generator, see
-        :trac:`15348`::
+        :issue:`15348`::
 
             sage: B.<z> = EquationOrder(x^2 + 3)                                        # needs sage.rings.number_field
             sage: B._defining_names()                                                   # needs sage.rings.number_field
@@ -503,7 +511,7 @@ cdef class CategoryObject(SageObject):
         In an old version, it was impossible to temporarily change
         the names if no names were previously assigned. But if one
         wants to print elements of the quotient of such an "unnamed"
-        ring, an error resulted. That was fixed in :trac:`11068`::
+        ring, an error resulted. That was fixed in :issue:`11068`::
 
             sage: # needs sage.modules
             sage: MS = MatrixSpace(GF(5), 2, 2)
@@ -843,7 +851,7 @@ cdef class CategoryObject(SageObject):
         """
         return self.getattr_from_category(name)
 
-    cdef getattr_from_category(self, name) noexcept:
+    cdef getattr_from_category(self, name):
         # Lookup a method or attribute from the category abstract classes.
         # See __getattr__ above for documentation.
         try:
@@ -908,7 +916,7 @@ cdef class CategoryObject(SageObject):
         """
         return dir_with_other_class(self, self.category().parent_class)
 
-cpdef normalize_names(Py_ssize_t ngens, names) noexcept:
+cpdef normalize_names(Py_ssize_t ngens, names):
     r"""
     Return a tuple of strings of variable names of length ngens given
     the input names.

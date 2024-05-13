@@ -28,12 +28,12 @@ provide a method
   new Hom-set class does not use ``MyScheme._morphism`` then you
   do not have to provide it.
 
-Note that points on schemes are morphisms `Spec(K)\to X`, too. But we
-typically use a different notation, so they are implemented in a
-different derived class. For this, you should implement a method
+Note that points on schemes are morphisms `\mathrm{Spec}(K)\to X`, too. But we
+typically use a different notation, so they are implemented in a different
+derived class. For this, you should implement a method
 
-* ``MyScheme._point(*args, **kwds)`` returning a point, that is,
-  a morphism `Spec(K)\to X`. Your point class should derive from
+* ``MyScheme._point(*args, **kwds)`` returning a point, that is, a morphism
+  `\mathrm{Spec}(K)\to X`. Your point class should derive from
   :class:`SchemeMorphism_point`.
 
 Optionally, you can also provide a special Hom-set for the points, for
@@ -59,7 +59,7 @@ AUTHORS:
 - Ben Hutz (June 2012): added support for projective ring
 
 - Simon King (2013-10): copy the changes of :class:`~sage.categories.morphism.Morphism`
-  that have been introduced in :trac:`14711`.
+  that have been introduced in :issue:`14711`.
 """
 
 # ****************************************************************************
@@ -129,7 +129,7 @@ class SchemeMorphism(Element):
 
         For historical reasons, :class:`SchemeMorphism` copies code from
         :class:`~sage.categories.map.Map` rather than inheriting from it.
-        Proper inheritance should be used instead. See :trac:`14711`.
+        Proper inheritance should be used instead. See :issue:`14711`.
 
     EXAMPLES::
 
@@ -504,7 +504,7 @@ class SchemeMorphism(Element):
             sage: f.base_ring()
             Multivariate Polynomial Ring in t over Integer Ring
 
-        Points have correct base rings too (:trac:`34336`)::
+        Points have correct base rings too (:issue:`34336`)::
 
             sage: x = P(t, 5); x
             (t : 5)
@@ -1402,7 +1402,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
               Defn: Defined on coordinates by sending (x : y) to (x : y)
 
 
-        Check that :trac:`16834` is fixed::
+        Check that :issue:`16834` is fixed::
 
             sage: # needs sage.rings.real_mpfr
             sage: A.<x,y,z> = AffineSpace(RR, 3)
@@ -1790,11 +1790,11 @@ class SchemeMorphism_polynomial_id(SchemeMorphism_id, SchemeMorphism_polynomial)
 ############################################################################
 
 class SchemeMorphism_point(SchemeMorphism):
-    """
+    r"""
     Base class for rational points on schemes.
 
     Recall that the `K`-rational points of a scheme `X` over `k` can
-    be identified with the set of morphisms `Spec(K) \to X`. In Sage,
+    be identified with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage,
     the rational points are implemented by such scheme morphisms.
 
     EXAMPLES::

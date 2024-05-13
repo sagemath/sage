@@ -10,9 +10,9 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Travis Scrimshaw (2016): ABC Basis_abstract and list functionality for bases
-  (:trac:`20770`)
+  (:issue:`20770`)
 - Eric Gourgoulhon (2018): some refactoring and more functionalities in the
-  choice of symbols for basis elements (:trac:`24792`)
+  choice of symbols for basis elements (:issue:`24792`)
 
 REFERENCES:
 
@@ -48,7 +48,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
     :class:`Mapping` subclasses, not the :meth:`keys` but the
     :meth:`values` are considered the elements.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
         sage: e = M.basis('e'); e
@@ -111,8 +111,8 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             sage: e = M.basis('e')
             sage: list(e.values())
             [Element e_0 of the Rank-3 free module M over the Integer Ring,
-            Element e_1 of the Rank-3 free module M over the Integer Ring,
-            Element e_2 of the Rank-3 free module M over the Integer Ring]
+             Element e_1 of the Rank-3 free module M over the Integer Ring,
+             Element e_2 of the Rank-3 free module M over the Integer Ring]
         """
         return self._vec
 

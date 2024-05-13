@@ -1,6 +1,6 @@
 # -*- shell-script -*- to be sourced
 
-# Trac #27907: Find location of crti.o, add it to LIBRARY_PATH.
+# Issue #27907: Find location of crti.o, add it to LIBRARY_PATH.
 # We add it to the end because we want $SAGE_LOCAL/lib to take precedence
 # over system directories.
 if [ -n "$SAGE_CRTI_DIR" ]; then

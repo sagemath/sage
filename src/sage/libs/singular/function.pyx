@@ -98,7 +98,7 @@ from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_g
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
 from sage.libs.singular.polynomial cimport singular_vector_maximal_component
-from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec
+from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec
 from sage.libs.singular.singular import error_messages
 
 from sage.interfaces.singular import get_docstring
@@ -353,7 +353,7 @@ cdef leftv* new_leftv(void *data, res_type) noexcept:
     res.rtyp = res_type
     return res
 
-cdef free_leftv(leftv *args, ring *r = NULL) noexcept:
+cdef free_leftv(leftv *args, ring *r = NULL):
     """
     Kills this ``leftv`` and all ``leftv``s in the tail.
 
@@ -363,6 +363,7 @@ cdef free_leftv(leftv *args, ring *r = NULL) noexcept:
     """
     args.CleanUp(r)
     omFreeBin(args, sleftv_bin)
+
 
 # =====================================
 # = Singular/Plural Abstraction Layer =
@@ -393,7 +394,7 @@ def is_sage_wrapper_for_singular_ring(ring):
         return True
     return False
 
-cdef new_sage_polynomial(ring,  poly *p) noexcept:
+cdef new_sage_polynomial(ring,  poly *p):
     if isinstance(ring, MPolynomialRing_libsingular):
         return new_MP(ring, p)
     else:
@@ -401,9 +402,10 @@ cdef new_sage_polynomial(ring,  poly *p) noexcept:
             return new_NCP(ring, p)
     raise ValueError("not a singular or plural ring")
 
+
 def is_singular_poly_wrapper(p):
     """
-    Checks if p is some data type corresponding to some singular ``poly``.
+    Check if ``p`` is some data type corresponding to some singular ``poly``.
 
     EXAMPLES::
 
@@ -412,9 +414,9 @@ def is_singular_poly_wrapper(p):
         sage: H.<x,y,z> = A.g_algebra({z*x:x*z+2*x, z*y:y*z-2*y})
         sage: is_singular_poly_wrapper(x+y)
         True
-
     """
-    return isinstance(p, MPolynomial_libsingular) or isinstance(p,  NCPolynomial_plural)
+    return isinstance(p, (MPolynomial_libsingular, NCPolynomial_plural))
+
 
 def all_singular_poly_wrapper(s):
     """
@@ -430,10 +432,8 @@ def all_singular_poly_wrapper(s):
         sage: all_singular_poly_wrapper([x+1, y, 1])
         False
     """
-    for p in s:
-        if not is_singular_poly_wrapper(p):
-            return False
-    return True
+    return all(is_singular_poly_wrapper(p) for p in s)
+
 
 cdef poly* access_singular_poly(p) except <poly*> -1:
     """
@@ -678,7 +678,7 @@ cdef class Converter(SageObject):
         """
         return self._append_leftv( new_leftv(data, res_type) )
 
-    cdef to_sage_matrix(self, matrix* mat) noexcept:
+    cdef to_sage_matrix(self, matrix* mat):
         """
         Convert singular matrix to matrix over the polynomial ring.
         """
@@ -693,7 +693,7 @@ cdef class Converter(SageObject):
                 result[i,j] = p
         return result
 
-    cdef to_sage_vector_destructive(self, poly *p, free_module = None) noexcept:
+    cdef to_sage_vector_destructive(self, poly *p, free_module = None):
         cdef int rank
         if free_module:
             rank = free_module.rank()
@@ -733,7 +733,7 @@ cdef class Converter(SageObject):
             result.append(new_sage_polynomial(self._sage_ring, first))
         return free_module(result)
 
-    cdef object to_sage_module_element_sequence_destructive( self, ideal *i) noexcept:
+    cdef object to_sage_module_element_sequence_destructive( self, ideal *i):
         """
         Convert a SINGULAR module to a Sage Sequence (the format Sage
         stores a Groebner basis in).
@@ -756,7 +756,7 @@ cdef class Converter(SageObject):
 
         return Sequence(l, check=False, immutable=True)
 
-    cdef to_sage_integer_matrix(self, intvec* mat) noexcept:
+    cdef to_sage_integer_matrix(self, intvec* mat):
         """
         Convert Singular matrix to matrix over the polynomial ring.
         """
@@ -908,7 +908,7 @@ cdef class Converter(SageObject):
         b = str_to_bytes(n)
         return self._append(omStrDup(b), STRING_CMD)
 
-    cdef to_python(self, leftv* to_convert) noexcept:
+    cdef to_python(self, leftv* to_convert):
         """
         Convert the ``leftv`` to a Python object.
 
@@ -928,7 +928,7 @@ cdef class Converter(SageObject):
             sage: freerank(I, true)
             [-1, [x^2*y - x*y^2 - x^2*z + y^2*z + x*z^2 - y*z^2]]
 
-        Singular's genus function is prone to crashing, see :trac:`12851` and :trac:`19750` ::
+        Singular's genus function is prone to crashing, see :issue:`12851` and :issue:`19750` ::
 
             sage: sing_genus = sage.libs.singular.function_factory.ff.normal__lib.genus  # known bug
             sage: sing_genus(I)  # known bug
@@ -954,6 +954,8 @@ cdef class Converter(SageObject):
             return si2sa(<number *>to_convert.data, self._singular_ring, self._sage_ring.base_ring())
         elif rtyp == INTVEC_CMD:
             return si2sa_intvec(<intvec *> to_convert.data)
+        elif rtyp == BIGINTVEC_CMD:
+            return si2sa_bigintvec(<bigintmat *> to_convert.data)
         elif rtyp == STRING_CMD:
             # TODO: Need to determine what kind of data can be returned by a
             # STRING_CMD--is it just ASCII strings or can it be an arbitrary
@@ -1048,6 +1050,17 @@ cdef class LibraryCallHandler(BaseCallHandler):
         """
         return False
 
+# mapping int --> string for function arity
+arity_dict = {
+        CMD_1: "CMD_1",
+        CMD_2: "CMD_2",
+        CMD_3: "CMD_3",
+        CMD_12: "CMD_12",
+        CMD_13: "CMD_13",
+        CMD_23: "CMD_23",
+        CMD_123: "CMD_123",
+        CMD_M: "CMD_M"
+}
 
 cdef class KernelCallHandler(BaseCallHandler):
     """
@@ -1125,8 +1138,9 @@ cdef class KernelCallHandler(BaseCallHandler):
 
         errorreported += 1
         error_messages.append(
-                "Wrong number of arguments (got {} arguments, arity code is {})"
-                .format(number_of_arguments, self.arity))
+                "Wrong number of arguments (got {} arguments, arity is {})"
+                .format(number_of_arguments,
+                        arity_dict.get(self.arity) or self.arity))
         return NULL
 
     cdef bint free_res(self) noexcept:
@@ -1168,7 +1182,7 @@ cdef class SingularFunction(SageObject):
                 currRingHdl.data.uring = <ring *>omAlloc0Bin(sip_sring_bin)
             currRingHdl.data.uring.ref += 1
 
-    cdef BaseCallHandler get_call_handler(self) noexcept:
+    cdef BaseCallHandler get_call_handler(self):
         """
         Return a call handler which does the actual work.
         """
@@ -1231,7 +1245,7 @@ cdef class SingularFunction(SageObject):
             Traceback (most recent call last):
             ...
             RuntimeError: error in Singular function call 'size':
-            Wrong number of arguments (got 2 arguments, arity code is 302)
+            Wrong number of arguments (got 2 arguments, arity is CMD_1)
             sage: size('foobar', ring=P)
             6
 
@@ -1274,7 +1288,7 @@ cdef class SingularFunction(SageObject):
             The input is no groebner basis.
             leaving triang.lib::triangL (0)
 
-        Flush any stray output -- see :trac:`28622`::
+        Flush any stray output -- see :issue:`28622`::
 
             sage: sys.stdout.flush()
             ...
@@ -1358,7 +1372,7 @@ The Singular documentation for '%s' is given below.
         else:
             return prefix + "\n::\n\n"+"    Singular documentation not found"
 
-    cdef common_ring(self, tuple args, ring=None) noexcept:
+    cdef common_ring(self, tuple args, ring=None):
         """
         Return the common ring for the argument list ``args``.
 
@@ -1442,7 +1456,7 @@ The Singular documentation for '%s' is given below.
         return richcmp(lx._name, rx._name, op)
 
 
-cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None) noexcept:
+cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None):
     global currRingHdl
     global errorreported
     global currentVoice
@@ -1530,7 +1544,7 @@ cdef class SingularLibraryFunction(SingularFunction):
         super().__init__(name)
         self.call_handler = self.get_call_handler()
 
-    cdef BaseCallHandler get_call_handler(self) noexcept:
+    cdef BaseCallHandler get_call_handler(self):
         cdef idhdl* singular_idhdl = ggetid(str_to_bytes(self._name))
         if singular_idhdl==NULL:
             raise NameError("Singular library function {!r} is not defined".format(self._name))
@@ -1577,7 +1591,7 @@ cdef class SingularKernelFunction(SingularFunction):
         super().__init__(name)
         self.call_handler = self.get_call_handler()
 
-    cdef BaseCallHandler get_call_handler(self) noexcept:
+    cdef BaseCallHandler get_call_handler(self):
         cdef int cmd_n = 0
         arity = IsCmd(str_to_bytes(self._name), cmd_n) # call by reverence for CMD_n
         if not cmd_n:
@@ -1634,17 +1648,17 @@ def singular_function(name):
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 0 arguments, arity code is 305)
+        Wrong number of arguments (got 0 arguments, arity is CMD_12)
         sage: factorize(f, 1, 2)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 3 arguments, arity code is 305)
+        Wrong number of arguments (got 3 arguments, arity is CMD_12)
         sage: factorize(f, 1, 2, 3)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 4 arguments, arity code is 305)
+        Wrong number of arguments (got 4 arguments, arity is CMD_12)
 
     The Singular function ``list`` can be called with any number of
     arguments::
@@ -1772,11 +1786,11 @@ def singular_function(name):
         sage: ring(l)
         <noncommutative RingWrap>
     """
-
     try:
         return SingularKernelFunction(name)
     except NameError:
         return SingularLibraryFunction(name)
+
 
 def lib(name):
     """
@@ -1812,6 +1826,7 @@ def lib(name):
     if failure:
         raise NameError("Singular library {!r} not found".format(name))
 
+
 def list_of_functions(packages=False):
     """
     Return a list of all function names currently available.
@@ -1842,7 +1857,7 @@ def list_of_functions(packages=False):
         h = IDNEXT(h)
     return l
 
-cdef inline RingWrap new_RingWrap(ring* r) noexcept:
+cdef inline RingWrap new_RingWrap(ring* r):
     cdef RingWrap ring_wrap_result = RingWrap.__new__(RingWrap)
     ring_wrap_result._ring = r
     ring_wrap_result._ring.ref += 1

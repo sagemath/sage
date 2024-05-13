@@ -27,7 +27,7 @@ EXAMPLES::
     Free Algebra on 3 generators (x, y, z) over Integer Ring
 
 The above free algebra is based on a generic implementation. By
-:trac:`7797`, there is a different implementation
+:issue:`7797`, there is a different implementation
 :class:`~sage.algebras.letterplace.free_algebra_letterplace.FreeAlgebra_letterplace`
 based on Singular's letterplace rings. It is currently restricted to
 weighted homogeneous elements and is therefore not the default. But the
@@ -53,7 +53,7 @@ two-sided ideals, and thus provide ideal containment tests::
     True
 
 Positive integral degree weights for the letterplace implementation
-was introduced in :trac:`7797`::
+was introduced in :issue:`7797`::
 
     sage: # needs sage.libs.singular
     sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
@@ -213,7 +213,7 @@ class FreeAlgebraFactory(UniqueFactory):
         True
         sage: TestSuite(F).run()
 
-    By :trac:`7797`, we provide a different implementation of free
+    By :issue:`7797`, we provide a different implementation of free
     algebras, based on Singular's "letterplace rings". Our letterplace
     wrapper allows for choosing positive integral degree weights for the
     generators of the free algebra. However, only (weighted) homogeneous
@@ -376,6 +376,10 @@ def is_FreeAlgebra(x) -> bool:
 
         sage: from sage.algebras.free_algebra import is_FreeAlgebra
         sage: is_FreeAlgebra(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeAlgebra is deprecated;
+        use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead
+        See https://github.com/sagemath/sage/issues/37896 for details.
         False
         sage: is_FreeAlgebra(ZZ)
         False
@@ -387,6 +391,8 @@ def is_FreeAlgebra(x) -> bool:
         ....:                            degrees=list(range(1,11))))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37896, "the function is_FreeAlgebra is deprecated; use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead")
     return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
 
 
@@ -449,7 +455,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         sage: F == FreeAlgebra(QQ,3,'y')
         False
 
-    Note that since :trac:`7797` there is a different
+    Note that since :issue:`7797` there is a different
     implementation of free algebras. Two corresponding free
     algebras in different implementations are not equal, but there
     is a coercion.
@@ -613,7 +619,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: F.1 + (z+1)*L.2
             b + (z+1)*c
 
-        Check that :trac:`15169` is fixed::
+        Check that :issue:`15169` is fixed::
 
             sage: A.<x> = FreeAlgebra(CC)
             sage: A(2)
@@ -648,11 +654,8 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
                 M = self._indices
 
                 def exp_to_monomial(T):
-                    out = []
-                    for i in range(len(T)):
-                        if T[i]:
-                            out.append((i % ngens, T[i]))
-                    return M(out)
+                    return M([(i % ngens, Ti) for i, Ti in enumerate(T) if Ti])
+
                 return self.element_class(self, {exp_to_monomial(T): c
                                                  for T, c in x.letterplace_polynomial().dict().items()})
         # ok, not a free algebra element (or should not be viewed as one).
@@ -745,7 +748,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             return True
 
         # free algebras in the same variable over any base that coerces in:
-        if is_FreeAlgebra(R):
+        if isinstance(R, (FreeAlgebra_generic, FreeAlgebra_letterplace)):
             if R.variable_names() == self.variable_names():
                 return self.base_ring().has_coerce_map_from(R.base_ring())
         if isinstance(R, PBWBasisOfFreeAlgebra):
@@ -1068,7 +1071,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: F.lie_polynomial('')
             1
 
-        We check that :trac:`22251` is fixed::
+        We check that :issue:`22251` is fixed::
 
             sage: F.lie_polynomial(x*y*z)
             x*y*z - x*z*y - y*z*x + z*y*x

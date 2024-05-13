@@ -850,7 +850,7 @@ class MiniCremonaDatabase(SQLDatabase):
             sage: d['torsion_order']
             2
 
-        Check that :trac:`17904` is fixed::
+        Check that :issue:`17904` is fixed::
 
             sage: 'gens' in CremonaDatabase().coefficients_and_data('100467a2')[1] # optional - database_cremona_ellcurve
             True
@@ -918,7 +918,7 @@ class MiniCremonaDatabase(SQLDatabase):
             sage: d['torsion_order']
             2
 
-        Check that :trac:`17904` is fixed::
+        Check that :issue:`17904` is fixed::
 
             sage: ai = EllipticCurve('100467a2').ainvs() # optional - database_cremona_ellcurve
             sage: 'gens' in CremonaDatabase().data_from_coefficients(ai) # optional - database_cremona_ellcurve
@@ -953,13 +953,14 @@ class MiniCremonaDatabase(SQLDatabase):
 
     def elliptic_curve_from_ainvs(self, ainvs):
         """
-        Return the elliptic curve in the database of with minimal
-        ``ainvs``, if it exists, or raises a ``RuntimeError`` exception
-        otherwise.
+        Return the elliptic curve in the database of with minimal ``ainvs``
+        if it exists.
+
+        This raises a :class:`RuntimeError` exception otherwise.
 
         INPUT:
 
-        -  ``ainvs`` - list (5-tuple of int's); the minimal
+        -  ``ainvs`` -- list (5-tuple of int's); the minimal
            Weierstrass model for an elliptic curve
 
         OUTPUT: EllipticCurve
@@ -977,7 +978,7 @@ class MiniCremonaDatabase(SQLDatabase):
             sage: c.elliptic_curve('9450KKKK1')
             Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 5*x + 7 over Rational Field
 
-        Make sure :trac:`12565` is fixed::
+        Make sure :issue:`12565` is fixed::
 
             sage: c.elliptic_curve('10a1')
             Traceback (most recent call last):
@@ -1695,7 +1696,7 @@ def CremonaDatabase(name=None,mini=None,set_global=None):
         sage: isinstance(c, sage.databases.cremona.LargeCremonaDatabase)  # optional - database_cremona_ellcurve
         True
 
-    Verify that :trac:`12341` has been resolved::
+    Verify that :issue:`12341` has been resolved::
 
         sage: c = CremonaDatabase('should not exist', mini=True)
         Traceback (most recent call last):

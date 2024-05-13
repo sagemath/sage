@@ -678,7 +678,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             sage: v.display(format_spec=10)  # 10 bits of precision
             v = 0.33 e_1 - 2.0 e_2
 
-        Check that the bug reported in :trac:`22520` is fixed::
+        Check that the bug reported in :issue:`22520` is fixed::
 
             sage: # needs sage.symbolic
             sage: M = FiniteRankFreeModule(SR, 3, name='M')
@@ -825,11 +825,11 @@ class FreeModuleTensor(ModuleElementWithMutability):
         The LaTeX output for the notebook::
 
             sage: latex(t.display_comp())
-            \begin{array}{lcl} T_{\phantom{\, 1}\phantom{\, 2}\,1}^{\,1\,2\phantom{\, 1}}
-             & = & \frac{2}{3} \\ T_{\phantom{\, 1}\phantom{\, 2}\,2}^{\,1\,2\phantom{\, 2}}
-             & = & -\frac{1}{4} \\ T_{\phantom{\, 2}\phantom{\, 1}\,1}^{\,2\,1\phantom{\, 1}}
-             & = & \frac{2}{3} \\ T_{\phantom{\, 2}\phantom{\, 1}\,2}^{\,2\,1\phantom{\, 2}}
-             & = & -\frac{1}{4} \\ T_{\phantom{\, 2}\phantom{\, 2}\,2}^{\,2\,2\phantom{\, 2}}
+            \begin{array}{lcl} {T}_{\phantom{\, 1}\phantom{\, 2}\,1}^{\,1\,2\phantom{\, 1}}
+             & = & \frac{2}{3} \\ {T}_{\phantom{\, 1}\phantom{\, 2}\,2}^{\,1\,2\phantom{\, 2}}
+             & = & -\frac{1}{4} \\ {T}_{\phantom{\, 2}\phantom{\, 1}\,1}^{\,2\,1\phantom{\, 1}}
+             & = & \frac{2}{3} \\ {T}_{\phantom{\, 2}\phantom{\, 1}\,2}^{\,2\,1\phantom{\, 2}}
+             & = & -\frac{1}{4} \\ {T}_{\phantom{\, 2}\phantom{\, 2}\,2}^{\,2\,2\phantom{\, 2}}
              & = & 3 \end{array}
 
         By default, only the non-vanishing components are displayed; to see
@@ -887,7 +887,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
                 symbol = 'X'
         if latex_symbol is None:
             if self._latex_name is not None:
-                latex_symbol = self._latex_name
+                latex_symbol = r'{' + self._latex_name + r'}'
             else:
                 latex_symbol = 'X'
         index_positions = self._tensor_type[0]*'u' + self._tensor_type[1]*'d'

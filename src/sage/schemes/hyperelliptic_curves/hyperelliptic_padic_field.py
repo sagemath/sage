@@ -107,7 +107,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         TESTS:
 
-        Check that :trac:`26005` is fixed::
+        Check that :issue:`26005` is fixed::
 
             sage: L = Qp(5, 100)
             sage: HL = H.change_ring(L)

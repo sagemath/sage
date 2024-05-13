@@ -3,7 +3,7 @@ Sage Runtime Environment
 
 Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
 environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
-(see also :trac:`29446`)::
+(see also :issue:`29446`)::
 
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
     sage: from subprocess import check_output
@@ -187,6 +187,11 @@ SAGE_DOC_SRC = var("SAGE_DOC_SRC", join(SAGE_ROOT, "src", "doc"), SAGE_DOC)
 SAGE_PKGS = var("SAGE_PKGS", join(SAGE_ROOT, "build", "pkgs"))
 SAGE_ROOT_GIT = var("SAGE_ROOT_GIT", join(SAGE_ROOT, ".git"))
 
+# Sage doc server (local server with PORT if URL is not given)
+SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
+# The default port is 0 so that the system will assign a random unused port > 1024
+SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
+
 # ~/.sage
 DOT_SAGE = var("DOT_SAGE", join(os.environ.get("HOME"), ".sage"))
 SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
@@ -220,6 +225,7 @@ MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
+SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
 RUBIKS_BINS_PREFIX = var("RUBIKS_BINS_PREFIX", "")
 FOURTITWO_HILBERT = var("FOURTITWO_HILBERT")
 FOURTITWO_MARKOV = var("FOURTITWO_MARKOV")

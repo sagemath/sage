@@ -18,6 +18,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.division_rings import DivisionRings
+from sage.categories.noetherian_rings import NoetherianRings
 
 from sage.structure.element import coerce_binop
 
@@ -33,7 +34,9 @@ class Fields(CategoryWithAxiom):
         sage: K
         Category of fields
         sage: Fields().super_categories()
-        [Category of euclidean domains, Category of division rings]
+        [Category of euclidean domains,
+         Category of division rings,
+         Category of noetherian rings]
 
         sage: K(IntegerRing())
         Rational Field
@@ -54,10 +57,9 @@ class Fields(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Fields().extra_super_categories()
-            [Category of euclidean domains]
-
+            [Category of euclidean domains, Category of noetherian rings]
         """
-        return [EuclideanDomains()]
+        return [EuclideanDomains(), NoetherianRings()]
 
     def __contains__(self, x):
         """
@@ -91,10 +93,10 @@ class Fields(CategoryWithAxiom):
             sage: GR in Fields()                                                        # needs sage.libs.gap
             True
 
-        The following tests against a memory leak fixed in :trac:`13370`. In order
+        The following tests against a memory leak fixed in :issue:`13370`. In order
         to prevent non-deterministic deallocation of fields that have been created
         in other doctests, we introduced a strong reference to all previously created
-        uncollected objects in :trac:`19244`. ::
+        uncollected objects in :issue:`19244`. ::
 
             sage: import gc
             sage: _ = gc.collect()
@@ -165,7 +167,9 @@ class Fields(CategoryWithAxiom):
             sage: K
             Category of fields
             sage: Fields().super_categories()
-            [Category of euclidean domains, Category of division rings]
+            [Category of euclidean domains,
+             Category of division rings,
+             Category of noetherian rings]
 
             sage: K(IntegerRing())  # indirect doctest
             Rational Field
@@ -269,7 +273,7 @@ class Fields(CategoryWithAxiom):
                 sage: f.gcd(g)
                 1.00000000000000
 
-            Check :trac:`23012`::
+            Check :issue:`23012`::
 
                 sage: # needs sage.libs.pari
                 sage: R.<x> = QQ[]
@@ -357,7 +361,7 @@ class Fields(CategoryWithAxiom):
                 x^2 + 2
 
             We check that the behavior of xgcd with zero elements is
-            compatible with gcd (:trac:`17671`)::
+            compatible with gcd (:issue:`17671`)::
 
                 sage: # needs sage.rings.number_field
                 sage: R.<x> = QQbar[]
@@ -637,8 +641,8 @@ class Fields(CategoryWithAxiom):
 
             AUTHOR:
 
-            - Simon King (2011-02) -- :trac:`10771`
-            - Vincent Delecroix (2015) -- :trac:`17671`
+            - Simon King (2011-02) -- :issue:`10771`
+            - Vincent Delecroix (2015) -- :issue:`17671`
             """
             P = self.parent()
             try:
@@ -691,8 +695,8 @@ class Fields(CategoryWithAxiom):
 
             AUTHOR:
 
-            - Simon King (2011-02) -- :trac:`10771`
-            - Vincent Delecroix (2015) -- :trac:`17671`
+            - Simon King (2011-02) -- :issue:`10771`
+            - Vincent Delecroix (2015) -- :issue:`17671`
             """
             P = self.parent()
             try:

@@ -152,7 +152,7 @@ class JoinFeature(Feature):
 
     def unhide(self):
         r"""
-        Revert what :meth:`hide` does.
+        Revert what :meth:`hide` did.
 
         EXAMPLES::
 

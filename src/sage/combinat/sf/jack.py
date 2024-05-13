@@ -50,8 +50,25 @@ m_to_p_cache = {}
 
 
 class Jack(UniqueRepresentation):
+    @staticmethod
+    def __classcall__(cls, Sym, t='t'):
+        """
+        Normalize the arguments.
 
-    def __init__(self, Sym, t='t'):
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).jack().P()
+            sage: B2 = SymmetricFunctions(R).jack(t).P()
+            sage: B3 = SymmetricFunctions(R).jack(q).P()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(t))
+
+    def __init__(self, Sym, t):
         r"""
         The family of Jack symmetric functions including the `P`, `Q`, `J`, `Qp`
         bases.  The default parameter is ``t``.
@@ -70,7 +87,7 @@ class Jack(UniqueRepresentation):
             Jack polynomials with t=1 over Rational Field
         """
         self._sym = Sym
-        self.t = Sym.base_ring()(t)
+        self.t = t
         self._name_suffix = ""
         if str(t) != 't':
             self._name_suffix += " with t=%s" % t
@@ -532,6 +549,25 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             self._h = self._sym.homogeneous()
             self   .register_coercion(SetMorphism(Hom(self._h, self, category), self._h_to_self))
             self._h.register_coercion(SetMorphism(Hom(self, self._h, category), self._self_to_h))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
+            sage: JP = Sym.jack().P()
+            sage: JP.construction()
+            (SymmetricFunctionsFunctor[Jack P],
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field)
+        """
+        return (sfa.SymmetricFunctionsFamilyFunctor(self, Jack,
+                                                    self.basis_name(),
+                                                    self.t),
+                self.base_ring())
 
     def _m_to_self(self, x):
         r"""

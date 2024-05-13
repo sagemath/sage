@@ -71,7 +71,7 @@ class SpikeFunction:
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: S.height
             [4.0, 1.0, 3.0]
-            sage: S.eps
+            sage: S.eps                                                                 # needs sage.rings.real_mpfr
             0.00100000000000000
         """
         if not v:

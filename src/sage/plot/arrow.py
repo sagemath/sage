@@ -114,7 +114,7 @@ class CurveArrow(GraphicPrimitive):
             sage: CurveArrow(path=[[(0,0),(1,4),(2,3)]],options={})._repr_()
             'CurveArrow from (0, 0) to (2, 3)'
         """
-        return "CurveArrow from %s to %s" % (self.path[0][0], self.path[-1][-1])
+        return f"CurveArrow from {self.path[0][0]} to {self.path[-1][-1]}"
 
     def _render_on_subplot(self, subplot):
         """
@@ -152,7 +152,7 @@ class CurveArrow(GraphicPrimitive):
         from matplotlib.path import Path
         bpath = Path(self.vertices, self.codes)
         p = FancyArrowPatch(path=bpath,
-                            lw=width, arrowstyle='%s,head_width=%s,head_length=%s' % (style, head_width, head_length),
+                            lw=width, arrowstyle='{},head_width={},head_length={}'.format(style, head_width, head_length),
                             fc=color, ec=color,
                             linestyle=get_matplotlib_linestyle(options['linestyle'], return_type='long'))
         p.set_zorder(options['zorder'])
@@ -319,7 +319,7 @@ class Arrow(GraphicPrimitive):
             sage: Arrow(0,0,2,3,{})._repr_()
             'Arrow from (0.0,0.0) to (2.0,3.0)'
         """
-        return "Arrow from (%s,%s) to (%s,%s)" % (self.xtail, self.ytail, self.xhead, self.yhead)
+        return f"Arrow from ({self.xtail},{self.ytail}) to ({self.xhead},{self.yhead})"
 
     def _render_on_subplot(self, subplot):
         r"""
@@ -339,7 +339,7 @@ class Arrow(GraphicPrimitive):
 
         The length of the ends (shrinkA and shrinkB) should not depend
         on the width of the arrow, because Matplotlib already takes
-        this into account. See :trac:`12836`::
+        this into account. See :issue:`12836`::
 
             sage: fig = Graphics().matplotlib()
             sage: sp = fig.add_subplot(1,1,1, label='axis1')
@@ -352,7 +352,7 @@ class Arrow(GraphicPrimitive):
             sage: p1.shrinkB == p2.shrinkB
             True
 
-        Dashed arrows should have solid arrowheads, :trac:`12852`. We tried to
+        Dashed arrows should have solid arrowheads, :issue:`12852`. We tried to
         make up a test for this, which turned out to be fragile and hence was
         removed. In general, robust testing of graphics seems basically need a
         human eye or AI.
@@ -378,7 +378,7 @@ class Arrow(GraphicPrimitive):
         from matplotlib.patches import FancyArrowPatch
         p = FancyArrowPatch((self.xtail, self.ytail), (self.xhead, self.yhead),
                             lw=width,
-                            arrowstyle='%s,head_width=%s,head_length=%s' % (style, head_width, head_length),
+                            arrowstyle='{},head_width={},head_length={}'.format(style, head_width, head_length),
                             shrinkA=arrowshorten_end, shrinkB=arrowshorten_end,
                             fc=color, ec=color,
                             linestyle=get_matplotlib_linestyle(options['linestyle'], return_type='long'))
@@ -395,7 +395,7 @@ class Arrow(GraphicPrimitive):
 
             import matplotlib.patheffects as pe
 
-            class CheckNthSubPath():
+            class CheckNthSubPath:
                 def __init__(self, patch, n):
                     """
                     creates a callable object that returns True if the
@@ -475,7 +475,7 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
     TESTS:
 
-    Check that :trac:`35031` is fixed::
+    Check that :issue:`35031` is fixed::
 
         sage: arrow((0,0), (0,0), linestyle='dashed')
         Graphics object consisting of 1 graphics primitive

@@ -560,7 +560,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: Partitions.options.display # indirect doctest                         # needs sage.combinat
+            sage: Partitions.options.display  # indirect doctest                        # needs sage.combinat
             list
         """
         # NOTE: we intentionally use str() instead of repr()
@@ -648,7 +648,7 @@ class Option():
 
         TESTS:
 
-        Check that values can be set to ``None`` (:trac:`30763`)::
+        Check that values can be set to ``None`` (:issue:`30763`)::
 
             sage: from sage.structure.global_options import GlobalOptions
             sage: class config(GlobalOptions):
@@ -1389,7 +1389,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         EXAMPLES::
 
-            sage: Partitions.options == PartitionsGreatestLE.options # indirect doctest             # needs sage.combinat
+            sage: Partitions.options == PartitionsGreatestLE.options  # indirect doctest            # needs sage.combinat
             True
             sage: Partitions.options == Tableaux.options                                # needs sage.combinat
             False

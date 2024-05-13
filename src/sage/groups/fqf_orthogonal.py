@@ -5,7 +5,6 @@ The orthogonal group of a torsion quadratic module `T`
 consists of all linear self-maps of `T` which preserve
 the torsion quadratic form.
 
-
 EXAMPLES::
 
     sage: L = IntegralLattice("A2").twist(2)                                            # needs sage.graphs
@@ -125,7 +124,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
 
     INPUT:
 
-    - ``T`` -- a non degenerate torsion quadratic module.
+    - ``T`` -- a non degenerate torsion quadratic module
 
     EXAMPLES::
 
@@ -230,7 +229,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
             [1 3]
             [3 4]
 
-        Note that the following does not work since it may lead to ambiguities, see :trac:`30669`::
+        Note that the following does not work since it may lead to ambiguities, see :issue:`30669`::
 
             sage: Oq(f.matrix())                                                        # needs sage.graphs
             Traceback (most recent call last):
@@ -436,9 +435,7 @@ class ActionOnFqf(Action):
         - ``a`` -- an element of the invariant submodule
         - ``g`` -- an element of the acting group
 
-        OUTPUT:
-
-        - an element of the invariant submodule
+        OUTPUT: an element of the invariant submodule
 
         EXAMPLES::
 
@@ -488,6 +485,7 @@ class ActionOnFqf(Action):
             P = a.parent()
             return P.linear_combination_of_smith_form_gens(v)
 
+
 def _isom_fqf(A, B=None):
     r"""
     Return isometries from `A` to `B`.
@@ -500,8 +498,9 @@ def _isom_fqf(A, B=None):
     OUTPUT:
 
     A list of generators of the orthogonal group of A.
-    If ``B`` is given returns instead a single isometry of `A` and `B` or
-    raises an ``ValueError`` if `A` and `B` are not isometric.
+
+    If ``B`` is given, this returns instead a single isometry of `A` and `B`
+    or raises a :class:`ValueError` if `A` and `B` are not isometric.
 
     EXAMPLES::
 

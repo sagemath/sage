@@ -248,7 +248,7 @@ class IndexedGenerators():
              ('sorting_key', <function ...<lambda> at ...>),
              ('sorting_reverse', False), ('string_quotes', True),
              ('tensor_symbol', None)]
-            sage: F.print_options(bracket='[') # reset                                  # needs sage.modules
+            sage: F.print_options(bracket='[')  # reset                                 # needs sage.modules
         """
         # don't just use kwds.get(...) because I want to distinguish
         # between an argument like "option=None" and the option not
@@ -399,7 +399,7 @@ class IndexedGenerators():
             sage: a              # indirect doctest                                     # needs sage.combinat sage.modules
             2*|1, 2, 3| + 4*|3, 2, 1|
 
-            sage: QS3.print_options(**original_print_options) # reset                   # needs sage.combinat sage.modules
+            sage: QS3.print_options(**original_print_options)  # reset                  # needs sage.combinat sage.modules
 
         TESTS::
 
@@ -491,6 +491,8 @@ class IndexedGenerators():
             return ascii_art(ret)
 
         pref = AsciiArt([self.prefix()])
+        if not pref:
+            return ascii_art(m)
         r = pref * (AsciiArt([" " * len(pref)]) + ascii_art(m))
         r._baseline = r._h - 1
         return r
@@ -530,6 +532,8 @@ class IndexedGenerators():
             return unicode_art(ret)
 
         pref = UnicodeArt([self.prefix()])
+        if not pref:
+            return unicode_art(m)
         r = pref * (UnicodeArt([" " * len(pref)]) + unicode_art(m))
         r._baseline = r._h - 1
         return r

@@ -280,12 +280,12 @@ We test an automatic coercion::
     <class 'sage.interfaces.singular.SingularElement'>
 
 Create a ring over GF(9) to check that ``gftables`` has been installed,
-see :trac:`11645`::
+see :issue:`11645`::
 
     sage: singular.eval("ring testgf9 = (9,x),(a,b,c,d,e,f),(M((1,2,3,0)),wp(2,3),lp);")
     ''
 
-Verify that :trac:`17720` is fixed::
+Verify that :issue:`17720` is fixed::
 
     sage: R.<p> = QQ[]
     sage: K.<p> = QQ.extension(p^2 - p - 1)
@@ -1211,14 +1211,14 @@ class Singular(ExtraTabCompletion, Expect):
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 3
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
             sage: singular.current_ring()
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 3
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
         """
@@ -1402,6 +1402,14 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         if self._name in s:
             if self.get_custom_name() is None and self.type() == 'matrix':
                 s = self.parent().eval('pmat(%s,20)' % (self.name()))
+        # compatibility for singular 4.3.2p10 and before
+        if s.startswith("polynomial ring,"):
+            from sage.rings.polynomial.term_order import singular_name_mapping
+            from sage.repl.rich_output import get_display_manager
+            # this is our cue that singular uses `rp` instead of `ip`
+            if singular_name_mapping['invlex'] == 'rp' and 'doctest' in str(get_display_manager()):
+                s = re.sub('^(// .*block.* : ordering )rp$', '\\1ip',
+                           s, 0, re.MULTILINE)
         return s
 
     def __copy__(self):
@@ -1751,7 +1759,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: singular('z^4')
             (-z3-z2-z-1)
 
-        Test that :trac:`25297` is fixed::
+        Test that :issue:`25297` is fixed::
 
             sage: R.<x,y> = QQ[]
             sage: SE.<xbar,ybar> = R.quotient(x^2 + y^2 - 1)
@@ -1760,7 +1768,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: P2.0.lift().parent()
             Multivariate Polynomial Ring in x, y over Rational Field
 
-        Test that :trac:`29396` is fixed::
+        Test that :issue:`29396` is fixed::
 
             sage: Rxz.<x,z> = RR[]
             sage: f = x**3 + x*z + 1
@@ -2018,13 +2026,17 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: singular('x^2+y').sage().parent()
             Quotient of Multivariate Polynomial Ring in x, y, z over Finite Field in a of size 3^2 by the ideal (y^4 - y^2*z^3 + z^6, x + y^2 + z^3)
 
-        Test that :trac:`18848` is fixed::
+        Test that :issue:`18848` is fixed::
 
             sage: singular(5).sage()
             5
             sage: type(singular(int(5)).sage())
             <class 'sage.rings.integer.Integer'>
 
+        Test that bigintvec can be coerced::
+
+            sage: singular('hilb((ideal(x)), 1)').sage()
+            (1, -1, 0, 0, -1, 1, 0)
         """
         typ = self.type()
         if typ == 'poly':
@@ -2040,6 +2052,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         elif typ == 'intvec':
             from sage.modules.free_module_element import vector
             return vector([sage.rings.integer.Integer(str(e)) for e in self])
+        elif typ == 'bigintvec':
+            from sage.modules.free_module_element import vector
+            return vector([sage.rings.rational.Rational(str(e)) for e in self])
         elif typ == 'intmat':
             from sage.matrix.constructor import matrix
             from sage.rings.integer_ring import ZZ
@@ -2776,7 +2791,7 @@ def singular_gb_standard_options(func):
         sage: "basis" in sage_getsource(J.interreduced_basis) #indirect doctest
         True
 
-    The following tests against a bug that was fixed in :trac:`11298`::
+    The following tests against a bug that was fixed in :issue:`11298`::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines, sage_getargspec
         sage: P.<x,y> = QQ[]

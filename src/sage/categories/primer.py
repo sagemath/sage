@@ -352,18 +352,20 @@ categories and their super categories::
     sage: ZZ.category()
     Join of Category of Dedekind domains
         and Category of euclidean domains
+        and Category of noetherian rings
         and Category of infinite enumerated sets
         and Category of metric spaces
 
     sage: ZZ.categories()
     [Join of Category of Dedekind domains
          and Category of euclidean domains
+         and Category of noetherian rings
          and Category of infinite enumerated sets
          and Category of metric spaces,
      Category of Dedekind domains,
      Category of euclidean domains, Category of principal ideal domains,
      Category of unique factorization domains, Category of gcd domains,
-     Category of integral domains, Category of domains,
+     Category of integral domains, Category of domains, ...
      Category of commutative rings, Category of rings, ...
      Category of magmas and additive magmas, ...
      Category of monoids, Category of semigroups,
@@ -723,7 +725,7 @@ be a *subcategory* of ``Cs()``.
     of *subcategory* and is subject to change. Indeed, the forgetful
     functor from the category of groups to the category of sets is not
     an inclusion of categories, as it is not injective: a given set
-    may admit more than one group structure. See :trac:`16183` for
+    may admit more than one group structure. See :issue:`16183` for
     more details. The name *supercategory* is also used with a
     different meaning in certain areas of mathematics.
 
@@ -1348,7 +1350,7 @@ point (say the category :class:`Magmas` as above), one can explore a
 whole range of related categories, typically with the help of
 introspection to discover which axioms are available, and without
 having to import new Python modules. This feature will be used in
-:trac:`15741` to unclutter the global name space from, for example,
+:issue:`15741` to unclutter the global name space from, for example,
 the many variants of the category of algebras like::
 
     sage: FiniteDimensionalAlgebrasWithBasis(QQ)
@@ -1648,13 +1650,13 @@ the ambiguity should be resolved explicitly by defining a
 method ``foo`` in this category. See the method ``some_elements`` in
 the code of the category :class:`FiniteCoxeterGroups` for an example.
 
-Since :trac:`11943`, ``C.all_super_categories()`` is computed by the
+Since :issue:`11943`, ``C.all_super_categories()`` is computed by the
 so-called ``C3`` algorithm used by Python to compute Method Resolution
 Order of new-style classes. Thus the order in
 ``C.all_super_categories()``, ``C.parent_class.mro()`` and
 ``C.element_class.mro()`` are guaranteed to be consistent.
 
-Since :trac:`13589`, the ``C3`` algorithm is put under control of some
+Since :issue:`13589`, the ``C3`` algorithm is put under control of some
 total order on categories. This order is not necessarily meaningful,
 but it guarantees that ``C3`` always finds a consistent Method
 Resolution Order. For background, see
