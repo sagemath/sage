@@ -478,8 +478,8 @@ class Groups(CategoryWithAxiom):
                 Heisenberg group of degree 1 over Ring of integers modulo 3
                 sage: H.minimum_generating_set()
                 [
-                [1 0 0]  [1 1 0]
-                [0 1 1]  [0 1 0]
+                [1 1 0]  [1 0 0]
+                [0 1 0]  [0 1 1]
                 [0 0 1], [0 0 1]
                 ]
 
