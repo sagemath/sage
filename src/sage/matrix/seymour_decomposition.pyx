@@ -581,7 +581,11 @@ cdef class DecompositionNode(SageObject):
                                         use_direct_graphicness_test=True,
                                         series_parallel_ok=True,
                                         check_graphic_minors_planar=False,
-                                        complete_tree='find_irregular',
+                                        recurse=True,
+                                        stop_when_irregular=False,
+                                        stop_when_nongraphic=False,
+                                        stop_when_noncographic=False,
+                                        stop_when_nongraphic_and_noncographic=False,
                                         three_sum_pivot_children=False,
                                         three_sum_strategy=None,
                                         construct_graphs=False):
@@ -602,8 +606,7 @@ cdef class DecompositionNode(SageObject):
             sage: from sage.matrix.seymour_decomposition import UnknownNode
             sage: node = UnknownNode(M); node
             UnknownNode (9×9)
-            sage: C0 = node._binary_linear_matroid_complete_decomposition(
-            ....:                            complete_tree=False)
+            sage: C0 = node._binary_linear_matroid_complete_decomposition(recurse=False)
             sage: C0
             OneSumNode (9×9) with 2 children
             sage: unicode_art(C0)
@@ -611,7 +614,7 @@ cdef class DecompositionNode(SageObject):
             │                 │
             UnknownNode (5×4) UnknownNode (4×5)
             sage: C1, C2 = C0.child_nodes()
-            sage: C11 = C1._binary_linear_matroid_complete_decomposition(complete_tree=False); C11
+            sage: C11 = C1._binary_linear_matroid_complete_decomposition(recurse=False); C11
             GraphicNode (5×4)
             sage: unicode_art(C11)
             GraphicNode (5×4)
@@ -627,7 +630,7 @@ cdef class DecompositionNode(SageObject):
             [0 1 1 1]
             [1 0 0 1]
             [0 0 1 1]
-            sage: C22 = C2._binary_linear_matroid_complete_decomposition(complete_tree=False); C22
+            sage: C22 = C2._binary_linear_matroid_complete_decomposition(recurse=False); C22
             CographicNode (4×5)
             sage: unicode_art(C22)
             CographicNode (4×5)
@@ -641,6 +644,55 @@ cdef class DecompositionNode(SageObject):
             [0 0 1 1 1]
             [0 1 0 1 1]
             [1 1 0 1 0]
+
+        This is test ``TreeFlagsStopNoncographic`` in CMR's ``test_regular.cpp``.
+        The default settings will not do the planarity check::
+
+            sage: unicode_art(node)
+            UnknownNode (9×9)
+            sage: certificate1 = node._binary_linear_matroid_complete_decomposition(
+            ....:                                           recurse=True,
+            ....:                                           stop_when_noncographic=True,
+            ....:                                           check_graphic_minors_planar=True)
+            sage: unicode_art(certificate1)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: certificate2 = node._binary_linear_matroid_complete_decomposition(
+            ....:                                           recurse=True,
+            ....:                                           stop_when_noncographic=True)
+            sage: unicode_art(certificate2)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) CographicNode (4×5)
+
+            sage: certificate1 = node._binary_linear_matroid_complete_decomposition(
+            ....:                                           recurse=True,
+            ....:                                           stop_when_nongraphic=True,
+            ....:                                           check_graphic_minors_planar=True)
+            sage: unicode_art(certificate1)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: C1, C2 = certificate1.child_nodes()
+            sage: C1._is_binary_linear_matroid_cographic()
+            False
+            sage: C2._is_binary_linear_matroid_graphic()
+            False
+            sage: certificate2 = node._binary_linear_matroid_complete_decomposition(
+            ....:                                           recurse=True,
+            ....:                                           stop_when_nongraphic=True)
+            sage: unicode_art(certificate2)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: C1, C2 = certificate2.child_nodes()
+            sage: C1._is_binary_linear_matroid_cographic()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Cographic Not Determined
+            sage: C2._is_binary_linear_matroid_graphic()
+            False
         """
         cdef CMR_REGULAR_PARAMS params
         cdef CMR_REGULAR_STATS stats
@@ -654,7 +706,11 @@ cdef class DecompositionNode(SageObject):
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
-                              complete_tree=complete_tree,
+                              recurse=recurse,
+                              stop_when_irregular=stop_when_irregular,
+                              stop_when_nongraphic=stop_when_nongraphic,
+                              stop_when_noncographic=stop_when_noncographic,
+                              stop_when_nongraphic_and_noncographic=stop_when_nongraphic_and_noncographic,
                               three_sum_pivot_children=three_sum_pivot_children,
                               three_sum_strategy=three_sum_strategy,
                               construct_graphs=construct_graphs)
@@ -730,7 +786,11 @@ cdef class DecompositionNode(SageObject):
                                use_direct_graphicness_test=True,
                                series_parallel_ok=True,
                                check_graphic_minors_planar=False,
-                               complete_tree='find_irregular',
+                               recurse=True,
+                               stop_when_nonTU=False,
+                               stop_when_nonnetwork=False,
+                               stop_when_nonconetwork=False,
+                               stop_when_nonnetwork_and_nonconetwork=False,
                                three_sum_pivot_children=False,
                                three_sum_strategy=None,
                                construct_graphs=False):
@@ -751,13 +811,13 @@ cdef class DecompositionNode(SageObject):
             sage: from sage.matrix.seymour_decomposition import UnknownNode
             sage: node = UnknownNode(M); node
             UnknownNode (9×9)
-            sage: C0 = node.complete_decomposition(complete_tree=False)
+            sage: C0 = node.complete_decomposition(recurse=False)
             sage: unicode_art(C0)
             ╭───────────OneSumNode (9×9) with 2 children
             │                 │
             UnknownNode (5×4) UnknownNode (4×5)
             sage: C1, C2 = C0.child_nodes()
-            sage: C11 = C1.complete_decomposition(complete_tree=False); C11
+            sage: C11 = C1.complete_decomposition(recurse=False); C11
             SubmatrixNode (5×4)
             sage: unicode_art(C11)
             SubmatrixNode (5×4)
@@ -775,7 +835,7 @@ cdef class DecompositionNode(SageObject):
             [0 1 1 1]
             [1 0 0 1]
             [0 0 1 1]
-            sage: C22 = C2.complete_decomposition(complete_tree=False); C22
+            sage: C22 = C2.complete_decomposition(); C22
             SubmatrixNode (4×5)
             sage: unicode_art(C22)
             SubmatrixNode (4×5)
@@ -804,7 +864,11 @@ cdef class DecompositionNode(SageObject):
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
-                              complete_tree=complete_tree,
+                              recurse=recurse,
+                              stop_when_irregular=stop_when_nonTU,
+                              stop_when_nongraphic=stop_when_nonnetwork,
+                              stop_when_noncographic=stop_when_nonconetwork,
+                              stop_when_nongraphic_and_noncographic=stop_when_nonnetwork_and_nonconetwork,
                               three_sum_pivot_children=three_sum_pivot_children,
                               three_sum_strategy=three_sum_strategy,
                               construct_graphs=construct_graphs)
@@ -1297,7 +1361,7 @@ cdef class ThreeSumNode(SumNode):
             ....:                    column_keys='abcdef'); node
             UnknownNode (6×6)
             sage: C0 = node.complete_decomposition(
-            ....:                            complete_tree=False,
+            ....:                            recurse=False,
             ....:                            three_sum_strategy="Wide_Wide",
             ....:                            )
             sage: C0
@@ -1308,7 +1372,7 @@ cdef class ThreeSumNode(SumNode):
             ╭──────────ThreeSumNode (6×6) with 2 children
             │                 │
             UnknownNode (4×5) UnknownNode (4×5)
-            sage: unicode_art(C0.complete_decomposition(complete_tree=True,
+            sage: unicode_art(C0.complete_decomposition(recurse=True, stop_when_nonTU=True,
             ....:                           three_sum_strategy="Wide_Wide"))
                     PivotsNode (6×6)
                     │

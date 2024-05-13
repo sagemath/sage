@@ -1653,7 +1653,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                           use_direct_graphicness_test=True,
                                           series_parallel_ok=True,
                                           check_graphic_minors_planar=False,
-                                          recurse=True,
                                           stop_when_irregular=True,
                                           three_sum_pivot_children=False,
                                           three_sum_strategy=None,
@@ -1797,7 +1796,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
-                              recurse=recurse,
+                              recurse=True,
                               stop_when_irregular=stop_when_irregular,
                               stop_when_nongraphic=False,
                               stop_when_noncographic=False,
@@ -1827,7 +1826,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               use_direct_graphicness_test=True,
                               series_parallel_ok=True,
                               check_graphic_minors_planar=False,
-                              recurse=True,
                               stop_when_nonTU=True,
                               three_sum_pivot_children=False,
                               three_sum_strategy=None,
@@ -1979,7 +1977,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
-                              recurse=recurse,
+                              recurse=True,
                               stop_when_irregular=stop_when_nonTU,
                               stop_when_nongraphic=False,
                               stop_when_noncographic=False,
@@ -2065,7 +2063,7 @@ cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
             treeFlag |= flag
         params.treeFlags = treeFlag
     else:
-        params.treeFlags = CMR_REGULAR_TREE_FLAGS_DEFAULT
+        params.treeFlags = 0
     params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
 
 
