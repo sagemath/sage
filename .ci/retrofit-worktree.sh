@@ -38,6 +38,10 @@ git tag -f new
 # The changed files now show up as uncommitted changes.
 # The final "git add -N" makes sure that files that were added in "new" do not show
 # as untracked files, which would be removed by "git clean -fx".
+if [ -L $WORKTREE_NAME ]; then
+    rm -f $WORKTREE_NAME
+    git worktree prune --verbose
+fi
 git worktree add --detach $WORKTREE_NAME
 rm -rf $WORKTREE_DIRECTORY/.git && mv $WORKTREE_NAME/.git $WORKTREE_DIRECTORY/
 rm -rf $WORKTREE_NAME && ln -s $WORKTREE_DIRECTORY $WORKTREE_NAME
