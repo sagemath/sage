@@ -1,11 +1,11 @@
 name: Lint
 
-on: 
+on:
   push:
     branches:
       - master
       - develop
-  pull_request: 
+  pull_request:
   merge_group:
 
 concurrency:
@@ -29,7 +29,7 @@ jobs:
         SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.9
 

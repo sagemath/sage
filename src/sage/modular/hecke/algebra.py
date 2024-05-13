@@ -179,7 +179,8 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             M = M[0]
         from . import module
         if not module.is_HeckeModule(M):
-            raise TypeError("M (=%s) must be a HeckeModule" % M)
+            msg = f"M (={M}) must be a HeckeModule"
+            raise TypeError(msg)
         self.__M = M
         cat = Algebras(M.base_ring()).Commutative()
         CommutativeRing.__init__(self, base_ring=M.base_ring(),
@@ -198,7 +199,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
         """
         return self.hecke_operator(self.level() + 1)
 
-    def __call__(self, x, check=True):
+    def _element_constructor_(self, x, check=True):
         r"""
         Convert x into an element of this Hecke algebra. Here x is either:
 
@@ -230,7 +231,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             sage: T.gen(2).matrix() in T
             Traceback (most recent call last):
             ...
-            NotImplementedError: Membership testing for '...' not implemented
+            NotImplementedError: membership testing for '...' not implemented
             sage: T(T.gen(2).matrix(), check=False)
             Hecke operator on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field defined by:
             [ 3  0 -1]
@@ -245,49 +246,52 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             TypeError: Don't know how to construct an element of Anemic Hecke algebra acting on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field from Hecke operator T_11 on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field
 
         """
-        from . import hecke_operator
+        from .hecke_operator import HeckeAlgebraElement_matrix, HeckeOperator, is_HeckeOperator, is_HeckeAlgebraElement
+
+        if not isinstance(x, Element):
+            x = self.base_ring()(x)
+
+        parent = x.parent()
+
+        if parent is self.base_ring():
+            return HeckeAlgebraElement_matrix(self, x * self.matrix_space().one())
+
+        if parent is self:
+            return x
+
+        if is_HeckeOperator(x):
+            if x.parent() == self \
+                    or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()) \
+                    or (self.is_anemic() and x.parent().anemic_subalgebra() == self and gcd(x.index(), self.level()) == 1):
+                return HeckeOperator(self, x.index())
+
+        if is_HeckeAlgebraElement(x):
+            if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
+                if x.parent().module().basis_matrix() == self.module().basis_matrix():
+                    return HeckeAlgebraElement_matrix(self, x.matrix())
+                else:
+                    A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
+                                for i in range(x.parent().module().rank())])
+                    return HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
+
         try:
-            if not isinstance(x, Element):
-                x = self.base_ring()(x)
-            if x.parent() is self:
-                return x
-            elif hecke_operator.is_HeckeOperator(x):
-                if x.parent() == self \
-                        or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()) \
-                        or (self.is_anemic() and x.parent().anemic_subalgebra() == self and gcd(x.index(), self.level()) == 1):
-                    return hecke_operator.HeckeOperator(self, x.index())
-                else:
-                    raise TypeError
-            elif hecke_operator.is_HeckeAlgebraElement(x):
-                if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
-                    if x.parent().module().basis_matrix() == self.module().basis_matrix():
-                        return hecke_operator.HeckeAlgebraElement_matrix(self, x.matrix())
-                    else:
-                        A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
-                                    for i in range(x.parent().module().rank())])
-                        return hecke_operator.HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
-                elif x.parent() == self.anemic_subalgebra():
-                    pass
-
-                else:
-                    raise TypeError
-            else:
-                A = self.matrix_space()(x)
-                if check:
-                    if not A.is_scalar():
-                        raise NotImplementedError("Membership testing for '%s' not implemented" % self)
-                return hecke_operator.HeckeAlgebraElement_matrix(self, A)
-
+            A = self.matrix_space()(x)
+            if check:
+                if not A.is_scalar():
+                    msg = f"membership testing for '{self}' not implemented"
+                    raise NotImplementedError(msg)
+            return HeckeAlgebraElement_matrix(self, A)
         except TypeError:
             raise TypeError("Don't know how to construct an element of %s from %s" % (self, x))
 
-    def _coerce_impl(self, x):
-        r"""
-        Implicit coercion of x into this Hecke algebra. The only things that
-        coerce implicitly into self are: elements of Hecke algebras which are
-        equal to self, or to the anemic subalgebra of self if self is not
-        anemic; and elements that coerce into the base ring of self.  Bare
-        matrices do *not* coerce implicitly into self.
+    def _coerce_map_from_(self, R):
+        """
+        Coercion of a parent ``R`` into this Hecke algebra.
+
+        The parents that coerce into ``self`` are: Hecke
+        algebras which are equal to ``self``, or to the anemic subalgebra
+        of ``self`` if ``self`` is not anemic; and parents that coerce into
+        the base ring of ``self``.
 
         EXAMPLES::
 
@@ -297,9 +301,11 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             sage: F.coerce(A.2) # indirect doctest
             Hecke operator T_2 on Cuspidal subspace of dimension 3 of Modular Forms space of dimension 5 for Congruence Subgroup Gamma0(3) of weight 12 over Rational Field
         """
-        if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
-            return self(x)
-        return self(self.matrix_space()(1) * self.base_ring().coerce(x))
+        if R == self:
+            return True
+        if not self.is_anemic() and R == self.anemic_subalgebra():
+            return True
+        return self.base_ring().has_coerce_map_from(R)
 
     def gen(self, n):
         """
@@ -316,7 +322,9 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
     def ngens(self):
         r"""
         The size of the set of generators returned by gens(), which is clearly
-        infinity. (This is not necessarily a minimal set of generators.)
+        infinity.
+
+        (This is not necessarily a minimal set of generators.)
 
         EXAMPLES::
 
@@ -324,6 +332,23 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             +Infinity
         """
         return infinity
+
+    def one(self):
+        """
+        Return the unit of the Hecke algebra.
+
+        EXAMPLES::
+
+            sage: M = ModularSymbols(11,2,1)
+            sage: H = M.hecke_algebra()
+            sage: H.one()
+            Hecke operator on Modular Symbols space of dimension 2 for Gamma_0(11) of weight 2 with sign 1 over Rational Field defined by:
+            [1 0]
+            [0 1]
+        """
+        from .hecke_operator import HeckeAlgebraElement_matrix
+        A = self.matrix_space()
+        return HeckeAlgebraElement_matrix(self, A.one())
 
     def is_noetherian(self) -> bool:
         """

@@ -1489,11 +1489,11 @@ class FiniteWordPath_all(SageObject):
 
 
 class FiniteWordPath_2d(FiniteWordPath_all):
-    def plot(self, pathoptions=dict(rgbcolor='red', thickness=3),
-             fill=True, filloptions=dict(rgbcolor='red', alpha=0.2),
-             startpoint=True, startoptions=dict(rgbcolor='red', pointsize=100),
-             endarrow=True, arrowoptions=dict(rgbcolor='red', arrowsize=20, width=3),
-             gridlines=False, gridoptions=dict()):
+    def plot(self, pathoptions={"rgbcolor": 'red', "thickness": 3},
+             fill=True, filloptions={"rgbcolor": 'red', "alpha": 0.2},
+             startpoint=True, startoptions={"rgbcolor": 'red', "pointsize": 100},
+             endarrow=True, arrowoptions={"rgbcolor": 'red', "arrowsize": 20, "width": 3},
+             gridlines=False, gridoptions={}):
         r"""
         Return a 2d Graphics illustrating the path.
 
@@ -1698,7 +1698,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
         return animate(images, **kwds)
 
-    def plot_directive_vector(self, options=dict(rgbcolor='blue')):
+    def plot_directive_vector(self, options={"rgbcolor": 'blue'}):
         r"""
         Return an arrow 2d graphics that goes from the start of the path
         to the end.
@@ -2003,8 +2003,8 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
 
 class FiniteWordPath_3d(FiniteWordPath_all):
-    def plot(self, pathoptions=dict(rgbcolor='red', arrow_head=True, thickness=3),
-             startpoint=True, startoptions=dict(rgbcolor='red', size=10)):
+    def plot(self, pathoptions={"rgbcolor": 'red', "arrow_head": True, "thickness": 3},
+             startpoint=True, startoptions={"rgbcolor": 'red', "size": 10}):
         r"""
         INPUT:
 

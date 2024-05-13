@@ -79,10 +79,11 @@ reconfigure:
 	fi
 
 # Preemptively download all source tarballs of normal packages.
+DOWNLOAD_PACKAGES=:all:
 download:
 	export SAGE_ROOT=$$(pwd) && \
 	export PATH=$$SAGE_ROOT/build/bin:$$PATH && \
-	sage-package download :all:
+	sage-package download $(DOWNLOAD_PACKAGES)
 
 dist: build/make/Makefile
 	./sage --sdist
