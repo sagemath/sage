@@ -74,13 +74,17 @@ cdef class DecompositionNode(SageObject):
             CMR_CALL(CMRmatroiddecCapture(cmr, dec))
         self._dec = dec
 
-    cdef _set_root_dec(self, isTernary=True):
+    cdef _set_root_dec(self):
         cdef CMR_MATROID_DEC *root
         cdef Matrix_cmr_chr_sparse matrix
         try:
             matrix = self.matrix()
         except:
             raise ValueError('no Matrix_cmr_chr_sparse matrix')
+        base_ring = matrix.parent().base_ring()
+        if base_ring.characteristic() not in [0, 2, 3] :
+            raise ValueError(f'only defined over binary or ternary, got {base_ring}')
+        isTernary = base_ring.characteristic() != 2
         cdef CMR_CHRMAT *mat = matrix._mat
 
         sig_on()
@@ -593,7 +597,7 @@ cdef class DecompositionNode(SageObject):
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(GF(2), 9, 9, sparse=True),
             ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
             ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
             ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
@@ -701,7 +705,7 @@ cdef class DecompositionNode(SageObject):
         cdef CMR_MATROID_DEC **pclone = &clone
 
         if self._dec == NULL:
-            self._set_root_dec(isTernary=False)
+            self._set_root_dec()
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
@@ -859,7 +863,7 @@ cdef class DecompositionNode(SageObject):
         cdef CMR_MATROID_DEC **pclone = &clone
 
         if self._dec == NULL:
-            self._set_root_dec(isTernary=True)
+            self._set_root_dec()
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
