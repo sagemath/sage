@@ -21,6 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         # On pushes to tags or branches, test the whole matrix.
         os: >-
