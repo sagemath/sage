@@ -1,3 +1,4 @@
+from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.rings.fast_arith import prime_range
 from sage.rings.ring import CommutativeRing
@@ -86,24 +87,19 @@ class DirichletSeriesRing(CommutativeRing, Parent):
         if isinstance(S, DirichletSeriesRing) and base_ring.has_coerce_map_from(S.base_ring()) and self.precision() <= S.precision() and (self.is_sparse() is True or S.is_sparse() is False):
             return True
 
-    def euler_product(self, factor):
+    def euler_product(self, Lpoly):
         """
+        Construct an Euler product out of `L`-polynomials.
+
         EXAMPLES:
 
         Construct the Riemann zeta function as a formal Dirichlet series::
 
              sage: R = DirichletSeriesRing(ZZ, 10)
-             sage: R.euler_product(lambda p: 1 - R({p:1}))
-             1 + 2^-s + 3^-s + 4^-s + 5^-s + 6^-s + 7^-s + 8^-s + 9^-s + O(10^-s)
-             sage: R.euler_product({p: 1 - R({p:1}) for p in prime_range(25)})
+             sage: P.<T> = ZZ[]
+             sage: R.euler_product({p: 1-T for p in prime_range(25)})
              1 + 2^-s + 3^-s + 4^-s + 5^-s + 6^-s + 7^-s + 8^-s + 9^-s + O(10^-s)
         """
-        ans = self.one()
-        if isinstance(factor, dict):
-            for p in prime_range(self.precision()):
-                ans /= factor[p]
-        else:
-            for p in prime_range(self.precision()):
-                ans /= factor(p)
-        return ans
+        return prod(1 / self({p**i: j for i, j in Lpoly[p].dict().items()}) 
+            for p in prime_range(self.precision()))
 
