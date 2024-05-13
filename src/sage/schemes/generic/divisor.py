@@ -406,7 +406,7 @@ class Divisor_curve(Divisor_generic):
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
 
-    def support(self) -> Set:
+    def support(self) -> list:
         """
         Return the support of this divisor, which is the set of points that
         occur in this divisor with nonzero coefficients.
@@ -420,8 +420,8 @@ class Divisor_curve(Divisor_generic):
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
             sage: D = C.divisor_group()([(3, pts[0]), (-1, pts[1])]); D
             -(x - 2, y - 2) + 3*(x, y)
-            sage: D.support() == {A(0, 0), A(2, 2)}
-            True
+            sage: D.support()
+            [(0, 0), (2, 2)]
 
         TESTS:
 
@@ -432,15 +432,15 @@ class Divisor_curve(Divisor_generic):
             sage: C = Curve(x^7 + y^7 + z^7)
             sage: pts = C.rational_points()
             sage: D = C.divisor([(2, pts[0])])
-            sage: D.support() == {PS(0, 4, 1)}
-            True
-            sage: (D + D).support() == {PS(0, 4, 1)}
-            True
+            sage: D.support()
+            [(0 : 4 : 1)]
+            sage: (D + D).support()
+            [(0 : 4 : 1)]
             sage: E = C.divisor([(-3, pts[1]), (1, pts[2])])
-            sage: (D - 2*E).support() == {PS(0, 4, 1), PS(1, 2, 1), PS(2, 1, 1)}
-            True
+            sage: (D - 2*E).support()
+            [(2 : 1 : 1), (1 : 2 : 1), (0 : 4 : 1)]
             sage: (D - D).support()
-            {}
+            []
         """
         try:
             return self._support
@@ -454,7 +454,7 @@ class Divisor_curve(Divisor_generic):
                 # rational points (see trac #16225)
                 self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
                 pts = self._points
-            self._support = Set(s[1] for s in pts)
+            self._support = [s[1] for s in pts]
             return self._support
 
     def coefficient(self, P):

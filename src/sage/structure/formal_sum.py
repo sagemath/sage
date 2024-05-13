@@ -29,9 +29,9 @@ EXAMPLES::
     sage: -B
     -3*1/5
     sage: A + B
-    2/3 + 3*1/5
+    3*1/5 + 2/3
     sage: A - B
-    2/3 - 3*1/5
+    -3*1/5 + 2/3
     sage: B*3
     9*1/5
     sage: 2*A
@@ -45,7 +45,7 @@ TESTS::
     sage: loads(dumps(R)) == R
     True
     sage: a = R(2/3) + R(-5/7); a
-    2/3 + -5/7
+    -5/7 + 2/3
     sage: loads(dumps(a)) == a
     True
 """
@@ -147,9 +147,9 @@ class FormalSum(ModuleElement):
 
             sage: for z in FormalSum([(1, 2), (-3, 7), (5, 1000)]):
             ....:     print(z)
+            (5, 1000)
             (1, 2)
             (-3, 7)
-            (5, 1000)
         """
         return iter(self._data)
 
@@ -158,15 +158,15 @@ class FormalSum(ModuleElement):
         EXAMPLES::
 
             sage: v = FormalSum([(1, 2), (-3, 7), (5, 1000)]); v
-            2 - 3*7 + 5*1000
+            5*1000 + 2 - 3*7
             sage: v[0]
-            (1, 2)
-            sage: v[1]
-            (-3, 7)
-            sage: v[2]
             (5, 1000)
+            sage: v[1]
+            (1, 2)
+            sage: v[2]
+            (-3, 7)
             sage: list(v)
-            [(1, 2), (-3, 7), (5, 1000)]
+            [(5, 1000), (1, 2), (-3, 7)]
         """
         return self._data[n]
 
@@ -196,7 +196,7 @@ class FormalSum(ModuleElement):
         EXAMPLES::
 
             sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))
-            2 + 5\cdot \frac{8}{9} - 3\cdot 7
+            2 - 3\cdot 7 + 5\cdot \frac{8}{9}
         """
         from sage.misc.latex import repr_lincomb
         symbols = [z[1] for z in self]
@@ -229,6 +229,15 @@ class FormalSum(ModuleElement):
             True
             sage: a == 0          # 0 is coerced into a.parent()(0)
             False
+
+        TESTS::
+
+            sage: a = FormalSum([(1,3),(2,5)])
+            sage: b = FormalSum([(2,5),(1,3)])
+            sage: a == b
+            True
+            sage: b == a
+            True
         """
         return richcmp(self._data, other._data, op)
 
@@ -246,7 +255,7 @@ class FormalSum(ModuleElement):
         EXAMPLES::
 
             sage: FormalSum([(1,3/7),(2,5/8)]) + FormalSum([(1,3/7),(-2,5)])  # indirect doctest
-            2*3/7 + 2*5/8 - 2*5
+            2*3/7 - 2*5 + 2*5/8
         """
         return self.__class__(self._data + other._data, check=False, parent=self.parent())
 
@@ -298,7 +307,7 @@ class FormalSum(ModuleElement):
             except KeyError:
                 pass
             new[x] = coeff
-        
+
         # We sort based on the string representation because some types have
         # comparison operators that aren't total orders.  There is nothing
         # special about sorting based on the string representations, we just
@@ -374,7 +383,7 @@ class FormalSums(UniqueRepresentation, Module):
 
             sage: P = FormalSum([(1,2/3)]).parent()
             sage: P([(1,2/3), (5,-2/9)])  # indirect test
-            2/3 + 5*-2/9
+            5*-2/9 + 2/3
         """
         if isinstance(x, FormalSum):
             P = x.parent()
