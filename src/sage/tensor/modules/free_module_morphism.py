@@ -32,6 +32,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sage.categories.morphism import Morphism
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer import Integer
 
@@ -1288,6 +1289,76 @@ class FiniteRankFreeModuleMorphism(Morphism):
                               left_border=basis2_names)
         resu_latex = latex(matrix)
         return FormattedExpansion(resu_txt, resu_latex)
+
+    @cached_method
+    def _matrix_cmr(self, basis1, basis2):
+        from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+        from sage.matrix.matrix_space import MatrixSpace
+        M = self.matrix()
+        MS = MatrixSpace(self.base_ring(), M.nrows(), M.ncols(), sparse=True)
+        return Matrix_cmr_chr_sparse(MS, M)
+
+    def is_unimodular(self, basis1=None, basis2=None, **kwds):
+        r"""
+        Return whether ``self`` is a unimodular morphism.
+
+        This does not depend on the choice of bases.
+
+        EXAMPLES::
+
+            sage: C = FiniteRankFreeModule(ZZ, 3, name='C'); c = C.basis('c')
+            sage: R = FiniteRankFreeModule(ZZ, 2, name='R'); r = R.basis('r')
+            sage: phi = C.hom(R, [[1, 0, 0], [0, 1, 0]]); phi
+            Generic morphism:
+            From: Rank-3 free module C over the Integer Ring
+            To:   Rank-2 free module R over the Integer Ring
+            sage: phi.matrix()
+            [1 0 0]
+            [0 1 0]
+            sage: phi.is_unimodular()
+            True
+            sage: psi = C.hom(R, [[1, 1, 0], [-1, 1, 1]]); psi
+            Generic morphism:
+            From: Rank-3 free module C over the Integer Ring
+            To:   Rank-2 free module R over the Integer Ring
+            sage: psi.is_unimodular()
+            False
+
+        Invariance under change of basis::
+
+            sage: U = R.automorphism(matrix=[[1, 1], [0, -1]], basis=r)
+            sage: V = C.automorphism(matrix=[[1, 1, 0], [0, 1, 1], [0, 0, 1]], basis=c)
+            sage: rp = r.new_basis(U, 'rp', latex_symbol="r'"); rp
+            Basis (rp_0,rp_1) on the Rank-2 free module R over the Integer Ring
+            sage: cp = c.new_basis(V, 'cp', latex_symbol="c'"); cp
+            Basis (cp_0,cp_1,cp_2) on the Rank-3 free module C over the Integer Ring
+            sage: phi.matrix(cp, rp)
+            [ 1  2  1]
+            [ 0 -1 -1]
+            sage: phi.is_unimodular(cp, rp)
+            True
+        """
+        fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
+        return self._matrix_cmr(basis1, basis2).is_unimodular(**kwds)
+
+    def is_totally_unimodular(self, basis1=None, basis2=None, **kwds):
+        r"""
+        Return whether the matrix of ``self`` is totally unimodular.
+
+        This depends on the choice of the bases.
+
+        EXAMPLES::
+
+
+        """
+        fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
+        return self._matrix_cmr(basis1, basis2).is_totally_unimodular(**kwds)
+
+    @staticmethod
+    def one_sum(*summands):
+        r"""
+
+        """
 
 
 class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
