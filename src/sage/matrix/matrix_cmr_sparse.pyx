@@ -1437,7 +1437,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                           complete_tree='if_regular',
                                           three_sum_pivot_children=False,
                                           three_sum_strategy=None,
-                                          construct_graphs=False):
+                                          construct_graphs=False,
+                                          row_keys=None,
+                                          column_keys=None):
         r"""
         Return whether the linear matroid of ``self`` over `\GF{2}` is regular.
 
@@ -1565,9 +1567,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             return <bint> result
 
         if <bint> result:
-            return True, create_DecompositionNode(dec)
+            return True, create_DecompositionNode(dec, None, row_keys, column_keys)
 
-        return False, (create_DecompositionNode(dec),
+        return False, (create_DecompositionNode(dec, None, row_keys, column_keys),
                        NotImplemented)
 
     def is_totally_unimodular(self, *, time_limit=60.0, certificate=False,
@@ -1577,7 +1579,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               complete_tree='if_regular',
                               three_sum_pivot_children=False,
                               three_sum_strategy=None,
-                              construct_graphs=False):
+                              construct_graphs=False,
+                              row_keys=None,
+                              column_keys=None):
         r"""
         Return whether ``self`` is a totally unimodular matrix.
 
@@ -1664,7 +1668,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             return <bint> result
 
         if <bint> result:
-            return True, create_DecompositionNode(dec)
+            return True, create_DecompositionNode(dec, None, row_keys, column_keys)
 
         if submat == NULL:
             submat_tuple = None
@@ -1672,7 +1676,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             submat_tuple = (tuple(submat.rows[i] for i in range(submat.numRows)),
                             tuple(submat.columns[i] for i in range(submat.numColumns)))
 
-        return False, (create_DecompositionNode(dec),
+        return False, (create_DecompositionNode(dec, None, row_keys, column_keys),
                        submat_tuple)
 
     def is_complement_totally_unimodular(self, *, time_limit=60.0, certificate=False,
@@ -1682,7 +1686,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                          complete_tree='if_regular',
                                          construct_matrices=False,
                                          construct_transposes=False,
-                                         construct_graphs=False):
+                                         construct_graphs=False,
+                                         row_keys=None,
+                                         column_keys=None):
         raise NotImplementedError
 
 

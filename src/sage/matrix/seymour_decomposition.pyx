@@ -134,8 +134,7 @@ cdef class DecompositionNode(SageObject):
         r"""
 
         """
-        return MatrixArgs(self.matrix(), MatrixSpace(ZZ, self.row_keys(), self.column_keys()))
-
+        return MatrixArgs(self.matrix(), MatrixSpace(ZZ, self.row_keys(), self.column_keys())).element()
 
     @cached_method
     def _parent_rows_and_columns(self):
@@ -311,34 +310,32 @@ cdef class DecompositionNode(SageObject):
         """
         return CMRmatroiddecNumChildren(self._dec)
 
-    # cdef _CMRelement_to_key(self, CMR_ELEMENT element):
-    #     if not CMRelementIsValid(element):
-    #         raise ValueError('CMRelement index not valid')
-    #     if CMRelementIsRow(element):
-    #         return self.row_keys[CMRelementToRowIndex(element)]
-    #     else:
-    #         return self.column_keys[CMRelementToColumnIndex(element)]
+    cdef _CMRelement_to_key(self, CMR_ELEMENT element):
+        if not CMRelementIsValid(element):
+            raise ValueError('CMRelement index not valid')
+        if CMRelementIsRow(element):
+            return self.row_keys()[CMRelementToRowIndex(element)]
+        else:
+            return self.column_keys()[CMRelementToColumnIndex(element)]
 
     def _create_child_node(self, index):
-        return create_DecompositionNode(CMRmatroiddecChild(self._dec, index), root = self._root or self)
-        # row_keys = self.row_keys()
-        # column_keys = self.column_keys()
-        # cdef CMR_MATROID_DEC *child_dec = CMRmatroiddecChild(self._dec, index)
-        # cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(child_dec)
-        # cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(child_dec)
+        row_keys = self.row_keys()
+        column_keys = self.column_keys()
+        cdef CMR_MATROID_DEC *child_dec = CMRmatroiddecChild(self._dec, index)
+        cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(child_dec)
+        cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(child_dec)
 
-        # child = create_DecompositionNode(child_dec, root = self._root or self)
+        child = create_DecompositionNode(child_dec, root=self._root or self)
 
-        # if row_keys is None or column_keys is None:
-        #     child_row_keys = tuple(self._CMRelement_to_key(parent_rows[i])
-        #                            for i in range(child.nrows()))
-        #     child_column_keys = tuple(self._CMRelement_to_key(parent_columns[i])
-        #                               for i in range(child.ncols()))
-        #     child._set_row_keys(child_row_keys)
-        #     child._set_column_keys(child_column_keys)
+        if row_keys is not None and column_keys is not None:
+            child_row_keys = tuple(self._CMRelement_to_key(parent_rows[i])
+                                   for i in range(child.nrows()))
+            child_column_keys = tuple(self._CMRelement_to_key(parent_columns[i])
+                                      for i in range(child.ncols()))
+            child._set_row_keys(child_row_keys)
+            child._set_column_keys(child_column_keys)
 
-        # return child
-
+        return child
 
     @cached_method
     def _children(self):
@@ -640,6 +637,7 @@ cdef class ThreeSumNode(SumNode):
 
     @cached_method
     def _children(self):
+        # to be overridden
         return tuple(self._create_child_node(index)
                      for index in range(self.nchildren()))
 
@@ -949,8 +947,10 @@ cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None, row_keys=None, co
         return None
     cdef DecompositionNode result = <DecompositionNode> _class(dec)()
     result._set_dec(dec, root)
-    result._set_row_keys(row_keys)
-    result._set_column_keys(column_keys)
+    if row_keys is not None:
+        result._set_row_keys(row_keys)
+    if column_keys is not None:
+        result._set_column_keys(column_keys)
     return result
 
 
