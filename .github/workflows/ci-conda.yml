@@ -18,15 +18,15 @@ concurrency:
 jobs:
   test:
     name: Conda
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         # On pushes to tags or branches, test the whole matrix.
         os: >-
           ${{ github.event_name == 'pull_request'
-                && fromJson('["ubuntu"]')
-                || fromJson('["ubuntu", "macos"]') }}
+                && fromJson('["ubuntu-latest"]')
+                || fromJson('["ubuntu-latest", "macos-latest"]') }}
         python: >-
           ${{ github.event_name == 'pull_request'
                 && fromJson('["3.9"]')
@@ -40,7 +40,7 @@ jobs:
         # Together, they cover the supported minor Python versions.
         include: >-
           ${{ github.event_name == 'pull_request'
-                && fromJson('[{"os": "macos", "python": "3.11", "conda-env": "environment"}]')
+                && fromJson('[{"os": "macos-latest", "python": "3.11", "conda-env": "environment"}]')
                 || fromJson('[]') }}
 
     steps:
