@@ -199,7 +199,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
         distribution = ''
     directive = 'sage_setup: ' f'distribution = {distribution}'.rstrip()
     try:
-        with open(src_file, 'r') as f:
+        with open(src_file) as f:
             src_lines = f.read().splitlines()
     except UnicodeDecodeError:
         # Silently skip binary files
@@ -566,7 +566,7 @@ if __name__ == '__main__':
             distribution_underscore = distribution.replace('-', '_')
             try:
                 with open(os.path.join(distribution_dir,
-                                       f'{distribution_underscore}.egg-info', 'SOURCES.txt'), "r") as f:
+                                       f'{distribution_underscore}.egg-info', 'SOURCES.txt')) as f:
                     paths.extend(os.path.join(SAGE_ROOT, 'src', line.strip())
                                  for line in f
                                  if line.startswith('sage/'))
@@ -615,7 +615,7 @@ if __name__ == '__main__':
         if package in ordinary_packages:
             pass
         elif ((missing_all_files := distributions_per_directives - package_distributions_per_all_files[package])
-                and not (missing_all_files == set(['']) and len(distributions_per_directives) < 2)):
+                and not (missing_all_files == {''} and len(distributions_per_directives) < 2)):
             s = '' if len(missing_all_files) == 1 else 's'
             print(f'{package}: missing file{s} ' + ', '.join(_all_filename(distribution)
                                                              for distribution in missing_all_files))

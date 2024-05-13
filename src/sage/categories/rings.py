@@ -339,6 +339,101 @@ class Rings(CategoryWithAxiom):
             """
             return False
 
+        def is_integral_domain(self, proof=True) -> bool:
+            """
+            Return ``True`` if this ring is an integral domain.
+
+            INPUT:
+
+            - ``proof`` -- (default: ``True``) Determines what to do in unknown
+              cases
+
+            ALGORITHM:
+
+            If the parameter ``proof`` is set to ``True``, the returned value is
+            correct but the method might throw an error.  Otherwise, if it is set
+            to ``False``, the method returns ``True`` if it can establish that ``self``
+            is an integral domain and ``False`` otherwise.
+
+            EXAMPLES::
+
+                sage: QQ.is_integral_domain()
+                True
+                sage: ZZ.is_integral_domain()
+                True
+                sage: ZZ['x,y,z'].is_integral_domain()
+                True
+                sage: Integers(8).is_integral_domain()
+                False
+                sage: Zp(7).is_integral_domain()                                            # needs sage.rings.padics
+                True
+                sage: Qp(7).is_integral_domain()                                            # needs sage.rings.padics
+                True
+                sage: R.<a,b> = QQ[]
+                sage: S.<x,y> = R.quo((b^3))                                                # needs sage.libs.singular
+                sage: S.is_integral_domain()                                                # needs sage.libs.singular
+                False
+                sage: R = ZZ.quotient(ZZ.ideal(10)); R.is_integral_domain()
+                False
+
+            This illustrates the use of the ``proof`` parameter::
+
+                sage: R.<a,b> = ZZ[]
+                sage: S.<x,y> = R.quo((b^3))                                                # needs sage.libs.singular
+                sage: S.is_integral_domain(proof=True)                                      # needs sage.libs.singular
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+                sage: S.is_integral_domain(proof=False)                                     # needs sage.libs.singular
+                False
+
+            TESTS:
+
+            Make sure :issue:`10481` is fixed::
+
+                sage: x = polygen(ZZ, 'x')
+                sage: R.<a> = ZZ['x'].quo(x^2)                                              # needs sage.libs.pari
+                sage: R.fraction_field()                                                    # needs sage.libs.pari
+                Traceback (most recent call last):
+                ...
+                TypeError: self must be an integral domain.
+                sage: R.is_integral_domain()                                                # needs sage.libs.pari
+                False
+
+            Forward the proof flag to ``is_field``, see :issue:`22910`::
+
+                sage: # needs sage.libs.singular
+                sage: R1.<x> = GF(5)[]
+                sage: F1 = R1.quotient_ring(x^2 + x + 1)
+                sage: R2.<x> = F1[]
+                sage: F2 = R2.quotient_ring(x^2 + x + 1)
+                sage: F2.is_integral_domain(False)
+                False
+            """
+            if self.is_field(proof):
+                return True
+
+            if self.is_zero():
+                return False
+
+            if proof:
+                raise NotImplementedError
+
+            return False
+
+        def is_noetherian(self):
+            """
+            Return ``True`` if this ring is Noetherian.
+
+            EXAMPLES::
+
+                sage: QQ.is_noetherian()
+                True
+                sage: ZZ.is_noetherian()
+                True
+            """
+            return False
+
         def is_zero(self) -> bool:
             """
             Return ``True`` if this is the zero ring.
@@ -579,6 +674,26 @@ class Rings(CategoryWithAxiom):
                 from sage.rings.noncommutative_ideals import IdealMonoid_nc
                 return IdealMonoid_nc(self)
 
+        def _ideal_class_(self, n=0):
+            r"""
+            Return a callable object that can be used to create ideals in this
+            ring.
+
+            EXAMPLES::
+
+                sage: MS = MatrixSpace(QQ, 2, 2)                                        # needs sage.modules
+                sage: MS._ideal_class_()                                                # needs sage.modules
+                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
+
+            Since :issue:`7797`, non-commutative rings have ideals as well::
+
+                sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
+                sage: A._ideal_class_()                                                     # needs sage.combinat sage.modules
+                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
+            """
+            from sage.rings.noncommutative_ideals import Ideal_nc
+            return Ideal_nc
+
         def characteristic(self):
             """
             Return the characteristic of this ring.
@@ -734,62 +849,6 @@ class Rings(CategoryWithAxiom):
                 gens = gens[0]
             return C(self, gens, **kwds)
 
-        def _ideal_class_(self, n=0):
-            """
-            Return the class that is used to implement ideals of this ring.
-
-            .. NOTE::
-
-                We copy the code from :class:`~sage.rings.ring.Ring`. This is
-                necessary because not all rings inherit from that class, such
-                as matrix algebras.
-
-            INPUT:
-
-            - ``n`` (optional integer, default 0): The number of generators
-              of the ideal to be created.
-
-            OUTPUT:
-
-            The class that is used to implement ideals of this ring with
-            ``n`` generators.
-
-            .. NOTE::
-
-                Often principal ideals (``n==1``) are implemented via
-                a different class.
-
-            EXAMPLES::
-
-                sage: MS = MatrixSpace(QQ, 2, 2)                                        # needs sage.modules
-                sage: MS._ideal_class_()                                                # needs sage.modules
-                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-
-            We do not know of a commutative ring in Sage that does not inherit
-            from the base class of rings. So, we need to cheat in the next
-            example::
-
-                sage: super(Ring,QQ)._ideal_class_.__module__
-                'sage.categories.rings'
-                sage: super(Ring,QQ)._ideal_class_()
-                <class 'sage.rings.ideal.Ideal_generic'>
-                sage: super(Ring,QQ)._ideal_class_(1)
-                <class 'sage.rings.ideal.Ideal_principal'>
-                sage: super(Ring,QQ)._ideal_class_(2)
-                <class 'sage.rings.ideal.Ideal_generic'>
-            """
-            from sage.rings.noncommutative_ideals import Ideal_nc
-            try:
-                if not self.is_commutative():
-                    return Ideal_nc
-            except (NotImplementedError, AttributeError):
-                return Ideal_nc
-            from sage.rings.ideal import Ideal_generic, Ideal_principal
-            if n == 1:
-                return Ideal_principal
-            return Ideal_generic
-
-        ##
         # Quotient rings
         def quotient(self, I, names=None, **kwds):
             """

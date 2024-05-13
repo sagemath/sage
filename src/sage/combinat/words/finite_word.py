@@ -293,7 +293,7 @@ class FiniteWord_class(Word_class):
         if word_options['old_repr']:
             if word_options['truncate'] and \
                     self.length() > word_options['truncate_length']:
-                return "Finite word of length %s over %s" % (self.length(), str(self.parent().alphabet())[17:])
+                return "Finite word of length {} over {}".format(self.length(), str(self.parent().alphabet())[17:])
         return word_options['identifier'] + self.string_rep()
 
     def coerce(self, other):
@@ -331,7 +331,7 @@ class FiniteWord_class(Word_class):
                     self = other.parent()(self)
                     self.parent()._check(self, length=None)
                 except Exception:
-                    raise TypeError("no coercion rule between %r and %r" % (self.parent(), other.parent()))
+                    raise TypeError("no coercion rule between {!r} and {!r}".format(self.parent(), other.parent()))
         return self, other
 
     def __hash__(self):
@@ -1261,7 +1261,7 @@ class FiniteWord_class(Word_class):
         elif algorithm == 'naive':
             return ZZ(len(self.factor_set(n, algorithm='naive')))
         else:
-            raise ValueError('Unknown algorithm (={})'.format(algorithm))
+            raise ValueError(f'Unknown algorithm (={algorithm})')
 
     def factor_iterator(self, n=None):
         r"""
@@ -1437,7 +1437,7 @@ class FiniteWord_class(Word_class):
                     S.add(self[i:i+n])
                 return Set(S)
         else:
-            raise ValueError('Unknown algorithm (={})'.format(algorithm))
+            raise ValueError(f'Unknown algorithm (={algorithm})')
 
     def topological_entropy(self, n):
         r"""
@@ -2067,8 +2067,7 @@ class FiniteWord_class(Word_class):
             [word: a]
         """
         S = [self]
-        for i in range(1, self.length()):
-            S.append(self.conjugate(i))
+        S.extend(self.conjugate(i) for i in range(1, self.length()))
         return S
 
     def conjugates_iterator(self):
@@ -2853,9 +2852,9 @@ class FiniteWord_class(Word_class):
         # Initialize the next (left) position to check
         i = (jj - m - 1) / 2
         if not i.is_integer():
-            raise ValueError("(2*j-m-1)/2(={}) must be an integer, i.e., "
-                             "2*j(={}) and m(={}) can't "
-                             "have the same parity".format(i, jj, m))
+            raise ValueError(f"(2*j-m-1)/2(={i}) must be an integer, i.e., "
+                             f"2*j(={jj}) and m(={m}) can't "
+                             "have the same parity")
         i = Integer(i)
 
         # Compute
@@ -2970,8 +2969,7 @@ class FiniteWord_class(Word_class):
         for j in range(1, 2 * len(self) + 1):
             Nj = j + LPC[j]
             if Nj > Nk:
-                for i in range(Nk + 2 - (Nk % 2), Nj + 1, 2):
-                    LPS.append(i - j)
+                LPS.extend(i - j for i in range(Nk + 2 - (Nk % 2), Nj + 1, 2))
                 Nk = Nj
         return LPS
 
@@ -3858,8 +3856,7 @@ class FiniteWord_class(Word_class):
                             if len(m) == 1:
                                 temp.append([j]+m[0])
                             if len(m) > 1:
-                                for sw in m:
-                                    temp.append([j]+sw)
+                                temp.extend([j] + sw for sw in m)
                     Mpos[i][j] = temp
 
         # Create the list of positions for occurrences of `self` as a subword
@@ -3875,7 +3872,7 @@ class FiniteWord_class(Word_class):
             comp_words.append(Word([other[i] for i in comp_pos]))
         return comp_words
 
-    def is_lyndon(self):
+    def is_lyndon(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a Lyndon word, and ``False``
         otherwise.

@@ -138,11 +138,16 @@ class ConwayPolynomials(Mapping):
         """
         Return the number of polynomials in this database.
 
-        TESTS::
+        TESTS:
+
+        The database currently contains `35357` polynomials, but due to
+        :issue:`35357` it will be extended by Conway polynomials of
+        degrees `1`, `2` and `3` for primes between `65537` and `110000`,
+        thus leading to a new total of `47090` entries::
 
             sage: c = ConwayPolynomials()
-            sage: len(c)
-            35357
+            sage: len(c) in [35357, 47090]
+            True
         """
         try:
             return self._len

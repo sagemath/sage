@@ -70,7 +70,7 @@ cdef class GenericAction(Action):
 
         This will break if we tried to use it::
 
-            sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True, check=False)
+            sage: GenericAction(QQ, Z6, True, check=False)
             Left action by Rational Field on Ring of integers modulo 6
 
         """
@@ -172,7 +172,8 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
         sage: ZZx = ZZ['x']
         sage: M = MatrixSpace(ZZ, 2)                                                    # needs sage.modules
         sage: detect_element_action(ZZx, ZZ, False)
-        Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+        Left scalar multiplication by Integer Ring
+         on Univariate Polynomial Ring in x over Integer Ring
         sage: detect_element_action(ZZx, QQ, True)
         Right scalar multiplication by Rational Field
          on Univariate Polynomial Ring in x over Integer Ring
@@ -301,7 +302,8 @@ cdef class ModuleAction(Action):
             sage: LeftModuleAction(QQ, ZZx)
             Left scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Integer Ring
             sage: LeftModuleAction(QQ, ZZxy)
-            Left scalar multiplication by Rational Field on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Rational Field
+             on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
 
         The following tests against a problem that was relevant during work on
         :issue:`9944`::
@@ -418,7 +420,8 @@ cdef class ModuleAction(Action):
             sage: from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
             sage: ZZx = ZZ['x']
             sage: A = LeftModuleAction(ZZ, ZZx); A
-            Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Integer Ring
+             on Univariate Polynomial Ring in x over Integer Ring
             sage: A._repr_name_()
             'scalar multiplication'
 
@@ -552,7 +555,8 @@ cdef class ModuleAction(Action):
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.explain(x, 1, operator.truediv)
             Action discovered.
-                Right inverse action by Symbolic Constants Subring on Univariate Polynomial Ring in x over Symbolic Constants Subring
+                Right inverse action by Symbolic Constants Subring
+                 on Univariate Polynomial Ring in x over Symbolic Constants Subring
                 with precomposition on right by Conversion via _symbolic_ method map:
                   From: Integer Ring
                   To:   Symbolic Constants Subring
