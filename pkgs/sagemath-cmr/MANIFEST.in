@@ -1,0 +1,21 @@
+include VERSION.txt
+
+graft sage/libs/cmr
+include sage/matrix/*_cmr_*.p*
+include sage/matrix/seymour_*.p*
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+
+global-exclude all__*.py
+global-include all__sagemath_cmr.py
+
+prune .tox
+prune build
+prune dist
