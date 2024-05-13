@@ -540,7 +540,13 @@ cdef class DecompositionNode(SageObject):
             return result
         except ValueError:
             # compute it... wait for CMR functions
-            raise NotImplementedError("Graphic Not Determined")
+            full_dec = self._binary_linear_matroid_complete_decomposition(
+                                        recurse=True,
+                                        stop_when_nongraphic=True,
+                                        check_graphic_minors_planar=True)
+            return full_dec._is_binary_linear_matroid_graphic(
+                                       decomposition=decomposition,
+                                       certificate=certificate)
 
     def _is_binary_linear_matroid_cographic(self, *, decomposition=False, **kwds):
         r"""
@@ -559,11 +565,61 @@ cdef class DecompositionNode(SageObject):
             return result
         except ValueError:
             # compute it... wait for CMR functions
-            raise NotImplementedError("Cographic Not Determined")
+            full_dec = self._binary_linear_matroid_complete_decomposition(
+                                        recurse=True,
+                                        stop_when_noncographic=True,
+                                        check_graphic_minors_planar=True)
+            return full_dec._is_binary_linear_matroid_cographic(
+                                       decomposition=decomposition,
+                                       certificate=certificate)
 
     def _is_binary_linear_matroid_regular(self, *, decomposition=False, **kwds):
         r"""
+        EXAMPLES::
 
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(GF(2), 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode(M)
+            sage: C0 = node._binary_linear_matroid_complete_decomposition(recurse=False)
+            sage: C0
+            OneSumNode (9×9) with 2 children
+            sage: result, decomposition = C0._is_binary_linear_matroid_graphic(decomposition=True)
+            sage: result
+            False
+            sage: unicode_art(decomposition)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: decomposition.child_nodes()[1]._graphicness()
+            False
+            sage: result, decomposition = C0._is_binary_linear_matroid_cographic(decomposition=True)
+            sage: result
+            False
+            sage: unicode_art(decomposition)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: decomposition.child_nodes()[1]._graphicness()
+            Traceback (most recent call last):
+            ...
+            ValueError: It is not determined whether the decomposition node is graphic/network
+            sage: result, decomposition = C0._is_binary_linear_matroid_regular(decomposition=True)
+            sage: result
+            True
+            sage: unicode_art(decomposition)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) CographicNode (4×5)
         """
         certificate = kwds.get('certificate', False)
         try:
@@ -578,7 +634,13 @@ cdef class DecompositionNode(SageObject):
             return result
         except ValueError:
             # compute it... wait for CMR functions
-            raise NotImplementedError("Regularity Not Determined")
+            full_dec = self._binary_linear_matroid_complete_decomposition(
+                                        recurse=True,
+                                        stop_when_irregular=True,
+                                        check_graphic_minors_planar=True)
+            return full_dec._is_binary_linear_matroid_regular(
+                                       decomposition=decomposition,
+                                       certificate=certificate)
 
     def _binary_linear_matroid_complete_decomposition(self, *,
                                         time_limit=60.0,
@@ -679,9 +741,9 @@ cdef class DecompositionNode(SageObject):
             │                 │
             GraphicNode (5×4) UnknownNode (4×5)
             sage: C1, C2 = certificate1.child_nodes()
-            sage: C1._is_binary_linear_matroid_cographic()
+            sage: C1._cographicness()
             False
-            sage: C2._is_binary_linear_matroid_graphic()
+            sage: C2._graphicness()
             False
             sage: certificate2 = node._binary_linear_matroid_complete_decomposition(
             ....:                                           recurse=True,
@@ -691,11 +753,11 @@ cdef class DecompositionNode(SageObject):
             │                 │
             GraphicNode (5×4) UnknownNode (4×5)
             sage: C1, C2 = certificate2.child_nodes()
-            sage: C1._is_binary_linear_matroid_cographic()
+            sage: C1._cographicness()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Cographic Not Determined
-            sage: C2._is_binary_linear_matroid_graphic()
+            ValueError: It is not determined whether the decomposition node is cographic/conetwork
+            sage: C2._graphicness()
             False
         """
         cdef CMR_REGULAR_PARAMS params
@@ -729,7 +791,10 @@ cdef class DecompositionNode(SageObject):
             CMR_CALL(CMRregularCompleteDecomposition(cmr, clone, &params, &stats, time_limit))
         finally:
             sig_off()
-        node = create_DecompositionNode(clone, self.matrix(), self.row_keys(), self.column_keys())
+        node = create_DecompositionNode(clone, matrix=self.matrix(),
+                                        row_keys=self.row_keys(),
+                                        column_keys=self.column_keys(),
+                                        base_ring=self.base_ring())
         return node
 
     def is_network_matrix(self, *, decomposition=False, **kwds):
@@ -889,7 +954,10 @@ cdef class DecompositionNode(SageObject):
             CMR_CALL(CMRtuCompleteDecomposition(cmr, clone, &params, &stats, time_limit))
         finally:
             sig_off()
-        node = create_DecompositionNode(clone, self.matrix(), self.row_keys(), self.column_keys())
+        node = create_DecompositionNode(clone, matrix=self.matrix(),
+                                        row_keys=self.row_keys(),
+                                        column_keys=self.column_keys(),
+                                        base_ring=self.base_ring())
         return node
 
 
