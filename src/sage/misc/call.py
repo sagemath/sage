@@ -17,7 +17,7 @@ Attribute and method calling
 #############################################
 # Operators
 #############################################
-class AttrCallObject():
+class AttrCallObject:
     def __init__(self, name, args, kwds):
         """
         TESTS::

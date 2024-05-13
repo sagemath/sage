@@ -239,7 +239,7 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 import itertools
 import operator
 
@@ -680,9 +680,9 @@ class Permutation(CombinatorialElement):
             redword = self.reduced_word()
             if not redword:
                 return self.parent().options.latex_empty_str
-            return " ".join("%s_{%s}" % (let, i) for i in redword)
+            return " ".join(f"{let}_{{{i}}}" for i in redword)
         if display == "twoline":
-            return "\\begin{pmatrix} %s \\\\ %s \\end{pmatrix}" % (
+            return r"\begin{{pmatrix}} {} \\ {} \end{{pmatrix}}".format(
                     " & ".join("%s" % i for i in range(1, len(self._list)+1)),
                     " & ".join("%s" % i for i in self._list))
         if display == "list":
@@ -1406,7 +1406,7 @@ class Permutation(CombinatorialElement):
         """
         if isinstance(i, (int, Integer)) and 1 <= i <= len(self):
             return self[i - 1]
-        raise TypeError("i (= %s) must be between 1 and %s" % (i, len(self)))
+        raise TypeError(f"i (= {i}) must be between 1 and {len(self)}")
 
     ########
     # Rank #
@@ -2780,7 +2780,7 @@ class Permutation(CombinatorialElement):
         for a in weight:
             partial.append(partial[-1]+a)
         if not set(ides).issubset(set(partial)):
-            raise ValueError("Standardization with weight {} is not possible!".format(weight))
+            raise ValueError(f"Standardization with weight {weight} is not possible!")
         if ordered_alphabet is None:
             ordered_alphabet = list(range(1,len(weight)+1))
         else:
@@ -4221,7 +4221,7 @@ class Permutation(CombinatorialElement):
              [2, 1, 5, 4, 3], [2, 5, 1, 4, 3], [2, 5, 4, 1, 3]]
         """
         if len(self) != len(other):
-            raise ValueError("len({}) and len({}) must be equal".format(self, other))
+            raise ValueError(f"len({self}) and len({other}) must be equal")
         if not self.permutohedron_lequal(other):
             raise ValueError("{} must be lower or equal than {} for the right permutohedron order".format(self, other))
         d = DiGraph()
@@ -6079,7 +6079,7 @@ class Permutations_nk(Permutations):
             sage: Permutations(3,2)
             Permutations of {1,...,3} of length 2
         """
-        return "Permutations of {1,...,%s} of length %s" % (self.n, self._k)
+        return f"Permutations of {{1,...,{self.n}}} of length {self._k}"
 
     def __iter__(self) -> Iterator[Permutation]:
         """
@@ -6710,7 +6710,7 @@ class Permutations_msetk(Permutations_mset):
             sage: Permutations([1,2,2], 2)
             Permutations of the multi-set [1, 2, 2] of length 2
         """
-        return "Permutations of the multi-set %s of length %s" % (list(self.mset), self._k)
+        return f"Permutations of the multi-set {list(self.mset)} of length {self._k}"
 
     def cardinality(self):
         """
@@ -6797,8 +6797,7 @@ class Permutations_setk(Permutations_set):
             sage: repr(Permutations([1,2,4],2))
             'Permutations of the set [1, 2, 4] of length 2'
         """
-        return "Permutations of the set %s of length %s" % (list(self._set),
-                                                            self._k)
+        return f"Permutations of the set {list(self._set)} of length {self._k}"
 
     def __iter__(self):
         """
@@ -6914,7 +6913,7 @@ class Arrangements_msetk(Arrangements, Permutations_msetk):
             sage: Arrangements([1,2,2],2)
             Arrangements of the multi-set [1, 2, 2] of length 2
         """
-        return "Arrangements of the multi-set %s of length %s" % (list(self.mset), self._k)
+        return f"Arrangements of the multi-set {list(self.mset)} of length {self._k}"
 
 
 class Arrangements_setk(Arrangements, Permutations_setk):
@@ -6929,8 +6928,7 @@ class Arrangements_setk(Arrangements, Permutations_setk):
             sage: Arrangements([1,2,3],2)
             Arrangements of the set [1, 2, 3] of length 2
         """
-        return "Arrangements of the set %s of length %s" % (list(self._set),
-                                                            self._k)
+        return f"Arrangements of the set {list(self._set)} of length {self._k}"
 
 ###############################################################
 # Standard permutations
@@ -7420,8 +7418,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         from sage.combinat.partition import Partition
         nu = Partition(nu)
         if nu.size() > self.n:
-            raise ValueError("the size of the partition (=%s) should be at most"
-                             " the size of the permutations (=%s)" % (nu.size(), self.n))
+            raise ValueError("the size of the partition (={}) should be at most"
+                             " the size of the permutations (={})".format(nu.size(), self.n))
         l = []
         i = 0
         for nui in nu:
@@ -8307,7 +8305,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
             sage: Permutations(descents=([1,0,4,8],12))
             Standard permutations of 12 with descents [0, 1, 4, 8]
         """
-        return "Standard permutations of %s with descents %s" % (self.n, list(self._d))
+        return f"Standard permutations of {self.n} with descents {list(self._d)}"
 
     def cardinality(self):
         """
@@ -9239,8 +9237,7 @@ class CyclicPermutationsOfPartition(Permutations):
             sage: CyclicPermutationsOfPartition([[1,2,3,4],[5,6,7]])
             Cyclic permutations of partition [[1, 2, 3, 4], [5, 6, 7]]
         """
-        return "Cyclic permutations of partition {}".format(
-            [list(_) for _ in self.partition])
+        return f"Cyclic permutations of partition {[list(_) for _ in self.partition]}"
 
     def __iter__(self, distinct=False):
         """
@@ -9498,7 +9495,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
             sage: Permutations(3, avoiding=[[2, 1, 3],[1,2,3]])
             Standard permutations of 3 avoiding [[2, 1, 3], [1, 2, 3]]
         """
-        return "Standard permutations of %s avoiding %s" % (self.n, list(self._a))
+        return f"Standard permutations of {self.n} avoiding {list(self._a)}"
 
     def __iter__(self):
         """

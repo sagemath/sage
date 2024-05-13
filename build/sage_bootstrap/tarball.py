@@ -4,7 +4,9 @@ Third-Party Tarballs
 """
 
 # ****************************************************************************
-#       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014-2015 Volker Braun <vbraun.name@gmail.com>
+#                     2017      Jeroen Demeyer
+#                     2020      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
