@@ -207,7 +207,6 @@ jobs:
         # We build the wheels from the sdists so that MANIFEST filtering becomes effective.
         # But we must run cibuildwheel with the unpacked source directory, not a tarball,
         # so that SAGE_ROOT is copied into the build containers.
-        # TODO: Not true any more since https://cibuildwheel.pypa.io/en/stable/changelog/#v250
         #
         # In the CIBW_BEFORE_ALL phase, we install libraries using the Sage distribution.
         # https://cibuildwheel.readthedocs.io/en/stable/options/#before-all
@@ -218,11 +217,11 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m pip install pipx
           export PATH=build/bin:$PATH
-          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap &&  && ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && format('--prefix=/host/sage-{0}', matrix.arch) || '' }} && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://\$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt"
+          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap && ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && \"--prefix=/host/sage-\$AUDITWHEEL_PLAT\"' || '' }} && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://\$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt"
           mkdir -p unpacked
           for pkg in sagemath*objects sagemath*categories sagemath*bliss sagemath*coxeter3 sagemath*mcqd sagemath*meataxe sagemath*sirocco sagemath*tdlib; do
               (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
-              "${{ steps.python.outputs.python-path }}" -m pipx run cibuildwheel==2.17.0 unpacked/$pkg*
+              "${{ steps.python.outputs.python-path }}" -m pipx run cibuildwheel==2.18.0 unpacked/$pkg*
           done
 
       - uses: actions/upload-artifact@v4
