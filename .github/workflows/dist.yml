@@ -166,7 +166,7 @@ jobs:
             arch: x86_64
           - os: ubuntu-latest
             arch: i686
-          - os: macos-latest
+          - os: macos-13
             arch: x86_64
           - os: macos-14
             arch: arm64
