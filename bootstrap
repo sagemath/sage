@@ -223,18 +223,7 @@ save () {
 	src/environment-optional-3.[89].yml src/environment-optional-3.1[0-9].yml \
 	src/Pipfile \
 	src/pyproject.toml \
-	src/requirements.txt \
-	build/pkgs/cypari/version_requirements.txt \
-	build/pkgs/cysignals/version_requirements.txt \
-	build/pkgs/cython/version_requirements.txt \
-	build/pkgs/gmpy2/version_requirements.txt \
-	build/pkgs/jupyter_core/version_requirements.txt \
-	build/pkgs/memory_allocator/version_requirements.txt \
-	build/pkgs/numpy/version_requirements.txt \
-	build/pkgs/pkgconfig/version_requirements.txt \
-	build/pkgs/pplpy/version_requirements.txt \
-	build/pkgs/setuptools/version_requirements.txt \
-	build/pkgs/wheel/version_requirements.txt
+	src/requirements.txt
 
     # Update version; this re-computes the checksum
     sage-package update configure "$NEWCONFVERSION"
