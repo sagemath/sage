@@ -241,26 +241,6 @@ class Divisor_generic(FormalSum):
         terms.sort(key=lambda x: x[1], reverse=True)
         return repr_lincomb([("V(%s)" % v, c) for c,v in terms])
 
-    def _coerce_map_from_(self, other) -> bool:
-        r"""
-        Check if there is a coercion from ``other`` to ``self``.
-        This is used to prevent divisors on different schemes from comparing as equal to each other.
-
-        EXAMPLES::
-
-            sage: C = EllipticCurve([2, 1])
-            sage: R = C(1, 2)
-            sage: E = EllipticCurve([1, 2])
-            sage: Q = E(1, 2)
-            sage: Qd = E.divisor(Q)
-            sage: Rd = C.divisor(R)
-            sage: Qd._coerce_map_from_(Rd)
-            False
-            sage: Rd._coerce_map_from_(Qd)
-            False
-        """
-        return (isinstance(other, type(self)) and self.scheme() == other.scheme() and super()._coerce_map_from_(other))
-
     def scheme(self):
         """
         Return the scheme that this divisor is on.

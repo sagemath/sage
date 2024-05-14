@@ -92,7 +92,12 @@ class FormalSum(ModuleElement):
           coefficients into base ring, which can speed
           up constructing a formal sum.
         - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
-          combine common terms. WARNING: setting this to ``False`` can cause commutativity issues when comparing sums that are equal but in different orders.
+          combine common terms
+
+      .. WARNING::
+
+        Setting ``reduce`` to ``False`` can cause issues when comparing
+        equal sums but with different orders and/or cancellations.
 
         EXAMPLES::
 
@@ -232,8 +237,8 @@ class FormalSum(ModuleElement):
 
         TESTS::
 
-            sage: a = FormalSum([(1,3),(2,5)])
-            sage: b = FormalSum([(2,5),(1,3)])
+            sage: a = FormalSum([(1, 3), (2, 5)])
+            sage: b = FormalSum([(2, 5), (1, 3)])
             sage: a == b
             True
             sage: b == a
