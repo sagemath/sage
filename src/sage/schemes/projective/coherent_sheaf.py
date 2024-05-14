@@ -17,15 +17,16 @@ We define the Fermat cubic surface in `\PP^2` and examine its structure sheaf::
 AUTHORS:
 
 - Kwankyu Lee (2024-01-22): initial version
-
 """
 
 from functools import cached_property
 from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule
 
 
-class CoherentSheaf(SageObject):
+class CoherentSheaf(UniqueRepresentation, SageObject):
     r"""
     Coherent sheaf on a projective scheme.
 
@@ -49,7 +50,7 @@ class CoherentSheaf(SageObject):
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme(x^4 + y^4 + z^4)
             sage: sheaf = X.structure_sheaf()
-            sage: TestSuite(sheaf).run(skip=['_test_pickling'])
+            sage: TestSuite(sheaf).run()
         """
         try:
             if module.is_ambient():
@@ -63,6 +64,7 @@ class CoherentSheaf(SageObject):
         self._module = module
         self._twist = twist
 
+    @cached_property
     def _cohomology(self):
         """
         Return an object that computes the cohomology.
@@ -73,9 +75,9 @@ class CoherentSheaf(SageObject):
             sage: X = P2.subscheme(x^4 + y^4 + z^4)
             sage: sheaf = X.structure_sheaf()
             sage: c = sheaf._cohomology
-            sage: c.H(1).dimension()
+            sage: c.cohomology_group(1).dimension()
             3
-            sage: c.h(1)
+            sage: c.betti(1)
             3
         """
         raise NotImplementedError('_cohomology is not implemented')
@@ -146,27 +148,84 @@ class CoherentSheaf(SageObject):
         """
         return self._module
 
-    def cohomology(self, r=0):
-        """
-        Return the dimension of the `r`-th cohomology as a vector space.
+    def cohomology(self, r=None):
+        r"""
+        Return the cohomology of ``self``.
 
         INPUT:
 
-        - ``r`` -- (default: 0) a non-negative integer
+        - ``r`` -- (optional) non-negative integer
+
+        .. SEEALSO::
+
+            :meth:`betti` to get the dimension of the cohomology groups.
 
         EXAMPLES::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme(x^4 + y^4 + z^4)
             sage: sheaf = X.structure_sheaf()
-            sage: sheaf.cohomology(0)
-            1
             sage: sheaf.cohomology(1)
-            3
+            Vector space quotient V/W of dimension 3 over Rational Field where
+            V: Vector space of degree 3 and dimension 3 over Rational Field
+            Basis matrix:
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            W: Vector space of degree 3 and dimension 0 over Rational Field
+            Basis matrix:
+            []
             sage: sheaf.cohomology(2)
+            Vector space quotient V/W of dimension 0 over Rational Field where
+            V: Vector space of dimension 0 over Rational Field
+            W: Vector space of degree 0 and dimension 0 over Rational Field
+            Basis matrix:
+            []
+
+        The rather complicated form (as a quotient of vector spaces) of the
+        `r`-th cohomology group ``H(r)`` reflects the internal representation
+        of the cohomology group in terms of the cohomology groups of twisted
+        structure sheaves of a projective space.
+
+        On the other hand, it is not clear how to represent `H^0(\tilde M)` in
+        terms of twisted structure sheaves of a projective space. Hence it is
+        merely created as a vector space over `k` with the correct dimension::
+
+            sage: sheaf.cohomology(0)
+            Vector space of dimension 1 over Rational Field
+        """
+        if r is None:
+            return self._cohomology
+        return self._cohomology.cohomology_group(r)
+
+    def betti(self, r=None):
+        r"""
+        Return the Betti numbers of ``self``, which are the dimensions
+        of the :meth:`cohomology` of ``self``.
+
+        INPUT:
+
+        - ``r`` -- (optional) non-negative integer
+
+        OUTPUT:
+
+        If ``r`` is not given, then this returns all Betti numbers
+        `h^0, \ldots, h^d`, where `d` is the dimension of ``self``.
+        Otherwise returns the `r`-th Betti number `h^r`.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P2.subscheme(x^4 + y^4 + z^4)
+            sage: sheaf = X.structure_sheaf()
+            sage: sheaf.betti(0)
+            1
+            sage: sheaf.betti(1)
+            3
+            sage: sheaf.betti(2)
             0
         """
-        return self._cohomology.h(r)
+        return self._cohomology.betti(r)
 
     def twist(self, t=0):
         r"""
@@ -208,7 +267,7 @@ class CoherentSheaf(SageObject):
         d = self._base_scheme.dimension()
         chi = 0
         for r in range(d + 1):  # for Grothendieck's vanishing theorem
-            d = self.cohomology(r)
+            d = self.betti(r)
             if r % 2:
                 chi = chi - d
             else:
@@ -235,10 +294,10 @@ class CoherentSheaf_on_projective_space(CoherentSheaf):
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: P2.structure_sheaf()._cohomology
-            Maruyama Method using S(0) <-- 0
+            Sheaf cohomology constructed from S(0) <-- 0
         """
-        from sage.schemes.projective.cohomology import MaruyamaMethod
-        return MaruyamaMethod(self._module, twist=self._twist)
+        from sage.schemes.projective.cohomology import CoherentSheafCohomology
+        return CoherentSheafCohomology(self._module, twist=self._twist)
 
 
 class CoherentSheaf_on_projective_subscheme(CoherentSheaf):
@@ -263,20 +322,17 @@ class CoherentSheaf_on_projective_subscheme(CoherentSheaf):
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme(x^4 + y^4 + z^4)
             sage: X.structure_sheaf()._cohomology
-            Maruyama Method using S(0) <-- S(-4) <-- 0
+            Sheaf cohomology constructed from S(0) <-- S(-4) <-- 0
         """
         return self.image_to_ambient_space()._cohomology
 
+    @cached_method
     def image_to_ambient_space(self):
         """
         Return the direct image of this sheaf to the ambient space.
 
         The image is with respect to the inclusion morphism from the base
         scheme into the projective space.
-
-        INPUT:
-
-        - ``twist`` -- (default: `0`) an integer
 
         EXAMPLES::
 
@@ -293,6 +349,7 @@ class CoherentSheaf_on_projective_subscheme(CoherentSheaf):
         M = FreeModule(S, d)
         I = X.defining_polynomials()
         J = self._module.relations().gens()
-        G = [f * M.gen(i) for i in range(d) for f in I] + [v.change_ring(S) for v in J]
+        gens = M.gens()
+        G = [f * g for g in gens for i in range(d) for f in I] + [v.change_ring(S) for v in J]
         N = M.submodule(G)
         return A.coherent_sheaf(M.quotient(N), twist=self._twist)

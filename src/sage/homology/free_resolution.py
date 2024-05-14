@@ -407,6 +407,18 @@ class FiniteFreeResolution(FreeResolution):
         """
         return len(self._maps)
 
+    def __hash__(self):
+        r"""
+        Return a hash of ``self``.
+        """
+        return hash(tuple(self._maps))
+
+    def __eq__(self, other):
+        r"""
+        Check equality.
+        """
+        return isinstance(other, type(self)) and self._maps == other._maps
+
     def __getitem__(self, i):
         r"""
         Return the ``i``-th free module of this resolution.
@@ -765,7 +777,7 @@ class FiniteFreeResolution_free_module(FiniteFreeResolution):
         """
         if isinstance(self._module, Ideal_generic):
             from sage.matrix.constructor import matrix
-            return [matrix([[self._module.gen()]])]
+            return [matrix([[self._module.gen()]], immutable=True)]
         return [self._m()]
 
 
@@ -919,4 +931,7 @@ class FiniteFreeResolution_singular(FiniteFreeResolution):
             minres = singular_function('minres')
             r = minres(res(std(mod), 0))
 
-        return si2sa_resolution(r)
+        res_mats = si2sa_resolution(r)
+        for M in res_mats:
+            M.set_immutable()
+        return res_mats

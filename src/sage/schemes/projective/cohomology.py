@@ -1,10 +1,10 @@
 r"""
 Cohomology of coherent sheaves
 
-This module implements Maruyama's method for computing the cohomology of
-coherent sheaves on projective schemes. This module is internal, and is not
-intended for direct use. Use :meth:`cohomology` method of coherent sheaves on
-projective schemes.
+We provide the cohomology of coherent sheaves over projective schemes by
+implementing Maruyama's method. Use the
+:meth:`~sage.schemes.projective.coherent_sheaf.CoherentSheaf.cohomology`
+method of coherent sheaves on projective schemes to access this.
 
 Maruyama's method is explained and proved in detail in [Kudo2017]_. Here we
 summary the main results necessary to understand the implementation.
@@ -13,21 +13,25 @@ Let `M` be a graded module finitely generated over the homogeneous coordinate
 ring `S` of the projective `r`-space over a field `k`. We aim for computing the
 cohomology groups `H^q(\tilde M)` for the coherent sheaf `\tilde M`.
 
-Let `S=k[x_0,x_2,\dots,x_r]`. Then `M` is a quotient of the free module
-`\bigoplus_{i=1}^{t}S` by a submodule. Let
+Let `S = k[x_0, x_1, \ldots, x_r]`. Then `M` is a quotient of the
+free module `\bigoplus_{i=1}^t S` by a submodule. Let
 
 .. MATH::
 
-    0\to\bigoplus_{j=1}^{t_{r+1}}S(-m^{(r+1)}_j)\overset{f_{r+1}}{\longrightarrow}\dots
-    \overset{f_1}{\longrightarrow}\bigoplus_{j=1}^{t_0}S(-m^{(0)}_j)\overset{f_0}{\longrightarrow}M\to 0
+    0 \to \bigoplus_{j=1}^{t_{r+1}}S(-m^{(r+1)}_j) \overset{f_{r+1}}{\longrightarrow}
+    \cdots \overset{f_1}{\longrightarrow}
+    \bigoplus_{j=1}^{t_0}S(-m^{(0)}_j) \overset{f_0}{\longrightarrow} M \to 0
 
-be a minimal free resolution of `M`. Then it induces a complex of (top) cohomology groups
+be a minimal free resolution of `M`. Then it induces a complex of (top)
+cohomology groups
 
 .. MATH::
 
-    \bigoplus_{j=1}^{t_{i+1}}H^r(\OO_{\PP^r}(-m^{(i+1)}_j))\overset{H^r(f_{i+1})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_i}H^r(\OO_{\PP^r}(-m^{(i)}_j))\overset{H^r(f_{i})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_{i-1}}H^r(\OO_{\PP^r}(-m^{(i-1)}_j)),
+    \bigoplus_{j=1}^{t_{i+1}} H^r(\mathcal{O}_{\PP^r}(-m^{(i+1)}_j))
+    \overset{H^r(f_{i+1})}{\longrightarrow}
+    \bigoplus_{j=1}^{t_i}H^r(\OO_{\PP^r}(-m^{(i)}_j))
+    \overset{H^r(f_{i})}{\longrightarrow}
+    \bigoplus_{j=1}^{t_{i-1}} H^r(\mathcal{O}_{\PP^r}(-m^{(i-1)}_j)),
 
 where `i` runs from `1` to `r`. Now it holds that
 
@@ -35,51 +39,59 @@ where `i` runs from `1` to `r`. Now it holds that
 
     H^q(\tilde M)\cong \ker H^r(f_{r-q})/\im H^r(f_{r-q+1})
 
-for `1\le q\le r - 1` and
+for `1 \le q \le r - 1` and
 
 .. MATH::
 
-    H^r(\tilde M)\cong \bigoplus_{j=1}^{t_0}H^r(\OO_{\PP^r}(-m^{(0)}_j))/\im H^r(f_1)
+    H^r(\tilde M) \cong \bigoplus_{j=1}^{t_0}H^r(\OO_{\PP^r}(-m^{(0)}_j))
+    / \mathrm{im} H^r(f_1)
 
 and `\dim H^0(\tilde M)` can be computed by the formula
 
 .. MATH::
 
     \begin{split}
-    &\dim \bigoplus_{j=1}^{t_{0}}H^0(\OO_{\PP^r}(-m^{(0)}_j))
-    -\dim \bigoplus_{j=1}^{t_{r+1}}H^r(\OO_{\PP^r}(-m^{(r+1)}_j))
-    +\dim \bigoplus_{j=1}^{t_{r}}H^r(\OO_{\PP^r}(-m^{(r)}_j)) \\
-    &\quad -\rank H^0(f_1)-\rank H^r(f_r)
+    &\dim \bigoplus_{j=1}^{t_{0}} H^0(\OO_{\PP^r}(-m^{(0)}_j))
+    -\dim \bigoplus_{j=1}^{t_{r+1}} H^r(\OO_{\PP^r}(-m^{(r+1)}_j))
+    +\dim \bigoplus_{j=1}^{t_{r}} H^r(\OO_{\PP^r}(-m^{(r)}_j)) \\
+    &\quad - \rank H^0(f_1) - \rank H^r(f_r)
     \end{split}
 
 in which the complex of (bottom) cohomology groups
 
 .. MATH::
 
-    \bigoplus_{j=1}^{t_{i+1}}H^0(\OO_{\PP^r}(-m^{(i+1)}_j))\overset{H^0(f_{i+1})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_i}H^0(\OO_{\PP^r}(-m^{(i)}_j))\overset{H^0(f_{i})}{\longrightarrow}
+    \bigoplus_{j=1}^{t_{i+1}} H^0(\mathcal{O}_{\PP^r}(-m^{(i+1)}_j))
+    \overset{H^0(f_{i+1})}{\longrightarrow}
+    \bigoplus_{j=1}^{t_i} H^0(\mathcal{O}_{\PP^r}(-m^{(i)}_j))
+    \overset{H^0(f_{i})}{\longrightarrow}
     \bigoplus_{j=1}^{t_{i-1}}H^0(\OO_{\PP^r}(-m^{(i-1)}_j)),
 
 where `i` runs from `1` to `r` is used.
 
-The implemented algorithm works more generally for twisted coherent sheaves and
-accepts as input shifted graded module `M(-n)` with shift `n`.
+The implemented algorithm works more generally for twisted coherent sheaves
+and accepts as input shifted graded module `M(-n)` with shift `n`.
 
 EXAMPLES:
 
-We define the Fermat cubic surface (a curve in `\PP^2`) and compute its cohomology groups::
+We define the Fermat cubic surface (a curve in `\PP^2`) and compute
+its cohomology groups::
 
     sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
     sage: X = P2.subscheme([x^4 + y^4 + z^4])
     sage: sh = X.structure_sheaf()
-    sage: sh.cohomology(1)
+    sage: sh.betti(1)
     3
 
 Internally the cohomology is computed by Maruyama's method::
 
-    sage: sh._cohomology
-    Maruyama Method using S(0) <-- S(-4) <-- 0
-    sage: sh._cohomology.H(1)
+    sage: c = sh.cohomology(); c
+    Sheaf cohomology constructed from S(0) <-- S(-4) <-- 0
+    sage: c.top_complex()
+    Top Cohomology Complex induced from S(0) <-- S(-4) <-- 0
+    sage: c.bottom_complex()
+    Bottom Cohomology Complex induced from S(0) <-- S(-4) <-- 0
+    sage: c.cohomology_group(1)
     Vector space quotient V/W of dimension 3 over Rational Field where
     V: Vector space of degree 3 and dimension 3 over Rational Field
     Basis matrix:
@@ -89,79 +101,69 @@ Internally the cohomology is computed by Maruyama's method::
     W: Vector space of degree 3 and dimension 0 over Rational Field
     Basis matrix:
     []
-    sage: sh._cohomology.H(1).dimension() == sh.cohomology(1)
+    sage: c.cohomology_group(1).dimension() == sh.betti(1)
     True
-    sage: sh.cohomology(2)
+    sage: sh.betti(2)
     0
-    sage: sh._cohomology.H(2)
+    sage: sh.cohomology(2)
     Vector space quotient V/W of dimension 0 over Rational Field where
     V: Vector space of dimension 0 over Rational Field
     W: Vector space of degree 0 and dimension 0 over Rational Field
     Basis matrix:
     []
-    sage: sh._cohomology.H(2).dimension() == sh.cohomology(2)
+    sage: c.cohomology_group(2) == sh.cohomology(2)
     True
-
-The rather complicated form (as a quotient of vector spaces) of the `r`-th
-cohomology group ``H(r)`` reflects the internal representation of the
-cohomology group in terms of the cohomology groups of twisted structure sheaves
-of a projective space.
-
-On the other hand, it is not clear how to represent `H^0(\tilde M)` in terms of
-twisted structure sheaves of a projective space. Hence it is merely created
-as a vector space over `k` with the correct dimension::
-
-    sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-    sage: X = P2.subscheme([x^4 + y^4 + z^4])
-    sage: sh = X.structure_sheaf()
-    sage: sh.cohomology(0)
-    1
-    sage: sh._cohomology.H(0)
-    Vector space of dimension 1 over Rational Field
 """
 
 from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.flatten import flatten
+from sage.misc.cachefunc import cached_method
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 
-
-class CohomologyGroupBottom(SageObject):
+class CohomologyGroup(SageObject):
     r"""
-    Bottom cohomology group of the twisted structure sheaf of a projective space.
+    Cohomology group (either top or bottom) of the twisted structure sheaf
+    of a projective space.
 
     INPUT:
 
-    - ``S`` -- a direct sum of copies of the coordinate ring of a projective space
-
+    - ``S`` -- direct sum of copies of the coordinate ring of a projective space
     - ``shifts`` -- shifts of the component rings of ``S``
+    - ``is_top`` -- boolean
 
-    This represents `\bigoplus_{j=1}^{t_i}H^0(\OO_{\PP^r}(-m^{(i)}_j))` for shifts `m^{(i)}_j`.
+    This represents `\bigoplus_{j=1}^{t_i}H^0(\OO_{\PP^r}(-m^{(i)}_j))`
+    for shifts `m^{(i)}_j`.
 
     EXAMPLES::
 
         sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
         sage: X = P2.subscheme([x^4 + y^4 + z^4])
-        sage: c = X.structure_sheaf()._cohomology
-        sage: c.cohomology_group_bottom(0)
+        sage: c = X.structure_sheaf().cohomology()
+        sage: c.bottom_complex().cohomology_group(0)
         Bottom Cohomology Group of dimension 1
+        sage: c.top_complex().cohomology_group(0)
+        Top Cohomology Group of dimension 0
     """
-    def __init__(self, S, shifts):
-        """
-        Initialize.
+    def __init__(self, S, shifts, is_top):
+        r"""
+        Initialize ``self``.
 
         TESTS::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf(twist=1)._cohomology
-            sage: c.cohomology_group_bottom(0)
-            Bottom Cohomology Group of dimension 3
+            sage: c = X.structure_sheaf(twist=1).cohomology()
+            sage: B0 = c.bottom_complex().cohomology_group(0)
+            sage: TestSuite(B0).run(skip="_test_pickling")
+            sage: T1 = c.top_complex().cohomology_group(1)
+            sage: TestSuite(T1).run(skip="_test_pickling")
         """
-        self.graded_ring = S
-        self.shifts = shifts
+        self._shifts = shifts
+        self._is_top = is_top  # if false, then bottom
 
         n = S.ngens()
 
@@ -169,21 +171,24 @@ class CohomologyGroupBottom(SageObject):
         summands_basis = []
         summands_index = []
         rank = 0
-        for m in self.shifts:
+        for m in self._shifts:
             # list of integer vectors whose entries are all non-negative integers and sum to -m
-            l = [vector(e) for e in IntegerListsLex(length=n, min_sum=-m, max_sum=-m)]
-            basis += l
-            summands_basis.append(l)
+            if self._is_top:
+                L = [-vector(e) for e in IntegerListsLex(length=n, min_sum=m, max_sum=m, min_part=1)]
+            else:
+                L = [vector(e) for e in IntegerListsLex(length=n, min_sum=-m, max_sum=-m)]
+            basis += L
+            summands_basis.append(L)
             summands_index.append(rank)
-            rank += len(l)
+            rank += len(L)
 
-        self.summands_basis = summands_basis
-        self.summands_index = summands_index
-        self.basis = basis
-        self.vector_space = VectorSpace(S.base_ring(), rank)
-        self.rank = rank
+        self._summands_basis = summands_basis
+        self._summands_index = summands_index
+        self._basis = tuple(basis)
+        self._vector_space = VectorSpace(S.base_ring(), rank)
+        self._rank = Integer(rank)
 
-    def __repr__(self):
+    def _repr_(self):
         r"""
         Return the string representation of ``self``.
 
@@ -192,256 +197,236 @@ class CohomologyGroupBottom(SageObject):
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
             sage: c = X.structure_sheaf()._cohomology
-            sage: c.cohomology_group_bottom(0)
+            sage: c.bottom_complex().cohomology_group(0)
             Bottom Cohomology Group of dimension 1
+            sage: c.top_complex().cohomology_group(1)
+            Top Cohomology Group of dimension 3
         """
-        return f'Bottom Cohomology Group of dimension {self.rank}'
+        start = "Top" if self._is_top else "Bottom"
+        return f'{start} Cohomology Group of dimension {self._rank}'
 
 
-class CohomologyGroupTop(SageObject):
-    r"""
-    Top cohomology group of the twisted structure sheaf of a projective space.
+class MaruyamaCohomologyComplex(UniqueRepresentation, SageObject):
+    """
+    The complex of (top/bottom) cohomology groups in Maruyama's method.
 
     INPUT:
 
-    - ``S`` -- a direct sum of copies of the coordinate ring of a projective space
-
-    - ``shifts`` -- shifts of the component rings of ``S``
-
-    This represents `\bigoplus_{j=1}^{t_i}H^r(\OO_{\PP^r}(-m^{(i)}_j))` for shifts `m^{(i)}_j`.
-
-    EXAMPLES::
-
-        sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-        sage: X = P2.subscheme([x^4 + y^4 + z^4])
-        sage: c = X.structure_sheaf()._cohomology
-        sage: c.cohomology_group_top(0)
-        Top Cohomology Group of dimension 0
+    - ``resolution`` -- a minimal free resolution of a module
+    - ``is_top`` -- boolean
     """
-    def __init__(self, S, shifts):
+    def __init__(self, resolution, is_top):
         """
-        Initialize.
-
-        TESTS::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf(twist=1)._cohomology
-            sage: c.cohomology_group_top(1)
-            Top Cohomology Group of dimension 1
-        """
-        self.graded_ring = S
-        self.shifts = shifts
-
-        n = S.ngens()
-
-        basis = []
-        summands_basis = []
-        summands_index = []
-        rank = 0
-        for m in self.shifts:
-            # list of integer vectors whose entries are all negative integers and sum to -m
-            l = [-vector(e) for e in IntegerListsLex(length=n, min_sum=m, max_sum=m, min_part=1)]
-            basis += l
-            summands_basis.append(l)
-            summands_index.append(rank)
-            rank += len(l)
-
-        self.summands_basis = summands_basis
-        self.summands_index = summands_index
-        self.basis = basis
-        self.vector_space = VectorSpace(S.base_ring(), rank)
-        self.rank = rank
-
-    def __repr__(self):
-        r"""
-        Return the string representation.
+        Initialize ``self``.
 
         EXAMPLES::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf()._cohomology
-            sage: c.cohomology_group_top(1)
+            sage: c = X.structure_sheaf().cohomology()
+            sage: BC = c.bottom_complex()
+            sage: TestSuite(BC).run()
+            sage: TC = c.top_complex()
+            sage: TestSuite(TC).run()
+        """
+        self._resolution = resolution
+        self._is_top = is_top
+        self._base_ring = self._resolution.target().base_ring()
+        self._coefficient_field = self._base_ring.base_ring()
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P2.subscheme([x^4 + y^4 + z^4])
+            sage: c = X.structure_sheaf().cohomology()
+            sage: c.bottom_complex()
+            Bottom Cohomology Complex induced from S(0) <-- S(-4) <-- 0
+            sage: c.top_complex()
+            Top Cohomology Complex induced from S(0) <-- S(-4) <-- 0
+        """
+        base = "Top" if self._is_top else "Bottom"
+        return f"{base} Cohomology Complex induced from {self._resolution}"
+
+    @cached_method
+    def cohomology_group(self, i):
+        r"""
+        Return `i`-th cohomology group `\bigoplus_{j=1}^{t_i}
+        H^a(\mathcal{O}_{\PP^r}(-m^{(i)}_j))` of ``self``.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P2.subscheme([x^4 + y^4 + z^4])
+            sage: c = X.structure_sheaf().cohomology()
+            sage: c.bottom_complex().cohomology_group(1)
+            Bottom Cohomology Group of dimension 0
+            sage: c.top_complex().cohomology_group(1)
             Top Cohomology Group of dimension 3
         """
-        return f'Top Cohomology Group of dimension {self.rank}'
+        S = self._base_ring
+        shifts = self._resolution.shifts(i)
+        return CohomologyGroup(S, shifts, is_top=self._is_top)
+
+    @cached_method
+    def differential(self, i):
+        r"""
+        Return the `i`-th differential map `H^a(f_i)` of ``self``.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P2.subscheme([x^4 + y^4 + z^4])
+            sage: c = X.structure_sheaf().cohomology()
+            sage: c.bottom_complex().differential(1)
+            Vector space morphism represented as left-multiplication by the matrix:
+            []
+            Domain: Vector space of dimension 0 over Rational Field
+            Codomain: Vector space of dimension 1 over Rational Field
+            sage: c.top_complex().differential(1)
+            Vector space morphism represented as left-multiplication by the matrix:
+            []
+            Domain: Vector space of dimension 3 over Rational Field
+            Codomain: Vector space of dimension 0 over Rational Field
+        """
+        H1 = self.cohomology_group(i)
+        H0 = self.cohomology_group(i - 1)
+        M = self._resolution.differential(i).matrix()
+        K = self._coefficient_field
+        zero = K.zero()
+
+        assert M.ncols() == len(H1._summands_basis)
+        assert M.nrows() == len(H0._summands_basis)
+
+        A = []
+        r = H0._rank
+        for i, basis in enumerate(H1._summands_basis):
+            for v in basis:
+                image = [zero] * r
+                for j in range(M.nrows()):
+                    f = M[j, i]
+                    basis = H0._summands_basis[j]
+                    for c, m in zip(f.coefficients(), f.exponents()):
+                        u = v + vector(m)
+                        assert sum(u) == -H0._shifts[j]
+                        if ((self._is_top and any(e < 0 for e in u))
+                            or (not self._is_top and any(e >= 0 for e in u))):
+                            continue
+                        k = H0._summands_index[j] + basis.index(u)
+                        image[k] += c
+                A.append(vector(K, image))
+
+        return H1._vector_space.hom(A, codomain=H0._vector_space, side='right')
 
 
-class MaruyamaMethod(SageObject):
+class CoherentSheafCohomology(UniqueRepresentation, SageObject):
     r"""
+    The cohomology groups of a coherent sheaf on a projective space.
+
+    ALGORITHM:
+
     This class implements Maruyama's method to compute the cohomology group
     `H^q(\tilde M(n))` as a vector space over the base field `k` and
-    `h^q(\tilde M(n))=\dim_kH^q(\tilde M(n))` where `n` denotes the twist.
+    `h^q(\tilde M(n)) = \dim_k H^q(\tilde M(n))`, where `n` denotes the twist.
 
     INPUT:
 
     - ``M`` -- a quotient of a free module over `S` by a submodule, where `S`
-      is a multi-variate polynomial ring
-
+      is a multivariate polynomial ring
     - ``twist`` -- (default: 0) an integer
-
-    This class provides :meth:`H` and :meth:`h` as public interface, and all
-    other methods are internal.
 
     EXAMPLES::
 
         sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
         sage: X = P2.subscheme([x^4 + y^4 + z^4])
         sage: sh = X.structure_sheaf(1)  # twisted sheaf
-        sage: sh._cohomology
-        Maruyama Method using S(1) <-- S(-3) <-- 0
+        sage: sh.cohomology()
+        Sheaf cohomology constructed from S(1) <-- S(-3) <-- 0
     """
     def __init__(self, M, twist=0):
         """
         Initialize.
 
+        EXAMPLES::
+
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
             sage: sh = X.structure_sheaf(1)  # twisted sheaf
-            sage: c = sh._cohomology
-            sage: TestSuite(c).run(skip=['_test_pickling'])
+            sage: c = sh.cohomology()
+            sage: TestSuite(c).run()
         """
-        shifts = [-twist for i in range(M.cover().degree())]
-        self.resolution = M.relations().graded_free_resolution(shifts=shifts)
-        self.base_ring = self.resolution.target().base_ring()
-        self.coefficient_field = self.base_ring.base_ring()
-        self.projective_space_dimension = self.base_ring.ngens() - 1
+        shifts = [-twist] * M.cover().degree()
+        self._resolution = M.relations().graded_free_resolution(shifts=shifts)
+        self._top_complex = MaruyamaCohomologyComplex(self._resolution, True)
+        self._bottom_complex = MaruyamaCohomologyComplex(self._resolution, False)
+        base_ring = self._resolution.target().base_ring()
+        self._projective_space_dimension = base_ring.ngens() - 1
+        self._coefficient_field = base_ring.base_ring()
 
-    def __repr__(self):
-        """
+    def _repr_(self):
+        r"""
         Return the string representation.
 
         EXAMPLES::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: X.structure_sheaf()._cohomology
-            Maruyama Method using S(0) <-- S(-4) <-- 0
+            sage: X.structure_sheaf().cohomology()
+            Sheaf cohomology constructed from S(0) <-- S(-4) <-- 0
         """
-        return f'Maruyama Method using {self.resolution}'
+        return f"Sheaf cohomology constructed from {self._resolution}"
 
-    def cohomology_group_bottom(self, i):
+    def resolution(self):
         r"""
-        Return `i`-th bottom cohomology group `\bigoplus_{j=1}^{t_i}H^0(\OO_{\PP^r}(-m^{(i)}_j))`
+        Return the minimal free resolution used to construct ``self``.
 
         EXAMPLES::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf()._cohomology
-            sage: c.cohomology_group_bottom(1)
-            Bottom Cohomology Group of dimension 0
+            sage: c = X.structure_sheaf().cohomology()
+            sage: c.resolution()
+            S(0) <-- S(-4) <-- 0
         """
-        S = self.base_ring
-        shifts = self.resolution.shifts(i)
-        return CohomologyGroupBottom(S, shifts)
+        return self._resolution
 
-    def cohomology_group_top(self, i):
+    def top_complex(self):
         r"""
-        Return `i`-th top cohomology group `\bigoplus_{j=1}^{t_i}H^r(\OO_{\PP^r}(-m^{(i)}_j))`
+        Return the complex of top cohomology groups of the resolution
+        used to construct ``self``.
 
         EXAMPLES::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf()._cohomology
-            sage: c.cohomology_group_top(1)
-            Top Cohomology Group of dimension 3
+            sage: c = X.structure_sheaf().cohomology()
+            sage: c.top_complex()
+            Top Cohomology Complex induced from S(0) <-- S(-4) <-- 0
         """
-        S = self.base_ring
-        shifts = self.resolution.shifts(i)
-        return CohomologyGroupTop(S, shifts)
+        return self._top_complex
 
-    def differential_bottom(self, i):
+    def bottom_complex(self):
         r"""
-        Return the `i`-th bottom differential map `H^0(f_i)`.
+        Return the complex of bottom cohomology groups of the resolution
+        used to construct ``self``.
 
         EXAMPLES::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf()._cohomology
-            sage: c.differential_bottom(1)
-            Vector space morphism represented as left-multiplication by the matrix:
-            []
-            Domain: Vector space of dimension 0 over Rational Field
-            Codomain: Vector space of dimension 1 over Rational Field
+            sage: c = X.structure_sheaf().cohomology()
+            sage: c.bottom_complex()
+            Bottom Cohomology Complex induced from S(0) <-- S(-4) <-- 0
         """
-        H1 = self.cohomology_group_bottom(i)
-        H0 = self.cohomology_group_bottom(i - 1)
-        M = self.resolution.differential(i).matrix()
-        K = self.coefficient_field
-        zero = K.zero()
+        return self._bottom_complex
 
-        assert M.ncols() == len(H1.summands_basis)
-        assert M.nrows() == len(H0.summands_basis)
-
-        A = []
-        for i in range(M.ncols()):
-            basis = H1.summands_basis[i]
-            for v in basis:
-                image = [zero for e in range(H0.rank)]
-                for j in range(M.nrows()):
-                    f = M[j,i]
-                    basis = H0.summands_basis[j]
-                    for c, m in zip(f.coefficients(), f.exponents()):
-                        u = v + vector(m)
-                        assert(sum(u) == -H0.shifts[j])
-                        if any(e < 0 for e in u):
-                            continue
-                        k = H0.summands_index[j] + basis.index(u)
-                        image[k] += c
-                A.append(vector(K, image))
-
-        return H1.vector_space.hom(A, codomain=H0.vector_space, side='right')
-
-    def differential_top(self, i):
+    def cohomology_group(self, q):
         r"""
-        Return the `i`-th top differential map `H^r(f_i)`.
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf()._cohomology
-            sage: c.differential_top(1)
-            Vector space morphism represented as left-multiplication by the matrix:
-            []
-            Domain: Vector space of dimension 3 over Rational Field
-            Codomain: Vector space of dimension 0 over Rational Field
-        """
-        H1 = self.cohomology_group_top(i)
-        H0 = self.cohomology_group_top(i - 1)
-        M = self.resolution.differential(i).matrix()
-        K = self.coefficient_field
-        zero = K.zero()
-
-        assert M.ncols() == len(H1.summands_basis)
-        assert M.nrows() == len(H0.summands_basis)
-
-        A = []
-        for i in range(M.ncols()):
-            basis = H1.summands_basis[i]
-            for v in basis:
-                image = [zero for e in range(H0.rank)]
-                for j in range(M.nrows()):
-                    f = M[j,i]
-                    basis = H0.summands_basis[j]
-                    for c, m in zip(f.coefficients(), f.exponents()):
-                        u = v + vector(m)
-                        assert(sum(u) == -H0.shifts[j])
-                        if any(e >= 0 for e in u):
-                            continue
-                        k = H0.summands_index[j] + basis.index(u)
-                        image[k] += c
-                A.append(vector(K, image))
-
-        return H1.vector_space.hom(A, codomain=H0.vector_space, side='right')
-
-    def H(self, q):
-        r"""
-        Return the `q`-th cohomology group `H^q(\tilde M)`.
+        Return the `q`-th cohomology group `H^q(\tilde M)` of ``self``
+        as a vector space.
 
         INPUT:
 
@@ -451,8 +436,8 @@ class MaruyamaMethod(SageObject):
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf()._cohomology
-            sage: c.H(1)
+            sage: c = X.structure_sheaf().cohomology()
+            sage: c.cohomology_group(1)
             Vector space quotient V/W of dimension 3 over Rational Field where
             V: Vector space of degree 3 and dimension 3 over Rational Field
             Basis matrix:
@@ -462,47 +447,70 @@ class MaruyamaMethod(SageObject):
             W: Vector space of degree 3 and dimension 0 over Rational Field
             Basis matrix:
             []
+            sage: c.cohomology_group(0)
+            Vector space of dimension 1 over Rational Field
+            sage: c.cohomology_group(-2)
+            Vector space of dimension 0 over Rational Field
+            sage: c.cohomology_group(6)
+            Vector space of dimension 0 over Rational Field
         """
-        r = self.projective_space_dimension
+        r = self._projective_space_dimension
+
         if q == r:
-            return self.cohomology_group_top(0).vector_space.quotient(self.differential_top(1).image())
-        elif 1 <= q and q < r:
-            return self.differential_top(r - q).kernel().quotient(self.differential_top(r - q + 1).image())
-        elif q == 0:
+            return self._top_complex.cohomology_group(0)._vector_space.quotient(self._top_complex.differential(1).image())
+
+        if 1 <= q and q < r:
+            return self._top_complex.differential(r - q).kernel().quotient(self._top_complex.differential(r - q + 1).image())
+
+        if q == 0:
             # 0th cohomology group of (global sections) is not realized in
             # terms of cohomology groups and differential maps of twisted
             # structure sheaves of the projective space.
-            return VectorSpace(self.coefficient_field, self.h(0))
-        elif q > r:
-            return VectorSpace(self.coefficient_field, 0)
-        raise IndexError('index must be non-negative')
+            return VectorSpace(self._coefficient_field, self.betti(0))
 
-    def h(self, q):
+        return VectorSpace(self._coefficient_field, 0)
+
+    def betti(self, q=None):
         r"""
-        Return the dimension `h^q(\tilde M)` of the `q`-th cohomology group `H^q(\tilde M)`.
+        Return the `q`-th Betti number, which is the dimension `h^q(\tilde M)`
+        of the `q`-th cohomology group `H^q(\tilde M)`.
 
         INPUT:
 
-        - ``q`` -- non-negative integer
+        - ``q`` -- (optional) non-negative integer
+
+        OUTPUT:
+
+        If ``q`` is not given, then this returns all Betti numbers
+        `h^0, \ldots, h^d`, where `d` is the dimension of `M`.
+        Otherwise returns the `q`-th Betti number `h^q`.
 
         EXAMPLES::
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
-            sage: c = X.structure_sheaf()._cohomology
-            sage: c.h(1)
+            sage: c = X.structure_sheaf().cohomology()
+            sage: c.betti(1)
             3
+            sage: c.betti()
+            [1, 3, 0]
         """
-        r = self.projective_space_dimension
+        r = self._projective_space_dimension
+        if q is None:
+            return [self.betti(k) for k in range(r+1)]
+
         if q == r:
-            return self.cohomology_group_top(0).rank - self.differential_top(1).rank()
-        elif 1 <= q and q < r:
-            return self.differential_top(r - q).kernel().dimension() - self.differential_top(r - q + 1).rank()
-        elif q == 0:
-            a = (self.cohomology_group_bottom(0).rank - self.cohomology_group_top(r + 1).rank
-                 + self.cohomology_group_top(r).rank)
-            b = self.differential_bottom(1).rank() + self.differential_top(r).rank()
-            return a - b
-        elif q > r:
-            return Integer(0)
-        raise IndexError('index must be non-negative')
+            return self._top_complex.cohomology_group(0)._rank - self._top_complex.differential(1).rank()
+
+        if 1 <= q and q < r:
+            return (self._top_complex.differential(r - q).kernel().dimension()
+                    - self._top_complex.differential(r - q + 1).rank())
+
+        if q == 0:
+            return (self._bottom_complex.cohomology_group(0)._rank
+                    - self._top_complex.cohomology_group(r + 1)._rank
+                    + self._top_complex.cohomology_group(r)._rank
+                    - self._bottom_complex.differential(1).rank()
+                    - self._top_complex.differential(r).rank())
+
+        return Integer(0)
