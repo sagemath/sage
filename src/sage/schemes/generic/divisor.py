@@ -136,13 +136,14 @@ class Divisor_generic(FormalSum):
         True
         sage: C = EllipticCurve([2, 1])
         sage: R = C(1, 2)
-        sage: E = EllipticCurve([1, 2])
-        sage: Q = E(1, 2)
-        sage: Qd = E.divisor(Q)
         sage: Rd = C.divisor(R)
         sage: Qd == Rd
         False
         sage: Rd == Qd
+        False
+        sage: Qd == (2 * (Qd * 1/2))
+        True
+        sage: Qd == 1/2 * Qd
         False
     """
 

@@ -207,8 +207,16 @@ class DivisorGroup_generic(FormalSums):
             True
             sage: C.divisor_group()._coerce_map_from_(C.divisor_group())
             True
+            sage: D = 1/2 * E.divisor(E(1, 2))
+            sage: D.parent()._coerce_map_from_(E.divisor_group())
+            True
+            sage: E.divisor_group()._coerce_map_from_(D.parent())
+            False
         """
-        return (isinstance(other, type(self)) and self.scheme() == other.scheme() and super()._coerce_map_from_(other))
+        if isinstance(other, DivisorGroup_generic):
+            return self.scheme() == other.scheme() and super()._coerce_map_from_(other)
+        else:
+            return super()._coerce_map_from_(other)
 
     def scheme(self):
         r"""
