@@ -425,7 +425,7 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
-            sage: # needs sage.modules
+            sage: # needs scipy sage.modules
             sage: A = matrix(RDF, 5, 5, 2)
             sage: b = vector(RDF, 5, range(5))
             sage: v = A \ b
