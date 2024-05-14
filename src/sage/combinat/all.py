@@ -93,6 +93,8 @@ lazy_import('sage.combinat.colored_permutations', ['ComplexReflectionGroup',
                                                    'ColoredPermutations',
                                                    'SignedPermutation',
                                                    'SignedPermutations'])
+lazy_import('sage.combinat.colored_permutations', 'STFamilyComplexReflectionGroup',
+            as_='ComplexReflectionGroup')
 from .derangements import Derangements
 lazy_import('sage.combinat.baxter_permutations', ['BaxterPermutations'])
 
