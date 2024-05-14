@@ -73,7 +73,7 @@ AS_VAR_SET_IF([SAGE_ENABLE_$pkgname], [], [AS_VAR_SET([SAGE_ENABLE_$pkgname], [y
             *:none)
                 # Issue #31163: Just an optional dummy package
                 spkg_configures="$spkg_configures
-                            AC_SUBST(SAGE_ENABLE_$pkgname, [if_installed])"
+AC_SUBST(SAGE_ENABLE_$pkgname, [if_installed])"
                 ;;
             *:*)
                 spkg_configures="$spkg_configures
@@ -98,24 +98,26 @@ $config"
 $config"
         fi
     done >> m4/sage_spkg_configures.m4
-    cat >> m4/sage_spkg_configures.m4 <<EOF
-$spkg_configures
-$spkg_configures_python
-EOF
     for pkgname in $(sage-package list); do
         eval DIR=\$path_$pkgname pkgtype=\$type_$pkgname SPKG_SOURCE=\$source_$pkgname SPKG_TREE_VAR=\$trees_$pkgname
         if test -f "$DIR/requirements.txt" -o -f "$DIR/version_requirements.txt"; then
             # A Python package
             echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(sage-get-system-packages install-requires ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions.m4
+            INSTALL_REQUIRES_TOML=
             echo "define(>>>SPKG_INSTALL_REQUIRES_${pkgname}<<<, >>>$(echo $(sage-get-system-packages install-requires-toml ${pkgname}))<<<)dnl" >> m4/sage_spkg_versions_toml.m4
+            echo "m4_define([SPKG_INSTALL_REQUIRES_${pkgname}], [[$(echo $(sage-get-system-packages install-requires-toml ${pkgname} | sed 's/"/\\"/g'))]])dnl" >> m4/sage_spkg_configures.m4
         fi
         spkg_finalizes="$spkg_finalizes
 SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
     done
-    echo "$spkg_finalizes" >> m4/sage_spkg_configures.m4
     for a in m4/sage_spkg_versions.m4 m4/sage_spkg_versions_toml.m4; do
         echo 'changequote(>>>`<<<, >>>'"'"'<<<)dnl' >> $a
     done
+    cat >> m4/sage_spkg_configures.m4 <<EOF
+$spkg_configures
+$spkg_configures_python
+$spkg_finalizes
+EOF
 
     for pkgname in $(sage-package list --has-file bootstrap "$@"); do
         eval DIR=\$path_$pkgname
