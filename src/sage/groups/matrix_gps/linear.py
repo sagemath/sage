@@ -330,6 +330,14 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
             sage: SL(4, Integers(15)).order()
             351980328960000000
 
+            sage: G = GL(2, Integers(6))
+            sage: G.order() == len(list(G))
+            True
+
+            sage: H = SL(2, Integers(6))
+            sage: H.order() == len(list(H))
+            True
+
         Arbitrary base rings are currently not fully supported::
 
             sage: R.<x> = PolynomialRing(GF(7))
@@ -371,10 +379,10 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
             sage: GL(1, ZZ).order()
             2
         """
-        def order_over_finite_field(q, n, special):
+        def order_over_finite_field(q, n):
             ord = prod(q**n - q**i for i in range(n))
-            if special:
-                ord = ord // (q-1)
+            if self._special:
+                return ord // (q-1)
             return ord
 
         n = self.degree()
@@ -384,19 +392,19 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
             q = R.order()
 
             if q == 1:
-                return 1
+                return ZZ.one()
 
             if R.is_field():
-                return order_over_finite_field(q, n, self._special)
+                return order_over_finite_field(q, n)
 
             if R == Integers(q):
-                ord = 1
+                ord = ZZ.one()
 
                 # By the Chinese remainder theorem we need to build the product
                 # over the orders of GL(n, ZZ/p^e ZZ) (or SL) for all prime
                 # powers in the factorization of q
                 for (p,e) in q.factor():
-                    ord_base = order_over_finite_field(p, n, self._special)
+                    ord_base = order_over_finite_field(p, n)
 
                     if not self._special:
                         ord *= p**((e-1)*n**2) * ord_base
@@ -407,7 +415,7 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
                     # handled in the call to order_over_finite_field, we only
                     # need to remove p^(e-1) compared to the above formula
                     else:
-                        ord *= p**((e-1)*(n**2 - 1)) * ord_base
+                        ord *= p**((e-1)*(n**2-1)) * ord_base
 
                 return ord
 
@@ -418,10 +426,10 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
             return Infinity
 
         if self._special:
-            return 1
+            return ZZ.one()
 
         if R == ZZ:
-            return 2
+            return ZZ(2)
 
         raise NotImplementedError("order computation of linear groups not "
                                   "fully supported for arbitrary base rings")
