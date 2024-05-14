@@ -178,17 +178,6 @@ bootstrap-clean:
 	rm -f src/Pipfile
 	rm -f src/requirements.txt
 	rm -f src/setup.cfg
-	rm -f build/pkgs/cypari/version_requirements.txt
-	rm -f build/pkgs/cysignals/version_requirements.txt
-	rm -f build/pkgs/cython/version_requirements.txt
-	rm -f build/pkgs/gmpy2/version_requirements.txt
-	rm -f build/pkgs/jupyter_core/version_requirements.txt
-	rm -f build/pkgs/memory_allocator/version_requirements.txt
-	rm -f build/pkgs/numpy/version_requirements.txt
-	rm -f build/pkgs/pkgconfig/version_requirements.txt
-	rm -f build/pkgs/pplpy/version_requirements.txt
-	rm -f build/pkgs/setuptools/version_requirements.txt
-	rm -f build/pkgs/wheel/version_requirements.txt
 
 # Remove absolutely everything which isn't part of the git repo
 maintainer-clean: distclean bootstrap-clean
