@@ -34,6 +34,18 @@ case "$SYSTEM" in
         STRIP_COMMENTS='sed s/#.*//;s/[[:space:]]//g;'
         COLLECT=echo
         ;;
+    versions)
+        # For use in sage-spkg-info
+        SYSTEM_PACKAGES_FILE_NAMES="package-version.txt requirements.txt src/pyproject.toml version_requirements.txt"
+        strip_comments () {
+            echo "$NAME::"
+            echo
+            sed "s/#.*//;/^[[:space:]]*$/d;s/\"/'/g;s/^/    /;" "$@"
+            echo
+        }
+        STRIP_COMMENTS=strip_comments
+        COLLECT=
+        ;;
     *)
         if [ "$SYSTEM" = auto ]; then
             SYSTEM=$(sage-guess-package-system 2>/dev/null)
@@ -56,6 +68,9 @@ esac
 
 for PKG_BASE in $SPKGS; do
     case "$SYSTEM:$ENABLE_SYSTEM_SITE_PACKAGES" in
+        versions*)
+            # Show everything.
+            ;;
         install-requires*|pip*)
             # This is output for installation of packages into a Python environment.
             # So it's OK to use any Python packages.
@@ -88,7 +103,7 @@ for PKG_BASE in $SPKGS; do
                     PACKAGE_INFO=$(sed -n '/requires *= *\[/,/^\]/s/^ *'\''\('$PKG_BASE'.*\)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
                     if [ -n "$PACKAGE_INFO" ]; then
                         echo "$PACKAGE_INFO" | ${STRIP_COMMENTS}
-                        break
+                        [ $SYSTEM = versions ] || break
                     fi
                 fi
                 ;;
@@ -100,7 +115,7 @@ for PKG_BASE in $SPKGS; do
                     else
                         $COLLECT $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE)
                     fi
-                    break
+                    [ $SYSTEM = versions ] || break
                 fi
                 ;;
         esac
