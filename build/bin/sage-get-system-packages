@@ -17,7 +17,8 @@ case "$SYSTEM" in
         # Collect from src/pyproject.toml or from version_requirements.txt (falling back to requirements.txt) and output it in the format
         # needed by setup.cfg [options] version_requirements=
         SYSTEM_PACKAGES_FILE_NAMES="version_requirements.txt requirements.txt"
-        STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;"
+        # also normalizes quotes from "" to ''.
+        STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/\"/'/g;"
         FROM_PYPROJECT_TOML=1
         COLLECT=
         ;;
@@ -25,7 +26,8 @@ case "$SYSTEM" in
         # Collect from src/pyproject.toml or from version_requirements.txt (falling back to requirements.txt) and output it in the format
         # needed by pyproject.toml [build-system] requires=
         SYSTEM_PACKAGES_FILE_NAMES="version_requirements.txt requirements.txt"
-        STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/^/'/;s/$/',/;"
+        # also normalizes quotes from '' to "".
+        STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/'/\"/g;s/^/'/;s/$/',/;"
         FROM_PYPROJECT_TOML=1
         COLLECT=
         ;;
