@@ -8,8 +8,8 @@
 #   Determine if the system copy of a python package can be used by sage.
 #
 #   This macro uses setuptools.version's pkg_resources to check that the
-#   "version_requirements.txt" file for the named package is satisfied, and
-#   it can typically fail in four ways:
+#   "version_requirements.txt" file (or entry in "src/pyproject.toml") for
+#   the named package is satisfied, and it can typically fail in four ways:
 #
 #     1. If --enable-system-site-packages was not passed to ./configure,
 #
@@ -19,8 +19,9 @@
 #
 #     4. If setuptools is not available to the system python,
 #
-#     5. If the contents of version_requirements.txt are not met (wrong
-#        version, no version, etc.) by the system python.
+#     5. If the contents of version_requirements.txt (or entry in
+#        "src/pyproject.toml")are not met (wrong version, no version,
+#        etc.) by the system python.
 #
 #   In any of those cases, we set sage_spkg_install_$package to "yes"
 #   so that the corresponding SPKG is installed. Otherwise, we do
