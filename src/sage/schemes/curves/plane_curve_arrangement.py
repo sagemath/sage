@@ -200,13 +200,13 @@ class PlaneCurveArrangementElement(Element):
             Arrangement of 5 curves in Projective Space of dimension 2 over Rational Field
         """
         if not self:
-            return 'Empty curve arrangement in {0}'.format(self.parent().ambient_space())
+            return 'Empty curve arrangement in {}'.format(self.parent().ambient_space())
         elif len(self) < 5:
             curves = ', '.join(h.defining_polynomial()._repr_()
                                for h in self._curves)
-            return 'Arrangement ({0}) in {1}'.format(curves,
+            return 'Arrangement ({}) in {}'.format(curves,
                                                      self.parent().ambient_space())
-        return 'Arrangement of {0} curves in {1}'.format(len(self),
+        return 'Arrangement of {} curves in {}'.format(len(self),
                                                          self.parent().ambient_space())
 
     def _richcmp_(self, other, op):
@@ -574,7 +574,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             if not vertical:
                 st = self._strands_nonvertical
                 d1 = prod(L).degree()
-                bd = (bm, st, dict(), d1)
+                bd = (bm, st, {}, d1)
             else:
                 st = self._strands_vertical
                 d1 = prod(L).degree(R.gen(1))
@@ -920,7 +920,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
                                        projective=proj)
         dic = C_affine.meridians(simplified=simplified, vertical=True)
         if infinity_in_C:
-            dic1 = dict()
+            dic1 = {}
             for k in range(j):
                 dic1[k] = dic[k]
             dic1[j] = dic[n - 1]
@@ -1023,7 +1023,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         names = normalize_names(len(names), names)
         return super().__classcall__(cls, base, names)
 
-    def __init__(self, base_ring, names=tuple()):
+    def __init__(self, base_ring, names=()):
         """
         Initialize ``self``.
 
@@ -1115,7 +1115,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.<x, y> = AffinePlaneCurveArrangements(QQ);  L
             Curve arrangements in Affine Space of dimension 2 over Rational Field
         """
-        return 'Curve arrangements in {0}'.format(self.ambient_space())
+        return 'Curve arrangements in {}'.format(self.ambient_space())
 
     def _element_constructor_(self, *args, **kwds):
         """

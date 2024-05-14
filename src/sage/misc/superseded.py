@@ -38,8 +38,8 @@ def _check_issue_number(issue_number):
 
     OUTPUT:
 
-    This function returns nothing. A ``ValueError`` or ``TypeError`` is
-    raised if the argument cannot be a valid issue number.
+    This function returns nothing. A :class:`ValueError` or :class:`TypeError`
+    is raised if the argument cannot be a valid issue number.
 
     EXAMPLES::
 
@@ -212,7 +212,7 @@ def experimental_warning(issue_number, message, stacklevel=4):
     warning(issue_number, message, FutureWarning, stacklevel)
 
 
-class experimental():
+class experimental:
     def __init__(self, issue_number, stacklevel=4):
         """
         A decorator which warns about the experimental/unstable status of
@@ -318,7 +318,7 @@ class experimental():
         return wrapper
 
 
-class __experimental_self_test():
+class __experimental_self_test:
     r"""
     This is a class only to demonstrate with a doc-test that the @experimental
     decorator only issues a warning message once (see :issue:`20601`).
@@ -339,7 +339,7 @@ class __experimental_self_test():
         print("I'm " + x)
 
 
-class DeprecatedFunctionAlias():
+class DeprecatedFunctionAlias:
     """
     A wrapper around methods or functions which automatically prints a
     deprecation message. See :func:`deprecated_function_alias`.

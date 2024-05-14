@@ -134,7 +134,7 @@ def tmp_filename(name="tmp_", ext=""):
 #################################################################
 # write to a temporary file and move it in place
 #################################################################
-class atomic_write():
+class atomic_write:
     """
     Write to a given file using a temporary file and then rename it
     to the target file. This renaming should be atomic on modern
@@ -413,7 +413,7 @@ class atomic_write():
 #################################################################
 # write to a temporary directory and move it in place
 #################################################################
-class atomic_dir():
+class atomic_dir:
     """
     Write to a given directory using a temporary directory and then rename it
     to the target directory. This is for creating a directory whose contents

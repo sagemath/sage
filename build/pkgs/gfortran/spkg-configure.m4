@@ -86,8 +86,8 @@ SAGE_SPKG_CONFIGURE([gfortran], [
                         # Install our own gfortran if the system-provided one is older than gcc-4.8.
                         SAGE_SHOULD_INSTALL_GFORTRAN([$FC is version $GFORTRAN_VERSION, which is quite old])
                     ],
-                    [1[[4-9]].*], [
-                        # Install our own gfortran if the system-provided one is newer than 13.x.
+                    [1[[5-9]].*], [
+                        # Install our own gfortran if the system-provided one is newer than 14.x.
                         # See https://github.com/sagemath/sage/issues/29456, https://github.com/sagemath/sage/issues/31838
                         SAGE_MUST_INSTALL_GFORTRAN([$FC is version $GFORTRAN_VERSION, which is too recent for this version of Sage])
                     ])
