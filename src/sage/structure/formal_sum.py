@@ -383,7 +383,7 @@ class FormalSums(UniqueRepresentation, Module):
 
             sage: P = FormalSum([(1,2/3)]).parent()
             sage: P([(1,2/3), (5,-2/9)])  # indirect test
-             2/3 + 5*-2/9
+            2/3 + 5*-2/9
         """
         if isinstance(x, FormalSum):
             P = x.parent()
