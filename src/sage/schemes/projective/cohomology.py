@@ -27,45 +27,46 @@ cohomology groups
 
 .. MATH::
 
-    \bigoplus_{j=1}^{t_{i+1}} H^r(\mathcal{O}_{\PP^r}(-m^{(i+1)}_j))
+    \bigoplus_{j=1}^{t_{i+1}} H^r(\mathcal{O}_{\Bold{P}^r}(-m^{(i+1)}_j))
     \overset{H^r(f_{i+1})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_i}H^r(\OO_{\PP^r}(-m^{(i)}_j))
+    \bigoplus_{j=1}^{t_i}H^r(\mathcal{O}_{\Bold{P}^r}(-m^{(i)}_j))
     \overset{H^r(f_{i})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_{i-1}} H^r(\mathcal{O}_{\PP^r}(-m^{(i-1)}_j)),
+    \bigoplus_{j=1}^{t_{i-1}} H^r(\mathcal{O}_{\Bold{P}^r}(-m^{(i-1)}_j)),
 
 where `i` runs from `1` to `r`. Now it holds that
 
 .. MATH::
 
-    H^q(\tilde M)\cong \ker H^r(f_{r-q})/\im H^r(f_{r-q+1})
+    H^q(\tilde M)\cong \ker H^r(f_{r-q})/\operatorname{im} H^r(f_{r-q+1})
 
 for `1 \le q \le r - 1` and
 
 .. MATH::
 
-    H^r(\tilde M) \cong \bigoplus_{j=1}^{t_0}H^r(\OO_{\PP^r}(-m^{(0)}_j))
-    / \mathrm{im} H^r(f_1)
+    H^r(\tilde M) \cong
+    \bigoplus_{j=1}^{t_0}H^r(\mathcal{O}_{\Bold{P}^r}(-m^{(0)}_j))
+      / \mathrm{im} H^r(f_1)
 
 and `\dim H^0(\tilde M)` can be computed by the formula
 
 .. MATH::
 
-    \begin{split}
-    &\dim \bigoplus_{j=1}^{t_{0}} H^0(\OO_{\PP^r}(-m^{(0)}_j))
-    -\dim \bigoplus_{j=1}^{t_{r+1}} H^r(\OO_{\PP^r}(-m^{(r+1)}_j))
-    +\dim \bigoplus_{j=1}^{t_{r}} H^r(\OO_{\PP^r}(-m^{(r)}_j)) \\
-    &\quad - \rank H^0(f_1) - \rank H^r(f_r)
-    \end{split}
+    \begin{aligned}
+    & \dim \bigoplus_{j=1}^{t_{0}} H^0(\mathcal{O}_{\Bold{P}^r}(-m^{(0)}_j))
+    - \dim \bigoplus_{j=1}^{t_{r+1}} H^r(\mathcal{O}_{\Bold{P}^r}(-m^{(r+1)}_j))
+    + \dim \bigoplus_{j=1}^{t_{r}} H^r(\mathcal{O}_{\Bold{P}^r}(-m^{(r)}_j)) \\
+    & \quad - \rank H^0(f_1) - \rank H^r(f_r)
+    \end{aligned}
 
 in which the complex of (bottom) cohomology groups
 
 .. MATH::
 
-    \bigoplus_{j=1}^{t_{i+1}} H^0(\mathcal{O}_{\PP^r}(-m^{(i+1)}_j))
+    \bigoplus_{j=1}^{t_{i+1}} H^0(\mathcal{O}_{\Bold{P}^r}(-m^{(i+1)}_j))
     \overset{H^0(f_{i+1})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_i} H^0(\mathcal{O}_{\PP^r}(-m^{(i)}_j))
+    \bigoplus_{j=1}^{t_i} H^0(\mathcal{O}_{\Bold{P}^r}(-m^{(i)}_j))
     \overset{H^0(f_{i})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_{i-1}}H^0(\OO_{\PP^r}(-m^{(i-1)}_j)),
+    \bigoplus_{j=1}^{t_{i-1}}H^0(\mathcal{O}_{\Bold{P}^r}(-m^{(i-1)}_j)),
 
 where `i` runs from `1` to `r` is used.
 
@@ -74,7 +75,7 @@ and accepts as input shifted graded module `M(-n)` with shift `n`.
 
 EXAMPLES:
 
-We define the Fermat cubic surface (a curve in `\PP^2`) and compute
+We define the Fermat cubic surface (a curve in `\Bold{P}^2`) and compute
 its cohomology groups::
 
     sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
@@ -135,8 +136,8 @@ class CohomologyGroup(SageObject):
     - ``shifts`` -- shifts of the component rings of ``S``
     - ``is_top`` -- boolean
 
-    This represents `\bigoplus_{j=1}^{t_i}H^0(\OO_{\PP^r}(-m^{(i)}_j))`
-    for shifts `m^{(i)}_j`.
+    This represents `\bigoplus_{j=1}^{t_i}
+    H^r(\mathcal{O}_{\Bold{P}^r}(-m^{(i)}_j))` for shifts `m^{(i)}_j`.
 
     EXAMPLES::
 
@@ -207,13 +208,25 @@ class CohomologyGroup(SageObject):
 
 
 class MaruyamaCohomologyComplex(UniqueRepresentation, SageObject):
-    """
+    r"""
     The complex of (top/bottom) cohomology groups in Maruyama's method.
 
     INPUT:
 
     - ``resolution`` -- a minimal free resolution of a module
     - ``is_top`` -- boolean
+
+    EXAMPLES::
+
+        sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+        sage: X = P2.subscheme([x^4 + y^4 + z^4])
+        sage: c = X.structure_sheaf(1).cohomology()
+        sage: TC = c.top_complex()
+        sage: all((TC.differential(i-1) * TC.differential(i)).is_zero() for i in range(4))
+        True
+        sage: BC = c.bottom_complex()
+        sage: all((BC.differential(i-1) * BC.differential(i)).is_zero() for i in range(4))
+        True
     """
     def __init__(self, resolution, is_top):
         """
@@ -255,7 +268,7 @@ class MaruyamaCohomologyComplex(UniqueRepresentation, SageObject):
     def cohomology_group(self, i):
         r"""
         Return `i`-th cohomology group `\bigoplus_{j=1}^{t_i}
-        H^a(\mathcal{O}_{\PP^r}(-m^{(i)}_j))` of ``self``.
+        H^a(\mathcal{O}_{\Bold{P}^r}(-m^{(i)}_j))` of ``self``.
 
         EXAMPLES::
 
@@ -268,7 +281,10 @@ class MaruyamaCohomologyComplex(UniqueRepresentation, SageObject):
             Top Cohomology Group of dimension 3
         """
         S = self._base_ring
-        shifts = self._resolution.shifts(i)
+        if i < 0:  # resolution.shifts() raises an error for negative index
+            shifts = []
+        else:
+            shifts = self._resolution.shifts(i)
         return CohomologyGroup(S, shifts, is_top=self._is_top)
 
     @cached_method
@@ -281,19 +297,47 @@ class MaruyamaCohomologyComplex(UniqueRepresentation, SageObject):
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
             sage: c = X.structure_sheaf().cohomology()
-            sage: c.bottom_complex().differential(1)
+            sage: BC = c.bottom_complex()
+            sage: BC.differential(1)
             Vector space morphism represented as left-multiplication by the matrix:
             []
             Domain: Vector space of dimension 0 over Rational Field
             Codomain: Vector space of dimension 1 over Rational Field
-            sage: c.top_complex().differential(1)
+            sage: TC = c.top_complex()
+            sage: TC.differential(1)
             Vector space morphism represented as left-multiplication by the matrix:
             []
             Domain: Vector space of dimension 3 over Rational Field
             Codomain: Vector space of dimension 0 over Rational Field
+
+            sage: BC.differential(-1)
+            Vector space morphism represented as left-multiplication by the matrix:
+            []
+            Domain: Vector space of dimension 0 over Rational Field
+            Codomain: Vector space of dimension 0 over Rational Field
+            sage: BC.differential(0)
+            Vector space morphism represented as left-multiplication by the matrix:
+            []
+            Domain: Vector space of dimension 1 over Rational Field
+            Codomain: Vector space of dimension 0 over Rational Field
+            sage: BC.differential(2)
+            Vector space morphism represented as left-multiplication by the matrix:
+            []
+            Domain: Vector space of dimension 0 over Rational Field
+            Codomain: Vector space of dimension 0 over Rational Field
+            sage: BC.differential(3)
+            Vector space morphism represented as left-multiplication by the matrix:
+            []
+            Domain: Vector space of dimension 0 over Rational Field
+            Codomain: Vector space of dimension 0 over Rational Field
         """
         H1 = self.cohomology_group(i)
         H0 = self.cohomology_group(i - 1)
+        if i < 0 or i > len(self._resolution):
+            return H1._vector_space.hom([], codomain=H0._vector_space, side='right')
+        if i == 0:
+            rank = H1._vector_space.rank()
+            return H1._vector_space.hom([[]]*rank, codomain=H0._vector_space, side='right')
         M = self._resolution.differential(i).matrix()
         K = self._coefficient_field
         zero = K.zero()
@@ -331,6 +375,10 @@ class CoherentSheafCohomology(UniqueRepresentation, SageObject):
     This class implements Maruyama's method to compute the cohomology group
     `H^q(\tilde M(n))` as a vector space over the base field `k` and
     `h^q(\tilde M(n)) = \dim_k H^q(\tilde M(n))`, where `n` denotes the twist.
+    See the module :mod:`~sage.schemes.projective.cohomology` documentation
+    for more information.
+
+    The cohomology groups are returned as vector space quotients (over `k`).
 
     INPUT:
 
@@ -482,8 +530,8 @@ class CoherentSheafCohomology(UniqueRepresentation, SageObject):
         OUTPUT:
 
         If ``q`` is not given, then this returns all Betti numbers
-        `h^0, \ldots, h^d`, where `d` is the dimension of `M`.
-        Otherwise returns the `q`-th Betti number `h^q`.
+        `h^0, \ldots, h^d`, where `d` is the dimension of the projective
+        space. Otherwise returns the `q`-th Betti number `h^q`.
 
         EXAMPLES::
 

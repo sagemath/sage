@@ -410,12 +410,32 @@ class FiniteFreeResolution(FreeResolution):
     def __hash__(self):
         r"""
         Return a hash of ``self``.
+
+        EXAMPLES::
+
+            sage: S.<x,y,z,w> = PolynomialRing(QQ)
+            sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+            sage: r = I.free_resolution()
+            sage: rm = I.free_resolution(name='R')
+            sage: hash(r) == hash(rm)
+            True
         """
         return hash(tuple(self._maps))
 
     def __eq__(self, other):
         r"""
         Check equality.
+
+        EXAMPLES::
+
+            sage: S.<x,y,z,w> = PolynomialRing(QQ)
+            sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+            sage: r = I.free_resolution()
+            sage: rm = I.free_resolution(name='R')
+            sage: r == rm
+            True
+            sage: r is rm
+            False
         """
         return isinstance(other, type(self)) and self._maps == other._maps
 

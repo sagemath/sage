@@ -201,12 +201,32 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
     def __hash__(self):
         r"""
         Return a hash of ``self``.
+
+        EXAMPLES::
+
+            sage: S.<x,y,z,w> = PolynomialRing(QQ)
+            sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+            sage: r = I.graded_free_resolution()
+            sage: rm = I.graded_free_resolution(shifts=[-1])
+            sage: hash(r) != hash(rm)
+            True
         """
         return hash(tuple(self._maps) + tuple([tuple(X) for X in self._res_shifts]))
 
     def __eq__(self, other):
         r"""
         Check equality.
+
+        EXAMPLES::
+
+            sage: S.<x,y,z,w> = PolynomialRing(QQ)
+            sage: I = S.ideal([y*w - z^2, -x*w + y*z, x*z - y^2])
+            sage: r = I.graded_free_resolution()
+            sage: rm = I.graded_free_resolution(shifts=[0])
+            sage: r == rm
+            True
+            sage: r is rm
+            False
         """
         return (isinstance(other, type(self))
                 and self._maps == other._maps
