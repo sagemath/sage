@@ -234,6 +234,8 @@ from .posets.all import *
 # Cluster Algebras and Quivers
 from .cluster_algebra_quiver.all import *
 
+from .lp_algebra_seed import LPASeed
+
 from . import ranker
 
 from .integer_vector import IntegerVectors
