@@ -192,8 +192,11 @@ class DivisorGroup_generic(FormalSums):
 
     def _coerce_map_from_(self, other):
         r"""
-        Check if there is a coercion from ``other`` to ``self``.
-        This is used to prevent divisors on different schemes from comparing as equal to each other.
+        Return if there is a coercion map from ``other`` to ``self``.
+
+        There is a coercion from another divisor group if the
+        schemes are equal and there is a coercion map from
+        the base rings.
 
         TESTS::
 

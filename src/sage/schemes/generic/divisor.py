@@ -408,7 +408,6 @@ class Divisor_curve(Divisor_generic):
         This checks that :issue:`10732` is fixed::
 
             sage: R.<x, y, z> = GF(5)[]
-            sage: PS = ProjectiveSpace(R)
             sage: C = Curve(x^7 + y^7 + z^7)
             sage: pts = C.rational_points()
             sage: D = C.divisor([(2, pts[0])])
