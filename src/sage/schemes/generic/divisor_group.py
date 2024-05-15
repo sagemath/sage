@@ -217,7 +217,7 @@ class DivisorGroup_generic(FormalSums):
             False
         """
         return (isinstance(other, DivisorGroup_generic)
-                and self.scheme() == other.scheme()
+                and self.scheme().has_coerce_map_from(other.scheme())
                 and super()._coerce_map_from_(other))
 
     def scheme(self):
