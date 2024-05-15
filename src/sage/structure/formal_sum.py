@@ -94,10 +94,10 @@ class FormalSum(ModuleElement):
         - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
           combine common terms
 
-      .. WARNING::
+        .. WARNING::
 
-        Setting ``reduce`` to ``False`` can cause issues when comparing
-        equal sums but with different orders and/or cancellations.
+            Setting ``reduce`` to ``False`` can cause issues when comparing
+            equal sums but with different orders and/or cancellations.
 
         EXAMPLES::
 
