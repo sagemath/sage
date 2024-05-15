@@ -1,9 +1,9 @@
 # DP: Don't auto-detect multilib osdirnames.
 
-Index: b/src/gcc/config/sparc/t-linux64
+Index: b/gcc/config/sparc/t-linux64
 ===================================================================
---- a/src/gcc/config/sparc/t-linux64
-+++ b/src/gcc/config/sparc/t-linux64
+--- a/gcc/config/sparc/t-linux64
++++ b/gcc/config/sparc/t-linux64
 @@ -25,7 +25,12 @@
  
  MULTILIB_OPTIONS = m64/m32
@@ -18,10 +18,10 @@ Index: b/src/gcc/config/sparc/t-linux64
 +endif
  
  MULTIARCH_DIRNAME = $(call if_multiarch,sparc$(if $(findstring 64,$(target)),64)-linux-gnu)
-Index: b/src/gcc/config/s390/t-linux64
+Index: b/gcc/config/s390/t-linux64
 ===================================================================
---- a/src/gcc/config/s390/t-linux64
-+++ b/src/gcc/config/s390/t-linux64
+--- a/gcc/config/s390/t-linux64
++++ b/gcc/config/s390/t-linux64
 @@ -7,7 +7,12 @@
  
  MULTILIB_OPTIONS = m64/m31
@@ -36,10 +36,10 @@ Index: b/src/gcc/config/s390/t-linux64
 +endif
  
  MULTIARCH_DIRNAME = $(call if_multiarch,s390$(if $(findstring s390x,$(target)),x)-linux-gnu)
-Index: b/src/gcc/config/rs6000/t-linux64
+Index: b/gcc/config/rs6000/t-linux64
 ===================================================================
---- a/src/gcc/config/rs6000/t-linux64
-+++ b/src/gcc/config/rs6000/t-linux64
+--- a/gcc/config/rs6000/t-linux64
++++ b/gcc/config/rs6000/t-linux64
 @@ -28,8 +28,13 @@
  MULTILIB_OPTIONS    := m64/m32
  MULTILIB_DIRNAMES   := 64 32
@@ -55,10 +55,10 @@ Index: b/src/gcc/config/rs6000/t-linux64
  
  MULTIARCH_DIRNAME = $(call if_multiarch,powerpc$(if $(findstring 64,$(target)),64)-linux-gnu)
  
-Index: b/src/gcc/config/i386/t-linux64
+Index: b/gcc/config/i386/t-linux64
 ===================================================================
---- a/src/gcc/config/i386/t-linux64
-+++ b/src/gcc/config/i386/t-linux64
+--- a/gcc/config/i386/t-linux64
++++ b/gcc/config/i386/t-linux64
 @@ -33,9 +33,19 @@
  comma=,
  MULTILIB_OPTIONS    = $(subst $(comma),/,$(TM_MULTILIB_CONFIG))
@@ -80,10 +80,10 @@ Index: b/src/gcc/config/i386/t-linux64
  
  ifneq (,$(findstring x86_64,$(target)))
    ifneq (,$(findstring biarchx32.h,$(tm_include_list)))
-Index: b/src/gcc/config/rs6000/t-linux
+Index: b/gcc/config/rs6000/t-linux
 ===================================================================
---- a/src/gcc/config/rs6000/t-linux
-+++ b/src/gcc/config/rs6000/t-linux
+--- a/gcc/config/rs6000/t-linux
++++ b/gcc/config/rs6000/t-linux
 @@ -2,7 +2,7 @@
  # or soft-float.
  ifeq (,$(filter $(with_cpu),$(SOFT_FLOAT_CPUS))$(findstring soft,$(with_float)))
@@ -93,10 +93,10 @@ Index: b/src/gcc/config/rs6000/t-linux
  else
  MULTIARCH_DIRNAME := $(call if_multiarch,powerpc-linux-gnu)
  endif
-Index: b/src/gcc/config/loongarch/t-linux
+Index: b/gcc/config/loongarch/t-linux
 ===================================================================
---- a/src/gcc/config/loongarch/t-linux
-+++ b/src/gcc/config/loongarch/t-linux
+--- a/gcc/config/loongarch/t-linux
++++ b/gcc/config/loongarch/t-linux
 @@ -32,22 +32,19 @@ ifneq ($(call if_multiarch,yes),yes)
  else
      # Only define MULTIARCH_DIRNAME when multiarch is enabled,
