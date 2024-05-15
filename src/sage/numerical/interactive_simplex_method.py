@@ -299,7 +299,11 @@ def _latex_product(coefficients, variables,
         sage: var("x, y")                                                               # needs sage.symbolic
         (x, y)
         sage: print(_latex_product([-1, 3], [x, y]))                                    # needs sage.symbolic
-        - \mspace{-6mu}&\mspace{-6mu} 1 x \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 3 y
+        - \mspace{-6mu}&\mspace{-6mu} x \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 3 y
+        sage: var("x, y, z")
+        (x, y, z)
+        sage: print(_latex_product([-pi, log(2), pi**0], [x, y, z]))
+        - \mspace{-6mu}&\mspace{-6mu} \pi x \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \log\left(2\right) y \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} z
     """
     entries = []
     for c, v in zip(coefficients, variables):
@@ -311,7 +315,7 @@ def _latex_product(coefficients, variables,
         if t.strip().startswith("-"):
             sign = "-"
             c = - c
-        if t.strip() == '1':
+        if t.strip() == '1' or t.strip() == '-1':
             t = latex(v)
         else:
             t = latex(c)
@@ -668,7 +672,7 @@ class InteractiveLPProblem(SageObject):
         R = PolynomialRing(base_ring, x, order='neglex')
         x = vector(R, R.gens()) # All variables as a vector
         self._Abcx = A, b, c, x
-        self._constant_term = objective_constant_term
+        self._constant_term = base_ring(objective_constant_term)
 
         if constraint_type in ["<=", ">=", "=="]:
             constraint_type = (constraint_type, ) * m
@@ -2620,6 +2624,28 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             Entering: $x_{2}$. Leaving: $x_{3}$.
             ...
             The optimal value: $6250.0$. An optimal solution: $\left(249.99999999999997,\,750.0\right)$.
+            sage: A = Matrix(([1, 1], [3, 1], [-1, -1])) * pi
+            sage: b = vector((1000, 1500, -400)) * pi
+            sage: c = vector((10, 5)) * pi
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: P.run_simplex_method()
+            \begin{equation*}
+            ...
+            \end{equation*}
+            The initial dictionary is infeasible, solving auxiliary problem.
+            ...
+            Entering: $x_{0}$. Leaving: $x_{5}$.
+            ...
+            Entering: $x_{1}$. Leaving: $x_{0}$.
+            ...
+            Back to the original problem.
+            ...
+            Entering: $x_{5}$. Leaving: $x_{4}$.
+            ...
+            Entering: $x_{2}$. Leaving: $x_{3}$.
+            ...
+            The optimal value: $6250 \, \pi$. An optimal solution: $\left(250,\,750\right)$.
+
         """
         output = []
         d = self.initial_dictionary()
@@ -3951,8 +3977,8 @@ class LPDictionary(LPAbstractDictionary):
             \renewcommand{\arraystretch}{1.5} %notruncate
             \begin{array}{|rcrcrcr|}
             \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 1000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} 1 x_{1} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} 1 x_{2}\\
-            x_{4} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 1500 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} 3 x_{1} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} 1 x_{2}\\
+            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 1000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} x_{1} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} x_{2}\\
+            x_{4} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 1500 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} 3 x_{1} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} x_{2}\\
             \hline
             z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 0 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 10 x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 5 x_{2}\\
             \hline
