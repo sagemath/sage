@@ -45,7 +45,6 @@ from sage.misc.latex import latex
 from sage.misc.repr import repr_lincomb
 from sage.misc.search import search
 from sage.rings.integer_ring import ZZ
-from sage.sets.set import Set
 from sage.structure.formal_sum import FormalSum
 
 from .morphism import is_SchemeMorphism
