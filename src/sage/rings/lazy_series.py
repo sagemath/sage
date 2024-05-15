@@ -5267,15 +5267,17 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             r = R.zero()
             for i in range(n // gv + 1):
                 c = coeff_stream[i]
-                if c in self.base_ring():
+                if c.parent() == self.base_ring():
                     c = P(c)
                     r += c[n]
                 elif c.parent().base_ring() is self.base_ring():
                     r += c(g)[n]
                 else:
                     if gR is None:
-                        gR = [h.change_ring(c.parent().base_ring()) for h in g]
-                    r += c(gR)[n]
+                        S = c.parent().base_ring()
+                        gR = [h.change_ring(S).map_coefficients(S) for h in g]
+                    s = c(gR)[n]
+                    r += s
             return r
 
         return P.element_class(P, Stream_function(coefficient,

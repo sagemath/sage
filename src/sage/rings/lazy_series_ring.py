@@ -893,6 +893,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: s1 = L.sum(lambda n: h[n]*t^(n+1)*u^(n-1), 1)
             sage: L.define_implicitly([D], [u*D - u - u*s1*D - t*(D - D(t, 0))])
             sage: D
+            h[] + h[1]*t^2 + ((h[1,1]+h[2])*t^4+h[2]*t^3*u)
+             + ((h[1,1,1]+3*h[2,1]+h[3])*t^6+(2*h[2,1]+h[3])*t^5*u+h[3]*t^4*u^2)
+             + O(t,u)^7
 
         TESTS::
 
