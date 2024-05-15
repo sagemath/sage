@@ -175,7 +175,7 @@ jobs:
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
-      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco tdlib
+      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib
       # Disable building PyPy wheels on all platforms
       # Disable musllinux until #33083 provides alpine package information
       CIBW_SKIP: "pp* *-musllinux*"
