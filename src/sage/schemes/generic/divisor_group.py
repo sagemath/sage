@@ -194,8 +194,8 @@ class DivisorGroup_generic(FormalSums):
         r"""
         Return if there is a coercion map from ``other`` to ``self``.
 
-        There is a coercion from another divisor group if the
-        schemes are equal and there is a coercion map from
+        There is a coercion from another divisor group if there is
+        a coercion map from the schemes and there is a coercion map from
         the base rings.
 
         TESTS::
