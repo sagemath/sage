@@ -213,10 +213,9 @@ class DivisorGroup_generic(FormalSums):
             sage: E.divisor_group()._coerce_map_from_(D.parent())
             False
         """
-        if isinstance(other, DivisorGroup_generic):
-            return self.scheme() == other.scheme() and super()._coerce_map_from_(other)
-        else:
-            return super()._coerce_map_from_(other)
+        return (isinstance(other, DivisorGroup_generic)
+                and self.scheme() == other.scheme()
+                and super()._coerce_map_from_(other))
 
     def scheme(self):
         r"""
