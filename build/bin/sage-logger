@@ -63,21 +63,19 @@ fi
 
 timefile="$logdir/$logname.time"
 rm -f "$timefile"
-if /usr/bin/time -h -o /dev/null true 2>/dev/null; then
-    TIME="/usr/bin/time -h -o $timefile"
-else
-    TIME=""
-fi
+time_cmd() {
+    local max=$(($SECONDS+10))
+    exec 3>&1 4>&2
+    local out
+    TIME_OUTPUT=$((time 1>&3 2>&4 sh -c "$1") 2>&1)
+    local retstat=$?
+    [ "$SECONDS" -lt "$max" ] || echo "$TIME_OUTPUT" > "$timefile"
+    return $retstat
+}
 
 report_time ()
 {
-    time=$(echo $(cat $timefile 2>/dev/null))
-    case "$time" in
-        *m*real*|*h*real*|*[1-9][0-9].*real*|*[1-9][0-9],*real*)
-            # at least 10 seconds wall time
-            echo "$time"
-            ;;
-    esac
+    [ -r "$timefile" ] && echo $(< $timefile)
 }
 
 mkdir -p "$logdir"
@@ -94,8 +92,7 @@ if [ -n "$SAGE_SILENT_BUILD" -a ${use_prefix} = true ]; then
     # Silent build.
     # Similar to https://www.gnu.org/software/automake/manual/html_node/Automake-Silent-Rules.html#Automake-Silent-Rules
     echo "[$logname] installing. Log file: $logfile"
-    ( exec>> $logfile 2>&1 ; $TIME sh -c "$cmd"; status=$?;
-      [ -r $timefile ] && cat $timefile; exit $status )
+    ( exec>> $logfile 2>&1; time_cmd "$cmd"; status=$?; report_time; exit $status )
     status=$?
     if [[ $status != 0 ]]; then
         echo "  [$logname] error installing, exit status $status. End of log file:"
@@ -115,9 +112,7 @@ else
     # We trap SIGINT such that SIGINT interrupts the main process being
     # run, not the logging.
 
-    ( exec 2>&1;
-      $TIME sh -c "$cmd"; status=$?; report_time;
-      exit $status ) | \
+    ( exec 2>&1; time_cmd "$cmd"; status=$?; report_time; exit $status ) | \
         ( trap '' SIGINT; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::group::${logname}"; fi; tee -a "$logfile" | $SED; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::endgroup::"; fi )
 
     pipestatus=(${PIPESTATUS[*]})
