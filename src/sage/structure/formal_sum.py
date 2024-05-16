@@ -98,7 +98,7 @@ class FormalSum(ModuleElement):
         .. WARNING::
 
             Setting ``reduce`` to ``False`` can cause issues when comparing
-            equal sums but with different orders and/or cancellations.
+            equal sums with different cancellations.
 
         EXAMPLES::
 
