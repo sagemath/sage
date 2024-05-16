@@ -279,6 +279,7 @@ RUN if [ -d /sage ]; then                                               \
         printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
         printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \
         if ! (cd /new && ./.ci/retrofit-worktree.sh worktree-image /sage); then \
+            echo "retrofit-worktree.sh failed, falling back to replacing /sage"; \
             for a in local logs; do                                     \
                 if [ -d /sage/\$a ]; then mv /sage/\$a /new/; fi;       \
             done;                                                       \
@@ -339,6 +340,7 @@ $ADD .gitignore /new/.gitignore
 $ADD src /new/src
 RUN cd /new && rm -rf .git && \
     if ! /sage/.ci/retrofit-worktree.sh worktree-pre /sage; then \
+        echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"; \
         rm -rf /sage/src;                                    \
         mv src /sage/src;                                    \
         cd /sage && ./bootstrap && ./config.status;          \

@@ -32,7 +32,7 @@ git tag -f new
 # But $WORKTREE_DIRECTORY is not a git repository.
 # We make $WORKTREE_DIRECTORY a worktree whose index is at tag "new".
 # We then commit the current sources and set the tag "old". (This keeps all mtimes unchanged.)
-# Then we update worktree and index with "git reset --hard new".
+# Then we update worktree and index with "git checkout new".
 # (This keeps mtimes of unchanged files unchanged and mtimes of changed files newer than unchanged files.)
 if [ -L $WORKTREE_NAME ]; then
     rm -f $WORKTREE_NAME
