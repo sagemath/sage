@@ -190,7 +190,7 @@ class BurnsideRing(CombinatorialFreeModule):
         self._G = G
         self._cache = dict() # invariant to a list of pairs (name, subgroup)
         basis = ConjugacyClassesOfSubgroups(G)
-        category = Algebras(base_ring).Commutative()
+        category = Algebras(base_ring).Commutative().WithBasis()
         CombinatorialFreeModule.__init__(self, base_ring, basis,
                                         element_class=BurnsideRingElement,
                                         category=category)
