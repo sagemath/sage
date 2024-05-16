@@ -94,7 +94,7 @@ class BurnsideRingElement(Element):
 
             sage: G = SymmetricGroup(3)
             sage: B = BurnsideRing(G)
-            sage: matrix([[b * c for b in B] for c in B])
+            sage: matrix([[b * c for b in B.gens()] for c in B.gens()])
             [        6*[()]         3*[()]         2*[()]           [()]]
             [        3*[()] [(2,3)] + [()]           [()]        [(2,3)]]
             [        2*[()]           [()]    2*[(1,2,3)]      [(1,2,3)]]
@@ -195,7 +195,7 @@ class BurnsideRing(UniqueRepresentation, Parent):
 
             sage: G = SymmetricGroup(4)
             sage: B = BurnsideRing(G)
-            sage: [H._F[0][1][1].order() for H in B]
+            sage: [H._F[0][1][1].order() for H in B.gens()]
             [1, 2, 2, 3, 4, 4, 4, 6, 8, 12, 24]
             sage: sorted((o, len(l)) for o, l in B._cache.items())
             [(1, 1), (2, 2), (3, 1), (4, 3), (6, 1), (8, 1), (12, 1), (24, 1)]
