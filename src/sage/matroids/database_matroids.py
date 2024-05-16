@@ -1489,7 +1489,7 @@ def K5dual(groundset='abcdefghij'):
     EXAMPLES::
 
         sage: M = matroids.catalog.K5dual(); M
-        M*(K5): Matroid of rank 6 on 10 elements with 15 circuits
+        M*(K5): Dual of 'Graphic matroid of rank 4 on 10 elements'
         sage: M.is_3connected()
         True
         sage: G1 = M.automorphism_group()
@@ -1502,7 +1502,6 @@ def K5dual(groundset='abcdefghij'):
     [Oxl2011]_, p. 656.
     """
     M = CompleteGraphic(5).dual()
-    M = Matroid(circuits=list(M.circuits()))
     M = _rename_and_relabel(M, "M*(K5)", groundset)
     return M
 
