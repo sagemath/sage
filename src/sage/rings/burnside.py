@@ -10,6 +10,7 @@ from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.repr import repr_lincomb
 from sage.categories.algebras import Algebras
+from sage.combinat.free_module import CombinatorialFreeModule
 
 def _is_conjugate(G, H1, H2):
     return libgap.eval('fail') != libgap.RepresentativeAction(G, H1, H2)
@@ -37,7 +38,7 @@ class ConjugacyClassesOfSubgroups(Parent):
     def _group_invariant(self, H):
         return H.order()
 
-    def _element_constructor_(self, x=None):
+    def _element_constructor_(self, x):
         def normalize(H):
             p = self._group_invariant(H)
             if p in self._cache:
@@ -50,7 +51,12 @@ class ConjugacyClassesOfSubgroups(Parent):
                 self._cache[p] = [H]
             return H
 
-        return self.element_class(self, normalize(x))
+        if x.is_subgroup(self._G):
+            return self.element_class(self, normalize(x))
+        else:
+            raise ValueError("x must be a subgroup of " + repr(self._G))
+
+        raise ValueError(f"unable to convert {x} into {self}")
 
     def __iter__(self):
         return iter(self(H) for H in self._G.conjugacy_classes_subgroups())
@@ -174,7 +180,7 @@ class BurnsideRingElement(Element):
         F = self._F + right._F
         return P.element_class(P, F)
 
-class BurnsideRing(UniqueRepresentation, Parent):
+class BurnsideRing(CombinatorialFreeModule):
     def __init__(self, G, base_ring=ZZ):
         """
             sage: G = SymmetricGroup(4)
@@ -183,8 +189,11 @@ class BurnsideRing(UniqueRepresentation, Parent):
         """
         self._G = G
         self._cache = dict() # invariant to a list of pairs (name, subgroup)
+        basis = ConjugacyClassesOfSubgroups(G)
         category = Algebras(base_ring).Commutative()
-        Parent.__init__(self, base=base_ring, category=category)
+        CombinatorialFreeModule.__init__(self, base_ring, basis,
+                                        element_class=BurnsideRingElement,
+                                        category=category)
 
     def _group_invariant(self, H):
         return H.order()
