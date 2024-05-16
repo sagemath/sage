@@ -5,7 +5,7 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.rings.integer_ring import ZZ
 from sage.structure.formal_sum import FormalSum
-from sage.categories.sets_cat import cartesian_product
+from sage.categories.sets_cat import cartesian_product, Sets
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.repr import repr_lincomb
@@ -13,6 +13,49 @@ from sage.categories.algebras import Algebras
 
 def _is_conjugate(G, H1, H2):
     return libgap.eval('fail') != libgap.RepresentativeAction(G, H1, H2)
+
+class ConjugacyClassOfSubgroups(Element):
+    def __init__(self, parent, C):
+        Element.__init__(self, parent)
+        self._C = C
+
+    def __hash__(self):
+        return hash(self._C)
+
+    def _repr_(self):
+        return repr(self._C.gens())
+
+    def __le__(self, other):
+        return libgap.eval('fail') != libgap.ContainedConjugates(self.parent()._G, other._C, self._C, True)
+
+class ConjugacyClassesOfSubgroups(Parent):
+    def __init__(self, G):
+        self._G = G
+        self._cache = dict() # invariant to subgroups
+        Parent.__init__(self, category=Sets().Finite())
+
+    def _group_invariant(self, H):
+        return H.order()
+
+    def _element_constructor_(self, x=None):
+        def normalize(H):
+            p = self._group_invariant(H)
+            if p in self._cache:
+                for H0 in self._cache[p]:
+                    if _is_conjugate(self._G, H, H0):
+                        return H0
+                else:
+                    self._cache[p].append(H)
+            else:
+                self._cache[p] = [H]
+            return H
+
+        return self.element_class(self, normalize(x))
+
+    def __iter__(self):
+        return iter(self(H) for H in self._G.conjugacy_classes_subgroups())
+
+    Element = ConjugacyClassOfSubgroups
 
 class BurnsideRingElement(Element):
     def __init__(self, parent, F):
@@ -130,7 +173,6 @@ class BurnsideRingElement(Element):
         P = self.parent()
         F = self._F + right._F
         return P.element_class(P, F)
-
 
 class BurnsideRing(UniqueRepresentation, Parent):
     def __init__(self, G, base_ring=ZZ):
