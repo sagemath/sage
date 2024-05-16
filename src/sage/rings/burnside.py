@@ -278,17 +278,35 @@ class BurnsideRing(UniqueRepresentation, Parent):
         """
         return self.element_class(self, FormalSum([]))
 
-    def __iter__(self):
+    def group(self):
+        r"""
+        Return the underlying group.
+
+        EXAMPLES::
+
+            sage: G = DiCyclicGroup(4)
+            sage: B = BurnsideRing(G)
+            sage: B.group()
+            Dicyclic group of order 16 as a permutation group
         """
+        return self._G
+
+    @cached_method
+    def gens(self):
+        r"""
+        Return the generators of ``self``.
+
+        These are the conjugacy classes of subgroups of the
+        underlying group :meth:`group`.
 
         EXAMPLES::
 
             sage: G = SymmetricGroup(3)
             sage: B = BurnsideRing(G)
-            sage: list(B)
-            [[()], [(2,3)], [(1,2,3)], 1]
+            sage: B.gens()
+            ([()], [(2,3)], [(1,2,3)], 1)
         """
-        return iter(self(H) for H in self._G.conjugacy_classes_subgroups())
+        return tuple(self(H) for H in self._G.conjugacy_classes_subgroups())
 
     def _repr_(self):
         r"""
