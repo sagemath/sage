@@ -174,7 +174,6 @@ def initprimes(filename, verb=False):
     filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
     mwrank_initprimes(filename, verb)
 
-    
 ############# bigint ###########################################
 #
 # In mwrank (and eclib) bigint is synonymous with NTL's ZZ class.
