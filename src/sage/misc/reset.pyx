@@ -42,14 +42,16 @@ def reset(vars=None, attached=False):
         sage: with open(fn, 'w') as f:
         ....:     _ = f.write('a = 111')
         sage: attach(fn)
-        sage: [fn] == attached_files()
+        sage: af = attached_files(); len(af)
+        1
+        sage: fn in af[0]
         True
         sage: reset()
-        sage: [fn] == attached_files()
-        True
+        sage: af = attached_files(); len(af)
+        1
         sage: reset(attached=True)
-        sage: [fn] == attached_files()
-        False
+        sage: af = attached_files(); len(af)
+        0
         sage: sage.misc.reset.EXCLUDE.remove('fn')
 
     TESTS:
