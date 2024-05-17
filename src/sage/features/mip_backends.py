@@ -52,7 +52,7 @@ class CPLEX(MIPBackend):
             FeatureTestResult('cplex', True)
         """
         MIPBackend.__init__(self, 'cplex',
-                            spkg='sage_numerical_backends_cplex')
+                            spkg='pypi:sage-numerical-backends-cplex')
 
 
 class Gurobi(MIPBackend):
@@ -68,7 +68,7 @@ class Gurobi(MIPBackend):
             FeatureTestResult('gurobi', True)
         """
         MIPBackend.__init__(self, 'gurobi',
-                            spkg='sage_numerical_backends_gurobi')
+                            spkg='pypi:sage-numerical-backends-gurobi')
 
 
 class COIN(JoinFeature):
@@ -85,7 +85,7 @@ class COIN(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage_numerical_backends_coin',
                              [MIPBackend('coin')],
-                             spkg='sage_numerical_backends_coin')
+                             spkg='pypi:sage-numerical-backends-coin')
 
 
 class CVXOPT(JoinFeature):
@@ -103,7 +103,7 @@ class CVXOPT(JoinFeature):
         JoinFeature.__init__(self, 'cvxopt',
                              [MIPBackend('CVXOPT'),
                               PythonModule('cvxopt')],
-                             spkg='cvxopt',
+                             spkg='pypi:cvxopt',
                              type='standard')
 
 

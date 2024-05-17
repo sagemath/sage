@@ -36,7 +36,7 @@ class Sphinx(PythonModule):
             sage: isinstance(Sphinx(), Sphinx)
             True
         """
-        PythonModule.__init__(self, 'sphinx', spkg='sphinx', type='standard')
+        PythonModule.__init__(self, 'sphinx', spkg='pypi:sphinx', type='standard')
 
 
 def all_features():
