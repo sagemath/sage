@@ -106,7 +106,9 @@ for PKG_BASE in $SPKGS; do
                     #  - from "[project] dependencies",
                     #  - from "[project.optional-dependencies]"
                     # Packages are in the format "'sage-conf ~= 10.3b3',"
-                    PACKAGE_INFO=$(sed -n '/\(requires\|dependencies\|R\) *= *\[/,/^\]/s/^ *'\''\('$PKG_BASE'.*\)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
+                    # Accept dashes and underscores in package names as equivalent:
+                    PKG_REGEX=$(echo $PKG_BASE | sed 's/[-_]/[-_]/g')
+                    PACKAGE_INFO=$(sed -En '/(requires|dependencies|R) *= *\[/,/^\]/s/^ *'\''('$PKG_REGEX'.*)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
                     if [ -n "$PACKAGE_INFO" ]; then
                         echo "$PACKAGE_INFO" | ${STRIP_COMMENTS}
                         [ $SYSTEM = versions ] || break
