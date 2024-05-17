@@ -25,7 +25,6 @@ on:
            "ubuntu-lunar",
            "ubuntu-mantic",
            "ubuntu-noble",
-           "debian-buster-gcc_spkg",
            "debian-bullseye",
            "debian-bookworm",
            "debian-trixie",
