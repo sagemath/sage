@@ -326,6 +326,9 @@ def make_parser():
         help=('package name or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:)'))
     parser_dependencies.add_argument(
+        '--build', action='store_true',
+        help='list the (ordinary) build dependencies')
+    parser_dependencies.add_argument(
         '--order-only', action='store_true',
         help='list the order-only build dependencies')
     parser_dependencies.add_argument(
@@ -507,6 +510,8 @@ def run():
         app.properties(*args.package_class, format=args.format)
     elif args.subcommand == 'dependencies':
         types = []
+        if args.build:
+            types.append('build')
         if args.order_only:
             types.append('order_only')
         if args.optional:
