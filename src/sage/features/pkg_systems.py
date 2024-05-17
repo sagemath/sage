@@ -13,6 +13,7 @@ Features for testing the presence of package systems ``sage_spkg``, ``conda``, `
 # *****************************************************************************
 
 import os
+import re
 import sys
 import sysconfig
 
@@ -61,6 +62,22 @@ class PackageSystem(Feature):
         return self._spkg_installation_hint(spkgs, prompt, feature)
 
     def _system_packages(self, spkgs):
+        r"""
+        Return system packages corresponding to SPKG names or PURLs.
+
+        INPUT:
+
+        - ``spkgs`` -- string, whitespace-separated list of SPKG names or PURLs
+
+        OUTPUT: string.
+
+        EXAMPLES::
+
+            sage: from sage.features.pkg_systems import PackageSystem
+            sage: debian = PackageSystem('debian')
+            sage: debian._system_packages('fflas_ffpack pypi/cvxopt pkg:generic/gmp')
+            'fflas-ffpack\nlibgmp-dev'
+        """
         from subprocess import run, CalledProcessError
         system = self.name
         proc = run(f'sage-get-system-packages {system} {spkgs}',
@@ -247,11 +264,28 @@ class PipPackageSystem(PackageSystem):
         return super()._spkg_installation_hint(spkgs, prompt, feature)
 
     def _system_packages(self, spkgs):
+        r"""
+        Return system packages corresponding to SPKG names or PURLs.
+
+        INPUT:
+
+        - ``spkgs`` -- string, whitespace-separated list of SPKG names or PURLs
+
+        OUTPUT: string.
+
+        EXAMPLES::
+
+            sage: from sage.features.pkg_systems import PipPackageSystem
+            sage: PipPackageSystem()._system_packages('pypi/cvxopt pkg:pypi/pynormaliz')
+            'cvxopt pynormaliz'
+            sage: PipPackageSystem()._system_packages('pypi/cvxopt pkg:pypi/pynormaliz dateutil')  # optional - sage_spkg
+            'cvxopt pynormaliz cvxopt>=1.2.5 python-dateutil... pynormaliz...'
+        """
         all_packages = spkgs.split()
-        pypi_packages = [package[len('pkg:pypi/'):] for package in all_packages
-                         if package.startswith('pkg:pypi/')]
+        pypi_packages = [m.group(2) for package in all_packages
+                         if (m := re.fullmatch('(pkg:)?pypi/(.*)', package))]
         other_packages = [package for package in all_packages
-                          if not package.startswith('pkg:pypi/')]
+                          if not re.fullmatch('(pkg:)?pypi/(.*)', package)]
         if other_packages:
             from subprocess import run, CalledProcessError
             system = self.name
