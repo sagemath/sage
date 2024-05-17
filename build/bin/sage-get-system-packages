@@ -101,9 +101,12 @@ for PKG_BASE in $SPKGS; do
             *pyproject.toml)
                 SYSTEM_PACKAGES_FILE="$SAGE_ROOT"/$NAME
                 if [ -f "$SYSTEM_PACKAGES_FILE" ]; then
-                    # Extract from the "requires" block in src/pyproject.toml
+                    # Extract from src/pyproject.toml:
+                    #  - from the "[build-system] requires" value
+                    #  - from "[project] dependencies",
+                    #  - from "[project.optional-dependencies]"
                     # Packages are in the format "'sage-conf ~= 10.3b3',"
-                    PACKAGE_INFO=$(sed -n '/requires *= *\[/,/^\]/s/^ *'\''\('$PKG_BASE'.*\)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
+                    PACKAGE_INFO=$(sed -n '/\(requires\|dependencies\|R\) *= *\[/,/^\]/s/^ *'\''\('$PKG_BASE'.*\)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
                     if [ -n "$PACKAGE_INFO" ]; then
                         echo "$PACKAGE_INFO" | ${STRIP_COMMENTS}
                         [ $SYSTEM = versions ] || break
