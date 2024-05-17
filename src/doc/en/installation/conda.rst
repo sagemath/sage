@@ -89,7 +89,7 @@ from source as follows:
 
       $ ./bootstrap
       $ ./configure --with-python=$CONDA_PREFIX/bin/python \
-                    --prefix=$CONDA_PREFIX
+                    --with-sage-venv=$CONDA_PREFIX
       $ make
 
 
