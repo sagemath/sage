@@ -488,8 +488,11 @@ def detach(filename):
                 fpath = fpath.resolve()
                 if fpath in attached:
                     break
+        r_fpath = fpath.resolve()
         if fpath in attached:
             attached.pop(fpath)
+        elif r_fpath in attached:
+            attached.pop(r_fpath)
         else:
             raise ValueError("file '{0}' is not attached, see attached_files()".format(filename))
     if not attached:
