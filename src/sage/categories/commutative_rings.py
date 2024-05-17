@@ -267,6 +267,39 @@ class CommutativeRings(CategoryWithAxiom):
                 gens = (gen,)
             return RingExtension(self, base, gens, names)
 
+        def frobenius_endomorphism(self, n=1):
+            """
+            Return the Frobenius endomorphism.
+
+            INPUT:
+
+            - ``n`` -- a nonnegative integer (default: 1)
+
+            OUTPUT:
+
+            The `n`-th power of the absolute arithmetic Frobenius
+            endomorphism on this commutative ring.
+
+            EXAMPLES::
+
+                sage: K.<u> = PowerSeriesRing(GF(5))
+                sage: Frob = K.frobenius_endomorphism(); Frob
+                Frobenius endomorphism x |--> x^5 of Power Series Ring in u
+                 over Finite Field of size 5
+                sage: Frob(u)
+                u^5
+
+            We can specify a power::
+
+                sage: f = K.frobenius_endomorphism(2); f
+                Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
+                 over Finite Field of size 5
+                sage: f(1+u)
+                1 + u^25
+            """
+            from sage.rings.morphism import FrobeniusEndomorphism_generic
+            return FrobeniusEndomorphism_generic(self, n)
+
     class ElementMethods:
         pass
 
