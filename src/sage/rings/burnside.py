@@ -257,6 +257,32 @@ class BurnsideRing(CombinatorialFreeModule):
 
         raise ValueError(f"unable to convert {x} into {self}")
 
+    def _from_dict(self, d, coerce=False, remove_zeros=True):
+        r"""
+        Construct an element of "self" from an "{index: coefficient}"
+        dictionary.
+
+        INPUT:
+
+        * "d" -- a dictionary "{index: coeff}" where each "index" is the
+            index of a basis element and each "coeff" belongs to the
+            coefficient ring "self.base_ring()"
+
+        * "coerce" -- a boolean (default: "False"), whether to coerce the
+            coefficients "coeff" to the coefficient ring
+
+        * "remove_zeros" -- a boolean (default: "True"), if some
+            coefficients "coeff" may be zero and should therefore be removed
+        """
+        assert isinstance(d, dict)
+        if coerce:
+            R = self.base_ring()
+            d = {key: R(coeff) for key, coeff in d.items()}
+        if remove_zeros:
+            d = {key: coeff for key, coeff in d.items() if coeff}
+        l = [(coeff, PermutationGroup(gens)) for gens, coeff in d.items()]
+        return self._element_constructor_(l)
+
     def construct_from_action(self, action, domain):
         r"""
         Construct an element of the Burnside ring from a group action.
