@@ -507,13 +507,13 @@ class DualMatroid(Matroid):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by
+        The output is obtained by relabeling each element `e` by
         ``mapping[e]``, where ``mapping`` is a given injective map. If
-        ``e not in mapping`` then the identity map is assumed.
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
           label of `e`
 
         OUTPUT: matroid
