@@ -123,12 +123,21 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 Universal enveloping algebra of
                  The 6-Witt Lie algebra over Ring of integers modulo 6
                  in the Poincare-Birkhoff-Witt basis
+
+            Corner case for the trivial (0-dimensional) Lie algebra::
+
+                sage: L.<a,b,c> = LieAlgebra(QQ, abelian=True)
+                sage: I = L.product_space(L)
+                sage: I._construct_UEA()
+                Free Algebra on 0 generators () over Rational Field
             """
             from sage.algebras.free_algebra import FreeAlgebra
 
             # Create the UEA relations
             # We need to get names for the basis elements, not just the generators
             I = self._basis_ordering
+            if not I:  # trivial Lie algebra
+                return FreeAlgebra(self.base_ring(), [])
             try:
                 names = [str(x) for x in I]
 
@@ -445,7 +454,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: H.centralizer_basis(H)
                 [z]
 
-                sage: # needs sage.combinat sage.groupssage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: D = DescentAlgebra(QQ, 4).D()
                 sage: L = LieAlgebra(associative=D)
                 sage: L.centralizer_basis(L)
@@ -456,6 +465,15 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 (D{},
                  D{1} + D{1, 2} + D{2, 3} + D{3},
                  D{1, 2, 3} + D{1, 3} + D{2})
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.centralizer_basis([a, c])
+                [a, b, c]
+                sage: L.centralizer_basis([a, e])
+                [c]
             """
             from sage.matrix.constructor import matrix
 
@@ -481,7 +499,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                            [[sum(m[i,j] * sc[x,xp][k] for j,xp in enumerate(X)
                                  if (x, xp) in sc)
                              for x in X]
-                            for i in range(d) for k in range(d)])
+                            for i in range(m.nrows()) for k in range(d)])
             C = c_mat.right_kernel().basis_matrix()
             return [self.from_vector(c) for c in C]
 
@@ -513,6 +531,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return self.subalgebra(self.centralizer_basis(S))
 
+        @cached_method
         def center(self):
             """
             Return the center of ``self``.
@@ -530,6 +549,99 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [0 0 1]
             """
             return self.centralizer(self)
+
+        def normalizer_basis(self, S):
+            r"""
+            Return a basis of the normalizer of ``S`` in ``self``.
+
+            INPUT:
+
+            - ``S`` -- a subalgebra of ``self`` or a list of elements that
+              represent generators for a subalgebra
+
+            .. SEEALSO::
+
+                :meth:`normalizer`
+
+            EXAMPLES::
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.normalizer_basis([a, e])
+                [b, c]
+
+                sage: S = L.subalgebra([a, e])
+                sage: L.normalizer_basis(S)
+                [a, b, c, e]
+
+            When the subalgebra is the ambient Lie algebra, we return the
+            basis of the ambient Lie algebra::
+
+                sage: L.normalizer_basis(L)
+                Finite family {'a': a, 'b': b, 'c': c, 'd': d, 'e': e}
+                sage: L.normalizer_basis([a, b, c, a, d + e, a + e])
+                Finite family {'a': a, 'b': b, 'c': c, 'd': d, 'e': e}
+            """
+            from sage.matrix.constructor import matrix
+
+            if S is self:
+                return self.basis()
+            if isinstance(S, (list, tuple)):
+                m = matrix([v.to_vector() for v in self.echelon_form(S)])
+            else:
+                m = self.subalgebra(S).basis_matrix()
+
+            if m.nrows() == self.dimension():
+                return self.basis()
+
+            S = self.structure_coefficients()
+            sc = {}
+            for k in S.keys():
+                v = S[k].to_vector()
+                sc[k] = v
+                sc[k[1], k[0]] = -v
+            X = self.basis().keys()
+            d = len(X)
+            ret = []
+            t = m.nrows()
+            c_mat = matrix(self.base_ring(),
+                           [[sum(m[i,j] * sc[x,xp][k] for j, xp in enumerate(X)
+                                 if (x, xp) in sc)
+                             for x in X]
+                            + [0]*(i*t) + [-m[j,k] for j in range(t)] + [0]*((t-i-1)*t)
+                            for i in range(t) for k in range(d)])
+            C = c_mat.right_kernel().basis_matrix()
+            return [self.from_vector(c[:d]) for c in C]
+
+        def normalizer(self, S):
+            r"""
+            Return the normalizer of ``S`` in ``self``.
+
+            INPUT:
+
+            - ``S`` -- a subalgebra of ``self`` or a list of elements that
+              represent generators for a subalgebra
+
+            .. SEEALSO::
+
+                :meth:`normalizer_basis`
+
+            EXAMPLES::
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.normalizer([a, e])
+                Subalgebra generated by (b, c) of Lie algebra on
+                 5 generators (a, b, c, d, e) over Rational Field
+                sage: L.normalizer([a, c, e])
+                Subalgebra generated by (b, c, d) of Lie algebra on
+                 5 generators (a, b, c, d, e) over Rational Field
+            """
+            return self.subalgebra(self.normalizer_basis(S))
 
         @cached_method
         def derivations_basis(self):
@@ -963,14 +1075,19 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.combinat sage.modules
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
-                sage: L.derived_series()        # not implemented
+                sage: L.derived_series()
                 (Lie algebra on 2 generators (x, y) over Rational Field,
-                 Subalgebra generated of
-                  Lie algebra on 2 generators (x, y) over Rational Field
-                  with basis: (x,),
-                 Subalgebra generated of
-                  Lie algebra on 2 generators (x, y) over Rational Field
-                  with basis: ())
+                 Ideal (x) of Lie algebra on 2 generators (x, y) over Rational Field,
+                 Ideal () of Lie algebra on 2 generators (x, y) over Rational Field)
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.derived_series()
+                (Lie algebra on 5 generators (a, b, c, d, e) over Rational Field,
+                 Ideal (a, b, c) of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field,
+                 Ideal () of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field)
             """
             L = [self]
             while L[-1].dimension() > 0:
@@ -1033,11 +1150,18 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.combinat sage.modules
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
-                sage: L.lower_central_series()  # not implemented
+                sage: L.lower_central_series()
                 (Lie algebra on 2 generators (x, y) over Rational Field,
-                 Subalgebra generated of
-                  Lie algebra on 2 generators (x, y) over Rational Field
-                  with basis: (x,))
+                 Ideal (x) of Lie algebra on 2 generators (x, y) over Rational Field)
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.lower_central_series()
+                (Lie algebra on 5 generators (a, b, c, d, e) over Rational Field,
+                 Ideal (a, b, c) of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field,
+                 Ideal (a, b) of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field)
             """
             if submodule:
                 L = [self.module()]
@@ -1049,6 +1173,82 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     break
                 L.append(s)
             return tuple(L)
+
+        @cached_method
+        def upper_central_series(self):
+            r"""
+            Return the upper central series `(Z_i(\mathfrak{g}))_i`
+            of ``self`` where the rightmost
+            `Z_k(\mathfrak{g}) = Z_{k+1}(\mathfrak{g}) = \cdots`.
+
+            The *upper central series* of a Lie algebra `\mathfrak{g}` is
+            defined recursively by `Z_0(\mathfrak{g}) := Z(\mathfrak{g})` and
+
+            .. MATH::
+
+                Z_{k+1}(\mathfrak{g}) / Z_k(\mathfrak{g})
+                = Z(\mathfrak{g} / Z_k(\mathfrak{g}),
+
+            and recall that `Z(\mathfrak{g})` is the :meth:`center`
+            of `\mathfrak{g}`.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+                sage: L.upper_central_series()
+                [An example of a finite dimensional Lie algebra with basis:
+                 the 3-dimensional abelian Lie algebra over Rational Field]
+
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'x':1}})
+                sage: L.upper_central_series()
+                [Subalgebra generated by () of Lie algebra on 2 generators (x, y) over Rational Field]
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.upper_central_series()
+                [Subalgebra generated by (c) of Lie algebra on 5 generators (a, b, c, d, e) over Rational Field]
+
+                sage: L = lie_algebras.Heisenberg(QQ, 3)
+                sage: L.upper_central_series()
+                [Subalgebra generated by (z) of Heisenberg algebra of rank 3 over Rational Field,
+                 Heisenberg algebra of rank 3 over Rational Field]
+            """
+            I = self.center()
+            if I.dimension() == 0:
+                return [I]
+            ret = [I]
+            dim = self.dimension()
+            while True:
+                Q = self.quotient(I)
+                Z = Q.center()
+                if not Z.dimension():  # we did not add anything
+                    return ret
+                new_gens = [Q.lift(b.value) for b in Z.basis()]
+                I = self.ideal(list(I.basis()) + new_gens)
+                if I.dimension() == dim:
+                    ret.append(self)
+                    return ret
+                ret.append(I)
+
+        def hypercenter(self):
+            r"""
+            Return the hypercenter of ``self``.
+
+            EXAMPLES::
+
+                sage: SGA3 = SymmetricGroup(3).algebra(QQ)
+                sage: L = LieAlgebra(associative=SGA3)
+                sage: L.hypercenter()
+                Subalgebra generated by ((), (1,2,3) + (1,3,2), (2,3) + (1,2) + (1,3))
+                 of Lie algebra of Symmetric group algebra of order 3 over Rational Field
+
+                sage: L = lie_algebras.Heisenberg(QQ, 3)
+                sage: L.hypercenter()
+                Heisenberg algebra of rank 3 over Rational Field
+            """
+            return self.upper_central_series()[-1]
 
         def is_abelian(self):
             """
@@ -1927,6 +2127,90 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return [UEA.sum(to_prod(vec, index) for index in vec.support())
                     for vec in tens]
 
+        def faithful_representation(self, algorithm=None):
+            r"""
+            Return a faithful representation of ``self``.
+
+            By Ado's and Iwasawa's theorems, every finite dimensional
+            Lie algebra has a faithful finite dimensional representation.
+
+            INPUT:
+
+            - ``algorithm`` -- one of the following depending on the
+              classification of the Lie algebra:
+
+              Nilpotent Lie algebras:
+
+              * ``'regular'`` -- use the universal enveloping algebra quotient
+                :class:`~sage.algebras.lie_algebras.representation.FaithfulRepresentationNilpotentPBW`
+              * ``'minimal'`` -- construct the minimal representation (for
+                precise details, see the documentation of
+                :class:`~sage.algebras.lie_algebras.representation.FaithfulRepresentationNilpotentPBW`)
+
+              Solvable but not nilpotent:
+
+              * Not implemented
+
+              Semisimple:
+
+              * Not implemented
+
+              General case
+
+              * Not implemented
+
+            EXAMPLES::
+
+                sage: H2 = lie_algebras.Heisenberg(QQ, 2)
+                sage: H2.is_nilpotent()
+                True
+                sage: F = H2.faithful_representation(); F
+                Faithful 16 dimensional representation of
+                 Heisenberg algebra of rank 2 over Rational Field
+                sage: M = H2.faithful_representation(algorithm="minimal"); M
+                Minimal faithful representation of
+                 Heisenberg algebra of rank 2 over Rational Field
+                sage: M.dimension()
+                4
+                sage: H2.faithful_representation(algorithm="invalid")
+                Traceback (most recent call last):
+                ...
+                ValueError: invalid algorithm 'invalid'
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.is_nilpotent()
+                False
+                sage: L.is_solvable()
+                True
+                sage: L.faithful_representation()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: only implemented for nilpotent Lie algebras
+
+                sage: sl3 = LieAlgebra(QQ, cartan_type=['A', 2])
+                sage: sl3.is_semisimple()
+                True
+                sage: sl3.faithful_representation()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: only implemented for nilpotent Lie algebras
+            """
+            if self.is_nilpotent():
+                if algorithm is None:
+                    algorithm = "regular"
+                if algorithm == "regular":
+                    from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
+                    return FaithfulRepresentationNilpotentPBW(self, minimal=False)
+                if algorithm == "minimal":
+                    from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
+                    return FaithfulRepresentationNilpotentPBW(self, minimal=True)
+            else:
+                raise NotImplementedError("only implemented for nilpotent Lie algebras")
+            raise ValueError("invalid algorithm '{}'".format(algorithm))
+
     class ElementMethods:
         def adjoint_matrix(self, sparse=False): # In #11111 (more or less) by using matrix of a morphism
             """
@@ -2068,3 +2352,71 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     [   1    0 -1/2]
                     [   0    1    1]
                 """
+
+            def reduce(self, X):
+                r"""
+                Reduce an element of the ambient Lie algebra modulo the
+                ideal ``self``.
+
+                INPUT:
+
+                - ``X`` -- an element of the ambient Lie algebra
+
+                OUTPUT:
+
+                An element `Y` of the ambient Lie algebra that is contained
+                in a fixed complementary submodule `V` to ``self`` such that
+                `X = Y` mod ``self``.
+
+                When the base ring of ``self`` is a field, the complementary
+                submodule `V` is spanned by the elements of the basis that
+                are not the leading supports of the basis of ``self``.
+
+                EXAMPLES:
+
+                An example reduction in a 6 dimensional Lie algebra::
+
+                    sage: sc = {('a','b'): {'d': 1}, ('a','c'): {'e': 1},
+                    ....:       ('b','c'): {'f': 1}}
+                    sage: L.<a,b,c,d,e,f> = LieAlgebra(QQ, sc)
+                    sage: I = L.ideal(c)
+                    sage: I.reduce(a + b + c + d + e + f)
+                    a + b + d
+
+                The reduction of an element is zero if and only if the
+                element belongs to the subalgebra::
+
+                    sage: I.reduce(c + e)
+                    0
+                    sage: c + e in I
+                    True
+
+                Over non-fields, the complementary submodule may not be spanned
+                by a subset of the basis of the ambient Lie algebra::
+
+                    sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
+                    sage: I = L.ideal(Y)
+                    sage: I.basis()
+                    Family (Y, 3*Z)
+                    sage: I.reduce(3*Z)
+                    0
+                    sage: I.reduce(Y + 14*Z)
+                    2*Z
+                """
+                R = self.base_ring()
+                from sage.categories.fields import Fields
+                is_field = R in Fields()
+                for Y in self.basis():
+                    Y = self.lift(Y)
+                    k, c = Y.leading_item(key=self._order)
+
+                    if is_field:
+                        X -= (X[k] / c) * Y
+                    else:
+                        try:
+                            q, _ = X[k].quo_rem(c)
+                            X -= q * Y
+                        except AttributeError:
+                            break
+
+                return X

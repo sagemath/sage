@@ -35,7 +35,7 @@ lazy_import('sage.categories.commutative_additive_groups', 'CommutativeAdditiveG
 lazy_import('sage.categories.commutative_rings', 'CommutativeRings')
 lazy_import('sage.categories.groups', 'Groups')
 lazy_import('sage.categories.objects', 'Objects')
-lazy_import('sage.categories.rings', 'Rings', at_startup=True)
+lazy_import('sage.categories.rings', 'Rings')
 
 # TODO, think through the rankings, and override pushout where necessary.
 

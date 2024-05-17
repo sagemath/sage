@@ -794,7 +794,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def __reduce__(self):
         r"""
-        Returns a function and its arguments needed to create this
+        Return a function and its arguments needed to create this
         permutation group element.  This is used in pickling.
 
         EXAMPLES::
@@ -899,7 +899,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def _gap_init_(self):
         r"""
-        Returns a GAP string representation for this
+        Return a GAP string representation for this
         PermutationGroupElement.
 
         EXAMPLES::
@@ -961,7 +961,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
     def __getitem__(self, i):
         r"""
         Return the ``i``-th permutation cycle in the disjoint cycle
-        representation of self.
+        representation of ``self``.
 
         INPUT:
 
@@ -1028,7 +1028,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def __call__(self, i):
         r"""
-        Returns the image of the integer i under this permutation.
+        Return the image of the integer i under this permutation.
         Alternately, if i is a list, tuple or string, returns the result of
         self acting on i.
 
@@ -1091,7 +1091,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     cpdef list _act_on_list_on_position(self, list x):
         r"""
-        Returns the right action of ``self`` on the list ``x``. This is the
+        Return the right action of ``self`` on the list ``x``. This is the
         action on positions.
 
         EXAMPLES::
@@ -1119,7 +1119,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x):
         r"""
-        Returns the right action of ``self`` on the ClonableIntArray
+        Return the right action of ``self`` on the :class:`ClonableIntArray`
         ``x``. This is the action on positions.
 
         EXAMPLES::
@@ -1422,7 +1422,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     cpdef _gap_list(self):
         r"""
-        Returns this permutation in list notation compatible with the
+        Return this permutation in list notation compatible with the
         GAP numbering.
 
         EXAMPLES::
@@ -1446,7 +1446,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def _gap_cycle_string(self):
         r"""
-        Returns a cycle string for this permutation compatible with
+        Return a cycle string for this permutation compatible with
         the GAP numbering.
 
         EXAMPLES::
@@ -1871,10 +1871,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
           type should be returned as a :class:`list` or as a :class:`Partition`
           (default: ``False``)
 
-        OUTPUT:
-
-        A :class:`Partition`, or :class:`list` if ``is_list`` is ``True``,
-        giving the cycle type of ``self``
+        OUTPUT: a :class:`Partition`, or :class:`list` if ``is_list`` is
+        ``True``, giving the cycle type of ``self``
 
         If speed is a concern, then ``as_list=True`` should be used.
 
@@ -1905,13 +1903,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def has_descent(self, i, side="right", positive=False):
         r"""
-        INPUT:
-
-        - ``i`` -- an element of the index set
-        - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``)
-        - ``positive`` -- a boolean (default: ``False``)
-
-        Returns whether ``self`` has a left (resp. right) descent at
+        Return whether ``self`` has a left (resp. right) descent at
         position ``i``. If ``positive`` is ``True``, then test for a non
         descent instead.
 
@@ -1919,6 +1911,12 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         meaning of descents is the reverse of the usual
         convention. Hence, ``self`` has a left descent at position
         ``i`` if ``self(i) > self(i+1)``.
+
+        INPUT:
+
+        - ``i`` -- an element of the index set
+        - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``)
+        - ``positive`` -- a boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -2124,10 +2122,10 @@ cdef class SymmetricGroupElement(PermutationGroupElement):
 
 cdef bint is_valid_permutation(int* perm, int n) noexcept:
     r"""
-    This is used in the __init__ method.
+    This is used in the ``__init__`` method.
 
-    Returns True iff the first n elements of perm are literally a
-    permutation of [0, ..., n-1].
+    Return ``True`` iff the first ``n`` elements of perm are literally a
+    permutation of ``[0, ..., n-1]``.
 
     TESTS::
 

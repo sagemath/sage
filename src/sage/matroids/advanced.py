@@ -53,6 +53,7 @@ import sage.matroids.basis_exchange_matroid
 from .minor_matroid import MinorMatroid
 from .dual_matroid import DualMatroid
 from .rank_matroid import RankMatroid
+from .circuits_matroid import CircuitsMatroid
 from .circuit_closures_matroid import CircuitClosuresMatroid
 from .basis_matroid import BasisMatroid
 from .flats_matroid import FlatsMatroid

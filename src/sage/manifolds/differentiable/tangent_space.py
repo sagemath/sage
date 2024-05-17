@@ -177,28 +177,32 @@ class TangentSpace(FiniteRankFreeModule):
         [0 1]
         sage: W_Tp_xy = VectorSpace(SR, 2, inner_product_matrix=Q_Tp_xy)
         sage: Tp.bases()[0]
-        Basis (∂/∂x,∂/∂y) on the Tangent space at Point p on the 2-dimensional differentiable manifold M
-        sage: phi_Tp_xy = Tp.isomorphism_with_fixed_basis(Tp.bases()[0], codomain=W_Tp_xy); phi_Tp_xy
+        Basis (∂/∂x,∂/∂y) on the Tangent space at Point p on the
+         2-dimensional differentiable manifold M
+        sage: phi_Tp_xy = Tp.isomorphism_with_fixed_basis(Tp.bases()[0], codomain=W_Tp_xy)
+        sage: phi_Tp_xy
         Generic morphism:
-        From: Tangent space at Point p on the 2-dimensional differentiable manifold M
-        To:   Ambient quadratic space of dimension 2 over Symbolic Ring
-        Inner product matrix:
-        [1 0]
-        [0 1]
+         From: Tangent space at Point p on the 2-dimensional differentiable manifold M
+         To:   Ambient quadratic space of dimension 2 over Symbolic Ring
+               Inner product matrix:
+               [1 0]
+               [0 1]
 
         sage: Q_Tp_uv = g[c_uv.frame(),:](*p.coordinates(c_uv)); Q_Tp_uv
         [1/2   0]
         [  0 1/2]
         sage: W_Tp_uv = VectorSpace(SR, 2, inner_product_matrix=Q_Tp_uv)
         sage: Tp.bases()[1]
-        Basis (∂/∂u,∂/∂v) on the Tangent space at Point p on the 2-dimensional differentiable manifold M
-        sage: phi_Tp_uv = Tp.isomorphism_with_fixed_basis(Tp.bases()[1], codomain=W_Tp_uv); phi_Tp_uv
+        Basis (∂/∂u,∂/∂v) on the Tangent space at Point p on the
+         2-dimensional differentiable manifold M
+        sage: phi_Tp_uv = Tp.isomorphism_with_fixed_basis(Tp.bases()[1], codomain=W_Tp_uv)
+        sage: phi_Tp_uv
         Generic morphism:
-        From: Tangent space at Point p on the 2-dimensional differentiable manifold M
-        To:   Ambient quadratic space of dimension 2 over Symbolic Ring
-        Inner product matrix:
-        [1/2   0]
-        [  0 1/2]
+         From: Tangent space at Point p on the 2-dimensional differentiable manifold M
+         To:   Ambient quadratic space of dimension 2 over Symbolic Ring
+               Inner product matrix:
+               [1/2   0]
+               [  0 1/2]
 
         sage: t1, t2 = Tp.tensor((1,0)), Tp.tensor((1,0))
         sage: t1[:] = (8, 15)
@@ -211,7 +215,8 @@ class TangentSpace(FiniteRankFreeModule):
         541
 
         sage: Tp_xy_to_uv = M.change_of_frame(c_xy.frame(), c_uv.frame()).at(p); Tp_xy_to_uv
-        Automorphism of the Tangent space at Point p on the 2-dimensional differentiable manifold M
+        Automorphism of the Tangent space at Point p on the
+         2-dimensional differentiable manifold M
         sage: Tp.set_change_of_basis(Tp.bases()[0], Tp.bases()[1], Tp_xy_to_uv)
         sage: t1[Tp.bases()[1],:]
         [23, -7]
