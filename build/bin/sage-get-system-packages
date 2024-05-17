@@ -108,7 +108,7 @@ for PKG_BASE in $SPKGS; do
                     # Packages are in the format "'sage-conf ~= 10.3b3',"
                     # Accept dashes and underscores in package names as equivalent:
                     PKG_REGEX=$(echo $PKG_BASE | sed 's/[-_]/[-_]/g')
-                    PACKAGE_INFO=$(sed -En '/(requires|dependencies|R) *= *\[/,/^\]/s/^ *'\''('$PKG_REGEX'.*)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
+                    PACKAGE_INFO=$(sed -En '/(requires|dependencies|R) *= *\[/,/^\]/s/^ *'\''('$PKG_REGEX'.*)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml" | sort -u)
                     if [ -n "$PACKAGE_INFO" ]; then
                         echo "$PACKAGE_INFO" | ${STRIP_COMMENTS}
                         [ $SYSTEM = versions ] || break
