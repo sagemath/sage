@@ -221,7 +221,7 @@ cdef class Matrix(Matrix1):
             return matrix([a.subs(*args, **kwds) for a in self.list()],
                           nrows=self._nrows, ncols=self._ncols, sparse=False)
 
-    def solve_left(self, B, check=True, *, integral=False):
+    def solve_left(self, B, check=True, *, extend=True):
         r"""
         Try to find a solution `X` to the equation `X A = B`.
 
@@ -239,11 +239,12 @@ cdef class Matrix(Matrix1):
 
         - ``B`` -- a matrix or vector
 
-        - ``integral`` -- boolean (default: ``False``); When the base
-          ring is a PID, request that a solution over the that ring
-          be returned. If there is no such solution, a ``ValueError``
-          is raised. A typical case are systems of non-full rank over
-          the integers.
+        - ``extend`` -- boolean (default: ``True``); when set to ``True``,
+          some solvers will return solutions over a larger ring than the
+          base ring of the inputs (a typical case are rational solutions
+          for integer linear systems). When set to ``False``, a solution
+          over the base ring is returned, with a :class:`ValueError`
+          being raised if none exists.
 
         - ``check`` -- boolean (default: ``True``); verify the answer
           if the system is non-square or rank-deficient, and if its
@@ -446,16 +447,16 @@ cdef class Matrix(Matrix1):
         """
         if is_Vector(B):
             try:
-                return self.transpose().solve_right(B, check=check, integral=integral)
+                return self.transpose().solve_right(B, check=check, extend=extend)
             except ValueError as e:
                 raise e.__class__(str(e).replace('row', 'column'))
         else:
             try:
-                return self.transpose().solve_right(B.transpose(), check=check, integral=integral).transpose()
+                return self.transpose().solve_right(B.transpose(), check=check, extend=extend).transpose()
             except ValueError as e:
                 raise e.__class__(str(e).replace('row', 'column'))
 
-    def solve_right(self, B, check=True, *, integral=False):
+    def solve_right(self, B, check=True, *, extend=True):
         r"""
         Try to find a solution `X` to the equation `A X = B`.
 
@@ -473,11 +474,12 @@ cdef class Matrix(Matrix1):
 
         - ``B`` -- a matrix or vector
 
-        - ``integral`` -- boolean (default: ``False``); When the base
-          ring is a PID, request that a solution over the that ring
-          be returned. If there is no such solution, a ``ValueError``
-          is raised. A typical case are systems of non-full rank over
-          the integers.
+        - ``extend`` -- boolean (default: ``True``); when set to ``True``,
+          some solvers will return solutions over a larger ring than the
+          base ring of the inputs (a typical case are rational solutions
+          for integer linear systems). When set to ``False``, a solution
+          over the base ring is returned, with a :class:`ValueError`
+          being raised if none exists.
 
         - ``check`` -- boolean (default: ``True``); verify the answer
           if the system is non-square or rank-deficient, and if its
@@ -897,7 +899,7 @@ cdef class Matrix(Matrix1):
         L = B.base_ring()
         # first coerce both elements to parent over same base ring
         P = K if L is K else coercion_model.common_parent(K, L)
-        if P not in _Fields and P.is_integral_domain() and not integral:
+        if P not in _Fields and P.is_integral_domain() and extend:
             # the non-integral-domain case is handled separatedly below
             P = P.fraction_field()
         if L is not P:
@@ -944,7 +946,7 @@ cdef class Matrix(Matrix1):
 
         C = B.column() if b_is_vec else B
 
-        if integral:
+        if not extend:
             X = self._solve_right_smith_form(C)
             return X.column(0) if b_is_vec else X
 
@@ -1084,12 +1086,12 @@ cdef class Matrix(Matrix1):
             [ 2 12  2 17 16 37 32]
             [32 37 16 17  2 12  2]
             sage: y = vector(ZZ, [-4, -1, 1, 5, 14, 31, 4])
-            sage: A.solve_left(y, integral=True)  # implicit doctest
+            sage: A.solve_left(y, extend=False)  # indirect doctest
             (-1, 0, 1, 1, -1)
             sage: z = vector(ZZ, [1, 2, 3, 4, 5])
-            sage: A.solve_right(z, integral=True)  # implicit doctest
+            sage: A.solve_right(z, extend=False)  # indirect doctest
             (10, 1530831087980480, -2969971929450215, -178745029498097, 2320752168397186, -806846536262381, -520939892126393)
-            sage: A.solve_right(identity_matrix(ZZ,5), integral=True)  # implicit doctest
+            sage: A.solve_right(identity_matrix(ZZ,5), extend=False)  # indirect doctest
             [              -1                0                2                0                1]
             [-156182670342972   -2199494166584  310625144000132          1293916  151907461896112]
             [ 303010665531453    4267248023008 -602645168043247         -2510332 -294716315371323]
