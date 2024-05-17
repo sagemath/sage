@@ -38,21 +38,21 @@ class ConjugacyClassesOfSubgroups(Parent):
     def _group_invariant(self, H):
         return H.order()
 
-    def _element_constructor_(self, x):
-        def normalize(H):
-            p = self._group_invariant(H)
-            if p in self._cache:
-                for H0 in self._cache[p]:
-                    if _is_conjugate(self._G, H, H0):
-                        return H0
-                else:
-                    self._cache[p].append(H)
+    def _normalize(self, H):
+        p = self._group_invariant(H)
+        if p in self._cache:
+            for H0 in self._cache[p]:
+                if _is_conjugate(self._G, H, H0):
+                    return H0
             else:
-                self._cache[p] = [H]
-            return H
+                self._cache[p].append(H)
+        else:
+            self._cache[p] = [H]
+        return H
 
+    def _element_constructor_(self, x):
         if x.is_subgroup(self._G):
-            return self.element_class(self, normalize(x))
+            return self.element_class(self, self._normalize(x))
         else:
             raise ValueError("x must be a subgroup of " + repr(self._G))
 
@@ -60,6 +60,12 @@ class ConjugacyClassesOfSubgroups(Parent):
 
     def __iter__(self):
         return iter(self(H) for H in self._G.conjugacy_classes_subgroups())
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+        """
+        return "Conjugacy classes of subgroups of " + repr(self._G)
 
     Element = ConjugacyClassOfSubgroups
 
@@ -92,7 +98,7 @@ class BurnsideRingElement(Element):
         r"""
         Return a string representation of ``self``.
         """
-        return repr_lincomb(([(H.gens() if name is None else name, c)
+        return repr_lincomb(([(f"B[{H.gens()}]" if name is None else f"B[{name}]", c)
                               for c, (name, H) in self._F]),
                             repr_monomial=lambda s: s if isinstance(s, str) else repr(list(s)))
 
@@ -198,6 +204,19 @@ class BurnsideRing(CombinatorialFreeModule):
     def _group_invariant(self, H):
         return H.order()
 
+    def _normalize(self, H, name=None):
+        p = self._group_invariant(H)
+        if p in self._cache:
+            for name0, H0 in self._cache[p]:
+                if _is_conjugate(self._G, H, H0):
+                    assert name is None or name0 == name, "the name should not change"
+                    return name0, H0
+            else:
+                self._cache[p].append((name, H))
+        else:
+            self._cache[p] = [(name, H)]
+        return name, H
+
     def _coerce_map_from_(self, S):
         """
         Return ``True`` if a coercion from ``S`` exists.
@@ -259,19 +278,6 @@ class BurnsideRing(CombinatorialFreeModule):
         if action is None and domain is None and x in self.base_ring():
             return x * self.one()
 
-        def normalize(H, name=None):
-            p = self._group_invariant(H)
-            if p in self._cache:
-                for name0, H0 in self._cache[p]:
-                    if _is_conjugate(self._G, H, H0):
-                        assert name is None or name0 == name, "the name should not change"
-                        return name0, H0
-                else:
-                    self._cache[p].append((name, H))
-            else:
-                self._cache[p] = [(name, H)]
-            return name, H
-
         def find_stabilizer(action, pnt):
             stabilizer = []
             for g in self._G:
@@ -292,7 +298,7 @@ class BurnsideRing(CombinatorialFreeModule):
             stabilizer_list = [find_stabilizer(action, orbit[0]) for orbit in orbit_list]
             # normalize each summand and collect terms
             from collections import Counter
-            C = Counter([normalize(stabilizer) for stabilizer in stabilizer_list])
+            C = Counter([self._normalize(stabilizer) for stabilizer in stabilizer_list])
             # create formal sum
             F = FormalSum([(coeff, subgroup) for subgroup, coeff in C.items()])
             return self.element_class(self, F)
@@ -306,16 +312,26 @@ class BurnsideRing(CombinatorialFreeModule):
             # if x is a list of pairs (coeff, subgroup) or FormalSum
             if not all([subgroup.is_subgroup(self._G) for coeff, subgroup in x]):
                 raise ValueError("All groups in list must be subgroups of " + repr(self._G))
-            return self.element_class(self, FormalSum([(coeff, normalize(subgroup)) for coeff, subgroup in x]))
+            return self.element_class(self, FormalSum([(coeff, self._normalize(subgroup)) for coeff, subgroup in x]))
         elif x.is_subgroup(self._G):
             # if x is a single subgroup of self._G
-            return self.element_class(self, FormalSum([(1, normalize(x, name))]))
+            return self.element_class(self, FormalSum([(1, self._normalize(x, name))]))
 
         raise ValueError(f"unable to convert {x} into {self}")
 
+    def monomial(self, subgroup_gens):
+        r"""
+        Return the basis element indexed by `subgroup_gens`.
+        """
+        return self.element_class(self, FormalSum([(1, self._normalize(PermutationGroup(subgroup_gens)))]))
+
     @cached_method
-    def one(self):
-        return self._element_constructor_(self._G, name="1")
+    def one_basis(self):
+        r"""
+        Returns the generators of the underlying group, which index the one
+        of this algebra, as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        """
+        return self._G.gens()
 
     @cached_method
     def zero(self):
