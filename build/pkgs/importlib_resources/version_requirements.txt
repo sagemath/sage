@@ -1,3 +1,1 @@
-# According to https://pypi.org/project/importlib-resources/,
-# version 5.7 provides the features of Python 3.11 importlib.resources
-importlib_resources >= 5.7; python_version<"3.11"
+importlib_resources
