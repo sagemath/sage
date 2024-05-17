@@ -376,6 +376,10 @@ def is_FreeAlgebra(x) -> bool:
 
         sage: from sage.algebras.free_algebra import is_FreeAlgebra
         sage: is_FreeAlgebra(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeAlgebra is deprecated;
+        use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead
+        See https://github.com/sagemath/sage/issues/37896 for details.
         False
         sage: is_FreeAlgebra(ZZ)
         False
@@ -387,6 +391,8 @@ def is_FreeAlgebra(x) -> bool:
         ....:                            degrees=list(range(1,11))))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37896, "the function is_FreeAlgebra is deprecated; use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead")
     return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
 
 
@@ -742,7 +748,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             return True
 
         # free algebras in the same variable over any base that coerces in:
-        if is_FreeAlgebra(R):
+        if isinstance(R, (FreeAlgebra_generic, FreeAlgebra_letterplace)):
             if R.variable_names() == self.variable_names():
                 return self.base_ring().has_coerce_map_from(R.base_ring())
         if isinstance(R, PBWBasisOfFreeAlgebra):

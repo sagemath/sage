@@ -21,7 +21,7 @@ def used_vars_set(l, bound=None):
         s.update(Polynomial(p).vars_as_monomial().variables())
         if bound and len(s) > bound:
             break
-    sorted_s = sorted(list(s), key=top_index, reverse=True)
+    sorted_s = sorted(s, key=top_index, reverse=True)
     m = Monomial(next(iter(l)).ring())
     for v in sorted_s:
         m = v * m

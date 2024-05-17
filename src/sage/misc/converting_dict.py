@@ -1,7 +1,7 @@
 r"""
 Converting Dictionary
 
-At the moment, the only class contained in this model is a key
+At the moment, the only class contained in this module is a key
 converting dictionary, which applies some function (e.g. type
 conversion function) to all arguments used as keys.
 

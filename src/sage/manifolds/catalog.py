@@ -127,13 +127,18 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         4-dimensional Lorentzian manifold M
         sage: K.atlas()
         [Chart (M, (t, r, th, ph))]
+
+    The Kerr metric in Boyer-Lindquist coordinates (cf. :wikipedia:`Kerr_metric`)::
+
         sage: K.metric().display()
         g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt⊗dt
-         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt⊗dph
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt⊗dph
          + (a^2*cos(th)^2 + r^2)/(a^2 - 2*m*r + r^2) dr⊗dr
          + (a^2*cos(th)^2 + r^2) dth⊗dth
-         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph⊗dt
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph⊗dt
          + (2*a^2*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) + a^2 + r^2)*sin(th)^2 dph⊗dph
+
+    The Schwarzschild spacetime with the mass parameter set to 1::
 
         sage: K.<t, r, th, ph> = manifolds.Kerr()
         sage: K
@@ -143,6 +148,9 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
          + r^2 dth⊗dth + r^2*sin(th)^2 dph⊗dph
         sage: K.default_chart().coord_range()
         t: (-oo, +oo); r: (0, +oo); th: (0, pi); ph: [-pi, pi] (periodic)
+
+
+    The Kerr spacetime in Kerr coordinates::
 
         sage: m, a = var('m, a')
         sage: K.<t, r, th, ph> = manifolds.Kerr(m, a, coordinates="Kerr")
@@ -205,7 +213,7 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         g[0, 0], g[1, 1], g[2, 2], g[3, 3] = -(1-2*m*r/rho**2), \
             rho**2/(r**2-2*m*r+a**2), rho**2, \
             (r**2+a**2+2*m*r*a**2/rho**2*sin(th)**2)*sin(th)**2
-        g[0, 3] = 2*m*r*a*sin(th)**2/rho**2
+        g[0, 3] = -2*m*r*a*sin(th)**2/rho**2
         return M
 
     raise NotImplementedError("coordinates system not implemented, see help"
