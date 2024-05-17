@@ -195,6 +195,7 @@ class BurnsideRing(CombinatorialFreeModule):
         """
         self._G = G
         self._cache = dict() # invariant to a list of pairs (name, subgroup)
+        self.rename_gen(G, "1") # name unit of ring as 1
         basis = ConjugacyClassesOfSubgroups(G)
         category = Algebras(base_ring).Commutative().WithBasis()
         CombinatorialFreeModule.__init__(self, base_ring, basis,
@@ -318,6 +319,15 @@ class BurnsideRing(CombinatorialFreeModule):
             return self.element_class(self, FormalSum([(1, self._normalize(x, name))]))
 
         raise ValueError(f"unable to convert {x} into {self}")
+
+    def rename_gen(self, subgroup, name):
+        r"""
+        Rename conjugacy class of ``subgroup`` to ``name``.
+        Passing ``None`` to ``name`` will remove any previously assigned name.
+        """
+        if not isinstance(name, str):
+            raise TypeError("name must be a string")
+        self._normalize(subgroup, name)
 
     def monomial(self, subgroup_gens):
         r"""
