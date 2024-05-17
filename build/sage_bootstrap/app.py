@@ -131,12 +131,12 @@ class Application(object):
         pc = PackageClass(*package_classes)
         if format in ['plain', 'rst']:
             if types is None:
-                typesets = [['order_only', 'runtime']]
+                typesets = [['build', 'order_only', 'runtime']]
             else:
                 typesets = [[t] for t in types]
         elif format == 'shell':
             if types is None:
-                types = ['order_only', 'optional', 'runtime', 'check']
+                types = ['build', 'order_only', 'optional', 'runtime', 'check']
             typesets = [[t] for t in types]
         else:
             raise ValueError('format must be one of "plain", "rst", and "shell"')
