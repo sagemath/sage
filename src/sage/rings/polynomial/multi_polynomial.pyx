@@ -2140,6 +2140,10 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: Pol = QQ['x']['x','y']
             sage: Pol.one().gcd(1)
             1
+
+            sage: P = PolynomialRing(QQ, 'x', 0)
+            sage: P.gens()
+            ()
         """
         flatten = self._parent.flattening_morphism()
         tgt = flatten.codomain()
@@ -2154,7 +2158,13 @@ cdef class MPolynomial(CommutativePolynomial):
         except (TypeError, AttributeError):
             pass
 
-        x = self._parent.gens()[-1]
+        gens = self.parent().gens()
+        if not gens:
+            # no variables
+            base = self.parent().base_ring()
+            return base(self).gcd(base(other))
+
+        x = gens[-1]
         uniself = self.polynomial(x)
         unibase = uniself.base_ring()
         try:

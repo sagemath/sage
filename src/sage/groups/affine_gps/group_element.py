@@ -53,20 +53,20 @@ class AffineGroupElement(MultiplicativeGroupElement):
     INPUT:
 
     - ``A`` -- an invertible matrix, or something defining a
-      matrix if ``convert==True``.
+      matrix if ``convert==True``
 
     - ``b``-- a vector, or something defining a vector if
       ``convert==True`` (default: ``0``, defining the zero
-      vector).
+      vector)
 
-    - ``parent`` -- the parent affine group.
+    - ``parent`` -- the parent affine group
 
-    - ``convert`` - bool (default: ``True``). Whether to convert
+    - ``convert`` - bool (default: ``True``); whether to convert
       ``A`` into the correct matrix space and ``b`` into the
-      correct vector space.
+      correct vector space
 
-    - ``check`` - bool (default: ``True``). Whether to do some
-      checks or just accept the input as valid.
+    - ``check`` - bool (default: ``True``); whether to do some
+      checks or just accept the input as valid
 
     As a special case, ``A`` can be a matrix obtained from
     :meth:`matrix`, that is, one row and one column larger. In
@@ -145,7 +145,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the general linear part of an affine group element.
 
-        OUTPUT: The matrix `A` of the affine group element `Ax + b`.
+        OUTPUT: The matrix `A` of the affine group element `Ax + b`
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the translation part of an affine group element.
 
-        OUTPUT: The vector `b` of the affine group element `Ax + b`.
+        OUTPUT: The vector `b` of the affine group element `Ax + b`
 
         EXAMPLES::
 
@@ -326,13 +326,10 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``other`` -- another element of the same affine group.
+        - ``other`` -- another element of the same affine group
 
-        OUTPUT:
-
-        The product of the affine group elements ``self`` and
-        ``other`` defined by the composition of the two affine
-        transformations.
+        OUTPUT: the product of the affine group elements ``self`` and
+        ``other`` defined by the composition of the two affine transformations
 
         EXAMPLES::
 
@@ -357,9 +354,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
         INPUT:
 
         - ``v`` -- a polynomial, a multivariate polynomial, a polyhedron, a
-          vector, or anything that can be converted into a vector.
+          vector, or anything that can be converted into a vector
 
-        OUTPUT: The image of ``v`` under the affine group element.
+        OUTPUT: the image of ``v`` under the affine group element
 
         EXAMPLES::
 
@@ -402,7 +399,6 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: cube = polytopes.cube()                                               # needs sage.geometry.polyhedron
             sage: f(cube)                                                               # needs sage.geometry.polyhedron
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 8 vertices
-
         """
         parent = self.parent()
 
@@ -455,7 +451,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the inverse group element.
 
-        OUTPUT: Another affine group element.
+        OUTPUT: another affine group element
 
         EXAMPLES::
 

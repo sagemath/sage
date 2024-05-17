@@ -1,2 +1,2 @@
 python3-devel
-python-setuptools
+python3-setuptools

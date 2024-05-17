@@ -27,11 +27,9 @@ def is_Group(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -50,7 +48,7 @@ def is_Group(x):
 
 cdef class Group(Parent):
     """
-    Base class for all groups
+    Base class for all groups.
 
     TESTS::
 
@@ -78,7 +76,7 @@ cdef class Group(Parent):
     """
     def __init__(self, base=None, category=None):
         """
-        The Python constructor
+        The Python constructor.
 
         TESTS::
 
@@ -175,7 +173,7 @@ cdef class Group(Parent):
 
     def is_finite(self):
         """
-        Returns True if this group is finite.
+        Return ``True`` if this group is finite.
 
         EXAMPLES::
 
@@ -223,8 +221,7 @@ cdef class Group(Parent):
 
     def is_multiplicative(self):
         r"""
-        Returns True if the group operation is given by \* (rather than
-        +).
+        Return ``True`` if the group operation is given by ``*`` (rather than ``+``).
 
         Override for additive groups.
 
@@ -239,11 +236,9 @@ cdef class Group(Parent):
 
     def _an_element_(self):
         """
-        Return an element
+        Return an element.
 
-        OUTPUT:
-
-        An element of the group.
+        OUTPUT: an element of the group
 
         EXAMPLES::
 

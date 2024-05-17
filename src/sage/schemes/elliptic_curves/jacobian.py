@@ -99,7 +99,7 @@ def Jacobian(X, **kwds):
     """
     try:
         return X.jacobian(**kwds)
-    except AttributeError:
+    except (AttributeError, TypeError):
         pass
 
     morphism = kwds.pop('morphism', False)

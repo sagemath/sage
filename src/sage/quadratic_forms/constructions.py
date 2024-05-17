@@ -50,7 +50,7 @@ def BezoutianQuadraticForm(f, g):
 
     # Initialize the quadratic form
     R = f.base_ring()
-    P = PolynomialRing(R, ['x','y'])
+    P = PolynomialRing(R, ['x', 'y'])
     a, b = P.gens()
     n = max(f.degree(), g.degree())
     Q = QuadraticForm(R, n)
@@ -60,9 +60,9 @@ def BezoutianQuadraticForm(f, g):
     for i in range(n):
         for j in range(i, n):
             if i == j:
-                Q[i,j] = bez_poly.coefficient({a:i,b:j})
+                Q[i, j] = bez_poly.coefficient({a: i, b: j})
             else:
-                Q[i,j] = bez_poly.coefficient({a:i,b:j}) * 2
+                Q[i, j] = bez_poly.coefficient({a: i, b: j}) * 2
 
     return Q
 

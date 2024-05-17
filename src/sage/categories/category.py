@@ -1228,7 +1228,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: structure(Rings())
             (Category of unital magmas, Category of additive unital additive magmas)
             sage: structure(Fields())
-            (Category of euclidean domains,)
+            (Category of euclidean domains, Category of noetherian rings)
             sage: structure(Algebras(QQ))
             (Category of unital magmas,
              Category of right modules over Rational Field,
@@ -2597,6 +2597,7 @@ def category_sample():
          Category of Hecke modules over Rational Field,
          Category of Hopf algebras over Rational Field,
          Category of Hopf algebras with basis over Rational Field,
+         Category of Jacobians over Rational Field,
          Category of Lie algebras over Rational Field,
          Category of Weyl groups,
          Category of abelian varieties over Rational Field,
@@ -2839,6 +2840,7 @@ class CategoryWithParameters(Category):
             sage: Algebras(ZZ)._make_named_class_key("parent_class")
             Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces
 
@@ -2851,6 +2853,7 @@ class CategoryWithParameters(Category):
                  and Category of metric spaces,
              Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
@@ -2978,6 +2981,7 @@ class JoinCategory(CategoryWithParameters):
             sage: Modules(ZZ)._make_named_class_key('element_class')
             Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')

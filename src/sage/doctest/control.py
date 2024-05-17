@@ -608,8 +608,8 @@ class DocTestController(SageObject):
 
         Float. The wall time on your computer that would be equivalent
         to one second on a modern computer. Unless you have kick-ass
-        hardware this should always be >= 1.0. Raises a
-        ``RuntimeError`` if there are no stored timings to use as
+        hardware this should always be >= 1.0. This raises a
+        :class:`RuntimeError` if there are no stored timings to use as
         benchmark.
 
         EXAMPLES::
@@ -1102,9 +1102,7 @@ class DocTestController(SageObject):
         EXAMPLES::
 
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: filename = sage.doctest.util.__file__
             sage: DD = DocTestDefaults()
             sage: DC = DocTestController(DD, [filename])
             sage: DC.expand_files_into_sources()
@@ -1579,8 +1577,9 @@ class DocTestController(SageObject):
             self.log("Features detected for doctesting: "
                      + ','.join(available_software.seen()))
             if self.options.hidden_features:
-                features_hidden = [f.name for f in self.options.hidden_features if f.unhide()]
-                self.log("Features that have been hidden: " + ','.join(features_hidden))
+                for f in self.options.hidden_features:
+                    f.unhide()
+                self.log("Features that have been hidden: " + ','.join(available_software.hidden()))
             self.cleanup()
             return self.reporter.error_status
 

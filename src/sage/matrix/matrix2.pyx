@@ -9964,6 +9964,33 @@ cdef class Matrix(Matrix1):
         chi = self.charpoly()
         return chi.is_monomial()
 
+    def is_semisimple(self) -> bool:
+        r"""
+        Return if ``self`` is semisimple.
+
+        A (square) matrix `A` is *semisimple* if the
+        :meth:`minimal polynomial <minpoly>` of `A` is sqaure-free.
+
+        If `A` represents a linear map from `F^n \to F^n` for some field `F`,
+        then this is equivalent to every `A`-invariant subspace of `F^n`
+        has a complementary `A`-invariant subspace. This is also equivalent
+        to saying the matrix is diagonalizable over `\bar{F}`, the algebraic
+        closure of `F`.
+
+        EXAMPLES::
+
+            sage: A = matrix([[0, -1], [1, 0]]); A
+            [ 0 -1]
+            [ 1  0]
+            sage: A.is_semisimple()
+            True
+            sage: A.change_ring(QQ).is_diagonalizable()
+            False
+            sage: A.change_ring(CyclotomicField(4)).is_diagonalizable()
+            True
+        """
+        return self.minpoly().is_squarefree()
+
     def as_sum_of_permutations(self):
         r"""
         Returns the current matrix as a sum of permutation matrices
@@ -10426,23 +10453,23 @@ cdef class Matrix(Matrix1):
             ....:                    [-1, 1, -6, -6, 5]])
             sage: Q, R = A.QR()
             sage: Q
-            [ -0.4588314677411235?  -0.1260506983326509?   0.3812120831224489?   -0.394573711338418?     -0.6874400625964?]
-            [ -0.4588314677411235?   0.4726901187474409? -0.05198346588033394?   0.7172941251646595?     -0.2209628772631?]
-            [  0.2294157338705618?   0.6617661662464172?   0.6619227988762521?  -0.1808720937375480?      0.1964114464561?]
-            [  0.6882472016116853?   0.1890760474989764?  -0.2044682991293135?   0.0966302966543065?     -0.6628886317894?]
+            [ -0.4588314677411235?  -0.1260506983326509?   0.3812120831224489?   -0.394573711338418?      -0.687440062597?]
+            [ -0.4588314677411235?   0.4726901187474409? -0.05198346588033394?    0.717294125164660?      -0.220962877263?]
+            [  0.2294157338705618?   0.6617661662464172?   0.6619227988762521?   -0.180872093737548?      0.1964114464561?]
+            [  0.6882472016116853?   0.1890760474989764?  -0.2044682991293135?    0.096630296654307?      -0.662888631790?]
             [ -0.2294157338705618?   0.5357154679137663?   -0.609939332995919?   -0.536422031427112?      0.0245514308070?]
             sage: R
             [  4.358898943540674? -0.4588314677411235?   13.07669683062202?   6.194224814505168?   2.982404540317303?]
             [                   0   1.670171752907625?  0.5987408170800917?  -1.292019657909672?   6.207996892883057?]
-            [                   0                    0   5.444401659866974?   5.468660610611130? -0.6827161852283857?]
-            [                   0                    0                    0   1.027626039419836?  -3.619300149686620?]
-            [                   0                    0                    0                    0   0.024551430807012?]
+            [                   0                    0   5.444401659866974?   5.468660610611130?  -0.682716185228386?]
+            [                   0                    0                    0   1.027626039419836?   -3.61930014968662?]
+            [                   0                    0                    0                    0    0.02455143080702?]
             sage: Q.conjugate_transpose()*Q
-            [1.000000000000000?            0.?e-18            0.?e-17            0.?e-16            0.?e-13]
-            [           0.?e-18 1.000000000000000?            0.?e-17            0.?e-16            0.?e-13]
-            [           0.?e-17            0.?e-17 1.000000000000000?            0.?e-16            0.?e-13]
-            [           0.?e-16            0.?e-16            0.?e-16 1.000000000000000?            0.?e-13]
-            [           0.?e-13            0.?e-13            0.?e-13            0.?e-13   1.0000000000000?]
+            [1.000000000000000?            0.?e-18            0.?e-17            0.?e-15            0.?e-12]
+            [           0.?e-18 1.000000000000000?            0.?e-16            0.?e-15            0.?e-12]
+            [           0.?e-17            0.?e-16 1.000000000000000?            0.?e-15            0.?e-12]
+            [           0.?e-15            0.?e-15            0.?e-15 1.000000000000000?            0.?e-12]
+            [           0.?e-12            0.?e-12            0.?e-12            0.?e-12    1.000000000000?]
             sage: Q * R == A
             True
 
@@ -10458,24 +10485,24 @@ cdef class Matrix(Matrix1):
             sage: Q, R = A.QR()
             sage: Q
             [                          -0.7302967433402215?    0.2070566455055649? + 0.5383472783144687?*I    0.2463049809998642? - 0.0764456358723292?*I    0.2381617683194332? - 0.1036596032779695?*I]
-            [                           0.0912870929175277?   -0.2070566455055649? - 0.3778783780476559?*I    0.3786559533863033? - 0.1952221495524667?*I     0.701244450214469? - 0.3643711650986595?*I]
-            [   0.6390096504226938? + 0.0912870929175277?*I    0.1708217325420910? + 0.6677576817554466?*I -0.03411475806452072? + 0.04090198741767143?*I    0.3140171085506764? - 0.0825191718705412?*I]
+            [                           0.0912870929175277?   -0.2070566455055649? - 0.3778783780476559?*I    0.3786559533863032? - 0.1952221495524667?*I      0.701244450214469? - 0.364371165098660?*I]
+            [   0.6390096504226938? + 0.0912870929175277?*I    0.1708217325420910? + 0.6677576817554466?*I -0.03411475806452072? + 0.04090198741767143?*I    0.3140171085506763? - 0.0825191718705412?*I]
             [   0.1825741858350554? + 0.0912870929175277?*I  -0.03623491296347385? + 0.0724698259269477?*I   0.8632284069415110? + 0.06322839976356195?*I   -0.4499694867611521? - 0.0116119181208918?*I]
             sage: R
             [                          10.95445115010333?               0.?e-18 - 1.917028951268082?*I    5.385938482134133? - 2.190890230020665?*I  -0.2738612787525831? - 2.190890230020665?*I]
-            [                                           0               4.829596256417300? + 0.?e-18*I   -0.869637911123373? - 5.864879483945125?*I   0.993871898426712? - 0.3054085521207082?*I]
+            [                                           0               4.829596256417300? + 0.?e-17*I   -0.869637911123373? - 5.864879483945125?*I   0.993871898426712? - 0.3054085521207082?*I]
             [                                           0                                            0               12.00160760935814? + 0.?e-16*I -0.2709533402297273? + 0.4420629644486323?*I]
             [                                           0                                            0                                            0               1.942963944258992? + 0.?e-16*I]
             sage: Q.conjugate_transpose()*Q
             [1.000000000000000? + 0.?e-19*I            0.?e-18 + 0.?e-17*I            0.?e-17 + 0.?e-17*I            0.?e-16 + 0.?e-16*I]
             [           0.?e-18 + 0.?e-17*I 1.000000000000000? + 0.?e-17*I            0.?e-17 + 0.?e-17*I            0.?e-16 + 0.?e-16*I]
-            [           0.?e-17 + 0.?e-17*I            0.?e-17 + 0.?e-17*I 1.000000000000000? + 0.?e-17*I            0.?e-16 + 0.?e-16*I]
-            [           0.?e-16 + 0.?e-16*I            0.?e-16 + 0.?e-16*I            0.?e-16 + 0.?e-16*I 1.000000000000000? + 0.?e-16*I]
+            [           0.?e-17 + 0.?e-17*I            0.?e-17 + 0.?e-17*I 1.000000000000000? + 0.?e-16*I            0.?e-16 + 0.?e-16*I]
+            [           0.?e-16 + 0.?e-16*I            0.?e-16 + 0.?e-16*I            0.?e-16 + 0.?e-16*I 1.000000000000000? + 0.?e-15*I]
             sage: Q*R - A
             [            0.?e-17 0.?e-17 + 0.?e-17*I 0.?e-16 + 0.?e-16*I 0.?e-16 + 0.?e-16*I]
-            [            0.?e-18 0.?e-17 + 0.?e-17*I 0.?e-16 + 0.?e-16*I 0.?e-16 + 0.?e-16*I]
+            [            0.?e-18 0.?e-17 + 0.?e-17*I 0.?e-16 + 0.?e-16*I 0.?e-15 + 0.?e-15*I]
             [0.?e-17 + 0.?e-18*I 0.?e-17 + 0.?e-17*I 0.?e-16 + 0.?e-16*I 0.?e-16 + 0.?e-16*I]
-            [0.?e-18 + 0.?e-18*I 0.?e-18 + 0.?e-18*I 0.?e-16 + 0.?e-16*I 0.?e-16 + 0.?e-16*I]
+            [0.?e-18 + 0.?e-18*I 0.?e-18 + 0.?e-17*I 0.?e-16 + 0.?e-16*I 0.?e-15 + 0.?e-16*I]
 
         A rank-deficient rectangular matrix, with both values of the ``full`` keyword.  ::
 
@@ -11660,6 +11687,95 @@ cdef class Matrix(Matrix1):
         else:
             return J
 
+    def jordan_decomposition(self):
+        r"""
+        Return the Jordan decomposition of ``self``.
+
+        The Jordan decomposition of a matrix `A` is a pair of
+        matrices `(S, N)` such that
+
+        - `A = S + N`,
+        - `S` is semisimple,
+        - `N` is nilpotent.
+
+        EXAMPLES::
+
+            sage: A = matrix(QQ, 5, 5, {(0,1): -1, (1,0): 1, (2,3): -1}); A
+            [ 0 -1  0  0  0]
+            [ 1  0  0  0  0]
+            [ 0  0  0 -1  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: S, N = A.jordan_decomposition()
+            sage: S
+            [ 0 -1  0  0  0]
+            [ 1  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: N
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0 -1  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: A == S + N
+            True
+            sage: S.is_semisimple()
+            True
+            sage: N.is_nilpotent()
+            True
+            sage: A.jordan_form()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Some eigenvalue does not exist in Rational Field.
+
+        TESTS::
+
+            sage: X = random_matrix(QQ, 4)
+            sage: S, N = X.jordan_decomposition()
+            sage: X == S + N
+            True
+            sage: S is X.jordan_decomposition()[0]  # result is cached
+            True
+            sage: N is X.jordan_decomposition()[1]  # result is cached
+            True
+            sage: A = matrix(ZZ, 5, 5, {(0,1): -1, (1,0): 1, (2,3): -1})
+            sage: A.jordan_decomposition()
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to compute Jordan decomposition
+            sage: B = A.change_ring(RR)
+            sage: B.jordan_decomposition()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Jordan decomposition not implemented over inexact rings
+        """
+        if not self.base_ring().is_exact():
+            raise NotImplementedError("Jordan decomposition not implemented over inexact rings")
+        JD = self.fetch('jordan_decomposition')
+        if JD is not None:
+            return JD
+        f = self.minpoly()
+        h = f // f.gcd(f.diff())
+        o, p, q = h.xgcd(h.diff())
+        if not o.is_one():
+            raise ValueError("unable to compute Jordan decomposition")
+        A = self
+        hq = h * q
+        # very bad bound, but requires no extra computation
+        # a better bound is the maximum multiplicity in the minpoly,
+        #   but this requires factoring the minpoly
+        for _ in range(self.nrows()):
+            if not h(A):
+                ret = (A, self - A)
+                ret[0].set_immutable()
+                ret[1].set_immutable()
+                self.cache('jordan_decomposition', ret)
+                return ret
+            A -= hq(A)
+        raise ValueError("Jordan decomposition does not exist")
+
     def diagonalization(self, base_field=None):
         """
         Return a diagonal matrix similar to ``self`` along with the
@@ -12076,9 +12192,9 @@ cdef class Matrix(Matrix1):
             sage: # needs sage.combinat sage.libs.pari
             sage: _, T = A.is_similar(B, transformation=True)
             sage: T
-            [ 1.00000000000000? + 0.?e-14*I            0.?e-14 + 0.?e-14*I            0.?e-14 + 0.?e-14*I]
-            [-0.66666666666667? + 0.?e-15*I 0.166666666666667? + 0.?e-15*I -0.83333333333334? + 0.?e-14*I]
-            [ 0.66666666666667? + 0.?e-14*I            0.?e-14 + 0.?e-14*I -0.33333333333333? + 0.?e-14*I]
+            [ 1.0000000000000? + 0.?e-13*I           0.?e-13 + 0.?e-13*I           0.?e-13 + 0.?e-13*I]
+            [-0.6666666666667? + 0.?e-13*I 0.16666666666667? + 0.?e-14*I -0.8333333333334? + 0.?e-13*I]
+            [ 0.6666666666667? + 0.?e-13*I           0.?e-13 + 0.?e-13*I  -0.333333333334? + 0.?e-13*I]
             sage: T.change_ring(QQ)
             [   1    0    0]
             [-2/3  1/6 -5/6]
@@ -18315,12 +18431,13 @@ def _generic_clear_column(m):
     I = ideal_or_fractional(R, a[0, 0])  # need to make sure we change this when a[0,0] changes
     for k in range(1, a.nrows()):
         if a[k, 0] not in I:
+            new_ideal = ideal_or_fractional(R, a[0, 0], a[k, 0])
             try:
-                v = ideal_or_fractional(R, a[0, 0], a[k, 0]).gens_reduced()
+                v = new_ideal.gens_reduced()
             except Exception as msg:
                 raise ArithmeticError("%s\nCan't create ideal on %s and %s" % (msg, a[0, 0], a[k, 0]))
             if len(v) > 1:
-                raise ArithmeticError("Ideal %s not principal" % ideal_or_fractional(R, a[0, 0], a[k, 0]))
+                raise ArithmeticError("Ideal %s not principal" % new_ideal)
             B = v[0]
 
             # now we find c,d, using the fact that c * (a_{0,0}/B) - d *
