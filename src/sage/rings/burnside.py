@@ -232,18 +232,39 @@ class BurnsideRing(CombinatorialFreeModule):
 
     Element = BurnsideRingElement
 
-    def _element_constructor_(self, x=None, action=None, domain=None, name=None):
+    def _element_constructor_(self, x):
         r"""
-        Construct an element of the Burnside ring.
+        Construct an element of the Burnside ring explicitly.
 
         INPUT:
 
         - ``x`` - data for an element
-        - ``action`` - an action on ``domain``
-        - ``domain`` - a finite set
 
         ``x`` can be a subgroup of `G` or a formal sum of such
         subgroups.
+        """
+        if x in self.base_ring():
+            return x * self.one()
+
+        if isinstance(x, list) or isinstance(x, FormalSum):
+            # if x is a list of pairs (coeff, subgroup) or FormalSum
+            if not all([subgroup.is_subgroup(self._G) for coeff, subgroup in x]):
+                raise ValueError("All groups in list must be subgroups of " + repr(self._G))
+            return self.element_class(self, FormalSum([(coeff, self._normalize(subgroup)) for coeff, subgroup in x]))
+        elif x.is_subgroup(self._G):
+            # if x is a single subgroup of self._G
+            return self.element_class(self, FormalSum([(1, self._normalize(x))]))
+
+        raise ValueError(f"unable to convert {x} into {self}")
+
+    def construct_from_action(self, action, domain):
+        r"""
+        Construct an element of the Burnside ring from a group action.
+
+        INPUT:
+
+        - ``action`` - an action on ``domain``
+        - ``domain`` - a finite set
 
         EXAMPLES:
 
@@ -256,6 +277,8 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: a = lambda g, x: X([g(e) for e in x])
             sage: B(domain=X, action=a)
             [(3,4), (1,2), (1,2)(3,4)]
+
+        Next, we create a group action of `S_4` on itself via conjugation::
 
             sage: X = G
             sage: a = lambda g, x: g*x*g.inverse()
@@ -276,9 +299,6 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: B(-3)
             -3*1
         """
-        if action is None and domain is None and x in self.base_ring():
-            return x * self.one()
-
         def find_stabilizer(action, pnt):
             stabilizer = []
             for g in self._G:
@@ -288,37 +308,17 @@ class BurnsideRing(CombinatorialFreeModule):
             gens = H.gens_small()
             return self._G.subgroup(gens)
 
-        # given a group action
-        if action is not None and domain is not None:
-            assert name is None
-            H = PermutationGroup(self._G.gens(), action=action, domain=domain)
-            # decompose H into a sum F of conjugacy classes
-            orbit_list = H.orbits()
-            # find the stabilizer subgroups
-            # TODO: find a way to do this with GAP instead
-            stabilizer_list = [find_stabilizer(action, orbit[0]) for orbit in orbit_list]
-            # normalize each summand and collect terms
-            from collections import Counter
-            C = Counter([self._normalize(stabilizer) for stabilizer in stabilizer_list])
-            # create formal sum
-            F = FormalSum([(coeff, subgroup) for subgroup, coeff in C.items()])
-            return self.element_class(self, F)
-        elif action is not None and domain is None:
-            raise ValueError("If action is provided then domain must be provided")
-        elif action is None and domain is not None:
-            raise ValueError("If domain is provided then action must be provided")
-
-        if isinstance(x, list) or isinstance(x, FormalSum):
-            assert name is None
-            # if x is a list of pairs (coeff, subgroup) or FormalSum
-            if not all([subgroup.is_subgroup(self._G) for coeff, subgroup in x]):
-                raise ValueError("All groups in list must be subgroups of " + repr(self._G))
-            return self.element_class(self, FormalSum([(coeff, self._normalize(subgroup)) for coeff, subgroup in x]))
-        elif x.is_subgroup(self._G):
-            # if x is a single subgroup of self._G
-            return self.element_class(self, FormalSum([(1, self._normalize(x, name))]))
-
-        raise ValueError(f"unable to convert {x} into {self}")
+        H = PermutationGroup(self._G.gens(), action=action, domain=domain)
+        # decompose H into orbits
+        orbit_list = H.orbits()
+        # find the stabilizer subgroups
+        stabilizer_list = [find_stabilizer(action, orbit[0]) for orbit in orbit_list]
+        # normalize each summand and collect terms
+        from collections import Counter
+        C = Counter([self._normalize(stabilizer) for stabilizer in stabilizer_list])
+        # create formal sum
+        F = FormalSum([(coeff, subgroup) for subgroup, coeff in C.items()])
+        return self.element_class(self, F)
 
     def rename_gen(self, subgroup, name):
         r"""
