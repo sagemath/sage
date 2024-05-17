@@ -1,3 +1,1 @@
-# According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
-# version 4.4.0 adds another Python 3.11 typing backport
-typing_extensions >= 4.4.0; python_version<"3.11"
+typing_extensions
