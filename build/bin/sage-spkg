@@ -646,7 +646,7 @@ unset V
 
 # First uninstall the previous version of this package, if any
 if [ "$KEEP_EXISTING" != "yes" ]; then
-    sage-spkg-uninstall "$PKG_BASE" "$SAGE_INST_LOCAL" --log-directory .
+    sage-spkg-uninstall "$PKG_BASE" "$SAGE_INST_LOCAL"
 fi
 
 # To work around #26996: Create lib and set a symlink so that writes into lib64/ end up in lib/
@@ -654,7 +654,7 @@ fi
 
 # Run the pre-install script, if any
 if [ -f spkg-preinst ]; then
-    sage-logger -p "$SAGE_SUDO ./spkg-preinst" spkg-preinst.log
+    sage-logger -P spkg-preinst "$SAGE_SUDO ./spkg-preinst" spkg-preinst
     if [ $? -ne 0 ]; then
         error_msg "Error running the preinst script for $PKG_NAME."
         exit 1
@@ -663,19 +663,19 @@ fi
 
 if [ -f spkg-build ]; then
     # Package has both spkg-build and spkg-install; execute the latter with SAGE_SUDO
-    sage-logger -p "./spkg-build" spkg-build.log
+    sage-logger -P spkg-build "./spkg-build"
     if [ $? -ne 0 ]; then
         error_msg "Error building package $PKG_NAME" "make"
         exit 1
     fi
-    sage-logger -p "$SAGE_SUDO ./spkg-install" spkg-install.log
+    sage-logger -P spkg-install "$SAGE_SUDO ./spkg-install"
     if [ $? -ne 0 ]; then
         error_msg "Error installing package $PKG_NAME" "make"
         exit 1
     fi
 else
     # Package only has spkg-install
-    sage-logger -p "./spkg-install" spkg-install.log
+    sage-logger -P spkg-install "./spkg-install"
     if [ $? -ne 0 ]; then
         error_msg "Error installing package $PKG_NAME" "make"
         exit 1
@@ -761,14 +761,14 @@ post_install() { #################################################
 # Run the post-install script, if any
 # But first complete the delayed installation of wheels.
 if [ -f spkg-pipinst ]; then
-    sage-logger -p "$SAGE_SUDO ./spkg-pipinst" spkg-pipinst.log
+    sage-logger -P spkg-pipinst "$SAGE_SUDO ./spkg-pipinst"
     if [ $? -ne 0 ]; then
         error_msg "Error running the pipinst script for $PKG_NAME."
         exit 1
     fi
 fi
 if [ -f spkg-postinst ]; then
-    sage-logger -p "$SAGE_SUDO ./spkg-postinst" spkg-postinst.log
+    sage-logger -P spkg-postinst "$SAGE_SUDO ./spkg-postinst"
     if [ $? -ne 0 ]; then
         error_msg "Error running the postinst script for $PKG_NAME."
         exit 1
@@ -788,7 +788,7 @@ run_test_suite() { ###############################################
     if [ -f "$INSTALLED_SCRIPTS_DEST"/spkg-check ]; then
         echo "Running the test suite for $PKG_NAME..."
         export PKG_BASE
-        sage-logger -p "$INSTALLED_SCRIPTS_DEST"/spkg-check spkg-check.log
+        sage-logger -P spkg-check "$INSTALLED_SCRIPTS_DEST"/spkg-check
         if [ $? -ne 0 ]; then
             TEST_SUITE_RESULT="failed"
             if [ "$SAGE_CHECK" = "warn" ]; then
