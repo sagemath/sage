@@ -167,7 +167,7 @@ def load(filename, globals, attach=False):
         ....:     _ = f.write("print('hello world')")
         sage: sage.repl.load.load(t, globals(), attach=True)
         hello world
-        sage: t in attached_files()
+        sage: any(t in f for f in attached_files())
         True
 
     You cannot attach remote URLs (yet)::

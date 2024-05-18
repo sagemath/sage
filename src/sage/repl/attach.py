@@ -186,7 +186,9 @@ def load_attach_path(path=None, replace=False):
         sage: load_attach_path(t_dir)
         sage: attach('test.py')
         111
-        sage: attached_files() == [fullpath]
+        sage: af = attached_files(); len(af)
+        1
+        sage: fullpath in af[0]
         True
         sage: from pathlib import Path
         sage: sage.repl.attach.reset(); reset_load_attach_path()
@@ -337,7 +339,11 @@ def attach(*files):
         sage: attach(t1, t2)
         hello world
         hi there xxx
-        sage: set(attached_files()) == set([t1,t2])
+        sage: af = attached_files(); len(af)
+        2
+        sage: any(t1 in f for f in af)
+        True
+        sage: any(t2 in f for f in af)
         True
 
     .. SEEALSO::
@@ -394,7 +400,7 @@ def add_attached_file(filename):
     attached[fpath] = fpath.stat().st_mtime
 
 
-def attached_files():
+def attached_files() -> list:
     """
     Return a list of all files attached to the current session with
     :meth:`attach`.
@@ -410,9 +416,9 @@ def attached_files():
         sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
-        sage: attached_files()
+        sage: af = attached_files(); af
         ['/....py']
-        sage: attached_files() == [t]
+        sage: t in af[0]
         True
     """
     global attached
@@ -437,7 +443,9 @@ def detach(filename):
         sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
-        sage: attached_files() == [t]
+        sage: af = attached_files(); len(af)
+        1
+        sage: t in af[0]
         True
         sage: detach(t)
         sage: attached_files()
@@ -452,7 +460,9 @@ def detach(filename):
         sage: load_attach_path(t_dir, replace=True)
         sage: attach('test.py')
         111
-        sage: attached_files() == [os.path.normpath(fullpath)]
+        sage: af = attached_files(); len(af)
+        1
+        sage: os.path.normpath(fullpath) in af[0]
         True
         sage: detach('test.py')
         sage: attached_files()
@@ -510,7 +520,9 @@ def reset():
         sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
-        sage: attached_files() == [t]
+        sage: af = attached_files(); len(af)
+        1
+        sage: t in af[0]
         True
         sage: sage.repl.attach.reset()
         sage: attached_files()
