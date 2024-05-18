@@ -84,22 +84,22 @@ class BurnsideRingElement(Element):
             sage: G = SymmetricGroup(4)
             sage: B = BurnsideRing(G)
             sage: B(G)
-            1
+            B[1]
 
             sage: X = Subsets(4, 2)
             sage: a = lambda g, x: X([g(e) for e in x])
-            sage: B(domain=X, action=a)
-            [(3,4), (1,2), (1,2)(3,4)]
+            sage: B.construct_from_action(a, X)
+            B[((3,4), (1,2), (1,2)(3,4))]
         """
         Element.__init__(self, parent)
         self._F = F
-        self._monomial_coefficients = {parent._indices(H): c for c, H in self._F}
+        self._monomial_coefficients = {H: c for c, H in self._F}
 
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
         """
-        return repr_lincomb(([(f"B[{H.gens()}]" if self.parent()._names[H] is None else f"B[{self.parent()._names[H]}]", c)
+        return repr_lincomb(([(f"B[{H._C.gens()}]" if self.parent()._names[H] is None else f"B[{self.parent()._names[H]}]", c)
                               for c, H in self._F]),
                             repr_monomial=lambda s: s if isinstance(s, str) else repr(list(s)))
 
@@ -131,9 +131,9 @@ class BurnsideRingElement(Element):
             sage: B = BurnsideRing(G)
             sage: b = B(G)
             sage: b
-            1
+            B[1]
             sage: 2*b
-            2*1
+            2*B[1]
         """
         B = self.parent()
         F = scalar * self._F
@@ -162,15 +162,15 @@ class BurnsideRing(CombinatorialFreeModule):
         self._G = G
         self._cache = dict() # invariant to subgroups
         self._names = dict() # dictionary mapping subgroups to names
-        self.rename_gen(G, "1") # name unit of ring as 1
         basis = ConjugacyClassesOfSubgroups(G)
         category = Algebras(base_ring).Commutative().WithBasis()
         CombinatorialFreeModule.__init__(self, base_ring, basis,
                                         element_class=BurnsideRingElement,
                                         category=category)
+        self.rename_gen(G, "1") # name unit of ring as 1
 
     def _group_invariant(self, H):
-        return H.order()
+        return H._C.order()
 
     def _normalize(self, H, name=None):
         if name is not None:
@@ -180,7 +180,7 @@ class BurnsideRing(CombinatorialFreeModule):
         p = self._group_invariant(H)
         if p in self._cache:
             for H0 in self._cache[p]:
-                if _is_conjugate(self._G, H, H0):
+                if _is_conjugate(self._G, H._C, H0._C):
                     return H0
             else:
                 self._cache[p].append(H)
@@ -218,12 +218,15 @@ class BurnsideRing(CombinatorialFreeModule):
 
         if isinstance(x, list) or isinstance(x, FormalSum):
             # if x is a list of pairs (coeff, subgroup) or FormalSum
-            if not all([subgroup.is_subgroup(self._G) for coeff, subgroup in x]):
+            # Turn all subgroups into elements of ConjugacyClassesOfSubgroups
+            x = [(coeff, self._indices(subgroup)) for coeff, subgroup in x]
+            #Check if all terms are actually subgroups of G
+            if not all([subgroup._C.is_subgroup(self._G) for coeff, subgroup in x]):
                 raise ValueError("All groups in list must be subgroups of " + repr(self._G))
             return self.element_class(self, FormalSum([(coeff, self._normalize(subgroup)) for coeff, subgroup in x]))
-        elif x.is_subgroup(self._G):
+        elif self._indices(x)._C.is_subgroup(self._G):
             # if x is a single subgroup of self._G
-            return self.element_class(self, FormalSum([(1, self._normalize(x))]))
+            return self.element_class(self, FormalSum([(1, self._normalize(self._indices(x)))]))
 
         raise ValueError(f"unable to convert {x} into {self}")
 
@@ -247,10 +250,10 @@ class BurnsideRing(CombinatorialFreeModule):
         assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {H._C: R(coeff) for H, coeff in d.items()}
+            d = {H: R(coeff) for H, coeff in d.items()}
         if remove_zeros:
-            d = {H._C: coeff for H, coeff in d.items() if coeff}
-        l = [(coeff, H._C) for H, coeff in d.items()]
+            d = {H: coeff for H, coeff in d.items() if coeff}
+        l = [(coeff, H) for H, coeff in d.items()]
         return self._element_constructor_(l)
 
     def construct_from_action(self, action, domain):
@@ -271,21 +274,21 @@ class BurnsideRing(CombinatorialFreeModule):
 
             sage: X = Subsets(4, 2)
             sage: a = lambda g, x: X([g(e) for e in x])
-            sage: B(domain=X, action=a)
-            [(3,4), (1,2), (1,2)(3,4)]
+            sage: B.construct_from_action(a, X)
+            B[((3,4), (1,2), (1,2)(3,4))]
 
         Next, we create a group action of `S_4` on itself via conjugation::
 
             sage: X = G
             sage: a = lambda g, x: g*x*g.inverse()
-            sage: B(domain=X, action=a)
-            1 + [(2,4), (1,4)(2,3)] + [(2,3,4)] + [(3,4), (1,2), (1,2)(3,4)] + [(1,3,2,4)]
+            sage: B.construct_from_action(a, X)
+            B[1] + B[((2,4), (1,4)(2,3))] + B[((2,3,4),)] + B[((3,4), (1,2), (1,2)(3,4))] + B[((1,3,2,4),)]
 
         TESTS::
 
             sage: G = SymmetricGroup(4)
             sage: B = BurnsideRing(G)
-            sage: [H._F[0][1][1].order() for H in B.gens()]
+            sage: [H._F[0][1]._C.order() for H in B.gens()]
             [1, 2, 2, 3, 4, 4, 4, 6, 8, 12, 24]
             sage: sorted((o, len(l)) for o, l in B._cache.items())
             [(1, 1), (2, 2), (3, 1), (4, 3), (6, 1), (8, 1), (12, 1), (24, 1)]
@@ -293,7 +296,7 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: G = SymmetricGroup(4)
             sage: B = BurnsideRing(G)
             sage: B(-3)
-            -3*1
+            -3*B[1]
         """
         def find_stabilizer(action, pnt):
             stabilizer = []
@@ -311,7 +314,7 @@ class BurnsideRing(CombinatorialFreeModule):
         stabilizer_list = [find_stabilizer(action, orbit[0]) for orbit in orbit_list]
         # normalize each summand and collect terms
         from collections import Counter
-        C = Counter([self._normalize(stabilizer) for stabilizer in stabilizer_list])
+        C = Counter([self._normalize(self._indices(stabilizer)) for stabilizer in stabilizer_list])
         # create formal sum
         F = FormalSum([(coeff, subgroup) for subgroup, coeff in C.items()])
         return self.element_class(self, F)
@@ -323,21 +326,21 @@ class BurnsideRing(CombinatorialFreeModule):
         """
         if not isinstance(name, str):
             raise TypeError("name must be a string")
-        self._normalize(subgroup, name)
+        self._normalize(self._indices(subgroup), name)
 
     def monomial(self, H):
         r"""
         Return the basis element indexed by `H`.
         """
-        return self.element_class(self, FormalSum([(1, self._normalize(H))]))
+        return self(H)
 
     @cached_method
     def one_basis(self):
         r"""
-        Returns the generators of the underlying group, which index the one
-        of this algebra, as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        Returns the underlying group, which indexes the one of this algebra,
+        as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
         """
-        return self._indices(G)
+        return self._indices(self._G)
 
     @cached_method
     def zero(self):
@@ -353,7 +356,7 @@ class BurnsideRing(CombinatorialFreeModule):
 
     def product_on_basis(self, g1, g2):
         r"""
-        Return the product of ``g1``  and ``g2``.
+        Return the product of the basis elements indexed by ``g1`` and ``g2``.
 
         For the symmetric group, this is also known as the Hadamard
         or tensor product of group actions.
@@ -364,9 +367,9 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: B = BurnsideRing(G)
             sage: matrix([[b * c for b in B.gens()] for c in B.gens()])
             [            6*B[((),)]             3*B[((),)]             2*B[((),)]               B[((),)]]
-            [            3*B[((),)] B[((1,2),)] + B[((),)]               B[((),)]            B[((1,2),)]]
+            [            3*B[((),)] B[((2,3),)] + B[((),)]               B[((),)]            B[((2,3),)]]
             [            2*B[((),)]               B[((),)]        2*B[((1,2,3),)]          B[((1,2,3),)]]
-            [              B[((),)]            B[((1,2),)]          B[((1,2,3),)]                   B[1]]
+            [              B[((),)]            B[((2,3),)]          B[((1,2,3),)]                   B[1]]
         """
         #TODO: Find faster way to multiply
         assert g1.parent() == g2.parent()
@@ -407,7 +410,7 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: G = SymmetricGroup(3)
             sage: B = BurnsideRing(G)
             sage: B.gens()
-            ([()], [(2,3)], [(1,2,3)], 1)
+            (B[((),)], B[((2,3),)], B[((1,2,3),)], B[1])
         """
         return tuple(self(H) for H in self._G.conjugacy_classes_subgroups())
 
