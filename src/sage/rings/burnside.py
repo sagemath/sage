@@ -93,13 +93,14 @@ class BurnsideRingElement(Element):
         """
         Element.__init__(self, parent)
         self._F = F
+        self._monomial_coefficients = {parent._indices(H): c for c, H in self._F}
 
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
         """
-        return repr_lincomb(([(f"B[{H.gens()}]" if name is None else f"B[{name}]", c)
-                              for c, (name, H) in self._F]),
+        return repr_lincomb(([(f"B[{H.gens()}]" if self.parent()._names[H] is None else f"B[{self.parent()._names[H]}]", c)
+                              for c, H in self._F]),
                             repr_monomial=lambda s: s if isinstance(s, str) else repr(list(s)))
 
     def _richcmp_(self, other, op):
@@ -138,46 +139,6 @@ class BurnsideRingElement(Element):
         F = scalar * self._F
         return B.element_class(B, F)
 
-    def _mul_(self, right):
-        r"""
-        Return the product of ``self``  and ``right``.
-
-        For the symmetric group, this is also known as the Hadamard
-        or tensor product of group actions.
-
-        EXAMPLES::
-
-            sage: G = SymmetricGroup(3)
-            sage: B = BurnsideRing(G)
-            sage: matrix([[b * c for b in B.gens()] for c in B.gens()])
-            [        6*[()]         3*[()]         2*[()]           [()]]
-            [        3*[()] [(2,3)] + [()]           [()]        [(2,3)]]
-            [        2*[()]           [()]    2*[(1,2,3)]      [(1,2,3)]]
-            [          [()]        [(2,3)]      [(1,2,3)]              1]
-        """
-        #TODO: Find faster way to multiply
-        assert right.parent() == self.parent()
-        B = self.parent()
-        G = B._G
-
-        def mul(H1, H2):
-            dom1 = [frozenset(g) for g in G.cosets(H1, side="left")]
-            dom2 = [frozenset(g) for g in G.cosets(H2, side="left")]
-            domain = cartesian_product([dom1, dom2])
-
-            def action(g, pair):
-                return (frozenset(g * h for h in pair[0]),
-                        frozenset(g * h for h in pair[1]))
-
-            return B(action=action, domain=domain)._F
-
-        result = FormalSum(0)
-        for c1, (_, g1) in self._F:
-            for c2, (_, g2) in right._F:
-                result += c1 * c2 * mul(g1, g2)
-
-        return B.element_class(B, result)
-
     def _add_(self, right):
         r"""
         Return the sum of ``self``  and ``right``.
@@ -185,6 +146,11 @@ class BurnsideRingElement(Element):
         P = self.parent()
         F = self._F + right._F
         return P.element_class(P, F)
+
+    def monomial_coefficients(self, copy=True):
+        if copy:
+            return dict(self._monomial_coefficients)
+        return self._monomial_coefficients
 
 class BurnsideRing(CombinatorialFreeModule):
     def __init__(self, G, base_ring=ZZ):
@@ -194,7 +160,8 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: TestSuite(B).run()
         """
         self._G = G
-        self._cache = dict() # invariant to a list of pairs (name, subgroup)
+        self._cache = dict() # invariant to subgroups
+        self._names = dict() # dictionary mapping subgroups to names
         self.rename_gen(G, "1") # name unit of ring as 1
         basis = ConjugacyClassesOfSubgroups(G)
         category = Algebras(base_ring).Commutative().WithBasis()
@@ -206,17 +173,20 @@ class BurnsideRing(CombinatorialFreeModule):
         return H.order()
 
     def _normalize(self, H, name=None):
+        if name is not None:
+            self._names[H] = name
+        elif H not in self._names:
+            self._names[H] = None
         p = self._group_invariant(H)
         if p in self._cache:
-            for name0, H0 in self._cache[p]:
+            for H0 in self._cache[p]:
                 if _is_conjugate(self._G, H, H0):
-                    assert name is None or name0 == name, "the name should not change"
-                    return name0, H0
+                    return H0
             else:
-                self._cache[p].append((name, H))
+                self._cache[p].append(H)
         else:
-            self._cache[p] = [(name, H)]
-        return name, H
+            self._cache[p] = [H]
+        return H
 
     def _coerce_map_from_(self, S):
         """
@@ -277,10 +247,10 @@ class BurnsideRing(CombinatorialFreeModule):
         assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {key: R(coeff) for key, coeff in d.items()}
+            d = {H._C: R(coeff) for H, coeff in d.items()}
         if remove_zeros:
-            d = {key: coeff for key, coeff in d.items() if coeff}
-        l = [(coeff, PermutationGroup(gens)) for gens, coeff in d.items()]
+            d = {H._C: coeff for H, coeff in d.items() if coeff}
+        l = [(coeff, H._C) for H, coeff in d.items()]
         return self._element_constructor_(l)
 
     def construct_from_action(self, action, domain):
@@ -355,11 +325,11 @@ class BurnsideRing(CombinatorialFreeModule):
             raise TypeError("name must be a string")
         self._normalize(subgroup, name)
 
-    def monomial(self, subgroup_gens):
+    def monomial(self, H):
         r"""
-        Return the basis element indexed by `subgroup_gens`.
+        Return the basis element indexed by `H`.
         """
-        return self.element_class(self, FormalSum([(1, self._normalize(PermutationGroup(subgroup_gens)))]))
+        return self.element_class(self, FormalSum([(1, self._normalize(H))]))
 
     @cached_method
     def one_basis(self):
@@ -367,7 +337,7 @@ class BurnsideRing(CombinatorialFreeModule):
         Returns the generators of the underlying group, which index the one
         of this algebra, as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
         """
-        return self._G.gens()
+        return self._indices(G)
 
     @cached_method
     def zero(self):
@@ -380,6 +350,36 @@ class BurnsideRing(CombinatorialFreeModule):
             True
         """
         return self.element_class(self, FormalSum([]))
+
+    def product_on_basis(self, g1, g2):
+        r"""
+        Return the product of ``g1``  and ``g2``.
+
+        For the symmetric group, this is also known as the Hadamard
+        or tensor product of group actions.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: B = BurnsideRing(G)
+            sage: matrix([[b * c for b in B.gens()] for c in B.gens()])
+            [            6*B[((),)]             3*B[((),)]             2*B[((),)]               B[((),)]]
+            [            3*B[((),)] B[((1,2),)] + B[((),)]               B[((),)]            B[((1,2),)]]
+            [            2*B[((),)]               B[((),)]        2*B[((1,2,3),)]          B[((1,2,3),)]]
+            [              B[((),)]            B[((1,2),)]          B[((1,2,3),)]                   B[1]]
+        """
+        #TODO: Find faster way to multiply
+        assert g1.parent() == g2.parent()
+        G = g1.parent()._G
+        dom1 = [frozenset(g) for g in G.cosets(g1._C, side="left")]
+        dom2 = [frozenset(g) for g in G.cosets(g2._C, side="left")]
+        domain = cartesian_product([dom1, dom2])
+
+        def action(g, pair):
+            return (frozenset(g * h for h in pair[0]),
+                    frozenset(g * h for h in pair[1]))
+
+        return self.construct_from_action(action, domain)
 
     def group(self):
         r"""
