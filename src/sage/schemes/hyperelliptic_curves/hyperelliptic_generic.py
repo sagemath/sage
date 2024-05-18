@@ -53,6 +53,8 @@ def is_HyperellipticCurve(C):
         sage: is_HyperellipticCurve(C)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_HyperellipticCurve is deprecated; use 'isinstance(..., HyperellipticCurve_generic)' instead")
     return isinstance(C, HyperellipticCurve_generic)
 
 

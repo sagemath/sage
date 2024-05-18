@@ -361,6 +361,8 @@ def is_ToricVariety(x):
         sage: is_ToricVariety(ProjectiveSpace(2))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead")
     return isinstance(x, ToricVariety_field)
 
 

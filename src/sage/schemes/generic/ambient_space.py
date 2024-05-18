@@ -32,7 +32,10 @@ def is_AmbientSpace(x):
         sage: is_AmbientSpace(P.subscheme([x + y + z]))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_AmbientSpace is deprecated; use 'isinstance(..., AmbientSpace)' instead")
     return isinstance(x, AmbientSpace)
+
 
 class AmbientSpace(Scheme):
     """

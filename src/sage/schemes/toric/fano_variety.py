@@ -179,6 +179,8 @@ def is_CPRFanoToricVariety(x):
         sage: is_CPRFanoToricVariety(ProjectiveSpace(2))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead")
     return isinstance(x, CPRFanoToricVariety_field)
 
 

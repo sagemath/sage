@@ -102,6 +102,8 @@ def is_EllipticCurve(x):
         sage: is_EllipticCurve(0)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead")
     return isinstance(x, EllipticCurve_generic)
 
 

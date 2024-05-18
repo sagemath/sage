@@ -190,6 +190,8 @@ def is_AlgebraicScheme(x):
         sage: is_AlgebraicScheme(S)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead")
     return isinstance(x, AlgebraicScheme)
 
 

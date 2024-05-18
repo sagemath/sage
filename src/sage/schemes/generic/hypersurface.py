@@ -48,7 +48,10 @@ def is_Hypersurface(self):
         sage: is_Hypersurface(H)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_Hypersurface is deprecated; use 'isinstance(..., (ProjectiveHypersurface, AffineHypersurface))' instead")
     return isinstance(self, (ProjectiveHypersurface, AffineHypersurface))
+
 
 class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
     """

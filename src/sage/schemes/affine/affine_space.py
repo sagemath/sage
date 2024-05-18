@@ -52,6 +52,8 @@ def is_AffineSpace(x) -> bool:
         sage: is_AffineSpace(Spec(ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead")
     return isinstance(x, AffineSpace_generic)
 
 

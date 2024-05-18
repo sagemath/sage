@@ -146,6 +146,8 @@ def is_ProjectiveSpace(x):
         sage: is_ProjectiveSpace(Spec(ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead")
     return isinstance(x, ProjectiveSpace_ring)
 
 

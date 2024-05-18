@@ -34,7 +34,10 @@ def is_QuarticCurve(C):
         True
 
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_QuarticCurve is deprecated; use 'isinstance(..., QuarticCurve_generic)' instead")
     return isinstance(C, QuarticCurve_generic)
+
 
 class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):
     # DRK: Note that we should check whether the curve is

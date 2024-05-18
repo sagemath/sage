@@ -49,6 +49,8 @@ def is_Scheme(x):
         sage: is_Scheme(X)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead")
     return isinstance(x, Scheme)
 
 
@@ -799,7 +801,10 @@ def is_AffineScheme(x):
         sage: is_AffineScheme(E)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead")
     return isinstance(x, AffineScheme)
+
 
 class AffineScheme(UniqueRepresentation, Scheme):
     """

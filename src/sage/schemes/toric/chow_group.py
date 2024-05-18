@@ -1220,6 +1220,8 @@ def is_ChowGroup(x) -> bool:
         sage: is_ChowGroup('Victoria')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead")
     return isinstance(x, ChowGroup_class)
 
 

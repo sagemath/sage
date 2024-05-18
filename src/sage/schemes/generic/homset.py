@@ -73,6 +73,8 @@ def is_SchemeHomset(H):
         sage: is_SchemeHomset('a string')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead")
     return isinstance(H, SchemeHomset_generic)
 
 

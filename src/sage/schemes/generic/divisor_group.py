@@ -79,6 +79,8 @@ def is_DivisorGroup(x):
         sage: is_DivisorGroup('not a divisor')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "the function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead")
     return isinstance(x, DivisorGroup_generic)
 
 
