@@ -948,6 +948,10 @@ REFERENCES:
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
 
+.. [BLSWZ1999] Anders Björner, Michel Las Vergnas, Bernd Sturmfels, Neil White
+               and Günter Ziegler, *Oriented Matroids*; Cambridge University
+               press, (1999).
+
 .. [BHMPW20a] Tom Braden, June Huh, Jacob P. Matherne, Nicholas Proudfoot,
              and Botong Wang, *A semi-small decomposition of the Chow
              ring of a matroid*, :arxiv:`2002.03341` (2020).
