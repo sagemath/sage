@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 The coercion model
 
@@ -492,7 +491,7 @@ cpdef bint is_mpmath_type(t) noexcept:
 
 cdef class CoercionModel:
     """
-    See also sage.categories.pushout
+    See also :mod:`sage.categories.pushout`
 
     EXAMPLES::
 

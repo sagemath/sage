@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.gap sage.libs.pari
 r"""
 Congruence arithmetic subgroups of `\SL_2(\ZZ)`
@@ -90,9 +89,9 @@ def CongruenceSubgroup_constructor(*args):
         TypeError: Ring of definition must be Z / NZ for some N
     """
     from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-    from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
+    from sage.groups.matrix_gps.matrix_group import MatrixGroup_base
 
-    if is_MatrixGroup(args[0]):
+    if isinstance(args[0], MatrixGroup_base):
         G = args[0]
 
     elif isinstance(args[0], list):

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Construct sheaves on toric varieties
@@ -139,7 +138,7 @@ def LineBundle(X, D):
     return klyachko.Bundle(X, filtrations, check=True)
 
 
-class SheafLibrary():
+class SheafLibrary:
 
     def __init__(self, toric_variety):
         """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 Suffix Tries and Suffix Trees
 """
@@ -1741,7 +1740,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         D = self.transition_function_dictionary()
         string_depth = {0: 0}
         n = len(self.word())
-        labeling = dict()
+        labeling = {}
         treat_node(0, None)
         return labeling
 
@@ -1828,7 +1827,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
                             walk_chain(current_node, child, l, square_start)
 
         prelabeling = self._partial_labeling()
-        labeling = dict()
+        labeling = {}
         D = self.transition_function_dictionary()
         treat_node(0, 0, 0)
         return labeling

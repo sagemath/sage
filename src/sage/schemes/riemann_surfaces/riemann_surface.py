@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs scipy sage.graphs sage.groups
 r"""
 Riemann matrices and endomorphism rings of algebraic Riemann surfaces
@@ -482,7 +481,7 @@ def reparameterize_differential_minpoly(minpoly, z0):
     return mt
 
 
-class RiemannSurface():
+class RiemannSurface:
     r"""
     Construct a Riemann Surface. This is specified by the zeroes of a bivariate
     polynomial with rational coefficients `f(z,w) = 0`.

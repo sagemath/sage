@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 An interface to Anders Buch's Littlewood-Richardson Calculator ``lrcalc``
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs SAGE_SRC
 """
 Recursive Directory Contents
 """
@@ -115,9 +116,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
     Filtering by distribution (distribution package)::
 
         sage: find_python_sources(SAGE_SRC, distributions=['sagemath-tdlib'])
-        ([],
-         [...],
-         [<setuptools.extension.Extension('sage.graphs.graph_decompositions.tdlib')...>])
+        ([], [], [<setuptools.extension.Extension('sage.graphs.graph_decompositions.tdlib')...>])
 
     Benchmarking::
 

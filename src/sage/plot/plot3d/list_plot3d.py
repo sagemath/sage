@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 """
 List plots
 """
@@ -265,7 +264,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         kwds['color'] = txtr
     if is_Matrix(v):
         if (interpolation_type == 'default' or
-            interpolation_type == 'linear' and 'num_points' not in kwds):
+                interpolation_type == 'linear' and 'num_points' not in kwds):
             return list_plot3d_matrix(v, **kwds)
         else:
             data = [(i, j, v[i, j])
@@ -564,7 +563,7 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
     # noise to avoid the problem if needed.
     corr_matrix = numpy.corrcoef(x, y)
     if not (-0.9 <= corr_matrix[0, 1] <= 0.9):
-        ep = float(.000001)
+        ep = .000001
         x = [float(p[0]) + random() * ep for p in v]
         y = [float(p[1]) + random() * ep for p in v]
 
@@ -608,6 +607,7 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
         def g(x, y):
             z = f(x, y)
             return (x, y, z)
+
         G = ParametricSurface(g, (list(numpy.r_[xmin:xmax:num_points * j]),
                                   list(numpy.r_[ymin:ymax:num_points * j])),
                               **kwds)
@@ -624,6 +624,7 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
         def g(x, y):
             z = f([x, y]).item()
             return (x, y, z)
+
         G = ParametricSurface(g, (list(numpy.r_[xmin:xmax:num_points * j]),
                                   list(numpy.r_[ymin:ymax:num_points * j])),
                               **kwds)
@@ -637,10 +638,11 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
             kx = kwds['degree']
             ky = kwds['degree']
         s = kwds.get('smoothing', len(x) - numpy.sqrt(2 * len(x)))
-        s = interpolate.bisplrep(x, y, z, [int(1)] * len(x), xmin, xmax,
+        s = interpolate.bisplrep(x, y, z, [1] * len(x), xmin, xmax,
                                  ymin, ymax, kx=kx, ky=ky, s=s)
 
         def f(x, y):
             return interpolate.bisplev(x, y, s)
+
         return plot3d(f, (xmin, xmax), (ymin, ymax),
                       plot_points=[num_points, num_points], **kwds)

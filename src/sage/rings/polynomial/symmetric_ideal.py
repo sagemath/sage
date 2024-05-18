@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.singular
 """
 Symmetric Ideals of Infinite Polynomial Rings

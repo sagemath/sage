@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Group Algebras
 
@@ -359,7 +358,7 @@ class GroupAlgebras(AlgebrasCategory):
             return ans
 
         # I haven't written is_noetherian(), because I don't know when group
-        # algebras are noetherian, and I haven't written is_prime_field(), because
+        # algebras are Noetherian, and I haven't written is_prime_field(), because
         # I don't know if that means "is canonically isomorphic to a prime field"
         # or "is identical to a prime field".
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Jacobians of curves
 
@@ -9,18 +8,23 @@ AUTHORS:
 - William Stein (2005)
 
 """
-#*****************************************************************************
+
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+from sage.categories.schemes import Jacobians
 from sage.categories.fields import Fields
-_Fields = Fields()
 from sage.schemes.generic.scheme import Scheme, is_Scheme
 from sage.structure.richcmp import richcmp_method, richcmp
+
+_Fields = Fields()
 
 
 def is_Jacobian(J):
@@ -34,6 +38,9 @@ def is_Jacobian(J):
         sage: C = Curve(x^3 + y^3 + z^3)
         sage: J = Jacobian(C)
         sage: is_Jacobian(J)
+        ...
+        DeprecationWarning: Use Jacobian_generic directly
+        See https://github.com/sagemath/sage/issues/35467 for details.
         True
 
     ::
@@ -42,6 +49,8 @@ def is_Jacobian(J):
         sage: is_Jacobian(E)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(35467, "Use Jacobian_generic directly")
     return isinstance(J, Jacobian_generic)
 
 
@@ -57,7 +66,7 @@ def Jacobian(C):
     """
     try:
         return C.jacobian()
-    except AttributeError:
+    except (AttributeError, TypeError):
         return Jacobian_generic(C)
 
 
@@ -76,7 +85,7 @@ class Jacobian_generic(Scheme):
         sage: J = Jacobian(C); J
         Jacobian of Projective Plane Curve over Rational Field defined by x^3 + y^3 + z^3
     """
-    def __init__(self, C):
+    def __init__(self, C, category=None):
         """
         Initialize.
 
@@ -92,12 +101,14 @@ class Jacobian_generic(Scheme):
 
         Note: this is an abstract parent, so we skip element tests::
 
-            sage: TestSuite(J).run(skip =["_test_an_element",\
-                                          "_test_elements",\
-                                          "_test_elements_eq_reflexive",\
-                                          "_test_elements_eq_symmetric",\
-                                          "_test_elements_eq_transitive",\
-                                          "_test_elements_neq",\
+            sage: TestSuite(J).run(skip =["_test_an_element", \
+                                          "_test_zero", \
+                                          "_test_elements", \
+                                          "_test_elements_eq_reflexive", \
+                                          "_test_elements_eq_symmetric", \
+                                          "_test_elements_eq_transitive", \
+                                          "_test_additive_associativity", \
+                                          "_test_elements_neq", \
                                           "_test_some_elements"])
 
         ::
@@ -129,7 +140,7 @@ class Jacobian_generic(Scheme):
         if C.dimension() != 1:
             raise ValueError("C (=%s) must have dimension 1." % C)
         self.__curve = C
-        Scheme.__init__(self, C.base_scheme())
+        Scheme.__init__(self, C.base_scheme(), category=Jacobians(C.base_ring()).or_subcategory(category))
 
     def __richcmp__(self, J, op):
         """
@@ -153,7 +164,7 @@ class Jacobian_generic(Scheme):
             sage: J1 != J2
             True
         """
-        if not is_Jacobian(J):
+        if not isinstance(J, Jacobian_generic):
             return NotImplemented
         return richcmp(self.curve(), J.curve(), op)
 
@@ -207,6 +218,8 @@ class Jacobian_generic(Scheme):
         """
         return self.__curve
 
+    base_curve = curve
+
     def change_ring(self, R):
         r"""
         Return the Jacobian over the ring `R`.
@@ -247,8 +260,10 @@ class Jacobian_generic(Scheme):
             sage: Jac = H.jacobian();   Jac
             Jacobian of Hyperelliptic Curve over Rational Field
              defined by y^2 = x^3 - 10*x + 9
-            sage: F.<a> = QQ.extension(x^2 + 1)                                         # needs sage.rings.number_field
-            sage: Jac.base_extend(F)                                                    # needs sage.rings.number_field
+
+            sage: # needs sage.rings.number_field
+            sage: F.<a> = QQ.extension(x^2 + 1)
+            sage: Jac.base_extend(F)
             Jacobian of Hyperelliptic Curve over Number Field in a with defining
              polynomial x^2 + 1 defined by y^2 = x^3 - 10*x + 9
         """

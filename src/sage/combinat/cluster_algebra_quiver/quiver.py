@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 Quiver
@@ -788,9 +787,8 @@ class ClusterQuiver(SageObject):
         string.append('1')
         string.append('//Matrix')
         string.append(str(m) + ' ' + str(m))
-        for i in range(m):
-            string.append(' '.join(str(M[i, j])
-                                   for j in range(m)))
+        string.extend(' '.join(str(M[i, j]) for j in range(m))
+                      for i in range(m))
         string.append('//Points')
 
         for i in range(m):

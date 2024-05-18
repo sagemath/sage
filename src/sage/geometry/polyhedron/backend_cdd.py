@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 r"""
 The cdd backend for polyhedral computations
 """
@@ -22,9 +21,6 @@ from sage.features.cddlib import CddExecutable
 
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
-
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.geometry.polyhedron.backend_cdd_rdf', 'Polyhedron_RDF_cdd', deprecation=32592)
 
 
 class Polyhedron_cdd(Polyhedron_base):

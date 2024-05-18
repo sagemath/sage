@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-categories
+# coding: utf-8
 """
 Univariate polynomial base class
 
@@ -1476,7 +1476,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: QQ(3*x + 45)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: 3*x + 45 is not a constant polynomial
         """
         return self._scalar_conversion(sage.rings.rational.Rational)
 
@@ -12894,7 +12894,7 @@ cdef class ConstantPolynomialSection(Map):
         sage: phi(y_1)
         Traceback (most recent call last):
         ...
-        TypeError: not a constant polynomial
+        TypeError: y_1 is not a constant polynomial
     """
     cpdef Element _call_(self, x):
         """
@@ -12913,7 +12913,7 @@ cdef class ConstantPolynomialSection(Map):
             sage: m(x)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
         """
         if x.degree() <= 0:
             try:
@@ -12921,7 +12921,7 @@ cdef class ConstantPolynomialSection(Map):
             except AttributeError:
                 return <Element>((<Polynomial>x).constant_coefficient())
         else:
-            raise TypeError("not a constant polynomial")
+            raise TypeError(f"{x} is not a constant polynomial")
 
 cdef class PolynomialBaseringInjection(Morphism):
     """

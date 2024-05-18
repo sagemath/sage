@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Points on elliptic curves
 
@@ -1819,6 +1818,17 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: z.multiplicative_order()
             360
 
+        Another larger example::
+
+            sage: F = GF(65537^2, modulus=[3,-1,1], name='a')
+            sage: F.inject_variables()
+            Defining a
+            sage: E = EllipticCurve(F, [0,1])
+            sage: P = E(22, 28891)
+            sage: Q = E(-93, 2728*a + 64173)
+            sage: P.weil_pairing(Q, 7282, algorithm='sage')
+            53278*a + 36700
+
         An example over a number field::
 
             sage: # needs sage.rings.number_field
@@ -1834,16 +1844,20 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         TESTS:
 
-        Check that the original Sage implementation still works::
+        Check that the original Sage implementation still works and
+        that the result coincides with the PARI implementation::
 
             sage: # needs sage.rings.finite_rings
             sage: GF(65537^2).inject_variables()
             Defining z2
             sage: E = EllipticCurve(GF(65537^2), [0,1])
-            sage: P = E(22, 28891)
-            sage: Q = E(-93, 40438*z2 + 31573)
-            sage: P.weil_pairing(Q, 7282, algorithm='sage')
-            19937*z2 + 65384
+            sage: R, S = E.torsion_basis(7282)
+            sage: a, b = ZZ.random_element(), ZZ.random_element()
+            sage: P = a*R + b*S
+            sage: c, d = ZZ.random_element(), ZZ.random_element()
+            sage: Q = c*R + d*S
+            sage: P.weil_pairing(Q, 7282, algorithm='sage') == P.weil_pairing(Q, 7282, algorithm='pari')
+            True
 
         Passing an unknown ``algorithm=`` argument should fail::
 
@@ -2048,18 +2062,18 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Px.weil_pairing(Qx, 41)^e == num/den
             True
 
-        TESTS:
+        An example over a large base field::
 
-        Check that the PARI output matches the original Sage implementation::
-
-            sage: # needs sage.rings.finite_rings
-            sage: GF(65537^2).inject_variables()
+            sage: F = GF(65537^2, modulus=[3,46810,1], name='z2')
+            sage: F.inject_variables()
             Defining z2
-            sage: E = EllipticCurve(GF(65537^2), [0,1])
+            sage: E = EllipticCurve(F, [0,1])
             sage: P = E(22, 28891)
             sage: Q = E(-93, 40438*z2 + 31573)
             sage: P.tate_pairing(Q, 7282, 2)
             34585*z2 + 4063
+
+        TESTS:
 
         The point ``P (self)`` must have ``n`` torsion::
 
@@ -2338,6 +2352,62 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         ret = ret**e
         return ret
 
+    def point_of_jacobian_of_curve(self):
+        r"""
+        Return the point in the Jacobian of the curve.
+
+        The Jacobian is the one attached to the projective curve associated
+        with this elliptic curve.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF((5,2))
+            sage: E = EllipticCurve(k,[1,0]); E
+            Elliptic Curve defined by y^2 = x^3 + x over Finite Field in a of size 5^2
+            sage: E.order()
+            32
+            sage: P = E([a, 2*a + 4])
+            sage: P
+            (a : 2*a + 4 : 1)
+            sage: P.order()
+            8
+            sage: p = P.point_of_jacobian_of_curve()
+            sage: p
+            [Place (x + 4*a, y + 3*a + 1)]
+            sage: p.order()
+            8
+            sage: Q = 3*P
+            sage: q = Q.point_of_jacobian_of_curve()
+            sage: q == 3*p
+            True
+            sage: G = p.parent()
+            sage: G.order()
+            32
+            sage: G
+            Group of rational points of Jacobian over Finite Field in a of size 5^2 (Hess model)
+            sage: J = G.parent(); J
+            Jacobian of Projective Plane Curve over Finite Field in a of size 5^2
+             defined by x^2*y + y^3 - x*z^2 (Hess model)
+            sage: J.curve() == E.affine_patch(2).projective_closure()
+            True
+        """
+        from sage.schemes.curves.constructor import Curve
+        C = self.curve()
+        A = C.ambient_space()  # projective plane
+        x, y, z = self
+
+        X = Curve(C.defining_ideal().gens(), A)
+        X = X.affine_patch(2).projective_closure()
+        F = X.function_field()
+        P = X(z,x,y).place()
+
+        Pinf = F.places_infinite()[0]
+        assert Pinf.degree() == 1, "no rational point at infinity"
+
+        J = X.jacobian(model='hess', base_div=F.genus()*Pinf)
+        G = J.group(self.base_ring())
+        return G(P - P.degree()*Pinf)
 
 class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     """

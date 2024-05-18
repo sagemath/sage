@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Unit testing for Sage objects
 """
@@ -18,7 +17,7 @@ import sys
 import traceback
 
 
-class TestSuite():
+class TestSuite:
     """
     Test suites for Sage objects.
 
@@ -577,7 +576,7 @@ class InstanceTester(unittest.TestCase):
         return list(some_tuples(S, repeat, self._max_runs, self._max_samples))
 
 
-class PythonObjectWithTests():
+class PythonObjectWithTests:
     """
     Utility class for running basis tests on a plain Python object
     (that is not in SageObject). More test methods can be added here.

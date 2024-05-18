@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Accurate timing information for Sage commands
 
@@ -18,7 +17,7 @@ AUTHOR:
 """
 
 
-class SageTimeitResult():
+class SageTimeitResult:
     r"""
     Represent the statistics of a timeit() command.
 

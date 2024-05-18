@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
@@ -898,7 +897,6 @@ cdef class Farey:
         sig_off()
         return result
 
-    @rename_keyword(rgbcolor='color')
     @options(alpha=1, fill=True, thickness=1, color='lightgray',
              color_even='white',
              zorder=2, linestyle='solid', show_pairing=True,

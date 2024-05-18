@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Inspect Python, Sage, and Cython objects
 
@@ -17,7 +16,7 @@ Cython modules::
     sage: sage_getdoc(sage.rings.rational).lstrip()
     'Rational Numbers...'
     sage: sage_getsource(sage.rings.rational)
-    '# sage_setup: distribution = sagemath-categories...# distutils: ...Rational Numbers...'
+    '# distutils: ...Rational Numbers...'
 
 Python modules::
 
@@ -25,7 +24,7 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
@@ -168,28 +167,6 @@ def is_function_or_cython_function(obj):
     return hasattr(type(obj), "__code__")
 
 
-def loadable_module_extension():
-    r"""
-    Return the filename extension of loadable modules, including the dot.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.misc.sageinspect import loadable_module_extension
-        sage: from importlib.machinery import EXTENSION_SUFFIXES
-        sage: loadable_module_extension() in EXTENSION_SUFFIXES
-        doctest:warning...
-        DeprecationWarning: loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead
-        See https://github.com/sagemath/sage/issues/33636 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(33636, "loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead")
-    # Return the full platform-specific extension module suffix
-    return import_machinery.EXTENSION_SUFFIXES[0]
-
-
 def isclassinstance(obj):
     r"""
     Check if argument is instance of non built-in class
@@ -213,7 +190,7 @@ def isclassinstance(obj):
         sage: isclassinstance(myclass2)
         False
     """
-    builtin_mods = set(['__builtin__', 'builtins', 'exceptions'])
+    builtin_mods = {'__builtin__', 'builtins', 'exceptions'}
 
     return (not inspect.isclass(obj) and
             hasattr(obj, '__class__') and
@@ -626,10 +603,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             [[], ['s', 't', 'u'], [['e'], [], ['pi']]]
 
         """
-        t = []
-        for n in node.elts:
-            t.append(self.visit(n))
-        return t
+        return [self.visit(n) for n in node.elts]
 
     def visit_Tuple(self, node):
         """
@@ -650,10 +624,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             [(), ('x', 'y'), ('Au', 'Al', 'Cu')]
 
         """
-        t = []
-        for n in node.elts:
-            t.append(self.visit(n))
-        return tuple(t)
+        return tuple(self.visit(n) for n in node.elts)
 
     def visit_Dict(self, node):
         """
@@ -1309,7 +1280,6 @@ def sage_getfile(obj):
         sage: from sage.misc.sageinspect import sage_getfile
         sage: sage_getfile(sage.rings.rational)
         '...sage/rings/rational.pyx'
-        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile(Sq)                                                          # needs sage.combinat sage.modules
         '...sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile(x)                                                           # needs sage.symbolic
@@ -1388,7 +1358,6 @@ def sage_getfile_relative(obj):
         sage: from sage.misc.sageinspect import sage_getfile_relative
         sage: sage_getfile_relative(sage.rings.rational)
         'sage/rings/rational.pyx'
-        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile_relative(x)                                                  # needs sage.symbolic
@@ -1575,11 +1544,14 @@ def sage_getargspec(obj):
         ....:     cpdef meet(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
         ....: ''')
         sage: sage_getargspec(Foo.join)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(Bar.join)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(Bar.meet)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     Test that :issue:`17009` is fixed::
 
@@ -1592,7 +1564,8 @@ def sage_getargspec(obj):
 
         sage: from sage.misc.nested_class import MainClass
         sage: sage_getargspec(MainClass.NestedClass.NestedSubClass.dummy)
-        FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds', defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds',
+                    defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In :issue:`18249` was decided to return a generic signature for Python
     builtin functions, rather than to raise an error (which is what Python's
@@ -2270,9 +2243,8 @@ def sage_getsourcelines(obj):
         sage: from sage.misc.sageinspect import sage_getsourcelines
 
         sage: # needs sage.modules
-        sage: from sage.matrix.constructor import matrix
         sage: sage_getsourcelines(matrix)[1]
-        22
+        21
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 
@@ -2301,7 +2273,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(test_func)
         (['def base(x):\n',
         ...
-        '    return x\n'], 8)
+        '    return x\n'], 7)
 
     Here are some cases that were covered in :issue:`11298`;
     note that line numbers may easily change, and therefore we do
@@ -2339,13 +2311,13 @@ def sage_getsourcelines(obj):
         (<class 'sage.misc.test_nested_class.TestNestedParent.Element'>,
          <class 'sage.categories.sets_cat.Sets.element_class'>)
         sage: print(sage_getsource(E))
-            class Element():
+            class Element:
                 "This is a dummy element class"
                 pass
         sage: print(sage_getsource(P))
         class TestNestedParent(UniqueRepresentation, Parent):
             ...
-            class Element():
+            class Element:
                 "This is a dummy element class"
                 pass
 

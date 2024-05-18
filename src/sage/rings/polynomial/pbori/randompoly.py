@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 from random import Random
 from pprint import pformat
 
@@ -100,5 +99,5 @@ def sparse_random_system_data_file_content(number_of_variables, **kwds):
                      dummy_dict)
     polynomials = sparse_random_system(r, **kwds)
     polynomials = pformat(polynomials)
-    return "declare_ring(['x'+str(i) for in range(%s)])\nideal=\\\n%s\n\n" % (
+    return "declare_ring(['x'+str(i) for in range({})])\nideal=\\\n{}\n\n".format(
         number_of_variables, polynomials)

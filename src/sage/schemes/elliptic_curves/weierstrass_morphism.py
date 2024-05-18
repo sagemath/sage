@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Isomorphisms between Weierstrass models of elliptic curves
 
@@ -33,7 +32,7 @@ from sage.structure.sequence import Sequence
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-class baseWI():
+class baseWI:
     r"""
     This class implements the basic arithmetic of isomorphisms between
     Weierstrass models of elliptic curves.
