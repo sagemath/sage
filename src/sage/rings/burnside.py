@@ -29,6 +29,9 @@ class ConjugacyClassOfSubgroups(Element):
     def __le__(self, other):
         return libgap.eval('fail') != libgap.ContainedConjugates(self.parent()._G, other._C, self._C, True)
 
+    def __eq__(self, other):
+        return _is_conjugate(self.parent()._G, self._C, other._C)
+
 class ConjugacyClassesOfSubgroups(Parent):
     def __init__(self, G):
         self._G = G
@@ -99,8 +102,8 @@ class BurnsideRingElement(Element):
         r"""
         Return a string representation of ``self``.
         """
-        return repr_lincomb(([(f"B[{H._C.gens()}]" if self.parent()._names[H] is None else f"B[{self.parent()._names[H]}]", c)
-                              for c, H in self._F]),
+        return repr_lincomb(([(f"B[{H._C.gens()}]" if self.parent()._names[H] is None else
+                            f"B[{self.parent()._names[H]}]", c) for c, H in self._F]),
                             repr_monomial=lambda s: s if isinstance(s, str) else repr(list(s)))
 
     def _richcmp_(self, other, op):
