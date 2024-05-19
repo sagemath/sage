@@ -64,7 +64,7 @@ AUTHORS:
 - John Jones (2017-07): improved check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
 - Anna Haensch (2018-03): added :meth:`quadratic_defect`
 - Michael Daub, Chris Wuthrich (2020-09-01): added Dirichlet characters for abelian fields
-
+- Mckenzie West (2024-02-09): address :issue:`28113` and :issue:`32982` for :meth:`completely_split_primes`
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2007 William Stein <wstein@gmail.com>
@@ -4126,17 +4126,76 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<xi> = NumberField(x^3 - 3*x + 1)
             sage: K.completely_split_primes(100)
             [17, 19, 37, 53, 71, 73, 89]
+
+        TESTS:
+
+        This checks that the example at :issue:`28113` is fixed::
+
+            sage: K.<a> = QuadraticField(17)
+            sage: K.completely_split_primes(20)
+            [2, 13, 19]
+
+        This checks that the example at :issue:`32982` is fixed::
+
+            sage: x = polygen(QQ)
+            sage: f = x^3 - x^2 + 2*x + 8
+            sage: K.<a> = NumberField(f)
+            sage: K.completely_split_primes(80)
+            [2, 59, 73, 79]
+
+        This checks a case where the index of Z[a] in OK is greater than 1::
+
+            sage: K.<a> = NumberField(x^2-13)
+            sage: K.completely_split_primes(80)
+            [3, 17, 23, 29, 43, 53, 61, 79]
+
+        This checks that extra primes in the polynomial discriminant are not a factor::
+
+            sage: K.<a> = NumberField(x^2-13*9*49)
+            sage: K.completely_split_primes(80)
+            [3, 17, 23, 29, 43, 53, 61, 79]
+
+        This checks that the method works in the case of fields of non-prime degree::
+
+            sage: L.<a> = NumberField(x^6 + 108) # splitting field of x^3-2
+            sage: L.completely_split_primes(80)
+            [31, 43]
+
+        .. NOTE::
+
+            Ramified primes are not considered to be completely split.
         """
         from sage.rings.fast_arith import prime_range
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         split_primes = []
+
+        field_disc = self.discriminant()
+        field_degree = self.degree()
+
+        def_poly = self.defining_polynomial()
+        poly_disc = def_poly.discriminant()
+
         for p in prime_range(B):
+            if field_disc % p == 0:
+                continue
             Fp = GF(p)
             FpT = PolynomialRing(Fp, 'T')
-            g = FpT(self.defining_polynomial())
-            if len(factor(g)) == self.degree():
+            g = FpT(def_poly)
+            num_factors = sum(f[1] for f in factor(g))
+            if num_factors == field_degree:
+
+                # Sometimes this happens even when the prime is not compeltely split
+                # for example, if we're working in a quadratic field with discriminant
+                # 1 mod 4. Then 2 could be a problem.
+                # So we're just going to brute force now, and factor the ideal.
+                # It is faster to factor a polylnomial over a finite field than
+                # it is to factor an ideal in a number field.
+                if poly_disc % p == 0:
+                    if len(self.ideal(p).factor()) != field_degree:
+                        continue
+
                 split_primes.append(p)
         return split_primes
 
