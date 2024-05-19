@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Functions to construct widgets, based on the old SageNB interface.
 

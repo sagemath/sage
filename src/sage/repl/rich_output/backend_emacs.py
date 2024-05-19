@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Emacs sage-mode Backend for the Sage Rich Output System
 

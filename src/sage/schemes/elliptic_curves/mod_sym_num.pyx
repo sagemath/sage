@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #cdivision=False
 #cython: cdivision_warnings=False
 #cython: profile=False
