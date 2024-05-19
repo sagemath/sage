@@ -25,6 +25,9 @@ def is_AmbientSpace(x):
 
         sage: from sage.schemes.generic.ambient_space import is_AmbientSpace
         sage: is_AmbientSpace(ProjectiveSpace(3, ZZ))
+        doctest:warning...
+        DeprecationWarning: the function is_AmbientSpace is deprecated; use 'isinstance(..., AmbientSpace)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_AmbientSpace(AffineSpace(2, QQ))
         True

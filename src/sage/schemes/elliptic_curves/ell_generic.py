@@ -98,6 +98,9 @@ def is_EllipticCurve(x):
         sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
         sage: E = EllipticCurve([1,2,3/4,7,19])
         sage: is_EllipticCurve(E)
+        doctest:warning...
+        DeprecationWarning: the function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_EllipticCurve(0)
         False

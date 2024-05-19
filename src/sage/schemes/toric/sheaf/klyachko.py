@@ -69,6 +69,9 @@ def is_KlyachkoBundle(X):
 
         sage: from sage.schemes.toric.sheaf.klyachko import is_KlyachkoBundle
         sage: is_KlyachkoBundle('test')
+        doctest:warning...
+        DeprecationWarning: the function is_KlyachkoBundle is deprecated; use 'isinstance(..., KlyachkoBundle_class)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
     """
     from sage.misc.superseded import deprecation

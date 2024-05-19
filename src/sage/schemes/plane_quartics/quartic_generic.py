@@ -31,6 +31,9 @@ def is_QuarticCurve(C):
         sage: x,y,z = PolynomialRing(QQ, ['x','y','z']).gens()
         sage: Q = QuarticCurve(x**4 + y**4 + z**4)
         sage: is_QuarticCurve(Q)
+        doctest:warning...
+        DeprecationWarning: the function is_QuarticCurve is deprecated; use 'isinstance(..., QuarticCurve_generic)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
 
     """

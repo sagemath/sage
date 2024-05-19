@@ -351,6 +351,9 @@ def is_ToricVariety(x):
 
         sage: from sage.schemes.toric.variety import is_ToricVariety
         sage: is_ToricVariety(1)
+        doctest:warning...
+        DeprecationWarning: the function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: fan = FaceFan(lattice_polytope.cross_polytope(2))
         sage: P = ToricVariety(fan)

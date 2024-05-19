@@ -60,6 +60,9 @@ def is_Berkovich(space) -> bool:
         sage: B = Berkovich_Cp_Projective(3)
         sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
         sage: is_Berkovich(B)
+        doctest:warning...
+        DeprecationWarning: the function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
     from sage.misc.superseded import deprecation
@@ -81,6 +84,9 @@ def is_Berkovich_Cp(space) -> bool:
         sage: B = Berkovich_Cp_Projective(3)
         sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
         sage: is_Berkovich_Cp(B)
+        doctest:warning...
+        DeprecationWarning: the function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
     from sage.misc.superseded import deprecation

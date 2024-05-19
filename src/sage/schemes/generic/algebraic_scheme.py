@@ -159,6 +159,9 @@ def is_AlgebraicScheme(x):
           x^2 + y^2
         sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
         sage: is_AlgebraicScheme(V)
+        doctest:warning...
+        DeprecationWarning: the function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
 
     Affine space is itself not an algebraic scheme, though the closed

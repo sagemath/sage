@@ -67,6 +67,9 @@ def is_SchemeHomset(H):
           Defn: Identity map
         sage: from sage.schemes.generic.homset import is_SchemeHomset
         sage: is_SchemeHomset(f)
+        doctest:warning...
+        DeprecationWarning: the function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: is_SchemeHomset(f.parent())
         True

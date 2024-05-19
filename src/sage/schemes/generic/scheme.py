@@ -44,6 +44,9 @@ def is_Scheme(x):
 
         sage: from sage.schemes.generic.scheme import is_Scheme
         sage: is_Scheme(5)
+        doctest:warning...
+        DeprecationWarning: the function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: X = Spec(QQ)
         sage: is_Scheme(X)
@@ -796,6 +799,9 @@ def is_AffineScheme(x):
 
         sage: from sage.schemes.generic.scheme import is_AffineScheme
         sage: is_AffineScheme(5)
+        doctest:warning...
+        DeprecationWarning: the function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: E = Spec(QQ)
         sage: is_AffineScheme(E)

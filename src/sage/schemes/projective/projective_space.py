@@ -140,6 +140,9 @@ def is_ProjectiveSpace(x):
 
         sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
         sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: the function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
         True

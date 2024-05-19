@@ -1216,6 +1216,9 @@ def is_ChowGroup(x) -> bool:
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import is_ChowGroup
         sage: is_ChowGroup(A)
+        doctest:warning...
+        DeprecationWarning: the function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_ChowGroup('Victoria')
         False
