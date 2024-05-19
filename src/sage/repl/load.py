@@ -28,7 +28,7 @@ def is_loadable_filename(filename):
 
     INPUT:
 
-    - ``filename`` -- a string or Path object
+    - ``filename`` -- a string or :class:`Path` object
 
     OUTPUT:
 
@@ -90,7 +90,7 @@ def load(filename, globals, attach=False):
 
     INPUT:
 
-    - ``filename`` -- a string (denoting a filename or URL) or a Path object
+    - ``filename`` -- a string (denoting a filename or URL) or a :class:`Path` object
 
     - ``globals`` -- a string:object dictionary; the context in which
       to execute the file contents.
