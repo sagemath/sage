@@ -464,7 +464,7 @@ class AffinePlaneCurve(AffineCurve):
         A 5-nodal curve of degree 11.  This example also illustrates
         some of the optional arguments::
 
-            sage: # needs sage.plot()
+            sage: # needs sage.plot
             sage: R.<x, y> = ZZ[]
             sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9
             ....:            - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
