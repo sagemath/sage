@@ -31,9 +31,6 @@ class ConjugacyClassOfSubgroups(Element):
     def __le__(self, other):
         return libgap.eval('fail') != libgap.ContainedConjugates(self.parent()._G, other._C, self._C, True)
 
-    def __eq__(self, other):
-        return _is_conjugate(self.parent()._G, self._C, other._C)
-
 class ConjugacyClassesOfSubgroups(Parent):
     def __init__(self, G):
         self._G = G
@@ -122,11 +119,20 @@ class BurnsideRing(CombinatorialFreeModule):
             # Turn all subgroups into elements of ConjugacyClassesOfSubgroups
             x = [(self._indices(subgroup), coeff) for coeff, subgroup in x]
             return self._from_dict(dict(x))
-        elif self._indices(x)._C.is_subgroup(self._G):
+        elif x.is_subgroup(self._G):
             # if x is a single subgroup of self._G
-            return self._from_dict(dict([(self._indices(x), 1)]))
+            return self._from_dict({self._indices(x): 1})
 
         raise ValueError(f"unable to convert {x} into {self}")
+
+    def __getitem__(self, H):
+        r"""
+        Return the basis element indexed by ``H``. ``H`` must be a subgroup of ``self._G``.
+        """
+        if H.is_subgroup(self._G):
+            return self._from_dict({self._indices(H): 1})
+        else:
+            raise ValueError(f"{H} must be a subgroup of {self._G}")
 
     def construct_from_action(self, action, domain):
         r"""
@@ -160,9 +166,9 @@ class BurnsideRing(CombinatorialFreeModule):
 
             sage: G = SymmetricGroup(4)
             sage: B = BurnsideRing(G)
-            sage: [H._F[0][1]._C.order() for H in B.gens()]
+            sage: [list(b.monomial_coefficients().keys())[0]._C.order() for b in B.gens()]
             [1, 2, 2, 3, 4, 4, 4, 6, 8, 12, 24]
-            sage: sorted((o, len(l)) for o, l in B._cache.items())
+            sage: sorted((o, len(l)) for o, l in B._indices._cache.items())
             [(1, 1), (2, 2), (3, 1), (4, 3), (6, 1), (8, 1), (12, 1), (24, 1)]
 
             sage: G = SymmetricGroup(4)
