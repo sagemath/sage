@@ -72,11 +72,11 @@ def is_DivisorGroup(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.generic.divisor_group import DivisorGroup_generic, DivisorGroup
+        sage: from sage.schemes.generic.divisor_group import is_DivisorGroup, DivisorGroup
         sage: Div = DivisorGroup(Spec(ZZ), base_ring=QQ)
-        sage: isinstance(Div, DivisorGroup_generic)
+        sage: is_DivisorGroup(Div)
         True
-        sage: isinstance('not a divisor', DivisorGroup_generic)
+        sage: is_DivisorGroup('not a divisor')
         False
     """
     from sage.misc.superseded import deprecation

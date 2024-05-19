@@ -42,11 +42,11 @@ def is_Scheme(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.generic.scheme import Scheme
-        sage: isinstance(5, Scheme)
+        sage: from sage.schemes.generic.scheme import is_Scheme
+        sage: is_Scheme(5)
         False
         sage: X = Spec(QQ)
-        sage: isinstance(X, Scheme)
+        sage: is_Scheme(X)
         True
     """
     from sage.misc.superseded import deprecation
@@ -794,11 +794,11 @@ def is_AffineScheme(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.generic.scheme import AffineScheme
-        sage: isinstance(5, AffineScheme)
+        sage: from sage.schemes.generic.scheme import is_AffineScheme
+        sage: is_AffineScheme(5)
         False
         sage: E = Spec(QQ)
-        sage: isinstance(E, AffineScheme)
+        sage: is_AffineScheme(E)
         True
     """
     from sage.misc.superseded import deprecation

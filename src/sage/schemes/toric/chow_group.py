@@ -1214,10 +1214,10 @@ def is_ChowGroup(x) -> bool:
 
         sage: P2 = toric_varieties.P2()
         sage: A = P2.Chow_group()
-        sage: from sage.schemes.toric.chow_group import ChowGroup_class
-        sage: isinstance(A, ChowGroup_class)
+        sage: from sage.schemes.toric.chow_group import is_ChowGroup
+        sage: is_ChowGroup(A)
         True
-        sage: isinstance('Victoria', ChowGroup_class)
+        sage: is_ChowGroup('Victoria')
         False
     """
     from sage.misc.superseded import deprecation

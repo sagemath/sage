@@ -58,8 +58,8 @@ def is_Berkovich(space) -> bool:
     EXAMPLES::
 
         sage: B = Berkovich_Cp_Projective(3)
-        sage: from sage.schemes.berkovich.berkovich_space import Berkovich
-        sage: isinstance(B, Berkovich)
+        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
+        sage: is_Berkovich(B)
         True
     """
     from sage.misc.superseded import deprecation
@@ -79,8 +79,8 @@ def is_Berkovich_Cp(space) -> bool:
     EXAMPLES::
 
         sage: B = Berkovich_Cp_Projective(3)
-        sage: from sage.schemes.berkovich.berkovich_space import Berkovich
-        sage: isinstance(B, Berkovich)
+        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
+        sage: is_Berkovich_Cp(B)
         True
     """
     from sage.misc.superseded import deprecation

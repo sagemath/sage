@@ -138,12 +138,12 @@ def is_ProjectiveSpace(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.projective.projective_space import ProjectiveSpace_ring
-        sage: isinstance(ProjectiveSpace(5, names='x'), ProjectiveSpace_ring)
+        sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
         True
         sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
         True
-        sage: isinstance(Spec(ZZ), ProjectiveSpace_ring)
+        sage: is_ProjectiveSpace(Spec(ZZ))
         False
     """
     from sage.misc.superseded import deprecation

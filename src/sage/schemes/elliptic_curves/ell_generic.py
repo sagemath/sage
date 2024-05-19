@@ -95,11 +95,11 @@ def is_EllipticCurve(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
         sage: E = EllipticCurve([1,2,3/4,7,19])
-        sage: isinstance(E, EllipticCurve_generic)
+        sage: is_EllipticCurve(E)
         True
-        sage: isinstance(0, EllipticCurve_generic)
+        sage: is_EllipticCurve(0)
         False
     """
     from sage.misc.superseded import deprecation

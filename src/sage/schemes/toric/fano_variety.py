@@ -168,15 +168,15 @@ def is_CPRFanoToricVariety(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.fano_variety import CPRFanoToricVariety_field
-        sage: isinstance(1, CPRFanoToricVariety_field)
+        sage: from sage.schemes.toric.fano_variety import is_CPRFanoToricVariety
+        sage: is_CPRFanoToricVariety(1)
         False
         sage: FTV = toric_varieties.P2()
         sage: FTV
         2-d CPR-Fano toric variety covered by 3 affine patches
-        sage: isinstance(FTV, CPRFanoToricVariety_field)
+        sage: is_CPRFanoToricVariety(FTV)
         True
-        sage: isinstance(ProjectiveSpace(2), CPRFanoToricVariety_field)
+        sage: is_CPRFanoToricVariety(ProjectiveSpace(2))
         False
     """
     from sage.misc.superseded import deprecation

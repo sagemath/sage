@@ -27,10 +27,10 @@ def is_QuarticCurve(C):
 
     EXAMPLES::
 
-        sage: from sage.schemes.plane_quartics.quartic_generic import QuarticCurve_generic
+        sage: from sage.schemes.plane_quartics.quartic_generic import is_QuarticCurve
         sage: x,y,z = PolynomialRing(QQ, ['x','y','z']).gens()
         sage: Q = QuarticCurve(x**4 + y**4 + z**4)
-        sage: isinstance(Q, QuarticCurve_generic)
+        sage: is_QuarticCurve(Q)
         True
 
     """

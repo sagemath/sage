@@ -65,12 +65,12 @@ def is_SchemeHomset(H):
         sage: f = Spec(QQ).identity_morphism();  f
         Scheme endomorphism of Spectrum of Rational Field
           Defn: Identity map
-        sage: from sage.schemes.generic.homset import SchemeHomset_generic
-        sage: isinstance(f, SchemeHomset_generic)
+        sage: from sage.schemes.generic.homset import is_SchemeHomset
+        sage: is_SchemeHomset(f)
         False
-        sage: isinstance(f.parent(), SchemeHomset_generic)
+        sage: is_SchemeHomset(f.parent())
         True
-        sage: isinstance('a string', SchemeHomset_generic)
+        sage: is_SchemeHomset('a string')
         False
     """
     from sage.misc.superseded import deprecation

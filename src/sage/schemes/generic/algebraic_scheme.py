@@ -157,20 +157,20 @@ def is_AlgebraicScheme(x):
         sage: V = A2.subscheme([x^2 + y^2]); V
         Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
           x^2 + y^2
-        sage: from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
-        sage: isinstance(V, AlgebraicScheme)
+        sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
+        sage: is_AlgebraicScheme(V)
         True
 
     Affine space is itself not an algebraic scheme, though the closed
     subscheme defined by no equations is::
 
-        sage: from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
-        sage: isinstance(AffineSpace(10, QQ), AlgebraicScheme)
+        sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
+        sage: is_AlgebraicScheme(AffineSpace(10, QQ))
         False
         sage: V = AffineSpace(10, QQ).subscheme([]); V
         Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
           (no polynomials)
-        sage: isinstance(V, AlgebraicScheme)
+        sage: is_AlgebraicScheme(V)
         True
 
     We create a more complicated closed subscheme::
@@ -179,15 +179,15 @@ def is_AlgebraicScheme(x):
         sage: X = A.subscheme([sum(x)]); X
         Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
           x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9
-        sage: isinstance(X, AlgebraicScheme)
+        sage: is_AlgebraicScheme(X)
         True
 
     ::
 
-        sage: isinstance(QQ, AlgebraicScheme)
+        sage: is_AlgebraicScheme(QQ)
         False
         sage: S = Spec(QQ)
-        sage: isinstance(S, AlgebraicScheme)
+        sage: is_AlgebraicScheme(S)
         False
     """
     from sage.misc.superseded import deprecation
