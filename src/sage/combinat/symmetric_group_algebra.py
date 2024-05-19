@@ -1244,6 +1244,100 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 blocks[c] = [la]
         return blocks
 
+    def ladder_idemponent(self, la):
+        r"""
+        Return the ladder idempontent of ``self``.
+
+        Let `F` be a field of characteristic `p`. The *ladder idempotent*
+        of shape `\lambda` is the idempotent of `F[S_n]` defined as follows.
+        Let `T` be the :meth:`ladder tableau
+        <sage.combinat.partition.Partition.ladder_tableau>` of shape `\lambda`.
+        Let `[T]` be the set of standard tableaux whose residue sequence
+        is the same as for `T`. Let `\alpha` be the sizes of the ladders
+        of `\lambda`. Then the ladder idempontent is constructed as
+
+        .. MATH::
+
+            \widetilde{e}_{\lambda} := \frac{1}{\alpha!}
+              \left( \sum_{\sigma \in S_{\alpha}} \sigma \right)
+              \left( \overline{\sum_{U \in [T]} E_U} \right),
+
+        where `E_{UU}` is the :meth:`seminormal_basis` element over `\QQ`
+        and we project the sum to `F`, `S_{\alpha}` is the Young subgroup
+        corresponding to `\alpha`, and `\alpha! = \alpha_1! \cdots \alpha_k!`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+            sage: for la in Partitions(SGA.n):
+            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     print(la)
+            ....:     print(idem)
+            ....:     assert idem^2 == idem
+            [4]
+            2*[1, 2, 3, 4] + 2*[1, 2, 4, 3] + 2*[2, 1, 3, 4] + 2*[2, 1, 4, 3]
+             + 2*[3, 4, 1, 2] + 2*[3, 4, 2, 1] + 2*[4, 3, 1, 2] + 2*[4, 3, 2, 1]
+            [3, 1]
+            2*[1, 2, 3, 4] + 2*[1, 2, 4, 3] + 2*[2, 1, 3, 4] + 2*[2, 1, 4, 3]
+             + [3, 4, 1, 2] + [3, 4, 2, 1] + [4, 3, 1, 2] + [4, 3, 2, 1]
+            [2, 2]
+            2*[1, 2, 3, 4] + 2*[1, 2, 4, 3] + 2*[2, 1, 3, 4] + 2*[2, 1, 4, 3]
+             + 2*[3, 4, 1, 2] + 2*[3, 4, 2, 1] + 2*[4, 3, 1, 2] + 2*[4, 3, 2, 1]
+            [2, 1, 1]
+            2*[1, 2, 3, 4] + [1, 2, 4, 3] + 2*[1, 3, 2, 4] + [1, 3, 4, 2]
+             + [1, 4, 2, 3] + 2*[1, 4, 3, 2] + 2*[2, 1, 3, 4] + [2, 1, 4, 3]
+             + 2*[2, 3, 1, 4] + [2, 3, 4, 1] + [2, 4, 1, 3] + 2*[2, 4, 3, 1]
+             + 2*[3, 1, 2, 4] + [3, 1, 4, 2] + 2*[3, 2, 1, 4] + [3, 2, 4, 1]
+             + [4, 1, 2, 3] + 2*[4, 1, 3, 2] + [4, 2, 1, 3] + 2*[4, 2, 3, 1]
+            [1, 1, 1, 1]
+            2*[1, 2, 3, 4] + [1, 2, 4, 3] + [2, 1, 3, 4] + 2*[2, 1, 4, 3]
+             + 2*[3, 4, 1, 2] + [3, 4, 2, 1] + [4, 3, 1, 2] + 2*[4, 3, 2, 1]
+
+        When `p = 0`, these idempotents will generate all of the simple
+        modules (which are the :meth:`Specht modules <specht_module>`
+        and also projective modules)::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: for la in Partitions(SGA.n):
+            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     assert idem^2 == idem
+            ....:     print(la, SGA.principal_ideal(idem).dimension())
+            [5] 1
+            [4, 1] 4
+            [3, 2] 5
+            [3, 1, 1] 6
+            [2, 2, 1] 5
+            [2, 1, 1, 1] 4
+            [1, 1, 1, 1, 1] 1
+            sage: [StandardTableaux(la).cardinality() for la in Partitions(SGA.n)]
+            [1, 4, 5, 6, 5, 4, 1]
+
+        REFERENCES:
+
+        - [Ryom2015]_
+        """
+        R = self.base_ring()
+        p = R.characteristic()
+        n = self.n
+        if not p:
+            p = n + 1
+        la = _Partitions(la)
+        if sum(la) != n:
+            raise ValueError(f"{la} is not a partition of {n}")
+        Tlad, alpha = la.ladder_tableau(p, ladder_lengths=True)
+        if not all(val < p for val in alpha):
+            raise ValueError(f"{la} is not {p}-ladder restricted")
+        Tclass = Tlad.residue_sequence(p).standard_tableaux()
+        Elad = sum(epsilon_ik(T, T) for T in Tclass)
+        Elad = self.element_class(self, {sigma: R(c) for sigma, c in Elad._monomial_coefficients.items()})
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        YG = SymmetricGroup(n).young_subgroup(alpha)
+        coeff = ~R.prod(factorial(val) for val in alpha)
+        G = self.group()
+        eprod = self.element_class(self, {G(list(elt.tuple())): coeff
+                                          for elt in YG})
+        return Elad * eprod
+
     @cached_method
     def algebra_generators(self):
         r"""

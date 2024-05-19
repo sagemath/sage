@@ -462,6 +462,14 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
 
+    The resulting order of vertices is unspecified but deterministic::
+
+        sage: from sage.graphs.graph_input import from_dict_of_dicts
+        sage: g = Graph()
+        sage: from_dict_of_dicts(g, {i: {} for i in range(99, 90, -1)})
+        sage: g.vertices(sort=False)
+        [99, 98, 97, 96, 95, 94, 93, 92, 91]
+
     TESTS:
 
     :issue:`32831` is fixed::
@@ -493,8 +501,11 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     G.allow_loops(loops, check=False)
     G.allow_multiple_edges(multiedges, check=False)
-    verts = set().union(M.keys(), *M.values())
-    G.add_vertices(verts)
+    # Use keys of a dictionary instead of a set, to preserve insertion order
+    verts = dict(M)
+    for d in M.values():
+        verts.update(d)
+    G.add_vertices(verts.keys())
     if convert_empty_dict_labels_to_None:
         def relabel(x):
             return x if x != {} else None
@@ -504,7 +515,7 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     is_directed = G.is_directed()
     if not is_directed and multiedges:
-        v_to_id = {v: i for i, v in enumerate(verts)}
+        v_to_id = {v: i for i, v in enumerate(verts.keys())}
         for u in M:
             for v in M[u]:
                 if v_to_id[u] <= v_to_id[v] or v not in M or u not in M[v] or u == v:
@@ -543,8 +554,18 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
         sage: from_dict_of_lists(g, graphs.PetersenGraph().to_dictionary())
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
+
+    The resulting order of vertices is unspecified but deterministic::
+
+        sage: from sage.graphs.graph_input import from_dict_of_lists
+        sage: g = Graph()
+        sage: from_dict_of_lists(g, {i: [] for i in range(99, 90, -1)})
+        sage: g.vertices(sort=False)
+        [99, 98, 97, 96, 95, 94, 93, 92, 91]
     """
-    verts = set().union(D.keys(), *D.values())
+    # Use keys of a dictionary instead of a set, to preserve insertion order
+    verts = dict(D)
+    verts.update({v: None for l in D.values() for v in l})
     if not loops:
         if any(u in neighb for u, neighb in D.items()):
             if loops is False:
@@ -567,11 +588,11 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
             multiedges = False
     G.allow_loops(loops, check=False)
     G.allow_multiple_edges(multiedges, check=False)
-    G.add_vertices(verts)
+    G.add_vertices(verts.keys())
 
     is_directed = G.is_directed()
     if not is_directed and multiedges:
-        v_to_id = {v: i for i, v in enumerate(verts)}
+        v_to_id = {v: i for i, v in enumerate(verts.keys())}
         for u in D:
             for v in D[u]:
                 if (v_to_id[u] <= v_to_id[v] or

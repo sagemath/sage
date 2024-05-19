@@ -491,7 +491,7 @@ cpdef bint is_mpmath_type(t) noexcept:
 
 cdef class CoercionModel:
     """
-    See also sage.categories.pushout
+    See also :mod:`sage.categories.pushout`
 
     EXAMPLES::
 
