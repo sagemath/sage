@@ -125,11 +125,11 @@ def enum_product_projective_rational_field(X, B):
          (0 : 1 : 0 , 1 : 1), (1 : -1/2 : 1 , 0 : 1), (1 : -1/2 : 1 , 1 : 1)]
     """
     if isinstance(X, Scheme):
-        if (not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring)):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
@@ -229,11 +229,11 @@ def enum_product_projective_number_field(X, **kwds):
     prec = kwds.pop('precision', 53)
 
     if isinstance(X, Scheme):
-        if (not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring)):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
@@ -285,11 +285,11 @@ def enum_product_projective_finite_field(X):
         36
     """
     if isinstance(X, Scheme):
-        if (not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring)):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()

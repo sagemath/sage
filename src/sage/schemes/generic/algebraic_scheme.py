@@ -229,7 +229,7 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S.category()
             Category of schemes over Integer Ring
         """
-        if not ambient_space.isinstance(A, AmbientSpace):
+        if not isinstance(A, ambient_space.AmbientSpace):
             raise TypeError("A (=%s) must be an ambient space")
         self.__A = A
         self.__divisor_group = {}
@@ -677,7 +677,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
-        if sage.schemes.affine.affine_space.isinstance(self.ambient_space(), AffineSpace_generic):
+        if isinstance(self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic):
             t = "affine"
         else:
             t = "projective"
@@ -711,7 +711,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             sage: U._repr_()
             'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
         """
-        if sage.schemes.affine.affine_space.isinstance(self.ambient_space(), AffineSpace_generic):
+        if isinstance(self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic):
             t = "affine"
         else:
             t = "projective"

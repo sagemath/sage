@@ -48,8 +48,8 @@ from sage.structure.all import Sequence
 
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
-from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
-from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.plane_conics.constructor import Conic
 
 from .projective_curve import (ProjectiveCurve,

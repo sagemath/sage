@@ -158,7 +158,7 @@ from sage.rings.qqbar import (number_field_elements_from_algebraics,
 from sage.rings.rational_field import is_RationalField
 from sage.rings.integer import Integer
 
-from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 
 from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subscheme_projective,
                                                           AlgebraicScheme_subscheme_projective_field)

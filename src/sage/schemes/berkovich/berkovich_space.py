@@ -36,7 +36,7 @@ from sage.schemes.berkovich.berkovich_cp_element import (Berkovich_Element_Cp_Af
                                                          Berkovich_Element_Cp_Projective)
 from sage.structure.parent import Parent
 from sage.schemes.affine.affine_space import AffineSpace_generic
-from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.number_fields import NumberFields
 import sage.rings.abc

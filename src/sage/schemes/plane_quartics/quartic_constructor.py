@@ -8,7 +8,7 @@ Quartic curve constructor
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 
 from .quartic_generic import QuarticCurve_generic

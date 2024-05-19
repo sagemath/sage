@@ -149,7 +149,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
 from sage.rings.infinity import infinity
 
-from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
 from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
                                                   AlgebraicScheme_subscheme_affine_field)
 

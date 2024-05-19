@@ -113,7 +113,7 @@ def enum_affine_rational_field(X, B):
         if not isinstance(X.ambient_space(), AffineSpace_generic):
             raise TypeError("ambient space must be affine space over the rational field")
         X = X(X.base_ring())
-    elif not is_AffineSpace(X.codomain().ambient_space()):
+    elif not isinstance(X.codomain().ambient_space(), AffineSpace_generic):
         raise TypeError("codomain must be affine space over the rational field")
 
     n = X.codomain().ambient_space().ngens()
@@ -220,7 +220,7 @@ def enum_affine_number_field(X, **kwds):
         if not isinstance(X.ambient_space(), AffineSpace_generic):
             raise TypeError("ambient space must be affine space over a number field")
         X = X(X.base_ring())
-    elif not is_AffineSpace(X.codomain().ambient_space()):
+    elif not isinstance(X.codomain().ambient_space(), AffineSpace_generic):
         raise TypeError("codomain must be affine space over a number field")
 
     R = X.codomain().ambient_space()
@@ -294,7 +294,7 @@ def enum_affine_finite_field(X):
         if not isinstance(X.ambient_space(), AffineSpace_generic):
             raise TypeError("ambient space must be affine space over a finite field")
         X = X(X.base_ring())
-    elif not is_AffineSpace(X.codomain().ambient_space()):
+    elif not isinstance(X.codomain().ambient_space(), AffineSpace_generic):
         raise TypeError("codomain must be affine space over a finite field")
 
     n = X.codomain().ambient_space().ngens()
