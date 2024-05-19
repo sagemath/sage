@@ -33,7 +33,7 @@ from sage.rings.rational cimport Rational
 from sage.matroids.basis_matroid cimport BasisMatroid
 from sage.matroids.circuits_matroid cimport CircuitsMatroid
 from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
-from sage.matroids.flats_matroid cimport FlatsMatroid
+from sage.matroids.flats_matroid cimport FlatsMatroid, LatticeOfFlatsMatroid
 from sage.matroids.dual_matroid import DualMatroid
 from sage.matroids.graphic_matroid import GraphicMatroid
 from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
@@ -176,7 +176,7 @@ def unpickle_circuit_closures_matroid(version, data):
 
 
 #############################################################################
-# FlatsMatroid
+# FlatsMatroid & LatticeOfFlatsMatroid
 #############################################################################
 
 def unpickle_flats_matroid(version, data):
@@ -214,6 +214,42 @@ def unpickle_flats_matroid(version, data):
     if version != 0:
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     M = FlatsMatroid(groundset=data[0], flats=data[1])
+    if data[2] is not None:
+        M.rename(data[2])
+    return M
+
+def unpickle_lattice_of_flats_matroid(version, data):
+    """
+    Unpickle a LatticeOfFlatsMatroid.
+
+    *Pickling* is Python's term for the loading and saving of objects.
+    Functions like these serve to reconstruct a saved object. This all happens
+    transparently through the ``load`` and ``save`` commands, and you should
+    never have to call this function directly.
+
+    INPUT:
+
+    - ``version`` -- integer, expected to be 0
+    - ``data`` -- a tuple ``(E, F, name)`` in which ``E`` is the groundset of
+      the matroid, ``F`` is the list of flats, and ``name`` is a custom name
+
+    OUTPUT: matroid
+
+    .. WARNING::
+
+        Users should never call this function directly.
+
+    EXAMPLES::
+
+        sage: from sage.matroids.flats_matroid import LatticeOfFlatsMatroid
+        sage: M = LatticeOfFlatsMatroid(matroids.catalog.Vamos())
+        sage: M == loads(dumps(M))  # indirect doctest
+        True
+    """
+    cdef LatticeOfFlatsMatroid M
+    if version != 0:
+        raise TypeError("object was created with newer version of Sage. Please upgrade.")
+    M = LatticeOfFlatsMatroid(groundset=data[0], flats=data[1])
     if data[2] is not None:
         M.rename(data[2])
     return M

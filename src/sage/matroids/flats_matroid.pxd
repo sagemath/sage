@@ -1,4 +1,4 @@
-from sage.matroids.matroid cimport Matroid
+from .matroid cimport Matroid
 
 cdef class FlatsMatroid(Matroid):
     cdef frozenset _groundset  # _E
@@ -7,7 +7,8 @@ cdef class FlatsMatroid(Matroid):
     cpdef groundset(self)
     cpdef _rank(self, X)
     cpdef full_rank(self)
-    cpdef _is_independent(self, F)
+    cpdef _closure(self, X)
+    cpdef _is_closed(self, X)
 
     # enumeration
     cpdef flats(self, k)
@@ -18,4 +19,9 @@ cdef class FlatsMatroid(Matroid):
     cpdef relabel(self, mapping)
 
     # verification
+    cpdef is_valid(self)
+
+cdef class LatticeOfFlatsMatroid(FlatsMatroid):
+    cdef object _L  # lattice_of_flats
+    cpdef whitney_numbers(self)
     cpdef is_valid(self)
