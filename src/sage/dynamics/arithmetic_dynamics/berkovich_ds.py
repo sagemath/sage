@@ -36,7 +36,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace_generic
 from sage.schemes.berkovich.berkovich_space import (Berkovich_Cp_Affine,
-                                Berkovich_Cp_Projective, is_Berkovich_Cp,
+                                Berkovich_Cp_Projective, Berkovich_Cp,
                                 Berkovich_Element_Cp_Affine)
 from sage.schemes.projective.projective_space import ProjectiveSpace_ring
 from sage.structure.element import Element
