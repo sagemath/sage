@@ -44,12 +44,12 @@ def is_AffineSpace(x) -> bool:
 
     EXAMPLES::
 
-        sage: from sage.schemes.affine.affine_space import is_AffineSpace
-        sage: is_AffineSpace(AffineSpace(5, names='x'))
+        sage: from sage.schemes.affine.affine_space import AffineSpace_generic
+        sage: isinstance(AffineSpace(5, names='x'), AffineSpace_generic)
         True
         sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
         True
-        sage: is_AffineSpace(Spec(ZZ))
+        sage: isinstance(Spec(ZZ), AffineSpace_generic)
         False
     """
     from sage.misc.superseded import deprecation

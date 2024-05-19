@@ -47,10 +47,10 @@ def is_HyperellipticCurve(C):
     """
     EXAMPLES::
 
-        sage: from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
+        sage: from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import HyperellipticCurve_generic
         sage: R.<x> = QQ[]; C = HyperellipticCurve(x^3 + x - 1); C
         Hyperelliptic Curve over Rational Field defined by y^2 = x^3 + x - 1
-        sage: is_HyperellipticCurve(C)
+        sage: isinstance(C, HyperellipticCurve_generic)
         True
     """
     from sage.misc.superseded import deprecation

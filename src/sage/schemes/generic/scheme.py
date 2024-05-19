@@ -42,11 +42,11 @@ def is_Scheme(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.generic.scheme import is_Scheme
-        sage: is_Scheme(5)
+        sage: from sage.schemes.generic.scheme import Scheme
+        sage: isinstance(5, Scheme)
         False
         sage: X = Spec(QQ)
-        sage: is_Scheme(X)
+        sage: isinstance(X, Scheme)
         True
     """
     from sage.misc.superseded import deprecation
@@ -107,7 +107,7 @@ class Scheme(Parent):
 
         if X is None:
             self._base_ring = ZZ
-        elif is_Scheme(X):
+        elif isinstance(X, Scheme):
             self._base_scheme = X
         elif is_SchemeMorphism(X):
             self._base_morphism = X
@@ -257,7 +257,7 @@ class Scheme(Parent):
             S = args[0]
             if S in CommutativeRings():
                 return self.point_homset(S)
-            elif is_Scheme(S):
+            elif isinstance(S, Scheme):
                 return S.Hom(self)
             elif isinstance(S, (list, tuple)):
                 args = S
@@ -333,8 +333,8 @@ class Scheme(Parent):
             (0 : 0 : 1)
         """
         # todo: update elliptic curve stuff to take point_homset as argument
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(self):
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        if isinstance(self, EllipticCurve_generic):
             try:
                 return self._point(self.point_homset(), v, check=check)
             except AttributeError:  # legacy code without point_homset
@@ -609,7 +609,7 @@ class Scheme(Parent):
               Defn: Structure map
         """
         if Y is None:
-            if is_Scheme(x):
+            if isinstance(x, Scheme):
                 return self.Hom(x).natural_map()
             else:
                 raise TypeError("unable to determine codomain")
@@ -794,11 +794,11 @@ def is_AffineScheme(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.generic.scheme import is_AffineScheme
-        sage: is_AffineScheme(5)
+        sage: from sage.schemes.generic.scheme import AffineScheme
+        sage: isinstance(5, AffineScheme)
         False
         sage: E = Spec(QQ)
-        sage: is_AffineScheme(E)
+        sage: isinstance(E, AffineScheme)
         True
     """
     from sage.misc.superseded import deprecation
@@ -1217,7 +1217,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         from sage.categories.map import Map
         from sage.categories.rings import Rings
 
-        if is_Scheme(x):
+        if isinstance(x, Scheme):
             return self.Hom(x).natural_map()
         if Y is None and isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
             # x is a morphism of Rings

@@ -95,11 +95,11 @@ def is_EllipticCurve(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+        sage: from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
         sage: E = EllipticCurve([1,2,3/4,7,19])
-        sage: is_EllipticCurve(E)
+        sage: isinstance(E, EllipticCurve_generic)
         True
-        sage: is_EllipticCurve(0)
+        sage: isinstance(0, EllipticCurve_generic)
         False
     """
     from sage.misc.superseded import deprecation
@@ -2910,7 +2910,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.is_isomorphic(F.change_ring(CC))
             False
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             return False
         if field is None:
             if self.base_ring() != other.base_ring():

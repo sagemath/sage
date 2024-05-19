@@ -131,7 +131,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 
 import sage.geometry.abc
-from sage.schemes.toric.variety import is_ToricVariety
+from sage.schemes.toric.variety import ToricVariety_field
 from sage.schemes.toric.divisor import is_ToricDivisor
 
 
@@ -548,7 +548,7 @@ class ChowGroupFactory(UniqueFactory):
             sage: ChowGroup(P2, ZZ, check=True) == ChowGroup(P2, ZZ, check=False)   # indirect doctest
             True
         """
-        if not is_ToricVariety(toric_variety):
+        if not isinstance(toric_variety, ToricVariety_field):
             raise ValueError('first argument must be a toric variety')
 
         if base_ring not in [ZZ, QQ]:
@@ -608,7 +608,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             sage: P2 = toric_varieties.P2()
             sage: A = ChowGroup_class(P2,ZZ,True); A
             Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches
-            sage: is_ChowGroup(A)
+            sage: isinstance(A, ChowGroup_class)
             True
             sage: is_ChowCycle(A.an_element())
             True
@@ -1214,10 +1214,10 @@ def is_ChowGroup(x) -> bool:
 
         sage: P2 = toric_varieties.P2()
         sage: A = P2.Chow_group()
-        sage: from sage.schemes.toric.chow_group import is_ChowGroup
-        sage: is_ChowGroup(A)
+        sage: from sage.schemes.toric.chow_group import ChowGroup_class
+        sage: isinstance(A, ChowGroup_class)
         True
-        sage: is_ChowGroup('Victoria')
+        sage: isinstance('Victoria', ChowGroup_class)
         False
     """
     from sage.misc.superseded import deprecation

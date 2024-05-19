@@ -23,13 +23,13 @@ def is_AmbientSpace(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.generic.ambient_space import is_AmbientSpace
-        sage: is_AmbientSpace(ProjectiveSpace(3, ZZ))
+        sage: from sage.schemes.generic.ambient_space import AmbientSpace
+        sage: isinstance(ProjectiveSpace(3, ZZ), AmbientSpace)
         True
-        sage: is_AmbientSpace(AffineSpace(2, QQ))
+        sage: isinstance(AffineSpace(2, QQ), AmbientSpace)
         True
         sage: P.<x, y, z> = ProjectiveSpace(2, ZZ)
-        sage: is_AmbientSpace(P.subscheme([x + y + z]))
+        sage: isinstance(P.subscheme([x + y + z]), AmbientSpace)
         False
     """
     from sage.misc.superseded import deprecation

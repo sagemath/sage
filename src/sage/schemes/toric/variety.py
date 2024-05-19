@@ -349,16 +349,16 @@ def is_ToricVariety(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.variety import is_ToricVariety
-        sage: is_ToricVariety(1)
+        sage: from sage.schemes.toric.variety import ToricVariety_field
+        sage: isinstance(1, ToricVariety_field)
         False
         sage: fan = FaceFan(lattice_polytope.cross_polytope(2))
         sage: P = ToricVariety(fan)
         sage: P
         2-d toric variety covered by 4 affine patches
-        sage: is_ToricVariety(P)
+        sage: isinstance(P, ToricVariety_field)
         True
-        sage: is_ToricVariety(ProjectiveSpace(2))
+        sage: isinstance(ProjectiveSpace(2), ToricVariety_field)
         False
     """
     from sage.misc.superseded import deprecation
@@ -1341,7 +1341,7 @@ class ToricVariety_field(AmbientSpace):
         """
         if self is another:
             return True
-        if not is_ToricVariety(another):
+        if not isinstance(another, ToricVariety_field):
             raise TypeError(
                 "only another toric variety can be checked for isomorphism; "
                 "got %s" % another)

@@ -5762,8 +5762,8 @@ def kolyvagin_reduction_data(E, q, first_only=True):
         sage: kolyvagin_reduction_data(EllipticCurve('2350g1'), 5, first_only=False)
         (19, 239, -311, 19, 6480, 85680)
     """
-    from .ell_generic import is_EllipticCurve
-    if not is_EllipticCurve(E):
+    from .ell_generic import EllipticCurve_generic
+    if not isinstance(E, EllipticCurve_generic):
         raise TypeError("E must be an elliptic curve")
 
     q = ZZ(q)

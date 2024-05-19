@@ -168,15 +168,15 @@ def is_CPRFanoToricVariety(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.fano_variety import is_CPRFanoToricVariety
-        sage: is_CPRFanoToricVariety(1)
+        sage: from sage.schemes.toric.fano_variety import CPRFanoToricVariety_field
+        sage: isinstance(1, CPRFanoToricVariety_field)
         False
         sage: FTV = toric_varieties.P2()
         sage: FTV
         2-d CPR-Fano toric variety covered by 3 affine patches
-        sage: is_CPRFanoToricVariety(FTV)
+        sage: isinstance(FTV, CPRFanoToricVariety_field)
         True
-        sage: is_CPRFanoToricVariety(ProjectiveSpace(2))
+        sage: isinstance(ProjectiveSpace(2), CPRFanoToricVariety_field)
         False
     """
     from sage.misc.superseded import deprecation
@@ -1144,7 +1144,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             sage: P1xP2.Delta_polar()
             3-d reflexive polytope in 3-d lattice N+N
         """
-        if is_CPRFanoToricVariety(other):
+        if isinstance(other, CPRFanoToricVariety_field):
             fan = self.fan().cartesian_product(other.fan())
             Delta_polar = LatticePolytope(fan.rays())
 
@@ -1316,7 +1316,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
               s^2*x^2 + s*t*x^2 + t^2*x^2 + s^2*x*y + s*t*x*y
               + t^2*x*y + s^2*y^2 + s*t*y^2 + t^2*y^2
         """
-        if not is_CPRFanoToricVariety(P_Delta):
+        if not isinstance(P_Delta, CPRFanoToricVariety_field):
             raise TypeError("anticanonical hypersurfaces can only be "
                             "constructed for CPR-Fano toric varieties!"
                             "\nGot: %s" % P_Delta)
@@ -1430,7 +1430,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
               b1*z1*z2^2 + b2*z2^2*z4 + b5*z1*z2*z5
               + b4*z2*z4*z5 + b3*z1*z5^2 + b0*z4*z5^2
         """
-        if not is_CPRFanoToricVariety(P_Delta):
+        if not isinstance(P_Delta, CPRFanoToricVariety_field):
             raise TypeError("nef complete intersections can only be "
                             "constructed for CPR-Fano toric varieties!"
                             "\nGot: %s" % P_Delta)

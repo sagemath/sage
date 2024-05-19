@@ -67,8 +67,8 @@ def is_KlyachkoBundle(X):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.sheaf.klyachko import is_KlyachkoBundle
-        sage: is_KlyachkoBundle('test')
+        sage: from sage.schemes.toric.sheaf.klyachko import KlyachkoBundle_class
+        sage: isinstance('test', KlyachkoBundle_class)
         False
     """
     from sage.misc.superseded import deprecation

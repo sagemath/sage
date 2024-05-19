@@ -63,7 +63,7 @@ from sage.rings.real_mpfr import RR
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange
-from sage.schemes.generic.scheme import is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
 from sage.matrix.constructor import matrix
@@ -128,9 +128,9 @@ def enum_projective_rational_field(X, B):
 
     - John Cremona and Charlie Turner (06-2010)
     """
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if not is_ProjectiveSpace(X.ambient_space()):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProjectiveSpace_ring):
             raise TypeError("ambient space must be projective space over the rational field")
         X = X(X.base_ring())
     elif not is_ProjectiveSpace(X.codomain().ambient_space()):
@@ -206,9 +206,9 @@ def enum_projective_number_field(X, **kwds):
     B = kwds.pop('bound')
     tol = kwds.pop('tolerance', 1e-2)
     prec = kwds.pop('precision', 53)
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if (not is_ProjectiveSpace(X.ambient_space())):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if (not isinstance(X.ambient_space(), ProjectiveSpace_ring)):
             raise TypeError("ambient space must be projective space over a number field")
         X = X(X.base_ring())
     else:
@@ -287,9 +287,9 @@ def enum_projective_finite_field(X):
 
     - John Cremona and Charlie Turner (06-2010).
     """
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if not is_ProjectiveSpace(X.ambient_space()):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProjectiveSpace_ring):
             raise TypeError("ambient space must be projective space over a finite")
         X = X(X.base_ring())
     elif not is_ProjectiveSpace(X.codomain().ambient_space()):

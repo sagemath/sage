@@ -374,7 +374,7 @@ from sage.modules.free_module_element import vector
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan
 
-from sage.schemes.generic.scheme import is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.schemes.generic.morphism import (
     is_SchemeMorphism,
     SchemeMorphism, SchemeMorphism_point, SchemeMorphism_polynomial
@@ -425,7 +425,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
             [1 : 2 : 3 : 4]
         """
         # Convert scheme to its set of points over the base ring
-        if is_Scheme(X):
+        if isinstance(X, Scheme):
             X = X(X.base_ring())
         super().__init__(X)
         if check:

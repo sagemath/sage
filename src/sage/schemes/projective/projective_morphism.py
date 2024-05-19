@@ -1555,8 +1555,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         from sage.calculus.functions import jacobian
 
         dom = self.domain()
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
-        if not (is_ProjectiveSpace(dom) and is_ProjectiveSpace(self.codomain())):
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+        if not (isinstance(dom, ProjectiveSpace_ring) and isinstance(self.codomain(), ProjectiveSpace_ring)):
             raise NotImplementedError("not implemented for subschemes")
         N = dom.dimension_relative() + 1
         R = dom.coordinate_ring()
@@ -1791,9 +1791,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                     ((-0.6823278038280193?)*x^3 + (-13)*y^3 : (-14)*y^3)
         """
         from sage.rings.qqbar import number_field_elements_from_algebraics
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
 
-        if not (is_ProjectiveSpace(self.domain()) and is_ProjectiveSpace(self.domain())):
+        if not (isinstance(self.domain(), ProjectiveSpace_ring) and isinstance(self.domain(), ProjectiveSpace_ring)):
             raise NotImplementedError("not implemented for subschemes")
 
         K_pre, C, phi = number_field_elements_from_algebraics([c for f in self

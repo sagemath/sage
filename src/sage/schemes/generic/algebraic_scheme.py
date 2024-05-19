@@ -157,20 +157,20 @@ def is_AlgebraicScheme(x):
         sage: V = A2.subscheme([x^2 + y^2]); V
         Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
           x^2 + y^2
-        sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-        sage: is_AlgebraicScheme(V)
+        sage: from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
+        sage: isinstance(V, AlgebraicScheme)
         True
 
     Affine space is itself not an algebraic scheme, though the closed
     subscheme defined by no equations is::
 
-        sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-        sage: is_AlgebraicScheme(AffineSpace(10, QQ))
+        sage: from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
+        sage: isinstance(AffineSpace(10, QQ), AlgebraicScheme)
         False
         sage: V = AffineSpace(10, QQ).subscheme([]); V
         Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
           (no polynomials)
-        sage: is_AlgebraicScheme(V)
+        sage: isinstance(V, AlgebraicScheme)
         True
 
     We create a more complicated closed subscheme::
@@ -179,15 +179,15 @@ def is_AlgebraicScheme(x):
         sage: X = A.subscheme([sum(x)]); X
         Closed subscheme of Affine Space of dimension 10 over Rational Field defined by:
           x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9
-        sage: is_AlgebraicScheme(X)
+        sage: isinstance(X, AlgebraicScheme)
         True
 
     ::
 
-        sage: is_AlgebraicScheme(QQ)
+        sage: isinstance(QQ, AlgebraicScheme)
         False
         sage: S = Spec(QQ)
-        sage: is_AlgebraicScheme(S)
+        sage: isinstance(S, AlgebraicScheme)
         False
     """
     from sage.misc.superseded import deprecation
@@ -229,7 +229,7 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S.category()
             Category of schemes over Integer Ring
         """
-        if not ambient_space.is_AmbientSpace(A):
+        if not ambient_space.isinstance(A, AmbientSpace):
             raise TypeError("A (=%s) must be an ambient space")
         self.__A = A
         self.__divisor_group = {}
@@ -677,7 +677,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
-        if sage.schemes.affine.affine_space.is_AffineSpace(self.ambient_space()):
+        if sage.schemes.affine.affine_space.isinstance(self.ambient_space(), AffineSpace_generic):
             t = "affine"
         else:
             t = "projective"
@@ -711,7 +711,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             sage: U._repr_()
             'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
         """
-        if sage.schemes.affine.affine_space.is_AffineSpace(self.ambient_space()):
+        if sage.schemes.affine.affine_space.isinstance(self.ambient_space(), AffineSpace_generic):
             t = "affine"
         else:
             t = "projective"

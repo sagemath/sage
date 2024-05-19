@@ -72,9 +72,9 @@ def is_ProductProjectiveSpaces(x):
 
     EXAMPLES::
 
-        sage: is_ProductProjectiveSpaces(ProjectiveSpace(5, names='x'))
+        sage: isinstance(ProjectiveSpace(5, names='x'), ProductProjectiveSpaces_ring)
         False
-        sage: is_ProductProjectiveSpaces(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'))
+        sage: isinstance(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'), ProductProjectiveSpaces_ring)
         True
     """
     from sage.misc.superseded import deprecation

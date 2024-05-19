@@ -138,12 +138,12 @@ def is_ProjectiveSpace(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
-        sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
+        sage: from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+        sage: isinstance(ProjectiveSpace(5, names='x'), ProjectiveSpace_ring)
         True
         sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
         True
-        sage: is_ProjectiveSpace(Spec(ZZ))
+        sage: isinstance(Spec(ZZ), ProjectiveSpace_ring)
         False
     """
     from sage.misc.superseded import deprecation
@@ -1541,7 +1541,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if CS is None:
             CS = ProjectiveSpace(self.base_ring(), binomial(N + d, d) - 1)
         else:
-            if not is_ProjectiveSpace(CS):
+            if not isinstance(CS, ProjectiveSpace_ring):
                 raise TypeError("(=%s) must be a projective space" % CS)
             if CS.dimension() != binomial(N + d, d) - 1:
                 raise TypeError("(=%s) has the wrong dimension to serve as the codomain space" % CS)
