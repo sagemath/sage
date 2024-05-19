@@ -17,7 +17,7 @@ def get_remote_file(filename, verbose=True) -> Path:
     OUTPUT:
 
     This creates a file in the temp directory and returns the absolute path
-    to that file as a ``Path`` object.
+    to that file as a :class:`Path` object.
 
     EXAMPLES::
 

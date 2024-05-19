@@ -2217,7 +2217,7 @@ def preparse_file_named(name) -> Path:
     Preparse file named ``name`` (presumably a ``.sage`` file),
     outputting to a temporary file.
 
-    This returns the temporary file as a ``Path`` object.
+    This returns the temporary file as a :class:`Path` object.
 
     EXAMPLES::
 
