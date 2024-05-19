@@ -11,5 +11,5 @@ Symmetric functions in non-commuting variables
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
-from .ncsym import SymmetricFunctionsNonCommutingVariables
-from .dual import SymmetricFunctionsNonCommutingVariablesDual
+from sage.combinat.ncsym.ncsym import SymmetricFunctionsNonCommutingVariables
+from sage.combinat.ncsym.dual import SymmetricFunctionsNonCommutingVariablesDual

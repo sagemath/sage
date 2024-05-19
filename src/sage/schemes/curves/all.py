@@ -20,9 +20,9 @@ Plane curves
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .constructor import Curve
+from sage.schemes.curves.constructor import Curve
 
-from .projective_curve import Hasse_bounds
+from sage.schemes.curves.projective_curve import Hasse_bounds
 
 from sage.misc.lazy_import import lazy_import
 

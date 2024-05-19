@@ -4,4 +4,4 @@
 #                  http://www.gnu.org/licenses/                           #
 ###########################################################################
 
-from .constructor import J0, J1, JH, AbelianVariety
+from sage.modular.abvar.constructor import J0, J1, JH, AbelianVariety
