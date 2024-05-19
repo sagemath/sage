@@ -41,3 +41,5 @@ from sage.combinat.posets.posets import Poset
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice, JoinSemilattice
 
 from sage.combinat.posets.poset_examples import posets, Posets
+
+del install_doc

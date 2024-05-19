@@ -3,7 +3,7 @@
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #########################################################################
 
 from sage.modular.modform.constructor import ModularForms, CuspForms, EisensteinForms, Newforms, Newform
@@ -26,3 +26,4 @@ from sage.modular.modform.numerical import NumericalEigenforms as numerical_eige
 from sage.modular.modform.element import delta_lseries
 
 from sage.modular.modform.ring import ModularFormsRing
+del lazy_import

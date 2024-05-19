@@ -1,6 +1,6 @@
 from sage.symbolic.ring import SR
 from sage.symbolic.constants import (pi, e, NaN, golden_ratio, log2, euler_gamma, catalan,
-                       khinchin, twinprime, mertens, glaisher)
+                                     khinchin, twinprime, mertens, glaisher)
 from sage.symbolic.expression import Expression, solve_diophantine, hold
 from sage.symbolic.callable import CallableSymbolicExpressionRing
 

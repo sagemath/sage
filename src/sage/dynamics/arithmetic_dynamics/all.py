@@ -10,3 +10,4 @@ from sage.dynamics.arithmetic_dynamics.dynamical_semigroup import DynamicalSemig
 from sage.dynamics.arithmetic_dynamics.dynamical_semigroup import DynamicalSemigroup_projective
 lazy_import('sage.dynamics.arithmetic_dynamics.wehlerK3', 'WehlerK3Surface')
 lazy_import('sage.dynamics.arithmetic_dynamics.wehlerK3', 'random_WehlerK3Surface')
+del lazy_import
