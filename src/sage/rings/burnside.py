@@ -31,6 +31,9 @@ class ConjugacyClassOfSubgroups(Element):
     def __le__(self, other):
         return libgap.eval('fail') != libgap.ContainedConjugates(self.parent()._G, other._C, self._C, True)
 
+    def __eq__(self, other):
+        return _is_conjugate(self.parent()._G, self._C, other._C)
+
 class ConjugacyClassesOfSubgroups(Parent):
     def __init__(self, G):
         self._G = G
@@ -44,19 +47,18 @@ class ConjugacyClassesOfSubgroups(Parent):
     def _normalize(self, H, name=None):
         if not H.is_subgroup(self._G):
             raise ValueError(f"{H} is not a subgroup of {self._G}")
-        if name is not None:
-            self._names[H] = name
-        elif H not in self._names:
-            self._names[H] = None
         p = self._group_invariant(H)
         if p in self._cache:
             for H0 in self._cache[p]:
                 if _is_conjugate(self._G, H, H0):
+                    if name is not None:
+                        self._names[H0] = name
                     return H0
             else:
                 self._cache[p].append(H)
         else:
             self._cache[p] = [H]
+        self._names[H] = name
         return H
 
     def _element_constructor_(self, x):
@@ -74,7 +76,8 @@ class ConjugacyClassesOfSubgroups(Parent):
         """
         if not isinstance(name, str):
             raise TypeError("name must be a string")
-        self._normalize(H, name)
+        H_norm = self._normalize(H)
+        self._names[H_norm] = name
 
     def __iter__(self):
         return iter(self(H) for H in self._G.conjugacy_classes_subgroups())
