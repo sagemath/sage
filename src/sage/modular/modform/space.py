@@ -140,7 +140,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if WARN:
             print("Modular forms -- under development -- do not trust yet.")
             WARN = False
-        if not arithgroup.isinstance(group, CongruenceSubgroupBase):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group (=%s) must be a congruence subgroup" % group)
         weight = Integer(weight)
         if not ((character is None) or isinstance(character, dirichlet.DirichletCharacter)):

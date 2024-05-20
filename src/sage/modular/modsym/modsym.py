@@ -386,7 +386,7 @@ def ModularSymbols(group=1,
     group, weight, sign, base_ring = key
 
     M = None
-    if arithgroup.isinstance(group, Gamma0_class):
+    if isinstance(group, arithgroup.Gamma0_class):
         if weight == 2:
             M = ambient.ModularSymbolsAmbient_wt2_g0(
                 group.level(), sign, base_ring, custom_init=custom_init)
@@ -394,12 +394,12 @@ def ModularSymbols(group=1,
             M = ambient.ModularSymbolsAmbient_wtk_g0(
                 group.level(), weight, sign, base_ring, custom_init=custom_init)
 
-    elif arithgroup.isinstance(group, Gamma1_class):
+    elif isinstance(group, arithgroup.Gamma1_class):
 
         M = ambient.ModularSymbolsAmbient_wtk_g1(group.level(),
                             weight, sign, base_ring, custom_init=custom_init)
 
-    elif arithgroup.isinstance(group, GammaH_class):
+    elif isinstance(group, arithgroup.GammaH_class):
 
         M = ambient.ModularSymbolsAmbient_wtk_gamma_h(group,
                             weight, sign, base_ring, custom_init=custom_init)
