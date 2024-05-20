@@ -4,7 +4,8 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.rings.integer_ring import ZZ
 from sage.structure.formal_sum import FormalSum
-from sage.categories.sets_cat import cartesian_product, Sets
+from sage.categories.sets_cat import cartesian_product
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.libs.gap.libgap import libgap
 from sage.categories.algebras import Algebras
@@ -23,10 +24,7 @@ class ConjugacyClassOfSubgroups(Element):
 
     def _repr_(self):
         name = self.parent()._names.get(self._C, None)
-        if name is None:
-            return repr(self._C.gens())
-        else:
-            return name
+        return repr(self._C.gens()) if name is None else name
 
     def __le__(self, other):
         return libgap.eval('fail') != libgap.ContainedConjugates(self.parent()._G, other._C, self._C, True)
@@ -39,7 +37,7 @@ class ConjugacyClassesOfSubgroups(Parent):
         self._G = G
         self._cache = dict() # invariant to subgroups
         self._names = dict() # dictionary mapping subgroups to names
-        Parent.__init__(self, category=Sets().Finite())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def _group_invariant(self, H):
         return H.order()
@@ -64,10 +62,7 @@ class ConjugacyClassesOfSubgroups(Parent):
     def _element_constructor_(self, x):
         if x.is_subgroup(self._G):
             return self.element_class(self, self._normalize(x))
-        else:
-            raise ValueError("x must be a subgroup of " + repr(self._G))
-
-        raise ValueError(f"unable to convert {x} into {self}")
+        raise ValueError(f"unable to convert {x} into {self}: not a subgroup of " + repr(self._G))
 
     def set_name(self, H, name):
         r"""
@@ -81,6 +76,9 @@ class ConjugacyClassesOfSubgroups(Parent):
 
     def __iter__(self):
         return iter(self(H) for H in self._G.conjugacy_classes_subgroups())
+
+    def __contains__(self, H):
+        return H.is_subgroup(self._G)
 
     def _repr_(self):
         r"""
@@ -102,31 +100,6 @@ class BurnsideRing(CombinatorialFreeModule):
         basis.set_name(G, "1")
         category = Algebras(base_ring).Commutative().WithBasis()
         CombinatorialFreeModule.__init__(self, base_ring, basis, category=category)
-
-    def _element_constructor_(self, x):
-        r"""
-        Construct an element of the Burnside ring explicitly.
-
-        INPUT:
-
-        - ``x`` - data for an element
-
-        ``x`` can be a subgroup of `G` or a formal sum of such
-        subgroups.
-        """
-        if x in self.base_ring():
-            return x * self.one()
-
-        if isinstance(x, list) or isinstance(x, FormalSum):
-            # if x is a list of pairs (coeff, subgroup) or FormalSum
-            # Turn all subgroups into elements of ConjugacyClassesOfSubgroups
-            x = [(self._indices(subgroup), coeff) for coeff, subgroup in x]
-            return self._from_dict(dict(x))
-        elif x.is_subgroup(self._G):
-            # if x is a single subgroup of self._G
-            return self._from_dict({self._indices(x): 1})
-
-        raise ValueError(f"unable to convert {x} into {self}")
 
     def __getitem__(self, H):
         r"""
@@ -248,23 +221,6 @@ class BurnsideRing(CombinatorialFreeModule):
             Dicyclic group of order 16 as a permutation group
         """
         return self._G
-
-    @cached_method
-    def gens(self):
-        r"""
-        Return the generators of ``self``.
-
-        These are the conjugacy classes of subgroups of the
-        underlying group :meth:`group`.
-
-        EXAMPLES::
-
-            sage: G = SymmetricGroup(3)
-            sage: B = BurnsideRing(G)
-            sage: B.gens()
-            (B[((),)], B[((2,3),)], B[((1,2,3),)], B[1])
-        """
-        return tuple(self(H) for H in self._G.conjugacy_classes_subgroups())
 
     def _repr_(self):
         r"""
