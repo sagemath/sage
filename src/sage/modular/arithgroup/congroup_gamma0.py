@@ -32,12 +32,17 @@ def is_Gamma0(x):
 
         sage: from sage.modular.arithgroup.all import is_Gamma0
         sage: is_Gamma0(SL2Z)
+        doctest:warning...
+        DeprecationWarning: the function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_Gamma0(Gamma0(13))
         True
         sage: is_Gamma0(Gamma1(6))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "the function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead")
     return isinstance(x, Gamma0_class)
 
 

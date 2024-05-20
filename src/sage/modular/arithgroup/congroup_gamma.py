@@ -319,8 +319,10 @@ def is_Gamma(x):
         sage: isinstance(Gamma(4), Gamma_class)
         True
     """
-
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "the function is_Gamma is deprecated; use 'isinstance(..., Gamma_class)' instead")
     return isinstance(x, Gamma_class)
+
 
 def _lift_pair(U,V,N):
     r"""

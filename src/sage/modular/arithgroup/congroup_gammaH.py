@@ -100,6 +100,9 @@ def is_GammaH(x):
 
         sage: from sage.modular.arithgroup.all import is_GammaH
         sage: is_GammaH(GammaH(13, [2]))
+        doctest:warning...
+        DeprecationWarning: the function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_GammaH(Gamma0(6))
         True
@@ -108,6 +111,8 @@ def is_GammaH(x):
         sage: is_GammaH(sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "the function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead")
     return isinstance(x, GammaH_class)
 
 
