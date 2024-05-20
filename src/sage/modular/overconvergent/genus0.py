@@ -205,7 +205,7 @@ from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0_class, is_Gamma1
+from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
 from sage.modular.dirichlet import trivial_character
 from sage.modular.etaproducts import EtaProduct
 from sage.modular.modform.element import ModularFormElement
