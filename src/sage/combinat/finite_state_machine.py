@@ -1168,8 +1168,13 @@ def is_FSMState(S):
 
         sage: from sage.combinat.finite_state_machine import is_FSMState, FSMState
         sage: is_FSMState(FSMState('A'))
+        doctest:warning...
+        DeprecationWarning: the function is_FSMState is deprecated; use 'isinstance(..., FSMState)' instead
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "the function is_FSMState is deprecated; use 'isinstance(..., FSMState)' instead")
     return isinstance(S, FSMState)
 
 
@@ -2177,8 +2182,13 @@ def is_FSMTransition(T):
 
         sage: from sage.combinat.finite_state_machine import is_FSMTransition, FSMTransition
         sage: is_FSMTransition(FSMTransition('A', 'B'))
+        doctest:warning...
+        DeprecationWarning: the function is_FSMTransition is deprecated; use 'isinstance(..., FSMTransition)' instead
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "the function is_FSMTransition is deprecated; use 'isinstance(..., FSMTransition)' instead")
     return isinstance(T, FSMTransition)
 
 
@@ -2494,12 +2504,17 @@ def is_FiniteStateMachine(FSM):
 
         sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine
         sage: is_FiniteStateMachine(FiniteStateMachine())
+        doctest:warning...
+        DeprecationWarning: the function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
         sage: is_FiniteStateMachine(Automaton())
         True
         sage: is_FiniteStateMachine(Transducer())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "the function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead")
     return isinstance(FSM, FiniteStateMachine)
 
 
@@ -7353,7 +7368,7 @@ class FiniteStateMachine(SageObject):
             ....:  if C(w)]
             [[0, 1]]
             sage: from sage.combinat.finite_state_machine import (
-            ....:     is_Automaton, is_Transducer)
+            ....:     Automaton, Transducer)
             sage: isinstance(C, Automaton)
             True
 
@@ -10926,12 +10941,20 @@ def is_Automaton(FSM):
 
         sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine, is_Automaton
         sage: is_Automaton(FiniteStateMachine())
+        doctest:warning...
+        DeprecationWarning: the function is_Automaton is deprecated; use 'isinstance(..., Automaton)' instead
+        See https://github.com/sagemath/sage/issues/38032 for details.
         False
         sage: is_Automaton(Automaton())
         True
         sage: is_FiniteStateMachine(Automaton())
+        doctest:warning...
+        DeprecationWarning: the function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "the function is_Automaton is deprecated; use 'isinstance(..., Automaton)' instead")
     return isinstance(FSM, Automaton)
 
 
@@ -12131,12 +12154,20 @@ def is_Transducer(FSM):
 
         sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine, is_Transducer
         sage: is_Transducer(FiniteStateMachine())
+        doctest:warning...
+        DeprecationWarning: the function is_Transducer is deprecated; use 'isinstance(..., Transducer)' instead
+        See https://github.com/sagemath/sage/issues/38032 for details.
         False
         sage: is_Transducer(Transducer())
         True
         sage: is_FiniteStateMachine(Transducer())
+        doctest:warning...
+        DeprecationWarning: the function is_FiniteStateMachine is deprecated; use 'isinstance(..., FiniteStateMachine)' instead
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "the function is_Transducer is deprecated; use 'isinstance(..., Transducer)' instead")
     return isinstance(FSM, Transducer)
 
 
@@ -13874,8 +13905,13 @@ def is_FSMProcessIterator(PI):
 
         sage: from sage.combinat.finite_state_machine import is_FSMProcessIterator, FSMProcessIterator
         sage: is_FSMProcessIterator(FSMProcessIterator(FiniteStateMachine([[0, 0, 0, 0]], initial_states=[0]), []))
+        doctest:warning...
+        DeprecationWarning: the function is_FSMProcessIterator is deprecated; use 'isinstance(..., FSMProcessIterator)' instead
+        See https://github.com/sagemath/sage/issues/38032 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38032, "the function is_FSMProcessIterator is deprecated; use 'isinstance(..., FSMProcessIterator)' instead")
     return isinstance(PI, FSMProcessIterator)
 
 
