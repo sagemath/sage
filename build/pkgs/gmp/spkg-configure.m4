@@ -1,5 +1,5 @@
-SAGE_SPKG_CONFIGURE([gmp], [
-           sage_spkg_install_gmp=no
+SAGE_SPKG_CONFIGURE([gmp], [dnl
+            sage_spkg_install_gmp=no
             AC_CHECK_HEADER(gmp.h, [], [sage_spkg_install_gmp=yes])
             AC_CHECK_HEADER(gmpxx.h, [], [sage_spkg_install_gmp=yes])
             # Check that GMP >= 6.2.1; this test is copied from FLINT.
@@ -27,7 +27,7 @@ SAGE_SPKG_CONFIGURE([gmp], [
             dnl flags.
             AC_SEARCH_LIBS([__gmpn_gcd_11], [gmp], [],
                 [sage_spkg_install_gmp=yes])
-], [], [], [
+], [], [], [dnl
     if test x$sage_spkg_install_gmp = xyes; then
         AC_SUBST(SAGE_GMP_PREFIX, ['$SAGE_LOCAL'])
         AC_SUBST(SAGE_GMP_INCLUDE, ['$SAGE_LOCAL/include'])
