@@ -36,10 +36,10 @@ def is_ArithmeticSubgroup(x) -> bool:
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import ArithmeticSubgroup
+        sage: from sage.modular.arithgroup.all import is_ArithmeticSubgroup
         sage: is_ArithmeticSubgroup(GL(2, GF(7)))
         False
-        sage: isinstance(Gamma0(4), ArithmeticSubgroup)
+        sage: is_ArithmeticSubgroup(Gamma0(4))
         True
     """
     return isinstance(x, ArithmeticSubgroup)

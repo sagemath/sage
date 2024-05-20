@@ -30,12 +30,12 @@ def is_Gamma0(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import Gamma0_class
-        sage: isinstance(SL2Z, Gamma0_class)
+        sage: from sage.modular.arithgroup.all import is_Gamma0
+        sage: is_Gamma0(SL2Z)
         True
-        sage: isinstance(Gamma0(13), Gamma0_class)
+        sage: is_Gamma0(Gamma0(13))
         True
-        sage: isinstance(Gamma1(6), Gamma0_class)
+        sage: is_Gamma0(Gamma1(6))
         False
     """
     return isinstance(x, Gamma0_class)

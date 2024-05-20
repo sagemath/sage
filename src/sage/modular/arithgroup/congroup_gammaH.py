@@ -98,14 +98,14 @@ def is_GammaH(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import GammaH_class
-        sage: isinstance(GammaH(13, [2]), GammaH_class)
+        sage: from sage.modular.arithgroup.all import is_GammaH
+        sage: is_GammaH(GammaH(13, [2]))
         True
-        sage: isinstance(Gamma0(6), GammaH_class)
+        sage: is_GammaH(Gamma0(6))
         True
-        sage: isinstance(Gamma1(6), GammaH_class)
+        sage: is_GammaH(Gamma1(6))
         True
-        sage: isinstance(sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5), GammaH_class)
+        sage: is_GammaH(sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5))
         False
     """
     return isinstance(x, GammaH_class)

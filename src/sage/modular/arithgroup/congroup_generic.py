@@ -126,20 +126,20 @@ def is_CongruenceSubgroup(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
-        sage: isinstance(SL2Z, CongruenceSubgroupBase)
+        sage: from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
+        sage: is_CongruenceSubgroup(SL2Z)
         True
-        sage: isinstance(Gamma0(13), CongruenceSubgroupBase)
+        sage: is_CongruenceSubgroup(Gamma0(13))
         True
-        sage: isinstance(Gamma1(6), CongruenceSubgroupBase)
+        sage: is_CongruenceSubgroup(Gamma1(6))
         True
-        sage: isinstance(GammaH(11, [3]), CongruenceSubgroupBase)
+        sage: is_CongruenceSubgroup(GammaH(11, [3]))
         True
-        sage: G = ArithmeticSubgroup_Permutation(L = "(1, 2)", R = "(1, 2)"); isinstance(G, CongruenceSubgroupBase)
+        sage: G = ArithmeticSubgroup_Permutation(L = "(1, 2)", R = "(1, 2)"); is_CongruenceSubgroup(G)
         False
         sage: G.is_congruence()
         True
-        sage: isinstance(SymmetricGroup(3), CongruenceSubgroupBase)
+        sage: is_CongruenceSubgroup(SymmetricGroup(3))
         False
     """
     return isinstance(x, CongruenceSubgroupBase)

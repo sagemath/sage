@@ -27,20 +27,20 @@ def is_Gamma1(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import Gamma1_class
-        sage: isinstance(SL2Z, Gamma1_class)
+        sage: from sage.modular.arithgroup.all import is_Gamma1
+        sage: is_Gamma1(SL2Z)
         False
-        sage: isinstance(Gamma1(13), Gamma1_class)
+        sage: is_Gamma1(Gamma1(13))
         True
-        sage: isinstance(Gamma0(6), Gamma1_class)
+        sage: is_Gamma1(Gamma0(6))
         False
-        sage: isinstance(GammaH(12, []), Gamma1_class) # trick question!
+        sage: is_Gamma1(GammaH(12, [])) # trick question!
         True
-        sage: isinstance(GammaH(12, [5]), Gamma1_class)
+        sage: is_Gamma1(GammaH(12, [5]))
         False
     """
-    #from congroup_sl2z import SL2Z_class
-    #return (isinstance(x, Gamma1_class) or isinstance(x, SL2Z_class))
+    #from congroup_sl2z import is_SL2Z
+    #return (isinstance(x, Gamma1_class) or is_SL2Z(x))
     return isinstance(x, Gamma1_class)
 
 

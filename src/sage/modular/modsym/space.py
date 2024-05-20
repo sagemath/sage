@@ -57,9 +57,9 @@ def is_ModularSymbolsSpace(x):
     EXAMPLES::
 
         sage: M = ModularForms(3, 2)
-        sage: sage.modular.modsym.space.isinstance(M, ModularSymbolsSpace)
+        sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M)
         False
-        sage: sage.modular.modsym.space.isinstance(M.modular_symbols(sign=1), ModularSymbolsSpace)
+        sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M.modular_symbols(sign=1))
         True
     """
     return isinstance(x, ModularSymbolsSpace)
