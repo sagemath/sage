@@ -153,6 +153,8 @@ in the Installation Guide.
 
 2.  Clone the sources with `git`:
 
+    - **NOTE: if you are using WSL, it is imperative that you follow these instructions, which use the Linux git. Otherwise you will run into confusing build errors.**
+
     - To check that `git` is available, open a terminal and enter
       the following command at the shell prompt (`$`):
 
