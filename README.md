@@ -153,7 +153,9 @@ in the Installation Guide.
 
 2.  Clone the sources with `git`:
 
-    - **NOTE: if you are using WSL, it is imperative that you follow these instructions, which use the Linux git. Otherwise you will run into confusing build errors.**
+    - [Windows] **The Sage source tree contains symbolic links, which use UNIX line endings.
+      Therefore, the build may not work if some other version of git is used to clone the repo.
+      So it is recommended to use Linux git and follow the instructions below.**
 
     - To check that `git` is available, open a terminal and enter
       the following command at the shell prompt (`$`):
@@ -193,13 +195,6 @@ in the Installation Guide.
     - Change into the created subdirectory:
 
             $ cd sage
-
-    - [Windows] The Sage source tree contains symbolic links, and the
-      build will not work if Windows line endings rather than UNIX
-      line endings are used.
-
-      Therefore it is recommended (but not necessary) to use the
-      WSL version of `git`.
 
 3.  Install system packages.
 
