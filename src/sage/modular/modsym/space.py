@@ -58,10 +58,15 @@ def is_ModularSymbolsSpace(x):
 
         sage: M = ModularForms(3, 2)
         sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M)
+        doctest:warning...
+        DeprecationWarning: the function is_ModularSymbolsSpace is deprecated; use 'isinstance(..., ModularForms)' instead
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M.modular_symbols(sign=1))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "the function is_ModularSymbolsSpace is deprecated; use 'isinstance(..., ModularForms)' instead")
     return isinstance(x, ModularSymbolsSpace)
 
 

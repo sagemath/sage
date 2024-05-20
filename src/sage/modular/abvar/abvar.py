@@ -91,6 +91,9 @@ def is_ModularAbelianVariety(x) -> bool:
 
         sage: from sage.modular.abvar.abvar import is_ModularAbelianVariety
         sage: is_ModularAbelianVariety(5)
+        doctest:warning...
+        DeprecationWarning: the function is_ModularAbelianVariety is deprecated; use 'isinstance(..., ModularAbelianVariety_abstract)' instead
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: is_ModularAbelianVariety(J0(37))
         True
@@ -101,6 +104,8 @@ def is_ModularAbelianVariety(x) -> bool:
         sage: is_ModularAbelianVariety(EllipticCurve('37a'))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "the function is_ModularAbelianVariety is deprecated; use 'isinstance(..., ModularAbelianVariety_abstract)' instead")
     return isinstance(x, ModularAbelianVariety_abstract)
 
 
