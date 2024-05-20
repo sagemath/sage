@@ -89,16 +89,16 @@ def is_ModularAbelianVariety(x) -> bool:
 
     EXAMPLES::
 
-        sage: from sage.modular.abvar.abvar import ModularAbelianVariety_abstract
-        sage: isinstance(5, ModularAbelianVariety_abstract)
+        sage: from sage.modular.abvar.abvar import is_ModularAbelianVariety
+        sage: is_ModularAbelianVariety(5)
         False
-        sage: isinstance(J0(37), ModularAbelianVariety_abstract)
+        sage: is_ModularAbelianVariety(J0(37))
         True
 
     Returning True is a statement about the data type not whether or
     not some abelian variety is modular::
 
-        sage: isinstance(EllipticCurve('37a'), ModularAbelianVariety_abstract)
+        sage: is_ModularAbelianVariety(EllipticCurve('37a'))
         False
     """
     return isinstance(x, ModularAbelianVariety_abstract)

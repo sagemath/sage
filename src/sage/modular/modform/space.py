@@ -91,12 +91,12 @@ def is_ModularFormsSpace(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.modform.space import ModularFormsSpace
-        sage: isinstance(ModularForms(11,2), ModularFormsSpace)
+        sage: from sage.modular.modform.space import is_ModularFormsSpace
+        sage: is_ModularFormsSpace(ModularForms(11,2))
         True
-        sage: isinstance(CuspForms(11,2), ModularFormsSpace)
+        sage: is_ModularFormsSpace(CuspForms(11,2))
         True
-        sage: isinstance(3, ModularFormsSpace)
+        sage: is_ModularFormsSpace(3)
         False
     """
     return isinstance(x, ModularFormsSpace)
