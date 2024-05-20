@@ -24,6 +24,7 @@ from sage.categories.category import JoinCategory, Category
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.super_modules import SuperModulesCategory
 from sage.categories.modules import Modules
 from sage.categories.sets_cat import Sets
 from sage.categories.homset import Hom
@@ -236,6 +237,110 @@ class LieAlgebras(Category_over_base_ring):
                     True
                 """
                 return True
+
+    class Super(SuperModulesCategory):
+        r"""
+        The category of super Lie algebras.
+
+        .. NOTE::
+
+            A super Lie algebra is *not* simply a Lie
+            algebra with a `\ZZ/2\ZZ` grading due to the
+            signed bracket compatibility conditions.
+        """
+        class ParentMethods:
+            def _test_jacobi_identity(self, **options):
+                """
+                Test that the (super) Jacobi identity is satisfied on (not
+                necessarily all) homogeneous elements of ``self``.
+
+                INPUT:
+
+                - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+                EXAMPLES:
+
+                By default, this method runs the tests only on the
+                elements returned by ``self.some_elements()``::
+
+                    sage: L = LieAlgebras(QQ).Super().example()
+                    sage: L._test_jacobi_identity()
+
+                However, the elements tested can be customized with the
+                ``elements`` keyword argument::
+
+                    sage: L = LieAlgebras(QQ).Super().example()
+                    sage: x,y = L.lie_algebra_generators()
+                    sage: L._test_jacobi_identity(elements=[x + y, x, 2*y, x.bracket(y)])
+
+                See the documentation for :class:`TestSuite` for more information.
+                """
+                tester = self._tester(**options)
+                # Filter out non-homogeneous elements
+                elts = [x for x in tester.some_elements() if x.is_homogeneous()]
+                def jacobi(x, y, z):
+                    return ((-1)**(x.is_even_odd() * z.is_even_odd()) * self.bracket(x, self.bracket(y, z))
+                            + (-1)**(x.is_even_odd() * y.is_even_odd()) * self.bracket(y, self.bracket(z, x))
+                            + (-1)**(y.is_even_odd() * z.is_even_odd()) * self.bracket(z, self.bracket(x, y)))
+                zero = self.zero()
+                from sage.misc.misc import some_tuples
+                for x, y, z in some_tuples(elts, 3, tester._max_runs):
+                    tester.assertEqual(jacobi(x, y, z), zero)
+
+            def _test_antisymmetry(self, **options):
+                """
+                Test that the suer antisymmetry axiom is satisfied on (not
+                necessarily all) homogeneous elements of ``self``.
+
+                INPUT:
+
+                - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+                EXAMPLES:
+
+                By default, this method runs the tests only on the
+                elements returned by ``self.some_elements()``::
+
+                    sage: L = LieAlgebras(QQ).Super().example()
+                    sage: L._test_antisymmetry()
+
+                However, the elements tested can be customized with the
+                ``elements`` keyword argument::
+
+                    sage: L = LieAlgebras(QQ).Super().example()
+                    sage: x,y = L.lie_algebra_generators()
+                    sage: L._test_antisymmetry(elements=[x + y, x, 2*y, x.bracket(y)])
+
+                See the documentation for :class:`TestSuite` for more information.
+                """
+                tester = self._tester(**options)
+                # Filter out non-homogeneous elements
+                elts = [x for x in tester.some_elements() if x.is_homogeneous()]
+                zero = self.zero()
+                from sage.misc.misc import some_tuples
+                for x, y in some_tuples(elts, 2, tester._max_runs):
+                    tester.assertEqual(self.bracket(x, y), -(-1)**(x.is_even_odd()*y.is_even_odd()) * self.bracket(y, x))
+
+        class ElementMethods:
+            @coerce_binop
+            def bracket(self, rhs):
+                """
+                Return the Lie bracket ``[self, rhs]``.
+
+                EXAMPLES::
+                """
+                return self._bracket_(rhs)
+
+            # Implement this method to define the Lie bracket. You do not
+            # need to deal with the coercions here.
+            @abstract_method
+            def _bracket_(self, y):
+                """
+                Return the Lie bracket ``[self, y]``, where ``y`` is an
+                element of the same super Lie algebra as ``self``.
+
+                EXAMPLES::
+                """
 
     class ParentMethods:
         #@abstract_method

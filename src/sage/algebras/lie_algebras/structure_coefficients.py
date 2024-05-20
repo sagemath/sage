@@ -128,7 +128,8 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
                 # At this point we assume they are given by the index set
                 pass
 
-        s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(s_coeff, index_set)
+        from sage.algebras.lie_algebras.superliealgebra import _standardize_s_coeff
+        s_coeff = _standardize_s_coeff(s_coeff, index_set, (0,)*len(index_set))
         if s_coeff.cardinality() == 0:
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
             return AbelianLieAlgebra(R, names, index_set, **kwds)
@@ -139,53 +140,6 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
 
         return super().__classcall__(cls, R, s_coeff, names, index_set, **kwds)
 
-    @staticmethod
-    def _standardize_s_coeff(s_coeff, index_set):
-        """
-        Helper function to standardize ``s_coeff`` into the appropriate form
-        (dictionary indexed by pairs, whose values are dictionaries).
-        Strips items with coefficients of 0 and duplicate entries.
-        This does not check the Jacobi relation (nor antisymmetry if the
-        cardinality is infinite).
-
-        EXAMPLES::
-
-            sage: from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
-            sage: d = {('y','x'): {'x':-1}}
-            sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'))
-            Finite family {('x', 'y'): (('x', 1),)}
-        """
-        # Try to handle infinite basis (once/if supported)
-        #if isinstance(s_coeff, AbstractFamily) and s_coeff.cardinality() == infinity:
-        #    return s_coeff
-
-        index_to_pos = {k: i for i,k in enumerate(index_set)}
-
-        sc = {}
-        # Make sure the first gen is smaller than the second in each key
-        for k in s_coeff.keys():
-            v = s_coeff[k]
-            if isinstance(v, dict):
-                v = v.items()
-
-            if index_to_pos[k[0]] > index_to_pos[k[1]]:
-                key = (k[1], k[0])
-                vals = tuple((g, -val) for g, val in v if val != 0)
-            else:
-                if not index_to_pos[k[0]] < index_to_pos[k[1]]:
-                    if k[0] == k[1]:
-                        if not all(val == 0 for g, val in v):
-                            raise ValueError("elements {} are equal but their bracket is not set to 0".format(k))
-                        continue
-                key = tuple(k)
-                vals = tuple((g, val) for g, val in v if val != 0)
-
-            if key in sc.keys() and sorted(sc[key]) != sorted(vals):
-                raise ValueError("two distinct values given for one and the same bracket")
-
-            if vals:
-                sc[key] = vals
-        return Family(sc)
 
     def __init__(self, R, s_coeff, names, index_set, category=None, prefix=None,
                  bracket=None, latex_bracket=None, string_quotes=None, **kwds):

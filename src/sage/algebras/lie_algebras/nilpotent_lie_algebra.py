@@ -122,9 +122,10 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
                         names.append(k)
 
         from sage.structure.indexed_generators import standardize_names_index_set
+        from sage.algebras.lie_algebras.superliealgebra import _standardize_s_coeff
+
         names, index_set = standardize_names_index_set(names, index_set)
-        s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(
-            s_coeff, index_set)
+        s_coeff = _standardize_s_coeff(s_coeff, index_set, (0,)*len(index_set))
 
         cat = LieAlgebras(R).FiniteDimensional().WithBasis().Nilpotent()
         category = cat.or_subcategory(category)
@@ -415,8 +416,8 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
                                                            for W_ind, W in basis_by_deg[dx + dy]}
 
         names, index_set = standardize_names_index_set(names, index_set)
-        s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(
-            s_coeff, index_set)
+        from sage.algebras.lie_algebras.superliealgebra import _standardize_s_coeff
+        s_coeff = _standardize_s_coeff(s_coeff, index_set, (0,)*len(index_set))
 
         NilpotentLieAlgebra_dense.__init__(self, R, s_coeff, names,
                                            index_set, s,
