@@ -102,6 +102,7 @@ Functions
 
 
 from itertools import combinations
+from sage.combinat.posets.lattices import FiniteLatticePoset
 from sage.matrix.constructor import Matrix
 from sage.structure.element import is_Matrix
 from sage.rings.integer_ring import ZZ
@@ -113,7 +114,7 @@ import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
 from .rank_matroid import RankMatroid
 from .circuits_matroid import CircuitsMatroid
-from .flats_matroid import FlatsMatroid, LatticeOfFlatsMatroid
+from .flats_matroid import FlatsMatroid
 from .circuit_closures_matroid import CircuitClosuresMatroid
 from .basis_matroid import BasisMatroid
 from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
@@ -181,7 +182,7 @@ def Matroid(groundset=None, data=None, **kwds):
     - ``circuits`` -- The list of circuits of the matroid.
     - ``nonspanning_circuits`` -- The list of nonspanning circuits of the
       matroid.
-    - ``flats`` -- The dictionary or list of flats of the matroid.
+    - ``flats`` -- The dictionary, list, or lattice of flats of the matroid.
     - ``graph`` -- A graph, whose edges form the elements of the matroid.
     - ``matrix`` -- A matrix representation of the matroid.
     - ``reduced_matrix`` -- A reduced representation of the matroid: if
@@ -230,7 +231,6 @@ def Matroid(groundset=None, data=None, **kwds):
         :class:`BasisMatroid <sage.matroids.basis_matroid.BasisMatroid>`,
         :class:`CircuitsMatroid <sage.matroids.circuits_matroid.CircuitsMatroid>`,
         :class:`FlatsMatroid <sage.matroids.flats_matroid.FlatsMatroid>`,
-        :class:`LatticeOfFlatsMatroid <sage.matroids.flats_matroid.LatticeOfFlatsMatroid>`,
         :class:`CircuitClosuresMatroid <sage.matroids.circuit_closures_matroid.CircuitClosuresMatroid>`,
         :class:`LinearMatroid <sage.matroids.linear_matroid.LinearMatroid>`,
         :class:`BinaryMatroid <sage.matroids.linear_matroid.LinearMatroid>`,
@@ -336,23 +336,21 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M.is_valid()
             False
 
-    #.  Dictionary or list of flats:
+    #.  Dictionary/list/lattice of flats:
 
         Given a dictionary of flats indexed by their rank, we get a
         :class:`FlatsMatroid <sage.matroids.circuits_matroid.FlatsMatroid>`::
 
             sage: M = Matroid(flats={0: [''], 1: ['a', 'b'], 2: ['ab']})
-            sage: M.is_valid()
+            sage: M.is_isomorphic(matroids.Uniform(2, 2)) and M.is_valid()
             True
             sage: type(M)
             <class 'sage.matroids.flats_matroid.FlatsMatroid'>
 
-        If instead we simply provide a list of flats, then we get a subclass
-        :class:`LatticeOfFlatsMatroid <sage.matroids.circuits_matroid.LatticeOfFlatsMatroid>`
-        of :class:`FlatsMatroid <sage.matroids.circuits_matroid.FlatsMatroid>`.
-        This class computes and stores the lattice of flats upon definition.
-        This can be time-consuming, but after it's done we benefit from some
-        faster methods (e.g., ``is_valid``)::
+        If instead we simply provide a list of flats, then the class computes
+        and stores the lattice of flats upon definition. This can be
+        time-consuming, but after it's done we benefit from some faster methods
+        (e.g., ``is_valid``)::
 
             sage: M = Matroid(flats=['', 'a', 'b', 'ab'])
             sage: for i in range(M.rank() + 1):  # print flats by rank
@@ -363,7 +361,18 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M.is_valid()
             True
             sage: type(M)
-            <class 'sage.matroids.flats_matroid.LatticeOfFlatsMatroid'>
+            <class 'sage.matroids.flats_matroid.FlatsMatroid'>
+
+        Finally, we can also directly provide a lattice of flats::
+
+            sage: from sage.combinat.posets.lattices import LatticePoset
+            sage: flats = [frozenset(F) for F in powerset('ab')]
+            sage: L_M = LatticePoset((flats, lambda x, y: x < y))
+            sage: M = Matroid(L_M)
+            sage: M.is_isomorphic(matroids.Uniform(2, 2)) and M.is_valid()
+            True
+            sage: type(M)
+            <class 'sage.matroids.flats_matroid.FlatsMatroid'>
 
     #.  Graph:
 
@@ -807,6 +816,8 @@ def Matroid(groundset=None, data=None, **kwds):
             key = 'matroid'
         elif isinstance(data, str):
             key = 'revlex'
+        elif isinstance(data, dict) or isinstance(data, FiniteLatticePoset):
+            key = 'flats'
         elif data is None:
             raise TypeError("no input data given for Matroid()")
         else:
@@ -884,11 +895,10 @@ def Matroid(groundset=None, data=None, **kwds):
                 for i in data:
                     for F in data[i]:
                         groundset.update(F)
-                M = FlatsMatroid(groundset=groundset, flats=data)
-            else:
+            else:  # iterable of flats (including lattice)
                 for F in data:
                     groundset.update(F)
-                M = LatticeOfFlatsMatroid(groundset=groundset, flats=data)
+        M = FlatsMatroid(groundset=groundset, flats=data)
 
     # Graphs:
     elif key == 'graph':

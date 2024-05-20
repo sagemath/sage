@@ -34,6 +34,7 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from .matroid cimport Matroid
 from .set_system cimport SetSystem
+from sage.combinat.posets.lattices import LatticePoset, FiniteLatticePoset
 
 cdef class FlatsMatroid(Matroid):
     r"""
@@ -41,8 +42,9 @@ cdef class FlatsMatroid(Matroid):
 
     - ``M`` -- matroid (default: ``None``)
     - ``groundset`` -- list (default: ``None``); the groundset of the matroid
-    - ``flats`` -- dictionary (default: ``None``); the lists of `k`-flats of
-      the matroid, indexed by their rank `k`
+    - ``flats`` -- (default: ``None``); the dictionary of the lists of flats
+      (indexed by their rank), or the list of all flats, or the lattice of
+      flats of the matroid
 
     .. NOTE::
 
@@ -72,7 +74,7 @@ cdef class FlatsMatroid(Matroid):
                     except KeyError:
                         self._F[i] = set()
                         self._F[i].add(frozenset(F))
-        else:
+        elif isinstance(flats, dict):
             self._groundset = frozenset(groundset)
             for i in sorted(flats):
                 for F in flats[i]:
@@ -81,6 +83,22 @@ cdef class FlatsMatroid(Matroid):
                     except KeyError:
                         self._F[i] = set()
                         self._F[i].add(frozenset(F))
+        elif isinstance(flats, FiniteLatticePoset):
+            self._groundset = frozenset(groundset)
+            self._L = flats
+            self._matroid_rank = self._L.rank()
+            for i in range(self._matroid_rank + 1):
+                self._F[i] = set()
+            for x in self._L:
+                self._F[self._L.rank(x)].add(x)
+        else:  # assume iterable of flats
+            self._groundset = frozenset(groundset)
+            self._L = LatticePoset(([frozenset(F) for F in flats], lambda x, y: x < y))
+            self._matroid_rank = self._L.rank()
+            for i in range(self._matroid_rank + 1):
+                self._F[i] = set()
+            for x in self._L:
+                self._F[self._L.rank(x)].add(x)
         self._matroid_rank = max(self._F, default=-1)
 
     cpdef groundset(self):
@@ -440,6 +458,61 @@ cdef class FlatsMatroid(Matroid):
             for F in self._F[k]:
                 yield F
 
+    def lattice_of_flats(self):
+        """
+        Return the lattice of flats of the matroid.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.flats_matroid import FlatsMatroid
+            sage: M = FlatsMatroid(matroids.catalog.Fano())
+            sage: M.lattice_of_flats()
+            Finite lattice containing 16 elements
+        """
+        if not self._L:
+            flats = [F for i in range(self._matroid_rank + 1) for F in self._F[i]]
+            self._L = LatticePoset((flats, lambda x, y: x < y))
+        return self._L
+
+    cpdef whitney_numbers(self):
+        r"""
+        Return the Whitney numbers of the first kind of the matroid.
+
+        The Whitney numbers of the first kind -- here encoded as a vector
+        `(w_0=1, \ldots, w_r)` -- are numbers of alternating sign, where `w_i`
+        is the value of the coefficient of the `(r-i)`-th degree term of the
+        matroid's characteristic polynomial. Moreover, `|w_i|` is the number of
+        `(i-1)`-dimensional faces of the broken circuit complex of the matroid.
+
+        OUTPUT: list of integers
+
+        EXAMPLES::
+
+            sage: from sage.matroids.flats_matroid import FlatsMatroid
+            sage: M = FlatsMatroid(matroids.catalog.BetsyRoss())
+            sage: M.whitney_numbers()
+            [1, -11, 35, -25]
+
+        TESTS::
+
+            sage: M = Matroid(flats=[[0], [0, 1]])
+            sage: M.whitney_numbers()
+            []
+        """
+        if self.loops():
+            return []
+        cdef list w = [0] * (self._matroid_rank + 1)
+        if not self._L:
+            for S in self.no_broken_circuits_sets_iterator():
+                w[len(S)] += 1
+            from sage.rings.integer_ring import ZZ
+            return [ZZ((-1)**i * abs_w) for (i, abs_w) in enumerate(w)]
+        else:
+            mu = self._L.moebius_function_matrix()
+            for (i, F) in enumerate(self._L.list()):
+                w[self._L.rank(F)] += mu[0, i]
+            return w
+
     cpdef whitney_numbers2(self):
         r"""
         Return the Whitney numbers of the second kind of the matroid.
@@ -477,15 +550,16 @@ cdef class FlatsMatroid(Matroid):
 
         For a matroid defined by its flats, we check the flats axioms.
 
+        If the lattice of flats has already been computed, we instead perform
+        the equivalent check of whether it forms a geometric lattice.
+
         OUTPUT: boolean
 
         EXAMPLES::
 
-            sage: M = Matroid(flats={0: [[]], 1: [[0], [1]], 2: [[0, 1]]})
-            sage: M.is_valid()
+            sage: Matroid(flats={0: [[]], 1: [[0], [1]], 2: [[0, 1]]}).is_valid()
             True
-            sage: M = Matroid(flats={0: [''], 1: ['a', 'b'], 2: ['ab']})
-            sage: M.is_valid()
+            sage: Matroid(flats={0: [''], 1: ['a', 'b'], 2: ['ab']}).is_valid()
             True
             sage: M = Matroid(flats={0: [[]], 1: [[0], [1]]})  # missing groundset
             sage: M.is_valid()
@@ -500,9 +574,43 @@ cdef class FlatsMatroid(Matroid):
             sage: M.is_valid()
             True
             sage: from sage.matroids.flats_matroid import FlatsMatroid
-            sage: M = FlatsMatroid(matroids.catalog.NonVamos())
-            sage: M.is_valid()
+            sage: FlatsMatroid(matroids.catalog.NonVamos()).is_valid()
             True
+
+        If we input a list or a lattice of flats, the method checks whether the
+        lattice of flats is geometric::
+
+            sage: Matroid(flats=[[], [0], [1], [0, 1]]).is_valid()
+            True
+            sage: Matroid(flats=['', 'a', 'b', 'ab']).is_valid()
+            True
+            sage: M = Matroid(flats=['',  # missing an extention of flat ['5'] by '6'
+            ....:                    '0','1','2','3','4','5','6','7','8','9','a','b','c',
+            ....:                    '45','46','47','4c','57','5c','67','6c','7c',
+            ....:                    '048','149','24a','34b','059','15a','25b','358',
+            ....:                    '06a','16b','268','369','07b','178','279','37a',
+            ....:                    '0123c','89abc',
+            ....:                    '0123456789abc'])
+            sage: M.is_valid()
+            False
+            sage: Matroid(matroids.catalog.Fano().lattice_of_flats()).is_valid()
+            True
+
+        Some invalid lists of flats are recognized before calling ``is_valid``,
+        upon the attempted matroid definition::
+
+            sage: M = Matroid(flats=[[], [0], [1]])  # missing groundset
+            Traceback (most recent call last):
+            ...
+            ValueError: not a join-semilattice: no top element
+            sage: Matroid(flats=[[0], [1], [0, 1]])  # missing an intersection
+            Traceback (most recent call last):
+            ...
+            ValueError: not a meet-semilattice: no bottom element
+            sage: Matroid(flats=[[], [0, 1], [2], [0], [1], [0, 1, 2]])
+            Traceback (most recent call last):
+            ...
+            ValueError: the poset is not ranked
 
         TESTS::
 
@@ -525,7 +633,24 @@ cdef class FlatsMatroid(Matroid):
             ....:                    3: ['0123456789abc']})
             sage: M.is_valid()
             False
+            sage: M = Matroid(flats=[[], [0], [1], [0], [0, 1]])  # duplicates are ignored
+            sage: M.lattice_of_flats()
+            Finite lattice containing 4 elements
+            sage: M.is_valid()
+            True
+            sage: M = Matroid(flats=['',
+            ....:                    '0','1','2','3','4','5','6','7','8','9','a','b','c',
+            ....:                    '45','46','47','4c','56','57','5c','67','6c','7c',
+            ....:                    '048','149','24a','34b','059','15a','25b','358',
+            ....:                    '06a','16b','268','369','07b','178','279','37a',
+            ....:                    '0123c','89abc',
+            ....:                    '0123456789abc'])
+            sage: M.is_valid()
+            True
         """
+        if self._L:  # if the lattice of flats is available
+            return self._is_closed(self._groundset) and self._L.is_geometric()
+
         cdef int i, j, k
         cdef frozenset F1, F2, I12
         cdef list ranks, cover, flats_lst
@@ -571,234 +696,3 @@ cdef class FlatsMatroid(Matroid):
                             return False
 
         return True
-
-cdef class LatticeOfFlatsMatroid(FlatsMatroid):
-    r"""
-    INPUT:
-
-    - ``M`` -- matroid (default: ``None``)
-    - ``groundset`` -- list (default: ``None``); the groundset of the matroid
-    - ``flats`` -- list (default: ``None``); the list of flats of the matroid
-
-    .. NOTE::
-
-        For a more flexible means of input, use the ``Matroid()`` function.
-    """
-
-    def __init__(self, M=None, groundset=None, flats=None):
-        """
-        Initialization of the matroid. See class docstring for full
-        documentation.
-
-        TESTS::
-
-            sage: from sage.matroids.flats_matroid import LatticeOfFlatsMatroid
-            sage: M = LatticeOfFlatsMatroid(matroids.catalog.Fano())
-            sage: TestSuite(M).run()
-        """
-        if M is not None:
-            self._groundset = M.groundset()
-            self._L = M.lattice_of_flats()
-        else:
-            self._groundset = frozenset(groundset)
-            from sage.combinat.posets.lattices import LatticePoset
-            self._L = LatticePoset(([frozenset(F) for F in flats], lambda x, y: x < y))
-        self._matroid_rank = self._L.rank()
-        self._F = {}
-        for i in range(self._matroid_rank + 1):
-            self._F[i] = set()
-        for x in self._L:
-            self._F[self._L.rank(x)].add(x)
-
-    def _repr_(self):
-        """
-        Return a string representation of the matroid.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.flats_matroid import LatticeOfFlatsMatroid
-            sage: M = LatticeOfFlatsMatroid(matroids.Uniform(6, 6)); M
-            Matroid of rank 6 on 6 elements with a lattice of 64 flats
-        """
-        flats_num = sum(1 for i in self._F for F in self._F[i])
-        return f'{Matroid._repr_(self)} with a lattice of {flats_num} flats'
-
-    def __reduce__(self):
-        """
-        Save the matroid for later reloading.
-
-        OUTPUT:
-
-        A tuple ``(unpickle, (version, data))``, where ``unpickle`` is the
-        name of a function that, when called with ``(version, data)``,
-        produces a matroid isomorphic to ``self``. ``version`` is an integer
-        (currently 0) and ``data`` is a tuple ``(E, F, name)`` where ``E`` is
-        the groundset, ``F`` is the list of flats, and ``name`` is a custom name.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.flats_matroid import LatticeOfFlatsMatroid
-            sage: M = LatticeOfFlatsMatroid(matroids.catalog.Vamos())
-            sage: M == loads(dumps(M))  # indirect doctest
-            True
-            sage: M.reset_name()
-            sage: loads(dumps(M))
-            Matroid of rank 4 on 8 elements with a lattice of 79 flats
-        """
-        import sage.matroids.unpickling
-        data = (self._groundset, self._L.list(), self.get_custom_name())
-        version = 0
-        return sage.matroids.unpickling.unpickle_lattice_of_flats_matroid, (version, data)
-
-    def lattice_of_flats(self):
-        """
-        Return the lattice of flats of the matroid.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.flats_matroid import LatticeOfFlatsMatroid
-            sage: M = LatticeOfFlatsMatroid(matroids.catalog.Fano())
-            sage: M.lattice_of_flats()
-            Finite lattice containing 16 elements
-        """
-        return self._L
-
-    cpdef whitney_numbers(self):
-        r"""
-        Return the Whitney numbers of the first kind of the matroid.
-
-        The Whitney numbers of the first kind -- here encoded as a vector
-        `(w_0=1, \ldots, w_r)` -- are numbers of alternating sign, where `w_i`
-        is the value of the coefficient of the `(r-i)`-th degree term of the
-        matroid's characteristic polynomial. Moreover, `|w_i|` is the number of
-        `(i-1)`-dimensional faces of the broken circuit complex of the matroid.
-
-        OUTPUT: list of integers
-
-        EXAMPLES::
-
-            sage: from sage.matroids.flats_matroid import LatticeOfFlatsMatroid
-            sage: M = LatticeOfFlatsMatroid(matroids.catalog.BetsyRoss())
-            sage: M.whitney_numbers()
-            [1, -11, 35, -25]
-
-        TESTS::
-
-            sage: M = Matroid(flats=[[0], [0, 1]])
-            sage: M.whitney_numbers()
-            []
-        """
-        if self.loops():
-            return []
-        cdef list w = [0] * (self.rank() + 1)
-        mu = self._L.moebius_function_matrix()
-        for (i, F) in enumerate(self._L.list()):
-            w[self._L.rank(F)] += mu[0, i]
-        return w
-
-    cpdef relabel(self, mapping):
-        r"""
-        Return an isomorphic matroid with relabeled groundset.
-
-        The output is obtained by relabeling each element `e` by
-        ``mapping[e]``, where ``mapping`` is a given injective map. If
-        ``mapping[e]`` is not defined, then the identity map is assumed.
-
-        INPUT:
-
-        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
-          label of `e`
-
-        OUTPUT: matroid
-
-        EXAMPLES::
-
-            sage: from sage.matroids.flats_matroid import LatticeOfFlatsMatroid
-            sage: M = LatticeOfFlatsMatroid(matroids.catalog.RelaxedNonFano())
-            sage: sorted(M.groundset())
-            [0, 1, 2, 3, 4, 5, 6]
-            sage: N = M.relabel({'g': 'x', 0: 'z'})  # 'g': 'x' is ignored
-            sage: from sage.matroids.utilities import cmp_elements_key
-            sage: sorted(N.groundset(), key=cmp_elements_key)
-            [1, 2, 3, 4, 5, 6, 'z']
-            sage: M.is_isomorphic(N)
-            True
-
-        TESTS::
-
-            sage: from sage.matroids.flats_matroid import LatticeOfFlatsMatroid
-            sage: M = LatticeOfFlatsMatroid(matroids.catalog.RelaxedNonFano())
-            sage: f = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g'}
-            sage: N = M.relabel(f)
-            sage: for S in powerset(M.groundset()):
-            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
-        """
-        d = self._relabel_map(mapping)
-        E = [d[x] for x in self._groundset]
-        flats = []
-        for F in self._L.list():
-            flats.append([d[x] for x in F])
-        M = LatticeOfFlatsMatroid(groundset=E, flats=flats)
-        return M
-
-    cpdef is_valid(self):
-        r"""
-        Test if ``self`` obeys the matroid axioms.
-
-        For a matroid defined by a list of flats, we check whether the
-        lattice of flats forms a geometric lattice.
-
-        OUTPUT: boolean
-
-        EXAMPLES::
-
-            sage: M = Matroid(flats=[[], [0], [1], [0, 1]])
-            sage: M.is_valid()
-            True
-            sage: M = Matroid(flats=['', 'a', 'b', 'ab'])
-            sage: M.is_valid()
-            True
-            sage: M = Matroid(flats=['',  # missing an extention of flat ['5'] by '6'
-            ....:                    '0','1','2','3','4','5','6','7','8','9','a','b','c',
-            ....:                    '45','46','47','4c','57','5c','67','6c','7c',
-            ....:                    '048','149','24a','34b','059','15a','25b','358',
-            ....:                    '06a','16b','268','369','07b','178','279','37a',
-            ....:                    '0123c','89abc',
-            ....:                    '0123456789abc'])
-            sage: M.is_valid()
-            False
-
-        Some invalid lists of flats are recognized before calling ``is_valid``,
-        upon the attempted matroid definition::
-
-            sage: M = Matroid(flats=[[], [0], [1]])  # missing groundset
-            Traceback (most recent call last):
-            ...
-            ValueError: not a join-semilattice: no top element
-            sage: Matroid(flats=[[0], [1], [0, 1]])  # missing an intersection
-            Traceback (most recent call last):
-            ...
-            ValueError: not a meet-semilattice: no bottom element
-            sage: Matroid(flats=[[], [0, 1], [2], [0], [1], [0, 1, 2]])
-            Traceback (most recent call last):
-            ...
-            ValueError: the poset is not ranked
-
-        TESTS::
-
-            sage: M = Matroid(flats=[[], [0], [1], [0], [0, 1]])  # duplicates are ignored
-            sage: M.lattice_of_flats()
-            Finite lattice containing 4 elements
-            sage: M.is_valid()
-            True
-            sage: M = Matroid(flats=['',
-            ....:                    '0','1','2','3','4','5','6','7','8','9','a','b','c',
-            ....:                    '45','46','47','4c','56','57','5c','67','6c','7c',
-            ....:                    '048','149','24a','34b','059','15a','25b','358',
-            ....:                    '06a','16b','268','369','07b','178','279','37a',
-            ....:                    '0123c','89abc',
-            ....:                    '0123456789abc'])
-            sage: M.is_valid()
-            True
-        """
-        return self._is_closed(self._groundset) and self._L.is_geometric()
