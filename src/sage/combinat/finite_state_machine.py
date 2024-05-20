@@ -1166,8 +1166,8 @@ def is_FSMState(S):
 
     TESTS::
 
-        sage: from sage.combinat.finite_state_machine import FSMState, FSMState
-        sage: isinstance(FSMState('A'), FSMState)
+        sage: from sage.combinat.finite_state_machine import is_FSMState, FSMState
+        sage: is_FSMState(FSMState('A'))
         True
     """
     return isinstance(S, FSMState)
@@ -2175,8 +2175,8 @@ def is_FSMTransition(T):
 
     TESTS::
 
-        sage: from sage.combinat.finite_state_machine import FSMTransition, FSMTransition
-        sage: isinstance(FSMTransition('A', 'B'), FSMTransition)
+        sage: from sage.combinat.finite_state_machine import is_FSMTransition, FSMTransition
+        sage: is_FSMTransition(FSMTransition('A', 'B'))
         True
     """
     return isinstance(T, FSMTransition)
@@ -2492,12 +2492,12 @@ def is_FiniteStateMachine(FSM):
 
     TESTS::
 
-        sage: from sage.combinat.finite_state_machine import FiniteStateMachine
-        sage: isinstance(FiniteStateMachine(), FiniteStateMachine)
+        sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine
+        sage: is_FiniteStateMachine(FiniteStateMachine())
         True
-        sage: isinstance(Automaton(), FiniteStateMachine)
+        sage: is_FiniteStateMachine(Automaton())
         True
-        sage: isinstance(Transducer(), FiniteStateMachine)
+        sage: is_FiniteStateMachine(Transducer())
         True
     """
     return isinstance(FSM, FiniteStateMachine)
@@ -10924,12 +10924,12 @@ def is_Automaton(FSM):
 
     TESTS::
 
-        sage: from sage.combinat.finite_state_machine import FiniteStateMachine, is_Automaton
-        sage: isinstance(FiniteStateMachine(), Automaton)
+        sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine, is_Automaton
+        sage: is_Automaton(FiniteStateMachine())
         False
-        sage: isinstance(Automaton(), Automaton)
+        sage: is_Automaton(Automaton())
         True
-        sage: isinstance(Automaton(), FiniteStateMachine)
+        sage: is_FiniteStateMachine(Automaton())
         True
     """
     return isinstance(FSM, Automaton)
@@ -12129,12 +12129,12 @@ def is_Transducer(FSM):
 
     TESTS::
 
-        sage: from sage.combinat.finite_state_machine import FiniteStateMachine, is_Transducer
-        sage: isinstance(FiniteStateMachine(), Transducer)
+        sage: from sage.combinat.finite_state_machine import is_FiniteStateMachine, is_Transducer
+        sage: is_Transducer(FiniteStateMachine())
         False
-        sage: isinstance(Transducer(), Transducer)
+        sage: is_Transducer(Transducer())
         True
-        sage: isinstance(Transducer(), FiniteStateMachine)
+        sage: is_FiniteStateMachine(Transducer())
         True
     """
     return isinstance(FSM, Transducer)
@@ -13872,7 +13872,7 @@ def is_FSMProcessIterator(PI):
 
     TESTS::
 
-        sage: from sage.combinat.finite_state_machine import FSMProcessIterator, FSMProcessIterator
+        sage: from sage.combinat.finite_state_machine import is_FSMProcessIterator, FSMProcessIterator
         sage: is_FSMProcessIterator(FSMProcessIterator(FiniteStateMachine([[0, 0, 0, 0]], initial_states=[0]), []))
         True
     """
