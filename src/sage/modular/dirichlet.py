@@ -2573,12 +2573,12 @@ def is_DirichletGroup(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.dirichlet import is_DirichletGroup
-        sage: is_DirichletGroup(DirichletGroup(11))
+        sage: from sage.modular.dirichlet import DirichletGroup_class
+        sage: isinstance(DirichletGroup(11), DirichletGroup_class)
         True
-        sage: is_DirichletGroup(11)
+        sage: isinstance(11, DirichletGroup_class)
         False
-        sage: is_DirichletGroup(DirichletGroup(11).0)
+        sage: isinstance(DirichletGroup(11).0, DirichletGroup_class)
         False
     """
     return isinstance(x, DirichletGroup_class)

@@ -782,10 +782,10 @@ class Cusp(Element):
             sage: G.dimension_cusp_forms(2)
             0
         """
-        from sage.modular.arithgroup.all import is_GammaH
+        from sage.modular.arithgroup.all import GammaH_class
         if not isinstance(other, Cusp):
             other = Cusp(other)
-        if not is_GammaH(G):
+        if not isinstance(G, GammaH_class):
             raise TypeError("G must be a group GammaH(N).")
 
         H = G._list_of_elements_in_H()

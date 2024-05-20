@@ -172,7 +172,7 @@ from itertools import product, chain
 from sage.categories.graded_algebras import GradedAlgebras
 
 from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
-from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.modform.element import GradedModularFormElement, ModularFormElement
 from sage.modular.modform.space import ModularFormsSpace
 from sage.modular.modform.ring import ModularFormsRing
@@ -256,7 +256,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         # check if the group is SL2(Z)
         if isinstance(group, (int, Integer)):
             group = Gamma0(group)
-        elif not is_CongruenceSubgroup(group):
+        elif not isinstance(group, CongruenceSubgroupBase):
             raise ValueError("Group (=%s) should be a congruence subgroup" % group)
 
         # Check if the base ring is the rational field

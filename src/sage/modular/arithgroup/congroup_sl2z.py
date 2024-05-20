@@ -34,10 +34,10 @@ def is_SL2Z(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_SL2Z
-        sage: is_SL2Z(SL2Z)
+        sage: from sage.modular.arithgroup.all import SL2Z_class
+        sage: isinstance(SL2Z, SL2Z_class)
         True
-        sage: is_SL2Z(Gamma0(6))
+        sage: isinstance(Gamma0(6), SL2Z_class)
         False
     """
     return isinstance(x, SL2Z_class)
