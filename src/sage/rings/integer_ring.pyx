@@ -58,6 +58,7 @@ import sage.libs.pari.all
 import sage.rings.ideal
 from sage.categories.basic import EuclideanDomains, DedekindDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.noetherian_rings import NoetherianRings
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
@@ -106,7 +107,7 @@ def is_IntegerRing(x):
     """
     return isinstance(x, IntegerRing_class)
 
-cdef class IntegerRing_class(PrincipalIdealDomain):
+cdef class IntegerRing_class(CommutativeRing):
     r"""
     The ring of integers.
 
@@ -124,6 +125,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         sage: Z.category()
         Join of Category of Dedekind domains
             and Category of euclidean domains
+            and Category of noetherian rings
             and Category of infinite enumerated sets
             and Category of metric spaces
         sage: Z(2^(2^5) + 1)
@@ -312,8 +314,10 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: A in InfiniteEnumeratedSets()
             True
         """
+        cat = (EuclideanDomains(), DedekindDomains(),
+               InfiniteEnumeratedSets().Metric(), NoetherianRings())
         Parent.__init__(self, base=self, names=('x',), normalize=False,
-                        category=(EuclideanDomains(), DedekindDomains(), InfiniteEnumeratedSets().Metric()))
+                        category=cat)
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_integer_')
 
@@ -422,7 +426,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             K, _ = parent(x).subfield(x)
             return K.order(K.gen())
 
-        return PrincipalIdealDomain.__getitem__(self, x)
+        return CommutativeRing.__getitem__(self, x)
 
     def range(self, start, end=None, step=None):
         """
@@ -528,7 +532,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             yield -n
             n += 1
 
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         r"""
         ``x`` canonically coerces to the integers `\ZZ` only if ``x``
         is an int, long or already an element of `\ZZ`.
@@ -586,9 +590,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: f(-7r)
             -7
         """
-        if S is long:
-            return sage.rings.integer.long_to_Z()
-        elif S is int:
+        if S is int:
             return sage.rings.integer.int_to_Z()
         elif S is bool:
             return True

@@ -502,18 +502,35 @@ def process_dollars(s):
     return s
 
 
-# Sage github issue shortcuts. For example, :issue:`7549` .
+# When adding roles here, also add them to SAGE_ROOT/src/tox.ini [flake8]
+# and document them in SAGE_ROOT/src/doc/en/developer/sage_manuals.rst
+#
+# Sage github issue shortcuts. For example, :issue:`7549`.
 pythonversion = sys.version.split(' ')[0]
 extlinks = {
     'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),
-    'trac': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'), # support :issue: for backward compatibility
-    'issue': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'),
+    'issue': ('https://github.com/sagemath/sage/issues/%s', 'Issue #%s'),
+    'sage_root': ('https://github.com/sagemath/sage/tree/develop/%s', 'SAGE_ROOT/%s'),
     'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article %s'),
     'arxiv': ('https://arxiv.org/abs/%s', 'arXiv %s'),
     'oeis': ('https://oeis.org/%s', 'OEIS sequence %s'),
     'doi': ('https://doi.org/%s', 'doi:%s'),
     'pari': ('https://pari.math.u-bordeaux.fr/dochtml/help/%s', 'pari:%s'),
-    'mathscinet': ('https://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet %s')
+    'mathscinet': ('https://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet %s'),
+    'common_lisp': ('https://www.lispworks.com/documentation/lw50/CLHS/Body/%s.htm', 'Common Lisp: %s'),
+    'ecl': ('https://ecl.common-lisp.dev/static/manual/%s.html', 'ECL: %s'),
+    'gap': ('https://docs.gap-system.org/doc/ref/%s_mj.html', 'GAP: %s'),
+    'gap_package': ('https://docs.gap-system.org/pkg/%s', 'GAP package %s'),
+    'giac_cascmd': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac/doc/en/cascmd_en/%s.html', 'Giac: %s'),
+    'giac_us': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac_us.html#%s', 'Giac API: %s'),
+    'maxima': ('https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html#%s', 'Maxima: %s'),
+    'meson': ('https://mesonbuild.com/%s', 'Meson: %s'),
+    'polymake': ('https://polymake.org/doku.php/documentation/latest/%s', 'polymake: %s'),
+    'ppl': ('https://www.bugseng.com/products/ppl/documentation/user/ppl-user-1.2-html/%s.html', 'PPL: %s'),
+    'qepcad': ('https://www.usna.edu/CS/qepcadweb/B/%s.html', 'QEPCAD: %s'),
+    'scip': ('https://scipopt.org/doc/html/%s.php', 'SCIP: %s'),
+    'singular': ('https://www.singular.uni-kl.de/Manual/4-3-2/%s.htm', 'Singular: %s'),
+    'soplex': ('https://soplex.zib.de/doc/html/%s.php', 'SoPlex: %s'),
 }
 
 
@@ -623,7 +640,7 @@ def format(s, embedded=False):
     r"""noreplace
     Format Sage documentation ``s`` for viewing with IPython.
 
-    This calls ``detex`` on ``s`` to convert LaTeX commands to plain
+    This calls :func:`detex` on ``s`` to convert LaTeX commands to plain
     text, unless the directive ``nodetex`` is given in the first line
     of the string.
 
@@ -637,13 +654,13 @@ def format(s, embedded=False):
 
     INPUT:
 
-    - ``s`` - string
-    - ``embedded`` - boolean (optional, default False)
+    - ``s`` -- string
+    - ``embedded`` -- boolean (optional, default ``False``)
 
     OUTPUT: string
 
-    Set ``embedded`` equal to True if formatting for use in the
-    notebook; this just gets passed as an argument to ``detex``.
+    Set ``embedded`` equal to ``True`` if formatting for use in the
+    notebook; this just gets passed as an argument to :func:`detex`.
 
     .. SEEALSO::
 
@@ -759,7 +776,7 @@ def format(s, embedded=False):
     except ImportError:
         pass
 
-    docs = set([])
+    docs = set()
     if 'noreplace' not in directives:
         i_0 = 0
         while True:
@@ -826,7 +843,7 @@ def format_src(s):
     """
     if not isinstance(s, str):
         raise TypeError("s must be a string")
-    docs = set([])
+    docs = set()
 
     try:
         import sage.all
@@ -1141,7 +1158,8 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         sage: s = search_src('MatRiX', path_re='matrix', interact=False); s.find('x') > 0
         True
 
-        sage: s = search_src('MatRiX', path_re='matrix', interact=False, ignore_case=False); s.find('x') > 0
+        sage: s = search_src('MatRiX', path_re='matrix',
+        ....:                interact=False, ignore_case=False); s.find('x') > 0
         False
 
     Searches are by default restricted to single lines, but this can
@@ -1153,7 +1171,8 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
         sage: len(search_src('log', 'derivative', interact=False).splitlines()) < 40
         True
-        sage: len(search_src('log', 'derivative', interact=False, multiline=True).splitlines()) > 70
+        sage: len(search_src('log', 'derivative',
+        ....:                interact=False, multiline=True).splitlines()) > 70
         True
 
     A little recursive narcissism: let's do a doctest that searches for
@@ -1355,7 +1374,7 @@ def format_search_as_html(what, results, search):
     if not isinstance(results, list):
         results = results.splitlines()
 
-    files = set([])
+    files = set()
     for L in results:
         filename = L.strip().split(':', 1)[0]
         if filename:

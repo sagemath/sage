@@ -13,7 +13,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
@@ -30,6 +30,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.integer_mod import mod
 from sage.arith.misc import legendre_symbol
 from sage.structure.unique_representation import CachedRepresentation
+
 
 def TorsionQuadraticForm(q):
     r"""
@@ -164,7 +165,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
             sage: W = FreeQuadraticModule(ZZ, 2, 2*matrix.identity(2))
             sage: V = (1/2) * W
-            sage: T = TorsionQuadraticModule(V,W)
+            sage: T = TorsionQuadraticModule(V, W)
             sage: x = T.gen(0)
             sage: x
             (1, 0)
@@ -695,7 +696,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
                           and (b[2] - d) % 4 == 0
                           and (b[4] - t) % 4 == 0
                           and (b[2] - d) % 8 == (b[4] - t) % 8  # if the oddity is altered by 4 then so is the determinant
-                         ]
+                          ]
         elif self.value_module_qf().n == 2:
             # the form is even
             block0 = [b for b in _blocks(sym2[0]) if b[3] == 0]
@@ -712,8 +713,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
                           if b[3] == o
                           and (b[2] - d) % 4 == 0
                           and (b[4] - t) % 4 == 0
-                          and (b[2] - d) % 8 == (b[4] - t) % 8 # if the oddity is altered by 4 then so is the determinant
-                         ]
+                          and (b[2] - d) % 8 == (b[4] - t) % 8
+                          # if the oddity is altered by 4
+                          # then so is the determinant
+                          ]
             # this is completely determined
             block2 = [sym2[2]]
         else:

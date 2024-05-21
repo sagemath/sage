@@ -260,7 +260,7 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     :class:`~sage.misc.lazy_import.LazyImport` objects that are resolving to the
     same object may be included in the output::
 
-        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)
+        sage: dt.find_objects_from_name('RR', include_lazy_imports=True)                # needs sage.rings.real_mpfr
         [Real Field with 53 bits of precision,
          ...
          Real Field with 53 bits of precision,
@@ -501,7 +501,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements('deprecated_RR')
         Traceback (most recent call last):
         ...
-        LookupError: object named 'deprecated_RR' is deprecated (see github issue 17458)
+        LookupError: object named 'deprecated_RR' is deprecated (see Issue #17458)
         sage: lazy_import('sage.all', 'RR', namespace=sage.__dict__, deprecation=17458)
         sage: import_statements('RR')
         from sage.rings.real_mpfr import RR
@@ -612,7 +612,7 @@ def import_statements(*objects, **kwds):
             except IndexError:
                 if deprecation:
                     raise LookupError(
-                        "object named {!r} is deprecated (see github issue "
+                        "object named {!r} is deprecated (see Issue #"
                         "{})".format(name, deprecation))
                 else:
                     raise LookupError("no object named {!r}".format(name))
@@ -680,10 +680,7 @@ def import_statements(*objects, **kwds):
         # is a best one (i.e. the object "obj" is contained in the module and
         # has name "name")
         if name is not None:
-            good_modules = []
-            for mod in modules:
-                if name in modules[mod]:
-                    good_modules.append(mod)
+            good_modules = [mod for mod in modules if name in modules[mod]]
 
             if len(good_modules) == 1:
                 answer[good_modules[0]].append((name, name))
@@ -732,9 +729,8 @@ def import_statements(*objects, **kwds):
     if lazy:
         res.append("from sage.misc.lazy_import import lazy_import")
 
-    for module_name in sorted(answer):
-        res.append(import_statement_string(module_name, answer[module_name],
-                                           lazy))
+    res.extend(import_statement_string(module_name, answer[module_name], lazy)
+               for module_name in sorted(answer))
 
     if answer_as_str:
         return '\n'.join(res)

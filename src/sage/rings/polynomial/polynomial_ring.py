@@ -144,12 +144,14 @@ Check that :issue:`5562` has been fixed::
 import sys
 
 from sage.structure.element import Element
+from sage.structure.category_object import check_default_category
 
 import sage.categories as categories
 from sage.categories.morphism import IdentityMorphism
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.rings import Rings
 
-from sage.rings.ring import (Ring, IntegralDomain,
-                             PrincipalIdealDomain, is_Ring)
+from sage.rings.ring import (Ring, IntegralDomain, PrincipalIdealDomain)
 from sage.structure.element import is_RingElement
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
@@ -246,7 +248,8 @@ class PolynomialRing_general(Ring):
             Join of Category of unique factorization domains
              and Category of commutative algebras over
               (Dedekind domains and euclidean domains
-               and infinite enumerated sets and metric spaces)
+               and noetherian rings and infinite enumerated sets
+               and metric spaces)
              and Category of infinite sets
             sage: category(GF(7)['x'])
             Join of Category of euclidean domains
@@ -264,9 +267,7 @@ class PolynomialRing_general(Ring):
         Check that category for zero ring::
 
             sage: PolynomialRing(Zmod(1), 'x').category()
-            Category of finite commutative algebras over
-            (finite commutative rings and subquotients of monoids and
-            quotients of semigroups and finite enumerated sets)
+            Category of finite commutative rings
 
         Check `is_finite` inherited from category (:issue:`24432`)::
 
@@ -284,11 +285,11 @@ class PolynomialRing_general(Ring):
         """
         # We trust that, if category is given, it is useful and does not need to be joined
         # with the default category
-        if category is None:
-            if base_ring.is_zero():
-                category = categories.rings.Rings().Finite()
-            else:
-                category = polynomial_default_category(base_ring.category(), 1)
+        if base_ring.is_zero():
+            category = categories.rings.Rings().Commutative().Finite()
+        else:
+            defaultcat = polynomial_default_category(base_ring.category(), 1)
+            category = check_default_category(defaultcat, category)
         self.__is_sparse = sparse
         if element_class:
             self._polynomial_class = element_class
@@ -788,6 +789,11 @@ class PolynomialRing_general(Ring):
             False
         """
         base_ring = self.base_ring()
+
+        # workaround, useful for the zero ring
+        if P == base_ring:
+            return self._coerce_map_from_base_ring()
+
         # handle constants that canonically coerce into self.base_ring()
         # first, if possible
         try:
@@ -1781,11 +1787,11 @@ class PolynomialRing_commutative(PolynomialRing_general):
         if base_ring not in _CommutativeRings:
             raise TypeError("Base ring %s must be a commutative ring." % repr(base_ring))
         # We trust that, if a category is given, that it is useful.
-        if category is None:
-            if base_ring.is_zero():
-                category = categories.algebras.Algebras(base_ring.category()).Commutative().Finite()
-            else:
-                category = polynomial_default_category(base_ring.category(), 1)
+        if base_ring.is_zero():
+            category = categories.algebras.Algebras(base_ring.category()).Commutative().Finite()
+        else:
+            defaultcat = polynomial_default_category(base_ring.category(), 1)
+            category = check_default_category(defaultcat, category)
         PolynomialRing_general.__init__(self, base_ring, name=name,
                                         sparse=sparse, implementation=implementation,
                                         element_class=element_class, category=category)
@@ -2529,14 +2535,13 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
     @cached_method
     def fraction_field(self):
         """
-        Returns the fraction field of self.
+        Return the fraction field of ``self``.
 
         EXAMPLES::
 
-            sage: R.<t> = GF(5)[]
-            sage: R.fraction_field()
-            Fraction Field of Univariate Polynomial Ring in t
-             over Finite Field of size 5
+            sage: QQbar['x'].fraction_field()
+            Fraction Field of Univariate Polynomial Ring in x over Algebraic
+            Field
 
         TESTS:
 
@@ -2556,17 +2561,14 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: t(x)
             x
 
+        Fixed :issue:`37374`::
+
+            sage: x = PolynomialRing(GF(37), ['x'], sparse=True).fraction_field().gen()
+            sage: type(x.numerator())
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
+            sage: (x^8 + 16*x^6 + 4*x^4 + x^2 + 12).numerator() - 1
+            x^8 + 16*x^6 + 4*x^4 + x^2 + 11
         """
-        R = self.base_ring()
-        p = R.characteristic()
-        if p != 0 and R.is_prime_field():
-            try:
-                from sage.rings.fraction_field_FpT import FpT
-            except ImportError:
-                pass
-            else:
-                if 2 < p and p < FpT.INTEGER_LIMIT:
-                    return FpT(self)
         from sage.rings.fraction_field import FractionField_1poly_field
         return FractionField_1poly_field(self)
 
@@ -3207,7 +3209,7 @@ class PolynomialRing_dense_padic_field_capped_relative(PolynomialRing_dense_padi
 
 class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
     def __init__(self, base_ring, name=None, element_class=None,
-            implementation=None, category=None):
+                 implementation=None, category=None):
         """
         TESTS::
 
@@ -3450,6 +3452,9 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
                     self._implementation_repr = ' (using GF2X)'
                 break
 
+        category = check_default_category(PrincipalIdealDomains(),
+                                          category)
+
         PolynomialRing_dense_mod_n.__init__(self, base_ring, name=name, implementation=implementation,
                                             element_class=element_class, category=category)
 
@@ -3471,6 +3476,10 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             Traceback (most recent call last):
             ...
             ValueError: GF2X only supports modulus 2
+            sage: A = PolynomialRing(Zmod(2), 'x'); A
+            Univariate Polynomial Ring in x over Ring of integers modulo 2 (using GF2X)
+            sage: A in PrincipalIdealDomains()
+            True
 
             sage: PolynomialRing(GF(2), 'x', implementation="FLINT")                    # needs sage.libs.flint
             Univariate Polynomial Ring in x over Finite Field of size 2
@@ -3639,6 +3648,31 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         # No suitable algorithm found, try algorithms from the base class.
         return PolynomialRing_dense_finite_field.irreducible_element(self, n, algorithm)
 
+    @cached_method
+    def fraction_field(self):
+        """
+        Return the fraction field of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<t> = GF(5)[]
+            sage: R.fraction_field()
+            Fraction Field of Univariate Polynomial Ring in t
+             over Finite Field of size 5
+        """
+        try:
+            from sage.rings.fraction_field_FpT import FpT
+            from sage.rings.polynomial.polynomial_zmod_flint import Polynomial_zmod_flint
+        except ImportError:
+            pass
+        else:
+            p = self.base_ring().characteristic()
+            if (issubclass(self.element_class, Polynomial_zmod_flint)
+                    and 2 < p < FpT.INTEGER_LIMIT):
+                return FpT(self)
+        return super().fraction_field()
+
+
 def polygen(ring_or_element, name="x"):
     """
     Return a polynomial indeterminate.
@@ -3669,7 +3703,7 @@ def polygen(ring_or_element, name="x"):
     """
     if is_RingElement(ring_or_element):
         base_ring = ring_or_element.parent()
-    elif is_Ring(ring_or_element):
+    elif ring_or_element in Rings():
         base_ring = ring_or_element
     else:
         raise TypeError("input must be a ring or ring element")
@@ -3679,6 +3713,7 @@ def polygen(ring_or_element, name="x"):
     if t.ngens() > 1:
         return t.gens()
     return t.gen()
+
 
 def polygens(base_ring, names="x", *args):
     """

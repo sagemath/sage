@@ -934,7 +934,7 @@ def krull_dimension(x):
         1
         sage: krull_dimension(ZZ[sqrt(5)])                                              # needs sage.rings.number_field sage.symbolic
         1
-        sage: U.<x,y,z> = PolynomialRing(ZZ,3); U
+        sage: U.<x,y,z> = PolynomialRing(ZZ, 3); U
         Multivariate Polynomial Ring in x, y, z over Integer Ring
         sage: U.krull_dimension()
         4
@@ -1732,9 +1732,9 @@ def quotient(x, y, *args, **kwds):
 
     EXAMPLES::
 
-        sage: quotient(5,6)
+        sage: quotient(5, 6)
         5/6
-        sage: quotient(5.,6.)
+        sage: quotient(5., 6.)
         0.833333333333333
         sage: R.<x> = ZZ[]; R
         Univariate Polynomial Ring in x over Integer Ring

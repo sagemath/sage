@@ -708,13 +708,13 @@ class ConstantOreFunctionSection(Map):
             sage: F(g)                                                                  # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
-            TypeError: not a constant function
+            TypeError: (x + t^2)^(-1) * x is not a constant function
         """
         numerator = x._numerator
         denominator = x._denominator
         if numerator.degree() == denominator.degree() and denominator.right_divides(numerator):
             return numerator.leading_coefficient() / denominator.leading_coefficient()
-        raise TypeError("not a constant function")
+        raise TypeError(f"{x} is not a constant function")
 
 class OreFunctionBaseringInjection(Morphism):
     r"""

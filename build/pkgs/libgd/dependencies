@@ -1,4 +1,4 @@
-libpng xz
+libpng | xz
 
 # xz needed to unpack tarball when sage-bootstrap-python is Python < 3.3
 ----------

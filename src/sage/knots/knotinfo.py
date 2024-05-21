@@ -204,7 +204,7 @@ in the KnotInfo database::
     ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
     ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
     sage: L.get_knotinfo()
-    (<KnotInfo.K0_1: '0_1'>, None)
+    (<KnotInfo.K0_1: '0_1'>, <SymmetryMutant.itself: 's'>)
 
 
 REFERENCES:
@@ -334,6 +334,47 @@ def knotinfo_bool(string):
     elif string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
+
+
+class SymmetryMutant(Enum):
+    r"""
+    Enum to specify the symmetry mutant link of the prime link listed in the
+    KnotInfo and LinkInfo databases. From the KnotInfo description page:
+
+        If a knot is viewed as the oriented diffeomorphism
+        class of an oriented pair, `K = (S_3, S_1)`, with `S_i`
+        diffeomorphic to `S^i`, there are four oriented knots
+        associated to any particular knot `K`. In addition to
+        `K` itself, there is the reverse, `K^r = (S_3, -S_1)`,
+        the concordance inverse, `-K = (-S_3, -S_1)`, and the
+        mirror image, `K^m = (-S_3, S_1)`.
+    """
+    itself = 's'
+    reverse = 'r'
+    concordance_inverse = 'mr'
+    mirror_image = 'm'
+    mixed = 'x' # to be used in connection with KnotInfoSeries
+    unknown = '?'
+
+    def __gt__(self, other):
+        r"""
+        Implement comparison of different items in order to have ``sorted`` work.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: sorted(SymmetryMutant)        # indirect doctest
+            [<SymmetryMutant.mixed: 'x'>,
+            <SymmetryMutant.itself: 's'>,
+            <SymmetryMutant.reverse: 'r'>,
+            <SymmetryMutant.concordance_inverse: 'mr'>,
+            <SymmetryMutant.mirror_image: 'm'>,
+            <SymmetryMutant.unknown: '?'>]
+        """
+        # We use the reversal of the alphabetical order of the values so that
+        # `itself` occurs before the mirrored cases
+        return self.value < other.value
+
 
 # ---------------------------------------------------------------------------------
 # KnotInfoBase
@@ -945,13 +986,29 @@ class KnotInfoBase(Enum):
 
             sage: KnotInfo.K6_3.is_reversible()
             True
+
+        TESTS::
+
+            sage: KnotInfo.K10_67.is_reversible() # optional - database_knotinfo
+            False
+            sage: KnotInfo.L7a4_0.is_reversible() # optional - database_knotinfo
         """
-        symmetry_type = self.symmetry_type()
-        if symmetry_type == 'reversible':
+        if self.is_knot():
+            symmetry_type = self.symmetry_type()
+            if symmetry_type == 'reversible':
+                return True
+            if symmetry_type == 'fully amphicheiral':
+                return True
+            return False
+
+        # revert orientation
+        b = self.braid()
+        bt = list(b.Tietze())
+        bt.reverse()
+        br = b.parent()(tuple(bt))
+        if b.is_conjugated(br):
             return True
-        if symmetry_type == 'fully amphicheiral':
-            return True
-        return False
+        return None
 
     @cached_method
     def is_amphicheiral(self, positive=False):
@@ -2123,6 +2180,9 @@ class KnotInfoBase(Enum):
             else:
                 l = self.link()
             if mirror:
+                if self.is_amphicheiral():
+                    # no need to test again
+                    return True
                 l = l.mirror_image()
 
             def check_result(L, m):
@@ -2131,12 +2191,10 @@ class KnotInfoBase(Enum):
                 """
                 if L != self:
                     return False
-                if m is None or m == '?':
-                    return True
                 if mirror:
-                    return m
+                    return m is SymmetryMutant.mirror_image
                 else:
-                    return not m
+                    return m is SymmetryMutant.itself
 
             try:
                 L, m = l.get_knotinfo()

@@ -352,18 +352,20 @@ categories and their super categories::
     sage: ZZ.category()
     Join of Category of Dedekind domains
         and Category of euclidean domains
+        and Category of noetherian rings
         and Category of infinite enumerated sets
         and Category of metric spaces
 
     sage: ZZ.categories()
     [Join of Category of Dedekind domains
          and Category of euclidean domains
+         and Category of noetherian rings
          and Category of infinite enumerated sets
          and Category of metric spaces,
      Category of Dedekind domains,
      Category of euclidean domains, Category of principal ideal domains,
      Category of unique factorization domains, Category of gcd domains,
-     Category of integral domains, Category of domains,
+     Category of integral domains, Category of domains, ...
      Category of commutative rings, Category of rings, ...
      Category of magmas and additive magmas, ...
      Category of monoids, Category of semigroups,

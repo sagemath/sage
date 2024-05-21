@@ -44,10 +44,10 @@ class AbelianGroupMap(Morphism):
 
 class AbelianGroupMorphism(Morphism):
     """
-    Some python code for wrapping GAP's GroupHomomorphismByImages
-    function for abelian groups. Returns "fail" if gens does not
-    generate self or if the map does not extend to a group
-    homomorphism, self - other.
+    Some python code for wrapping GAP's ``GroupHomomorphismByImages``
+    function for abelian groups. Returns "fail" if ``gens`` does not
+    generate ``self`` or if the map does not extend to a group
+    homomorphism, ``self`` - ``other``.
 
     EXAMPLES::
 

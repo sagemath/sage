@@ -704,7 +704,7 @@ cdef class Expression(Expression_abc):
 
     cdef GEx _gobj
 
-    cpdef object pyobject(self) noexcept:
+    cpdef object pyobject(self):
         """
         Get the underlying Python object.
 
@@ -1577,7 +1577,7 @@ cdef class Expression(Expression_abc):
             return n
         return sage.rings.rational.Rational(n)
 
-    cpdef _eval_self(self, R) noexcept:
+    cpdef _eval_self(self, R):
         """
         Evaluate this expression numerically.
 
@@ -1638,7 +1638,7 @@ cdef class Expression(Expression_abc):
         else:
             raise TypeError("cannot evaluate symbolic expression to a numeric value")
 
-    cpdef _convert(self, kwds) noexcept:
+    cpdef _convert(self, kwds):
         """
         Convert all the numeric coefficients and constants in this expression
         to the given ring ``R``. This results in an expression which contains
@@ -2178,7 +2178,7 @@ cdef class Expression(Expression_abc):
         finally:
             sig_off()
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Create a formal symbolic inequality or equality.
 
@@ -3798,7 +3798,7 @@ cdef class Expression(Expression_abc):
             return False
         raise NotImplementedError
 
-    cdef Expression coerce_in(self, z) noexcept:
+    cdef Expression coerce_in(self, z):
         """
         Quickly coerce z to be an Expression.
         """
@@ -3807,7 +3807,7 @@ cdef class Expression(Expression_abc):
         except TypeError:
             return self._parent.coerce(z)
 
-    cpdef _add_(left, right) noexcept:
+    cpdef _add_(left, right):
         """
         Add left and right.
 
@@ -3902,7 +3902,7 @@ cdef class Expression(Expression_abc):
             x = left._gobj + _right._gobj
         return new_Expression_from_GEx(left._parent, x)
 
-    cpdef _sub_(left, right) noexcept:
+    cpdef _sub_(left, right):
         """
         EXAMPLES::
 
@@ -3954,7 +3954,7 @@ cdef class Expression(Expression_abc):
             x = left._gobj - _right._gobj
         return new_Expression_from_GEx(left._parent, x)
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         Multiply left and right.
 
@@ -4120,7 +4120,7 @@ cdef class Expression(Expression_abc):
             x = left._gobj * _right._gobj
         return new_Expression_from_GEx(left._parent, x)
 
-    cpdef _div_(left, right) noexcept:
+    cpdef _div_(left, right):
         """
         Divide left and right.
 
@@ -4301,7 +4301,7 @@ cdef class Expression(Expression_abc):
         """
         return print_order_compare_mul(left._gobj, right._gobj)
 
-    cpdef _pow_(self, other) noexcept:
+    cpdef _pow_(self, other):
         r"""
         Return ``self`` raised to the power ``other``.
 
@@ -4515,7 +4515,7 @@ cdef class Expression(Expression_abc):
             x = g_pow(self._gobj, nexp._gobj)
         return new_Expression_from_GEx(self._parent, x)
 
-    cpdef _pow_int(self, other) noexcept:
+    cpdef _pow_int(self, other):
         """
         TESTS::
 
@@ -5899,7 +5899,7 @@ cdef class Expression(Expression_abc):
         res = self._gobj.subs_map(smap, 0)
         return new_Expression_from_GEx(self._parent, res)
 
-    cpdef Expression _subs_expr(self, expr) noexcept:
+    cpdef Expression _subs_expr(self, expr):
         """
         EXAMPLES::
 
@@ -7497,14 +7497,14 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``base_ring`` - (optional) the base ring for the polynomial
+        -  ``base_ring`` -- (optional) the base ring for the polynomial
 
-        -  ``ring`` - (optional) the parent for the polynomial
+        -  ``ring`` -- (optional) the parent for the polynomial
 
         .. warning::
 
            This is different from :meth:`poly` which is used to rewrite
-           self as a polynomial in terms of one of the variables.
+           ``self`` as a polynomial in terms of one of the variables.
 
         EXAMPLES::
 
@@ -7828,9 +7828,9 @@ cdef class Expression(Expression_abc):
             sage: gcd(I + I*x, x^2 - 1)
             x + 1
             sage: alg = SR(QQbar(sqrt(2) + I*sqrt(3)))
-            sage: gcd(alg + alg*x, x^2 - 1)  # known bug (trac #28489)
+            sage: gcd(alg + alg*x, x^2 - 1)  # known bug (Issue #28489)
             x + 1
-            sage: gcd(alg - alg*x, x^2 - 1)  # known bug (trac #28489)
+            sage: gcd(alg - alg*x, x^2 - 1)  # known bug (Issue #28489)
             x - 1
             sage: sqrt2 = SR(QQbar(sqrt(2)))
             sage: gcd(sqrt2 + x, x^2 - 2)    # known bug
@@ -9019,7 +9019,7 @@ cdef class Expression(Expression_abc):
 
         This also works using functional notation::
 
-            sage: arccos(1,hold=True)
+            sage: arccos(1, hold=True)
             arccos(1)
             sage: arccos(1)
             0
@@ -9070,7 +9070,7 @@ cdef class Expression(Expression_abc):
 
         This also works using functional notation::
 
-            sage: arctan(1,hold=True)
+            sage: arctan(1, hold=True)
             arctan(1)
             sage: arctan(1)
             1/4*pi
@@ -9342,7 +9342,7 @@ cdef class Expression(Expression_abc):
 
         This also works using functional notation::
 
-            sage: tanh(arcsinh(x),hold=True)
+            sage: tanh(arcsinh(x), hold=True)
             tanh(arcsinh(x))
             sage: tanh(arcsinh(x))
             x/sqrt(x^2 + 1)
@@ -9623,7 +9623,7 @@ cdef class Expression(Expression_abc):
 
         The ``hold`` parameter also works in functional notation::
 
-            sage: log(-1,hold=True)
+            sage: log(-1, hold=True)
             log(-1)
             sage: log(-1)
             I*pi
@@ -9668,7 +9668,7 @@ cdef class Expression(Expression_abc):
 
         This also works using functional notation::
 
-            sage: zeta(2,hold=True)
+            sage: zeta(2, hold=True)
             zeta(2)
             sage: zeta(2)
             1/6*pi^2
@@ -9845,7 +9845,7 @@ cdef class Expression(Expression_abc):
 
         This also works using functional notation::
 
-            sage: gamma(1/2,hold=True)
+            sage: gamma(1/2, hold=True)
             gamma(1/2)
             sage: gamma(1/2)
             sqrt(pi)
@@ -9876,8 +9876,8 @@ cdef class Expression(Expression_abc):
 
     def log_gamma(self, hold=False):
         """
-        Return the log gamma function evaluated at self.
-        This is the logarithm of gamma of self, where
+        Return the log gamma function evaluated at ``self``.
+        This is the logarithm of gamma of ``self``, where
         gamma is a complex function such that `gamma(n)`
         equals `factorial(n-1)`.
 
@@ -12142,12 +12142,12 @@ cdef class Expression(Expression_abc):
 
         .. warning::
 
-           This is *not* a numerical solver - use ``find_root`` to
-           solve for self == 0 numerically on an interval.
+           This is *not* a numerical solver - use :meth:`find_root` to
+           solve for ``self == 0`` numerically on an interval.
 
         INPUT:
 
-        - ``x`` - variable to view the function in terms of
+        - ``x`` -- variable to view the function in terms of
           (use default variable if not given)
 
         - ``explicit_solutions`` -- bool (default ``True``); require that
@@ -12157,7 +12157,7 @@ cdef class Expression(Expression_abc):
           multiplicities
 
         - ``ring`` -- a ring (default ``None``): if not ``None``, convert
-          ``self`` to a polynomial over ring and find roots over ring
+          ``self`` to a polynomial over ``ring`` and find roots over ``ring``
 
         OUTPUT:
 
@@ -12210,9 +12210,9 @@ cdef class Expression(Expression_abc):
         .. NOTE::
 
             It is possible to solve a greater variety of equations
-            using ``solve()`` and the keyword ``to_poly_solve``,
+            using :func:`solve` and the keyword ``to_poly_solve``,
             but only at the price of possibly encountering
-            approximate solutions.  See documentation for f.solve
+            approximate solutions.  See documentation for :meth:`solve`
             for more details.
 
         We derive the roots of a general quadratic polynomial::
@@ -12377,18 +12377,18 @@ cdef class Expression(Expression_abc):
         """
         from sage.symbolic.relation import solve
         return solve(self, x, multiplicities=multiplicities,
-                              solution_dict=solution_dict,
-                              explicit_solutions=explicit_solutions,
-                              to_poly_solve=to_poly_solve,
-                              algorithm=algorithm,
-                              domain=domain)
+                     solution_dict=solution_dict,
+                     explicit_solutions=explicit_solutions,
+                     to_poly_solve=to_poly_solve,
+                     algorithm=algorithm,
+                     domain=domain)
 
     def solve_diophantine(self, x=None, solution_dict=False):
         """
         Solve a polynomial equation in the integers (a so called Diophantine).
 
         If the argument is just a polynomial expression, equate to zero.
-        If ``solution_dict=True`` return a list of dictionaries instead of
+        If ``solution_dict=True``, return a list of dictionaries instead of
         a list of tuples.
 
         EXAMPLES::
@@ -12505,26 +12505,26 @@ cdef class Expression(Expression_abc):
     def find_root(self, a, b, var=None, xtol=10e-13, rtol=2.0**-50,
                   maxiter=100, full_output=False, imaginary_tolerance=1e-8):
         """
-        Numerically find a root of self on the closed interval [a,b] (or
-        [b,a]) if possible, where self is a function in the one variable.
+        Numerically find a root of ``self`` on the closed interval [a,b] (or
+        [b,a]) if possible, where ``self`` is a function in one variable.
         Note: this function only works in fixed (machine) precision, it is not
         possible to get arbitrary precision approximations with it.
 
         INPUT:
 
-        -  ``a, b`` - endpoints of the interval
+        -  ``a``, ``b`` -- endpoints of the interval
 
-        -  ``var`` - optional variable
+        -  ``var`` -- optional variable
 
-        -  ``xtol, rtol`` - the routine converges when a root
-           is known to lie within xtol of the value return. Should be >= 0. The
+        -  ``xtol, rtol`` -- the routine converges when a root
+           is known to lie within ``xtol`` of the value return. Should be >= 0. The
            routine modifies this to take into account the relative precision
            of doubles.
 
-        -  ``maxiter`` - integer; if convergence is not
+        -  ``maxiter`` -- integer; if convergence is not
            achieved in maxiter iterations, an error is raised. Must be >= 0.
 
-        -  ``full_output`` - bool (default: False), if True,
+        -  ``full_output`` -- bool (default: ``False``), if ``True``,
            also return object that contains information about convergence.
 
         - ``imaginary_tolerance`` -- (default: ``1e-8``); if an imaginary
@@ -12698,19 +12698,19 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``a`` - real number; left endpoint of interval on which to
+        -  ``a`` -- real number; left endpoint of interval on which to
            minimize
 
-        -  ``b`` - real number; right endpoint of interval on which to
+        -  ``b`` -- real number; right endpoint of interval on which to
            minimize
 
-        -  ``var`` - variable (default: first variable in self); the
+        -  ``var`` -- variable (default: first variable in self); the
            variable in self to maximize over
 
-        -  ``tol`` - positive real (default: 1.48e-08); the convergence
+        -  ``tol`` -- positive real (default: 1.48e-08); the convergence
            tolerance
 
-        -  ``maxfun`` - natural number (default: 500); maximum function
+        -  ``maxfun`` -- natural number (default: 500); maximum function
            evaluations
 
         - ``imaginary_tolerance`` -- (default: ``1e-8``); if an imaginary
@@ -12842,7 +12842,7 @@ cdef class Expression(Expression_abc):
 
     def plot(self, *args, **kwds):
         """
-        Plot a symbolic expression. All arguments are passed onto the standard plot command.
+        Plot a symbolic expression. All arguments are passed onto the standard :func:`plot` command.
 
         EXAMPLES:
 
@@ -12890,7 +12890,8 @@ cdef class Expression(Expression_abc):
             sage: plot(2*sin, -4, 4)                                                    # needs sage.plot
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Integer Ring' and '<class 'sage.functions.trig.Function_sin'>'
+            TypeError: unsupported operand parent(s) for *:
+            'Integer Ring' and '<class 'sage.functions.trig.Function_sin'>'
 
         You should evaluate the function first::
 
@@ -12990,7 +12991,7 @@ cdef class Expression(Expression_abc):
 
         -  ``b`` -- upper endpoint of the sum
 
-        - ``algorithm`` - (default: ``'maxima'``)  one of
+        - ``algorithm`` -- (default: ``'maxima'``)  one of
 
           - ``'maxima'`` -- use Maxima (the default)
           - ``'maple'`` -- (optional) use Maple
@@ -13530,7 +13531,7 @@ cdef class Expression(Expression_abc):
                 return S
 
 
-cpdef _repr_Expression(x) noexcept:
+cpdef _repr_Expression(x):
     r"""
     Return the string representation of the expression ``x``.
 
@@ -13542,7 +13543,7 @@ cpdef _repr_Expression(x) noexcept:
     return ccrepr((<Expression>x)._gobj)
 
 
-cpdef _latex_Expression(x) noexcept:
+cpdef _latex_Expression(x):
     r"""
     Return the standard LaTeX version of the expression `x`.
 
@@ -13618,7 +13619,7 @@ def _eval_on_operands(f):
 
 
 cdef dict dynamic_class_cache = {}
-cdef get_dynamic_class_for_function(unsigned serial) noexcept:
+cdef get_dynamic_class_for_function(unsigned serial):
     r"""
     Create a dynamic class corresponding to the function with given
     ``serial`` that includes dynamic methods defined by the function.
@@ -13713,7 +13714,7 @@ cdef get_dynamic_class_for_function(unsigned serial) noexcept:
     return cls
 
 
-cdef Expression new_Expression_from_GEx(parent, GEx juice) noexcept:
+cdef Expression new_Expression_from_GEx(parent, GEx juice):
     cdef type cls
     cdef Expression nex
     if is_exactly_a_function(juice):
@@ -13729,7 +13730,7 @@ cdef Expression new_Expression_from_GEx(parent, GEx juice) noexcept:
     return nex
 
 
-cpdef new_Expression(parent, x) noexcept:
+cpdef new_Expression(parent, x):
     r"""
     Convert ``x`` into the symbolic expression ring ``parent``.
 
@@ -13819,7 +13820,7 @@ cpdef new_Expression(parent, x) noexcept:
     return new_Expression_from_GEx(parent, exp)
 
 
-cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=True) noexcept:
+cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=True):
     r"""
     Wrap the given Python object in a symbolic expression even if it
     cannot be coerced to the Symbolic Ring.
@@ -13890,7 +13891,7 @@ cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=Tr
     return new_Expression_from_GEx(parent, exp)
 
 
-cpdef new_Expression_wild(parent, unsigned int n=0) noexcept:
+cpdef new_Expression_wild(parent, unsigned int n=0):
     r"""
     Return the n-th wild-card for pattern matching and substitution.
 
@@ -13920,7 +13921,7 @@ cpdef new_Expression_wild(parent, unsigned int n=0) noexcept:
     return new_Expression_from_GEx(parent, g_wild(n))
 
 
-cpdef new_Expression_symbol(parent, name=None, latex_name=None, domain=None) noexcept:
+cpdef new_Expression_symbol(parent, name=None, latex_name=None, domain=None):
     r"""
     Look up or create a symbol.
 
@@ -14072,7 +14073,7 @@ cdef class ExpressionIterator:
         self._ind+=1
         return new_Expression_from_GEx(self._ex._parent, ex)
 
-cdef inline ExpressionIterator new_ExpIter_from_Expression(Expression ex) noexcept:
+cdef inline ExpressionIterator new_ExpIter_from_Expression(Expression ex):
     """
     Construct a new iterator over a symbolic expression.
 

@@ -44,15 +44,15 @@ lists of integer exponents.
     sage: x.list()
     [7, 2, 0, 1, 1]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.category_object import normalize_names
@@ -141,7 +141,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
         sage: FreeAbelianMonoid(names='x,y')
         Free abelian monoid on 2 generators (x, y)
     """
-    if isinstance(index_set, str): # Swap args (this works if names is None as well)
+    if isinstance(index_set, str):  # Swap args (this works if names is None as well)
         names, index_set = index_set, names
 
     if index_set is None and names is not None:
@@ -169,6 +169,10 @@ def is_FreeAbelianMonoid(x):
 
         sage: from sage.monoids.free_abelian_monoid import is_FreeAbelianMonoid
         sage: is_FreeAbelianMonoid(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeAbelianMonoid is deprecated;
+        use 'isinstance(..., FreeAbelianMonoid_class)' instead
+        See https://github.com/sagemath/sage/issues/37897 for details.
         False
         sage: is_FreeAbelianMonoid(FreeAbelianMonoid(7,'a'))
         True
@@ -177,7 +181,10 @@ def is_FreeAbelianMonoid(x):
         sage: is_FreeAbelianMonoid(FreeMonoid(0,''))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37897, "the function is_FreeAbelianMonoid is deprecated; use 'isinstance(..., FreeAbelianMonoid_class)' instead")
     return isinstance(x, FreeAbelianMonoid_class)
+
 
 class FreeAbelianMonoid_class(Parent):
     """
@@ -204,7 +211,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __repr__(self):
         n = self.__ngens
-        return "Free abelian monoid on %s generators %s" % (n,self.gens())
+        return f"Free abelian monoid on {n} generators {self.gens()}"
 
     def __call__(self, x):
         """

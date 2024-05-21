@@ -78,22 +78,23 @@ reconfigure:
 	        exit 1; \
 	fi
 
-# This is used to monitor progress towards Python 3 and prevent
-# regressions. Should be removed after the full switch to python3.
-#
-# As of Sage 9.0: keep the build target for backward compatibility,
-# but it just runs "make".
-buildbot-python3:
-	$(MAKE)
-
 # Preemptively download all source tarballs of normal packages.
+DOWNLOAD_PACKAGES=:all:
 download:
 	export SAGE_ROOT=$$(pwd) && \
 	export PATH=$$SAGE_ROOT/build/bin:$$PATH && \
-	sage-package download :all:
+	sage-package download $(DOWNLOAD_PACKAGES)
 
 dist: build/make/Makefile
 	./sage --sdist
+
+ci-build-with-fallback:
+	$(MAKE) build && $(MAKE) SAGE_CHECK=no pypi-wheels; 	\
+	if [ $$? != 0 ]; then					\
+            echo "Incremental build failed, falling back";	\
+	    $(MAKE) doc-clean doc-uninstall sagelib-clean;	\
+	    $(MAKE) build && $(MAKE) SAGE_CHECK=no pypi-wheels;	\
+	fi
 
 ###############################################################################
 # Cleaning up
@@ -175,9 +176,19 @@ bootstrap-clean:
 	rm -rf src/doc/en/reference/spkg/*.rst
 	for a in environment environment-optional src/environment src/environment-dev src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
 	rm -f src/Pipfile
-	rm -f src/pyproject.toml
 	rm -f src/requirements.txt
 	rm -f src/setup.cfg
+	rm -f build/pkgs/cypari/version_requirements.txt
+	rm -f build/pkgs/cysignals/version_requirements.txt
+	rm -f build/pkgs/cython/version_requirements.txt
+	rm -f build/pkgs/gmpy2/version_requirements.txt
+	rm -f build/pkgs/jupyter_core/version_requirements.txt
+	rm -f build/pkgs/memory_allocator/version_requirements.txt
+	rm -f build/pkgs/numpy/version_requirements.txt
+	rm -f build/pkgs/pkgconfig/version_requirements.txt
+	rm -f build/pkgs/pplpy/version_requirements.txt
+	rm -f build/pkgs/setuptools/version_requirements.txt
+	rm -f build/pkgs/wheel/version_requirements.txt
 
 # Remove absolutely everything which isn't part of the git repo
 maintainer-clean: distclean bootstrap-clean
@@ -343,7 +354,7 @@ CONFIGURE_DEPENDENCIES =							\
 	build/pkgs/*/spkg-configure.m4						\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/checksums.ini build/pkgs/*/requirements.txt		\
-	build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt	\
+	build/pkgs/*/version_requirements.txt build/pkgs/*/package-version.txt	\
 	build/pkgs/*/spkg-install build/pkgs/*/spkg-install.in
 
 # SPKG_INFO_DEPENDENCIES is the list of files that influence the run of 'sage-spkg-info' and hence
@@ -351,7 +362,7 @@ CONFIGURE_DEPENDENCIES =							\
 SPKG_INFO_DEPENDENCIES =							\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/requirements.txt						\
-	build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt	\
+	build/pkgs/*/version_requirements.txt build/pkgs/*/package-version.txt	\
 	build/pkgs/*/distros/*.txt
 
 configure: bootstrap src/doc/bootstrap $(CONFIGURE_DEPENDENCIES) $(SPKG_INFO_DEPENDENCIES)
@@ -376,5 +387,5 @@ list:
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \
-	buildbot-python3 list \
+	list \
 	doc-clean clean sagelib-clean build-clean

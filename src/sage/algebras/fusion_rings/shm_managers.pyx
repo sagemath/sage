@@ -144,7 +144,7 @@ cdef class KSHandler:
     @cython.nonecheck(False)
     @cython.wraparound(False)
     @cython.boundscheck(False)
-    cdef NumberFieldElement_absolute get(self, int idx) noexcept:
+    cdef NumberFieldElement_absolute get(self, int idx):
         r"""
         Retrieve the known square corresponding to the given index,
         if it exists.
@@ -175,7 +175,7 @@ cdef class KSHandler:
         self.obj_cache[idx] = cyc_coeff
         return cyc_coeff
 
-    cpdef update(self, list eqns) noexcept:
+    cpdef update(self, list eqns):
         r"""
         Update ```self``'s ``shared_memory``-backed dictionary of known
         squares. Keys are variable indices and corresponding values
@@ -242,7 +242,7 @@ cdef class KSHandler:
     @cython.nonecheck(False)
     @cython.wraparound(False)
     @cython.infer_types(False)
-    cdef setitem(self, int idx, rhs) noexcept:
+    cdef setitem(self, int idx, rhs):
         """
         Create an entry corresponding to the given index.
 

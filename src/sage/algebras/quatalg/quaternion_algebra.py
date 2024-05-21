@@ -54,6 +54,7 @@ from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import is_RationalField, QQ
 from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
@@ -80,6 +81,8 @@ from sage.misc.cachefunc import cached_method
 
 from sage.categories.algebras import Algebras
 from sage.categories.number_fields import NumberFields
+
+from sage.structure.richcmp import richcmp_method
 
 ########################################################
 # Constructor
@@ -304,10 +307,16 @@ def is_QuaternionAlgebra(A):
     EXAMPLES::
 
         sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(QuaternionAlgebra(QQ,-1,-1))
+        doctest:warning...
+        DeprecationWarning: the function is_QuaternionAlgebra is deprecated;
+        use 'isinstance(..., QuaternionAlgebra_abstract)' instead
+        See https://github.com/sagemath/sage/issues/37896 for details.
         True
         sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37896, "the function is_QuaternionAlgebra is deprecated; use 'isinstance(..., QuaternionAlgebra_abstract)' instead")
     return isinstance(A, QuaternionAlgebra_abstract)
 
 
@@ -512,7 +521,7 @@ class QuaternionAlgebra_abstract(Parent):
 
     def is_noetherian(self) -> bool:
         """
-        Return ``True`` always, since any quaternion algebra is a noetherian
+        Return ``True`` always, since any quaternion algebra is a Noetherian
         ring (because it is a finitely generated module over a field).
 
         EXAMPLES::
@@ -687,17 +696,22 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         self._gens = (self([0, 1, 0, 0]), self([0, 0, 1, 0]), self([0, 0, 0, 1]))
 
     @cached_method
-    def maximal_order(self, take_shortcuts=True):
+    def maximal_order(self, take_shortcuts=True, order_basis=None):
         r"""
         Return a maximal order in this quaternion algebra.
 
-        The algorithm used is from [Voi2012]_.
+        If ``order_basis`` is specified, the resulting maximal order
+        will contain the order of the quaternion algebra given by this
+        basis. The algorithm used is from [Voi2012]_.
 
         INPUT:
 
         - ``take_shortcuts`` -- (default: ``True``) if the discriminant is
           prime and the invariants of the algebra are of a nice form, use
           Proposition 5.2 of [Piz1980]_.
+
+        - ``order_basis`` -- (optional, default: ``None``) a basis of an
+          order of this quaternion algebra
 
         OUTPUT:
 
@@ -755,8 +769,20 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
             sage: for d in ( m for m in range(1, 750) if is_squarefree(m) ):        # long time (3s)
             ....:     A = QuaternionAlgebra(d)
-            ....:     R = A.maximal_order(take_shortcuts=False)
-            ....:     assert A.discriminant() == R.discriminant()
+            ....:     assert A.maximal_order(take_shortcuts=False).is_maximal()
+
+        Specifying an order basis gives an extension of orders::
+
+            sage: A.<i,j,k> = QuaternionAlgebra(-292, -732)
+            sage: alpha = A.random_element()
+            sage: while alpha.is_zero():
+            ....:     alpha = A.random_element()
+            sage: conj = [alpha * b * alpha.inverse() for b in [k,i,j]]
+            sage: order_basis = tuple(conj) + (A.one(),)
+            sage: O = A.quaternion_order(basis=order_basis)
+            sage: R = A.maximal_order(order_basis=order_basis)
+            sage: O <= R and R.is_maximal()
+            True
 
         We do not support number fields other than the rationals yet::
 
@@ -766,9 +792,24 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ...
             NotImplementedError: maximal order only implemented
             for rational quaternion algebras
+
+        TESTS:
+
+        Check that :issue:`37417` and the first part of :issue:`37217` are fixed::
+
+            sage: invars = [(-4, -28), (-292, -732), (-48, -564), (-436, -768),
+            ....:           (-752, -708), (885, 545), (411, -710), (-411, 593),
+            ....:           (805, -591), (-921, 353), (409, 96), (394, 873),
+            ....:           (353, -722), (730, 830), (-466, -427), (-213, -630),
+            ....:           (-511, 608), (493, 880), (105, -709), (-213, 530),
+            ....:           (97, 745)]
+            sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal()
+            ....:     for (a, b) in invars)
+            True
         """
         if self.base_ring() != QQ:
-            raise NotImplementedError("maximal order only implemented for rational quaternion algebras")
+            raise NotImplementedError("maximal order only implemented for "
+                                      "rational quaternion algebras")
 
         d_A = self.discriminant()
 
@@ -777,7 +818,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         # (every quaternion algebra of prime discriminant has a representation
         #  of such a form though)
         a, b = self.invariants()
-        if take_shortcuts and d_A.is_prime() and a in ZZ and b in ZZ:
+        if (not order_basis and take_shortcuts and d_A.is_prime()
+            and a in ZZ and b in ZZ):
             a = ZZ(a)
             b = ZZ(b)
             i, j, k = self.gens()
@@ -810,16 +852,28 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
                 return self.quaternion_order(basis)
 
         # The following code should always work (over QQ)
-        # Start with <1,i,j,k>
-        R = self.quaternion_order((1,) + self.gens())
-        d_R = R.discriminant()
+        # If no order basis is given, start with <1,i,j,k>
+        if not order_basis:
+            order_basis = (self.one(),) + self.gens()
+
+        try:
+            R = self.quaternion_order(order_basis)
+            d_R = R.discriminant()
+        except (TypeError, ValueError):
+            raise ValueError('order_basis is not a basis of an order of the'
+                            ' given quaternion algebra')
+
+        # Since Voight's algorithm only works for a starting basis having 1 as
+        # its first vector, we derive such a basis from the given order basis
+        basis = basis_for_quaternion_lattice(order_basis, reverse=True)
 
         e_new_gens = []
 
         # For each prime at which R is not yet maximal, make it bigger
         for p, _ in d_R.factor():
-            e = R.basis()
-            while self.quaternion_order(e).discriminant().valuation(p) > d_A.valuation(p):
+            e = basis
+            disc = d_R
+            while disc.valuation(p) > d_A.valuation(p):
                 # Compute a normalized basis at p
                 f = normalize_basis_at_p(list(e), p)
 
@@ -892,14 +946,89 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
                             e_n = basis_for_quaternion_lattice(list(e) + e_n[1:], reverse=True)
 
                 # e_n now contains elements that locally at p give a bigger order,
-                # but the basis may be messed up at other primes (it might not even
-                # be an order). We will join them all together at the end
+                # but the basis may be messed up at other primes (it might not
+                # even be an order). We will join them all together at the end
                 e = e_n
+
+                # Since e might not define an order at this point, we need to
+                # manually calculate the updated discriminant
+                L = [[x.pair(y) for y in e] for x in e]
+                disc = matrix(QQ, 4, 4, L).determinant().sqrt()
 
             e_new_gens.extend(e[1:])
 
-        e_new = basis_for_quaternion_lattice(list(R.basis()) + e_new_gens, reverse=True)
+        e_new = basis_for_quaternion_lattice(list(basis) + e_new_gens, reverse=True)
         return self.quaternion_order(e_new)
+
+    def order_with_level(self, level):
+        """
+        Return an order in this quaternion algebra with given level.
+
+        INPUT:
+
+        - ``level`` -- positive integer
+
+        Currently this is only implemented when the base field is the
+        rational numbers and the level is divisible by at most one
+        power of a prime that ramifies in this quaternion algebra.
+
+        EXAMPLES::
+
+            sage: A.<i,j,k> = QuaternionAlgebra(5)
+            sage: level = 2 * 5 * 17
+            sage: O = A.order_with_level(level); O
+            Order of Quaternion Algebra (-2, -5) with base ring Rational Field with basis (1/2 + 1/2*j + 7/2*k, 1/2*i + 19/2*k, j + 7*k, 17*k)
+
+        Check that the order has the right index in the maximal order::
+
+            sage: L = O.free_module()
+            sage: N = A.maximal_order().free_module()
+            sage: L.index_in(N) == level / 5
+            True
+        """
+        if self.base_ring() is not QQ:
+            raise NotImplementedError("base field must be rational numbers")
+
+        if len(self.ramified_primes()) > 1:
+            raise NotImplementedError("currently this algorithm only works when the quaternion algebra is only ramified at one finite prime")
+
+        # The algorithm we use is similar to that in Magma (by David Kohel).
+        level = abs(level)
+        N = self.discriminant()
+        N1 = gcd(level, N)
+        M1 = level // N1
+
+        O = self.maximal_order()
+        # if N1 != 1:
+        #     # we do not know why magma does the following, so we do not do it.
+        #     for p in self.ramified_primes():
+        #         if not (level % p**2):
+        #             raise NotImplementedError("Currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
+
+        #     P = O._left_ideal_basis([N1] + [x * y - y * x
+        #                                     for x in self.basis()
+        #                                     for y in self.basis()])
+        #     O = self.quaternion_order(P)
+
+        fact = M1.factor()
+        B = O.basis()
+
+        for (p, r) in fact:
+            a = int(-p) // 2
+            for v in GF(p)**4:
+                x = sum([int(v[i] + a) * B[i] for i in range(4)])
+                D = x.reduced_trace()**2 - 4 * x.reduced_norm()
+                # x = O.random_element((-p/2).floor(), (p/2).ceil())
+                if kronecker_symbol(D, p) == 1:
+                    break
+            X = PolynomialRing(GF(p), 'x').gen()
+            a = ZZ((X**2 - ZZ(x.reduced_trace()) * X + ZZ(x.reduced_norm())).roots()[0][0])
+            I = O._left_ideal_basis([p**r, (x - a)**r])
+            O = O._right_order_from_ideal_basis(I)
+            # right_order returns the RightOrder of I inside O, so we
+            # do not need to do another intersection
+
+        return O
 
     def invariants(self):
         """
@@ -1119,9 +1248,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if not is_RationalField(self.base_ring()):
             raise ValueError("base field must be the rational numbers")
 
-        return sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
-                prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
-                prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
+        a, b = self._a, self._b
+        return sorted(p for p in {2}.union(prime_divisors(a.numerator()),
+                                           prime_divisors(a.denominator()),
+                                           prime_divisors(b.numerator()),
+                                           prime_divisors(b.denominator()))
+                      if hilbert_symbol(self._a, self._b, p) == -1)
 
     def is_isomorphic(self, A) -> bool:
         """
@@ -1401,6 +1533,7 @@ def unpickle_QuaternionAlgebra_v0(*key):
     return QuaternionAlgebra(*key)
 
 
+@richcmp_method
 class QuaternionOrder(Parent):
     """
     An order in a quaternion algebra.
@@ -1614,48 +1747,58 @@ class QuaternionOrder(Parent):
         """
         return self.__basis[n]
 
-    def __eq__(self, R):
+    def __richcmp__(self, other, op):
         """
-        Compare orders self and other.
+        Compare this quaternion order to ``other``.
 
         EXAMPLES::
 
-            sage: R = QuaternionAlgebra(-11,-1).maximal_order()
+            sage: R = QuaternionAlgebra(-1, -11).maximal_order()
             sage: R == R                       # indirect doctest
             True
-            sage: R == QuaternionAlgebra(-1,-1).maximal_order()
-            False
             sage: R == 5
             False
-            sage: Q.<i,j,k> = QuaternionAlgebra(-1,-19)
+            sage: R == QuaternionAlgebra(-1, -7).maximal_order()
+            False
 
         Orders can be equal even if they are defined by different
         bases (see :issue:`32245`)::
 
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1, -19)
             sage: Q.quaternion_order([1,-i,k,j+i*7]) == Q.quaternion_order([1,i,j,k])
             True
-        """
-        if not isinstance(R, QuaternionOrder):
-            return False
-        return (self.__quaternion_algebra == R.__quaternion_algebra and
-                self.unit_ideal() == R.unit_ideal())
 
-    def __ne__(self, other):
-        """
-        Compare orders self and other.
+        TESTS::
 
-        Two orders are equal if they
-        have the same basis and are in the same quaternion algebra.
-
-        EXAMPLES::
-
-            sage: R = QuaternionAlgebra(-11,-1).maximal_order()
-            sage: R != R                       # indirect doctest
+            sage: B = QuaternionAlgebra(-1, -11)
+            sage: i,j,k = B.gens()
+            sage: O = B.quaternion_order([1,i,j,k])
+            sage: O == O
+            True
+            sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
+            sage: O <= R                # indirect doctest
+            True
+            sage: O >= R
             False
-            sage: R != QuaternionAlgebra(-1,-1).maximal_order()
+            sage: O != R
+            True
+            sage: O == R
+            False
+            sage: O != O
+            False
+            sage: O < O
+            False
+            sage: O < R
+            True
+            sage: O <= O
+            True
+            sage: R >= R
             True
         """
-        return not self.__eq__(other)
+        from sage.structure.richcmp import richcmp, op_NE
+        if not isinstance(other, QuaternionOrder):
+            return op == op_NE
+        return richcmp(self.unit_ideal(), other.unit_ideal(), op)
 
     def __hash__(self):
         """
@@ -1823,22 +1966,16 @@ class QuaternionOrder(Parent):
             sage: type(S.discriminant())
             <... 'sage.rings.rational.Rational'>
         """
-        L = []
-        for d in self.basis():
-            MM = []
-            for e in self.basis():
-                MM.append(d.pair(e))
-            L.append(MM)
+        e = self.basis()
+        L = [[x.pair(y) for y in e] for x in e]
+        return matrix(QQ, 4, 4, L).determinant().sqrt()
 
-        return (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
-
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         r"""
         Check whether the order of ``self`` is maximal in the ambient quaternion algebra.
 
-        Only works in quaternion algebras over number fields
-
-        OUTPUT: Boolean
+        Only implemented for quaternion algebras over number fields; for reference,
+        see Theorem 15.5.5 in [Voi2021]_.
 
         EXAMPLES::
 
@@ -1867,6 +2004,75 @@ class QuaternionOrder(Parent):
         if self.quaternion_algebra().base_ring() not in NumberFields():
             raise NotImplementedError("check for maximality is only implemented for quaternion algebras over number fields")
         return self.discriminant() == self.quaternion_algebra().discriminant()
+
+    def _left_ideal_basis(self, gens):
+        """
+        Return a basis for the left ideal of ``self`` with given generators.
+
+        INPUT:
+
+        - ``gens`` -- list of elements of ``self``
+
+        OUTPUT:
+
+        A list of four elements of ``self``.
+
+        EXAMPLES::
+
+            sage: A.<i,j,k> = QuaternionAlgebra(-17, -3)
+            sage: A.maximal_order()._left_ideal_basis([i + j, i - j, 2*k, A(3)])
+            [1/2 + 1/6*j + 2/3*k, 1/2*i + 1/2*k, 1/3*j + 1/3*k, k]
+            sage: A.maximal_order()._left_ideal_basis([3*(i + j), 3*(i - j), 6*k, A(3)])
+            [3/2 + 1/2*j + 2*k, 3/2*i + 3/2*k, j + k, 3*k]
+        """
+        return basis_for_quaternion_lattice([b * g for b in self.basis() for g in gens], reverse=False)
+
+    def _right_order_from_ideal_basis(self, basis):
+        """
+        Given a basis for a left ideal `I`, return the right order in
+        ``self`` of elements `x` such that `I x` is contained in `I`.
+
+        INPUT:
+
+        - ``basis`` -- basis for an ideal `I`
+
+        EXAMPLES:
+
+            sage: A.<i,j,k> = QuaternionAlgebra(17)
+            sage: O = A.maximal_order()
+            sage: basis = O._left_ideal_basis([1]); basis
+            [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
+            sage: O._right_order_from_ideal_basis(basis)
+            Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
+
+            sage: basis = O._left_ideal_basis([i*j - j]); basis
+            [17 + 17/3*i + 4/3*k, 34/3*i + 2/3*k, j + k, 2*k]
+            sage: O._right_order_from_ideal_basis(basis)
+            Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
+        """
+        # Compute matrix of multiplication by each element of the basis.
+        B = self.basis()
+        Z = self.quaternion_algebra()
+        M = MatrixSpace(QQ, 4)
+
+        # I = matrix with rows the given basis for I
+        I = M([list(f) for f in basis])
+
+        # psi = matrix of right multiplication on each basis element
+        psi = [M([list(f * x) for x in Z.basis()]) for f in basis]
+
+        # invert them
+        psi_inv = [x**(-1) for x in psi]
+
+        # apply the four inverses to I
+        W = [I * x for x in psi_inv]
+
+        # The right order is the intersection of the row span of the W with the row span of B.
+        X = M([list(b) for b in B]).row_module(ZZ)
+        for A in W:
+            X = X.intersection(A.row_module(ZZ))
+        C = [Z(list(b)) for b in X.basis()]
+        return Z.quaternion_order(C)
 
     def left_ideal(self, gens, check=True, *, is_basis=False):
         r"""
@@ -2192,7 +2398,7 @@ class QuaternionOrder(Parent):
             ....:         break
             sage: O1 = (b * O0).left_order()
             sage: iso = O0.isomorphism_to(O1); iso
-            Ring morphism: ...
+            Ring ...
             sage: iso.domain() == O0
             True
             sage: iso.codomain() == O1
@@ -2491,13 +2697,15 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     def _compute_order(self, side='left'):
         r"""
         Used internally to compute either the left or right order
-        associated to an ideal in a quaternion algebra.  If
-        action='right', compute the left order, and if action='left'
-        compute the right order.
+        associated to an ideal in a quaternion algebra.
 
         INPUT:
 
         - ``side`` -- 'left' or 'right'
+
+        OUTPUT:
+
+        The left order if side='left'; the right order if side='right'.
 
         EXAMPLES::
 
@@ -2639,8 +2847,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: B.<i,j,k> = QuaternionAlgebra(211)
             sage: I = B.ideal([1, 1/4*j, 20*(i+k), 2/3*i])
-            sage: x = I.random_element()  # random
-            sage: x in I
+            sage: I.random_element() in I
             True
         """
         return sum(ZZ.random_element(*args, **kwds) * g for g in self.gens())
@@ -2880,8 +3087,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         if not self.quaternion_algebra().is_definite():
             raise ValueError('quaternion algebra must be definite')
         pariqf = self.quadratic_form().__pari__()
-        _,v = pariqf.qfminim(None, None, 1)
-        return sum(ZZ(c)*g for c,g in zip(v, self.basis()))
+        _, v = pariqf.qfminim(None, None, 1)
+        return sum(ZZ(c) * g for c, g in zip(v, self.basis()))
 
     def theta_series(self, B, var='q'):
         r"""
@@ -3181,6 +3388,195 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         basis = tuple(basis_for_quaternion_lattice(gens, reverse=False))
         R = self.quaternion_algebra()
         return R.ideal(basis, check=False)
+
+    def pushforward(self, J, side=None):
+        """
+        Compute the ideal which is the pushforward of ``self`` through an ideal ``J``.
+
+        Uses Lemma 2.1.7 of [Ler2022]_. Only works for integral ideals.
+
+        INPUT:
+
+        - ``J`` -- a fractional quaternion ideal with norm coprime to ``self`` and either
+          the same left order or right order as ``self``
+
+        - ``side`` -- string (optional, default ``None``) set to ``"left"`` or ``"right"`` to
+          perform pushforward of left or right ideals respectively. If ``None`` the side
+          is determined by the matching left or right orders
+
+        OUTPUT: a fractional quaternion ideal
+
+        EXAMPLES::
+
+            sage: B = QuaternionAlgebra(419)
+            sage: i,j,k = B.gens()
+            sage: I1 = B.ideal([1/2 + 3/2*j + 2*k, 1/2*i + j + 3/2*k, 3*j, 3*k])
+            sage: I2 = B.ideal([1/2 + 9/2*j, 1/2*i + 9/2*k, 5*j, 5*k])
+            sage: I1.left_order() == I2.left_order()
+            True
+            sage: I1.pushforward(I2, side="left")
+            Fractional ideal (1/2 + 3/2*j + 5*k, 1/10*i + 2*j + 39/10*k, 3*j, 15*k)
+
+        TESTS::
+
+            sage: B = QuaternionAlgebra(419)
+            sage: i,j,k = B.gens()
+            sage: O0 = B.maximal_order()
+            sage: O0.unit_ideal().pushforward(O0.unit_ideal())
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J have same left and right orders, side of pushforward must be specified
+            sage: O0.unit_ideal().pushforward(O0.unit_ideal(), "left")
+            Fractional ideal (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            sage: I1 = B.ideal([1/2 + 3/2*j + 2*k, 1/2*i + j + 3/2*k, 3*j, 3*k])
+            sage: I2 = B.ideal([1/2 + 9/2*j, 1/2*i + 9/2*k, 5*j, 5*k])
+            sage: I1.pushforward(I2)
+            Fractional ideal (1/2 + 3/2*j + 5*k, 1/10*i + 2*j + 39/10*k, 3*j, 15*k)
+            sage: I1.pushforward(I2, side="right")
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J must have the same right orders
+            sage: I1.conjugate().pushforward(I2.conjugate())
+            Fractional ideal (1/2 + 3/2*j + 10*k, 1/10*i + 2*j + 39/10*k, 3*j, 15*k)
+            sage: I1.conjugate().pushforward(I2.conjugate(), side="left")
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J must have the same left orders
+            sage: I1.pushforward(I1, side="left")
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J must have coprime norms
+            sage: I3 = B.ideal([1/2 + 13/2*j + 6*k, 1/2*i + 3*j + 13/2*k, 9*j, 9*k])
+            sage: I3.pushforward(I3*(1/3), side="left")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: quaternion ideal pushforward not implemented for non-integral ideals
+        """
+        if not isinstance(J, QuaternionFractionalIdeal_rational):
+            raise TypeError("can only pushforward through a quaternion ideal")
+
+        if side == "left":
+            if self.left_order() != J.left_order():
+                raise ValueError("self and J must have the same left orders")
+            if not self.is_integral() or not J.is_integral():
+                raise NotImplementedError("quaternion ideal pushforward not implemented for non-integral ideals")
+            Jnorm = J.norm()
+            if gcd(self.norm(), Jnorm) != 1:
+                raise ValueError("self and J must have coprime norms")
+            return (1 / Jnorm) * (J.conjugate() * self.intersection(J))
+
+        if side == "right":
+            if self.right_order() != J.right_order():
+                raise ValueError("self and J must have the same right orders")
+            return self.conjugate().pushforward(J.conjugate(), side="left").conjugate()
+
+        if side is None:
+            same_left_order = bool(self.left_order() == J.left_order())
+            same_right_order = bool(self.right_order() == J.right_order())
+            if not same_left_order and not same_right_order:
+                raise ValueError("self and J must share a left or right order")
+            if same_left_order and same_right_order:
+                raise ValueError("self and J have same left and right orders, side of pushforward must be specified")
+            if same_left_order:
+                return self.pushforward(J, side="left")
+            return self.pushforward(J, side="right")
+
+        raise ValueError('side must be "left", "right" or None')
+
+    def pullback(self, J, side=None):
+        """
+        Compute the ideal which is the pullback of ``self`` through an ideal ``J``.
+
+        Uses Lemma 2.1.7 of [Ler2022]_. Only works for integral ideals.
+
+        INPUT:
+
+        - ``J`` -- a fractional quaternion ideal with norm coprime to ``self`` and either
+          left order equal to the right order of ``self``, or vice versa
+
+        - ``side`` -- string (optional, default ``None``) set to ``"left"`` or ``"right"`` to
+          perform pullback of left or right ideals respectively. If ``None`` the side
+          is determined by the matching left and right orders
+
+        OUTPUT: a fractional quaternion ideal
+
+        EXAMPLES::
+
+            sage: B = QuaternionAlgebra(419)
+            sage: i,j,k = B.gens()
+            sage: I1 = B.ideal([1/2 + 3/2*j + 2*k, 1/2*i + j + 3/2*k, 3*j, 3*k])
+            sage: I2 = B.ideal([1/2 + 9/2*j, 1/2*i + 9/2*k, 5*j, 5*k])
+            sage: I3 = I1.pushforward(I2, side="left")
+            sage: I3.left_order() == I2.right_order()
+            True
+            sage: I3.pullback(I2, side="left") == I1
+            True
+
+        TESTS::
+
+            sage: B = QuaternionAlgebra(419)
+            sage: i,j,k = B.gens()
+            sage: O0 = B.maximal_order()
+            sage: O0.unit_ideal().pullback(O0.unit_ideal())
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J have same left and right orders, side of pullback must be specified
+            sage: O0.unit_ideal().pullback(O0.unit_ideal(), "left")
+            Fractional ideal (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            sage: I1 = B.ideal([1/2 + 3/2*j + 2*k, 1/2*i + j + 3/2*k, 3*j, 3*k])
+            sage: I2 = B.ideal([1/2 + 15/2*j + 2*k, 1/6*i + 43/3*j + 5/2*k, 15*j, 5*k])
+            sage: I2.pullback(I1)
+            Fractional ideal (1/2 + 5/2*j + 2*k, 1/2*i + 3*j + 5/2*k, 5*j, 5*k)
+            sage: I2.pullback(I1, side="right")
+            Traceback (most recent call last):
+            ...
+            ValueError: right order of self should be left order of J
+            sage: I2.conjugate().pullback(I1.conjugate(), side="right")
+            Fractional ideal (1/2 + 5/2*j + 3*k, 1/2*i + 3*j + 5/2*k, 5*j, 5*k)
+            sage: I2.conjugate().pullback(I1.conjugate(), side="left")
+            Traceback (most recent call last):
+            ...
+            ValueError: left order of self should be right order of J
+            sage: I1.pullback(I1.conjugate(), side="left")
+            Traceback (most recent call last):
+            ...
+            ValueError: self and J must have coprime norms
+            sage: I3 = B.ideal([1/2 + 13/2*j + 6*k, 1/2*i + 3*j + 13/2*k, 9*j, 9*k])
+            sage: I3.pullback(I3.conjugate()*(1/3), side="left")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: quaternion ideal pullback not implemented for non-integral ideals
+        """
+        if not isinstance(J, QuaternionFractionalIdeal_rational):
+            raise TypeError("can only pullback through a quaternion ideal")
+
+        if side == "left":
+            if self.left_order() != J.right_order():
+                raise ValueError("left order of self should be right order of J")
+            if not self.is_integral() or not J.is_integral():
+                raise NotImplementedError("quaternion ideal pullback not implemented for non-integral ideals")
+            N = self.norm()
+            if gcd(N, J.norm()) != 1:
+                raise ValueError("self and J must have coprime norms")
+            return J*self + N*J.left_order()
+
+        if side == "right":
+            if self.right_order() != J.left_order():
+                raise ValueError("right order of self should be left order of J")
+            return self.conjugate().pullback(J.conjugate(), side="left").conjugate()
+
+        if side is None:
+            is_side_left = bool(self.left_order() == J.right_order())
+            is_side_right = bool(self.right_order() == J.left_order())
+            if not is_side_left and not is_side_right:
+                raise ValueError("left order of self must equal right order of J, or vice versa")
+            if is_side_left and is_side_right:
+                raise ValueError("self and J have same left and right orders, side of pullback must be specified")
+            if is_side_left:
+                return self.pullback(J, side="left")
+            return self.pullback(J, side="right")
+
+        raise ValueError('side must be "left", "right" or None')
 
     def is_equivalent(self, J, B=10, certificate=False, side=None):
         r"""
@@ -3522,14 +3918,14 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             ans.append(J)
         return ans
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
-        Check if a quaternion fractional ideal is integral. An ideal in a quaternion algebra is
-        said integral if it is contained in its left order. If the left order is already defined it just
-        check the definition, otherwise it uses one of the alternative definition of Lemma 16.2.8 of
-        [Voi2021]_.
+        Check whether the quaternion fractional ideal ``self`` is integral.
 
-        OUTPUT: a boolean.
+        An ideal in a quaternion algebra is integral if and only if it is
+        contained in its left order. If the left order is already defined
+        this method just checks this definition, otherwise it uses one
+        of the alternative definitions from Lemma 16.2.8 of [Voi2021]_.
 
         EXAMPLES::
 
@@ -3558,7 +3954,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         Let `I` = ``self``. If `I` is an integral left `\mathcal{O}`-ideal return its decomposition
         as an equivalent primitive ideal and an integer such that their product is the initial ideal.
 
-        OUTPUTS: and quivalent primitive ideal to `I`, i.e. equivalent ideal not contained in `n\mathcal{O}` for any `n>0`, and the smallest integer such that `I \subset g\mathcal{O}`.
+        OUTPUTS: A primitive ideal equivalent to `I`, i.e. an equivalent ideal not contained
+        in `n\mathcal{O}` for any `n>0`, and the smallest integer `g` such that `I \subset g\mathcal{O}`.
 
         EXAMPLES::
 
@@ -3575,7 +3972,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         TESTS:
 
-        Checks on random crafted ideals that they decompose as expected::
+        Check that randomly generated ideals decompose as expected::
 
             sage: for d in ( m for m in range(400, 750) if is_squarefree(m) ):
             ....:     A = QuaternionAlgebra(d)
@@ -3607,13 +4004,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         return J, g
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         r"""
-        Check if the quaternion fractional ideal is primitive. An integral left
-        $O$-ideal for some order $O$ is said primitive if for all integers $n > 1$
-        $I$ is not contained in $nO$.
+        Check whether the quaternion fractional ideal ``self`` is primitive.
 
-        OUTPUT: a boolean.
+        An integral left `\mathcal{O}`-ideal for some order `\mathcal{O}`
+        is called primitive if for all integers `n > 1` it is not
+        contained in `n\mathcal{O}`.
 
         EXAMPLES::
 
@@ -3625,7 +4022,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             False
 
         """
-        _,g = self.primitive_decomposition()
+        _, g = self.primitive_decomposition()
         return g.is_one()
 
 #######################################################################
@@ -3774,7 +4171,18 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
         sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
         sage: normalize_basis_at_p(e, 2)
         [(1, 0), (1/2 + 1/2*i + 1/2*j + 1/2*k, 0), (-34/105*i - 463/735*j + 71/105*k, 1),
-         (-34/105*i - 463/735*j + 71/105*k, 1)]
+         (1/7*i - 8/49*j + 1/7*k, 1)]
+
+    TESTS:
+
+    We check that the second part of :issue:`37217` is fixed::
+
+        sage: A.<i,j,k> = QuaternionAlgebra(-1,-7)
+        sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
+        sage: e_norm = normalize_basis_at_p(e, 2)
+        sage: V = QQ**4
+        sage: V.span([V(x.coefficient_tuple()) for (x,_) in e_norm]).dimension()
+        4
     """
 
     N = len(e)
@@ -3822,8 +4230,9 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
 
             # Ensures that (B(f0,f0)/2).valuation(p) <= B(f0,f1).valuation(p)
             if B(f0, f1).valuation(p) + 1 < B(f0, f0).valuation(p):
+                g = f0
                 f0 += f1
-                f1 = f0
+                f1 = g
 
             # Make remaining vectors orthogonal to span of f0, f1
             e[min_m] = e[0]
@@ -3836,7 +4245,7 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
             tu = [(B01 * B(f1, e[l]) - B11 * B(f0, e[l]),
                    B01 * B(f0, e[l]) - B00 * B(f1, e[l])) for l in range(2, N)]
 
-            e[2:n] = [e[l] + tu[l-2][0]/d * f0 + tu[l-2][1]/d * f1 for l in range(2, N)]
+            e[2:N] = [e[l] + tu[l-2][0]/d * f0 + tu[l-2][1]/d * f1 for l in range(2, N)]
 
             # Recursively normalize remaining vectors
             f = normalize_basis_at_p(e[2:N], p)
