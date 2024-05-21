@@ -1730,11 +1730,11 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     """
     name = str(n)
     if construction_name:
-       def report_name(nam):
-           return nam
+        def report_name(nam):
+            return nam
     else:
-       def report_name(nam):
-           return True 
+        def report_name(nam):
+            return True
 
     if not (n % 4 == 0) and (n > 2):
         if existence:
@@ -1811,7 +1811,7 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     elif regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1, existence=True) is True:
         name = "RSHCD " + name
         if existence:
-            return  report_name(name)
+            return report_name(name)
         M = regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1)
     else:
         if existence:
@@ -3159,7 +3159,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
     def true(nam):
         _skew_had_cache[n] = nam 
         if construction_name:
-           return nam+": "+str(n)
+            return nam+": "+str(n)
         return True
     M = None
     name = ''
@@ -3178,7 +3178,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
             return true(name)
         M = matrix([1])
     elif skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=True):
-        name="good matrices small cases"
+        name = "good matrices small cases"
         if existence:
             return true(name)
         M = skew_hadamard_matrix_from_good_matrices_smallcases(n, check=False)
