@@ -3910,8 +3910,8 @@ class LPDictionary(LPAbstractDictionary):
         c = copy(c)
         B = vector(basic_variables)
         N = vector(nonbasic_variables)
-        # Sadly, vector does not guarantee that the result is freshly allocated
-        # if the input was already a vector: #29101
+        # Issue #29101: vector does not guarantee that the result is freshly allocated
+        # if the input was already a vector
         if B is basic_variables:
             B = copy(B)
         if N is nonbasic_variables:
