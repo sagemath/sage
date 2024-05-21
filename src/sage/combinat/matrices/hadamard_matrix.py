@@ -1663,6 +1663,9 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     - ``check`` -- boolean (default: ``True``); whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed.
+    - ``construction_name`` -- boolean (default: ``False``); if it is ``True``,
+      ``existence`` is ``True``, and a matrix exists, output the construction name.
+      It has no effect if ``existence`` is set to ``False``.
 
     EXAMPLES::
 
@@ -1708,6 +1711,11 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         [-----+-----+-----+-----+-----+-----]
         [ 1 -1| 1  1|-1 -1|-1 -1| 1  1| 1 -1]
         [ 1  1| 1 -1|-1  1|-1  1| 1 -1|-1 -1]
+
+    To find how the matrix is obtained, use ``construction_name`` ::
+
+        sage: matrix.hadamard(476, existence=True, construction_name=True)
+        'cooper-wallis small cases: 476'
 
     TESTS::
 
@@ -3099,6 +3107,9 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
     - ``check`` -- boolean (default: ``True``); whether to check that output is
       correct before returning it. As this is expected to be useless (but we are
       cautious guys), you may want to disable it whenever you want speed
+    - ``construction_name`` -- boolean (default: ``False``); if it is ``True``,
+      ``existence`` is ``True``, and a matrix exists, output the construction name.
+      It has no effect if ``existence`` is set to ``False``.
 
     EXAMPLES::
 
@@ -3112,6 +3123,8 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
         sage: skew_hadamard_matrix(2)
         [ 1  1]
         [-1  1]
+        sage: skew_hadamard_matrix(196, existence=True, construction_name=True)
+        'Williamson-Goethals-Seidel: 196'
 
     TESTS::
 
