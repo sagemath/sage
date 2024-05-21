@@ -496,14 +496,14 @@ def detach(filename):
         if not fpath.is_absolute():
             for path in load_attach_path():
                 fpath = path.expanduser() / filename
-                fpath = fpath.resolve()
+                fpath = fpath.absolute()
                 if fpath in attached:
                     break
-        r_fpath = fpath.resolve()
+        abs_fpath = fpath.absolute()
         if fpath in attached:
             attached.pop(fpath)
-        elif r_fpath in attached:
-            attached.pop(r_fpath)
+        elif abs_fpath in attached:
+            attached.pop(abs_fpath)
         else:
             raise ValueError("file '{0}' is not attached, see attached_files()".format(filename))
     if not attached:
