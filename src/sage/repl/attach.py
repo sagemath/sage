@@ -188,7 +188,7 @@ def load_attach_path(path=None, replace=False):
         111
         sage: af = attached_files(); len(af)
         1
-        sage: fullpath in af[0]
+        sage: af == [fullpath]
         True
         sage: from pathlib import Path
         sage: sage.repl.attach.reset(); reset_load_attach_path()
@@ -397,7 +397,7 @@ def add_attached_file(filename):
         []
     """
     sage.repl.inputhook.install()
-    fpath = Path(filename).resolve()
+    fpath = Path(filename).absolute()
     attached[fpath] = fpath.stat().st_mtime
 
 
@@ -419,7 +419,7 @@ def attached_files() -> list:
         hello world
         sage: af = attached_files(); af
         ['/....py']
-        sage: t in af[0]
+        sage: af == [t]
         True
     """
     global attached
@@ -446,7 +446,7 @@ def detach(filename):
         hello world
         sage: af = attached_files(); len(af)
         1
-        sage: t in af[0]
+        sage: af == [t]
         True
         sage: detach(t)
         sage: attached_files()
@@ -463,7 +463,7 @@ def detach(filename):
         111
         sage: af = attached_files(); len(af)
         1
-        sage: os.path.normpath(fullpath) in af[0]
+        sage: af == [os.path.normpath(fullpath)]
         True
         sage: detach('test.py')
         sage: attached_files()
@@ -523,7 +523,7 @@ def reset():
         hello world
         sage: af = attached_files(); len(af)
         1
-        sage: t in af[0]
+        sage: af == [t]
         True
         sage: sage.repl.attach.reset()
         sage: attached_files()
