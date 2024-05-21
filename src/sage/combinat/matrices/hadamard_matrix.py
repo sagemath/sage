@@ -3170,7 +3170,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
         raise ValueError("parameter n must be strictly positive")
 
     def true(nam):
-        _skew_had_cache[n] = nam 
+        _skew_had_cache[n] = nam
         if construction_name:
             return nam+": "+str(n)
         return True
