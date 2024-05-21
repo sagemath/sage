@@ -327,8 +327,8 @@ def Matroid(groundset=None, data=None, **kwds):
 
         Strange things can happen if the input does not satisfy the circuit
         axioms, and these can be caught by the
-        :meth:`is_valid() <sage.matroids.matroid.Matroid.is_valid>` method. So
-        always check whether your input makes sense!
+        :meth:`is_valid() <sage.matroids.circuits_matroid.CircuitsMatroid.is_valid>`
+        method. So please check that your input makes sense!
 
         ::
 
@@ -336,10 +336,10 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M.is_valid()
             False
 
-    #.  Dictionary/list/lattice of flats:
+    #.  Flats:
 
         Given a dictionary of flats indexed by their rank, we get a
-        :class:`FlatsMatroid <sage.matroids.circuits_matroid.FlatsMatroid>`::
+        :class:`FlatsMatroid <sage.matroids.flats_matroid.FlatsMatroid>`::
 
             sage: M = Matroid(flats={0: [''], 1: ['a', 'b'], 2: ['ab']})
             sage: M.is_isomorphic(matroids.Uniform(2, 2)) and M.is_valid()
@@ -350,7 +350,7 @@ def Matroid(groundset=None, data=None, **kwds):
         If instead we simply provide a list of flats, then the class computes
         and stores the lattice of flats upon definition. This can be
         time-consuming, but after it's done we benefit from some faster methods
-        (e.g., ``is_valid``)::
+        (e.g., :meth:`is_valid() <sage.matroids.flats_matroid.FlatsMatroid.is_valid>`)::
 
             sage: M = Matroid(flats=['', 'a', 'b', 'ab'])
             sage: for i in range(M.rank() + 1):  # print flats by rank
