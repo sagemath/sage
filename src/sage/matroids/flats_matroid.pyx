@@ -65,40 +65,36 @@ cdef class FlatsMatroid(Matroid):
             sage: TestSuite(M).run()
         """
         self._F = {}
+        self._L = None
         if M is not None:
             self._groundset = M.groundset()
-            for i in range(len(M.groundset()) + 1):
+            for i in range(M.rank() + 1):
                 for F in M.flats(i):
                     try:
-                        self._F[i].add(frozenset(F))
+                        self._F[i].add(F)
                     except KeyError:
                         self._F[i] = set()
-                        self._F[i].add(frozenset(F))
-        elif isinstance(flats, dict):
+                        self._F[i].add(F)
+        else:
             self._groundset = frozenset(groundset)
-            for i in sorted(flats):
-                for F in flats[i]:
-                    try:
-                        self._F[i].add(frozenset(F))
-                    except KeyError:
-                        self._F[i] = set()
-                        self._F[i].add(frozenset(F))
-        elif isinstance(flats, FiniteLatticePoset):
-            self._groundset = frozenset(groundset)
-            self._L = flats
-            self._matroid_rank = self._L.rank()
-            for i in range(self._matroid_rank + 1):
-                self._F[i] = set()
-            for x in self._L:
-                self._F[self._L.rank(x)].add(x)
-        else:  # assume iterable of flats
-            self._groundset = frozenset(groundset)
-            self._L = LatticePoset(([frozenset(F) for F in flats], lambda x, y: x < y))
-            self._matroid_rank = self._L.rank()
-            for i in range(self._matroid_rank + 1):
-                self._F[i] = set()
-            for x in self._L:
-                self._F[self._L.rank(x)].add(x)
+            if isinstance(flats, dict):
+                for i in sorted(flats):
+                    for F in flats[i]:
+                        try:
+                            self._F[i].add(frozenset(F))
+                        except KeyError:
+                            self._F[i] = set()
+                            self._F[i].add(frozenset(F))
+            else:  # store lattice of flats
+                if isinstance(flats, FiniteLatticePoset):
+                    self._L = flats
+                else:  # assume iterable of flats
+                    self._L = LatticePoset(([frozenset(F) for F in flats], lambda x, y: x < y))
+                self._matroid_rank = self._L.rank()
+                for i in range(self._matroid_rank + 1):
+                    self._F[i] = set()
+                for x in self._L:
+                    self._F[self._L.rank(x)].add(x)
         self._matroid_rank = max(self._F, default=-1)
 
     cpdef groundset(self):
@@ -469,7 +465,7 @@ cdef class FlatsMatroid(Matroid):
             sage: M.lattice_of_flats()
             Finite lattice containing 16 elements
         """
-        if not self._L:
+        if self._L is None:
             flats = [F for i in range(self._matroid_rank + 1) for F in self._F[i]]
             self._L = LatticePoset((flats, lambda x, y: x < y))
         return self._L
@@ -502,7 +498,7 @@ cdef class FlatsMatroid(Matroid):
         if self.loops():
             return []
         cdef list w = [0] * (self._matroid_rank + 1)
-        if not self._L:
+        if self._L is None:
             for S in self.no_broken_circuits_sets_iterator():
                 w[len(S)] += 1
             from sage.rings.integer_ring import ZZ
@@ -648,7 +644,7 @@ cdef class FlatsMatroid(Matroid):
             sage: M.is_valid()
             True
         """
-        if self._L:  # if the lattice of flats is available
+        if self._L is not None:  # if the lattice of flats is available
             return self._is_closed(self._groundset) and self._L.is_geometric()
 
         cdef int i, j, k
