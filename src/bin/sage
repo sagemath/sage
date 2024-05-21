@@ -428,7 +428,7 @@ usage_advanced() {
         echo "     --initial        -- only show the first failure per block"
         echo "     --debug          -- drop into PDB after an unexpected error"
         echo "     --failed         -- only test files that failed last test"
-        echo "     --warn-long [timeout] -- warning if doctest is slow"
+        echo "     --warn-long [timeout] -- warn if tests take too much CPU time"
         echo "     --only-errors    -- only output failures, not successes"
         echo "     --gc=GC          -- control garbarge collection (ALWAYS:"
         echo "                         collect garbage before every test; NEVER:"

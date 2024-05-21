@@ -22,8 +22,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.timing import walltime, cputime
-
+from sage.misc.timing import walltime
+from os import sysconf, times
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
     """
@@ -103,6 +103,135 @@ class Timer:
         {}
         sage: TestSuite(Timer()).run()
     """
+
+    def _pid_cpu_seconds(self, pid):
+        r"""
+        Parse the ``/proc`` filesystem to get the cputime of the given
+        ``pid``.
+
+        This also includes the times for child processes, but only
+        those that have already terminated and for which ``wait()``
+        was called. It is important to note that pexpect processes DO
+        NOT fall into that category.
+
+        INPUT:
+
+        - ``pid`` -- nonnegative integer; the process identifier (PID)
+          of the process whose cputime you want
+
+        OUTPUT:
+
+        A nonnegative float representing the number of cpu-seconds
+        used by the process associated with ``pid``. An ``OSError`` is
+        raised if anything goes wrong, which typically happens on
+        platforms that don't store this information under ``/proc``.
+
+        TESTS:
+
+        About all we can say for certain is that this will return a
+        nonnegative float or raise an ``OSError``::
+
+            sage: from sage.doctest.util import Timer
+            sage: cputime = float(0.0)
+            sage: try:
+            ....:     cputime = Timer()._pid_cpu_seconds(1)
+            ....: except OSError:
+            ....:     pass
+            sage: cputime >= 0.0
+            True
+            sage: isinstance(cputime, float)
+            True
+        """
+        try:
+            with open(f"/proc/{pid}/stat", "r") as statfile:
+                stats = statfile.read().split()
+        except (FileNotFoundError, PermissionError):
+            # FileNotFoundError: bad PID, or no /proc support
+            # PermissionError: can't read the stat file
+            raise OSError
+
+        try:
+            # man 5 proc (linux)
+            cputicks = sum( float(s) for s in stats[13:17] )
+        except (ArithmeticError, LookupError, TypeError):
+            # ArithmeticError: unexpected (non-numeric?) values in fields
+            # LookupError: missing the expected fields
+            # TypeError: fields can't be converted to float
+            raise OSError
+
+        try:
+            hertz = sysconf("SC_CLK_TCK")
+        except (ValueError):
+            # ValueError: SC_CLK_TCK doesn't exist
+            raise OSError
+
+        if hertz <= 0:
+            # The python documentation for os.sysconf() says, "If the
+            # configuration value specified by name isn’t defined, -1
+            # is returned." Having tried this with a junk value, I
+            # don't believe it: I got a ValueError that was handled
+            # above. Nevertheless, we play it safe here and turn a -1
+            # into an OSError. We check for zero, too, because we're
+            # about to divide by it.
+            raise OSError
+
+        return (cputicks / hertz)
+
+    def _quick_cputime(self):
+        r"""
+        A fast replacement for ``sage.misc.timing.cputime``.
+
+        This is a "reliable" replacement (on Linux/BSD) that takes
+        subprocesses (particularly pexpect interfaces) into
+        account. The ``cputime()`` function from the ``misc`` module
+        can be passed ``subprocesses=True``, but this has a few
+        faults; mainly that it relies on each pexpect interface to
+        implement its own ``cputime()`` function. And most of our
+        pexpect interfaces either don't implement one, or implement
+        one in a way that requires the subprocess (being pexpected) to
+        be in perfect working condition -- that will often not be the
+        case at the end of a doctest line.
+
+        OUTPUT:
+
+        A float measuring the cputime in seconds of the sage process
+        and all its subprocesses.
+
+        TESTS:
+
+        About all we can say for certain is that this will return a
+        nonnegative float::
+
+            sage: from sage.doctest.util import Timer
+            sage: cputime = Timer()._quick_cputime()
+            sage: cputime >= 0.0
+            True
+            sage: isinstance(cputime, float)
+            True
+
+        """
+        # Start by using os.times() to get the cputime for sage itself
+        # and any subprocesses that have been wait()ed for and that
+        # have terminated.
+        cputime = sum( times()[:4] )
+
+        # Now try to get the times for any pexpect interfaces, since
+        # they do not fall into the category above.
+        from sage.interfaces.quit import expect_objects
+        for s in expect_objects:
+            S = s()
+            if S and S.is_running():
+                try:
+                    cputime += self._pid_cpu_seconds(S.pid())
+                except OSError:
+                    # This will fail anywhere but linux/BSD, but
+                    # there's no good cross-platform way to get the
+                    # cputimes from pexpect interfaces without
+                    # totally mucking up the doctests.
+                    pass
+
+        return cputime
+
     def start(self):
         """
         Start the timer.
@@ -115,7 +244,7 @@ class Timer:
             sage: Timer().start()
             {'cputime': ..., 'walltime': ...}
         """
-        self.cputime = cputime()
+        self.cputime = self._quick_cputime()
         self.walltime = walltime()
         return self
 
@@ -133,7 +262,7 @@ class Timer:
             sage: timer.stop()
             {'cputime': ..., 'walltime': ...}
         """
-        self.cputime = cputime(self.cputime)
+        self.cputime = self._quick_cputime() - self.cputime
         self.walltime = walltime(self.walltime)
         return self
 
