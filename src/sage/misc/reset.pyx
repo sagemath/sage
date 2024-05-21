@@ -44,7 +44,7 @@ def reset(vars=None, attached=False):
         sage: attach(fn)
         sage: af = attached_files(); len(af)
         1
-        sage: fn in af[0]
+        sage: af == [fn]
         True
         sage: reset()
         sage: af = attached_files(); len(af)

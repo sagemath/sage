@@ -341,9 +341,7 @@ def attach(*files):
         hi there xxx
         sage: af = attached_files(); len(af)
         2
-        sage: any(t1 in f for f in af)
-        True
-        sage: any(t2 in f for f in af)
+        sage: t1 in af and t2 in af
         True
 
     .. SEEALSO::

@@ -2192,7 +2192,7 @@ def handle_encoding_declaration(contents, out):
             return '\n'.join(lines[:num] + lines[(num + 1):])
 
     # If we did not find any encoding hints, use explicit utf-8.
-    # According to PEP 3120, this could be omitted
+    # According to PEP 3120, this could be omitted.
     out.write("# -*- coding: utf-8 -*-\n")
     return contents
 

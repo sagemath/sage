@@ -167,7 +167,7 @@ def load(filename, globals, attach=False):
         ....:     _ = f.write("print('hello world')")
         sage: sage.repl.load.load(t, globals(), attach=True)
         hello world
-        sage: any(t in f for f in attached_files())
+        sage: t in in attached_files()
         True
 
     You cannot attach remote URLs (yet)::
@@ -300,15 +300,13 @@ def load_wrap(filename, attach=False):
 
     INPUT:
 
-    - ``filename`` - a string or Path object; the argument
+    - ``filename`` -- a string or :class:`Path` object; the argument
       to the load or attach command
 
-    - ``attach`` - a boolean (default: ``False``); whether to attach
+    - ``attach`` -- a boolean (default: ``False``); whether to attach
       ``filename``, instead of loading it
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: a string
 
     EXAMPLES::
 
