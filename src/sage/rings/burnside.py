@@ -86,6 +86,7 @@ class ConjugacyClassOfSubgroups(Element):
         a subgroup of ``other`` in the parent group.
 
         EXAMPLES:
+
         We recreate the poset of conjugacy classes of subgroups of
         `S_4`::
 
