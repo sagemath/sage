@@ -18,7 +18,7 @@ from sage.rings.integer import Integer
 from sage.structure.element import parent
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.combinat.cartesian_product import CartesianProduct_iters
+from sage.categories.cartesian_product import cartesian_product
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -1380,8 +1380,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             F
         """
         self._sets = modules
-        indices = CartesianProduct_iters(*[module.basis().keys()
-                                           for module in modules]).map(tuple, is_injective=True)
+        indices = cartesian_product([module.basis().keys()
+                                     for module in modules])
         CombinatorialFreeModule.__init__(self, modules[0].base_ring(), indices, **options)
         # the following is not the best option, but it's better than nothing.
         if 'tensor_symbol' in options:
