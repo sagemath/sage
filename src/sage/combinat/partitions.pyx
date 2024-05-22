@@ -1,4 +1,4 @@
-"""
+r"""
 Iterators over the partitions of an integer
 
 The iterators generate partitions in either increasing or decreasing
