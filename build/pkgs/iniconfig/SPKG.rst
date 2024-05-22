@@ -1,10 +1,10 @@
-iniconfig: brain-dead simple config-ini parsing
+iniconfig: Brain-dead simple config-ini parsing
 ===============================================
 
 Description
 -----------
 
-brain-dead simple config-ini parsing
+Brain-dead simple config-ini parsing
 
 License
 -------
