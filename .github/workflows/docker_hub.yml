@@ -79,7 +79,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-        if: env.JOB_DONE == 'false' && env.CAN_DEPLOY == 'true'
+        if: env.JOB_DONE == 'false' && env.CAN_LOGIN == 'true'
 
       - name: Build and push make-build
         uses: docker/build-push-action@v5
