@@ -2400,10 +2400,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         EXAMPLES::
 
-            sage: Modules(ZZ).Subobjects()
-            Join of Category of modules over Integer Ring and Category of subobjects of sets
-            sage: Modules(ZZ).Subobjects().all_super_categories()
-            [Join of Category of modules over Integer Ring and Category of subobjects of sets,
+            sage: ModulesWithBasis(ZZ).Subobjects()
+            Category of subobjects of modules with basis over Integer Ring
+            sage: ModulesWithBasis(ZZ).Subobjects().all_super_categories()
+            [Category of subobjects of modules with basis over Integer Ring,
+             Category of modules with basis over Integer Ring,
              Category of modules over Integer Ring,
              Category of bimodules over Integer Ring on the left and Integer Ring on the right,
              Category of right modules over Integer Ring,
