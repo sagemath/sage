@@ -1526,6 +1526,71 @@ cdef class MixedIntegerLinearProgram(SageObject):
             return self._backend_variable_value_ZZ(v, tolerance)
         return self.base_ring()(self._backend_variable_value(v, tolerance))
 
+    def constraints_values(self, indices=None):
+        r"""
+        Return values of constraints according to the current values of variables.
+
+        INPUT:
+
+        - ``indices`` -- select which constraint(s) values to return
+
+            - If ``indices = None``, the method returns the list of all the
+              constraints values.
+
+            - If ``indices`` is an integer `i`, the method returns value of constraint
+              `i`.
+
+            - If ``indices`` is a list of integers, the method returns the list
+              of the corresponding value of constraints.
+
+        OUTPUT:
+
+        Each constraint is returned as a number.
+
+        EXAMPLES:
+
+        sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
+        sage: x = p.new_variable(nonnegative=True)
+        sage: p.set_objective(5*x[1] + 4*x[2])
+        sage: p.add_constraint(6*x[1] + 4*x[2], max=24)
+        sage: p.add_constraint(x[1] + 2*x[2], max=6)
+        sage: p.add_constraint(-x[1] + x[2], max=1)
+        sage: p.add_constraint(x[2], max=2)
+        sage: p.solve()
+        21.0
+        sage: p.get_values(x)
+        {1: 3.0, 2: 1.5}
+        sage: p.constraints_values()
+        [24.0, 6.0, -1.5, 1.5]
+        
+        """
+        from sage.rings.integer import Integer
+
+        # calculate value of constraint 'i'
+        def calculate_value(self, i):
+            sum = 0
+            cons = self.constraints(i)[1]
+            for index, coeff in zip(cons[0], cons[1]):
+                sum += var_val[index] * coeff
+            return sum
+            
+        result = []
+        var = [n for n in self._variables]
+        var_val = self.get_values([n for n in var])
+        
+        if indices is None:
+            indices = [n for n in range(0, self.number_of_constraints())]
+
+        if isinstance(indices, (int, Integer)):
+            result.append(calculate_value(self, indices))
+            return result
+        elif isinstance(indices, list):
+            for i in indices:
+                result.append(calculate_value(self, i))
+            return result
+        else:
+            raise ValueError("constraints_values() requires a list of integers, though it will accommodate None or an integer.")
+
     def get_values(self, *lists, convert=None, tolerance=None):
         r"""
         Return values found by the previous call to ``solve()``.
