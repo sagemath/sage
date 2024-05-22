@@ -230,7 +230,8 @@ FROM run-time-dependencies as sagemath
 ARG HOME=/home/sage
 ARG SAGE_ROOT=/home/sage/sage
 COPY --chown=sage:sage --from=make-release $SAGE_ROOT/ $SAGE_ROOT/
-# set path to start gap, gp, maxima, ... bashrc
+# set path in bashrc to start gap, gp, maxima, ... this does not
+# affect Sage (see https://github.com/sagemath/sage/pull/38049)
 RUN echo "export PATH=$SAGE_ROOT/local/bin:$PATH" >> ~/.bashrc
 
 COPY ./docker/entrypoint.sh /usr/local/bin/sage-entrypoint
