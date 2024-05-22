@@ -1762,7 +1762,7 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
             return report_name(name)
         M = hadamard_matrix_paleyII(n)
     elif n == 4 or n % 8 == 0 and hadamard_matrix(n//2, existence=True) is True:
-        name = "doubling" + name
+        name = "doubling " + name
         if existence:
             return report_name(name)
         had = hadamard_matrix(n//2, check=False)
@@ -1773,7 +1773,7 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
                        for i in range(R)])
         M = chad1.stack(chad2)
     elif is_prime_power(n - 1) and (n - 1) % 4 == 3:
-        name = "paleyI" + name
+        name = "paleyI " + name
         if existence:
             return report_name(name)
         M = hadamard_matrix_paleyI(n)
