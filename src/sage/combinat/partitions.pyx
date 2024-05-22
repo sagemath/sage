@@ -166,10 +166,10 @@ def ZS1_iterator(int n):
 
     This is an implementation of the ZS1 algorithm found in [ZS1998]_.
 
-    ..SEEALSO::
+    .. SEEALSO::
 
-    - :meth:`sage.combinat.partitions.ZS2_iterator`
-    - :meth:`sage.combinat.partitions.AccelDesc_iterator`
+        - :meth:`sage.combinat.partitions.ZS2_iterator`
+        - :meth:`sage.combinat.partitions.AccelDesc_iterator`
 
     EXAMPLES::
 
@@ -407,9 +407,9 @@ def ZS2_iterator(int n):
 
     This is an implementation of the ZS2 algorithm found in [ZS1998]_.
 
-    ..SEEALSO::
+    .. SEEALSO::
 
-    :meth:`sage.combinat.partitions.ZS1_iterator`
+        :meth:`sage.combinat.partitions.ZS1_iterator`
 
     EXAMPLES::
 
@@ -553,9 +553,9 @@ def AccelDesc_iterator(int n):
 
     This is an implementation of the AccelDesc algorithm found in [KS2012]_.
 
-    ..SEEALSO::
+    .. SEEALSO::
 
-    :meth:`sage.combinat.partitions.ZS1_iterator`
+        :meth:`sage.combinat.partitions.ZS1_iterator`
 
     EXAMPLES::
 
@@ -640,9 +640,9 @@ def AccelAsc_iterator(int n):
 
     This is an implementation of the ``AccelAsc`` algorithm found in [KS2012]_.
 
-    ..SEEALSO::
+    .. SEEALSO::
 
-    :meth:`sage.combinat.partitions.ZS1_iterator`
+        :meth:`sage.combinat.partitions.ZS1_iterator`
 
     EXAMPLES::
 
