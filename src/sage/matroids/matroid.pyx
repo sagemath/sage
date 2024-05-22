@@ -638,14 +638,14 @@ cdef class Matroid(SageObject):
             sage: all(M.is_dependent(X.union([y])) for y in M.groundset() if y not in X)
             True
         """
-        res = set([])
-        r = 0
+        cdef list res = []
+        cdef int r = 0
         for e in X:
-            res.add(e)
+            res.append(e)
             if self._rank(res) > r:
                 r += 1
             else:
-                res.discard(e)
+                res.pop()
         return frozenset(res)
 
     cpdef frozenset _circuit(self, frozenset X):
@@ -674,13 +674,13 @@ cdef class Matroid(SageObject):
             ...
             ValueError: no circuit in independent set.
         """
-        Z = set(X)
+        cdef set Z = set(X)
         if self._is_independent(X):
             raise ValueError("no circuit in independent set.")
-        l = len(X) - 1
+        cdef int l = len(X) - 1
         for x in X:
             Z.discard(x)
-            if self._rank(Z) == l:
+            if self._rank(frozenset(Z)) == l:
                 Z.add(x)
             else:
                 l -= 1
@@ -724,14 +724,14 @@ cdef class Matroid(SageObject):
             sage: sorted(M._closure(frozenset(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
         """
-        X = set(X)
-        Y = self.groundset().difference(X)
-        r = self._rank(X)
+        cdef list XX = list(X)
+        cdef frozenset Y = self.groundset().difference(frozenset(X))
+        cdef int r = self._rank(frozenset(X))
         for y in Y:
-            X.add(y)
-            if self._rank(X) > r:
-                X.discard(y)
-        return frozenset(X)
+            XX.append(y)
+            if self._rank(frozenset(XX)) > r:
+                XX.pop()
+        return frozenset(XX)
 
     cpdef int _corank(self, frozenset X):
         """
@@ -772,11 +772,11 @@ cdef class Matroid(SageObject):
             sage: all(M.is_codependent(X.union([y])) for y in M.groundset() if y not in X)
             True
         """
-        res = set([])
-        r = 0
+        cdef set res = set()
+        cdef int r = 0
         for e in X:
             res.add(e)
-            if self._corank(res) > r:
+            if self._corank(frozenset(res)) > r:
                 r += 1
             else:
                 res.discard(e)
@@ -808,13 +808,13 @@ cdef class Matroid(SageObject):
             ...
             ValueError: no cocircuit in coindependent set.
         """
-        Z = set(X)
+        cdef set Z = set(X)
         if self._is_coindependent(X):
             raise ValueError("no cocircuit in coindependent set.")
-        l = len(X) - 1
+        cdef int l = len(X) - 1
         for x in X:
             Z.discard(x)
-            if self._corank(Z) == l:
+            if self._corank(frozenset(Z)) == l:
                 Z.add(x)
             else:
                 l -= 1
@@ -858,14 +858,14 @@ cdef class Matroid(SageObject):
             sage: sorted(M._coclosure(frozenset(['a', 'b', 'c'])))
             ['a', 'b', 'c', 'd']
         """
-        X = set(X)
-        Y = self.groundset().difference(X)
-        r = self._corank(X)
+        cdef set XX = set(X)
+        cdef frozenset Y = self.groundset().difference(X)
+        cdef int r = self._corank(X)
         for y in Y:
-            X.add(y)
-            if self._corank(X) > r:
-                X.discard(y)
-        return frozenset(X)
+            XX.add(y)
+            if self._corank(frozenset(XX)) > r:
+                XX.discard(y)
+        return frozenset(XX)
 
     cpdef frozenset _augment(self, frozenset X, frozenset Y):
         r"""
@@ -893,12 +893,12 @@ cdef class Matroid(SageObject):
             sage: all(M.is_dependent(Z.union([y])) for y in Y if y not in Z)
             True
         """
-        X = set(X)
-        res = set([])
-        r = self._rank(X)
+        cdef set XX = set(X)
+        cdef set res = set([])
+        cdef int r = self._rank(frozenset(X))
         for e in Y:
-            X.add(e)
-            if self.rank(X) > r:
+            XX.add(e)
+            if self._rank(frozenset(XX)) > r:
                 r += 1
                 res.add(e)
         return frozenset(res)
