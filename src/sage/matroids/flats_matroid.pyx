@@ -97,7 +97,7 @@ cdef class FlatsMatroid(Matroid):
                     self._F[self._L.rank(x)].add(x)
         self._matroid_rank = max(self._F, default=-1)
 
-    cpdef groundset(self):
+    cpdef frozenset groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -114,7 +114,7 @@ cdef class FlatsMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X):
+    cpdef int _rank(self, frozenset X):
         """
         Return the rank of a set ``X``.
 
@@ -167,7 +167,7 @@ cdef class FlatsMatroid(Matroid):
         """
         return self._matroid_rank
 
-    cpdef _closure(self, X):
+    cpdef frozenset _closure(self, frozenset X):
         """
         Return the closure of a set.
 
@@ -191,7 +191,7 @@ cdef class FlatsMatroid(Matroid):
                 if f >= X:
                     return f
 
-    cpdef _is_closed(self, X):
+    cpdef bint _is_closed(self, frozenset X):
         """
         Test if input is a closed set.
 
@@ -361,7 +361,7 @@ cdef class FlatsMatroid(Matroid):
         version = 0
         return sage.matroids.unpickling.unpickle_flats_matroid, (version, data)
 
-    cpdef relabel(self, mapping):
+    cpdef Matroid relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
@@ -409,7 +409,7 @@ cdef class FlatsMatroid(Matroid):
 
     # enumeration
 
-    cpdef flats(self, k):
+    cpdef SetSystem flats(self, long k):
         r"""
         Return the flats of the matroid of specified rank.
 
@@ -470,7 +470,7 @@ cdef class FlatsMatroid(Matroid):
             self._L = LatticePoset((flats, lambda x, y: x < y))
         return self._L
 
-    cpdef whitney_numbers(self):
+    cpdef list whitney_numbers(self):
         r"""
         Return the Whitney numbers of the first kind of the matroid.
 
@@ -509,7 +509,7 @@ cdef class FlatsMatroid(Matroid):
                 w[self._L.rank(F)] += mu[0, i]
             return w
 
-    cpdef whitney_numbers2(self):
+    cpdef list whitney_numbers2(self):
         r"""
         Return the Whitney numbers of the second kind of the matroid.
 
@@ -540,7 +540,7 @@ cdef class FlatsMatroid(Matroid):
 
     # verification
 
-    cpdef is_valid(self):
+    cpdef bint is_valid(self):
         r"""
         Test if ``self`` obeys the matroid axioms.
 
