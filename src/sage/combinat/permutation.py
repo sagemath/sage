@@ -250,6 +250,7 @@ from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.combinat.backtrack import GenericBacktracker
+from sage.combinat.SJT import SJT
 from sage.combinat.combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.composition import Composition
@@ -378,6 +379,30 @@ class Permutation(CombinatorialElement):
         sage: type(p)
         <class 'sage.combinat.permutation.StandardPermutations_n_with_category.element_class'>
 
+    Construction using the Steinhaus-Johnson Trotter algorithm to generate
+    the permutations (lexicographic algorithm by default)::
+
+        sage: p = Permutation([1, 2, 3, 4], algorithm='sjt'); p
+        [1, 2, 3, 4]
+        sage: p = p.next(); p
+        [1, 2, 4, 3]
+        sage: p = p.next(); p
+        [1, 4, 2, 3]
+        sage: p = Permutation([1, 2, 3], algorithm='sjt')
+        sage: for _ in range(6):
+        ....:     p = p.next()
+        ....:
+        sage: p
+        False
+
+        sage: Permutation([1, 2, 3, 4], algorithm='blah')
+        ValueError: Unsupported algorithm 'blah'; expected 'lex' or 'sjt'
+
+        sage: Permutation([1, 3, 2, 4], algorithm='sjt')
+        ValueError: No internal state directions were given for non-identity \
+        starting permutation for Steinhaus-Johnson-Trotter algorithm. Expected \
+        identity permutation.
+
     Construction from a string in cycle notation::
 
         sage: p = Permutation( '(4,5)' ); p
@@ -436,7 +461,7 @@ class Permutation(CombinatorialElement):
     """
     @staticmethod
     @rename_keyword(deprecation=35233, check_input='check')
-    def __classcall_private__(cls, l, check=True):
+    def __classcall_private__(cls, l, algorithm='lex', directions=None, check=True):
         """
         Return a permutation in the general permutations parent.
 
@@ -486,11 +511,14 @@ class Permutation(CombinatorialElement):
             else:
                 raise ValueError("cannot convert l (= %s) to a Permutation" % l)
 
+        if algorithm != "lex" and algorithm != "sjt":
+            raise ValueError("Unsupported algorithm %s; expected 'lex' or 'sjt'"
+            % algorithm)
         # otherwise, it gets processed by CombinatorialElement's __init__.
-        return Permutations()(l, check=check)
+        return Permutations()(l, algorithm=algorithm, directions=directions, check=check)
 
     @rename_keyword(deprecation=35233, check_input='check')
-    def __init__(self, parent, l, check=True):
+    def __init__(self, parent, l, algorithm='lex', directions=None, check=True):
         """
         Constructor. Checks that INPUT is not a mess, and calls
         :class:`CombinatorialElement`. It should not, because
@@ -505,6 +533,13 @@ class Permutation(CombinatorialElement):
           happens.
 
           This is set to ``True`` by default.
+
+        - ``algorithm`` (string) -- the algorithm used to generate the
+          permutations. Choice between ``lex`` (lexicographic order) or ``sjt``
+          (Steinhaus-Johnson-Trotter). ``sjt`` requires ``check`` to be set to
+          ``True``.
+
+          This is set to ``lex`` by default.
 
         TESTS::
 
@@ -558,6 +593,12 @@ class Permutation(CombinatorialElement):
                 if i == previous:
                     raise ValueError("an element appears twice in the input")
                 previous = i
+
+            if algorithm != "lex" and algorithm != "sjt":
+                raise ValueError("unsupported algorithm %s; expected 'lex' or"
+                "'sjt'." % algorithm)
+
+            self.__sjt = SJT(l, directions=directions) if algorithm == "sjt" else None
 
         CombinatorialElement.__init__(self, parent, l)
 
@@ -765,6 +806,14 @@ class Permutation(CombinatorialElement):
             sage: next(p)
             False
         """
+        if self.__sjt is not None:
+            # Ensure the same permutations is yielded when called multiple times
+            # without reassigning
+            p, directions = self.__sjt.next()
+            if p is False:
+                return False
+            return Permutations()(p, algorithm='sjt', directions=directions)
+
         p = self[:]
         n = len(self)
         first = -1
@@ -824,6 +873,8 @@ class Permutation(CombinatorialElement):
             sage: Permutation([1,4,3,2]).prev()
             [1, 4, 2, 3]
         """
+        if self.__sjt is not None:
+            raise NotImplementedError
 
         p = self[:]
         n = len(self)
