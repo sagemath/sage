@@ -95,12 +95,11 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
     def __init__(self, parent, side='left'):
         """
+        Initialize ``self``.
+
         INPUT:
 
-        -  ``parent`` - a homspace
-
-        -  ``A`` - matrix
-
+        -  ``parent`` -- a homspace
 
         EXAMPLES::
 
@@ -137,8 +136,8 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             True
             sage: psi == 5 * id
             True
-            sage: psi == 5  # no coercion
-            False
+            sage: psi == 5
+            True
             sage: id == End(V).identity()
             True
         """
@@ -478,9 +477,26 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined by the matrix
             [2 2]
             [0 4]...
+
+        TESTS:
+
+        Check that :trac:`28272` is fixed::
+
+            sage: V = VectorSpace(QQ,2)
+            sage: f = V.hom(identity_matrix(QQ,2))
+            sage: 1/2 * f
+            Vector space morphism represented by the matrix:
+            [1/2   0]
+            [  0 1/2]...
+            sage: f * 1/2
+            Vector space morphism represented by the matrix:
+            [1/2   0]
+            [  0 1/2]...
         """
         R = self.base_ring()
         return self.parent()(R(left) * self.matrix(), side=self.side())
+
+    _rmul_ = _lmul_ = __rmul__
 
     def __mul__(self, right):
         r"""
@@ -654,7 +670,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             else:
                 return H(right.matrix() * self.matrix().transpose(), side="left")
 
-    def __add__(self, right):
+    def _add_(self, other):
         """
         Sum of morphisms, denoted by +.
 
@@ -688,10 +704,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi + psi
             Traceback (most recent call last):
             ...
-            ValueError: inconsistent number of rows: should be 2 but got 3
+            TypeError: unsupported operand parent(s) for +: ...
 
         ::
-
 
             sage: V = ZZ^2
             sage: m = matrix(2, [1,1,0,1])
@@ -719,22 +734,16 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             If the two morphisms do not share the same ``side`` attribute, then
             the resulting morphism will be defined with the default value.
         """
-        # TODO: move over to any coercion model!
-        if not isinstance(right, MatrixMorphism):
-            R = self.base_ring()
-            return self.parent()(self.matrix() + R(right))
-        if not right.parent() == self.parent():
-            right = self.parent()(right, side=right.side())
         if self.side() == "left":
-            if right.side() == "left":
-                return self.parent()(self.matrix() + right.matrix(), side=self.side())
-            elif right.side() == "right":
-                return self.parent()(self.matrix() + right.matrix().transpose(), side="left")
+            if other.side() == "left":
+                return self.parent()(self.matrix() + other.matrix(), side=self.side())
+            elif other.side() == "right":
+                return self.parent()(self.matrix() + other.matrix().transpose(), side="left")
         if self.side() == "right":
-            if right.side() == "right":
-                return self.parent()(self.matrix() + right.matrix(), side=self.side())
-            elif right.side() == "left":
-                return self.parent()(self.matrix().transpose() + right.matrix(), side="left")
+            if other.side() == "right":
+                return self.parent()(self.matrix() + other.matrix(), side=self.side())
+            elif other.side() == "left":
+                return self.parent()(self.matrix().transpose() + other.matrix(), side="left")
 
     def __neg__(self):
         """
@@ -752,7 +761,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         return self.parent()(-self.matrix(), side=self.side())
 
-    def __sub__(self, other):
+    def _sub_(self, other):
         """
         EXAMPLES::
 
@@ -790,12 +799,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             If the two morphisms do not share the same ``side`` attribute, then
             the resulting morphism will be defined with the default value.
         """
-        # TODO: move over to any coercion model!
-        if not isinstance(other, MatrixMorphism):
-            R = self.base_ring()
-            return self.parent()(self.matrix() - R(other), side=self.side())
-        if not other.parent() == self.parent():
-            other = self.parent()(other, side=other.side())
         if self.side() == "left":
             if other.side() == "left":
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())

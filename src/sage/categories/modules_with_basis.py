@@ -106,12 +106,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
     `Hom(X,Y)` has a natural module structure (except for the zero,
     the operations are not yet implemented though). However since the
-    dimension is not necessarily finite, it is not a module with
+    dimension is not necessarily finite, in general it is not a module with
     basis; but see :class:`FiniteDimensionalModulesWithBasis` and
     :class:`GradedModulesWithBasis`::
 
         sage: H in ModulesWithBasis(QQ), H in Modules(QQ)                               # needs sage.modules
-        (False, True)
+        (True, True)
 
     Some more playing around with categories and higher order homsets::
 
@@ -2276,6 +2276,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return tensor(parents)._tensor_of_elements(elements)  # good name ?
 
     class Homsets(HomsetsCategory):
+
         class ParentMethods:
             def __call_on_basis__(self, **options):
                 """
