@@ -156,7 +156,7 @@ cdef inline ZS1_step(list P, int n, int *m, int *h):
 
 
 def ZS1_iterator(int n):
-    """
+    r"""
     Return an iterator over the partitions of `n`.
 
     The partitions are generated in the decreasing lexicographic order and each
@@ -245,8 +245,8 @@ def ZS1_next(list P):
 
 
 def ZS1_iterator_nk(int n, int k):
-    """
-    An iterator for the partitions of ``n`` of length at most ``k`` (in the
+    r"""
+    An iterator for the partitions of `n` of length at most `k` (in the
     decreasing lexicographic order) which returns lists and not objects of type
     :class:`~sage.combinat.partition.Partition`.
 
