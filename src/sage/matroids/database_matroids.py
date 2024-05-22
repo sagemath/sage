@@ -913,7 +913,7 @@ def L8(groundset=None):
 
         sage: K4 = matroids.catalog.K4(range(6))
         sage: Bext = [list(b) for b in K4.bases()] + [list(I)+[6] for I in
-        ....:                                         K4.independent_r_sets(2)]
+        ....:                                         K4.independent_k_sets(2)]
         sage: K4ext = Matroid(bases=Bext)
         sage: import random
         sage: e = random.choice(list(M.groundset()))

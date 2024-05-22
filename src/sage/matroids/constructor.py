@@ -510,7 +510,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: Matroid([0, 1, 2], [[1, 0, 1], [0, 1, 1]])
             Traceback (most recent call last):
             ...
-            ValueError: basis has wrong cardinality.
+            ValueError: basis has wrong cardinality
 
         If the groundset size equals number of rows plus number of columns, an
         identity matrix is prepended. Otherwise the groundset size must equal

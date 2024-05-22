@@ -361,7 +361,7 @@ cdef class FlatsMatroid(Matroid):
         version = 0
         return sage.matroids.unpickling.unpickle_flats_matroid, (version, data)
 
-    cpdef Matroid relabel(self, mapping):
+    cpdef relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 

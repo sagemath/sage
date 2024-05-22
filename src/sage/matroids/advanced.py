@@ -1,5 +1,5 @@
 r"""
-Advanced matroid functionality.
+Advanced matroid functionality
 
 This module collects a number of advanced functions which are not directly
 available to the end user by default. To import them into the main namespace,
@@ -49,6 +49,7 @@ AUTHORS:
 
 - Stefan van Zwam (2013-04-01): initial version
 """
+
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
 from .minor_matroid import MinorMatroid
@@ -63,6 +64,4 @@ from .utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cros
 from . import lean_matrix
 from .extension import LinearSubclasses, MatroidExtensions
 from .union_matroid import MatroidUnion, MatroidSum, PartitionMatroid
-
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.matroids.graphic_matroid', 'GraphicMatroid')
+from .graphic_matroid import GraphicMatroid

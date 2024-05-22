@@ -2390,7 +2390,7 @@ cdef class Matroid(SageObject):
         cdef set B_ext = set()
         cdef frozenset X
         if k is None:
-        for B in self.bases_iterator():
+            for B in self.bases_iterator():
                 for e in B ^ E:
                     B_ext.add(B | {e})
             for X in B_ext:
@@ -6224,7 +6224,7 @@ cdef class Matroid(SageObject):
                     return False
         return True
 
-    cpdef is_sparse_paving(self):
+    cpdef bint is_sparse_paving(self):
         """
         Return if ``self`` is sparse-paving.
 
