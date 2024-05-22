@@ -1,10 +1,10 @@
-execnet: execnet: rapid multi-Python deployment
-===============================================
+execnet: Rapid multi-Python deployment
+======================================
 
 Description
 -----------
 
-execnet: rapid multi-Python deployment
+Rapid multi-Python deployment
 
 License
 -------
