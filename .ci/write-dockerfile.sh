@@ -340,7 +340,9 @@ $ADD .gitignore /new/.gitignore
 $ADD src /new/src
 $ADD .ci /.ci
 RUN cd /new && rm -rf .git && \
-    if ! /.ci/retrofit-worktree.sh worktree-pre /sage; then \
+    if /.ci/retrofit-worktree.sh worktree-pre /sage; then \
+        cd /sage && touch configure build/make/Makefile; \
+    else \
         echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"; \
         rm -rf /sage/src;                                    \
         mv src /sage/src;                                    \
