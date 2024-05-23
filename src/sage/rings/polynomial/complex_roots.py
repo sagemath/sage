@@ -46,7 +46,6 @@ from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.qqbar import AA, QQbar
 from sage.arith.misc import sort_complex_numbers_for_display
 from sage.rings.polynomial.refine_root import refine_root
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 def interval_roots(p, rts, prec):
