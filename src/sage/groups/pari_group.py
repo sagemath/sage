@@ -30,7 +30,7 @@ class PariGroup:
 
     def __repr__(self):
         """
-        String representation of this group
+        String representation of this group.
 
         EXAMPLES::
 
@@ -160,7 +160,7 @@ class PariGroup:
 
     def permutation_group(self):
         """
-        Return the corresponding GAP transitive group
+        Return the corresponding GAP transitive group.
 
         EXAMPLES::
 

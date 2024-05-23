@@ -221,7 +221,6 @@ Distribution
    :maxdepth: 1
 
    sage/misc/package
-   sage/misc/dist
 
 
 Credits

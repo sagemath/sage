@@ -53,7 +53,6 @@
 
 /src/setup.cfg
 /src/requirements*.txt
-/src/pyproject.toml
 /src/Pipfile
 /src/Pipfile.lock
 /src/pyproject.toml
@@ -197,6 +196,8 @@ build/bin/sage-build-env-config
 /pkgs/*/MANIFEST
 /pkgs/*/*.egg-info
 /pkgs/*/.tox
+/pkgs/*/venv*
+/pkgs/*/.venv*
 
 /pkgs/sage-conf/pyproject.toml
 /pkgs/sage-conf_pypi/sage_root/config.log

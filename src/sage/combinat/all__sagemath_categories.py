@@ -8,8 +8,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_lists import IntegerListsLex
 from sage.combinat.integer_vector import IntegerVectors
 
-from sage.combinat.combinat import (CombinatorialClass, CombinatorialObject,
-                                    MapCombinatorialClass,
+from sage.combinat.combinat import (CombinatorialObject,
                                     bell_number, bell_polynomial, bernoulli_polynomial,
                                     catalan_number, euler_number,
                                     fibonacci, fibonacci_sequence, fibonacci_xrange,
@@ -17,11 +16,6 @@ from sage.combinat.combinat import (CombinatorialClass, CombinatorialObject,
                                     number_of_tuples, number_of_unordered_tuples,
                                     polygonal_number, stirling_number1, stirling_number2,
                                     tuples, unordered_tuples)
-
-lazy_import('sage.combinat.combinat',
-            ('InfiniteAbstractCombinatorialClass', 'UnionCombinatorialClass',
-             'FilteredCombinatorialClass'),
-            deprecation=(31545, 'this class is deprecated, do not use'))
 
 from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions

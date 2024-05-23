@@ -251,7 +251,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         return (CompletionFunctor(sage.rings.infinity.Infinity,
                                   53,
                                   {'type': 'RDF'}),
-               sage.rings.rational_field.QQ)
+                sage.rings.rational_field.QQ)
 
     def complex_field(self):
         """
@@ -432,10 +432,8 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         if prec == 53:
             return self
-        else:
-            from sage.rings.real_mpfr import RealField
-            return RealField(prec)
-
+        from sage.rings.real_mpfr import RealField
+        return RealField(prec)
 
     def gen(self, n=0):
         """
@@ -902,7 +900,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: complex(RDF(a))
             (2303+0j)
         """
-        return complex(self._value,0)
+        return complex(self._value, 0)
 
     def _integer_(self, ZZ=None):
         """
@@ -1155,7 +1153,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: RDF(2.1)._im_gens_(R, [R(1)])                                         # needs sage.rings.real_mpfr
             2.1000
         """
-        return codomain(self) # since 1 |--> 1
+        return codomain(self)  # since 1 |--> 1
 
     def str(self):
         """
@@ -2022,7 +2020,8 @@ cdef class RealDoubleElement(FieldElement):
         while True:
             a1 = (a+b)/2
             b1 = libc.math.sqrt(a*b)
-            if abs((b1/a1)-1) < eps: return self._new_c(a1)
+            if abs((b1/a1)-1) < eps:
+                return self._new_c(a1)
             a, b = a1, b1
 
     def algebraic_dependency(self, n):
@@ -2047,7 +2046,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: r.algebraic_dependency(5)                                             # needs sage.libs.pari
             x^2 - 2
         """
-        return sage.arith.misc.algdep(self,n)
+        return sage.arith.misc.algdep(self, n)
 
     algdep = algebraic_dependency
 
@@ -2318,6 +2317,7 @@ _RDF = RealDoubleField_class()
 
 RDF = _RDF   # external interface
 
+
 def RealDoubleField():
     """
     Return the unique instance of the
@@ -2330,6 +2330,7 @@ def RealDoubleField():
     """
     global _RDF
     return _RDF
+
 
 def is_RealDoubleElement(x):
     """
@@ -2346,9 +2347,9 @@ def is_RealDoubleElement(x):
     return isinstance(x, RealDoubleElement)
 
 
-################# FAST CREATION CODE ######################
-########### Based on fast integer creation code   #########
-######## There is nothing to see here, move along   #######
+# ################ FAST CREATION CODE ######################
+#            Based on fast integer creation code
+#         There is nothing to see here, move along
 
 # We use a global element to steal all the references
 # from.  DO NOT INITIALIZE IT AGAIN and DO NOT REFERENCE IT!
@@ -2410,12 +2411,12 @@ cdef PyObject* fast_tp_new(type t, args, kwds) noexcept:
         # objects (As indicated by the Py_TPFLAGS_HAVE_GC flag).
         # See below for a more detailed description.
 
-        new = <PyObject*>PyObject_Malloc( sizeof(RealDoubleElement) )
+        new = <PyObject*>PyObject_Malloc(sizeof(RealDoubleElement))
 
         # Now set every member as set in z, the global dummy RealDoubleElement
         # created before this tp_new started to operate.
 
-        memcpy(new, (<void*>global_dummy_element), sizeof(RealDoubleElement) )
+        memcpy(new, (<void*>global_dummy_element), sizeof(RealDoubleElement))
 
     # This line is only needed if Python is compiled in debugging mode
     # './configure --with-pydebug' or SAGE_DEBUG=yes. If that is the

@@ -1,1 +1,1 @@
-lrcalc ~=2.1
+lrcalc

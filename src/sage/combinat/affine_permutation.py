@@ -2246,7 +2246,7 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
             True
             sage: TestSuite(A).run()
         """
-        return self([i for i in range(1,self.k+2)])
+        return self(list(range(1, self.k + 2)))
 
     #------------------------
     #Type-unique methods.

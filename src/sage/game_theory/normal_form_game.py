@@ -236,8 +236,7 @@ currently available:
   `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_. At present this is
   the only gambit algorithm available in sage but further development will
   hope to implement more algorithms
-  (in particular for games with more than 2 players). To install it,
-  type ``sage -i gambit`` in the shell.
+  (in particular for games with more than 2 players).
 
 * ``'enumeration'``: Support enumeration for 2 player games. This
   algorithm is hard coded in Sage and checks through all potential
@@ -648,7 +647,6 @@ from sage.matrix.constructor import matrix
 from sage.matrix.constructor import vector
 from sage.misc.temporary_file import tmp_filename
 from sage.numerical.mip import MixedIntegerLinearProgram
-from sage.misc.package import PackageNotFoundError
 from sage.cpython.string import bytes_to_str
 
 try:
@@ -1705,7 +1703,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         if algorithm == "LCP":
             if Game is None:
-                raise PackageNotFoundError("gambit")
+                raise RuntimeError("gambit not found")  # should later become a FeatureNotFoundError
             return self._solve_LCP(maximization)
 
         if algorithm.startswith('lp'):

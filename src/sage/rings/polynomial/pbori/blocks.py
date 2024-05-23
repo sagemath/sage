@@ -6,7 +6,7 @@ from .pbori import VariableBlock
 from .PyPolyBoRi import (Ring, Polynomial, VariableFactory, Variable)
 
 
-class Block():
+class Block:
     r"""
     The block class represents a block of variables
     <var_name>(start_index,...,start_index+size-1), it is the preferred
@@ -38,12 +38,12 @@ class Block():
         ring = ring_context['r']
 
         var_func = VariableBlock(self.size, self.start_index, start, self.
-            reverse, ring)
+                                 reverse, ring)
         var_func.__name__ = self.var_name
         context[self.var_name] = var_func
 
 
-class AlternatingBlock():
+class AlternatingBlock:
     r"""
     The Alternating Block class is used for doing tricky variable
     schemes,where base names vary, e.g.
@@ -75,7 +75,7 @@ class AlternatingBlock():
     def register(self, start, context):
         def gen_var_func(var_pos):
 
-            class var_factory():
+            class var_factory:
                 def __init__(self, ring, index2pos, size):
                     self.ring = ring
                     self.index2pos = index2pos
@@ -83,7 +83,7 @@ class AlternatingBlock():
 
                 def __call__(self, idx):
                     return self.ring.variable(self.index2pos[idx] * self.size +
-                                        var_pos + start)
+                                              var_pos + start)
             ring_context = context
             while isinstance(ring_context, PrefixedDictProxy):
                 ring_context = ring_context.wrapped
@@ -108,7 +108,8 @@ class AdderBlock(AlternatingBlock):
     def __init__(self, adder_bits, sums="s", carries="c", input1="a",
                  input2="b", start_index=0):
         AlternatingBlock.__init__(self, (sums, carries, input1, input2),
-            adder_bits, start_index=start_index, reverse=True)
+                                  adder_bits, start_index=start_index,
+                                  reverse=True)
         self.input1 = input1
         self.input2 = input2
         self.sums = sums
@@ -125,13 +126,14 @@ class AdderBlock(AlternatingBlock):
         a = shift(a, self.start_index)
         b = shift(b, self.start_index)
         carries = [Polynomial(a(0).ring().zero())]
+        last = carries[0]
         for i in range(self.adder_bits):
-            c = 1 + (1 + a(i) * b(i)) * (1 + carries[-1] * a(i)) * (1 +
-                carries[-1] * b(i))
+            c = 1 + (1 + a(i) * b(i)) * (1 + last * a(i)) * (1 + last * b(i))
             carries.append(c)
+            last = c
 
-        self.add_results = [a(i) + b(i) + carries[i] for i in range(self.
-            adder_bits)]
+        self.add_results = [a(i) + b(i) + carries[i]
+                            for i in range(self.adder_bits)]
         self.carries_polys = carries[1:]
 
     # def s(i):
@@ -147,7 +149,7 @@ class AdderBlock(AlternatingBlock):
             equations.append(self.c(i) + self.carries_polys[i])
 
 
-class HigherOrderBlock():
+class HigherOrderBlock:
     r"""
     HigherOrderBlocks are multidimensional blocks of variables.
 
@@ -193,14 +195,14 @@ class HigherOrderBlock():
         context[self.var_name] = var_func
 
 
-class InOutBlock():
+class InOutBlock:
     def __init__(self, out_size, in_size, output="out", input="in",
                  in_start_index=0, out_start_index=0,
                  out_reverse=False, in_reverse=False):
         self.output = Block(var_name=output, start_index=out_start_index,
-                        size=out_size, reverse=out_reverse)
+                            size=out_size, reverse=out_reverse)
         self.input = Block(var_name=input, start_index=in_start_index,
-                       size=in_size, reverse=in_reverse)
+                           size=in_size, reverse=in_reverse)
         self.out_start_index = out_start_index
 
         self.in_start_index = in_start_index
@@ -220,11 +222,11 @@ class InOutBlock():
         self.output.register(start, context)
         self.input.register(start + len(self.output), context)
         self.out_vars = shift(context[self.output.var_name], self.
-            out_start_index)
+                              out_start_index)
         self.in_vars = shift(context[self.input.var_name], self.in_start_index)
 
 
-class MultiBlock():
+class MultiBlock:
     def __init__(self, sizes=None, var_names=["v"],
                  start_indices=[], reverses=None):
         if reverses is None:
@@ -237,8 +239,9 @@ class MultiBlock():
         sizes += [1] * (len(var_names) - len(sizes))
 
         self.blocks = [Block(var_name=var_names[idx], size=sizes[idx],
-            start_index=self.start_indices[idx], reverse=reverses[idx]) for
-            idx in range(len(var_names))]
+                             start_index=self.start_indices[idx],
+                             reverse=reverses[idx])
+                       for idx in range(len(var_names))]
 
     def __iter__(self):
         return chain(*self.blocks)
@@ -248,7 +251,7 @@ class MultiBlock():
         # sum([bl.names for bl in self.blocks])[i]
 
     def __len__(self):
-        return sum((len(bl) for bl in self.blocks))
+        return sum(len(bl) for bl in self.blocks)
 
     def register(self, start, context):
         offset = 0
@@ -256,11 +259,12 @@ class MultiBlock():
             bl.register(start + offset, context)
             offset += len(bl)
 
-        self.vars = [shift(context[self.blocks[idx].var_name], self.
-            start_indices[idx]) for idx in range(len(self.blocks))]
+        self.vars = [shift(context[self.blocks[idx].var_name],
+                           self.start_indices[idx])
+                     for idx in range(len(self.blocks))]
 
 
-class PrefixedDictProxy():
+class PrefixedDictProxy:
     """docstring for PrefixedDictProxy"""
 
     def __init__(self, wrapped, prefix):
@@ -279,7 +283,7 @@ class PrefixedDictProxy():
         self.wrapped[self.prefix + k] = v
 
 
-class MacroBlock():
+class MacroBlock:
     def __init__(self, prefix):
 
         self.prefix = prefix
@@ -300,7 +304,7 @@ class MacroBlock():
         return self.prefix + "_" + next(islice(chain(*self.blocks), i, i + 1))
 
     def __len__(self):
-        return sum((len(bl) for bl in self.blocks))
+        return sum(len(bl) for bl in self.blocks)
 
     def resolve(self, localname):
         return self.prefix + "_" + localname
@@ -325,7 +329,7 @@ class MacroBlock():
         equations += self.connections
 
 
-class IfThen():
+class IfThen:
     def __init__(self, ifpart, thenpart, supposed_to_be_valid=True):
         self.ifpart = [Polynomial(p) for p in ifpart]
         self.thenpart = [Polynomial(p) for p in thenpart]
@@ -370,10 +374,7 @@ def declare_ring(blocks, context=None):
     n = 0
 
     for b in blocks:
-        if isinstance(b, str):
-            n = n + 1
-        else:
-            n = n + len(b)
+        n = n + 1 if isinstance(b, str) else n + len(b)
 
     r = Ring(n, names=canonicalize(blocks))
 

@@ -116,10 +116,13 @@ additional functionality (e.g. linear extensions).
     - :meth:`girth() <sage.matroids.matroid.Matroid.girth>`
 
 - Representation
+    - :meth:`is_graphic() <sage.matroids.matroid.Matroid.is_graphic>`
+    - :meth:`is_regular() <sage.matroids.matroid.Matroid.is_regular>`
     - :meth:`binary_matroid() <sage.matroids.matroid.Matroid.binary_matroid>`
     - :meth:`is_binary() <sage.matroids.matroid.Matroid.is_binary>`
     - :meth:`ternary_matroid() <sage.matroids.matroid.Matroid.ternary_matroid>`
     - :meth:`is_ternary() <sage.matroids.matroid.Matroid.is_ternary>`
+    - :meth:`relabel() <sage.matroids.matroid.Matroid.relabel>`
 
 - Optimization
     - :meth:`max_weight_independent() <sage.matroids.matroid.Matroid.max_weight_independent>`
@@ -1288,9 +1291,7 @@ cdef class Matroid(SageObject):
             sage: sage.matroids.matroid.Matroid._repr_(M)
             'Matroid of rank 4 on 8 elements'
         """
-        S = "Matroid of rank "
-        S = S + str(self.rank()) + " on " + str(self.size()) + " elements"
-        return S
+        return f'Matroid of rank {self.rank()} on {self.size()} elements'
 
     # cpdef show(self):
     # Show either the graph, or the matrix with labels, or the lattice,
@@ -6557,6 +6558,71 @@ cdef class Matroid(SageObject):
         """
         return self.ternary_matroid(randomized_tests=randomized_tests, verify=True) is not None
 
+    cpdef is_graphic(self):
+        r"""
+        Return if ``self`` is graphic.
+
+        A matroid is graphic if and only if it has no minor isomorphic to any
+        of the matroids `U_{2, 4}`, `F_7`, `F_7^*`, `M^*(K_5)`, and
+        `M^*(K_{3, 3})`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Wheel4()
+            sage: M.is_graphic()
+            True
+            sage: M = matroids.catalog.U24()
+            sage: M.is_graphic()
+            False
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 385.
+        """
+        from sage.matroids.database_matroids import (
+            U24,
+            Fano,
+            FanoDual,
+            K5dual,
+            K33dual
+        )
+        excluded_minors = [U24(), Fano(), FanoDual(), K5dual(), K33dual()]
+        for M in excluded_minors:
+            if self.has_minor(M):
+                return False
+        return True
+
+    cpdef is_regular(self):
+        r"""
+        Return if ``self`` is regular.
+
+        A regular matroid is one that can be represented by a totally
+        unimodular matrix, the latter being a matrix over `\mathbb{R}` for
+        which every square submatrix has determinant in `\{0, 1, -1\}`. A
+        matroid is regular if and only if it is representable over every field.
+        Alternatively, a matroid is regular if and only if it has no minor
+        isomorphic to `U_{2, 4}`, `F_7`, or `F_7^*`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Wheel4()
+            sage: M.is_regular()
+            True
+            sage: M = matroids.catalog.R9()
+            sage: M.is_regular()
+            False
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 373.
+        """
+        if not self.is_binary():  # equivalent to checking for a U24 minor
+            return False
+        from sage.matroids.database_matroids import Fano, FanoDual
+        if self.has_minor(Fano()) or self.has_minor(FanoDual()):
+            return False
+        return True
+
     # matroid k-closed
 
     cpdef is_k_closed(self, int k):
@@ -8481,3 +8547,87 @@ cdef class Matroid(SageObject):
         # place this matroid at the beginning of the list
         matroids.insert(0, self)
         return union_matroid.MatroidSum(iter(matroids))
+
+    cpdef _relabel_map(self, mapping):
+        """
+        Return a dictionary from the groundset to the relabeled groundset
+        and check that the mapping defined by ``mapping`` is valid.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``; if ``mapping[e]`` is not defined then the identity
+          map is assumed
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Vamos([1, 2, 3, 4, 5, 6, 7, 8])
+            sage: M._relabel_map({1: 'a', 8: 'h', 9: 'i'})
+            {1: 'a', 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 'h'}
+            sage: M._relabel_map({1: 2})
+            Traceback (most recent call last):
+            ...
+            ValueError: given map doesn't relabel the groundset properly
+        """
+        E = set()
+        d = {}
+        for x in self.groundset():
+            try:
+                E.add(mapping[x])
+                d[x] = mapping[x]
+            except LookupError:
+                E.add(x)
+                d[x] = x
+        if len(E) != len(self.groundset()):
+            raise ValueError("given map doesn't relabel the groundset properly")
+        return d
+
+    def relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: from sage.matroids.rank_matroid import RankMatroid
+            sage: N = matroids.catalog.Sp8pp()
+            sage: M = RankMatroid(groundset=N.groundset(), rank_function=N.rank)
+            sage: sorted(M.groundset())
+            [1, 2, 3, 4, 5, 6, 7, 8]
+            sage: N = M.relabel({8: 0})
+            sage: sorted(N.groundset())
+            [0, 1, 2, 3, 4, 5, 6, 7]
+            sage: M.is_isomorphic(N)
+            True
+
+        TESTS::
+
+            sage: from sage.matroids.rank_matroid import RankMatroid
+            sage: N = matroids.catalog.Sp8pp()
+            sage: M = RankMatroid(groundset=N.groundset(), rank_function=N.rank)
+            sage: f = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        from sage.matroids.rank_matroid import RankMatroid
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset()]
+
+        def f_relabel(X):
+            d_inv = {d[x]: x for x in self.groundset()}
+            X_inv = [d_inv[x] for x in X]
+            return self.rank(X_inv)
+
+        M = RankMatroid(groundset=E, rank_function=f_relabel)
+        return M

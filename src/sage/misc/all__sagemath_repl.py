@@ -8,8 +8,6 @@ from sage.misc.sage_input import sage_input
 
 from sage.misc.banner import version
 
-lazy_import('sage.misc.dist', 'install_scripts', deprecation=34259)
-
 lazy_import('sage.misc.banner', 'banner', deprecation=34259)
 
 lazy_import('sage.misc.sagedoc', ['browse_sage_doc',
@@ -43,7 +41,6 @@ lazy_import("sage.misc.cython", "cython_compile", "cython")
 lazy_import('sage.misc.inline_fortran', 'fortran')
 
 lazy_import('sage.misc.package', ('installed_packages', 'is_package_installed',
-                                  'standard_packages', 'optional_packages',
-                                  'experimental_packages', 'package_versions'),
+                                  'package_versions'),
             deprecation=34259)
 lazy_import('sage.misc.benchmark', 'benchmark', deprecation=34259)

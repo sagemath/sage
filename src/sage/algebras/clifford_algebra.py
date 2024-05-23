@@ -515,6 +515,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: Cl.category()
             Category of finite dimensional super algebras with basis over
              (Dedekind domains and euclidean domains
+              and noetherian rings
               and infinite enumerated sets and metric spaces)
             sage: TestSuite(Cl).run()
 
@@ -1094,6 +1095,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: phi.category_for()
             Category of finite dimensional super algebras with basis over
              (Dedekind domains and euclidean domains
+              and noetherian rings
               and infinite enumerated sets and metric spaces)
             sage: phi.matrix()
             [  1   0   0   0   7  -3  -7   0]
@@ -1178,6 +1180,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: phi.category_for()
             Category of finite dimensional super algebras with basis over
              (Dedekind domains and euclidean domains
+              and noetherian rings
               and infinite enumerated sets and metric spaces)
             sage: phi.matrix()
             [ 1  0  0  0  1  2  5  0]

@@ -97,7 +97,7 @@ Sage example in ./polynomes.tex, line 536::
 Sage example in ./polynomes.tex, line 551::
 
   sage: A = QQ['x']
-  sage: A.is_ring() and A.is_noetherian()
+  sage: A in Rings() and A.is_noetherian()
   True
 
 Sage example in ./polynomes.tex, line 559::

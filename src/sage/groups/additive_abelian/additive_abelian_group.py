@@ -19,16 +19,15 @@ def AdditiveAbelianGroup(invs, remember_generators=True):
 
     INPUT:
 
-    - ``invs`` (list of integers): the invariants.
+    - ``invs`` -- list of integers; the invariants.
       These should all be greater than or equal to zero.
 
-    - ``remember_generators`` (boolean): whether or not to fix a set of
-      generators (corresponding to the given invariants, which need not be in
-      Smith form).
+    - ``remember_generators`` -- boolean (default: ``True``); whether or not
+      to fix a set of generators (corresponding to the given invariants, which
+      need not be in Smith form).
 
-    OUTPUT:
-
-    The abelian group `\bigoplus_i \ZZ / n_i \ZZ`, where `n_i` are the invariants.
+    OUTPUT: the abelian group `\bigoplus_i \ZZ / n_i \ZZ`, where `n_i` are the
+    invariants
 
     EXAMPLES::
 
@@ -208,9 +207,9 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
     INPUT:
 
-    - ``cover`` -- the covering group as `\ZZ`-module.
+    - ``cover`` -- the covering group as `\ZZ`-module
 
-    - ``relations`` -- the relations as submodule of ``cover``.
+    - ``relations`` -- the relations as submodule of ``cover``
     """
 
     # The element class must be overridden in derived classes
@@ -247,7 +246,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
     def _latex_(self):
         r"""
-        Returns a Latex representation of the group, using the invariants.
+        Return a Latex representation of the group, using the invariants.
 
         EXAMPLES::
 
@@ -297,11 +296,11 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
         INPUT:
 
-        - ``cover`` -- the covering group as `\ZZ`-module.
+        - ``cover`` -- the covering group as `\ZZ`-module
 
-        - ``relations`` -- the relations as submodule of ``cover``.
+        - ``relations`` -- the relations as submodule of ``cover``
 
-        - ``check`` -- ignored, present for compatibility with ``fg_pid`` code.
+        - ``check`` -- ignored, present for compatibility with ``fg_pid`` code
 
         EXAMPLES::
 
@@ -327,7 +326,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
     def order(self):
         r"""
-        Return the order of this group (an integer or infinity)
+        Return the order of this group (integer or infinity).
 
         EXAMPLES::
 
@@ -376,7 +375,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
     def is_cyclic(self):
         r"""
-        Returns ``True`` if the group is cyclic.
+        Return ``True`` if the group is cyclic.
 
         EXAMPLES:
 
@@ -423,7 +422,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
 
     def gens(self) -> tuple:
         r"""
-        Return the specified generators for self (as a tuple). Compare
+        Return the specified generators for ``self`` (as a tuple). Compare
         ``self.smithform_gens()``.
 
         EXAMPLES::

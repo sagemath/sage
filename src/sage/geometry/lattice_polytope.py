@@ -483,6 +483,9 @@ def is_LatticePolytope(x):
 
         sage: from sage.geometry.lattice_polytope import is_LatticePolytope
         sage: is_LatticePolytope(1)
+        doctest:warning...
+        DeprecationWarning: is_LatticePolytope is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         False
         sage: p = LatticePolytope([(1,0), (0,1), (-1,-1)])
         sage: p                                                                         # needs palp
@@ -490,6 +493,8 @@ def is_LatticePolytope(x):
         sage: is_LatticePolytope(p)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_LatticePolytope is deprecated, use isinstance instead")
     return isinstance(x, LatticePolytopeClass)
 
 @richcmp_method

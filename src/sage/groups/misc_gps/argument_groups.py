@@ -115,9 +115,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -152,9 +150,7 @@ class AbstractArgument(MultiplicativeGroupElement):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -286,7 +282,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
     def __abs__(self):
         r"""
-        Return the absolute value of this argument which equals `1`
+        Return the absolute value of this argument which equals `1`.
 
         TESTS::
 
@@ -338,9 +334,7 @@ class AbstractArgumentGroup(UniqueRepresentation, Parent):
         - ``category`` -- a category or ``None`` (in which case the output
           equals ``category``)
 
-        OUTPUT:
-
-        A category.
+        OUTPUT: a category
 
         EXAMPLES::
 
@@ -415,9 +409,7 @@ class UnitCirclePoint(AbstractArgument):
 
         - ``exponent`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -464,9 +456,7 @@ class UnitCirclePoint(AbstractArgument):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -682,9 +672,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         - ``kwds`` -- are passed on to element
 
-        OUTPUT:
-
-        A :class:`UnitCirclePoint`.
+        OUTPUT: a :class:`UnitCirclePoint`
 
         TESTS::
 
@@ -795,11 +783,9 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``exponent`` -- the element data.
+        - ``exponent`` -- the element data
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -827,11 +813,9 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``R`` -- a parent.
+        - ``R`` -- a parent
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -1089,9 +1073,7 @@ class ArgumentByElement(AbstractArgument):
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -1124,9 +1106,7 @@ class ArgumentByElement(AbstractArgument):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -1276,9 +1256,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         - ``kwds`` -- are passed on to element
 
-        OUTPUT:
-
-        A :class:`ArgumentByElement`.
+        OUTPUT: a :class:`ArgumentByElement`
 
         TESTS::
 
@@ -1344,11 +1322,9 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``element`` -- the element data.
+        - ``element`` -- the element data
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -1378,11 +1354,9 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``R`` -- a parent.
+        - ``R`` -- a parent
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -1437,9 +1411,7 @@ class Sign(AbstractArgument):
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -1690,9 +1662,7 @@ class SignGroup(AbstractArgumentGroup):
 
         - ``data`` -- an object
 
-        OUTPUT:
-
-        A :class:`Sign`.
+        OUTPUT: a :class:`Sign`
 
         TESTS::
 

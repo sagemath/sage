@@ -16,14 +16,13 @@ gsl_set_error_handler_off()
 
 cdef class RealDoubleElement_gsl(RealDoubleElement):
 
-
     def nth_root(self, int n):
         """
         Return the `n^{th}` root of ``self``.
 
         INPUT:
 
-        -  ``n`` -- an integer
+        - ``n`` -- an integer
 
         OUTPUT:
 
@@ -54,9 +53,9 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
                 from sage.rings.complex_double import CDF
                 return self._complex_double_(CDF).nth_root(n)
             else:
-                return - ( (-self) ** (float(1)/n) )
-        else:
-            return self ** (float(1)/n)
+                return - ((-self) ** (float(1)/n))
+
+        return self ** (float(1)/n)
 
     cdef __pow_double(self, double exponent, double sign):
         """
@@ -326,7 +325,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         sig_off()
         return a
 
-
     def log10(self):
         """
         Return log to the base 10 of ``self``.
@@ -531,7 +529,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             sage: q.tan()
             0.5773502691896256
         """
-        cdef double denom
         cos = gsl_sf_cos(self._value)
         a = self._new_c(gsl_sf_sin(self._value) / cos)
         return a
@@ -564,7 +561,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             sage: q.cosh()
             1.0344656400955106
         """
-        return self._new_c(gsl_ldexp( gsl_sf_exp(self._value) + gsl_sf_exp(-self._value), -1)) # (e^x + e^-x)/2
+        return self._new_c(gsl_ldexp(gsl_sf_exp(self._value) + gsl_sf_exp(-self._value), -1))  # (e^x + e^-x)/2
 
     def sinh(self):
         """
@@ -576,7 +573,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             sage: q.sinh()
             0.26480022760227073
         """
-        return self._new_c(gsl_ldexp( gsl_sf_expm1(self._value) - gsl_sf_expm1(-self._value), -1)) # (e^x - e^-x)/2
+        return self._new_c(gsl_ldexp(gsl_sf_expm1(self._value) - gsl_sf_expm1(-self._value), -1))  # (e^x - e^-x)/2
 
     def tanh(self):
         """

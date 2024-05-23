@@ -1,5 +1,4 @@
 # sage_setup: distribution = sagemath-brial
-# coding=utf-8
 r"""
 parallel.py
 PolyBoRi

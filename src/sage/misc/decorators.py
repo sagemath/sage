@@ -178,7 +178,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
 
 
 # Infix operator decorator
-class infix_operator():
+class infix_operator:
     """
     A decorator for functions which allows for a hack that makes
     the function behave like an infix operator.
@@ -260,7 +260,7 @@ class infix_operator():
         return wrapper_inst
 
 
-class _infix_wrapper():
+class _infix_wrapper:
     function = None
 
     def __init__(self, left=None, right=None):
@@ -349,7 +349,7 @@ def decorator_defaults(func):
     return my_wrap
 
 
-class suboptions():
+class suboptions:
     def __init__(self, name, **options):
         """
         A decorator for functions which collects all keywords
@@ -434,7 +434,7 @@ class suboptions():
         return wrapper
 
 
-class options():
+class options:
     def __init__(self, **options):
         """
         A decorator for functions which allows for default options to be
@@ -574,7 +574,7 @@ class options():
         return wrapper
 
 
-class rename_keyword():
+class rename_keyword:
     def __init__(self, deprecated=None, deprecation=None, **renames):
         """
         A decorator which renames keyword arguments and optionally

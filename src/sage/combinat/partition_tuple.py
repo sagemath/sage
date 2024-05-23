@@ -770,7 +770,7 @@ class PartitionTuple(CombinatorialElement):
             ***
             **
         """
-        return [t for t in self]
+        return list(self)
 
     def diagram(self):
         r"""
@@ -886,7 +886,7 @@ class PartitionTuple(CombinatorialElement):
         """
         for c in range(len(self)):
             for nu in self[c].up():
-                up = [tau for tau in self]
+                up = list(self)
                 up[c] = nu
                 yield PartitionTuple(up)
 
@@ -903,7 +903,7 @@ class PartitionTuple(CombinatorialElement):
             [([1], [], [], []), ([], [1], [], []), ([], [], [1], []), ([], [], [], [1])]
 
         """
-        return [mu for mu in self.up()]
+        return list(self.up())
 
     def down(self):
         r"""
@@ -920,7 +920,7 @@ class PartitionTuple(CombinatorialElement):
         """
         for c in range(len(self)):
             for nu in self[c].down():
-                down = [tau for tau in self]
+                down = list(self)
                 down[c] = nu
                 yield PartitionTuple(down)
 
@@ -936,7 +936,7 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[],[],[]]).down_list()
             []
         """
-        return [mu for mu in self.down()]
+        return list(self.down())
 
     def cells(self):
         """
@@ -1518,7 +1518,7 @@ class PartitionTuple(CombinatorialElement):
         m = 0
         for comp in self:
             for row in comp:
-                gens.extend([c for c in range(m + 1, m + row)])
+                gens.extend(list(range(m + 1, m + row)))
                 m += row
         return gens
 

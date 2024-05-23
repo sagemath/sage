@@ -44,7 +44,7 @@ jobs:
           - 5000:5000
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v8
+        uses: easimon/maximize-build-space@v10
         with:
           # need space in /var for Docker images
           root-reserve-mb:      30000
@@ -120,7 +120,7 @@ jobs:
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build documentation workflow"
           # mathjax path in old doc (regex)
-          mathjax_path_from="[-./A-Za-z_]*/tex-chtml[.]js"
+          mathjax_path_from="[-./A-Za-z_]*/tex-chtml[.]js?v=[0-9a-f]*"
           # mathjax path in new doc
           mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           new_version=$(docker exec BUILD cat src/VERSION.txt)
