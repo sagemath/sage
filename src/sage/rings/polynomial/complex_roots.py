@@ -75,6 +75,7 @@ def interval_roots(p, rts, prec):
     """
 
     CIF = ComplexIntervalField(prec)
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     CIFX = PolynomialRing(CIF, 'x')
 
     ip = CIFX(p)
