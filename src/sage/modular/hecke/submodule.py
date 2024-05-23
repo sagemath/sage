@@ -35,10 +35,16 @@ def is_HeckeSubmodule(x):
     EXAMPLES::
 
         sage: sage.modular.hecke.submodule.is_HeckeSubmodule(ModularForms(1, 12))
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeSubmodule is deprecated;
+        use 'isinstance(..., HeckeSubmodule)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         False
         sage: sage.modular.hecke.submodule.is_HeckeSubmodule(CuspForms(1, 12))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeSubmodule is deprecated; use 'isinstance(..., HeckeSubmodule)' instead")
     return isinstance(x, HeckeSubmodule)
 
 
