@@ -426,7 +426,7 @@ cdef class Ring(ParentWithGens):
             coerce = True
 
         from sage.rings.ideal import Ideal_generic
-        from sage.structure.parent import is_Parent
+        from sage.structure.parent import Parent
         gens = args
         while isinstance(gens, (list, tuple)) and len(gens) == 1:
             first = gens[0]
@@ -445,7 +445,7 @@ cdef class Ring(ParentWithGens):
                 break
             elif isinstance(first, (list, tuple)):
                 gens = first
-            elif is_Parent(first) and self.has_coerce_map_from(first):
+            elif isinstance(first, Parent) and self.has_coerce_map_from(first):
                 gens = first.gens()  # we have a ring as argument
             else:
                 break
