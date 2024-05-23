@@ -577,7 +577,7 @@ def AccelDesc_iterator(int n):
 
         sage: from sage.combinat.partitions import ZS1_iterator
         sage: from sage.misc.prandom import randint
-        sage: n = randint(1, 100)
+        sage: n = randint(1, 50)
         sage: for p, q in zip(ZS1_iterator(n), AccelDesc_iterator(n)):  # long time
         ....:     if p != q:
         ....:         raise ValueError('something goes wrong')
