@@ -103,7 +103,7 @@ import sage.rings.abc
 from sage.misc.lazy_import import lazy_import
 from sage.modular.abvar.torsion_point import TorsionPoint
 from sage.modules.module import Module
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.structure.gens_py import abelian_iterator
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -871,7 +871,7 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
             from sage.rings.qqbar import QQbar as field_of_definition
         if check:
             from .abvar import is_ModularAbelianVariety
-            if not is_FreeModule(lattice) or lattice.base_ring() != ZZ:
+            if not isinstance(lattice, FreeModule_generic) or lattice.base_ring() != ZZ:
                 raise TypeError("lattice must be a free module over ZZ")
             if not is_ModularAbelianVariety(abvar):
                 raise TypeError("abvar must be a modular abelian variety")
