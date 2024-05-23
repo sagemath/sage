@@ -498,19 +498,14 @@ class Fields(CategoryWithAxiom):
                 cur = cur.gcd(cur.derivative())
                 f.append(cur)
 
-            g = []
-            for i in range(len(f) - 1):
-                g.append(f[i] // f[i+1])
-
-            a = []
-            for i in range(len(g) - 1):
-                a.append(g[i] // g[i+1])
+            g = [f[i] // f[i + 1] for i in range(len(f) - 1)]
+            a = [g[i] // g[i + 1] for i in range(len(g) - 1)]
             a.append(g[-1])
 
             unit = f[-1]
             for i in range(len(a)):
                 if a[i].degree() > 0:
-                    factors.append((a[i], i+1))
+                    factors.append((a[i], i + 1))
                 else:
                     unit = unit * a[i].constant_coefficient() ** (i + 1)
 
