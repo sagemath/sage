@@ -571,6 +571,16 @@ def AccelDesc_iterator(int n):
         [4]
         sage: type(_)
         <class 'list'>
+
+    Check that :meth:`ZS1_iterator` and :meth:`AccelDesc_iterator` generate
+    partitions in the same order::
+
+        sage: from sage.combinat.partitions import ZS1_iterator
+        sage: from sage.misc.prandom import randint
+        sage: n = randint(1, 100)
+        sage: for p, q in zip(ZS1_iterator(n), AccelDesc_iterator(n)):  # long time
+        ....:     if p != q:
+        ....:         raise ValueError('something goes wrong')
     """
     # Easy cases.
     if n < 0:
