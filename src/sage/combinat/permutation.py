@@ -396,11 +396,15 @@ class Permutation(CombinatorialElement):
         False
 
         sage: Permutation([1, 2, 3, 4], algorithm='blah')
-        ValueError: Unsupported algorithm 'blah'; expected 'lex' or 'sjt'
+        Traceback (most recent call last):
+        ...
+        ValueError: Unsupported algorithm blah; expected 'lex' or 'sjt'
 
         sage: Permutation([1, 3, 2, 4], algorithm='sjt')
-        ValueError: No internal state directions were given for non-identity \
-        starting permutation for Steinhaus-Johnson-Trotter algorithm. Expected \
+        Traceback (most recent call last):
+        ...
+        ValueError: No internal state directions were given for non-identity
+        starting permutation for Steinhaus-Johnson-Trotter algorithm. Expected
         identity permutation.
 
     Construction from a string in cycle notation::
