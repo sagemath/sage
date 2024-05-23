@@ -137,7 +137,7 @@ TESTS::
 import sage.categories.commutative_rings as commutative_rings
 import sage.misc.latex as latex
 from sage.interfaces.abc import MagmaElement
-from sage.misc.sage_eval import sage_eval
+from sage.misc.lazy_import import lazy_import
 from sage.rings import (
     integer,
     laurent_series_ring,
@@ -166,6 +166,8 @@ import sage.categories.fields as fields
 _Fields = fields.Fields()
 
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings
+
+lazy_import('sage.misc.sage_eval', 'sage_eval')
 
 try:
     from .laurent_series_ring import LaurentSeriesRing

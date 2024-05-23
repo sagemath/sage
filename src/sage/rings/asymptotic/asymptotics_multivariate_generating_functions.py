@@ -199,18 +199,20 @@ Classes and Methods
 from functools import total_ordering
 from itertools import combinations_with_replacement
 
-from sage.structure.element import RingElement
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.calculus.var import var
-from sage.calculus.functional import diff
-from sage.symbolic.ring import SR
+from sage.categories.rings import Rings
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.categories.rings import Rings
+from sage.structure.element import RingElement
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_by_eq_and_lt
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import("sage.calculus.var", "var")
+lazy_import("sage.calculus.functional", "diff")
+lazy_import("sage.symbolic.ring", "SR")
 
 
 @total_ordering
