@@ -80,7 +80,6 @@ class GraphHomomorphismCounter:
         #   ((4, 2), (5, 1)): 60}, {}, ...]
         self.DP_table = [{} for _ in range(len(self.dir_labelled_TD))]
 
-
     def count_homomorphisms(self):
         r"""
         Return the number of homomorphisms from the graph `G` to the graph `H`.
@@ -121,7 +120,7 @@ class GraphHomomorphismCounter:
                 case 'join':
                     self._add_join_node(node)
 
-                case _: 
+                case _:
                     self._add_leaf_node(node)
 
         return self.DP_table[0][0]
