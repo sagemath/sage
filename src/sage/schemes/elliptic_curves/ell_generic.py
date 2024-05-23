@@ -99,14 +99,14 @@ def is_EllipticCurve(x):
         sage: E = EllipticCurve([1,2,3/4,7,19])
         sage: is_EllipticCurve(E)
         doctest:warning...
-        DeprecationWarning: the function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead
+        DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_EllipticCurve(0)
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead")
+    deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
     return isinstance(x, EllipticCurve_generic)
 
 

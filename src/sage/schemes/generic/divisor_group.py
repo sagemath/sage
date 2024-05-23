@@ -76,14 +76,14 @@ def is_DivisorGroup(x):
         sage: Div = DivisorGroup(Spec(ZZ), base_ring=QQ)
         sage: is_DivisorGroup(Div)
         doctest:warning...
-        DeprecationWarning: the function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead
+        DeprecationWarning: The function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_DivisorGroup('not a divisor')
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead")
+    deprecation(38022, "The function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead.")
     return isinstance(x, DivisorGroup_generic)
 
 

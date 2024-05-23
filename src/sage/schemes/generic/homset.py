@@ -68,7 +68,7 @@ def is_SchemeHomset(H):
         sage: from sage.schemes.generic.homset import is_SchemeHomset
         sage: is_SchemeHomset(f)
         doctest:warning...
-        DeprecationWarning: the function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead
+        DeprecationWarning: The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: is_SchemeHomset(f.parent())
@@ -77,7 +77,7 @@ def is_SchemeHomset(H):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead")
+    deprecation(38022, "The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.")
     return isinstance(H, SchemeHomset_generic)
 
 

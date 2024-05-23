@@ -171,7 +171,7 @@ def is_CPRFanoToricVariety(x):
         sage: from sage.schemes.toric.fano_variety import is_CPRFanoToricVariety
         sage: is_CPRFanoToricVariety(1)
         doctest:warning...
-        DeprecationWarning: the function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead
+        DeprecationWarning: The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: FTV = toric_varieties.P2()
@@ -183,7 +183,7 @@ def is_CPRFanoToricVariety(x):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead")
+    deprecation(38022, "The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.")
     return isinstance(x, CPRFanoToricVariety_field)
 
 

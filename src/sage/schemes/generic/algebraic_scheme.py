@@ -160,7 +160,7 @@ def is_AlgebraicScheme(x):
         sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
         sage: is_AlgebraicScheme(V)
         doctest:warning...
-        DeprecationWarning: the function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead
+        DeprecationWarning: The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         True
 
@@ -194,7 +194,7 @@ def is_AlgebraicScheme(x):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead")
+    deprecation(38022, "The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.")
     return isinstance(x, AlgebraicScheme)
 
 

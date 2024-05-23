@@ -61,12 +61,12 @@ def is_Berkovich(space) -> bool:
         sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
         sage: is_Berkovich(B)
         doctest:warning...
-        DeprecationWarning: the function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead
+        DeprecationWarning: The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead")
+    deprecation(38022, "The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.")
     return isinstance(space, Berkovich)
 
 
@@ -85,12 +85,12 @@ def is_Berkovich_Cp(space) -> bool:
         sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
         sage: is_Berkovich_Cp(B)
         doctest:warning...
-        DeprecationWarning: the function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead
+        DeprecationWarning: The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead")
+    deprecation(38022, "The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.")
     return isinstance(space, Berkovich_Cp)
 
 

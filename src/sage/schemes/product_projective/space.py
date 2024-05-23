@@ -74,14 +74,14 @@ def is_ProductProjectiveSpaces(x):
 
         sage: is_ProductProjectiveSpaces(ProjectiveSpace(5, names='x'))
         doctest:warning...
-        DeprecationWarning: the function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead
+        DeprecationWarning: The function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: is_ProductProjectiveSpaces(ProductProjectiveSpaces([1, 2, 3], ZZ, 'x'))
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead")
+    deprecation(38022, "The function is_ProductProjectiveSpaces is deprecated; use 'isinstance(..., ProductProjectiveSpaces_ring)' instead.")
     return isinstance(x, ProductProjectiveSpaces_ring)
 
 

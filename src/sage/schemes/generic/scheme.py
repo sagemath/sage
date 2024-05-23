@@ -45,7 +45,7 @@ def is_Scheme(x):
         sage: from sage.schemes.generic.scheme import is_Scheme
         sage: is_Scheme(5)
         doctest:warning...
-        DeprecationWarning: the function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead
+        DeprecationWarning: The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: X = Spec(QQ)
@@ -53,7 +53,7 @@ def is_Scheme(x):
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead")
+    deprecation(38022, "The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.")
     return isinstance(x, Scheme)
 
 
@@ -800,7 +800,7 @@ def is_AffineScheme(x):
         sage: from sage.schemes.generic.scheme import is_AffineScheme
         sage: is_AffineScheme(5)
         doctest:warning...
-        DeprecationWarning: the function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead
+        DeprecationWarning: The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.
         See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: E = Spec(QQ)
@@ -808,7 +808,7 @@ def is_AffineScheme(x):
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "the function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead")
+    deprecation(38022, "The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.")
     return isinstance(x, AffineScheme)
 
 
