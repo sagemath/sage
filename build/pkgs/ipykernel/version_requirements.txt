@@ -1,1 +1,1 @@
-ipykernel >=5.2.1
+ipykernel
