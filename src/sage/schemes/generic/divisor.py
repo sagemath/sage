@@ -121,6 +121,29 @@ def is_Divisor(x):
 class Divisor_generic(FormalSum):
     r"""
     A Divisor.
+
+    TESTS::
+
+        sage: E = EllipticCurve([1, 2])
+        sage: P = E(-1, 0)
+        sage: Q = E(1, 2)
+        sage: Pd = E.divisor(P)
+        sage: Qd = E.divisor(Q)
+        sage: Pd + Qd == Qd + Pd
+        True
+        sage: Pd != Qd
+        True
+        sage: C = EllipticCurve([2, 1])
+        sage: R = C(1, 2)
+        sage: Rd = C.divisor(R)
+        sage: Qd == Rd
+        False
+        sage: Rd == Qd
+        False
+        sage: Qd == (2 * (Qd * 1/2))
+        True
+        sage: Qd == 1/2 * Qd
+        False
     """
 
     def __init__(self, v, parent, check=True, reduce=True):
@@ -363,14 +386,15 @@ class Divisor_curve(Divisor_generic):
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
 
-    def support(self):
+    def support(self) -> list:
         """
         Return the support of this divisor, which is the set of points that
         occur in this divisor with nonzero coefficients.
 
         EXAMPLES::
 
-            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
+            sage: A = AffineSpace(2, GF(5), names='xy')
+            sage: x, y = A.gens()
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
