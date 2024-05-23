@@ -78,6 +78,7 @@ class Bimodules(CategoryWithParameters):
                  and Category of metric spaces,
              Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
@@ -86,6 +87,7 @@ class Bimodules(CategoryWithParameters):
             (Category of fields,
              Join of Category of Dedekind domains
              and Category of euclidean domains
+             and Category of noetherian rings
              and Category of infinite enumerated sets
              and Category of metric spaces)
 

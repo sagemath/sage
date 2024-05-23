@@ -1,1 +1,1 @@
-jupyter_core >=4.6.3
+jupyter-core

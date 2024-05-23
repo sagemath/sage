@@ -115,7 +115,7 @@ cdef inline int OP_find(OrbitPartition *OP, int n) noexcept:
         OP.parent[n] = OP_find(OP, OP.parent[n])
         return OP.parent[n]
 
-cdef inline int OP_join(OrbitPartition *OP, int m, int n) noexcept:
+cdef inline void OP_join(OrbitPartition *OP, int m, int n) noexcept:
     """
     Join the cells containing m and n, if they are different.
     """

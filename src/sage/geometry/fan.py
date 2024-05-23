@@ -239,6 +239,8 @@ from collections.abc import Callable, Container
 from copy import copy
 from warnings import warn
 
+import sage.geometry.abc
+
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.combinat.combination import Combinations
 from sage.combinat.posets.posets import FinitePoset
@@ -246,7 +248,6 @@ from sage.geometry.cone import (_ambient_space_point,
                                 Cone,
                                 ConvexRationalPolyhedralCone,
                                 IntegralRayCollection,
-                                is_Cone,
                                 normalize_rays)
 from sage.geometry.hasse_diagram import lattice_from_incidences
 from sage.geometry.point_collection import PointCollection
@@ -572,7 +573,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         cones = ((), )
         rays = ()
         return result()
-    if is_Cone(cones[0]):
+    if isinstance(cones[0], sage.geometry.abc.ConvexRationalPolyhedralCone):
         # Construct the fan from Cone objects
         if lattice is None:
             lattice = cones[0].lattice()
@@ -750,11 +751,10 @@ def FaceFan(polytope, lattice=None):
         ValueError: face fans are defined only for
         polytopes containing the origin as an interior point!
     """
-    from sage.geometry.lattice_polytope import is_LatticePolytope
     interior_point_error = ValueError(
         "face fans are defined only for polytopes containing "
         "the origin as an interior point!")
-    if is_LatticePolytope(polytope):
+    if isinstance(polytope, sage.geometry.abc.LatticePolytope):
         if any(d <= 0 for d in polytope.distances([0] * polytope.dim())):
             raise interior_point_error
         cones = (f.ambient_vertex_indices() for f in polytope.facets())
@@ -844,8 +844,7 @@ def NormalFan(polytope, lattice=None):
     """
     dimension_error = ValueError(
         'the normal fan is only defined for full-dimensional polytopes')
-    from sage.geometry.lattice_polytope import is_LatticePolytope
-    if is_LatticePolytope(polytope):
+    if isinstance(polytope, sage.geometry.abc.LatticePolytope):
         if polytope.dim() != polytope.lattice_dim():
             raise dimension_error
         rays = polytope.facet_normals()
@@ -2426,7 +2425,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             ValueError: 2-d cone in 3-d lattice N does not belong
             to Rational polyhedral fan in 3-d lattice N!
         """
-        if not is_Cone(cone):
+        if not isinstance(cone, sage.geometry.abc.ConvexRationalPolyhedralCone):
             raise TypeError("%s is not a cone!" % cone)
         if cone.ambient() is self:
             return cone

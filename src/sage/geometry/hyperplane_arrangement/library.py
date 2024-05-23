@@ -157,7 +157,7 @@ class HyperplaneArrangementLibrary:
         for u, v in G.edge_iterator(labels=False, sort_vertices=False):
             i = vertex_to_int[u]
             j = vertex_to_int[v]
-            hyperplanes.append( x[i] - x[j] - A[i][j])
+            hyperplanes.append(x[i] - x[j] - A[i][j])
             hyperplanes.append(-x[i] + x[j] - A[j][i])
         return H(*hyperplanes)
 
@@ -795,7 +795,7 @@ class HyperplaneArrangementLibrary:
         hyperplanes = []
 
         for a in PR:
-            for const in range(-m+1,m+1):
+            for const in range(-m + 1, m + 1):
                 hyperplanes.append(sum(a[j]*x[j] for j in range(d))-const)
         A = H(*hyperplanes)
         x = polygen(QQ, 'x')

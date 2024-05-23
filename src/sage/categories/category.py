@@ -1229,7 +1229,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: structure(Rings())
             (Category of unital magmas, Category of additive unital additive magmas)
             sage: structure(Fields())
-            (Category of euclidean domains,)
+            (Category of euclidean domains, Category of noetherian rings)
             sage: structure(Algebras(QQ))
             (Category of unital magmas,
              Category of right modules over Rational Field,
@@ -2841,6 +2841,7 @@ class CategoryWithParameters(Category):
             sage: Algebras(ZZ)._make_named_class_key("parent_class")
             Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces
 
@@ -2853,6 +2854,7 @@ class CategoryWithParameters(Category):
                  and Category of metric spaces,
              Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
@@ -2980,6 +2982,7 @@ class JoinCategory(CategoryWithParameters):
             sage: Modules(ZZ)._make_named_class_key('element_class')
             Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')

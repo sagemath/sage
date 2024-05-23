@@ -24,7 +24,9 @@ This performs two types of uninstallation:
        are also removed.
 """
 # ****************************************************************************
-#       Copyright (C) 2017 Erik M. Bray <erik.m.bray@gmail.com>
+#       Copyright (C) 2017-2018 Erik M. Bray <erik.m.bray@gmail.com>
+#                     2019      Jeroen Demeyer
+#                     2021-2022 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

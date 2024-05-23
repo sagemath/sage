@@ -15,8 +15,9 @@ Python language standard
 Sage library code needs to be compatible with all versions of Python
 that Sage supports.  The information regarding the supported versions
 can be found in the files ``build/pkgs/python3/spkg-configure.m4``
-(for the Sage distribution), ``m4/pyproject_toml_metadata.m4`` (for
-the Sage library and most other distribution packages in ``pkgs/``).
+(for the Sage distribution), ``src/pyproject.toml`` (for the Sage
+library), and ``m4/pyproject_toml_metadata.m4`` (for most other
+distribution packages in ``pkgs/``).
 
 Python 3.9 is the oldest supported version.  Hence,
 all language and library features that are available in Python 3.9 can
@@ -748,6 +749,13 @@ documentation for more information on its behaviour and optional arguments.
 
       from sage.misc.superseded import deprecation
       deprecation(666, "Do not use your computer to compute 1+1. Use your brain.")
+
+Note that these decorators only work for (pure) Python. There is no implementation
+of decorators in Cython. Hence, when in need to rename a keyword/function/method/...
+in a Cython (.pyx) file and/or to deprecate something, forget about decorators and
+just use :func:`~sage.misc.superseded.deprecation_cython` instead. The usage of
+:func:`~sage.misc.superseded.deprecation_cython` is exactly the same as
+:func:`~sage.misc.superseded.deprecation`.
 
 
 Experimental/unstable code

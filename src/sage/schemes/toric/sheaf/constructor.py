@@ -139,7 +139,7 @@ def LineBundle(X, D):
     return klyachko.Bundle(X, filtrations, check=True)
 
 
-class SheafLibrary():
+class SheafLibrary:
 
     def __init__(self, toric_variety):
         """

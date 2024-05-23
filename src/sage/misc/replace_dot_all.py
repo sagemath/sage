@@ -112,8 +112,9 @@ def find_replacements(location, package_regex=None, verbose=False):
 
     EXAMPLES::
 
+        sage: # needs SAGE_SRC
         sage: from sage.misc.replace_dot_all import *
-        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/plot/arc.py')
+        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage', 'plot', 'arc.py')
         sage: find_replacements(location, package_regex='sage[.]plot[.]all', verbose=True)
         [[..., ..., 'from sage.plot.graphics import Graphics']]
     """
@@ -123,7 +124,7 @@ def find_replacements(location, package_regex=None, verbose=False):
     pattern = re.compile(regex)
     replacements = []
     global log_messages, interesting_examples
-    with open(location, "r") as fp:
+    with open(location) as fp:
         skip_line = False
         lines = fp.readlines()  # read all lines using readline()
         row_index = 0
@@ -296,8 +297,9 @@ def process_line(location, line, replacements, row_index, verbose=False):
 
     Replacing the first line which needs a replacement in the source file with filepath ``src/sage/plot/arc.py``::
 
+        sage: # needs SAGE_SRC
         sage: from sage.misc.replace_dot_all import *
-        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/plot/arc.py')
+        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage', 'plot', 'arc.py')
         sage: replacements = find_replacements(location, package_regex='sage[.]plot[.]all', verbose=True); replacements
         [[478, 24, 'from sage.plot.graphics import Graphics']]
         sage: with open(location, "r") as file:
@@ -367,7 +369,7 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
         from sage.plot.line import line
     """
     replacements = find_replacements(location, package_regex, verbose)
-    with open(location, "r") as file:
+    with open(location) as file:
         lines = file.readlines()
     replaced_content = ""
     row_index = 0  # keeps track of the line number
@@ -402,6 +404,7 @@ def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex
 
     EXAMPLES::
 
+        sage: # needs SAGE_SRC
         sage: from sage.misc.replace_dot_all import *
         sage: walkdir_replace_dot_all(os.path.join(sage.env.SAGE_SRC, 'sage'))  # not tested
     """

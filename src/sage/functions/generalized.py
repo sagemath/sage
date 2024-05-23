@@ -291,7 +291,7 @@ class FunctionUnitStep(GinacFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -332,7 +332,7 @@ class FunctionUnitStep(GinacFunction):
 
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -379,7 +379,7 @@ class FunctionSignum(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -549,8 +549,8 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``m`` - a number or a symbolic expression
-    -  ``n`` - a number or a symbolic expression
+    -  ``m`` -- a number or a symbolic expression
+    -  ``n`` -- a number or a symbolic expression
 
     DEFINITION:
 
@@ -561,9 +561,9 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: kronecker_delta(1,2)                                                      # needs sage.rings.complex_interval_field
+        sage: kronecker_delta(1, 2)                                                     # needs sage.rings.complex_interval_field
         0
-        sage: kronecker_delta(1,1)                                                      # needs sage.rings.complex_interval_field
+        sage: kronecker_delta(1, 1)                                                     # needs sage.rings.complex_interval_field
         1
         sage: m, n = var('m,n')                                                         # needs sage.symbolic
         sage: kronecker_delta(m, n)                                                     # needs sage.symbolic
@@ -580,9 +580,9 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: kronecker_delta(1,2)                                                  # needs sage.rings.complex_interval_field
+            sage: kronecker_delta(1, 2)                                                 # needs sage.rings.complex_interval_field
             0
-            sage: kronecker_delta(1,1)                                                  # needs sage.rings.complex_interval_field
+            sage: kronecker_delta(1, 1)                                                 # needs sage.rings.complex_interval_field
             1
             sage: y = var('y')                                                          # needs sage.symbolic
             sage: kronecker_delta(x, y)._sympy_()                                       # needs sympy sage.symbolic
@@ -599,9 +599,9 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: kronecker_delta(1,2)                                                  # needs sage.rings.complex_interval_field
+            sage: kronecker_delta(1, 2)                                                 # needs sage.rings.complex_interval_field
             0
-            sage: kronecker_delta(1,1)                                                  # needs sage.rings.complex_interval_field
+            sage: kronecker_delta(1, 1)                                                 # needs sage.rings.complex_interval_field
             1
 
         Kronecker delta is a symmetric function. We keep arguments sorted to
