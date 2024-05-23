@@ -46,7 +46,6 @@ from sage.categories.morphism cimport Morphism
 from sage.rings.ring cimport Field
 import sage.rings.infinity
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 cdef QQ, RR, CC, RealField, ComplexField
 from sage.rings.rational_field import QQ
@@ -66,6 +65,7 @@ cdef _QQx = None
 
 cdef QQx():
     global _QQx
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     if _QQx is None:
         _QQx = PolynomialRing(QQ, 'x')
     return _QQx

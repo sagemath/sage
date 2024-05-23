@@ -267,6 +267,7 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
         factors = p.squarefree_decomposition()
 
     prec = 53
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     while True:
         CC = ComplexField(prec)
         CCX = PolynomialRing(CC, 'x')
