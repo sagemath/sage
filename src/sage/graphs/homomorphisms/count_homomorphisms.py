@@ -9,7 +9,7 @@ from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_d
 #   second_node_index: [10, 20, 30, 40, 50], ...}
 
 class GraphHomomorphismCounter:
-    def __init__(self, graph, target_graph, density_threshold=0.5, graph_clr=None, target_clr=None, colourful=False):
+    def __init__(self, graph, target_graph, density_threshold=0.25, graph_clr=None, target_clr=None, colourful=False):
         r"""
         INPUT:
 
@@ -17,7 +17,7 @@ class GraphHomomorphismCounter:
 
         - ``target_graph`` -- the graph to which ``graph`` is sent
 
-        - ``density_threshold`` (default: 0.5) -- the desnity threshold for `target_graph` representation
+        - ``density_threshold`` (default: 0.25) -- the desnity threshold for `target_graph` representation
 
         - ``graph_clr`` (default: None) -- a list of integers representing the colours of the vertices of `graph`
 
@@ -101,42 +101,43 @@ class GraphHomomorphismCounter:
 
         EXAMPLES::
 
-            sage: graph = graphs.CompleteBipartiteGraph(1, 4)
-            sage: target_graph = graphs.CompleteGraph(4)
-            sage: from sage.graphs.hom_count_best import count_homomorphisms
-            sage: count_homomorphisms(graph, target_graph)
-            324
+            sage: from sage.graphs.homomorphisms.count_homomorphisms import GraphHomomorphismCounter
+            sage: square = graphs.CycleGraph(4)
+            sage: bip = graphs.CompleteBipartiteGraph(2, 4)
+            sage: counter = GraphHomomorphismCounter(square, bip)
+            sage: counter.count_homomorphisms()
+            128
         """
         # Whether it's BFS or DFS, every node below join node(s) would be
-        # computed first, so we can safely go bottom-up.
+        # computed already, so we can go bottom-up safely.
         for node in reversed(self.dir_labelled_TD.vertices()):
             node_type = self.dir_labelled_TD.get_vertex(node)
 
             match node_type:
                 case 'intro':
-                    self._add_intro_node_best(node)
+                    self._add_intro_node(node)
                 case 'forget':
-                    self._add_forget_node_best(node)
+                    self._add_forget_node(node)
                 case 'join':
-                    self._add_join_node_best(node)
+                    self._add_join_node(node)
 
                 case _: 
-                    self._add_leaf_node_best(node)
+                    self._add_leaf_node(node)
 
         return self.DP_table[0][0]
 
     ### Main adding functions
 
-    def _add_leaf_node_best(self, node):
+    def _add_leaf_node(self, node):
         r"""
-        Add the leaf node to the DP table and update it accordingly.
+        Add the computation result of processing leaf node(s) to the DP table.
         """
         node_index = get_node_index(node)
         self.DP_table[node_index] = [1]
 
-    def _add_intro_node_best(self, node):
+    def _add_intro_node(self, node):
         r"""
-        Add the intro node to the DP table and update it accordingly.
+        Add the computation result of processing introduce node(s) to the DP table.
         """
         # Basic setup
         node_index, node_vertices = node
@@ -149,7 +150,7 @@ class GraphHomomorphismCounter:
 
         mappings_count = [0] * mappings_length
 
-        # Use the adjacency matrix when dense, otherwise use the graph itself
+        # Use the adjacency matrix when dense, otherwise the graph itself
         target_density = self.actual_target_graph.density()
         target = self.actual_target_graph.adjacency_matrix() if target_density >= self.density_threshold else self.actual_target_graph
 
@@ -187,9 +188,9 @@ class GraphHomomorphismCounter:
 
         self.DP_table[node_index] = mappings_count
 
-    def _add_forget_node_best(self, node):
+    def _add_forget_node(self, node):
         r"""
-        Add the forget node to the DP table and update it accordingly.
+        Add the computation result of processing forget node(s) to the DP table.
         """
         # Basic setup
         node_index, node_vertices = node
@@ -199,8 +200,8 @@ class GraphHomomorphismCounter:
         child_node_vtx_tuple = tuple(child_node_vtx)
 
         target_graph_size = len(self.target_graph)
-        mappings_length_range = range(self.actual_target_size ** len(node_vtx_tuple))
-        mappings_count = [0 for _ in mappings_length_range] # TODO [0] * something_length directly
+        mappings_length = self.actual_target_size ** len(node_vtx_tuple)
+        mappings_count = [0] * mappings_length
 
         # Forget node specifically
         forgotten_vtx = self.node_changes_dict[node_index]
@@ -208,13 +209,11 @@ class GraphHomomorphismCounter:
 
         child_DP_entry = self.DP_table[child_node_index]
 
-        for mapping in mappings_length_range:
+        for mapping in range(mappings_length):
             sum = 0
-            # extended_mapping = add_vertex_into_mapping(0, mapping, forgotten_vtx_index, target_graph_size)
             extended_mapping = add_vertex_into_mapping(0, mapping, forgotten_vtx_index, self.actual_target_size)
 
             for _ in range(target_graph_size):
-            # for target_vtx in self.actual_target_graph:
                 sum += child_DP_entry[extended_mapping]
                 extended_mapping += self.actual_target_size ** forgotten_vtx_index
 
@@ -222,9 +221,9 @@ class GraphHomomorphismCounter:
 
         self.DP_table[node_index] = mappings_count
 
-    def _add_join_node_best(self, node):
+    def _add_join_node(self, node):
         r"""
-        Add the join node to the DP table and update it accordingly.
+        Add the computation result of processing join node(s) to the DP table.
         """
         node_index, node_vertices = node
         left_child, right_child  = [vtx for vtx in self.dir_labelled_TD.neighbors_out(node)
