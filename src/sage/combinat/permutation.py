@@ -565,6 +565,8 @@ class Permutation(CombinatorialElement):
             is something wrong with its length.
         """
         l = list(l)
+        # Default initialisation to ``None`` to declare the variable.
+        self.__sjt = None
 
         if check and len(l) > 0:
             # Make a copy to sort later
@@ -602,7 +604,8 @@ class Permutation(CombinatorialElement):
                 raise ValueError("unsupported algorithm %s; expected 'lex' or"
                 "'sjt'." % algorithm)
 
-            self.__sjt = SJT(l, directions=directions) if algorithm == "sjt" else None
+            if algorithm == "sjt":
+                self.__sjt = SJT(l, directions=directions)
 
         CombinatorialElement.__init__(self, parent, l)
 
@@ -793,7 +796,10 @@ class Permutation(CombinatorialElement):
         r"""
         Return the permutation that follows ``self`` in lexicographic order on
         the symmetric group containing ``self``. If ``self`` is the last
-        permutation, then ``next`` returns ``False``.
+        permutation, then ``next`` returns ``False``. If the algorithm parameter
+        is specified, the permutations will be generated according to it.
+        Allowed algorithms: lexicographic or "lex" and Steinhaus-Johnson-Trotter
+        or "sjt".
 
         EXAMPLES::
 
@@ -872,13 +878,20 @@ class Permutation(CombinatorialElement):
             sage: p.prev()
             False
 
+            sage: p = Permutation([1,2,3], algorithm='sjt')
+            sage: p.prev()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Previous permutation for SJT algorithm is not
+            yet implemented
+
         Check that :issue:`16913` is fixed::
 
             sage: Permutation([1,4,3,2]).prev()
             [1, 4, 2, 3]
         """
         if self.__sjt is not None:
-            raise NotImplementedError
+            raise NotImplementedError("Previous permutation for SJT algorithm is not yet implemented")
 
         p = self[:]
         n = len(self)
