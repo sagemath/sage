@@ -74,6 +74,9 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
          //        block   2 : ordering C,
          None)
     """
+    if singular is None:
+        from sage.interfaces.singular import singular
+
     make_ring = lambda s: singular.ring(s, _vars, order=order)
 
     if base_ring is ZZ:
@@ -183,7 +186,7 @@ class PolynomialRing_singular_repr:
     polynomial rings which support conversion from and to Singular
     rings.
     """
-    def _singular_(self, singular=singular):
+    def _singular_(self, singular=None):
         r"""
         Return a Singular ring for this polynomial ring.
 
@@ -333,8 +336,10 @@ class PolynomialRing_singular_repr:
         """
         try:
             R = self.__singular
-            if not (R.parent() is singular):
+            if singular is not None and R.parent() is not singular:
                 raise ValueError
+            elif singular is None:
+                from sage.interfaces.singular import singular
             R._check_valid()
             if self.base_ring() is ZZ or self.base_ring().is_prime_field():
                 return R
@@ -348,7 +353,7 @@ class PolynomialRing_singular_repr:
         except (AttributeError, ValueError):
             return self._singular_init_(singular)
 
-    def _singular_init_(self, singular=singular):
+    def _singular_init_(self, singular=None):
         """
         Return a newly created Singular ring matching this ring.
 
@@ -460,14 +465,18 @@ class Polynomial_singular_repr:
     Due to the incompatibility of Python extension classes and multiple inheritance,
     this just defers to module-level functions.
     """
-    def _singular_(self, singular=singular):
+    def _singular_(self, singular=None):
+        if singular is None:
+            from sage.interfaces.singular import singular
         return _singular_func(self, singular)
 
-    def _singular_init_func(self, singular=singular):
+    def _singular_init_func(self, singular=None):
+        if singular is None:
+            from sage.interfaces.singular import singular
         return _singular_init_func(self, singular)
 
 
-def _singular_func(self, singular=singular):
+def _singular_func(self, singular=None):
     """
     Return Singular polynomial matching this polynomial.
 
@@ -500,8 +509,9 @@ def _singular_func(self, singular=singular):
         sage: R(h^20) == f^20
         True
     """
+    if singular is None:
+        from sage.interfaces.singular import singular
     self.parent()._singular_(singular).set_ring()  # this is expensive
-
     try:
         self.__singular._check_valid()
         if self.__singular.parent() is singular:
@@ -511,13 +521,15 @@ def _singular_func(self, singular=singular):
     return _singular_init_func(self, singular)
 
 
-def _singular_init_func(self, singular=singular):
+def _singular_init_func(self, singular=None):
     """
     Return corresponding Singular polynomial but enforce that a new
     instance is created in the Singular interpreter.
 
     Use ``self._singular_()`` instead.
     """
+    if singular is None:
+        from sage.interfaces.singular import singular
     self.parent()._singular_(singular).set_ring()  # this is expensive
     self.__singular = singular(str(self))
     return self.__singular

@@ -47,8 +47,6 @@ from sage.rings.fraction_field_element import FractionFieldElement
 
 from sage.rings.infinity import infinity
 
-from sage.interfaces.singular import singular as singular_default
-
 from sage.structure.element import canonical_coercion, coerce_binop, have_same_parent
 
 from sage.libs.ntl.types cimport NTL_SP_BOUND
@@ -360,7 +358,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         self._poly = ZZ_pX(v, self.parent().modulus())
 
     # Polynomial_singular_repr stuff, copied due to lack of multiple inheritance
-    def _singular_(self, singular=singular_default, force=False):
+    def _singular_(self, singular=None, force=False):
         self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         if self.__singular is not None:
             try:
@@ -371,7 +369,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
                 pass
         return self._singular_init_(singular)
 
-    def _singular_init_(self, singular=singular_default, force=False):
+    def _singular_init_(self, singular=None, force=False):
         self.parent()._singular_(singular, force=force).set_ring()  # this is expensive
         self.__singular = singular(str(self))
         return self.__singular
