@@ -29,6 +29,13 @@ if [ -z "$CONFIG_SHELL" ]; then
     export CONFIG_SHELL=`command -v bash`
 fi
 
+# Dirty	workaround to link on OSX
+# https://github.com/linbox-team/fflas-ffpack/issues/391
+# https://github.com/sagemath/sage/issues/38002
+if [ "$UNAME" = Darwin ]; then
+    LDFLAGS="-lgivaro $LDFLAGS"
+fi
+
 # We disable openmp because of build failures, see
 # https://github.com/sagemath/sage/issues/17635#comment:67
 sdh_configure --with-default="$SAGE_LOCAL" --with-blas-libs="$LINBOX_BLAS" \
