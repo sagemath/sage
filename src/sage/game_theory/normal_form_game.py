@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Normal form games with N players.
 
