@@ -82,8 +82,8 @@ cpdef _fast_possible_periods(self, return_points=False):
         raise TypeError("must be prime field")
 
     PS = self.domain()
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if not is_ProjectiveSpace(PS) or PS != self.codomain():
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if not isinstance(PS, ProjectiveSpace_ring) or PS != self.codomain():
         raise NotImplementedError("must be an endomorphism of projective space")
 
     p = PS.base_ring().order()

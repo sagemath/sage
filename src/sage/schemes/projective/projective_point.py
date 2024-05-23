@@ -1269,8 +1269,8 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: Q[0] == T[0]
             True
         """
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
-        if not is_ProjectiveSpace(self.codomain()):
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+        if not isinstance(self.codomain(), ProjectiveSpace_ring):
             raise NotImplementedError("not implemented for subschemes")
 
         # Issue #23808: Keep the embedding info associated with the number field K
@@ -1368,8 +1368,8 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             ...
             TypeError: this point must be a point on a projective subscheme
         """
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
-        if is_ProjectiveSpace(self.codomain()):
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+        if isinstance(self.codomain(), ProjectiveSpace_ring):
             raise TypeError("this point must be a point on a projective subscheme")
         return self.codomain().intersection_multiplicity(X, self)
 
@@ -1393,8 +1393,8 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: Q2.multiplicity()                                                     # needs sage.libs.singular
             8
         """
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
-        if is_ProjectiveSpace(self.codomain()):
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+        if isinstance(self.codomain(), ProjectiveSpace_ring):
             raise TypeError("this point must be a point on a projective subscheme")
         return self.codomain().multiplicity(self)
 
