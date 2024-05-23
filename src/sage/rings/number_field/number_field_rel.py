@@ -2536,7 +2536,7 @@ class NumberField_relative(NumberField_generic):
         """
         M = self.absolute_field('a')
         from_M, to_M = M.structure()
-        g = M['x']([to_M(x) for x in poly.list()])
+        g = PolynomialRing(M, 'x')([to_M(x) for x in poly.list()])
         F = g.factor()
         S = poly.parent()
         v = [(S([from_M(x) for x in f.list()]), e) for f, e in F]

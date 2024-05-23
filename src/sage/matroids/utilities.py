@@ -709,6 +709,7 @@ def lift_map(target):
         ....:                 print('not a proper lift map')
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
     if target == "reg":
         R = GF(3)

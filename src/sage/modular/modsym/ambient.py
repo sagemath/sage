@@ -797,7 +797,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             if len(x) != 3:
                 raise ValueError("%s must have length 3" % x)
             f = x[0]
-            R = self.base_ring()['X', 'Y']
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            R = PolynomialRing(self.base_ring(), ['X', 'Y'])
             X = R.gen(0)
             try:
                 f = R(f)

@@ -2285,7 +2285,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         # For now, use pari's factoring abilities
         K = self.number_field()
-        R = K['t']
+        R = PolynomialRing(K, 't')
         f = R([-self, 0, 1])
         roots = f.roots()
         if extend and not roots:
@@ -2320,7 +2320,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         ALGORITHM: Use PARI to factor `x^n` - ``self`` in `K`.
         """
-        R = self.number_field()['t']
+        R = PolynomialRing(self.number_field(), 't')
         if not self:
             return [self] if all else self
         f = (R.gen(0) << (n-1)) - self
@@ -3066,7 +3066,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             [a, (-zeta3 - 1)*a, zeta3*a]
         """
         f = self.absolute_minpoly()
-        g = K['x'](f)
+        g = PolynomialRing(K, 'x')(f)
         return [a for a,_ in g.roots()]
 
     def conjugate(self):

@@ -7890,8 +7890,8 @@ cdef class Matroid(SageObject):
         """
         a = x
         b = y
-        R = ZZ['x, y']
-        x, y = R._first_ngens(2)
+        R = PolynomialRing(ZZ, ['x', 'y'])
+        x, y = R.gens()
         T = R(0)
         for B in self.bases_iterator():
             T += x ** len(self._internal(B)) * y ** len(self._external(B))
@@ -8096,7 +8096,6 @@ cdef class Matroid(SageObject):
                 flats_containing[x].append(i)
 
         # Create the ambient polynomial ring
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         try:
             names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
             P = PolynomialRing(R, names)

@@ -8919,7 +8919,7 @@ class NumberField_absolute(NumberField_generic):
             from_K = K.hom([a])  # check=False here ??   would be safe unless there are bugs.
 
             if both_maps and K.degree() == self.degree():
-                g = K['x'](self.polynomial())
+                g = PolynomialRing(K, 'x')(self.polynomial())
                 a = from_K(K.gen())
                 for root in g.roots(multiplicities=False):
                     to_K = self.hom([root])    # check=False here ??
@@ -9999,10 +9999,11 @@ class NumberField_absolute(NumberField_generic):
         coeff_mat = matrix(extdeg, f.degree(), list(reln)[:-1])  # easy way to divide into the correct lengths
         coeffs_in_L = [r * vector(L.power_basis()) for r in coeff_mat.rows()]
         # f is the minimal polynomial of a over L
-        f = L['x'](coeffs_in_L + [1])
+        f = PolynomialRing(L, 'x')(coeffs_in_L + [1])
         # sanity check...
 
-        mp_in_self = self['x']([L_into_self(_) for _ in f.coefficients(sparse=False)])
+        P = PolynomialRing(self, 'x')
+        mp_in_self = P([L_into_self(_) for _ in f.coefficients(sparse=False)])
         assert mp_in_self(a) == 0
 
         if structure is None:

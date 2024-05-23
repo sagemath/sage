@@ -115,6 +115,7 @@ def qfparam(G, sol):
         Ambient free module of rank 3 over the principal ideal domain
          Univariate Polynomial Ring in t over Rational Field
     """
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     R = PolynomialRing(QQ, 't')
     mat = G.__pari__().qfparam(sol)
     # Interpret the rows of mat as coefficients of polynomials

@@ -56,6 +56,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.misc import binomial
 from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from . import hyperelliptic_generic
 from sage.schemes.hyperelliptic_curves.hypellfrob import hypellfrob
 from sage.misc.cachefunc import cached_method

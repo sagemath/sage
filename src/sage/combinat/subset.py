@@ -41,7 +41,6 @@ from sage.sets.set import Set, Set_object_enumerated
 from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from . import combination
 
 ZZ_0 = ZZ.zero()
@@ -1102,6 +1101,7 @@ class SubMultiset_s(Parent):
             sage: sum(S.generating_serie())
             72
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(ZZ, variable)
         return R.prod(R([1] * (n + 1)) for n in self._d.values())
 
@@ -1233,6 +1233,7 @@ class SubMultiset_sk(SubMultiset_s):
             True
             True
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         x = PolynomialRing(ZZ, variable).gen()
         P = SubMultiset_s.generating_serie(self)
         return P[self._k] * (x**self._k)

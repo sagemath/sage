@@ -21,6 +21,8 @@ Path Semigroups
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import Infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.semigroups import Semigroups
@@ -543,10 +545,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             ...
             ValueError: the underlying quiver has cycles, thus, there may be an infinity of directed paths
         """
-        from sage.rings.integer_ring import ZZ
         if self._quiver.is_directed_acyclic() and not self._quiver.has_loops():
             return ZZ(len(self))
-        from sage.rings.infinity import Infinity
         return Infinity
 
     def __iter__(self):

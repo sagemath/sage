@@ -122,6 +122,7 @@ from sage.rings.factorint import factor_trial_division
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.quadratic_forms.binary_qf import BinaryQF
 from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives

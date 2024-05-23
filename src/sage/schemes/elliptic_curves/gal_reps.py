@@ -150,7 +150,7 @@ def _ex_set(p):
     """
     k = GF(p)
     res = [ k(0), k(1), k(2), k(4) ]
-    R = k['X']
+    R = PolynomialRing(k, 'X')
     f = R([1,-3,1]) #(X**2 - 3*X+1)
     ro = f.roots()
     for a in ro:
@@ -1019,7 +1019,7 @@ class GaloisRepresentation(SageObject):
                     if p % 5 != 1 and p % 5 != 4:
                         could_be_a5 = 0
                     # elements of order 5 # bug corrected see trac 14577
-                    R = k['X']
+                    R = PolynomialRing(k, 'X')
                     f = R([1,-3,1]) #(X**2 - 3*X+1)
                     el5 = f.roots()
                     # loops over primes as long as we still have two options left

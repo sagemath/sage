@@ -132,7 +132,7 @@ def classical_modular_polynomial(l, j=None):
 
         return Phi
 
-    R = parent(j)['Y']
+    R = PolynomialRing(parent(j), 'Y')
     Y = R.gen()
 
     # If the generic polynomial is in the cache or the database, evaluating
