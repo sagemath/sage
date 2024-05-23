@@ -7055,7 +7055,7 @@ def _heegner_index_in_EK(self, D):
     basis = [G(z) for z in E.gens()] + [G(phi(z)) for z in F.gens()]
     # Make a list of the 2-power order torsion points in E(K), including 0.
     T = [G(z) for z in G.torsion_subgroup().list() if z.order() == 1 or
-            ((z.order() % 2 == 0 and len(z.order().factor()) == 1))]
+            (z.order() % 2 == 0 and len(z.order().factor()) == 1)]
 
     r = len(basis)   # rank
     V = QQ**r
@@ -7066,9 +7066,8 @@ def _heegner_index_in_EK(self, D):
         if not v:
             continue
         P = sum([basis[i] for i in range(r) if v[i]])
-        for t in T:
-            if (P+t).is_divisible_by(2):
-                B.append(V(v)/2)
+        w = V(v) / 2
+        B.extend(w for t in T if (P + t).is_divisible_by(2))
 
     A = ZZ**r
     # Take span of our vectors in (1/2)*ZZ^r, along with ZZ^r.  This is E(K)/tor.
