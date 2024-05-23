@@ -27,7 +27,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# ****************************************************************************s
+# ****************************************************************************
 class SJT:
     def __init__(self, l, directions=None) -> None:
         r"""
