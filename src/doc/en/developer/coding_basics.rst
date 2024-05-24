@@ -661,15 +661,15 @@ indentation:
         - ``y`` -- integer (default: ``2``); the description of the
           argument ``y``
 
-        OUTPUT: the point as a tuple
+        OUTPUT: tuple; further description of the output
 
         EXAMPLES:
 
         This example illustrates ... ::
 
-            sage: A = ModuliSpace()
+            sage: A = EuclideanSpace(2)
             sage: A.point(2, 3)
-            ...
+            (32, 3)
 
         We now ... ::
 
