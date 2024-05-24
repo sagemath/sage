@@ -94,7 +94,7 @@ def is_ModularFormsSpace(x):
         sage: from sage.modular.modform.space import is_ModularFormsSpace
         sage: is_ModularFormsSpace(ModularForms(11,2))
         doctest:warning...
-        DeprecationWarning: the function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead
+        DeprecationWarning: The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.
         See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_ModularFormsSpace(CuspForms(11,2))
@@ -103,7 +103,7 @@ def is_ModularFormsSpace(x):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38035, "the function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead")
+    deprecation(38035, "The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.")
     return isinstance(x, ModularFormsSpace)
 
 

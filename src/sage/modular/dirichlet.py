@@ -2576,7 +2576,7 @@ def is_DirichletGroup(x):
         sage: from sage.modular.dirichlet import is_DirichletGroup
         sage: is_DirichletGroup(DirichletGroup(11))
         doctest:warning...
-        DeprecationWarning: the function is_DirichletGroup is deprecated; use 'isinstance(..., DirichletGroup_class)' instead
+        DeprecationWarning: The function is_DirichletGroup is deprecated; use 'isinstance(..., DirichletGroup_class)' instead.
         See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_DirichletGroup(11)
@@ -2585,7 +2585,7 @@ def is_DirichletGroup(x):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38035, "the function is_DirichletGroup is deprecated; use 'isinstance(..., DirichletGroup_class)' instead")
+    deprecation(38035, "The function is_DirichletGroup is deprecated; use 'isinstance(..., DirichletGroup_class)' instead.")
     return isinstance(x, DirichletGroup_class)
 
 

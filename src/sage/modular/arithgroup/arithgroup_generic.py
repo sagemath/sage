@@ -39,14 +39,14 @@ def is_ArithmeticSubgroup(x) -> bool:
         sage: from sage.modular.arithgroup.all import is_ArithmeticSubgroup
         sage: is_ArithmeticSubgroup(GL(2, GF(7)))
         doctest:warning...
-        DeprecationWarning: the function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead
+        DeprecationWarning: The function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead.
         See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: is_ArithmeticSubgroup(Gamma0(4))
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(38035, "the function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead")
+    deprecation(38035, "The function is_ArithmeticSubgroup is deprecated; use 'isinstance(..., ArithmeticSubgroup)' instead.")
     return isinstance(x, ArithmeticSubgroup)
 
 
