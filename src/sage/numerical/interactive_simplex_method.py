@@ -650,7 +650,7 @@ class InteractiveLPProblem(SageObject):
         b = vector(b)
         c = vector(c)
         if base_ring is None:
-            base_ring = vector(A.list() + list(b) + list(c)).base_ring()
+            base_ring = vector(A.list() + list(b) + list(c) + [objective_constant_term]).base_ring()
         base_ring = base_ring.fraction_field()
         A = A.change_ring(base_ring)
         A.set_immutable()
