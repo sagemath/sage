@@ -2526,11 +2526,11 @@ def skew_supplementary_difference_set(n, existence=False, check=True, return_gro
         True
         sage: _is_skew_set(G, S1)
         True
-        sage: skew_supplementary_difference_set(7)
+        sage: skew_supplementary_difference_set(17)
         Traceback (most recent call last):
         ...
-        ValueError: Skew SDS of order 7 not yet implemented.
-        sage: skew_supplementary_difference_set(7, existence=True)
+        ValueError: Skew SDS of order 17 not yet implemented.
+        sage: skew_supplementary_difference_set(17, existence=True)
         False
         sage: skew_supplementary_difference_set(127, existence=True)
         True
@@ -2731,6 +2731,10 @@ def skew_supplementary_difference_set(n, existence=False, check=True, return_gro
         if existence:
             return True
         G, [S1, S2, S3, S4] = skew_supplementary_difference_set_with_paley_todd(n, check=False)
+    elif skew_spin_goethals_seidel_difference_family(n, existence=True):
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = skew_spin_goethals_seidel_difference_family(n, check=False)
 
     if existence:
         return False
@@ -2901,11 +2905,11 @@ def supplementary_difference_set_hadamard(n, existence=False, check=True):
         sage: G, [S1, S2, S3, S4] = supplementary_difference_set_hadamard(37, check=False)
         sage: is_supplementary_difference_set([S1, S2, S3, S4], lmbda=len(S1)+len(S2)+len(S3)+len(S4)-37, G=G)
         True
-        sage: supplementary_difference_set_hadamard(7)
+        sage: supplementary_difference_set_hadamard(11)
         Traceback (most recent call last):
         ...
-        ValueError: SDS of order 7 not yet implemented.
-        sage: supplementary_difference_set_hadamard(7, existence=True)
+        ValueError: SDS of order 11 not yet implemented.
+        sage: supplementary_difference_set_hadamard(11, existence=True)
         False
         sage: supplementary_difference_set_hadamard(127, existence=True)
         True
@@ -2947,6 +2951,10 @@ def supplementary_difference_set_hadamard(n, existence=False, check=True):
         G, sets = _construction_supplementary_difference_set(n, H_db[n], indices[n], cosets_gens[n], check=False)
     elif skew_supplementary_difference_set(n, existence=True):
         G, sets = skew_supplementary_difference_set(n, check=False, return_group=True)
+    elif spin_goethals_seidel_difference_family(n, existence=True):
+        if existence:
+            return True
+        G, [S1, S2, S3, S4] = spin_goethals_seidel_difference_family(n, check=False)
 
     if sets is None:
         raise ValueError(f'SDS of order {n} not yet implemented.')
