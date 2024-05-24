@@ -55,7 +55,6 @@ ordering::
     sage: AccelAsc_next([2, 2])
     [4]
 
-
 It is also possible to iterate over the partitions of bounded length::
 
     sage: from sage.combinat.partitions import ZS1_iterator_nk
