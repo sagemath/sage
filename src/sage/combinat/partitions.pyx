@@ -94,26 +94,26 @@ AUTHOR:
 
 cdef inline ZS1_step(list P, int n, int *m, int *h):
     r"""
-    Compute the partition following `P` in the ordering of the ZS1 algorithm.
+    Compute the partition following ``P`` in the ordering of the ZS1 algorithm.
 
     This is a helper method for methods :meth:`ZS1_iterator` and :meth:`ZS1_next`.
-    Partition `P` is modified in place.
+    Partition ``P`` is modified in place.
 
     INPUT:
 
     - ``P`` -- a list of size `n` storing a partition of `n`
 
-    - ``n`` -- integer; the sum of the elements of the partition stored in `P`
+    - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
     - ``m`` -- pointer to the index of the last element of the partition
 
-    - ``h`` -- pointer to the last value larger than 1 in `P`
+    - ``h`` -- pointer to the last value larger than 1 in ``P``
 
     .. WARNING::
 
         The method assumes that input parameters are valid and consistent with
         the ZS1 algorithm as proposed in [ZS1998]_. It modifies the content of
-        `P` and the values pointed by `m` and `h`.
+        ``P`` and the values pointed by ``m`` and ``h``.
 
     EXAMPLES::
 
@@ -157,11 +157,11 @@ cdef inline ZS1_step(list P, int n, int *m, int *h):
 
 def ZS1_iterator(int n):
     r"""
-    Return an iterator over the partitions of `n`.
+    Return an iterator over the partitions of ``n``.
 
     The partitions are generated in the decreasing lexicographic order and each
-    partition is represented as a list `P` in descending order (i.e., `P_i \geq
-    P_{i+1}`). The method yields lists and not objects of type
+    partition is represented as a list ``P`` in descending order (i.e.,
+    `P_i \geq P_{i+1}`). The method yields lists and not objects of type
     :class:`~sage.combinat.partition.Partition`.
 
     This is an implementation of the ZS1 algorithm found in [ZS1998]_.
@@ -204,7 +204,7 @@ def ZS1_iterator(int n):
 
 def ZS1_next(list P):
     r"""
-    Return the partition after `P` in the ordering of the ZS1 algorithm.
+    Return the partition after ``P`` in the ordering of the ZS1 algorithm.
 
     INPUT:
 
@@ -246,7 +246,7 @@ def ZS1_next(list P):
 
 def ZS1_iterator_nk(int n, int k):
     r"""
-    An iterator for the partitions of `n` of length at most `k` (in the
+    An iterator for the partitions of ``n`` of length at most ``k`` (in the
     decreasing lexicographic order) which returns lists and not objects of type
     :class:`~sage.combinat.partition.Partition`.
 
@@ -339,26 +339,26 @@ def ZS1_iterator_nk(int n, int k):
 
 cdef inline ZS2_step(list P, int n, int *m, int *h):
     r"""
-    Compute the partition following `P` in the ordering of the ZS2 algorithm.
+    Compute the partition following ``P`` in the ordering of the ZS2 algorithm.
 
     This is a helper method for methods :meth:`ZS2_iterator` and :meth:`ZS2_next`.
-    Partition `P` is modified in place.
+    Partition ``P`` is modified in place.
 
     INPUT:
 
     - ``P`` -- a list of size `n` storing a partition of `n`
 
-    - ``n`` -- integer; the sum of the elements of the partition stored in `P`
+    - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
     - ``m`` -- pointer to the index of the last element of the partition
 
-    - ``h`` -- pointer to the last value larger than 1 in `P`
+    - ``h`` -- pointer to the last value larger than 1 in ``P``
 
     .. WARNING::
 
         The method assumes that input parameters are valid and consistent with
         the ZS2 algorithm as proposed in [ZS1998]_. It modifies the content of
-        `P` and the values pointed by `m` and `h`.
+        ``P`` and the values pointed by ``m`` and ``h``.
 
     EXAMPLES::
 
@@ -399,7 +399,7 @@ cdef inline ZS2_step(list P, int n, int *m, int *h):
 
 def ZS2_iterator(int n):
     r"""
-    Return an iterator over the partitions of `n`.
+    Return an iterator over the partitions of ``n``.
 
     The partitions are generated in the increasing lexicographic order and each
     partition is represented as a list in descending order (i.e., `p_i \geq
@@ -444,7 +444,7 @@ def ZS2_iterator(int n):
 
 def ZS2_next(list P):
     r"""
-    Return the partition after `P` in the ordering of the ZS2 algorithm.
+    Return the partition after ``P`` in the ordering of the ZS2 algorithm.
 
     INPUT:
 
@@ -482,26 +482,26 @@ def ZS2_next(list P):
 
 cdef inline AccelDesc_step(list P, int n, int* m, int* h):
     r"""
-    Compute the partition following `P` in the ordering of the AccelDesc algorithm.
+    Compute the partition following ``P`` in the ordering of the AccelDesc algorithm.
 
     This is a helper method for methods :meth:`AccelDesc_iterator` and
-    :meth:`AccelDesc_next`.  Partition `P` is modified in place.
+    :meth:`AccelDesc_next`. Partition ``P`` is modified in place.
 
     INPUT:
 
     - ``P`` -- a list of size `n` storing a partition of `n`
 
-    - ``n`` -- integer; the sum of the elements of the partition stored in `P`
+    - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
     - ``m`` -- pointer to the index of the last element of the partition
 
-    - ``h`` -- pointer to the last value larger than 1 in `P`
+    - ``h`` -- pointer to the last value larger than 1 in ``P``
 
     .. WARNING::
 
         The method assumes that input parameters are valid and consistent with
-        the AccelDesc algorithm as proposed in [YYYYYYY]_. It modifies the content of `P`
-        and the values pointed by `m` and `h`.
+        the AccelDesc algorithm as proposed in [ZS2012]_. It modifies the
+        content of ``P`` and the values pointed by ``m`` and ``h``.
 
     EXAMPLES::
 
@@ -545,7 +545,7 @@ cdef inline AccelDesc_step(list P, int n, int* m, int* h):
 
 def AccelDesc_iterator(int n):
     r"""
-    Return an iterator over the partitions of `n`.
+    Return an iterator over the partitions of ``n``.
 
     The partitions are generated in the increasing lexicographic order and each
     partition is represented as a list in descending order (i.e., `p_i \geq
@@ -578,9 +578,8 @@ def AccelDesc_iterator(int n):
         sage: from sage.combinat.partitions import ZS1_iterator
         sage: from sage.misc.prandom import randint
         sage: n = randint(1, 50)
-        sage: for p, q in zip(ZS1_iterator(n), AccelDesc_iterator(n)):  # long time
-        ....:     if p != q:
-        ....:         raise ValueError('something goes wrong')
+        sage: all(p == q for p, q in zip(ZS1_iterator(n), AccelDesc_iterator(n)))  # long time
+        True
     """
     # Easy cases.
     if n < 0:
@@ -600,7 +599,7 @@ def AccelDesc_iterator(int n):
 
 def AccelDesc_next(list P):
     r"""
-    Return the partition after `P` in the ordering of the AccelDesc algorithm.
+    Return the partition after ``P`` in the ordering of the AccelDesc algorithm.
 
     INPUT:
 
@@ -642,7 +641,7 @@ def AccelDesc_next(list P):
 
 def AccelAsc_iterator(int n):
     r"""
-    Return an iterator over the partitions of `n`.
+    Return an iterator over the partitions of ``n``.
 
     The partitions are generated in the increasing lexicographic order and each
     partition is represented as a list in ascending order (i.e., `p_i \leq
@@ -700,7 +699,7 @@ def AccelAsc_iterator(int n):
 
 def AccelAsc_next(list P):
     r"""
-    Return the partition after `P` in the ordering of the ``AccelAsc`` algorithm.
+    Return the partition after ``P`` in the ordering of the ``AccelAsc`` algorithm.
 
     INPUT:
 
