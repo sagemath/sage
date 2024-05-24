@@ -653,12 +653,12 @@ indentation:
 
         INPUT:
 
-        - ``x`` -- integer (default: `1`); the description of the
+        - ``x`` -- integer (default: ``1``); the description of the
           argument ``x`` goes here. If it contains multiple lines, all
           the lines after the first need to begin at the same indentation
           as the backtick.
 
-        - ``y`` -- integer (default: `2`); the description of the
+        - ``y`` -- integer (default: ``2``); the description of the
           argument ``y``
 
         OUTPUT: the point as a tuple
@@ -669,19 +669,19 @@ indentation:
 
             sage: A = ModuliSpace()
             sage: A.point(2, 3)
-            xxx
+            ...
 
         We now ... ::
 
             sage: B = A.point(5, 6)
-            sage: xxx
+            sage: ...
 
         It is an error to ... ::
 
             sage: C = A.point('x', 7)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert 'r' to an integer
+            TypeError: unable to convert 'x' to an integer
 
         .. NOTE::
 
@@ -696,8 +696,8 @@ indentation:
 
         TESTS::
 
-            sage: A.point(42, 0)  # Check for corner case y=0
-            xxx
+            sage: A.point(42, 0)  # Check for corner case y = 0
+            ...
         """
         <body of the function>
 
