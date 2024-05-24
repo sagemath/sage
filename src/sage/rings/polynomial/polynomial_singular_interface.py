@@ -327,12 +327,12 @@ class PolynomialRing_singular_repr:
             - Singular represents precision of floating point numbers base 10
               while Sage represents floating point precision base 2.
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         try:
             R = self.__singular
-            if singular is not None and R.parent() is not singular:
+            if R.parent() is not singular:
                 raise ValueError
-            elif singular is None:
-                from sage.interfaces.singular import singular
             R._check_valid()
             if self.base_ring() is ZZ or self.base_ring().is_prime_field():
                 return R
