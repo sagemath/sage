@@ -206,7 +206,7 @@ covered here.
 
 - a list of edges::
 
-       sage: g = Graph([(1,3),(3,8),(5,2)]); g
+       sage: g = Graph([(1, 3), (3, 8), (5, 2)]); g
        Graph on 5 vertices
 
 - an igraph Graph::
@@ -793,10 +793,10 @@ class Graph(GenericGraph):
 
     #. List of edges, or labelled edges::
 
-          sage: g = Graph([(1,3),(3,8),(5,2)]); g
+          sage: g = Graph([(1, 3), (3, 8), (5, 2)]); g
           Graph on 5 vertices
 
-          sage: g = Graph([(1,2,"Peace"), (7,-9,"and"), (77,2, "Love")]); g
+          sage: g = Graph([(1, 2, "Peace"), (7, -9, "and"), (77, 2, "Love")]); g
           Graph on 5 vertices
           sage: g = Graph([(0, 2, '0'), (0, 2, '1'), (3, 3, '2')],
           ....:           loops=True, multiedges=True)
@@ -838,8 +838,8 @@ class Graph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)],                                # optional - python_igraph
-           ....:                  edge_attrs={'name':['a','b'], 'weight':[1,3]})
+           sage: g = igraph.Graph([(0, 1), (0, 2)],                             # optional - python_igraph
+           ....:                  edge_attrs={'name': ['a', 'b'], 'weight': [1, 3]})
            sage: Graph(g).edges(sort=True)                                      # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
@@ -869,7 +869,7 @@ class Graph(GenericGraph):
           Create an immutable copy by `g.copy(immutable=True)`
 
     When providing the optional arguments ``data_structure="static_sparse"`` or
-    ``immutable=True`` (both mean the same), then an immutable graph results. ::
+    ``immutable=True`` (both mean the same), then an immutable graph results::
 
           sage: G_imm = Graph(G, immutable=True)
           sage: H_imm = Graph(G, data_structure='static_sparse')
@@ -3755,7 +3755,7 @@ class Graph(GenericGraph):
         A complete multipartite graph with `k` parts has chromatic number `k`::
 
             sage: all(graphs.CompleteMultipartiteGraph([5]*i).chromatic_number() == i
-            ....:     for i in range(2,5))
+            ....:     for i in range(2, 5))
             True
 
         The complete graph has the largest chromatic number from all the graphs
@@ -5037,7 +5037,7 @@ class Graph(GenericGraph):
         As there is no cycle in a tree, looking for a `K_3` minor is useless.
         This function will raise an exception in this case::
 
-            sage: g = graphs.RandomGNP(20,.5)
+            sage: g = graphs.RandomGNP(20, .5)
             sage: g = g.subgraph(edges=g.min_spanning_tree())
             sage: g.is_tree()
             True
@@ -5359,7 +5359,7 @@ class Graph(GenericGraph):
             2
             sage: G.eccentricity([7,8,9])
             [2, 3, 4]
-            sage: G.eccentricity([7,8,9], with_labels=True) == {8: 3, 9: 4, 7: 2}
+            sage: G.eccentricity([7, 8, 9], with_labels=True) == {8: 3, 9: 4, 7: 2}
             True
             sage: G = Graph({0: [], 1: [], 2: [1]})
             sage: G.eccentricity()
@@ -5371,7 +5371,7 @@ class Graph(GenericGraph):
             sage: G.eccentricity(with_labels=True)
             {0: +Infinity, 1: +Infinity}
             sage: G = Graph([(0,1,1), (1,2,1), (0,2,3)])
-            sage: G.eccentricity(algorithm = 'BFS')
+            sage: G.eccentricity(algorithm='BFS')
             [1, 1, 1]
             sage: G.eccentricity(algorithm='Floyd-Warshall-Cython')
             [1, 1, 1]
