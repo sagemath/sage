@@ -7119,9 +7119,9 @@ class Partitions_n(Partitions):
 
     def prev(self, p):
         r"""
-        Return the lexicographically previous partition before partition `p`.
+        Return the lexicographically previous partition before partition ``p``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Partitions(4).prev([3, 1])
             [4]
