@@ -5370,7 +5370,7 @@ class Graph(GenericGraph):
             sage: G = Graph({0:[], 1:[]})
             sage: G.eccentricity(with_labels=True)
             {0: +Infinity, 1: +Infinity}
-            sage: G = Graph([(0,1,1), (1,2,1), (0,2,3)])
+            sage: G = Graph([(0, 1, 1), (1, 2, 1), (0, 2, 3)])
             sage: G.eccentricity(algorithm='BFS')
             [1, 1, 1]
             sage: G.eccentricity(algorithm='Floyd-Warshall-Cython')
