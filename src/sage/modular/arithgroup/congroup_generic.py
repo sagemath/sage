@@ -129,7 +129,7 @@ def is_CongruenceSubgroup(x):
         sage: from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
         sage: is_CongruenceSubgroup(SL2Z)
         doctest:warning...
-        DeprecationWarning: the function is_CongruenceSubgroup is deprecated; use 'isinstance(..., CongruenceSubgroupBase)' instead
+        DeprecationWarning: The function is_CongruenceSubgroup is deprecated; use 'isinstance(..., CongruenceSubgroupBase)' instead.
         See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_CongruenceSubgroup(Gamma0(13))
@@ -146,7 +146,7 @@ def is_CongruenceSubgroup(x):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38035, "the function is_CongruenceSubgroup is deprecated; use 'isinstance(..., CongruenceSubgroupBase)' instead")
+    deprecation(38035, "The function is_CongruenceSubgroup is deprecated; use 'isinstance(..., CongruenceSubgroupBase)' instead.")
     return isinstance(x, CongruenceSubgroupBase)
 
 

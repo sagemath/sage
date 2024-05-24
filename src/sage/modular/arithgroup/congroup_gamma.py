@@ -320,7 +320,7 @@ def is_Gamma(x):
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(38035, "the function is_Gamma is deprecated; use 'isinstance(..., Gamma_class)' instead")
+    deprecation(38035, "The function is_Gamma is deprecated; use 'isinstance(..., Gamma_class)' instead.")
     return isinstance(x, Gamma_class)
 
 
