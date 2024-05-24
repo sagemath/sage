@@ -377,6 +377,9 @@ class PolynomialRing_singular_repr:
             _vars = str(self.gens())
             order = self.term_order().singular_str()
 
+        if singular is None:
+            from sage.interfaces.singular import singular
+
         self.__singular, self.__minpoly = _do_singular_init_(singular, self.base_ring(), self.characteristic(), _vars, order)
 
         return self.__singular
