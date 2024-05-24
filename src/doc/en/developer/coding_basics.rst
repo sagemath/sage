@@ -649,7 +649,7 @@ indentation:
 
     def point(self, x=1, y=2):
         r"""
-        Return the point `(x^5,y)`.
+        Return the point `(x^5, y)`.
 
         INPUT:
 
@@ -668,17 +668,17 @@ indentation:
         This example illustrates ... ::
 
             sage: A = ModuliSpace()
-            sage: A.point(2,3)
+            sage: A.point(2, 3)
             xxx
 
         We now ... ::
 
-            sage: B = A.point(5,6)
+            sage: B = A.point(5, 6)
             sage: xxx
 
         It is an error to ... ::
 
-            sage: C = A.point('x',7)
+            sage: C = A.point('x', 7)
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 'r' to an integer
