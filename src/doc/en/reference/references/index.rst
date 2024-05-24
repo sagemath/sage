@@ -2232,6 +2232,10 @@ REFERENCES:
 
 .. [Djo2023b] \D. Đoković, Email Communication. 26 January 2023.
 
+.. [Djo2024] \D. Đoković.
+            *Two classes of Hadamard matrices of Goethals-Seidel type*
+            :arxiv:`2404.14375`
+
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
 
