@@ -309,9 +309,23 @@ class Permutation(CombinatorialElement):
         the permutation obtained from the pair using the inverse of the
         Robinson-Schensted algorithm.
 
-    - ``check`` (boolean) -- whether to check that input is correct. Slows
-       the function down, but ensures that nothing bad happens. This is set to
-       ``True`` by default.
+    - ``check`` boolean (default: ``True``) -- whether to check that input is
+      correct. Slows the function down, but ensures that nothing bad happens. This
+      is set to ``True`` by default.
+
+    - ``algorithm`` string (default: ``lex``) -- the algorithm used to generate
+      the permutations. Supported algorithms are:
+
+      - ``lex``: lexicographic order generation, this is the default algorithm.
+
+      - ``sjt``: Steinhaus-Johnson-Trotter algorithm to generate permutations
+        using only transposition of two elements in the list. It is highly
+        recommended to set ``check=True`` (default value).
+
+    - ``directions`` list (default: ``None``) -- the list of directions to be
+      used with ``sjt`` algorithm when initializing the ``Permutation`` object
+      with non-identity permutation. Mainly used to handle internal states, best
+      to leave it by default.
 
     .. WARNING::
 
@@ -395,11 +409,6 @@ class Permutation(CombinatorialElement):
         sage: p
         False
 
-        sage: Permutation([1, 2, 3, 4], algorithm='blah')
-        Traceback (most recent call last):
-        ...
-        ValueError: Unsupported algorithm blah; expected 'lex' or 'sjt'
-
         sage: Permutation([1, 3, 2, 4], algorithm='sjt')
         Traceback (most recent call last):
         ...
@@ -455,6 +464,11 @@ class Permutation(CombinatorialElement):
         []
         sage: Permutation( [1] )
         [1]
+
+        sage: Permutation([1, 2, 3, 4], algorithm='blah')
+        Traceback (most recent call last):
+        ...
+        ValueError: Unsupported algorithm blah; expected 'lex' or 'sjt'
 
     From a pair of empty tableaux ::
 
@@ -532,18 +546,22 @@ class Permutation(CombinatorialElement):
 
         - ``l`` -- a list of ``int`` variables
 
-        - ``check`` (boolean) -- whether to check that input is
-          correct. Slows the function down, but ensures that nothing bad
+        - ``check`` boolean (default: ``True``) -- whether to check that input
+          is correct. Slows the function down, but ensures that nothing bad
           happens.
 
-          This is set to ``True`` by default.
+        - ``algorithm`` string (default: ``lex``) -- the algorithm used to
+          generate the permutations. Supported algorithms are:
 
-        - ``algorithm`` (string) -- the algorithm used to generate the
-          permutations. Choice between ``lex`` (lexicographic order) or ``sjt``
-          (Steinhaus-Johnson-Trotter). ``sjt`` requires ``check`` to be set to
-          ``True``.
+          - ``lex``: lexicographic order generation, this is the default
+          algorithm.
+          - ``sjt``: Steinhaus-Johnson-Trotter algorithm to generate
+          permutations using only transposition of two elements in the list. It
+          is highly recommended to set ``check=True`` (default value).
 
-          This is set to ``lex`` by default.
+        - ``directions`` list (default: ``None``) -- the list of directions to
+          be used with ``sjt`` algorithm when initializing the ``Permutation``
+          object with non-identity permutation.
 
         TESTS::
 
@@ -563,10 +581,28 @@ class Permutation(CombinatorialElement):
             ValueError: The permutation has length 4 but its maximal element is
             5. Some element may be repeated, or an element is missing, but there
             is something wrong with its length.
+
+            sage: Permutation([1, 3, 2], algorithm='sjt')
+            Traceback (most recent call last):
+            ...
+            ValueError: No internal state directions were given for non-identity
+            starting permutation for Steinhaus-Johnson-Trotter algorithm.
+            Expected identity permutation.
+
+            sage: Permutation([1, 3, 2], algorithm='sjt', check=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: No internal state directions were given for non-identity
+            starting permutation for Steinhaus-Johnson-Trotter algorithm.
+            Expected identity permutation.
         """
         l = list(l)
         # Default initialisation to ``None`` to declare the variable.
         self.__sjt = None
+
+        if algorithm != "lex" and algorithm != "sjt":
+            raise ValueError("unsupported algorithm %s; expected 'lex' or 'sjt'"
+                             "." % algorithm)
 
         if check and len(l) > 0:
             # Make a copy to sort later
@@ -600,12 +636,8 @@ class Permutation(CombinatorialElement):
                     raise ValueError("an element appears twice in the input")
                 previous = i
 
-            if algorithm != "lex" and algorithm != "sjt":
-                raise ValueError("unsupported algorithm %s; expected 'lex' or"
-                "'sjt'." % algorithm)
-
-            if algorithm == "sjt":
-                self.__sjt = SJT(l, directions=directions)
+        if algorithm == "sjt":
+            self.__sjt = SJT(l, directions=directions)
 
         CombinatorialElement.__init__(self, parent, l)
 
@@ -796,10 +828,16 @@ class Permutation(CombinatorialElement):
         r"""
         Return the permutation that follows ``self`` in lexicographic order on
         the symmetric group containing ``self``. If ``self`` is the last
-        permutation, then ``next`` returns ``False``. If the algorithm parameter
-        is specified, the permutations will be generated according to it.
-        Allowed algorithms: lexicographic or "lex" and Steinhaus-Johnson-Trotter
-        or "sjt".
+        permutation, then ``next`` returns ``False``. If the ``algorithm``
+        parameter is specified, the permutations will be generated according to
+        it. Supported algorithms are:
+
+        - ``lex``: lexicographic order generation, this is the default
+          algorithm.
+
+        - ``sjt``: Steinhaus-Johnson-Trotter algorithm to generate
+          permutations using only transposition of two elements in the list.
+          It is highly recommended to set ``check=True`` (default value).
 
         EXAMPLES::
 
@@ -809,6 +847,9 @@ class Permutation(CombinatorialElement):
             sage: p = Permutation([4,3,2,1])
             sage: next(p)
             False
+            sage: p = Permutation([1, 2, 3], algorithm='sjt')
+            sage: next(p)
+            [1, 3, 2]
 
         TESTS::
 
@@ -862,6 +903,7 @@ class Permutation(CombinatorialElement):
         Return the permutation that comes directly before ``self`` in
         lexicographic order on the symmetric group containing ``self``.
         If ``self`` is the first permutation, then it returns ``False``.
+        Does not support the Steinhaus-Johnson-Trotter algorithm for the moment.
 
         EXAMPLES::
 
@@ -889,6 +931,11 @@ class Permutation(CombinatorialElement):
 
             sage: Permutation([1,4,3,2]).prev()
             [1, 4, 2, 3]
+
+        .. TODO::
+
+            Implement the previous permutation for the Steinhaus-Johnson-Trotter
+            algorithm.
         """
         if self.__sjt is not None:
             raise NotImplementedError("Previous permutation for SJT algorithm is not yet implemented")

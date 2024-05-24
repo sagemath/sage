@@ -37,14 +37,18 @@ class SJT:
 
         INPUT:
 
-        - ``l`` -- list: a list of ``int`` variables.
+        - ``l`` -- list: a list of ordered ``int``.
 
-        - ``directions`` -- list: a list of directions for each element in the
-          permuted list. There are three possible values:
-            - negative -> element tranposes to the left
-            - positive -> element transposes to the right
-            - null     -> element does not move
-          Used when constructing permutations from a pre-defined intern state.
+        - ``directions`` -- list (default: ``None`` ): a list of directions for
+          each element in the permuted list. Used when constructing permutations
+          from a pre-defined internal state. There are three possible values:
+
+          - ``-1`` -> element tranposes to the left
+
+          - ``1``  -> element transposes to the right
+
+          - ``0``  -> element does not move
+
         """
         # The permuted list.
         self.__perm = l
