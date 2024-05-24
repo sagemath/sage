@@ -54,6 +54,7 @@ from sage.rings.number_field.number_field_base import NumberField
 
 import sage.rings.finite_rings.finite_field_constructor
 
+
 def _do_singular_init_(singular, base_ring, char, _vars, order):
     r"""
     Implementation of :meth:`PolynomialRing_singular_repr._singular_init_`.
@@ -74,9 +75,6 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
          //        block   2 : ordering C,
          None)
     """
-    if singular is None:
-        from sage.interfaces.singular import singular
-
     make_ring = lambda s: singular.ring(s, _vars, order=order)
 
     if base_ring is ZZ:
