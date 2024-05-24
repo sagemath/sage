@@ -33,7 +33,7 @@ class Arc(GraphicPrimitive):
 
     - ``x,y`` -- coordinates of the center of the arc
 
-    - ``r1``, ``r2`` - lengths of the two radii
+    - ``r1``, ``r2`` -- lengths of the two radii
 
     - ``angle`` -- angle of the horizontal with width
 
@@ -398,7 +398,7 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
 
     - ``center`` -- 2-tuple of real numbers - position of the center.
 
-    - ``r1``, ``r2`` - positive real numbers - radii of the ellipse. If only ``r1``
+    - ``r1``, ``r2`` -- positive real numbers - radii of the ellipse. If only ``r1``
       is set, then the two radii are supposed to be equal and this function returns
       an arc of circle.
 
@@ -414,7 +414,7 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
 
     - ``thickness`` -- float (default: 1) - thickness of the arc
 
-    - ``color``, ``rgbcolor`` - string or 2-tuple (default: 'blue') - the color
+    - ``color``, ``rgbcolor`` -- string or 2-tuple (default: 'blue') - the color
       of the arc
 
     - ``linestyle`` -- string (default: ``'solid'``) - The style of the line,

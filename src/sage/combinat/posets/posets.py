@@ -2771,7 +2771,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``m``, ``n`` - positive integers
+        - ``m``, ``n`` -- positive integers
 
         It is also possible to give a list of integer pairs as argument.
         See below for an example.

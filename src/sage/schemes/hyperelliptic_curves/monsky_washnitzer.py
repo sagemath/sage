@@ -1024,7 +1024,7 @@ def reduce_all(Q, p, coeffs, offset, compute_exact_form=False):
 
     OUTPUT:
 
-    - ``A, B`` - pair such that the input differential is
+    - ``A, B`` -- pair such that the input differential is
       cohomologous to (A + Bx) dx/y.
 
     .. NOTE::

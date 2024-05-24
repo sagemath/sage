@@ -4124,7 +4124,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k``, ``size`` - a positive integers
+        - ``k``, ``size`` -- a positive integers
         - ``outer_shape`` -- a list representing a `k+1`-core (default: ``None``)
         - ``inner_shape`` -- a list representing a `k+1`-core (default: [])
 

@@ -694,7 +694,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` - vectors on the surface.
+         - ``vector1``, ``vector2`` -- vectors on the surface.
 
         OUTPUT:
 
@@ -1027,7 +1027,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``e1``, ``e2`` - vector fields in intrinsic coordinates on
+         - ``e1``, ``e2`` -- vector fields in intrinsic coordinates on
            the surface, expressed as pairs of functions, or as vectors of
            length 2.
 
@@ -1256,7 +1256,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` - 2-tuples representing the input vectors.
+         - ``vector1``, ``vector2`` -- 2-tuples representing the input vectors.
 
         OUTPUT:
 

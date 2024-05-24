@@ -238,7 +238,7 @@ def hyperbolic_arc(a, b, model="UHP", **options):
 
     INPUT:
 
-    - ``a, b`` - complex numbers connected by a hyperbolic arc
+    - ``a, b`` -- complex numbers connected by a hyperbolic arc
 
     - ``model`` -- (default: ``'UHP'``) hyperbolic model used,
       which is one of the following:

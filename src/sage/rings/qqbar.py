@@ -1458,7 +1458,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
           coefficients but that will not vary the degree of the
           extension containing the element.
 
-        - ``args``, ``kwds`` - arguments and keywords passed to the random
+        - ``args``, ``kwds`` -- arguments and keywords passed to the random
           number generator for elements of ``ZZ``, the integers. See
           :meth:`~sage.rings.integer_ring.IntegerRing_class.random_element` for
           details, or see example below.
@@ -1942,7 +1942,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
           also vary the distribution of the coefficients but that will not vary
           the degree of the extension containing the element.
 
-        - ``args``, ``kwds`` - arguments and keywords passed to the random
+        - ``args``, ``kwds`` -- arguments and keywords passed to the random
           number generator for elements of ``ZZ``, the integers. See
           :meth:`~sage.rings.integer_ring.IntegerRing_class.random_element` for
           details, or see example below.

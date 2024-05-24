@@ -9215,7 +9215,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``left``, ``right`` - two matrices, such that if ``left`` is
+        - ``left``, ``right`` -- two matrices, such that if ``left`` is
           augmented by placing ``right`` on the right side of ``left``,
           then the result is ``self``.  It is the responsibility of the
           calling routine to ensure this condition holds.
@@ -9260,7 +9260,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``top``, ``bottom`` - two matrices, such that if ``top`` is
+        - ``top``, ``bottom`` -- two matrices, such that if ``top`` is
         stacked by placing ``top`` above ``bottom``, then the result
         is ``self``.  It is the responsibility of the calling routine
         to ensure this condition holds.

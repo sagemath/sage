@@ -991,7 +991,7 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
 
     INPUT:
 
-    - ``v``, ``k``, ``lmbda`` - integers; parameters of the difference family
+    - ``v``, ``k``, ``lmbda`` -- integers; parameters of the difference family
     - ``return_parameters`` -- boolean (default ``False``); if ``True``, return a
       pair ``(True, (q, s))`` so that ``(q,s)`` can be used in the function
       :func:`mcfarland_1973_construction` to actually build a
@@ -1070,7 +1070,7 @@ def mcfarland_1973_construction(q, s):
 
     INPUT:
 
-    - ``q``, ``s`` - integers; parameters for the difference set (see the above
+    - ``q``, ``s`` -- integers; parameters for the difference set (see the above
       formulas for the expression of ``v``, ``k``, ``l`` in terms of ``q`` and
       ``s``)
 

@@ -1056,7 +1056,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``z1``, ``z2`` - unramified algebraic points of h_p
+        - ``z1``, ``z2`` -- unramified algebraic points of h_p
 
         OUTPUT:
 
@@ -3207,7 +3207,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1``, ``v2`` - 2x2 matrices. They represent either a pair
+        - ``v1``, ``v2`` -- 2x2 matrices. They represent either a pair
           of normalized vertices or a pair of normalized edges.
 
         - ``as_edges`` -- boolean. If True, the inputs will be
@@ -3368,7 +3368,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1``, ``v2`` - two 2x2 integral matrices representing
+        - ``v1``, ``v2`` -- two 2x2 integral matrices representing
           either vertices or edges
 
         - ``as_edges`` -- boolean (Default: False). Tells whether the

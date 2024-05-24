@@ -2419,7 +2419,7 @@ def mqrr_rational_reconstruction(u, m, T):
 
     INPUT:
 
-    - ``u, m, T`` -  integers such that `m > u \ge 0`, `T > 0`.
+    - ``u, m, T`` --  integers such that `m > u \ge 0`, `T > 0`.
 
     OUTPUT:
 
@@ -3332,11 +3332,11 @@ def crt(a, b, m=None, n=None):
 
     INPUT:
 
-    - ``a``, ``b`` - two residues (elements of some ring for which
+    - ``a``, ``b`` -- two residues (elements of some ring for which
       extended gcd is available), or two lists, one of residues and
       one of moduli.
 
-    - ``m``, ``n`` - (default: ``None``) two moduli, or ``None``.
+    - ``m``, ``n`` -- (default: ``None``) two moduli, or ``None``.
 
     OUTPUT:
 

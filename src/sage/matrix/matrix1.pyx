@@ -2236,10 +2236,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``row``, ``col`` - index of the starting row and column.
+        - ``row``, ``col`` -- index of the starting row and column.
           Indices start at zero.
 
-        - ``nrows``, ``ncols`` - (optional) number of rows and columns to
+        - ``nrows``, ``ncols`` -- (optional) number of rows and columns to
           take. If not provided, take all rows below and all columns to
           the right of the starting entry.
 
@@ -2663,7 +2663,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``nrows``, ``ncols`` - (optional) number of rows and columns in
+        - ``nrows``, ``ncols`` -- (optional) number of rows and columns in
           returned matrix space.
 
         - ``sparse`` -- whether the returned matrix space uses sparse or
@@ -2722,7 +2722,7 @@ cdef class Matrix(Matrix0):
 
         These three variables get sent to :func:`matrix_space`:
 
-        - ``nrows``, ``ncols`` - number of rows and columns in returned
+        - ``nrows``, ``ncols`` -- number of rows and columns in returned
           matrix. If not specified, defaults to ``None`` and will give a
           matrix of the same size as self.
         - ``sparse`` -- whether returned matrix is sparse or not. Defaults

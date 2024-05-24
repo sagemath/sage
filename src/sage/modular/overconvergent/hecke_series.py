@@ -619,7 +619,7 @@ def compute_elldash(p, N, k0, n):
 
     - ``p`` -- prime.
     - ``N`` -- positive integer (level).
-    - ``k0``, ``n`` - non-negative integers not both zero.
+    - ``k0``, ``n`` -- non-negative integers not both zero.
 
     OUTPUT:
 

@@ -2589,7 +2589,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``c1``, ``c2`` - integers specifying columns of ``self`` to interchange
+        - ``c1``, ``c2`` -- integers specifying columns of ``self`` to interchange
 
         OUTPUT:
 
@@ -2774,7 +2774,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``r1``, ``r2`` - integers specifying rows of ``self`` to interchange
+        - ``r1``, ``r2`` -- integers specifying rows of ``self`` to interchange
 
         OUTPUT:
 

@@ -310,7 +310,7 @@ def ArithmeticSubgroup_Permutation(
 
     INPUT:
 
-    - ``S2``, ``S3``, ``L``, ``R`` - permutations - action of matrices on the
+    - ``S2``, ``S3``, ``L``, ``R`` -- permutations - action of matrices on the
       right cosets (each coset is identified to an element of `\{1,\dots,n\}`
       where `1` is reserved for the identity coset).
 
@@ -1198,7 +1198,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
         - ``r_edges`` -- bool (default: False) - put edges associated to r
 
-        - ``s2_label``, ``s3_label``, ``l_label``, ``r_label`` - the labels to
+        - ``s2_label``, ``s3_label``, ``l_label``, ``r_label`` -- the labels to
           put on the edges corresponding to the generators action. Use ``None``
           for no label.
 

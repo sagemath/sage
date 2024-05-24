@@ -31,7 +31,7 @@ class Ellipse(GraphicPrimitive):
 
     - ``x,y`` -- coordinates of the center of the ellipse
 
-    - ``r1, r2`` - radii of the ellipse
+    - ``r1, r2`` -- radii of the ellipse
 
     - ``angle`` -- angle
 
@@ -241,7 +241,7 @@ def ellipse(center, r1, r2, angle=0, **options):
 
     - ``center`` -- 2-tuple of real numbers - coordinates of the center
 
-    - ``r1``, ``r2`` - positive real numbers - the radii of the ellipse
+    - ``r1``, ``r2`` -- positive real numbers - the radii of the ellipse
 
     - ``angle`` -- real number (default: 0) - the angle between the first axis
       and the horizontal

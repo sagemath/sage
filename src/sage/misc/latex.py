@@ -1132,7 +1132,7 @@ class Latex(LatexCall):
 
         INPUT:
 
-        - ``left``, ``right`` - strings or ``None``
+        - ``left``, ``right`` -- strings or ``None``
 
         If both ``left`` and ``right`` are ``None``, then return the
         current delimiters.  Otherwise, set the left and/or right

@@ -2092,7 +2092,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``t1``, ``t2`` - elements of `P^1(\QQ_p)` (the endpoints
+        - ``t1``, ``t2`` -- elements of `P^1(\QQ_p)` (the endpoints
           of integration)
 
         - ``E`` -- (default: None). If specified, will not compute the

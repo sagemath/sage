@@ -132,7 +132,7 @@ def _rmcmd(s, cmd, left='', right=''):
       command which takes a single argument, like 'emph' or 'url'; the
       command is removed, but its argument is not.
 
-    - ``left``, ``right`` - (string, optional, default '') add these
+    - ``left``, ``right`` -- (string, optional, default '') add these
       strings at the left and right ends of the command. See the
       examples.
 
@@ -1052,7 +1052,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     - ``string`` -- a string to find in the Sage source code.
 
-    - ``extra1``, ..., ``extra5`` - additional strings to require when
+    - ``extra1``, ..., ``extra5`` -- additional strings to require when
       searching.  Lines must match all of these, as well as ``string``.
 
     - ``whole_word`` (optional, default False) - if True, search for

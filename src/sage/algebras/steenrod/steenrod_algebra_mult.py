@@ -645,7 +645,7 @@ def binomial_mod2(n,k):
 
     INPUT:
 
-    - `n`, `k` - integers
+    - `n`, `k` -- integers
 
     OUTPUT:
 
@@ -677,7 +677,7 @@ def binomial_modp(n,k,p):
 
     INPUT:
 
-    - `n`, `k` - integers
+    - `n`, `k` -- integers
     - `p` -- prime number
 
     OUTPUT:
