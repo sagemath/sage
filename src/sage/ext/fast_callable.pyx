@@ -33,10 +33,10 @@ form) at `x = 30`::
     sage: # needs sage.symbolic
     sage: wilk = prod((x-i) for i in [1 .. 20]); wilk
     (x - 1)*(x - 2)*(x - 3)*(x - 4)*(x - 5)*(x - 6)*(x - 7)*(x - 8)*(x - 9)*(x - 10)*(x - 11)*(x - 12)*(x - 13)*(x - 14)*(x - 15)*(x - 16)*(x - 17)*(x - 18)*(x - 19)*(x - 20)
-    sage: timeit('wilk.subs(x=30)')                     # random, long time
+    sage: timeit('wilk.subs(x=30)')         # random    # long time
     625 loops, best of 3: 1.43 ms per loop
     sage: fc_wilk = fast_callable(wilk, vars=[x])
-    sage: timeit('fc_wilk(30)')                         # random, long time
+    sage: timeit('fc_wilk(30)')             # random    # long time
     625 loops, best of 3: 9.72 us per loop
 
 You can specify a particular domain for the evaluation using
@@ -60,7 +60,7 @@ the correct parent before we call ``D``.
 We don't yet have a special interpreter with domain ``ZZ``, so we can see
 how that compares to the generic ``fc_wilk`` example above::
 
-    sage: timeit('fc_wilk_zz(30)')                      # random, long time                     # needs sage.symbolic
+    sage: timeit('fc_wilk_zz(30)')          # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 15.4 us per loop
 
 However, for other types, using ``domain=D`` will get a large speedup,
@@ -71,7 +71,7 @@ floating-point operations directly and skip all the Python object
 creations that you would get from actually using ``RDF`` objects::
 
     sage: fc_wilk_rdf = fast_callable(wilk, vars=[x], domain=RDF)                       # needs sage.symbolic
-    sage: timeit('fc_wilk_rdf(30.0)')                   # random, long time                     # needs sage.symbolic
+    sage: timeit('fc_wilk_rdf(30.0)')       # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 7 us per loop
 
 The domain does not need to be a Sage type; for instance, ``domain=float``
@@ -81,25 +81,25 @@ the return value is an ``RDF`` element, and when ``domain=float`` is used,
 the return value is a Python :class:`float`.) ::
 
     sage: fc_wilk_float = fast_callable(wilk, vars=[x], domain=float)                   # needs sage.symbolic
-    sage: timeit('fc_wilk_float(30.0)')                 # random, long time                     # needs sage.symbolic
+    sage: timeit('fc_wilk_float(30.0)')     # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 5.04 us per loop
 
 We also have support for ``RR``::
 
     sage: fc_wilk_rr = fast_callable(wilk, vars=[x], domain=RR)                         # needs sage.symbolic
-    sage: timeit('fc_wilk_rr(30.0)')                    # random, long time                     # needs sage.symbolic
+    sage: timeit('fc_wilk_rr(30.0)')        # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 13 us per loop
 
 For ``CC``::
 
     sage: fc_wilk_cc = fast_callable(wilk, vars=[x], domain=CC)                         # needs sage.symbolic
-    sage: timeit('fc_wilk_cc(30.0)')                    # random, long time                     # needs sage.symbolic
+    sage: timeit('fc_wilk_cc(30.0)')        # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 23 us per loop
 
 And support for ``CDF``::
 
     sage: fc_wilk_cdf = fast_callable(wilk, vars=[x], domain=CDF)                       # needs sage.symbolic
-    sage: timeit('fc_wilk_cdf(30.0)')                   # random, long time                     # needs sage.symbolic
+    sage: timeit('fc_wilk_cdf(30.0)')       # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 10.2 us per loop
 
 Currently, :func:`fast_callable` can accept two kinds of objects:
