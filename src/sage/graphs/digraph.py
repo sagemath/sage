@@ -1556,8 +1556,8 @@ class DiGraph(GenericGraph):
         is an edge, then `vu` is an edge too), then obviously the cardinality of
         its feedback arc set is the number of edges in the first graph::
 
-            sage: cycle=graphs.CycleGraph(5)
-            sage: dcycle=DiGraph(cycle)
+            sage: cycle = graphs.CycleGraph(5)
+            sage: dcycle = DiGraph(cycle)
             sage: cycle.size()
             5
             sage: dcycle.feedback_edge_set(value_only=True)                             # needs sage.numerical.mip
@@ -3170,9 +3170,9 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: Q = DiGraph({1: {2: ['a', 'c']}, 2: {3: ['b']}})
-            sage: F = Q.path_semigroup(); F
+            sage: F = Q.path_semigroup(); F                                             # needs sage.libs.flint
             Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices
-            sage: list(F)
+            sage: list(F)                                                               # needs sage.libs.flint
             [e_1, e_2, e_3, a, c, b, a*b, c*b]
 
         """
