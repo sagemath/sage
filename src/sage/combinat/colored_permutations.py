@@ -409,7 +409,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
 # reflection groups
 
 
-class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
+class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
     r"""
     The Shephard-Todd family complex reflection group `G(m, p, n)`
     realized as a subgroup of :class:`colored permutations
@@ -425,17 +425,11 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
 
     By the (Chevalley-)Shephard-Todd classification of irreducible
     finite complex reflection groups, the groups `G(m, p, n)` (with
-    `G(2, 2, 2)` being exceptionally reducible since it is the Klien
+    `G(2, 2, 2)` being exceptionally reducible since it is the Klein
     four group) form the only infinite family with an additional 34
     exceptional groups `G_k`, where `4 \leq k \leq 37`. To avoid
     ambiguities, we refer to `G(m, p, n)` as the *Shephard-Todd family
     complex reflection group*.
-
-    .. NOTE::
-
-        This does *not* currently function as a dispatcher class for all
-        irreducible complex reflection groups. It *only* constructs
-        for `G(m, p, n)`.
 
     INPUT:
 
@@ -446,6 +440,17 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
     REFERENCES:
 
     - :wikipedia:`Complex_reflection_group`
+
+    EXAMPLES::
+
+        sage: groups.misc.ShephardToddFamily(6, 1, 4)
+        6-colored permutations of size 4
+        sage: groups.misc.ShephardToddFamily(6, 2, 4)
+        Complex reflection group G(6, 2, 4)
+        sage: groups.misc.ShephardToddFamily(6, 3, 4)
+        Complex reflection group G(6, 3, 4)
+        sage: groups.misc.ShephardToddFamily(6, 6, 4)
+        Complex reflection group G(6, 6, 4)
     """
     @staticmethod
     def __classcall_private__(cls, m, p, n):
@@ -455,7 +460,7 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: G = ComplexReflectionGroup(6, 1, 3)
+            sage: G = groups.misc.ShephardToddFamily(6, 1, 3)
             sage: C = ColoredPermutations(6, 3)
             sage: G is C
             True
@@ -470,9 +475,9 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: G = ComplexReflectionGroup(6, 2, 3)
+            sage: G = groups.misc.ShephardToddFamily(6, 2, 3)
             sage: TestSuite(G).run()
-            sage: G = ComplexReflectionGroup(8, 4, 1)
+            sage: G = groups.misc.ShephardToddFamily(8, 4, 1)
             sage: TestSuite(G).run()
 
         We skip some of the Coxeter group tests since the left descents
@@ -480,9 +485,9 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
 
             sage: coxeter_tests = ["_test_descents", "_test_has_descent",
             ....:                  "_test_reduced_word", "_test_simple_projections"]
-            sage: G = ComplexReflectionGroup(2, 2, 3)
+            sage: G = groups.misc.ShephardToddFamily(2, 2, 3)
             sage: TestSuite(G).run(skip=coxeter_tests)
-            sage: G = ComplexReflectionGroup(4, 4, 2)
+            sage: G = groups.misc.ShephardToddFamily(4, 4, 2)
             sage: TestSuite(G).run(skip=coxeter_tests)
         """
         if m <= 0:
@@ -515,7 +520,7 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: ComplexReflectionGroup(6, 2, 3)
+            sage: groups.misc.ShephardToddFamily(6, 2, 3)
             Complex reflection group G(6, 2, 3)
         """
         return "Complex reflection group G({}, {}, {})".format(self._m, self._p, self._n)
@@ -535,19 +540,19 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
             sage: C.index_set()
             (1, 2, 3)
 
-            sage: G = ComplexReflectionGroup(6, 6, 4)
+            sage: G = groups.misc.ShephardToddFamily(6, 6, 4)
             sage: G.index_set()
             (1, 2, 3, 4)
 
-            sage: G = ComplexReflectionGroup(6, 2, 4)
+            sage: G = groups.misc.ShephardToddFamily(6, 2, 4)
             sage: G.index_set()
             (1, 2, 3, 4, 5)
 
-            sage: G = ComplexReflectionGroup(6, 6, 1)
+            sage: G = groups.misc.ShephardToddFamily(6, 6, 1)
             sage: G.index_set()
             ()
 
-            sage: G = ComplexReflectionGroup(6, 2, 1)
+            sage: G = groups.misc.ShephardToddFamily(6, 2, 1)
             sage: G.index_set()
             (1,)
 
@@ -586,39 +591,39 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
             [3 1 3]
             [2 3 1]
 
-            sage: G = ComplexReflectionGroup(2, 2, 3)
+            sage: G = groups.misc.ShephardToddFamily(2, 2, 3)
             sage: G.coxeter_matrix()
             [1 3 3]
             [3 1 2]
             [3 2 1]
 
-            sage: G = ComplexReflectionGroup(2, 2, 2)
+            sage: G = groups.misc.ShephardToddFamily(2, 2, 2)
             sage: G.coxeter_matrix()
             [1 2]
             [2 1]
 
-            sage: G = ComplexReflectionGroup(2, 2, 1)
+            sage: G = groups.misc.ShephardToddFamily(2, 2, 1)
             sage: G.coxeter_matrix()
             [1]
 
-            sage: G = ComplexReflectionGroup(5, 5, 1)
+            sage: G = groups.misc.ShephardToddFamily(5, 5, 1)
             sage: G.coxeter_matrix()
             []
 
-            sage: G = ComplexReflectionGroup(4, 4, 2)
+            sage: G = groups.misc.ShephardToddFamily(4, 4, 2)
             sage: G.coxeter_matrix()
             [1 4]
             [4 1]
 
-            sage: G = ComplexReflectionGroup(7, 7, 2)
+            sage: G = groups.misc.ShephardToddFamily(7, 7, 2)
             sage: G.coxeter_matrix()
             [1 7]
             [7 1]
 
-            sage: G = ComplexReflectionGroup(6, 3, 1)
+            sage: G = groups.misc.ShephardToddFamily(6, 3, 1)
             sage: G.coxeter_matrix() is None
             True
-            sage: G = ComplexReflectionGroup(6, 3, 4)
+            sage: G = groups.misc.ShephardToddFamily(6, 3, 4)
             sage: G.coxeter_matrix() is None
             True
 
@@ -697,18 +702,18 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
             sage: S.simple_reflection(4)
             [1, 2, 3, -4]
 
-            sage: G = ComplexReflectionGroup(4, 2, 3)
+            sage: G = groups.misc.ShephardToddFamily(4, 2, 3)
             sage: list(G.simple_reflections())
             [[[0, 0, 0], [2, 1, 3]],
              [[0, 0, 0], [1, 3, 2]],
              [[0, 1, 3], [1, 3, 2]],
              [[0, 0, 2], [1, 2, 3]]]
 
-            sage: G = ComplexReflectionGroup(8, 4, 1)
+            sage: G = groups.misc.ShephardToddFamily(8, 4, 1)
             sage: G.simple_reflections()
             Finite family {1: [[4], [1]]}
 
-            sage: G = ComplexReflectionGroup(8, 8, 1)
+            sage: G = groups.misc.ShephardToddFamily(8, 8, 1)
             sage: G.simple_reflections()
             Finite family {}
         """
@@ -880,7 +885,7 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: G = ComplexReflectionGroup(6, 3, 2)
+            sage: G = groups.misc.ShephardToddFamily(6, 3, 2)
             sage: [x for x in G]
             [[[0, 0], [1, 2]],
              [[0, 0], [2, 1]],
@@ -974,7 +979,7 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
             sage: S = ColoredPermutations(1, 3)
             sage: S.degrees()
             (2, 3)
-            sage: G = ComplexReflectionGroup(6, 2, 3)
+            sage: G = groups.misc.ShephardToddFamily(6, 2, 3)
             sage: G.degrees()
             (6, 9, 12)
 
@@ -1022,7 +1027,7 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
             sage: S = ColoredPermutations(1, 3)
             sage: S.codegrees()
             (1, 0)
-            sage: G = ComplexReflectionGroup(6, 2, 3)
+            sage: G = groups.misc.ShephardToddFamily(6, 2, 3)
             sage: G.codegrees()
             (12, 6, 0)
 
@@ -1143,7 +1148,7 @@ class STFamilyComplexReflectionGroup(Parent, UniqueRepresentation):
     Element = ColoredPermutation
 
 
-class ColoredPermutations(STFamilyComplexReflectionGroup):
+class ColoredPermutations(ShephardToddFamilyGroup):
     r"""
     The group of `m`-colored permutations on `\{1, 2, \ldots, n\}`.
 
@@ -1217,7 +1222,7 @@ class ColoredPermutations(STFamilyComplexReflectionGroup):
             sage: C = ColoredPermutations(1, 3)
             sage: TestSuite(C).run()
         """
-        STFamilyComplexReflectionGroup.__init__(self, m, 1, n)
+        ShephardToddFamilyGroup.__init__(self, m, 1, n)
 
     def _repr_(self):
         """
