@@ -260,7 +260,7 @@ def implicit_multiplication(level=None):
       -  1 - Numeric followed by alphanumeric
       -  2 - Closing parentheses followed by alphanumeric
       -  3 - Spaces between alphanumeric
-      - 10 -- Adjacent parentheses (may mangle call statements)
+      - 10 - Adjacent parentheses (may mangle call statements)
 
     OUTPUT:
 

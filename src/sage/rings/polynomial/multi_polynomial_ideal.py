@@ -3046,7 +3046,7 @@ class MPolynomialIdeal_singular_repr(
             sage: J.hilbert_series(grading=(10,3))                                      # needs sage.libs.flint
             (t^25 + t^24 + t^23 - t^15 - t^14 - t^13 - t^12 - t^11
              - t^10 - t^9 - t^8 - t^7 - t^6 - t^5 - t^4 - t^3 - t^2
-             - t -- 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
+             - t - 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
 
             sage: K = R.ideal([a^2*b^3, a*b^4 + a^3*b^2])
             sage: K.hilbert_series(grading=[1,2])                                       # needs sage.libs.flint

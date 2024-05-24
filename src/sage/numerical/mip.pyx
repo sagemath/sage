@@ -40,7 +40,7 @@ Imagine you want to solve the following linear system of three equations:
 
 and this additional inequality:
 
- - `w_0 -- w_1 - w_2 \geq 0`
+ - `w_0 - w_1 - w_2 \geq 0`
 
 where all `w_i \in \ZZ^+`. You know that the trivial solution is `w_i=0`,
 but what is the first non-trivial one with `w_3 \geq 1`?
