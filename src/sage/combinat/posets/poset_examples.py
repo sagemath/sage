@@ -1183,13 +1183,13 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` - Defines the number (n-1) of layers in the poset.
+        - ``n`` -- Defines the number (n-1) of layers in the poset.
 
-        - ``colors`` - The colors that define the covering relations of the
+        - ``colors`` -- The colors that define the covering relations of the
           poset. Colors used are 'green', 'red', 'yellow', 'orange', 'silver',
           and 'blue'.
 
-        - ``labels`` - Keyword variable used to determine whether the poset
+        - ``labels`` -- Keyword variable used to determine whether the poset
           is labeled with integers or tuples.  To label with integers, the
           method should be called with ``labels='integers'``.  Otherwise, the
           labeling will default to tuples.

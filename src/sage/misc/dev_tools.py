@@ -140,9 +140,9 @@ def load_submodules(module=None, exclude_pattern=None):
 
     INPUT:
 
-    - ``module`` - an optional module
+    - ``module`` -- an optional module
 
-    - ``exclude_pattern`` - an optional regular expression pattern of module
+    - ``exclude_pattern`` -- an optional regular expression pattern of module
       names that have to be excluded.
 
     EXAMPLES::

@@ -33,15 +33,15 @@ class OperationTable(SageObject):
 
     INPUT:
 
-    - ``S`` - a finite algebraic structure (or finite iterable)
+    - ``S`` -- a finite algebraic structure (or finite iterable)
 
-    - ``operation`` - a function of two variables that accepts pairs
+    - ``operation`` -- a function of two variables that accepts pairs
         of elements from ``S``. A natural source of such functions is
         the Python :mod:`operator` module, and in particular
         :func:`operator.add` and :func:`operator.mul`. This may also
         be a function defined with ``lambda`` or ``def.``
 
-    - ``names`` - (default: ``'letters'``)  The type of names
+    - ``names`` -- (default: ``'letters'``)  The type of names
       used, values are:
 
       * ``'letters'`` - lowercase ASCII letters are used
@@ -58,7 +58,7 @@ class OperationTable(SageObject):
       * a list - a list of strings, where the length
         of the list equals the number of elements.
 
-    - ``elements`` - (default: ``None``)  A list of elements of ``S``,
+    - ``elements`` -- (default: ``None``)  A list of elements of ``S``,
       in forms that can be coerced into the structure, eg. their
       string representations. This may be used to impose an alternate
       ordering on the elements of `S``, perhaps when this is used in
@@ -498,12 +498,12 @@ class OperationTable(SageObject):
 
         OUTPUT:
 
-        - ``width`` - an integer giving the maximum width of the strings
+        - ``width`` -- an integer giving the maximum width of the strings
           describing the elements.  This is used for formatting the ASCII
           version of the table.
-        - ``name_list`` - a list of strings naming the elements, in the
+        - ``name_list`` -- a list of strings naming the elements, in the
           same order as given by the :meth:`list` method.
-        - ``name_dict`` - a dictionary giving the correspondence between the
+        - ``name_dict`` -- a dictionary giving the correspondence between the
           strings and the actual elements.  So the keys are the strings and
           the values are the elements of the structure.
 
@@ -663,7 +663,7 @@ class OperationTable(SageObject):
 
         INPUT:
 
-        - ``other`` - a second table to compare to ``self``.
+        - ``other`` -- a second table to compare to ``self``.
 
         OUTPUT:
         Tables are equal if they have the same operation and elements.
@@ -728,8 +728,8 @@ class OperationTable(SageObject):
 
         INPUT:
 
-        - ``ascii`` - a single character for text table
-        - ``latex`` - a string to represent an operation in LaTeX math mode.
+        - ``ascii`` -- a single character for text table
+        - ``latex`` -- a string to represent an operation in LaTeX math mode.
           Note the need for double-backslashes to escape properly.
 
         EXAMPLES::
@@ -853,7 +853,7 @@ class OperationTable(SageObject):
 
         INPUT:
 
-        - ``names`` - the type of names used, values are:
+        - ``names`` -- the type of names used, values are:
 
           * ``'letters'`` - lowercase ASCII letters are used
             for a base 26 representation of the elements'
@@ -968,7 +968,7 @@ class OperationTable(SageObject):
 
         INPUT:
 
-        - ``element_names`` - (default : ``True``) Whether to display text with element names on the image
+        - ``element_names`` -- (default : ``True``) Whether to display text with element names on the image
 
         - ``cmap`` -- (default: :obj:`matplotlib.cm.gist_rainbow`) color map for plot, see :mod:`matplotlib.cm`
 

@@ -517,7 +517,7 @@ def milnor_basis(n, p=2, **kwds):
 
     - ``p`` -- positive prime number (optional, default 2)
 
-    - ``profile`` - profile function (optional, default ``None``).
+    - ``profile`` -- profile function (optional, default ``None``).
       Together with ``truncation_type``, specify the profile function
       to be used; ``None`` means the profile function for the entire
       Steenrod algebra.  See

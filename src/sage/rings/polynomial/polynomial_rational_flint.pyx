@@ -196,15 +196,15 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        - ``parent`` - Polynomial ring, the parent of ``self``
-        - ``x`` - Data for the new polynomial self, e.g. a polynomial, an
+        - ``parent`` -- Polynomial ring, the parent of ``self``
+        - ``x`` -- Data for the new polynomial self, e.g. a polynomial, an
           integer, a rational, a list of rationals, a dictionary with keys
           the degrees and the rational coefficients, etc (default: ``None``)
-        - `check`` - Whether the integrity of the data needs to be verified,
+        - `check`` -- Whether the integrity of the data needs to be verified,
           largely ignored by this method (default: ``True``)
-        - ``is_gen`` - Whether self shall be initialised as the generator of
+        - ``is_gen`` -- Whether self shall be initialised as the generator of
           the parent polynomial ring
-        - ``construct`` - Whether the element shall always be constructed
+        - ``construct`` -- Whether the element shall always be constructed
           as an independent copy of any input data (default: ``False``)
 
         TESTS::
@@ -567,7 +567,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        - ``n`` - The power of `t` modulo which ``self`` is truncated
+        - ``n`` -- The power of `t` modulo which ``self`` is truncated
 
         EXAMPLES::
 
@@ -1176,7 +1176,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        - ``exp`` - Exponent
+        - ``exp`` -- Exponent
 
         OUTPUT:
 

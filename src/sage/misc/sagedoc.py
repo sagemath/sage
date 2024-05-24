@@ -126,9 +126,9 @@ def _rmcmd(s, cmd, left='', right=''):
 
     INPUT:
 
-    - ``s`` - (string) string from which to remove the command
+    - ``s`` -- (string) string from which to remove the command
 
-    - ``cmd`` - (string) command to be removed.  This should be a
+    - ``cmd`` -- (string) command to be removed.  This should be a
       command which takes a single argument, like 'emph' or 'url'; the
       command is removed, but its argument is not.
 
@@ -196,8 +196,8 @@ def detex(s, embedded=False):
 
     INPUT:
 
-    - ``s`` - string
-    - ``embedded`` - boolean (optional, default False)
+    - ``s`` -- string
+    - ``embedded`` -- boolean (optional, default False)
 
     If ``embedded`` is False, then do the replacements in both
     ``math_substitutes`` and ``nonmath_substitutes``.  If True, then
@@ -588,7 +588,7 @@ def process_mathtt(s):
 
     INPUT:
 
-    - ``s`` - string, in practice a docstring
+    - ``s`` -- string, in practice a docstring
 
     This function is called by :func:`format`.
 
@@ -1050,7 +1050,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     INPUT:
 
-    - ``string`` - a string to find in the Sage source code.
+    - ``string`` -- a string to find in the Sage source code.
 
     - ``extra1``, ..., ``extra5`` - additional strings to require when
       searching.  Lines must match all of these, as well as ``string``.
@@ -1322,11 +1322,11 @@ def format_search_as_html(what, results, search):
 
     INPUT:
 
-    - ``what`` - (string) what was searched (source code or
+    - ``what`` -- (string) what was searched (source code or
       documentation)
-    - ``results`` - (string or list) the results of the search as a string or list of
+    - ``results`` -- (string or list) the results of the search as a string or list of
       search results
-    - ``search`` - (string or list) what was being searched for, either as a
+    - ``search`` -- (string or list) what was being searched for, either as a
       string which is taken verbatim, or a list of multiple search terms if
       there were more than one
 
@@ -1475,9 +1475,9 @@ class _sage_doc:
 
         INPUT:
 
-        - ``obj`` - a Sage object
-        - ``output`` - 'html', 'rst', or 'text': return documentation in this form
-        - ``view`` - only has an effect if output is 'html': in this
+        - ``obj`` -- a Sage object
+        - ``output`` -- 'html', 'rst', or 'text': return documentation in this form
+        - ``view`` -- only has an effect if output is 'html': in this
           case, if ``view`` is ``True``, display the documentation in
           a web browser.  Otherwise, return the documentation as a
           string.
@@ -1618,9 +1618,9 @@ class _sage_doc:
 
         INPUT:
 
-        - ``name`` - string, name of the documentation
+        - ``name`` -- string, name of the documentation
 
-        - ``testing`` - boolean (optional, default False): if True,
+        - ``testing`` -- boolean (optional, default False): if True,
           then just return the URL and path-name for this document;
           don't open the web browser.
 

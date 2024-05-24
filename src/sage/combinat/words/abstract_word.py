@@ -506,7 +506,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``period`` - positive integer (optional, default 1)
+        - ``period`` -- positive integer (optional, default 1)
 
         OUTPUT:
 
@@ -541,7 +541,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``period`` - positive integer (optional, default 1)
+        - ``period`` -- positive integer (optional, default 1)
 
         OUTPUT:
 
@@ -600,7 +600,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``use_parent_alphabet`` - Bool (default: False). When True and if
+        - ``use_parent_alphabet`` -- Bool (default: False). When True and if
           the self parent's alphabet is finite, it uses the index of
           the letters in the alphabet. Otherwise, the first letter occurring in
           self is mapped to zero, and every letter that hasn't yet occurred in
@@ -1005,8 +1005,8 @@ class Word_class(SageObject):
            algorithm to be used when computing the iterated palindromic closure.
            It must be one of the two following values:
 
-           - ``'definition'`` - computed using the definition
-           - ``'recursive'`` - computation based on an efficient formula
+           - ``'definition'`` -- computed using the definition
+           - ``'recursive'`` -- computation based on an efficient formula
              that recursively computes the iterated right palindromic closure
              without having to recompute the longest `f`-palindromic suffix
              at each iteration [2].
@@ -1115,7 +1115,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``max_length`` - non negative integer or None (optional,
+        - ``max_length`` -- non negative integer or None (optional,
           default: None) the maximum length of the prefixes
 
         OUTPUT:
@@ -1169,7 +1169,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``max_length`` - non negative integer or None (optional,
+        - ``max_length`` -- non negative integer or None (optional,
           default: None) the maximum length of the prefixes
 
         OUTPUT:
@@ -1210,9 +1210,9 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``start`` - integer, the first letter of the resulting word.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- A word over the integers.
+        - ``start`` -- integer, the first letter of the resulting word.
+        - ``mod`` -- (default: None) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1256,9 +1256,9 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``start`` - integer, the first letter of the resulting word.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- A word over the integers.
+        - ``start`` -- integer, the first letter of the resulting word.
+        - ``mod`` -- (default: None) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1317,8 +1317,8 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- A word over the integers.
+        - ``mod`` -- (default: None) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1393,8 +1393,8 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``self`` - A word over the integers.
-        - ``mod`` - (default: None) It can be one of the following:
+        - ``self`` -- A word over the integers.
+        - ``mod`` -- (default: None) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1464,7 +1464,7 @@ class Word_class(SageObject):
 
            - integer -- the modulo
 
-           - ``None`` - the value ``base`` is considered for the modulo.
+           - ``None`` -- the value ``base`` is considered for the modulo.
 
         EXAMPLES:
 
@@ -1621,7 +1621,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
         OUTPUT:
 
@@ -1662,7 +1662,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
         OUTPUT:
 
@@ -1714,7 +1714,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``fact`` - a non empty finite word
+        - ``fact`` -- a non empty finite word
 
         OUTPUT:
 

@@ -110,7 +110,7 @@ cdef class Farey:
 
     INPUT:
 
-    - `G` - an arithmetic subgroup of `\PSL_2(\ZZ)`
+    - `G` -- an arithmetic subgroup of `\PSL_2(\ZZ)`
 
     EXAMPLES:
 

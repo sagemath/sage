@@ -364,7 +364,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         INPUT:
 
-        - `modulus` - a number
+        - `modulus` -- a number
 
         OUTPUT:
 
@@ -431,14 +431,14 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``algorithm`` - determines which algorithm to use, options are:
+        - ``algorithm`` -- determines which algorithm to use, options are:
 
-          - 'pari' - use the :pari:`matkerint` function from the PARI library
-          - 'padic' - use the p-adic algorithm from the IML library
-          - 'default' - use a heuristic to decide which of the two above
+          - 'pari' -- use the :pari:`matkerint` function from the PARI library
+          - 'padic' -- use the p-adic algorithm from the IML library
+          - 'default' -- use a heuristic to decide which of the two above
             routines is fastest.  This is the default value.
 
-        - ``proof`` - this is passed to the p-adic IML algorithm.
+        - ``proof`` -- this is passed to the p-adic IML algorithm.
           If not specified, the global flag for linear algebra will be used.
 
         OUTPUT:
@@ -1005,7 +1005,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
             -  ``linbox_dense_elimination'`` - use LinBox dense elimination
 
-            - ``'linbox_sparse_elimination'`` - use LinBox sparse elimination
+            - ``'linbox_sparse_elimination'`` -- use LinBox sparse elimination
 
             -  ``'linbox_ blackbox'`` - LinBox via a Blackbox algorithm
 
@@ -1015,7 +1015,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             -  ``'generic'`` - use the Sage generic implementation
                (via inversion)
 
-        - ``check_rank`` - whether to check that the rank is maximal
+        - ``check_rank`` -- whether to check that the rank is maximal
 
         OUTPUT: a matrix or vector
 

@@ -744,7 +744,7 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
       ``M1.groundset()`` such that if a line in geometric representation is
       setwise same as any of these then points contained will be traversed in
       that order thus overriding internal order deciding heuristic.
-    - ``pd`` - (optional) A dictionary mapping ground set elements to their
+    - ``pd`` -- (optional) A dictionary mapping ground set elements to their
       (x,y) positions.
     - ``sp`` -- (optional) If True, a positioning dictionary and line orders
       will be placed in ``M._cached_info``.

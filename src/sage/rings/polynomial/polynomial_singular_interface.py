@@ -188,7 +188,7 @@ class PolynomialRing_singular_repr:
 
         INPUT:
 
-        - ``singular`` - Singular instance
+        - ``singular`` -- Singular instance
 
         OUTPUT: Singular ring matching this ring
 
@@ -478,7 +478,7 @@ def _singular_func(self, singular=None):
 
     INPUT:
 
-    - ``singular`` - Singular instance to use.
+    - ``singular`` -- Singular instance to use.
 
     EXAMPLES::
 

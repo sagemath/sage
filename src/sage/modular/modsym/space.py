@@ -196,15 +196,15 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        - ``v`` - a list of positive integers
-        - ``nz`` - (default: ``None``); if given specifies a column index
+        - ``v`` -- a list of positive integers
+        - ``nz`` -- (default: ``None``); if given specifies a column index
           such that the dual module has that column nonzero.
 
         OUTPUT:
 
-        - ``E`` - matrix such that E\*v is a vector with components
+        - ``E`` -- matrix such that E\*v is a vector with components
           the eigenvalues `a_n` for `n \in v`.
-        - ``v`` - a vector over a number field
+        - ``v`` -- a vector over a number field
 
         EXAMPLES::
 
@@ -511,7 +511,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         OUTPUT:
 
-        - ``int`` - the number of generators, which is the same as the
+        - ``int`` -- the number of generators, which is the same as the
           dimension of self.
 
         ALGORITHM: Call the dimension function.
@@ -2412,9 +2412,9 @@ class PeriodMapping(SageObject):
 
         INPUT:
 
-        - ``modsym`` - a space of modular symbols
+        - ``modsym`` -- a space of modular symbols
 
-        - ``A`` - matrix of the associated period map
+        - ``A`` -- matrix of the associated period map
 
         EXAMPLES::
 

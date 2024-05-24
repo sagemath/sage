@@ -39,11 +39,11 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
 
     INPUT:
 
-    - ``start`` - number (default: 0)
+    - ``start`` -- number (default: 0)
 
-    - ``end`` - number
+    - ``end`` -- number
 
-    - ``step`` - number (default: 1)
+    - ``step`` -- number (default: 1)
 
     - ``universe`` -- parent or type where all the elements should live
       (default: deduce from inputs)
@@ -184,11 +184,11 @@ def srange(*args, **kwds):
 
     INPUT:
 
-    - ``start`` - number (default: 0)
+    - ``start`` -- number (default: 0)
 
-    - ``end`` - number
+    - ``end`` -- number
 
-    - ``step`` - number (default: 1)
+    - ``step`` -- number (default: 1)
 
     - ``universe -- parent or type where all the elements should live
       (default: deduce from inputs). This is only used if ``coerce`` is

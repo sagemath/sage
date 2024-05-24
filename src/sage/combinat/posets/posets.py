@@ -1492,7 +1492,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         - ``allow_incomparable`` -- a Boolean. If ``True`` (the default),
           return incomparable elements in some order; if ``False``, raise
           an error if ``l`` is not a chain of the poset.
-        - ``remove_duplicates`` - a Boolean. If ``True``, remove duplicates
+        - ``remove_duplicates`` -- a Boolean. If ``True``, remove duplicates
           from the output list.
 
         EXAMPLES::
@@ -2117,7 +2117,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         - ``element_labels`` (default: ``None``) - a dictionary of
           element labels
 
-        - ``cover_labels`` - a dictionary, list or function representing labels
+        - ``cover_labels`` -- a dictionary, list or function representing labels
           of the covers of ``self``. When set to ``None`` (default) no label is
           displayed on the edges of the Hasse Diagram.
 
@@ -5382,7 +5382,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``other``, a poset.
 
-        - ``labels`` - (defaults to 'pairs') If set to 'pairs', each
+        - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
           element ``v`` in this poset will be named ``(0,v)`` and each
           element ``u`` in ``other`` will be named ``(1,u)`` in the
           result. If set to 'integers', the elements of the result
@@ -5546,7 +5546,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``other``, a poset.
 
-        - ``labels`` - (defaults to 'pairs') If set to 'pairs', each
+        - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
           element ``v`` in this poset will be named ``(0,v)`` and each
           element ``u`` in ``other`` will be named ``(1,u)`` in the
           result. If set to 'integers', the elements of the result

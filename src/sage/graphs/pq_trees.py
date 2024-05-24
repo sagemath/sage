@@ -236,7 +236,7 @@ def reorder_sets(sets):
 
     INPUT:
 
-    - ``sets`` - a list of instances of ``list, Set`` or ``set``
+    - ``sets`` -- a list of instances of ``list, Set`` or ``set``
 
     ALGORITHM:
 

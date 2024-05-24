@@ -825,7 +825,7 @@ class AlternatingSignMatrix(Element,
 
         INPUT:
 
-        - ``algorithm`` - either ``'last_diagonal'`` or ``'link_pattern'``
+        - ``algorithm`` -- either ``'last_diagonal'`` or ``'link_pattern'``
 
         EXAMPLES::
 

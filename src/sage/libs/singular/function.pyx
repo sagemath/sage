@@ -343,8 +343,8 @@ cdef leftv* new_leftv(void *data, res_type) noexcept:
     """
     INPUT:
 
-    - ``data`` - some Singular data this interpreter object points to
-    - ``res_type`` - the type of that data
+    - ``data`` -- some Singular data this interpreter object points to
+    - ``res_type`` -- the type of that data
     """
     cdef leftv* res
     res = <leftv*>omAllocBin(sleftv_bin)
@@ -359,7 +359,7 @@ cdef free_leftv(leftv *args, ring *r = NULL):
 
     INPUT:
 
-    - ``args`` - a list of Singular arguments
+    - ``args`` -- a list of Singular arguments
     """
     args.CleanUp(r)
     omFreeBin(args, sleftv_bin)
@@ -497,9 +497,9 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``args`` - a list of Python objects
-        - ``ring`` - a multivariate polynomial ring
-        - ``attributes`` - an optional dictionary of Singular
+        - ``args`` -- a list of Python objects
+        - ``ring`` -- a multivariate polynomial ring
+        - ``attributes`` -- an optional dictionary of Singular
           attributes (default: ``None``)
 
         EXAMPLES::
@@ -674,8 +674,8 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``data`` - the raw data
-        - ``res_type`` - the type of the data
+        - ``data`` -- the raw data
+        - ``res_type`` -- the type of the data
         """
         return self._append_leftv( new_leftv(data, res_type) )
 
@@ -915,7 +915,7 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``to_convert`` - a Singular ``leftv``
+        - ``to_convert`` -- a Singular ``leftv``
 
         TESTS:
 
@@ -1164,7 +1164,7 @@ cdef class SingularFunction(SageObject):
         """
         INPUT:
 
-        - ``name`` - the name of the function
+        - ``name`` -- the name of the function
 
         EXAMPLES::
 

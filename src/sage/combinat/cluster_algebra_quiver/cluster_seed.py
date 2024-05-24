@@ -2782,20 +2782,20 @@ class ClusterSeed(SageObject):
 
         Possible options are:
 
-        - ``"all"`` - All options below
-        - ``"edges"`` - Number of edges (works with skew-symmetric quivers)
-        - ``"edge_diff"`` - Edges added/deleted (works with skew-symmetric quivers)
-        - ``"green_vertices"`` - List of green vertices (works with principals)
-        - ``"green_vertices_diff"`` - Green vertices added/removed (works with principals)
-        - ``"red_vertices"`` - List of red vertices (works with principals)
-        - ``"red_vertices_diff"`` - Red vertices added/removed (works with principals)
-        - ``"urban_renewals"`` - List of urban renewal vertices
-        - ``"urban_renewals_diff"`` - Urban renewal vertices added/removed
-        - ``"sources"`` - List of source vertices
-        - ``"sources_diff"`` - Source vertices added/removed
-        - ``"sinks"`` - List of sink vertices
-        - ``"sinks_diff"`` - Sink vertices added/removed
-        - ``"denominators"`` - List of all denominators of the cluster variables
+        - ``"all"`` -- All options below
+        - ``"edges"`` -- Number of edges (works with skew-symmetric quivers)
+        - ``"edge_diff"`` -- Edges added/deleted (works with skew-symmetric quivers)
+        - ``"green_vertices"`` -- List of green vertices (works with principals)
+        - ``"green_vertices_diff"`` -- Green vertices added/removed (works with principals)
+        - ``"red_vertices"`` -- List of red vertices (works with principals)
+        - ``"red_vertices_diff"`` -- Red vertices added/removed (works with principals)
+        - ``"urban_renewals"`` -- List of urban renewal vertices
+        - ``"urban_renewals_diff"`` -- Urban renewal vertices added/removed
+        - ``"sources"`` -- List of source vertices
+        - ``"sources_diff"`` -- Source vertices added/removed
+        - ``"sinks"`` -- List of sink vertices
+        - ``"sinks_diff"`` -- Sink vertices added/removed
+        - ``"denominators"`` -- List of all denominators of the cluster variables
 
         OUTPUT:
 

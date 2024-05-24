@@ -1116,7 +1116,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        - ``conductors`` - list or generator of ints
+        - ``conductors`` -- list or generator of ints
 
         OUTPUT:
 
@@ -1154,7 +1154,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        - ``conductors`` - list or generator of ints
+        - ``conductors`` -- list or generator of ints
 
         OUTPUT:
 

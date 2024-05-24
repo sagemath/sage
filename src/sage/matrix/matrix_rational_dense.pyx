@@ -308,7 +308,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``base`` - an optional integer (default is ``10``)
+        - ``base`` -- an optional integer (default is ``10``)
 
         EXAMPLES::
 
@@ -1348,7 +1348,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 
@@ -1873,7 +1873,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         -  ``algorithm`` - an optional specification of an algorithm
 
-           - ``None`` - (default) use default algorithm for computing Echelon
+           - ``None`` -- (default) use default algorithm for computing Echelon
              forms
 
            - 'multimodular': much better if the answers
@@ -2472,7 +2472,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``algorithm`` - an optional specification of an algorithm. One of
+        - ``algorithm`` -- an optional specification of an algorithm. One of
 
           - ``None``: (default) will use flint
 

@@ -675,7 +675,7 @@ cdef class FractionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``right`` - ``RingElement`` to multiply with ``self``
+        - ``right`` -- ``RingElement`` to multiply with ``self``
 
         OUTPUT:
 

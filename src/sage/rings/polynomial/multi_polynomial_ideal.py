@@ -377,11 +377,11 @@ class MPolynomialIdeal_magma_repr:
 
         INPUT:
 
-        - ``deg_bound`` - only compute to degree ``deg_bound``, that
+        - ``deg_bound`` -- only compute to degree ``deg_bound``, that
           is, ignore all S-polynomials of higher degree. (default:
           ``None``)
 
-        - ``prot`` - if ``True`` Magma's protocol is printed to
+        - ``prot`` -- if ``True`` Magma's protocol is printed to
           stdout.
 
         -  ``magma`` - Magma instance or None (default instance) (default: None)
@@ -1046,13 +1046,13 @@ class MPolynomialIdeal_singular_repr(
 
         ALGORITHMS:
 
-        - ``"singular:triangL"`` - decomposition of ``self`` into triangular
+        - ``"singular:triangL"`` -- decomposition of ``self`` into triangular
           systems (Lazard).
 
-        - ``"singular:triangLfak"`` - decomposition of ``self`` into triangular systems
+        - ``"singular:triangLfak"`` -- decomposition of ``self`` into triangular systems
           plus factorization.
 
-        - ``"singular:triangM"`` - decomposition of ``self`` into
+        - ``"singular:triangM"`` -- decomposition of ``self`` into
           triangular systems (Moeller).
 
         OUTPUT: a list `T` of lists `t` such that the variety of
@@ -1352,12 +1352,12 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``algorithm`` - "TQ", "TQBlockHigh", "TQBlockLow" or "TQDegree"
-        - ``criteria`` - "Without" (without any criteria)
+        - ``algorithm`` -- "TQ", "TQBlockHigh", "TQBlockLow" or "TQDegree"
+        - ``criteria`` -- "Without" (without any criteria)
                         - "C1", "CritPartially" (partial involutive criteria)
                         - "C1C2C3", "C1C2C3C4" (full involutive criteria)
 
-        - ``division_interface`` - either "Janet" or "JanetLike"
+        - ``division_interface`` -- either "Janet" or "JanetLike"
 
         EXAMPLES:
 
@@ -1487,13 +1487,13 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``algorithm`` - Singular function to call (default: ``groebner``)
+        - ``algorithm`` -- Singular function to call (default: ``groebner``)
 
-        - ``singular`` - Singular instance to use (default: ``singular_default``)
+        - ``singular`` -- Singular instance to use (default: ``singular_default``)
 
-        - ``args`` - ignored
+        - ``args`` -- ignored
 
-        - ``kwds`` - Singular options
+        - ``kwds`` -- Singular options
 
         EXAMPLES::
 
@@ -1810,9 +1810,9 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``p`` - powers of `I` (default: 0)
+        - ``p`` -- powers of `I` (default: 0)
 
-        - ``r`` - check whether ``self`` is a radical ideal first (default: ``True``)
+        - ``r`` -- check whether ``self`` is a radical ideal first (default: ``True``)
 
         EXAMPLES::
 
@@ -2181,27 +2181,27 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``algorithm`` - see below for options.
+        - ``algorithm`` -- see below for options.
 
-        - ``other_ring`` - only valid for ``algorithm='fglm'``; if
+        - ``other_ring`` -- only valid for ``algorithm='fglm'``; if
           provided, conversion will be performed to this
           ring. Otherwise a lex Groebner basis will be returned.
 
 
         ALGORITHMS:
 
-        - ``"fglm"`` - FGLM algorithm. The input ideal must be given with a reduced
+        - ``"fglm"`` -- FGLM algorithm. The input ideal must be given with a reduced
           Groebner Basis of a zero-dimensional ideal
 
-        - ``"gwalk"`` - Groebner Walk algorithm (*default*)
+        - ``"gwalk"`` -- Groebner Walk algorithm (*default*)
 
-        - ``"awalk1"`` - 'first alternative' algorithm
+        - ``"awalk1"`` -- 'first alternative' algorithm
 
-        - ``"awalk2"`` - 'second alternative' algorithm
+        - ``"awalk2"`` -- 'second alternative' algorithm
 
-        - ``"twalk"`` - Tran algorithm
+        - ``"twalk"`` -- Tran algorithm
 
-        - ``"fwalk"`` - Fractal Walk algorithm
+        - ``"fwalk"`` -- Fractal Walk algorithm
 
         EXAMPLES::
 
@@ -2290,7 +2290,7 @@ class MPolynomialIdeal_singular_repr(
 
         - ``variables`` -- a list or tuple of variables in ``self.ring()``
 
-        - ``algorithm`` - determines the algorithm to use, see below
+        - ``algorithm`` -- determines the algorithm to use, see below
           for available algorithms.
 
         ALGORITHMS:
@@ -2539,11 +2539,11 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``ring`` - return roots in the ``ring`` instead of the base
+        - ``ring`` -- return roots in the ``ring`` instead of the base
           ring of this ideal (default: ``None``)
-        - ``algorithm`` - algorithm or implementation to use; see below for
+        - ``algorithm`` -- algorithm or implementation to use; see below for
           supported values
-        - ``proof`` - return a provably correct result (default: ``True``)
+        - ``proof`` -- return a provably correct result (default: ``True``)
 
         EXAMPLES::
 
@@ -3046,7 +3046,7 @@ class MPolynomialIdeal_singular_repr(
             sage: J.hilbert_series(grading=(10,3))                                      # needs sage.libs.flint
             (t^25 + t^24 + t^23 - t^15 - t^14 - t^13 - t^12 - t^11
              - t^10 - t^9 - t^8 - t^7 - t^6 - t^5 - t^4 - t^3 - t^2
-             - t - 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
+             - t -- 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
 
             sage: K = R.ideal([a^2*b^3, a*b^4 + a^3*b^2])
             sage: K.hilbert_series(grading=[1,2])                                       # needs sage.libs.flint
@@ -3502,11 +3502,11 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         INPUT:
 
-        - ``ring`` - the g-algebra to which this ideal belongs
-        - ``gens`` - the generators of this ideal
+        - ``ring`` -- the g-algebra to which this ideal belongs
+        - ``gens`` -- the generators of this ideal
         - ``coerce`` (optional - default True) - generators are
           coerced into the ring before creating the ideal
-        - ``side`` - optional string, either ``"left"`` (default)
+        - ``side`` -- optional string, either ``"left"`` (default)
           or ``"twosided"``; defines whether this ideal is left
           of two-sided.
 
@@ -3548,7 +3548,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         INPUT:
 
-        - ``cmd`` - string, representing a Singular function
+        - ``cmd`` -- string, representing a Singular function
         - ``arg`` (Default: None) - arguments for which cmd is called
 
         OUTPUT:
@@ -3893,11 +3893,11 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         INPUT:
 
-        - ``ring`` - the ring the ideal is defined in
+        - ``ring`` -- the ring the ideal is defined in
 
-        - ``gens`` - a list of generators for the ideal
+        - ``gens`` -- a list of generators for the ideal
 
-        - ``coerce`` - whether to coerce elements to the ring ``ring``
+        - ``coerce`` -- whether to coerce elements to the ring ``ring``
 
         EXAMPLES::
 
@@ -4229,19 +4229,19 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         INPUT:
 
-        - ``algorithm`` - determines the algorithm to use, see below
+        - ``algorithm`` -- determines the algorithm to use, see below
           for available algorithms.
 
-        - ``deg_bound`` - only compute to degree ``deg_bound``, that
+        - ``deg_bound`` -- only compute to degree ``deg_bound``, that
           is, ignore all S-polynomials of higher degree. (default:
           ``None``)
 
-        - ``mult_bound`` - the computation is stopped if the ideal is
+        - ``mult_bound`` -- the computation is stopped if the ideal is
           zero-dimensional in a ring with local ordering and its
           multiplicity is lower than ``mult_bound``. Singular
           only. (default: ``None``)
 
-        - ``prot`` - if set to ``True`` the computation protocol of
+        - ``prot`` -- if set to ``True`` the computation protocol of
           the underlying implementation is printed. If an algorithm
           from the ``singular:`` or ``magma:`` family is used,
           ``prot`` may also be ``sage`` in which case the output is
@@ -5197,9 +5197,9 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         INPUT:
 
-        - ``self`` - a principal ideal in 2 variables
+        - ``self`` -- a principal ideal in 2 variables
 
-        - ``algorithm`` - set this to 'surf' if you want 'surf' to
+        - ``algorithm`` -- set this to 'surf' if you want 'surf' to
           plot the ideal (default: None)
 
         - ``*args`` - optional tuples ``(variable, minimum, maximum)``
@@ -5320,7 +5320,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         INPUT:
 
-        - ``compute_gb`` - if ``True`` then a Gröbner basis is computed first
+        - ``compute_gb`` -- if ``True`` then a Gröbner basis is computed first
           and `f_i` are the elements in the Gröbner basis. Otherwise whatever
           basis is returned by ``self.gens()`` is used.
 

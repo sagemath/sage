@@ -314,10 +314,10 @@ class table(SageObject):
 
         INPUT:
 
-        - ``header_row`` - if True, first row is highlighted.
-        - ``header_column`` - if True, first column is highlighted.
-        - ``frame`` - if True, put a box around each cell.
-        - ``align`` - the alignment of each entry: either 'left',
+        - ``header_row`` -- if True, first row is highlighted.
+        - ``header_column`` -- if True, first column is highlighted.
+        - ``frame`` -- if True, put a box around each cell.
+        - ``align`` -- the alignment of each entry: either 'left',
           'center', or 'right'
 
         EXAMPLES::

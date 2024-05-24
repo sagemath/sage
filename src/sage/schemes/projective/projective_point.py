@@ -854,9 +854,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``f`` - a endomorphism of this point's codomain.
+        - ``f`` -- a endomorphism of this point's codomain.
 
-        - ``n`` - a positive integer, the period of this point.
+        - ``n`` -- a positive integer, the period of this point.
 
         - ``check`` -- check if ``P`` is periodic of period ``n``, Default:True.
 

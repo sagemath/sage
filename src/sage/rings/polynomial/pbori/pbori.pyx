@@ -260,10 +260,10 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
     -  ``n`` - number of variables (an integer > 1)
 
-    - ``names`` - names of ring variables, may be a string or
+    - ``names`` -- names of ring variables, may be a string or
       list/tuple
 
-    - ``order`` - term order (default: lex)
+    - ``order`` -- term order (default: lex)
 
     EXAMPLES::
 
@@ -1589,7 +1589,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         INPUT:
 
-        - ``i`` - an integer or a boolean monomial in one variable
+        - ``i`` -- an integer or a boolean monomial in one variable
 
         EXAMPLES::
 
@@ -1858,7 +1858,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
 
     INPUT:
 
-    - ``polring`` - the polynomial ring our monomials lie in
+    - ``polring`` -- the polynomial ring our monomials lie in
 
     EXAMPLES::
 
@@ -2079,7 +2079,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
 
         INPUT:
 
-        - ``other`` - element to convert, if ``None`` a
+        - ``other`` -- element to convert, if ``None`` a
           :class:`BooleanMonomial` representing 1 is returned only
           :class:`BooleanPolynomial`s with the same parent ring as ``self``
           which have a single monomial is converted
@@ -2220,7 +2220,7 @@ cdef class BooleanMonomial(MonoidElement):
 
     INPUT:
 
-    - ``parent`` - parent monoid this element lives in
+    - ``parent`` -- parent monoid this element lives in
 
     EXAMPLES::
 
@@ -2472,7 +2472,7 @@ cdef class BooleanMonomial(MonoidElement):
 
         INPUT:
 
-        - ``x`` - boolean multivariate polynomial (a generator of the
+        - ``x`` -- boolean multivariate polynomial (a generator of the
           polynomial ring). If ``x`` is not specified (or is ``None``),
           return the total degree of this monomial.
 
@@ -2785,7 +2785,7 @@ cdef class BooleanMonomial(MonoidElement):
 
         INPUT:
 
-        - ``rhs`` - a boolean monomial
+        - ``rhs`` -- a boolean monomial
 
         EXAMPLES::
 
@@ -2932,7 +2932,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
     INPUT:
 
-    - ``parent`` - a boolean polynomial ring
+    - ``parent`` -- a boolean polynomial ring
 
     TESTS::
 
@@ -4817,7 +4817,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 
         -  ``gens`` - a list of generators
 
-        - ``coerce`` - coerce all elements to the ring ``ring`` (default: ``True``)
+        - ``coerce`` -- coerce all elements to the ring ``ring`` (default: ``True``)
 
         EXAMPLES::
 
@@ -4853,47 +4853,47 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 
         INPUT:
 
-        - ``algorithm`` - either ``"polybori"`` (built-in default)
+        - ``algorithm`` -- either ``"polybori"`` (built-in default)
           or ``"magma"`` (requires Magma).
 
-        - ``red_tail`` - tail reductions in intermediate polynomials,
+        - ``red_tail`` -- tail reductions in intermediate polynomials,
           this options affects mainly heuristics. The reducedness of
           the output polynomials can only be guaranteed by the option
           redsb (default: ``True``)
 
-        - ``minsb`` - return a minimal Groebner basis (default:
+        - ``minsb`` -- return a minimal Groebner basis (default:
           ``True``)
 
-        - ``redsb`` - return a minimal Groebner basis and all tails
+        - ``redsb`` -- return a minimal Groebner basis and all tails
           are reduced (default: ``True``)
 
-        - ``deg_bound`` - only compute Groebner basis up to a given
+        - ``deg_bound`` -- only compute Groebner basis up to a given
           degree bound (default: ``False``)
 
-        - ``faugere`` - turn off or on the linear algebra (default:
+        - ``faugere`` -- turn off or on the linear algebra (default:
           ``False``)
 
-        - ``linear_algebra_in_last_block`` - this affects the last
+        - ``linear_algebra_in_last_block`` -- this affects the last
           block of block orderings and degree orderings. If it is set
           to ``True`` linear algebra takes affect in this
           block. (default: ``True``)
 
-        - ``gauss_on_linear`` - perform Gaussian elimination on linear
+        - ``gauss_on_linear`` -- perform Gaussian elimination on linear
            polynomials (default: ``True``)
 
-        - ``selection_size`` - maximum number of polynomials for
+        - ``selection_size`` -- maximum number of polynomials for
           parallel reductions (default: ``1000``)
 
-        - ``heuristic`` - Turn off heuristic by setting
+        - ``heuristic`` -- Turn off heuristic by setting
           ``heuristic=False`` (default: ``True``)
 
-        - ``lazy`` - (default: ``True``)
+        - ``lazy`` -- (default: ``True``)
 
-        - ``invert`` - setting ``invert=True`` input and output get a
+        - ``invert`` -- setting ``invert=True`` input and output get a
           transformation ``x+1`` for each variable ``x``, which should not
           effect the calculated GB, but the algorithm.
 
-        - ``other_ordering_first`` - possible values are ``False`` or
+        - ``other_ordering_first`` -- possible values are ``False`` or
           an ordering code. In practice, many Boolean examples have
           very few solutions and a very easy Groebner basis. So, a
           complex walk algorithm (which cannot be implemented using
@@ -4902,9 +4902,9 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
           algorithm from one ordering into another
           ordering. (default: ``False``)
 
-        - ``prot`` - show protocol (default: ``False``)
+        - ``prot`` -- show protocol (default: ``False``)
 
-        - ``full_prot`` - show full protocol (default: ``False``)
+        - ``full_prot`` -- show full protocol (default: ``False``)
 
         EXAMPLES::
 
@@ -5266,8 +5266,8 @@ cdef class BooleSet:
 
     INPUT:
 
-    - ``param`` - either a :class:`CCuddNavigator`, a :class:`BooleSet` or ``None``.
-    - ``ring`` - a boolean polynomial ring.
+    - ``param`` -- either a :class:`CCuddNavigator`, a :class:`BooleSet` or ``None``.
+    - ``ring`` -- a boolean polynomial ring.
 
     EXAMPLES::
 
@@ -5620,7 +5620,7 @@ cdef class BooleSet:
 
         INPUT:
 
-        - ``vs`` - a boolean set
+        - ``vs`` -- a boolean set
 
         EXAMPLES::
 
@@ -5641,7 +5641,7 @@ cdef class BooleSet:
 
         INPUT:
 
-        - ``m`` - a monomial
+        - ``m`` -- a monomial
 
         EXAMPLES::
 
@@ -5712,7 +5712,7 @@ cdef class BooleSet:
 
         INPUT:
 
-        - ``i`` - an index
+        - ``i`` -- an index
 
         EXAMPLES::
 
@@ -5737,7 +5737,7 @@ cdef class BooleSet:
 
         INPUT:
 
-        - ``i`` - an index
+        - ``i`` -- an index
 
         EXAMPLES::
 
@@ -5821,7 +5821,7 @@ cdef class BooleSet:
 
         INPUT:
 
-        - ``m`` - a boolean monomial
+        - ``m`` -- a boolean monomial
 
         EXAMPLES::
 
@@ -5840,7 +5840,7 @@ cdef class BooleSet:
 
         INPUT:
 
-        - ``m`` - a boolean monomial
+        - ``m`` -- a boolean monomial
 
         EXAMPLES::
 
@@ -5999,7 +5999,7 @@ cdef class BooleanPolynomialVector:
 
         INPUT:
 
-        - ``I`` - a list of boolean polynomials.
+        - ``I`` -- a list of boolean polynomials.
 
         EXAMPLES::
 
@@ -6193,7 +6193,7 @@ cdef class ReductionStrategy:
 
         INPUT:
 
-        - ``p`` - a boolean polynomial.
+        - ``p`` -- a boolean polynomial.
 
         EXAMPLES::
 
@@ -6247,7 +6247,7 @@ cdef class ReductionStrategy:
 
         INPUT:
 
-        - ``p`` - a polynomial
+        - ``p`` -- a polynomial
 
         EXAMPLES::
 
@@ -6318,7 +6318,7 @@ cdef class ReductionStrategy:
 
         INPUT:
 
-        - ``p`` - a boolean polynomial
+        - ``p`` -- a boolean polynomial
 
         EXAMPLES::
 
@@ -6344,19 +6344,19 @@ cdef class ReductionStrategy:
 
         SUPPORTED OPTIONS:
 
-        - ``opt_ll`` - use linear algebra (default: ``False``)
+        - ``opt_ll`` -- use linear algebra (default: ``False``)
 
-        - ``opt_red_tail`` - perform tail reductions (default: ``True``)
+        - ``opt_red_tail`` -- perform tail reductions (default: ``True``)
 
-        - ``opt_red_tail_deg_growth`` - (default: ``True``)
+        - ``opt_red_tail_deg_growth`` -- (default: ``True``)
 
-        - ``opt_brutal_reductions`` - (default: ``True``)
+        - ``opt_brutal_reductions`` -- (default: ``True``)
 
         OTHER ATTRIBUTES:
 
-        - ``leading_terms`` - all leading terms of generators
+        - ``leading_terms`` -- all leading terms of generators
 
-        - ``minimal_leading_terms`` - the reduced set of leading terms
+        - ``minimal_leading_terms`` -- the reduced set of leading terms
 
         - ``monomials`` -
 
@@ -6534,7 +6534,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``param`` - either ``None`` or a :class:`GroebnerStrategy`
+        - ``param`` -- either ``None`` or a :class:`GroebnerStrategy`
           object.
 
         EXAMPLES::
@@ -6566,7 +6566,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``p`` - a polynomial
+        - ``p`` -- a polynomial
 
         EXAMPLES::
 
@@ -6593,7 +6593,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``p`` - a polynomial
+        - ``p`` -- a polynomial
 
         EXAMPLES::
 
@@ -6621,7 +6621,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``p`` - a polynomial
+        - ``p`` -- a polynomial
 
         EXAMPLES::
 
@@ -6654,7 +6654,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``i`` - an index
+        - ``i`` -- an index
         """
         cdef PBGBStrategy* strat = self._strat.get()
         strat.addNonTrivialImplicationsDelayed(strat.generators[i])
@@ -6710,7 +6710,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``v`` - a boolean polynomial vector
+        - ``v`` -- a boolean polynomial vector
 
         EXAMPLES::
 
@@ -6819,7 +6819,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``v`` - the index of a variable
+        - ``v`` -- the index of a variable
 
         EXAMPLES::
 
@@ -6854,7 +6854,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``p`` - a boolean polynomial
+        - ``p`` -- a boolean polynomial
 
         EXAMPLES::
 
@@ -6892,7 +6892,7 @@ cdef class GroebnerStrategy:
 
         INPUT:
 
-        - ``m`` - a :class:`BooleanMonomial`
+        - ``m`` -- a :class:`BooleanMonomial`
 
         EXAMPLES::
 
@@ -7057,7 +7057,7 @@ def add_up_polynomials(BooleanPolynomialVector v, BooleanPolynomial init):
 
     INPUT:
 
-    - ``v`` - a vector of boolean polynomials
+    - ``v`` -- a vector of boolean polynomials
 
     EXAMPLES::
 
@@ -7083,8 +7083,8 @@ def red_tail(ReductionStrategy s, BooleanPolynomial p):
 
     INPUT:
 
-    - ``s`` - a reduction strategy
-    - ``p`` - a polynomial
+    - ``s`` -- a reduction strategy
+    - ``p`` -- a polynomial
 
     EXAMPLES::
 
@@ -7128,9 +7128,9 @@ def zeros(pol, BooleSet s):
 
     INPUT:
 
-    - ``pol`` - a boolean polynomial
+    - ``pol`` -- a boolean polynomial
 
-    - ``s`` - a set of points encoded as a ``BooleSet``
+    - ``s`` -- a set of points encoded as a ``BooleSet``
 
     EXAMPLES::
 
@@ -7172,9 +7172,9 @@ def interpolate(zero, one):
 
     INPUT:
 
-    - ``zero`` - the set of zero
+    - ``zero`` -- the set of zero
 
-    - ``one`` - the set of ones
+    - ``one`` -- the set of ones
 
     EXAMPLES::
 
@@ -7227,9 +7227,9 @@ def interpolate_smallest_lex(zero, one):
 
     INPUT:
 
-    - ``zero`` - the set of zeros
+    - ``zero`` -- the set of zeros
 
-    - ``one`` - the set of ones
+    - ``one`` -- the set of ones
 
     EXAMPLES:
 
@@ -7326,9 +7326,9 @@ def ll_red_nf_redsb(p, BooleSet reductors):
 
     INPUT:
 
-    - ``p`` - a boolean polynomial
+    - ``p`` -- a boolean polynomial
 
-    - ``reductors`` - a boolean set encoding a reduced Groebner basis
+    - ``reductors`` -- a boolean set encoding a reduced Groebner basis
       with linear leading terms.
 
     EXAMPLES::
@@ -7368,9 +7368,9 @@ def ll_red_nf_noredsb(BooleanPolynomial p, BooleSet reductors):
 
     INPUT:
 
-    - ``p`` - a boolean polynomial
+    - ``p`` -- a boolean polynomial
 
-    - ``reductors`` - a boolean set encoding a Groebner basis with
+    - ``reductors`` -- a boolean set encoding a Groebner basis with
       linear leading terms.
 
     EXAMPLES::
@@ -7401,9 +7401,9 @@ def ll_red_nf_noredsb_single_recursive_call(BooleanPolynomial p, BooleSet reduct
 
     INPUT:
 
-    - ``p`` - a boolean polynomial
+    - ``p`` -- a boolean polynomial
 
-    - ``reductors`` - a boolean set encoding a Groebner basis with
+    - ``reductors`` -- a boolean set encoding a Groebner basis with
       linear leading terms.
 
     EXAMPLES::
@@ -7443,9 +7443,9 @@ def if_then_else(root, a, b):
 
     -  ``root`` - a variable
 
-    - ``a`` - the if branch, a ``BooleSet`` or a ``BoolePolynomial``
+    - ``a`` -- the if branch, a ``BooleSet`` or a ``BoolePolynomial``
 
-    - ``b`` - the else branch, a ``BooleSet`` or a ``BoolePolynomial``
+    - ``b`` -- the else branch, a ``BooleSet`` or a ``BoolePolynomial``
 
     EXAMPLES::
 
@@ -7522,7 +7522,7 @@ def top_index(s):
 
     INPUT:
 
-    - ``s`` - ``BooleSet``, ``BooleMonomial``, ``BoolePolynomial``
+    - ``s`` -- ``BooleSet``, ``BooleMonomial``, ``BoolePolynomial``
 
     EXAMPLES::
 

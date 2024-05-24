@@ -388,7 +388,7 @@ cdef class Element(SageObject):
         r"""
         INPUT:
 
-        - ``parent`` - a SageObject
+        - ``parent`` -- a SageObject
         """
         self._parent = parent
 
@@ -785,7 +785,7 @@ cdef class Element(SageObject):
 
         INPUT:
 
-        - ``in_dict`` - (optional) dictionary of inputs
+        - ``in_dict`` -- (optional) dictionary of inputs
 
         - ``**kwds`` - named parameters
 
@@ -3203,7 +3203,7 @@ cdef class CommutativeRingElement(RingElement):
 
         INPUT:
 
-        - ``root`` - whether or not to also return a square
+        - ``root`` -- whether or not to also return a square
           root (default: ``False``)
 
         OUTPUT:

@@ -169,13 +169,13 @@ def ModularForms(group=1,
 
     INPUT:
 
-    - ``group`` - A congruence subgroup or a Dirichlet character eps.
+    - ``group`` -- A congruence subgroup or a Dirichlet character eps.
 
-    - ``weight`` - int, the weight, which must be an integer >= 1.
+    - ``weight`` -- int, the weight, which must be an integer >= 1.
 
-    - ``base_ring`` - the base ring (ignored if group is a Dirichlet character)
+    - ``base_ring`` -- the base ring (ignored if group is a Dirichlet character)
 
-    - ``eis_only`` - if True, compute only the Eisenstein part of the space.
+    - ``eis_only`` -- if True, compute only the Eisenstein part of the space.
       Only permitted (and only useful) in weight 1, where computing dimensions
       of cusp form spaces is expensive.
 

@@ -2876,7 +2876,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         - ``approx`` -- an individual or list of symbolic expressions in
           one variable
-        - ``alpha`` - a list of positive integers of length
+        - ``alpha`` -- a list of positive integers of length
           ``self.denominator_ring.ngens()``
         - ``interval`` -- a list of positive integers
         - ``exp_scale`` -- (optional; default: 1) a number
@@ -4125,7 +4125,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
     INPUT:
 
     - ``A, B`` -- Symbolic functions in the variable ``x``
-    - ``AB_derivs`` - a dictionary whose keys are the (symbolic)
+    - ``AB_derivs`` -- a dictionary whose keys are the (symbolic)
       derivatives of ``A`` up to order ``2 * N`` if ``v`` is even or
       ``N`` if ``v`` is odd and the (symbolic) derivatives of ``B``
       up to order ``2 * N + v`` if ``v`` is even or ``N + v``

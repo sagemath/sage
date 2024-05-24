@@ -356,7 +356,7 @@ def random_new_basis_modp(N, p, k, LWBModp, TotalBasisModp, elldash, bound):
     - ``LWBModp`` -- list of list of `q`-expansions modulo
       `(p,q^\text{elldash})`.
     - ``TotalBasisModp`` -- matrix over `\mathrm{GF}(p)`.
-    - ``elldash`` - positive integer.
+    - ``elldash`` -- positive integer.
     - ``bound`` -- positive even integer (twice the length of the list
       ``LWBModp``).
 

@@ -1448,7 +1448,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
 
         INPUT:
 
-        - ``poly_degree`` - default: 2 - degree of the random
+        - ``poly_degree`` -- default: 2 - degree of the random
           polynomial over the integers of which the returned algebraic
           real number is a (real part of a) root. This is not
           necessarily the degree of the minimal polynomial of the
@@ -1934,7 +1934,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
 
         INPUT:
 
-        - ``poly_degree`` - default: 2 - degree of the random polynomial over
+        - ``poly_degree`` -- default: 2 - degree of the random polynomial over
           the integers of which the returned algebraic number is a root. This
           is not necessarily the degree of the minimal polynomial of the
           number. Increase this parameter to achieve a greater diversity of
@@ -2336,8 +2336,8 @@ def do_polred(poly, threshold=32):
 
     INPUT:
 
-    - ``poly`` - a monic irreducible polynomial with integer coefficients
-    - ``threshold`` - an integer used to decide whether to run ``polredbest``
+    - ``poly`` -- a monic irreducible polynomial with integer coefficients
+    - ``threshold`` -- an integer used to decide whether to run ``polredbest``
 
     OUTPUT:
 
@@ -4226,11 +4226,11 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``extend`` - bool (default: True); ignored if self is in QQbar, or
+        - ``extend`` -- bool (default: True); ignored if self is in QQbar, or
           positive in AA. If self is negative in AA, do the following: if True,
           return a square root of self in QQbar, otherwise raise a ValueError.
 
-        - ``all`` - bool (default: False); if True, return a list of all square
+        - ``all`` -- bool (default: False); if True, return a list of all square
           roots. If False, return just one square root, or raise an ValueError
           if self is a negative element of AA and extend=False.
 

@@ -699,9 +699,9 @@ class P1NFList(SageObject):
 
         OUTPUT:
 
-        - ``u`` - the normalizing scalar (only if ``with_scalar=True``)
+        - ``u`` -- the normalizing scalar (only if ``with_scalar=True``)
 
-        - ``i`` - the index of `(c, d)` in the list.
+        - ``i`` -- the index of `(c, d)` in the list.
 
         EXAMPLES::
 
@@ -782,7 +782,7 @@ class P1NFList(SageObject):
 
         OUTPUT:
 
-        - ``i`` - the index of `(c, d)` in the list.
+        - ``i`` -- the index of `(c, d)` in the list.
 
         EXAMPLES::
 

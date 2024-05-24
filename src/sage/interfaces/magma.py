@@ -316,14 +316,14 @@ class Magma(ExtraTabCompletion, Expect):
 
         -  ``server`` - address of remote server
 
-        - ``server_tmpdir`` - temporary directory to use in remote server
+        - ``server_tmpdir`` -- temporary directory to use in remote server
 
         -  ``user_config`` - if True, then local user
            configuration files will be read by Magma. If False (the default),
            then Magma is started with the -n option which suppresses user
            configuration files.
 
-        - ``seed`` - Seed to use in the random number generator.
+        - ``seed`` -- Seed to use in the random number generator.
 
         -  ``command`` - (Default: 'magma') The command to execute to start Magma.
 
@@ -663,10 +663,10 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        - ``value`` - something coercible to an element of this Magma
+        - ``value`` -- something coercible to an element of this Magma
            interface
 
-        - ``gens`` - string; comma separated list of variable names
+        - ``gens`` -- string; comma separated list of variable names
 
 
         OUTPUT: new Magma element that is equal to value with given gens
@@ -1616,7 +1616,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``n`` - number of threads
+        - ``n`` -- number of threads
 
         EXAMPLES::
 
@@ -2834,10 +2834,10 @@ class MagmaGBLogPrettyPrinter:
 
         INPUT:
 
-        - ``verbosity`` - how much information should be printed
+        - ``verbosity`` -- how much information should be printed
           (between 0 and 1)
 
-        - ``style`` - if "magma" the full Magma log is printed; if
+        - ``style`` -- if "magma" the full Magma log is printed; if
           'sage' only the current degree and the number of pairs in
           the queue is printed (default: "magma").
 
@@ -3002,7 +3002,7 @@ class MagmaGBDefaultContext:
         """
         INPUT:
 
-        - ``magma`` - (default: ``magma_default``)
+        - ``magma`` -- (default: ``magma_default``)
 
         EXAMPLES::
 

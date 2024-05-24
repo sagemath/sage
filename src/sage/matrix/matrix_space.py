@@ -2657,9 +2657,9 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
 
     INPUT:
 
-    - ``ring`` - a ring
-    - ``sparse`` - a boolean
-    - ``checkrank`` - a boolean
+    - ``ring`` -- a ring
+    - ``sparse`` -- a boolean
+    - ``checkrank`` -- a boolean
 
     OUTPUT:
 

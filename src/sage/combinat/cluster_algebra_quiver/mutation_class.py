@@ -33,7 +33,7 @@ def _principal_part(mat):
 
     INPUT:
 
-    - ``mat`` - a matrix with at least as many rows as columns
+    - ``mat`` -- a matrix with at least as many rows as columns
 
     OUTPUT:
 

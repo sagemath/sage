@@ -641,7 +641,7 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``var`` - Variable with respect to which the derivative is computed
+            - ``var`` -- Variable with respect to which the derivative is computed
 
             OUTPUT:
 

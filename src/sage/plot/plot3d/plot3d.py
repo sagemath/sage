@@ -434,12 +434,12 @@ class _ArbitraryCoordinates(_Coordinates):
 
         INPUT:
 
-         - ``custom_trans`` - A 3-tuple of transformation
+         - ``custom_trans`` -- A 3-tuple of transformation
            functions.
 
-         - ``dep_var`` - The dependent (function) variable.
+         - ``dep_var`` -- The dependent (function) variable.
 
-         - ``indep_vars`` - a list of the two other independent
+         - ``indep_vars`` -- a list of the two other independent
            variables.
 
         EXAMPLES::

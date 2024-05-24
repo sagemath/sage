@@ -84,9 +84,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
 
     INPUT:
 
-    - ``x`` - a list or tuple instance
+    - ``x`` -- a list or tuple instance
 
-    - ``universe`` - (default: None) the universe of elements; if None
+    - ``universe`` -- (default: None) the universe of elements; if None
       determined using canonical coercions and the entire list of
       elements.  If list is empty, is category Objects() of all
       objects.
@@ -94,13 +94,13 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     - ``check`` -- (default: True) whether to coerce the elements of x
       into the universe
 
-    - ``immutable`` - (default: True) whether or not this sequence is
+    - ``immutable`` -- (default: True) whether or not this sequence is
       immutable
 
-    - ``cr`` - (default: False) if True, then print a carriage return
+    - ``cr`` -- (default: False) if True, then print a carriage return
       after each comma when printing this sequence.
 
-    - ``cr_str`` - (default: False) if True, then print a carriage return
+    - ``cr_str`` -- (default: False) if True, then print a carriage return
       after each comma when calling ``str()`` on this sequence.
 
     - ``use_sage_types`` -- (default: False) if True, coerce the
@@ -276,9 +276,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     INPUT:
 
-    - ``x`` - a list or tuple instance
+    - ``x`` -- a list or tuple instance
 
-    - ``universe`` - (default: None) the universe of elements; if None
+    - ``universe`` -- (default: None) the universe of elements; if None
       determined using canonical coercions and the entire list of
       elements.  If list is empty, is category Objects() of all
       objects.
@@ -286,10 +286,10 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
     - ``check`` -- (default: True) whether to coerce the elements of x
       into the universe
 
-    - ``immutable`` - (default: True) whether or not this sequence is
+    - ``immutable`` -- (default: True) whether or not this sequence is
       immutable
 
-    - ``cr`` - (default: False) if True, then print a carriage return
+    - ``cr`` -- (default: False) if True, then print a carriage return
       after each comma when printing this sequence.
 
     - ``use_sage_types`` -- (default: False) if True, coerce the
@@ -616,9 +616,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         INPUT:
 
-        - ``key`` - see Python ``list sort``
+        - ``key`` -- see Python ``list sort``
 
-        - ``reverse`` - see Python ``list sort``
+        - ``reverse`` -- see Python ``list sort``
 
         EXAMPLES::
 
@@ -845,7 +845,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
         INPUT:
 
-        - ``name`` - some string
+        - ``name`` -- some string
 
         TESTS::
 

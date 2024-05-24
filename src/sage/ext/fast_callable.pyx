@@ -2394,7 +2394,7 @@ class CompilerInstrSpec():
     The parameter list is a list of strings.  Each string is one of
     the following:
 
-    - ``'args'`` - The instruction argument refers to an input argument of the
+    - ``'args'`` -- The instruction argument refers to an input argument of the
       wrapper class; it is just appended to the code.
 
     - ``'constants'``, ``'py_constants'`` - The instruction argument is a value; the

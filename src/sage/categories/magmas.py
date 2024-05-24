@@ -845,7 +845,7 @@ class Magmas(Category_singleton):
 
             INPUT:
 
-            - ``names`` - the type of names used
+            - ``names`` -- the type of names used
 
               * ``'letters'`` - lowercase ASCII letters are used
                 for a base 26 representation of the elements'
@@ -860,7 +860,7 @@ class Magmas(Category_singleton):
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
-            - ``elements`` - default = ``None``.  A list of
+            - ``elements`` -- default = ``None``.  A list of
               elements of the magma, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an

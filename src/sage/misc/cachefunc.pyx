@@ -1553,7 +1553,7 @@ class CachedMethodPickle():
         """
         INPUT:
 
-        - ``inst`` - some instance.
+        - ``inst`` -- some instance.
         - ``name`` (string) - usually the name of an attribute
           of ``inst`` to which ``self`` is assigned.
 

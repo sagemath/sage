@@ -1403,7 +1403,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         INPUT:
 
-        - ``algorithm`` - the following algorithms should be available through
+        - ``algorithm`` -- the following algorithms should be available through
           this function:
 
           * ``'lrs'`` - This algorithm is only suited for 2 player games.

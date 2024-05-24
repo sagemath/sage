@@ -1559,7 +1559,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``variable`` - The variable with respect to which we compute
+        - ``variable`` -- The variable with respect to which we compute
           the discriminant
 
         OUTPUT: An element of the base ring of the polynomial ring.
@@ -1997,7 +1997,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``weights`` - Either individual numbers, an iterable or a dictionary,
+        - ``weights`` -- Either individual numbers, an iterable or a dictionary,
           specifying the weights of each variable. If it is a dictionary, it
           maps each variable of ``self`` to its weight. If it is a sequence of
           individual numbers or a tuple, the weights are specified in the order
@@ -2236,7 +2236,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``root`` - if set to ``True``, return a pair ``(True, root)``
+        - ``root`` -- if set to ``True``, return a pair ``(True, root)``
           where ``root`` is a square root or ``(False, None)`` if
           it is not a square.
 

@@ -1783,22 +1783,22 @@ cdef class Matrix_integer_dense(Matrix_dense):
             Up to 75 rows or columns with no transformation matrix,
             use pari with flag 0; otherwise, use flint.
 
-          - ``'flint'`` - use flint
+          - ``'flint'`` -- use flint
 
-          - ``'ntl'`` - use NTL (only works for square matrices of
+          - ``'ntl'`` -- use NTL (only works for square matrices of
             full rank!)
 
-          - ``'padic'`` - an asymptotically fast p-adic modular
+          - ``'padic'`` -- an asymptotically fast p-adic modular
             algorithm, If your matrix has large coefficients and is
             small, you may also want to try this.
 
-          - ``'pari'`` - use PARI with flag 1
+          - ``'pari'`` -- use PARI with flag 1
 
-          - ``'pari0'`` - use PARI with flag 0
+          - ``'pari0'`` -- use PARI with flag 0
 
-          - ``'pari1'`` - use PARI with flag 1
+          - ``'pari1'`` -- use PARI with flag 1
 
-          - ``'pari4'`` - use PARI with flag 4 (use heuristic LLL)
+          - ``'pari4'`` -- use PARI with flag 4 (use heuristic LLL)
 
         -  ``proof`` - (default: True); if proof=False certain
            determinants are computed using a randomized hybrid p-adic
@@ -2304,7 +2304,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
            - ``'pari'``: works robustly, but is slower.
 
-           - ``'linbox'`` - use linbox (currently off, broken)
+           - ``'linbox'`` -- use linbox (currently off, broken)
 
 
         OUTPUT: list of integers
@@ -2560,15 +2560,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``algorithm`` - determines which algorithm to use, options are:
+        - ``algorithm`` -- determines which algorithm to use, options are:
 
-          - 'flint' - use the algorithm from the FLINT library
-          - 'pari' - use the :pari:`matkerint` function from the PARI library
-          - 'padic' - use the p-adic algorithm from the IML library
-          - 'default' - use a heuristic to decide which of the three above
+          - 'flint' -- use the algorithm from the FLINT library
+          - 'pari' -- use the :pari:`matkerint` function from the PARI library
+          - 'padic' -- use the p-adic algorithm from the IML library
+          - 'default' -- use a heuristic to decide which of the three above
             routines is fastest.  This is the default value.
 
-        - ``proof`` - this is passed to the p-adic IML algorithm.
+        - ``proof`` -- this is passed to the p-adic IML algorithm.
           If not specified, the global flag for linear algebra will be used.
 
         OUTPUT:
@@ -3026,17 +3026,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         AVAILABLE ALGORITHMS:
 
-        - ``'NTL:LLL'`` - NTL's LLL + choice of ``fp``.
+        - ``'NTL:LLL'`` -- NTL's LLL + choice of ``fp``.
 
-        - ``'fpLLL:heuristic'`` - fpLLL's heuristic + choice of ``fp``.
+        - ``'fpLLL:heuristic'`` -- fpLLL's heuristic + choice of ``fp``.
 
-        - ``'fpLLL:fast'`` - fpLLL's fast + choice of ``fp``.
+        - ``'fpLLL:fast'`` -- fpLLL's fast + choice of ``fp``.
 
-        - ``'fpLLL:proved'`` - fpLLL's proved + choice of ``fp``.
+        - ``'fpLLL:proved'`` -- fpLLL's proved + choice of ``fp``.
 
-        - ``'fpLLL:wrapper'`` - fpLLL's automatic choice (default).
+        - ``'fpLLL:wrapper'`` -- fpLLL's automatic choice (default).
 
-        - ``'pari'`` - pari's qflll.
+        - ``'pari'`` -- pari's qflll.
 
         OUTPUT:
 
@@ -3683,15 +3683,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
           - ``'flint'`` -- let flint do the determinant
 
-          - ``'padic'`` -  uses a p-adic / multimodular
+          - ``'padic'`` --  uses a p-adic / multimodular
             algorithm that relies on code in IML and linbox
 
-          - ``'linbox'`` - calls linbox det (you *must* set
+          - ``'linbox'`` -- calls linbox det (you *must* set
             proof=False to use this!)
 
-          - ``'ntl'`` - calls NTL's det function
+          - ``'ntl'`` -- calls NTL's det function
 
-          - ``'pari'`` - uses PARI
+          - ``'pari'`` -- uses PARI
 
         -  ``proof`` - bool or None; if None use
            proof.linear_algebra(); only relevant for the padic algorithm.
@@ -4210,7 +4210,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         -  ``check_rank`` - bool (default: True); if True
            verify that in fact the rank is full.
 
-        - ``algorithm`` - ``'iml'`` (default) or ``'flint'``
+        - ``algorithm`` -- ``'iml'`` (default) or ``'flint'``
 
         OUTPUT: a matrix or vector over `\QQ`
 
@@ -4641,7 +4641,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``self`` - a matrix over the integers.
 
-        - ``solver`` - either ``'iml'`` (default) or ``'flint'``
+        - ``solver`` -- either ``'iml'`` (default) or ``'flint'``
 
         OUTPUT:
 
@@ -5363,10 +5363,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix, vector or free module element, whose
+        - ``right`` -- a matrix, vector or free module element, whose
           dimensions are compatible with ``self``.
 
-        - ``subdivide`` - default: ``False`` - request the resulting
+        - ``subdivide`` -- default: ``False`` - request the resulting
           matrix to have a new subdivision, separating ``self`` from ``right``.
 
         OUTPUT:
@@ -5448,9 +5448,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``index`` - integer
+        - ``index`` -- integer
 
-        - ``row`` - a vector
+        - ``row`` -- a vector
 
         EXAMPLES::
 

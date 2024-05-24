@@ -302,7 +302,7 @@ class multiples:
 
         - ``P`` -- step value: any Sage object on which a binary operation is defined
         - ``n`` -- number of multiples: non-negative integer
-        - ``P0`` - offset (default 0): Sage object which can be 'added' to P
+        - ``P0`` -- offset (default 0): Sage object which can be 'added' to P
         - ``indexed`` -- boolean (default ``False``)
 
           If ``indexed==False``, then the iterator delivers ``P0+i*P``

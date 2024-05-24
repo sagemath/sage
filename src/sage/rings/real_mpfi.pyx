@@ -1708,14 +1708,14 @@ cdef class RealIntervalFieldElement(RingElement):
 
         INPUT:
 
-          - ``base`` - base for output
+          - ``base`` -- base for output
 
-          - ``error_digits`` - maximum number of decimal digits for error
+          - ``error_digits`` -- maximum number of decimal digits for error
 
-          - ``e`` - symbol for exponent (typically ``'e'`` for base
+          - ``e`` -- symbol for exponent (typically ``'e'`` for base
             less than or equal to 10, ``'@'`` for larger base)
 
-          - ``prefer_sci`` - ``True`` to always print in scientific notation;
+          - ``prefer_sci`` -- ``True`` to always print in scientific notation;
             ``False`` to prefer non-scientific notation when
             possible
 

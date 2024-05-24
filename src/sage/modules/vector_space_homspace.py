@@ -253,7 +253,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         r"""
         INPUT:
 
-        - ``A`` - one of several possible inputs representing
+        - ``A`` -- one of several possible inputs representing
           a morphism from this vector space homspace.
 
           - a vector space morphism in this homspace

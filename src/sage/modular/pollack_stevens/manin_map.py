@@ -654,7 +654,7 @@ class ManinMap():
 
         INPUT:
 
-        - ``gamma`` - `2 \times 2` integer matrix of nonzero determinant, with a
+        - ``gamma`` -- `2 \times 2` integer matrix of nonzero determinant, with a
           well-defined action on the coefficient module
 
         OUTPUT:

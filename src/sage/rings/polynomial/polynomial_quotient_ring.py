@@ -1266,7 +1266,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         INPUT:
 
-        - ``degree`` - Optional argument: either an integer for fixing the
+        - ``degree`` -- Optional argument: either an integer for fixing the
           degree, or a tuple of the minimum and maximum degree. By default the
           degree is n - 1 with n the degree of the polynomial ring. Note that
           the degree of the polynomial is fixed before the modulo calculation.
@@ -1398,9 +1398,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         INPUT:
 
-        - ``S`` - a set of primes of the coefficient ring
+        - ``S`` -- a set of primes of the coefficient ring
 
-        - ``proof`` - if False, assume the GRH in computing the class group
+        - ``proof`` -- if False, assume the GRH in computing the class group
 
         OUTPUT:
 
@@ -1572,7 +1572,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         INPUT:
 
-        - ``proof`` - if False, assume the GRH in computing the class group
+        - ``proof`` -- if False, assume the GRH in computing the class group
 
         OUTPUT:
 
@@ -1681,9 +1681,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         INPUT:
 
-        - ``S`` - a set of primes of the base field
+        - ``S`` -- a set of primes of the base field
 
-        - ``proof`` - if False, assume the GRH in computing the class group
+        - ``proof`` -- if False, assume the GRH in computing the class group
 
         OUTPUT:
 
@@ -1778,7 +1778,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         INPUT:
 
-        - ``proof`` - if False, assume the GRH in computing the class group
+        - ``proof`` -- if False, assume the GRH in computing the class group
 
         OUTPUT:
 
@@ -1857,11 +1857,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         INPUT:
 
-        - ``S`` - A set of primes of the coefficient ring (which is a number field).
+        - ``S`` -- A set of primes of the coefficient ring (which is a number field).
 
-        - ``m`` - a positive integer
+        - ``m`` -- a positive integer
 
-        - ``proof`` - if False, assume the GRH in computing the class group
+        - ``proof`` -- if False, assume the GRH in computing the class group
 
         OUTPUT:
 

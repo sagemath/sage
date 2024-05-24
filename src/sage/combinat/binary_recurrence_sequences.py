@@ -516,9 +516,9 @@ class BinaryRecurrenceSequence(SageObject):
 
         INPUT:
 
-        - ``p`` - a rational prime integer (the fixed p in `u_n = y^p`)
+        - ``p`` -- a rational prime integer (the fixed p in `u_n = y^p`)
 
-        - ``Bound`` - a natural number (the maximum index `n` in `u_n = y^p` that is checked).
+        - ``Bound`` -- a natural number (the maximum index `n` in `u_n = y^p` that is checked).
 
         OUTPUT:
 

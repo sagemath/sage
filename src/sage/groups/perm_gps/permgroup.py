@@ -2471,7 +2471,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``other`` - a permutation group.
+        - ``other`` -- a permutation group.
 
         OUTPUT:
 
@@ -2728,7 +2728,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``N`` - A group which is acted on by ``self`` and
+        - ``N`` -- A group which is acted on by ``self`` and
           naturally embeds as a normal subgroup of the returned semidirect
           product.
 

@@ -602,11 +602,11 @@ def prepare(v, R, degree=None):
 
     INPUT:
 
-    - ``v`` - a dictionary with non-negative integers as keys,
+    - ``v`` -- a dictionary with non-negative integers as keys,
       or a list or other object that can be converted by the ``Sequence``
       constructor
-    - ``R`` - a ring containing all the entries, possibly given as ``None``
-    - ``degree`` -  a requested size for the list when the input is a dictionary,
+    - ``R`` -- a ring containing all the entries, possibly given as ``None``
+    - ``degree`` --  a requested size for the list when the input is a dictionary,
       otherwise ignored
 
     OUTPUT:
@@ -704,10 +704,10 @@ def zero_vector(arg0, arg1=None):
 
     INPUT:
 
-    - ``degree`` - the number of zero entries in the vector or
+    - ``degree`` -- the number of zero entries in the vector or
       free module element
 
-    - ``ring`` - default ``ZZ`` - the base ring of the vector
+    - ``ring`` -- default ``ZZ`` - the base ring of the vector
       space or module containing the constructed zero vector
 
     OUTPUT:
@@ -1672,7 +1672,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``p`` - default: 2 -- ``p`` can be a real number greater than 1,
+        - ``p`` -- default: 2 -- ``p`` can be a real number greater than 1,
           infinity (``oo`` or ``Infinity``), or a symbolic expression.
 
           - `p=1`: the taxicab (Manhattan) norm
@@ -2289,7 +2289,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         INPUT:
 
-        - ``plot_type`` - (default: 'arrow' if v has 3 or fewer components,
+        - ``plot_type`` -- (default: 'arrow' if v has 3 or fewer components,
             otherwise 'step') type of plot. Options are:
 
             - 'arrow' to draw an arrow
@@ -2303,7 +2303,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
           Both 'arrow' and 'point' raise exceptions if the vector has
           more than 3 dimensions.
 
-        - ``start`` - (default: origin in correct dimension) may be a tuple,
+        - ``start`` -- (default: origin in correct dimension) may be a tuple,
           list, or vector.
 
         EXAMPLES:
@@ -2651,7 +2651,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - A vector of the same size as ``self``, either
+        - ``right`` -- A vector of the same size as ``self``, either
           degree three or degree seven.
 
         OUTPUT:
@@ -3260,7 +3260,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector of the same degree as ``self``
+        - ``right`` -- a vector of the same degree as ``self``
 
         OUTPUT:
 
@@ -3364,7 +3364,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector (or free module element) of any size, whose
+        - ``right`` -- a vector (or free module element) of any size, whose
           elements are compatible (with regard to multiplication) with the
           elements of ``self``.
 
@@ -3483,7 +3483,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector of the same degree as ``self``
+        - ``right`` -- a vector of the same degree as ``self``
 
         OUTPUT:
 

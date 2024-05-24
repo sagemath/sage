@@ -1113,8 +1113,8 @@ cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
     - A tuple of arrays, [``dr``, ``dtheta``], with each array 2 less in both
       dimensions than ``z_values``
 
-      - ``dr`` - the abs of the derivative of the function in the +r direction
-      - ``dtheta`` - the rate of accumulation of angle in the +theta direction
+      - ``dr`` -- the abs of the derivative of the function in the +r direction
+      - ``dtheta`` -- the rate of accumulation of angle in the +theta direction
 
     EXAMPLES:
 

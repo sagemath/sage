@@ -208,9 +208,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``var`` - string (default: 'x')
+        - ``var`` -- string (default: 'x')
 
-        - ``algorithm`` - string (default: 'pari')
+        - ``algorithm`` -- string (default: 'pari')
 
           - 'pari' -- use pari's minpoly
 

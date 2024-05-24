@@ -1926,7 +1926,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
            the resulting matrix is going to be defined.
            By default, the output of :meth:`sage_global_ring` is used.
 
-        - ``sparse`` - (default: True); determines whether the
+        - ``sparse`` -- (default: True); determines whether the
           resulting matrix is sparse or not.
 
         EXAMPLES::
@@ -2417,7 +2417,7 @@ def get_docstring(name):
 
     INPUT:
 
-    - ``name`` - a Singular function name
+    - ``name`` -- a Singular function name
 
     EXAMPLES::
 
@@ -2519,7 +2519,7 @@ class SingularGBLogPrettyPrinter:
 
         INPUT:
 
-        - ``verbosity`` - how much information should be printed
+        - ``verbosity`` -- how much information should be printed
           (between 0 and 3)
 
         EXAMPLES::

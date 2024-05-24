@@ -453,7 +453,7 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``projection_point`` - The projection point. This must be
+        - ``projection_point`` -- The projection point. This must be
           distinct from the polyhedron's vertices. Default is `(1,0,\dots,0)`
 
         EXAMPLES::

@@ -18525,10 +18525,10 @@ class GenericGraph(GenericGraph_pyx):
 
           - For ``by_weight==False`` only:
 
-            - ``'BFS'`` - the computation is done through a BFS centered on
+            - ``'BFS'`` -- the computation is done through a BFS centered on
               each vertex successively.
 
-            - ``'Floyd-Warshall-Cython'`` - the Cython implementation of
+            - ``'Floyd-Warshall-Cython'`` -- the Cython implementation of
               the Floyd-Warshall algorithm. Usually slower than ``'BFS'``.
 
           - For graphs without negative weights:
@@ -18547,7 +18547,7 @@ class GenericGraph(GenericGraph_pyx):
             - ``'Johnson_Boost'``: the Johnson algorithm, implemented in
               Boost.
 
-            - ``'Floyd-Warshall-Python'`` - the Python implementation of
+            - ``'Floyd-Warshall-Python'`` -- the Python implementation of
               the Floyd-Warshall algorithm. Usually slower than
               ``'Johnson_Boost'``.
 

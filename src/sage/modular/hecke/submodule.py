@@ -59,16 +59,16 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         INPUT:
 
-        - ``ambient`` - an ambient Hecke module
+        - ``ambient`` -- an ambient Hecke module
 
-        - ``submodule`` - a free module over the base ring which is a submodule
+        - ``submodule`` -- a free module over the base ring which is a submodule
           of the free module attached to the ambient Hecke module. This should
           be invariant under all Hecke operators.
 
-        - ``dual_free_module`` - the submodule of the dual of the ambient
+        - ``dual_free_module`` -- the submodule of the dual of the ambient
           module corresponding to this submodule (or None).
 
-        - ``check`` - whether or not to explicitly check that the submodule is
+        - ``check`` -- whether or not to explicitly check that the submodule is
           Hecke equivariant.
 
         EXAMPLES::

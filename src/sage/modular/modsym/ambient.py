@@ -119,11 +119,11 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
     INPUT:
 
-    - ``weight`` - an integer
-    - ``group`` - a congruence subgroup.
-    - ``sign`` - an integer, either -1, 0, or 1
-    - ``base_ring`` - a commutative ring
-    - ``custom_init`` - a function that is called with self as input
+    - ``weight`` -- an integer
+    - ``group`` -- a congruence subgroup.
+    - ``sign`` -- an integer, either -1, 0, or 1
+    - ``base_ring`` -- a commutative ring
+    - ``custom_init`` -- a function that is called with self as input
       before any computations are done using self; this could be used
       to set a custom modular symbols presentation.
 
@@ -2052,7 +2052,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         OUTPUT:
 
-            - ``matrix`` - the matrix of the diamond bracket operator
+            - ``matrix`` -- the matrix of the diamond bracket operator
               on this space.
 
         EXAMPLES::
@@ -3535,7 +3535,7 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
 
         -  ``sign`` - int, either -1, 0, or 1
 
-        - ``base_ring`` - the base ring. It must be possible to change the ring
+        - ``base_ring`` -- the base ring. It must be possible to change the ring
           of the character to this base ring (not always canonically).
 
 

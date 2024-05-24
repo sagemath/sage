@@ -1926,7 +1926,7 @@ class AffineConnection(SageObject):
              differentiable manifold M
             sage: r.display(eU)             # long time
             (x^2*y - x*y^2) ∂/∂x⊗dx⊗dx⊗dy + (-x^2*y + x*y^2) ∂/∂x⊗dx⊗dy⊗dx + ∂/∂x⊗dy⊗dx⊗dy
-             - ∂/∂x⊗dy⊗dy⊗dx - (x^2 - 1)*y ∂/∂y⊗dx⊗dx⊗dy + (x^2 - 1)*y ∂/∂y⊗dx⊗dy⊗dx
+             - ∂/∂x⊗dy⊗dy⊗dx -- (x^2 - 1)*y ∂/∂y⊗dx⊗dx⊗dy + (x^2 - 1)*y ∂/∂y⊗dx⊗dy⊗dx
              + (-x^2*y + x*y^2) ∂/∂y⊗dy⊗dx⊗dy + (x^2*y - x*y^2) ∂/∂y⊗dy⊗dy⊗dx
             sage: r.display(eV)             # long time
             (1/32*u^3 - 1/32*u*v^2 - 1/32*v^3 + 1/32*(u^2 + 4)*v - 1/8*u - 1/4) ∂/∂u⊗du⊗du⊗dv

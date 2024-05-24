@@ -1295,9 +1295,9 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- a string monoid over some alphabet
 
-    - ``m`` - integer `> 0`; the block length of matrices that specify
+    - ``m`` -- integer `> 0`; the block length of matrices that specify
       block permutations
 
     OUTPUT:
@@ -1339,9 +1339,9 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``S`` - a string monoid over some alphabet
+        - ``S`` -- a string monoid over some alphabet
 
-        - ``m`` - integer `> 0`; the block length of matrices that specify
+        - ``m`` -- integer `> 0`; the block length of matrices that specify
           block permutations
 
         OUTPUT:
@@ -1366,7 +1366,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` - a matrix which specifies a block permutation
+        - ``A`` -- a matrix which specifies a block permutation
 
         EXAMPLES::
 
@@ -1575,9 +1575,9 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` - a key within the key space of this Hill cipher
+        - ``A`` -- a key within the key space of this Hill cipher
 
-        - ``M`` - a string (possibly empty) over the string monoid of this
+        - ``M`` -- a string (possibly empty) over the string monoid of this
           Hill cipher.
 
         OUTPUT:
@@ -3014,7 +3014,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- a string monoid over some alphabet
 
     OUTPUT:
 
@@ -3063,7 +3063,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key which is a permutation of the cryptosystem alphabet
+        - ``K`` -- a key which is a permutation of the cryptosystem alphabet
 
         EXAMPLES::
 
@@ -3136,7 +3136,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this cryptosystem
+        - ``K`` -- a key belonging to the key space of this cryptosystem
 
         OUTPUT:
 
@@ -3169,7 +3169,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` - a string, possibly empty
+        - ``M`` -- a string, possibly empty
 
         OUTPUT:
 
@@ -3197,9 +3197,9 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this substitution cipher
+        - ``K`` -- a key belonging to the key space of this substitution cipher
 
-        - ``C`` - a string (possibly empty) over the string monoid of this
+        - ``C`` -- a string (possibly empty) over the string monoid of this
           cryptosystem.
 
         OUTPUT:
@@ -3223,9 +3223,9 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this substitution cipher
+        - ``K`` -- a key belonging to the key space of this substitution cipher
 
-        - ``M`` - a string (possibly empty) over the string monoid of this
+        - ``M`` -- a string (possibly empty) over the string monoid of this
           cryptosystem.
 
         OUTPUT:
@@ -3249,9 +3249,9 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- a string monoid over some alphabet
 
-    - ``n`` - integer `> 0`; a block length of a block permutation
+    - ``n`` -- integer `> 0`; a block length of a block permutation
 
     OUTPUT:
 
@@ -3299,7 +3299,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key which specifies a block permutation
+        - ``K`` -- a key which specifies a block permutation
 
         EXAMPLES::
 

@@ -115,20 +115,20 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``verbose`` - boolean (default: ``False``); if ``True``, print the
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
           whole output of the LattE command.
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
         <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-        - ``dual`` - boolean; triangulate and signed-decompose in the dual
+        - ``dual`` -- boolean; triangulate and signed-decompose in the dual
           space
 
-        - ``irrational_primal`` - boolean; triangulate in the dual space,
+        - ``irrational_primal`` -- boolean; triangulate in the dual space,
           signed-decompose in the primal space using irrationalization.
 
-        - ``irrational_all_primal`` - boolean; triangulate and signed-decompose
+        - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
           in the primal space using irrationalization.
 
         - ``maxdet`` -- integer; decompose down to an index (determinant) of
@@ -142,9 +142,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         - ``dualization`` -- string; either 'cdd' or '4ti2'
 
-        - ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
+        - ``triangulation`` -- string; 'cddlib', '4ti2' or 'topcom'
 
-        - ``triangulation_max_height`` - integer; use a uniform distribution of
+        - ``triangulation_max_height`` -- integer; use a uniform distribution of
           height from 1 to this number
 
         .. NOTE::

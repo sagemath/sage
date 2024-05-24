@@ -762,12 +762,12 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         - ``color_map``, ``link_color_map``, ``loop_color_map`` - (string,
           optional) a name of a matplotlib color map for the link or the loop
 
-        - ``link_color_randomize`` - (boolean, default ``False``) when
+        - ``link_color_randomize`` -- (boolean, default ``False``) when
           ``link_colors`` or ``link_color_map`` is specified it randomizes
           its order. Setting this option to ``True`` makes it unlikely to
           have two neighboring links with the same color.
 
-        - ``loop_fill`` - (boolean, optional) whether to fill the interior of the loops
+        - ``loop_fill`` -- (boolean, optional) whether to fill the interior of the loops
 
         EXAMPLES:
 

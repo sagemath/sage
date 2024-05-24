@@ -32,12 +32,12 @@ class QuotientRingElement(RingElement):
 
     INPUT:
 
-    - ``parent`` - the ring `R/I`
+    - ``parent`` -- the ring `R/I`
 
-    - ``rep`` - a representative of the element in `R`; this is used
+    - ``rep`` -- a representative of the element in `R`; this is used
       as the internal representation of the element
 
-    - ``reduce`` - bool (optional, default: True) - if True, then the
+    - ``reduce`` -- bool (optional, default: True) - if True, then the
       internal representation of the element is ``rep`` reduced modulo
       the ideal `I`
 

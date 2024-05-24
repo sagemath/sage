@@ -943,7 +943,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         INPUT:
 
-        - ``i`` - element of the index_set of the underlying root_system.
+        - ``i`` -- element of the index_set of the underlying root_system.
 
         OUTPUT:
 

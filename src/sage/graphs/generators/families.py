@@ -1623,7 +1623,7 @@ def FibonacciTree(n):
 
     INPUT:
 
-    - ``n`` - the recursion depth of the Fibonacci Tree
+    - ``n`` -- the recursion depth of the Fibonacci Tree
 
     EXAMPLES::
 
@@ -1687,9 +1687,9 @@ def GeneralizedPetersenGraph(n, k):
 
     INPUT:
 
-    - ``n`` - the number of nodes is `2*n`.
+    - ``n`` -- the number of nodes is `2*n`.
 
-    - ``k`` - integer `0<k\leq\lfloor(n-1)`/`2\rfloor`. Decides
+    - ``k`` -- integer `0<k\leq\lfloor(n-1)`/`2\rfloor`. Decides
       how inner vertices are connected.
 
     PLOTTING: Upon construction, the position dictionary is filled to
@@ -2756,12 +2756,12 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
 
     INPUT:
 
-    - ``pegs`` - the number of pegs in the puzzle, 2 or greater
-    - ``disks`` - the number of disks in the puzzle, 1 or greater
-    - ``labels`` - default: ``True``, if ``True`` the graph contains
+    - ``pegs`` -- the number of pegs in the puzzle, 2 or greater
+    - ``disks`` -- the number of disks in the puzzle, 1 or greater
+    - ``labels`` -- default: ``True``, if ``True`` the graph contains
       more meaningful labels, see explanation below.  For large instances,
       turn off labels for much faster creation of the graph.
-    - ``positions`` - default: ``True``, if ``True`` the graph contains
+    - ``positions`` -- default: ``True``, if ``True`` the graph contains
       layout information.  This creates a planar layout for the case
       of three pegs.  For large instances, turn off layout information
       for much faster creation of the graph.

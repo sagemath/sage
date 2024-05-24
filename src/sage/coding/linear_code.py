@@ -251,7 +251,7 @@ def _dump_code_in_leon_format(C):
 
     INPUT:
 
-    - ``C`` - a linear code (over GF(p), p < 11)
+    - ``C`` -- a linear code (over GF(p), p < 11)
 
     OUTPUT:
 
@@ -1544,7 +1544,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``algorithm`` - If ``"gap"`` then GAP's MatrixAutomorphism function
+        - ``algorithm`` -- If ``"gap"`` then GAP's MatrixAutomorphism function
           (written by Thomas Breuer) is used. The implementation combines an
           idea of mine with an improvement suggested by Cary Huffman. If
           ``"gap+verbose"`` then code-theoretic data is printed out at

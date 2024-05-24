@@ -337,22 +337,22 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
     -  ``c`` - the number of columns in the state array (default: 1)
     -  ``e`` - the exponent of the finite extension field (default: 4)
     -  ``star`` - determines if SR\* or SR should be constructed (default: ``False``)
-    - ``aes_mode`` - as the SR key schedule specification differs
+    - ``aes_mode`` -- as the SR key schedule specification differs
       slightly from the AES key schedule, this parameter controls
       which schedule to use (default: ``True``)
-    - ``gf2`` - generate polynomial systems over `\GF{2}` rather than
+    - ``gf2`` -- generate polynomial systems over `\GF{2}` rather than
       over `\GF{2^e}` (default: ``False``)
-    - ``polybori`` - use the ``BooleanPolynomialRing`` as polynomial
+    - ``polybori`` -- use the ``BooleanPolynomialRing`` as polynomial
       representation (default: ``True``, `\GF{2}` only)
-    - ``order`` - a string to specify the term ordering of the
+    - ``order`` -- a string to specify the term ordering of the
       variables (default: ``deglex``)
-    - ``postfix`` - a string which is appended after the variable name
+    - ``postfix`` -- a string which is appended after the variable name
       (default: '')
-    - ``allow_zero_inversions`` - a boolean to control whether zero
+    - ``allow_zero_inversions`` -- a boolean to control whether zero
       inversions raise an exception (default: ``False``)
-    - ``correct_only`` - only include correct inversion polynomials
+    - ``correct_only`` -- only include correct inversion polynomials
       (default: ``False``, `\GF{2}` only)
-    - ``biaffine_only`` - only include bilinear and biaffine inversion
+    - ``biaffine_only`` -- only include bilinear and biaffine inversion
       polynomials (default: ``True``, `\GF{2}` only)
 
 
@@ -793,7 +793,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``inversion_only`` - do not include the `\GF{2}` affine map when
+        - ``inversion_only`` -- do not include the `\GF{2}` affine map when
           computing the S-Box (default: ``False``)
 
         EXAMPLES::
@@ -887,7 +887,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``d`` - state array or something coercible to a state array
+        - ``d`` -- state array or something coercible to a state array
 
         EXAMPLES::
 
@@ -1215,10 +1215,10 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``P`` - plaintext as state array or something coercible to a
+        - ``P`` -- plaintext as state array or something coercible to a
           qstate array
 
-        - ``K`` - key as state array or something coercible to a state
+        - ``K`` -- key as state array or something coercible to a state
           array
 
         TESTS:
@@ -1554,10 +1554,10 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``name`` - variable name
-        - ``nr`` - number of round to create variable strings for
-        - ``rc`` - row*column index in state array
-        - ``e`` - exponent of base field
+        - ``name`` -- variable name
+        - ``nr`` -- number of round to create variable strings for
+        - ``rc`` -- row*column index in state array
+        - ``e`` -- exponent of base field
 
         EXAMPLES::
 
@@ -1574,10 +1574,10 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``name`` - variable name
-        - ``nr`` - number of round to create variable strings for
-        - ``rc`` - number of rows * number of columns in the state array (default: ``None``)
-        - ``e`` - exponent of base field (default: ``None``)
+        - ``name`` -- variable name
+        - ``nr`` -- number of round to create variable strings for
+        - ``rc`` -- number of rows * number of columns in the state array (default: ``None``)
+        - ``e`` -- exponent of base field (default: ``None``)
 
         EXAMPLES::
 
@@ -1604,10 +1604,10 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``name`` - variable name
-        - ``nr`` - number of round to create variable strings for
-        - ``rc`` - number of rounds * number of columns in the state array (default: ``None``)
-        - ``e`` - exponent of base field (default: ``None``)
+        - ``name`` -- variable name
+        - ``nr`` -- number of round to create variable strings for
+        - ``rc`` -- number of rounds * number of columns in the state array (default: ``None``)
+        - ``e`` -- exponent of base field (default: ``None``)
 
         EXAMPLES::
 
@@ -1735,15 +1735,15 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``order`` - a monomial ordering (default: ``None``)
-        - ``reverse_variables`` - reverse rounds of variables (default: ``True``)
+        - ``order`` -- a monomial ordering (default: ``None``)
+        - ``reverse_variables`` -- reverse rounds of variables (default: ``True``)
 
         The variable assignment is as follows:
 
-        - `k_{i,j,l}` - subkey round `i` word `j` conjugate/bit `l`
-        - `s_{i,j,l}` - subkey inverse round `i` word `j` conjugate/bit `l`
-        - `w_{i,j,l}` - inversion input round `i` word `j` conjugate/bit `l`
-        - `x_{i,j,l}` - inversion output round `i` word `j` conjugate/bit `l`
+        - `k_{i,j,l}` -- subkey round `i` word `j` conjugate/bit `l`
+        - `s_{i,j,l}` -- subkey inverse round `i` word `j` conjugate/bit `l`
+        - `w_{i,j,l}` -- inversion input round `i` word `j` conjugate/bit `l`
+        - `x_{i,j,l}` -- inversion output round `i` word `j` conjugate/bit `l`
 
 
         Note that the variables are ordered in column major ordering
@@ -1993,9 +1993,9 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``P`` - vector, list, or tuple (default: ``None``)
-        - ``K`` - vector, list, or tuple (default: ``None``)
-        - ``C`` - vector, list, or tuple (default: ``None``)
+        - ``P`` -- vector, list, or tuple (default: ``None``)
+        - ``K`` -- vector, list, or tuple (default: ``None``)
+        - ``C`` -- vector, list, or tuple (default: ``None``)
 
         EXAMPLES::
 
@@ -2580,7 +2580,7 @@ class SR_gf2(SR_generic):
         INPUT:
 
         -  ``l`` - element to perform `\phi` on.
-        - ``diffusion_matrix`` - if ``True``, the given matrix ``l`` is
+        - ``diffusion_matrix`` -- if ``True``, the given matrix ``l`` is
           transformed to a matrix which performs the same operation
           over `\GF{2}` as ``l`` over `\GF{2^n}` (default: ``False``).
 
@@ -2637,7 +2637,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        - ``l`` - a vector in the sense of ``self.is_vector``
+        - ``l`` -- a vector in the sense of ``self.is_vector``
 
         EXAMPLES::
 
@@ -2845,9 +2845,9 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        - ``xi`` - output variables
-        - ``wi`` - input variables
-        - ``length`` - length of both lists
+        - ``xi`` -- output variables
+        - ``wi`` -- input variables
+        - ``length`` -- length of both lists
 
         EXAMPLES::
 
@@ -3058,10 +3058,10 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        - ``x`` - output variables (default: ``None``)
-        - ``w`` - input variables  (default: ``None``)
-        - ``biaffine_only`` - only include biaffine polynomials (default: object default)
-        - ``correct_only`` - only include correct polynomials (default: object default)
+        - ``x`` -- output variables (default: ``None``)
+        - ``w`` -- input variables  (default: ``None``)
+        - ``biaffine_only`` -- only include biaffine polynomials (default: object default)
+        - ``correct_only`` -- only include correct polynomials (default: object default)
 
         EXAMPLES::
 
@@ -3215,11 +3215,11 @@ class SR_gf2_2(SR_gf2):
 
         INPUT:
 
-        - ``x`` - output variables (default: ``None``)
-        - ``w`` - input variables  (default: ``None``)
-        - ``biaffine_only`` - ignored (always ``False``)
-        - ``correct_only`` - ignored (always ``True``)
-        - ``groebner`` - precompute the Groebner basis for this S-Box (default: ``False``).
+        - ``x`` -- output variables (default: ``None``)
+        - ``w`` -- input variables  (default: ``None``)
+        - ``biaffine_only`` -- ignored (always ``False``)
+        - ``correct_only`` -- ignored (always ``True``)
+        - ``groebner`` -- precompute the Groebner basis for this S-Box (default: ``False``).
 
         EXAMPLES::
 

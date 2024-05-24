@@ -1139,31 +1139,31 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``g`` - a rational map of `\mathbb{P}^1` given as a projective morphism.
+        - ``g`` -- a rational map of `\mathbb{P}^1` given as a projective morphism.
           ``g`` and ``self`` should have the same field of definition.
 
         kwds:
 
-        - ``n`` - (default: 5) a positive integer
+        - ``n`` -- (default: 5) a positive integer
           Order of periodic points to use or preimages to take if starting points are specified.
 
-        - ``f_starting_point`` - (optional, default: ``None``) value in the base number field or None.
+        - ``f_starting_point`` -- (optional, default: ``None``) value in the base number field or None.
           If ``f_starting_point`` is None, we solve for points of period ``n`` for ``self``.
           Otherwise, we take ``n``-th preimages of the point given by ``f_starting_point``
           under ``f`` on the affine line.
 
-        - ``g_starting_point`` - (optional, default: ``None``) value in the base number field or None.
+        - ``g_starting_point`` -- (optional, default: ``None``) value in the base number field or None.
           If ``g_starting_point`` is None, we solve for points of period ``n`` for ``g``.
           Otherwise, we take ``n``-th preimages of the point given by ``g_starting_point``
           under ``g`` on the affine line.
 
-        - ``check_primes_of_bad_reduction`` - (optional, default: ``False``) boolean.
+        - ``check_primes_of_bad_reduction`` -- (optional, default: ``False``) boolean.
           Passed to the ``primes_of_bad_reduction`` function for ``self`` and ``g``.
 
-        - ``prec`` - (optional, default: ``RealField`` default)
+        - ``prec`` -- (optional, default: ``RealField`` default)
           default precision for RealField values which are returned.
 
-        - ``noise_multiplier`` - (default: 2) a real number.
+        - ``noise_multiplier`` -- (default: 2) a real number.
           Discriminant terms involved in the computation at the archimedean places
           are often not needed, particularly if the capacity of the Julia sets is 1,
           and introduce a lot of error. By a well-known result of Mahler (see
@@ -4317,9 +4317,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` - a positive integer, the period
+        - ``n`` -- a positive integer, the period
 
-        - ``m`` - a non negative integer, the preperiod
+        - ``m`` -- a non negative integer, the preperiod
 
         kwds:
 
@@ -4660,7 +4660,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` - a positive integer
+        - ``n`` -- a positive integer
 
         - ``minimal`` -- (default: ``True``) boolean; ``True`` specifies to
           find only the periodic points of minimal period ``n`` and ``False``

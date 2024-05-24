@@ -43,12 +43,12 @@ class WordDatatype_morphic(WordDatatype_callable):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        - ``morphism`` - a word morphism
-        - ``letter`` - a starting letter
-        - ``coding`` - dict (default: ``None``), if ``None``
+        - ``parent`` -- a parent
+        - ``morphism`` -- a word morphism
+        - ``letter`` -- a starting letter
+        - ``coding`` -- dict (default: ``None``), if ``None``
           the identity map is used for the coding
-        - ``length`` - integer or ``'finite'`` or ``Infinity`` or
+        - ``length`` -- integer or ``'finite'`` or ``Infinity`` or
           ``'unknown'`` (default: ``Infinity``) the length of the word
 
         EXAMPLES::
@@ -243,8 +243,8 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         INPUT:
 
-        - ``self`` - a fixed point of a morphism
-        - ``key`` - an integer, the position
+        - ``self`` -- a fixed point of a morphism
+        - ``key`` -- an integer, the position
 
         OUTPUT:
 
@@ -291,10 +291,10 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         INPUT:
 
-        - ``self`` - an endomorphism, must be prolongable on
+        - ``self`` -- an endomorphism, must be prolongable on
            letter
 
-        - ``letter`` - a letter in the domain of ``self``
+        - ``letter`` -- a letter in the domain of ``self``
 
         OUTPUT:
 

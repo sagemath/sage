@@ -347,7 +347,7 @@ def line2d(points, **options):
 
     Any MATPLOTLIB line option may also be passed in.  E.g.,
 
-    - ``linestyle`` - (default: "-") The style of the line, which is one of
+    - ``linestyle`` -- (default: "-") The style of the line, which is one of
        - ``"-"`` or ``"solid"``
        - ``"--"`` or ``"dashed"``
        - ``"-."`` or ``"dash dot"``

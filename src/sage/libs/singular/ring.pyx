@@ -87,13 +87,13 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     INPUT:
 
-    - ``base_ring`` - a Sage ring
+    - ``base_ring`` -- a Sage ring
 
-    - ``n`` - the number of variables (> 0)
+    - ``n`` -- the number of variables (> 0)
 
-    - ``names`` - a list of names of length ``n``
+    - ``names`` -- a list of names of length ``n``
 
-    - ``term_order`` - a term ordering
+    - ``term_order`` -- a term ordering
 
     EXAMPLES::
 

@@ -559,7 +559,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``right`` - an affine space or subscheme.
+        - ``right`` -- an affine space or subscheme.
 
         OUTPUT: an affine space.= or subscheme.
 
@@ -1034,11 +1034,11 @@ class AffineSpace_field(AffineSpace_generic):
 
         kwds:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-        - ``precision`` - the precision to use for computing the elements of bounded height of number fields
+        - ``precision`` -- the precision to use for computing the elements of bounded height of number fields
 
         OUTPUT:
 

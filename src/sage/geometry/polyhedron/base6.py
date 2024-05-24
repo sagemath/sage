@@ -495,20 +495,20 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``view`` - list (default: [0,0,1]) representing the rotation axis (see note below).
-        - ``angle`` - integer (default: 0) angle of rotation in degree from 0 to 360 (see note
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below).
+        - ``angle`` -- integer (default: 0) angle of rotation in degree from 0 to 360 (see note
           below).
-        - ``scale`` - integer (default: 1) specifying the scaling of the tikz picture.
-        - ``edge_color`` - string (default: 'blue!95!black') representing colors which tikz
+        - ``scale`` -- integer (default: 1) specifying the scaling of the tikz picture.
+        - ``edge_color`` -- string (default: 'blue!95!black') representing colors which tikz
           recognize.
-        - ``facet_color`` - string (default: 'blue!95!black') representing colors which tikz
+        - ``facet_color`` -- string (default: 'blue!95!black') representing colors which tikz
           recognize.
-        - ``vertex_color`` - string (default: 'green') representing colors which tikz
+        - ``vertex_color`` -- string (default: 'green') representing colors which tikz
           recognize.
-        - ``opacity`` - real number (default: 0.8) between 0 and 1 giving the opacity of
+        - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets.
-        - ``axis`` - Boolean (default: False) draw the axes at the origin or not.
-        - ``output_type`` - string (default: ``None``), valid values
+        - ``axis`` -- Boolean (default: False) draw the axes at the origin or not.
+        - ``output_type`` -- string (default: ``None``), valid values
           are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a LatexExpr object (which inherits from Python
           str) or a ``TikzPicture`` object from module

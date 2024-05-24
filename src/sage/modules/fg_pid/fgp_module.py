@@ -1629,7 +1629,7 @@ class FGP_Module_class(Module):
 
         INPUT:
 
-        - ``im_gens`` - a Sequence object giving the images of ``self.gens()``,
+        - ``im_gens`` -- a Sequence object giving the images of ``self.gens()``,
           whose universe is some fixed finitely generated `R`-module
 
         EXAMPLES::

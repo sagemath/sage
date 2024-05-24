@@ -1551,7 +1551,7 @@ class DeltaComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (optional, default
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this

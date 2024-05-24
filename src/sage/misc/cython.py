@@ -456,11 +456,11 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
 
     INPUT:
 
-    - ``vars`` - list of pairs (variable name, c-data type), where the variable
+    - ``vars`` -- list of pairs (variable name, c-data type), where the variable
       names and data types are strings, OR a string such as ``'double x, int y,
       int z'``
 
-    - ``expr`` - an expression involving the vars and constants; you can access
+    - ``expr`` -- an expression involving the vars and constants; you can access
       objects defined in the current module scope ``globals()`` using
       ``sage.object_name``.
 
@@ -542,7 +542,7 @@ def cython_import(filename, **kwds):
 
     INPUT:
 
-    - ``filename`` - a string; name of a file that contains Cython
+    - ``filename`` -- a string; name of a file that contains Cython
       code
 
     See the function :func:`sage.misc.cython.cython` for documentation
@@ -578,7 +578,7 @@ def cython_import_all(filename, globals, **kwds):
 
     INPUT:
 
-    - ``filename`` - a string; name of a file that contains Cython
+    - ``filename`` -- a string; name of a file that contains Cython
       code
     """
     m = cython_import(filename, **kwds)

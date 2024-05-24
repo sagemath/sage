@@ -890,7 +890,7 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        - ``l`` - integer (default: 1), the length of the desired words
+        - ``l`` -- integer (default: 1), the length of the desired words
 
         EXAMPLES::
 
@@ -1030,9 +1030,9 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        - ``arg`` - (optional, default: ``None``) It can be one of the following:
+        - ``arg`` -- (optional, default: ``None``) It can be one of the following:
 
-          - ``None`` - then the method iterates through all morphisms.
+          - ``None`` -- then the method iterates through all morphisms.
 
           - tuple `(a, b)` of two integers  - It specifies the range
             ``range(a, b)`` of values to consider for the sum of the length
@@ -1043,10 +1043,10 @@ class FiniteWords(AbstractLanguage):
             ``arg`` determines the length of the word mapped to by the i-th
             letter of the (ordered) alphabet.
 
-        - ``codomain`` - (default: ``None``) a combinatorial class of words.
+        - ``codomain`` -- (default: ``None``) a combinatorial class of words.
           By default, ``codomain`` is ``self``.
 
-        - ``min_length`` - (default: 1) nonnegative integer. If ``arg`` is
+        - ``min_length`` -- (default: 1) nonnegative integer. If ``arg`` is
           not specified, then iterate through all the morphisms where the
           length of the images of each letter in the alphabet is at least
           ``min_length``. This is ignored if ``arg`` is a list.

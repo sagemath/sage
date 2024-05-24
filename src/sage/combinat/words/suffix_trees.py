@@ -322,7 +322,7 @@ class SuffixTrie(SageObject):
 
         INPUT:
 
-        - ``state`` - a state
+        - ``state`` -- a state
 
         EXAMPLES::
 
@@ -1024,7 +1024,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        - ``state`` - a state
+        - ``state`` -- a state
 
         EXAMPLES::
 

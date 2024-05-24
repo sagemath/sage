@@ -3063,7 +3063,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``name`` - None or a string; used for printing the variable.
+        - ``name`` -- None or a string; used for printing the variable.
 
         EXAMPLES::
 
@@ -3555,9 +3555,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-          - ``self`` - Polynomial
-          - ``right`` - Polynomial (over same base ring as ``self``)
-          - ``K_threshold`` - (optional) Integer. A threshold to fall back to
+          - ``self`` -- Polynomial
+          - ``right`` -- Polynomial (over same base ring as ``self``)
+          - ``K_threshold`` -- (optional) Integer. A threshold to fall back to
             schoolbook algorithm. In the recursion, if one of the polynomials
             is of degree less that K_threshold then the classic quadratic
             polynomial is used.
@@ -3802,7 +3802,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``R`` - a ring or morphism.
+        - ``R`` -- a ring or morphism.
 
         EXAMPLES::
 
@@ -6660,7 +6660,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``m`` - a monomial
+        - ``m`` -- a monomial
 
         OUTPUT: Coefficient in base ring.
 
@@ -7663,7 +7663,7 @@ cdef class Polynomial(CommutativePolynomial):
         - ``algorithm`` -- ``None`` (default), ``"resultant"`` or ``"BFSS"``.
           See :meth:`.composed_op`
 
-        - ``monic`` - ``False`` (default) or ``True``.
+        - ``monic`` -- ``False`` (default) or ``True``.
           See :meth:`.composed_op`
 
         OUTPUT:
@@ -12594,7 +12594,7 @@ def universal_discriminant(n):
 
     INPUT:
 
-    - ``n`` - degree of the polynomial
+    - ``n`` -- degree of the polynomial
 
     OUTPUT:
 
@@ -12632,11 +12632,11 @@ cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec):
 
     INPUT:
 
-    - ``p`` - a polynomial
+    - ``p`` -- a polynomial
 
-    - ``n`` - an integer (of type :class:`sage.rings.integer.Integer`)
+    - ``n`` -- an integer (of type :class:`sage.rings.integer.Integer`)
 
-    - ``prec`` - a precision (should fit into a C ``long``)
+    - ``prec`` -- a precision (should fit into a C ``long``)
 
     TESTS:
 

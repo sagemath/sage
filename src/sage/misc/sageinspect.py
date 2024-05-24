@@ -493,7 +493,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
         INPUT:
 
-        - ``node`` - the node instance to visit
+        - ``node`` -- the node instance to visit
 
         OUTPUT: ``None``, ``True``, ``False``
 

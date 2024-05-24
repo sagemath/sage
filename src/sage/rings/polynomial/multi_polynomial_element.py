@@ -572,7 +572,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``x`` - multivariate polynomial (a generator of the parent
+        - ``x`` -- multivariate polynomial (a generator of the parent
           of ``self``). If ``x`` is not specified (or is None), return
           the total degree, which is the maximum degree of any
           monomial. Note that a weighted term ordering alters the
@@ -2024,7 +2024,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``proof`` - insist on provably correct results (default: ``True``
+        - ``proof`` -- insist on provably correct results (default: ``True``
           unless explicitly disabled for the ``"polynomial"`` subsystem with
           :class:`sage.structure.proof.proof.WithProof`.)
 

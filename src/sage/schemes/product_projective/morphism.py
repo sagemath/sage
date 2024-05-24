@@ -243,11 +243,11 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``right`` - a map on product of projective space.
+        - ``right`` -- a map on product of projective space.
 
         OUTPUT:
 
-        - Boolean - True if ``self`` and ``right`` define the same product projective
+        - Boolean -- True if ``self`` and ``right`` define the same product projective
           map. False otherwise.
 
         EXAMPLES::

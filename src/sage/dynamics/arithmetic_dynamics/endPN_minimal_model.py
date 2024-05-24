@@ -923,7 +923,7 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
 
     - ``f`` -- a dynamical system on `P^1`
 
-    - ``m`` - positive integer. the period used to create ``F``
+    - ``m`` -- positive integer. the period used to create ``F``
 
     - ``dynatomic`` -- boolean. whether ``F`` is the periodic points or the
       formal periodic points of period ``m`` for ``f``

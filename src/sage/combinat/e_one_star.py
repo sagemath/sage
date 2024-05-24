@@ -8,11 +8,11 @@ that acts on unit faces of dimension `(d-1)` in `\RR^d`.
 
 This module defines the following classes and functions:
 
-- ``Face`` - a class to model a face
+- ``Face`` -- a class to model a face
 
-- ``Patch`` - a class to model a finite set of faces
+- ``Patch`` -- a class to model a finite set of faces
 
-- ``E1Star`` - a class to model the `E_1^*(\sigma)` application
+- ``E1Star`` -- a class to model the `E_1^*(\sigma)` application
   defined by the substitution sigma
 
 See the documentation of these objects for more information.
@@ -245,10 +245,10 @@ class Face(SageObject):
 
     INPUT:
 
-    - ``v`` - tuple of integers
-    - ``t`` - integer in ``[1, ..., len(v)]``, type of the face. The face of type `i`
+    - ``v`` -- tuple of integers
+    - ``t`` -- integer in ``[1, ..., len(v)]``, type of the face. The face of type `i`
       is orthogonal to the canonical vector `e_i`.
-    - ``color`` - color (optional, default: ``None``) color of the face,
+    - ``color`` -- color (optional, default: ``None``) color of the face,
       used for plotting only. If ``None``, its value is guessed from the
       face type.
 
@@ -383,7 +383,7 @@ class Face(SageObject):
 
         INPUT:
 
-        - ``other`` - a Patch or a Face or a finite iterable of faces
+        - ``other`` -- a Patch or a Face or a finite iterable of faces
 
         EXAMPLES::
 
@@ -446,7 +446,7 @@ class Face(SageObject):
 
         INPUT:
 
-        - ``color`` - string, rgb tuple, color (optional, default: ``None``)
+        - ``color`` -- string, rgb tuple, color (optional, default: ``None``)
           the new color to assign to the face. If ``None``, it returns the
           color of the face.
 
@@ -475,10 +475,10 @@ class Face(SageObject):
 
         INPUT:
 
-        - ``projmat`` - 2*3 projection matrix (used only for faces in three dimensions)
-        - ``face_contour`` - dict, maps the face type to vectors describing
+        - ``projmat`` -- 2*3 projection matrix (used only for faces in three dimensions)
+        - ``face_contour`` -- dict, maps the face type to vectors describing
           the contour of unit faces (used only for faces in three dimensions)
-        - ``opacity`` - the alpha value for the color of the face
+        - ``opacity`` -- the alpha value for the color of the face
 
         OUTPUT:
 
@@ -527,7 +527,7 @@ class Face(SageObject):
 
         INPUT:
 
-        - ``face_contour`` - dict, maps the face type to vectors describing
+        - ``face_contour`` -- dict, maps the face type to vectors describing
           the contour of unit faces
 
         EXAMPLES::
@@ -560,8 +560,8 @@ class Patch(SageObject):
 
     INPUT:
 
-    - ``faces`` - finite iterable of faces
-    - ``face_contour`` - dict (optional, default:``None``) maps the face
+    - ``faces`` -- finite iterable of faces
+    - ``face_contour`` -- dict (optional, default:``None``) maps the face
       type to vectors describing the contour of unit faces. If None,
       defaults contour are assumed for faces of type 1, 2, 3 or 1, 2, 3.
       Used in plotting methods only.
@@ -637,7 +637,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``other`` - an object
+        - ``other`` -- an object
 
         EXAMPLES::
 
@@ -748,7 +748,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``other`` - a Patch or a Face or a finite iterable of faces
+        - ``other`` -- a Patch or a Face or a finite iterable of faces
 
         EXAMPLES::
 
@@ -770,7 +770,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``other`` - a Patch or a Face or a finite iterable of faces
+        - ``other`` -- a Patch or a Face or a finite iterable of faces
 
         EXAMPLES::
 
@@ -818,7 +818,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``other`` - a Patch or a Face or a finite iterable of faces
+        - ``other`` -- a Patch or a Face or a finite iterable of faces
 
         EXAMPLES::
 
@@ -840,7 +840,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``other`` - a finite iterable of faces or a single face
+        - ``other`` -- a finite iterable of faces or a single face
 
         EXAMPLES::
 
@@ -893,7 +893,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``v`` - a vector
+        - ``v`` -- a vector
 
         EXAMPLES::
 
@@ -911,7 +911,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``t`` - integer or any other type
+        - ``t`` -- integer or any other type
 
         EXAMPLES::
 
@@ -928,7 +928,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``color`` - color
+        - ``color`` -- color
 
         EXAMPLES::
 
@@ -946,7 +946,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``v`` - vector or tuple
+        - ``v`` -- vector or tuple
 
         EXAMPLES::
 
@@ -965,7 +965,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``other`` - a Patch
+        - ``other`` -- a Patch
 
         OUTPUT:
 
@@ -1089,12 +1089,12 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``projmat`` - matrix (optional, default: ``None``) the projection
+        - ``projmat`` -- matrix (optional, default: ``None``) the projection
           matrix. Its number of lines must be two. Its number of columns
           must equal the dimension of the ambient space of the faces. If
           ``None``, the isometric projection is used by default.
 
-        - ``opacity`` - float between ``0`` and ``1`` (optional, default: ``0.75``)
+        - ``opacity`` -- float between ``0`` and ``1`` (optional, default: ``0.75``)
           opacity of the face
 
         .. WARNING::
@@ -1201,21 +1201,21 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``projmat`` - matrix (optional, default: ``None``) the projection
+        - ``projmat`` -- matrix (optional, default: ``None``) the projection
           matrix. Its number of lines must be two. Its number of columns
           must equal the dimension of the ambient space of the faces. If
           ``None``, the isometric projection is used by default.
-        - ``print_tikz_env`` - bool (optional, default: ``True``) if ``True``,
+        - ``print_tikz_env`` -- bool (optional, default: ``True``) if ``True``,
           the tikzpicture environment are printed
-        - ``edgecolor`` - string (optional, default: ``'black'``) either
+        - ``edgecolor`` -- string (optional, default: ``'black'``) either
           ``'black'`` or ``'facecolor'`` (color of unit face edges)
-        - ``scale`` - real number (optional, default: ``0.25``) scaling
+        - ``scale`` -- real number (optional, default: ``0.25``) scaling
           constant for the whole figure
-        - ``drawzero`` - bool (optional, default: ``False``) if ``True``,
+        - ``drawzero`` -- bool (optional, default: ``False``) if ``True``,
           mark the origin by a black dot
-        - ``extra_code_before`` - string (optional, default: ``''``) extra code to
+        - ``extra_code_before`` -- string (optional, default: ``''``) extra code to
           include in the tikz picture
-        - ``extra_code_after`` - string (optional, default: ``''``) extra code to
+        - ``extra_code_after`` -- string (optional, default: ``''``) extra code to
           include in the tikz picture
 
         EXAMPLES::
@@ -1358,10 +1358,10 @@ class E1Star(SageObject):
 
     INPUT:
 
-    - ``sigma`` - unimodular ``WordMorphism``, i.e. such that its incidence
+    - ``sigma`` -- unimodular ``WordMorphism``, i.e. such that its incidence
       matrix has determinant `\pm 1`.
 
-    - ``method`` - 'prefix' or 'suffix' (optional, default: 'suffix')
+    - ``method`` -- 'prefix' or 'suffix' (optional, default: 'suffix')
       Enables to use an alternative definition `E_1^*(\sigma)` substitutions,
       where the abelianized of the prefix` is used instead of the suffix.
 
@@ -1452,7 +1452,7 @@ class E1Star(SageObject):
 
         INPUT:
 
-        - ``other`` - an object
+        - ``other`` -- an object
 
         EXAMPLES::
 
@@ -1477,8 +1477,8 @@ class E1Star(SageObject):
 
         INPUT:
 
-        - ``patch`` - a patch
-        - ``iterations`` - integer (optional, default: 1) number of iterations
+        - ``patch`` -- a patch
+        - ``iterations`` -- integer (optional, default: 1) number of iterations
 
         OUTPUT:
 
@@ -1527,7 +1527,7 @@ class E1Star(SageObject):
 
         INPUT:
 
-        - ``other`` - an instance of E1Star
+        - ``other`` -- an instance of E1Star
 
         OUTPUT:
 
@@ -1567,8 +1567,8 @@ class E1Star(SageObject):
 
         INPUT:
 
-        - ``face`` - a face
-        - ``color`` - string, RGB tuple or color, (optional, default: None)
+        - ``face`` -- a face
+        - ``color`` -- string, RGB tuple or color, (optional, default: None)
           RGB color
 
         OUTPUT:

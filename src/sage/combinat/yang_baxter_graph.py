@@ -39,7 +39,7 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
 
     - ``root`` -- the root vertex
 
-    - ``operator`` - a function that maps vertices `u` to a list of
+    - ``operator`` -- a function that maps vertices `u` to a list of
       tuples of the form `(v, l)` where `v` is a successor of `u` and `l` is
       the label of the edge from `u` to `v`.
 

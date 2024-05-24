@@ -15,7 +15,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
 
     INPUT:
 
-    - ``v`` - something that defines a set of points in 3 space:
+    - ``v`` -- something that defines a set of points in 3 space:
 
       - a matrix
 
@@ -26,7 +26,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
 
     OPTIONAL KEYWORDS:
 
-    - ``interpolation_type`` - 'linear', 'clough' (CloughTocher2D), 'spline'
+    - ``interpolation_type`` -- 'linear', 'clough' (CloughTocher2D), 'spline'
 
       'linear' will perform linear interpolation
 
@@ -42,15 +42,15 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
       When v is a matrix the default is to use linear interpolation, when
       v is a list of points the default is 'clough'.
 
-    - ``degree`` - an integer between 1 and 5, controls the degree of spline
+    - ``degree`` -- an integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
       use higher values
 
-    - ``point_list`` - If point_list=True is passed, then if the array
+    - ``point_list`` -- If point_list=True is passed, then if the array
       is a list of lists of length three, it will be treated as an
       array of points rather than a 3xn array.
 
-    - ``num_points`` - Number of points to sample interpolating
+    - ``num_points`` -- Number of points to sample interpolating
       function in each direction, when ``interpolation_type`` is not
       ``default``. By default for an `n\times n` array this is `n`.
 
@@ -392,8 +392,8 @@ def list_plot3d_array_of_arrays(v, interpolation_type, **kwds):
 
     INPUT:
 
-    - ``v`` - a list of lists, all the same length
-    - ``interpolation_type`` - (default: 'linear')
+    - ``v`` -- a list of lists, all the same length
+    - ``interpolation_type`` -- (default: 'linear')
 
     OPTIONAL KEYWORDS:
 

@@ -1120,7 +1120,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - ``i`` - integer (optional, default 0)
+        - ``i`` -- integer (optional, default 0)
 
         EXAMPLES::
 
@@ -1319,8 +1319,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - ``basis`` - list of 4 elements of ``self``
-        - ``check`` - bool (default: ``True``)
+        - ``basis`` -- list of 4 elements of ``self``
+        - ``check`` -- bool (default: ``True``)
 
         EXAMPLES::
 
@@ -1549,9 +1549,9 @@ class QuaternionOrder(Parent):
         """
         INPUT:
 
-        - ``A`` - a quaternion algebra
-        - ``basis`` - list of 4 integral quaternions in ``A``
-        - ``check`` - whether to do type and other consistency checks
+        - ``A`` -- a quaternion algebra
+        - ``basis`` -- list of 4 integral quaternions in ``A``
+        - ``check`` -- whether to do type and other consistency checks
 
         .. WARNING::
 
@@ -1729,7 +1729,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``n`` - an integer between 0 and 3, inclusive.
+        - ``n`` -- an integer between 0 and 3, inclusive.
 
         EXAMPLES::
 
@@ -1878,7 +1878,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``other`` - a quaternion order in the same ambient quaternion algebra
+        - ``other`` -- a quaternion order in the same ambient quaternion algebra
 
         OUTPUT: a quaternion order
 

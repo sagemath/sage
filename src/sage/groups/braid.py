@@ -956,7 +956,7 @@ class Braid(FiniteTypeArtinGroupElement):
           resulting polynomial; if ``None``, then use the variable `A`
           in `\ZZ[A,A^{-1}]`
 
-        - ``normalized`` - boolean (default: ``True``); if specified to be
+        - ``normalized`` -- boolean (default: ``True``); if specified to be
           ``False``, return instead a rescaled Laurent polynomial version of
           the Markov trace
 

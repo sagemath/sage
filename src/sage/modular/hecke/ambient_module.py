@@ -833,7 +833,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         INPUT:
 
-        - ``p`` - (default: ``None``); if not ``None``, return only the `p`-old
+        - ``p`` -- (default: ``None``); if not ``None``, return only the `p`-old
           submodule.
 
         OUTPUT: the old or `p`-old submodule of ``self``

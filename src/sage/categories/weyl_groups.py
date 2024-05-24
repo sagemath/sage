@@ -166,9 +166,9 @@ class WeylGroups(Category_singleton):
 
             INPUT:
 
-            - ``x`` - an element in the group `W`
+            - ``x`` -- an element in the group `W`
 
-            - ``y`` - an element in the group `W`
+            - ``y`` -- an element in the group `W`
 
             - ``side`` (default: ``'upper'``) -- must be one of the following:
 

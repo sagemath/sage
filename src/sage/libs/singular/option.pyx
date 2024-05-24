@@ -316,11 +316,11 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
        is ring dependent. By default, it is set for rings with
        characteristic 0 and not set for all other rings.
 
-     - ``lazy`` - uses a more lazy approach in std computations, which
+     - ``lazy`` -- uses a more lazy approach in std computations, which
        was used in SINGULAR version before 2-0 (and which may lead to
        faster or slower computations, depending on the example).
 
-     - ``length`` - select shorter reducers in std computations.
+     - ``length`` -- select shorter reducers in std computations.
 
      - ``not_regularity`` or ``notRegularity`` - disables the
        regularity bound for ``res`` and ``mres``.
@@ -339,7 +339,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
        (and which may lead to faster or slower computations, depending
        on the example).
 
-     - ``prot`` - shows protocol information indicating the progress
+     - ``prot`` -- shows protocol information indicating the progress
        during the following computations: ``facstd``, ``fglm``,
        ``groebner``, ``lres``, ``mres``, ``minres``, ``mstd``,
        ``res``, ``slimgb``, ``sres``, ``std``, ``stdfglm``,
@@ -475,10 +475,10 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
 
     Supported options are:
 
-     - ``mem`` - shows memory usage in square brackets.
-     - ``yacc`` - Only available in debug version.
-     - ``redefine`` - warns about variable redefinitions.
-     - ``reading`` - shows the number of characters read from a file.
+     - ``mem`` -- shows memory usage in square brackets.
+     - ``yacc`` -- Only available in debug version.
+     - ``redefine`` -- warns about variable redefinitions.
+     - ``reading`` -- shows the number of characters read from a file.
      - ``loadLib`` or ``load_lib`` - shows loading of libraries.
      - ``debugLib`` or ``debug_lib`` - warns about syntax errors
        when loading a library.
@@ -486,7 +486,7 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
        from libraries.
      - ``defRes`` or ``def_res`` - shows the names of the syzygy
        modules while converting ``resolution`` to ``list``.
-     - ``usage`` - shows correct usage in error messages.
+     - ``usage`` -- shows correct usage in error messages.
      - ``Imap`` or ``imap`` - shows the mapping of variables with
        the ``fetch`` and ``imap`` commands.
      - ``notWarnSB`` or ``not_warn_sb`` - do not warn if
@@ -494,7 +494,7 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
      - ``contentSB`` or ``content_sb`` - avoids to divide by the
        content of a polynomial in ``std`` and related algorithms.
        Should usually not be used.
-     - ``cancelunit`` - avoids to divide polynomials by non-constant
+     - ``cancelunit`` -- avoids to divide polynomials by non-constant
        units in ``std`` in the local case. Should usually not be used.
 
     EXAMPLES::

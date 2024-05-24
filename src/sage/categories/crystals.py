@@ -411,9 +411,9 @@ class Crystals(Category_singleton):
             - ``direction`` -- (default: ``'both'``) the direction to build
               the subcrystal; it can be one of the following:
 
-              - ``'both'`` - using both `e_i` and `f_i`
-              - ``'upper'`` - using `e_i`
-              - ``'lower'`` - using `f_i`
+              - ``'both'`` -- using both `e_i` and `f_i`
+              - ``'upper'`` -- using `e_i`
+              - ``'lower'`` -- using `f_i`
 
             - ``contained`` -- (optional) a set or function defining the
               containment in the subcrystal
@@ -1714,9 +1714,9 @@ class Crystals(Category_singleton):
             - ``direction`` -- (default: ``'both'``) the direction to build
               the subcrystal; it can be one of the following:
 
-              - ``'both'`` - using both `e_i` and `f_i`
-              - ``'upper'`` - using `e_i`
-              - ``'lower'`` - using `f_i`
+              - ``'both'`` -- using both `e_i` and `f_i`
+              - ``'upper'`` -- using `e_i`
+              - ``'lower'`` -- using `f_i`
 
             - ``contained`` -- (optional) a set (or function) defining the
               containment in the subcrystal

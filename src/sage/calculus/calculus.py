@@ -851,7 +851,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'mathematica'`` -- (optional) use Mathematica
 
-    - ``hold`` - (default: ``False``) if ``True``, don't evaluate
+    - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
 
     EXAMPLES::
 

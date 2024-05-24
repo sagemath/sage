@@ -600,7 +600,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         INPUT:
 
-        - ``other`` - a toric (sub)lattice.dual
+        - ``other`` -- a toric (sub)lattice.dual
 
         OUTPUT:
 

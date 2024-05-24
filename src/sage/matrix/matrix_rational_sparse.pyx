@@ -737,7 +737,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 

@@ -144,14 +144,14 @@ class LowerChristoffelWord(FiniteWord_list):
         r"""
         INPUT:
 
-        - ``p`` - integer coprime with ``q``.
-        - ``q`` - integer coprime with ``p``.
-        - ``alphabet`` - sequence of two elements (optional, default: (0, 1)).
-        - ``algorithm`` - construction method (optional, default: 'cf').
+        - ``p`` -- integer coprime with ``q``.
+        - ``q`` -- integer coprime with ``p``.
+        - ``alphabet`` -- sequence of two elements (optional, default: (0, 1)).
+        - ``algorithm`` -- construction method (optional, default: 'cf').
           It can be one of the following:
 
-          - ``'linear'`` - linear algorithm in the length of the word.
-          - ``'cf'`` - fast method using continued fraction.
+          - ``'linear'`` -- linear algorithm in the length of the word.
+          - ``'cf'`` -- fast method using continued fraction.
 
         TESTS::
 
@@ -448,9 +448,9 @@ class WordGenerator:
 
         INPUT:
 
-        - ``n`` - integer, the position
-        - ``alphabet`` - an alphabet (default : (0, 1) ) of size at least 2
-        - ``base`` - an integer (default : 2) greater or equal to 2
+        - ``n`` -- integer, the position
+        - ``alphabet`` -- an alphabet (default : (0, 1) ) of size at least 2
+        - ``base`` -- an integer (default : 2) greater or equal to 2
 
         OUTPUT:
 
@@ -911,9 +911,9 @@ class WordGenerator:
 
         INPUT:
 
-        - ``cf`` - iterator, the continued fraction expansion of a real
+        - ``cf`` -- iterator, the continued fraction expansion of a real
           number in `]0, 1[`.
-        - ``alphabet`` - the alphabet (optional, default ``(0,1)``) of
+        - ``alphabet`` -- the alphabet (optional, default ``(0,1)``) of
           the output
 
         OUTPUT:
@@ -1369,8 +1369,8 @@ class WordGenerator:
 
         INPUT:
 
-        - ``n`` - integer, the length of the word
-        - ``m`` - integer (default 2), the size of the output alphabet
+        - ``n`` -- integer, the length of the word
+        - ``m`` -- integer (default 2), the size of the output alphabet
         -  ``alphabet`` - (default is `\{0,1,...,m-1\}`) any container of
            length m that is suitable to build an instance of
            OrderedAlphabet (list, tuple, str, ...)
@@ -1475,10 +1475,10 @@ class WordGenerator:
 
         INPUT:
 
-        - ``n`` - non negative integer
-        - ``q_0`` - first initial value (default: None) It can be None, 0, 1,
+        - ``n`` -- non negative integer
+        - ``q_0`` -- first initial value (default: None) It can be None, 0, 1,
           2 or 3.
-        - ``q_1`` - second initial value (default: 3) It can be None, 0, 1, 2
+        - ``q_1`` -- second initial value (default: 3) It can be None, 0, 1, 2
           or 3.
 
         EXAMPLES::
@@ -1577,9 +1577,9 @@ class WordGenerator:
 
         INPUT:
 
-        - ``sequence`` - An iterable sequence of morphisms. It may be finite
+        - ``sequence`` -- An iterable sequence of morphisms. It may be finite
           or infinite.
-        - ``letters`` - An iterable  sequence of letters. The image of the
+        - ``letters`` -- An iterable  sequence of letters. The image of the
           (i+1)-th letter under the (i+1)-th morphism must start with the i-th
           letter.
 
@@ -1680,14 +1680,14 @@ class WordGenerator:
 
         INPUT:
 
-        - ``sequence`` - An iterable sequence of indices or of morphisms. It
+        - ``sequence`` -- An iterable sequence of indices or of morphisms. It
           may be finite or infinite. If ``sequence`` is infinite, the image
           of the `(i+1)`-th letter under the `(i+1)`-th morphism must start
           with the `i`-th letter.
 
-        - ``letters`` - A letter or a sequence of letters.
+        - ``letters`` -- A letter or a sequence of letters.
 
-        - ``morphisms`` - dict, list, callable or ``None`` (optional, default
+        - ``morphisms`` -- dict, list, callable or ``None`` (optional, default
           ``None``) an object that maps indices to morphisms. If ``None``, then
           ``sequence`` must consist of morphisms.
 

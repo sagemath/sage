@@ -717,7 +717,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``type`` - either "std" (the default) for the standard continued
+        - ``type`` -- either "std" (the default) for the standard continued
           fractions or "hj" for the Hirzebruch-Jung ones.
 
         EXAMPLES::
@@ -1579,7 +1579,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``expected_value`` - (bool) whether or not this rational is expected
+        - ``expected_value`` -- (bool) whether or not this rational is expected
           be a perfect power. This does not affect the  correctness of the
           output, only the runtime.
 

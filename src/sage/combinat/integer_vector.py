@@ -785,8 +785,8 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``x`` - a nonnegative integer
-        - ``rtn`` - a list of nonnegative integers
+        - ``x`` -- a nonnegative integer
+        - ``rtn`` -- a list of nonnegative integers
 
 
         EXAMPLES::

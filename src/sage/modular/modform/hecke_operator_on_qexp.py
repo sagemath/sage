@@ -171,13 +171,13 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
     INPUT:
 
-    - ``B`` - list of q-expansions
+    - ``B`` -- list of q-expansions
 
-    - ``n`` - an integer >= 1
+    - ``n`` -- an integer >= 1
 
-    - ``k`` - an integer
+    - ``k`` -- an integer
 
-    - ``eps`` - Dirichlet character
+    - ``eps`` -- Dirichlet character
 
     - ``already_echelonized`` -- bool (default: False); if True, use that the
       basis is already in Echelon form, which saves a lot of time.

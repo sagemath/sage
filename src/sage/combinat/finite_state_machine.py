@@ -12414,7 +12414,7 @@ class Transducer(FiniteStateMachine):
 
         INPUT:
 
-        - ``other`` - a finite state machine (if `d=2`) or a list (or
+        - ``other`` -- a finite state machine (if `d=2`) or a list (or
           other iterable) of `d-1` finite state machines
 
         - ``only_accessible_components`` -- If ``True`` (default), then

@@ -132,9 +132,9 @@ cdef class Lfunction:
 
         INPUT:
 
-        - ``s`` -  a complex number
-        - ``derivative`` - integer (default: 0)  the derivative to be evaluated
-        - ``rotate`` - (default: False) If True, this returns the value of the
+        - ``s`` --  a complex number
+        - ``derivative`` -- integer (default: 0)  the derivative to be evaluated
+        - ``rotate`` -- (default: False) If True, this returns the value of the
           Hardy Z-function (sometimes called the Riemann-Siegel Z-function or
           the Siegel Z-function).
 
@@ -189,7 +189,7 @@ cdef class Lfunction:
 
         INPUT:
 
-        - ``s`` - a complex number with imaginary part between -0.5 and 0.5
+        - ``s`` -- a complex number with imaginary part between -0.5 and 0.5
 
         EXAMPLES::
 
@@ -345,13 +345,13 @@ cdef class Lfunction:
 
         INPUT:
 
-        - ``count`` - number of zeros to be found
-        - ``start`` - (default: 0) how many initial zeros to skip
-        - ``max_refine`` - when some zeros are found to be missing, the step
+        - ``count`` -- number of zeros to be found
+        - ``start`` -- (default: 0) how many initial zeros to skip
+        - ``max_refine`` -- when some zeros are found to be missing, the step
           size used to find zeros is refined. max_refine gives an upper limit
           on when lcalc should give up. Use default value unless you know
           what you are doing.
-        - ``rank`` - integer (default: -1) analytic rank of the L-function.
+        - ``rank`` -- integer (default: -1) analytic rank of the L-function.
           If -1 is passed, then we attempt to compute it. (Use default if in
           doubt)
 
@@ -589,26 +589,26 @@ cdef class Lfunction_D(Lfunction):
 
     INPUT:
 
-    - ``what_type_L`` - integer, this should be set to 1 if the coefficients are
+    - ``what_type_L`` -- integer, this should be set to 1 if the coefficients are
       periodic and 0 otherwise.
 
-    - ``dirichlet_coefficient`` - List of Dirichlet coefficients of the
+    - ``dirichlet_coefficient`` -- List of Dirichlet coefficients of the
       L-function. Only first `M` coefficients are needed if they are periodic.
 
-    - ``period`` - If the coefficients are periodic, this should be the
+    - ``period`` -- If the coefficients are periodic, this should be the
       period of the coefficients.
 
-    - ``Q`` - See above
+    - ``Q`` -- See above
 
-    - ``OMEGA`` - See above
+    - ``OMEGA`` -- See above
 
-    - ``kappa`` - List of the values of `\kappa_j` in the functional equation
+    - ``kappa`` -- List of the values of `\kappa_j` in the functional equation
 
-    - ``gamma`` - List of the values of `\gamma_j` in the functional equation
+    - ``gamma`` -- List of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` - List of the poles of L-function
+    - ``pole`` -- List of the poles of L-function
 
-    - ``residue`` - List of the residues of the L-function
+    - ``residue`` -- List of the residues of the L-function
 
     .. NOTE::
 
@@ -727,26 +727,26 @@ cdef class Lfunction_C:
 
     INPUT:
 
-    - ``what_type_L`` - integer, this should be set to 1 if the coefficients are
+    - ``what_type_L`` -- integer, this should be set to 1 if the coefficients are
       periodic and 0 otherwise.
 
-    - ``dirichlet_coefficient`` - List of Dirichlet coefficients of the
+    - ``dirichlet_coefficient`` -- List of Dirichlet coefficients of the
       L-function. Only first `M` coefficients are needed if they are periodic.
 
-    - ``period`` - If the coefficients are periodic, this should be the
+    - ``period`` -- If the coefficients are periodic, this should be the
       period of the coefficients.
 
-    - ``Q`` - See above
+    - ``Q`` -- See above
 
-    - ``OMEGA`` - See above
+    - ``OMEGA`` -- See above
 
-    - ``kappa`` - List of the values of `\kappa_j` in the functional equation
+    - ``kappa`` -- List of the values of `\kappa_j` in the functional equation
 
-    - ``gamma`` - List of the values of `\gamma_j` in the functional equation
+    - ``gamma`` -- List of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` - List of the poles of L-function
+    - ``pole`` -- List of the poles of L-function
 
-    - ``residue`` - List of the residues of the L-function
+    - ``residue`` -- List of the residues of the L-function
 
     .. NOTE::
 
@@ -905,8 +905,8 @@ def Lfunction_from_character(chi, type="complex"):
 
     INPUT:
 
-    - ``chi`` - A Dirichlet character
-    - ``use_type`` - string (default: "complex") type used for the Dirichlet
+    - ``chi`` -- A Dirichlet character
+    - ``use_type`` -- string (default: "complex") type used for the Dirichlet
       coefficients. This can be "int", "double" or "complex".
 
     OUTPUT:
@@ -965,8 +965,8 @@ def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
 
     INPUT:
 
-    - ``E`` - An elliptic curve
-    - ``number_of_coeffs`` - integer (default: 10000) The number of
+    - ``E`` -- An elliptic curve
+    - ``number_of_coeffs`` -- integer (default: 10000) The number of
       coefficients to be used when constructing the L-function object. Right
       now this is fixed at object creation time, and is not automatically
       set intelligently.

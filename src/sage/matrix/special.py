@@ -684,19 +684,19 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     INPUT:
 
-    - ``entries`` - the values to place along the diagonal
+    - ``entries`` -- the values to place along the diagonal
       of the returned matrix.  This may be a flat list, a
       flat tuple, a vector or free module element, or
       a one-dimensional NumPy array.
 
-    - ``nrows`` - the size of the returned matrix, which
+    - ``nrows`` -- the size of the returned matrix, which
       will have an equal number of columns
 
-    - ``ring`` - the ring containing the entries of the
+    - ``ring`` -- the ring containing the entries of the
       diagonal entries.  This may not be specified in
       combination with a NumPy array.
 
-    - ``sparse`` - default: ``True`` - whether or not
+    - ``sparse`` -- default: ``True`` - whether or not
       the result has a sparse implementation.
 
     OUTPUT:
@@ -1023,11 +1023,11 @@ def ones_matrix(ring, nrows=None, ncols=None, sparse=False):
 
     INPUT:
 
-    - ``ring`` - default: ``ZZ`` - base ring for the matrix.
-    - ``nrows`` - number of rows in the matrix.
-    - ``ncols`` - number of columns in the matrix.
+    - ``ring`` -- default: ``ZZ`` - base ring for the matrix.
+    - ``nrows`` -- number of rows in the matrix.
+    - ``ncols`` -- number of columns in the matrix.
       If omitted, defaults to the number of rows, producing a square matrix.
-    - ``sparse`` - default: ``False`` - if ``True`` creates a sparse representation.
+    - ``sparse`` -- default: ``False`` - if ``True`` creates a sparse representation.
 
     OUTPUT:
 
@@ -2594,7 +2594,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
       Set ``upper_bound`` to 1 more than the maximum value entries can achieve.
       If None, no size control occurs. But see the warning below.  (default: None)
 
-    - ``max_tries`` - If designated, number of tries used to generate each new random row;
+    - ``max_tries`` -- If designated, number of tries used to generate each new random row;
       only matters when upper_bound!=None. Used to prevent endless looping. (default: 100)
 
     OUTPUT:
@@ -2799,10 +2799,10 @@ def random_subspaces_matrix(parent, rank=None):
 
     INPUT:
 
-    - ``parent`` - A matrix space specifying the base ring, dimensions, and
+    - ``parent`` -- A matrix space specifying the base ring, dimensions, and
       representation (dense/sparse) for the result.  The base ring must be exact.
 
-    - ``rank`` - The desired rank of the return matrix (default: None).
+    - ``rank`` -- The desired rank of the return matrix (default: None).
 
     OUTPUT:
 
@@ -2946,15 +2946,15 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     INPUT:
 
-    - ``parent`` - A matrix space specifying the base ring, dimensions
+    - ``parent`` -- A matrix space specifying the base ring, dimensions
       and representation (dense/sparse) for the result.  The base ring
       must be exact.
 
-    - ``upper_bound`` - For large matrices over QQ or ZZ,
+    - ``upper_bound`` -- For large matrices over QQ or ZZ,
       ``upper_bound`` is the largest value matrix entries can achieve.  But
       see the warning below.
 
-    - ``max_tries`` - If designated, number of tries used to generate each new random row;
+    - ``max_tries`` -- If designated, number of tries used to generate each new random row;
       only matters when upper_bound!=None. Used to prevent endless looping. (default: 100)
 
     A matrix not in reduced row-echelon form with the desired dimensions and properties.

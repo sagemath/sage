@@ -839,10 +839,10 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
         kwds:
 
-        - ``bound`` - integer (optional, default=0). The bound for the coordinates for
+        - ``bound`` -- integer (optional, default=0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``F`` - field (optional, default=base ring). The field to compute
+        - ``F`` -- field (optional, default=base ring). The field to compute
           the rational points over.
 
 
@@ -1744,24 +1744,24 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         kwds:
 
-        - ``bound`` - integer (optional, default=0). The bound for the coordinates for
+        - ``bound`` -- integer (optional, default=0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``prec`` - integer (optional, default=53). The precision to use to
+        - ``prec`` -- integer (optional, default=53). The precision to use to
           compute the elements of bounded height for number fields.
 
-        - ``F`` - field (optional, default=base ring). The field to compute
+        - ``F`` -- field (optional, default=base ring). The field to compute
           the rational points over.
 
-        - ``point_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``point_tolerance`` -- positive real number (optional, default=10^(-10)).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` -- positive real number (optional, default=10^(-10)).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
         OUTPUT: list of points in subscheme or ambient space
 

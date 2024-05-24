@@ -623,16 +623,16 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
 
     INPUT:
 
-    - ``gens`` - a list of either vectors or lists of ring elements
+    - ``gens`` -- a list of either vectors or lists of ring elements
       used to generate the span
 
-    - ``base_ring`` - default: ``None`` - a principal ideal domain
+    - ``base_ring`` -- default: ``None`` - a principal ideal domain
       for the ring of scalars
 
-    - ``check`` - default: ``True`` - passed to the ``span()`` method
+    - ``check`` -- default: ``True`` - passed to the ``span()`` method
       of the ambient module
 
-    - ``already_echelonized`` - default: ``False`` - set to ``True``
+    - ``already_echelonized`` -- default: ``False`` - set to ``True``
       if the vectors form the rows of a matrix in echelon form, in
       order to skip the computation of an echelonized basis for the
       span.
@@ -4414,9 +4414,9 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         INPUT:
 
-        - ``Y`` - a free module (or vector space) that will
+        - ``Y`` -- a free module (or vector space) that will
           be the codomain of the morphisms in returned homspace
-        - ``category`` - the category for the homspace
+        - ``category`` -- the category for the homspace
 
         OUTPUT:
 
@@ -4768,7 +4768,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         INPUT:
 
-        - ``dim`` - int, dimension of subspaces to be generated
+        - ``dim`` -- int, dimension of subspaces to be generated
 
         EXAMPLES::
 
@@ -5824,7 +5824,7 @@ class FreeModule_ambient(FreeModule_generic):
 
         INPUT:
 
-        - ``v`` - list
+        - ``v`` -- list
 
         EXAMPLES::
 
@@ -5945,7 +5945,7 @@ class FreeModule_ambient(FreeModule_generic):
         INPUT:
 
 
-        - ``prob`` - float. Each coefficient will be set to zero with
+        - ``prob`` -- float. Each coefficient will be set to zero with
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
@@ -7604,7 +7604,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         INPUT:
 
-        - ``v`` - list
+        - ``v`` -- list
 
         EXAMPLES::
 

@@ -647,7 +647,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         INPUT:
 
-        - ``prec`` - integer (>=0) or None
+        - ``prec`` -- integer (>=0) or None
 
         If prec is None, the prec is computed to be *at least* large
         enough so that each q-expansion determines the form as an element

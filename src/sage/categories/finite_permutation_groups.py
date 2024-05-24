@@ -110,7 +110,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             INPUT:
 
-             - ``self`` - a permutation group `G`
+             - ``self`` -- a permutation group `G`
              - ``parent`` -- a free module with basis indexed by partitions,
                or behave as such, with a ``term`` and ``sum`` method
                (default: the symmetric functions over the rational field in the `p` basis)

@@ -452,7 +452,7 @@ def default_variable_name(variable):
 
     INPUT:
 
-    - ``variable`` - a string describing requested name
+    - ``variable`` -- a string describing requested name
 
     OUTPUT:
 

@@ -1007,7 +1007,7 @@ class Latex(LatexCall):
         - ``engine`` -- latex engine to use. Currently ``'latex'``,
           ``'pdflatex'``, ``'xelatex'`` and ``'lualatex'`` are supported
 
-        - ``locals`` - extra local variables used when evaluating Sage code in ``x``
+        - ``locals`` -- extra local variables used when evaluating Sage code in ``x``
 
         .. WARNING::
 
@@ -1250,7 +1250,7 @@ class Latex(LatexCall):
 
         INPUT:
 
-        - ``align`` - a string (``'r'`` for right, ``'c'`` for center,
+        - ``align`` -- a string (``'r'`` for right, ``'c'`` for center,
           ``'l'`` for left) or ``None``.
 
         OUTPUT:

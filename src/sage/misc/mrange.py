@@ -241,10 +241,10 @@ class xmrange_iter:
 
     INPUT:
 
-    - ``iter_list`` - a list of objects usable as iterators (possibly
+    - ``iter_list`` -- a list of objects usable as iterators (possibly
        lists)
 
-    - ``typ`` - (default: list) a type or class; more generally,
+    - ``typ`` -- (default: list) a type or class; more generally,
        something that can be called with a list as input.
 
     OUTPUT: a generator

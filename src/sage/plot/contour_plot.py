@@ -33,14 +33,14 @@ class ContourPlot(GraphicPrimitive):
 
     INPUT:
 
-    - ``xy_data_array`` - list of lists giving evaluated values of the function
+    - ``xy_data_array`` -- list of lists giving evaluated values of the function
       on the grid
 
-    - ``xrange`` - tuple of 2 floats indicating range for horizontal direction
+    - ``xrange`` -- tuple of 2 floats indicating range for horizontal direction
 
-    - ``yrange`` - tuple of 2 floats indicating range for vertical direction
+    - ``yrange`` -- tuple of 2 floats indicating range for vertical direction
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -1441,7 +1441,7 @@ def region_plot(f, xrange, yrange, **options):
 
     - ``legend_label`` -- the label for this item in the legend
 
-    - ``base`` - (default: 10) the base of the logarithm if
+    - ``base`` -- (default: 10) the base of the logarithm if
       a logarithmic scale is set. This must be greater than 1. The base
       can be also given as a list or tuple ``(basex, basey)``.
       ``basex`` sets the base of the logarithm along the horizontal

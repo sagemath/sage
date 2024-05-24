@@ -1161,10 +1161,10 @@ class ChainComplex_class(Parent):
           ``True``, return generators for the homology groups along with
           the groups. See :issue:`6100`
 
-        - ``verbose`` - boolean (optional, default ``False``); if
+        - ``verbose`` -- boolean (optional, default ``False``); if
           ``True``, print some messages as the homology is computed
 
-        - ``algorithm`` - string (optional, default ``'pari'``); the
+        - ``algorithm`` -- string (optional, default ``'pari'``); the
           options are:
 
           * ``'auto'``

@@ -284,7 +284,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
 
     INPUT:
 
-    - ``n`` - an integer
+    - ``n`` -- an integer
     - ``algorithm``:
 
       - ``'default'`` -- use 'flint' for n <= 20000, then 'arb' for n <= 300000
@@ -300,7 +300,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
       - ``'magma'`` -- use MAGMA (optional)
       - ``'bernmm'`` -- use bernmm package (a multimodular algorithm)
 
-    - ``num_threads`` - positive integer, number of
+    - ``num_threads`` -- positive integer, number of
       threads to use (only used for bernmm algorithm)
 
     EXAMPLES::
@@ -814,11 +814,11 @@ def prime_powers(start, stop=None):
 
     INPUT:
 
-    - ``start`` - an integer. If two inputs are given, a lower bound
+    - ``start`` -- an integer. If two inputs are given, a lower bound
       for the returned set of prime powers. If this is the only input,
       then it is an upper bound.
 
-    - ``stop`` - an integer (default: ``None``). An upper bound for the
+    - ``stop`` -- an integer (default: ``None``). An upper bound for the
       returned set of prime powers.
 
     OUTPUT:
@@ -934,7 +934,7 @@ def primes_first_n(n, leave_pari=False):
 
     INPUT:
 
-    - `n` - a nonnegative integer
+    - `n` -- a nonnegative integer
 
     OUTPUT:
 
@@ -1402,7 +1402,7 @@ def random_prime(n, proof=None, lbound=2):
        does not provide a proof of primality. If ``None``, uses the global default
        (see :mod:`sage.structure.proof.proof`)
 
-    - ``lbound`` - an integer `\geq 2`, lower bound for the chosen primes
+    - ``lbound`` -- an integer `\geq 2`, lower bound for the chosen primes
 
     EXAMPLES::
 
@@ -2333,7 +2333,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     - ``algorithm`` -- (default: 'fast')
 
-      - ``'fast'`` - a fast implementation using direct GMP library calls
+      - ``'fast'`` -- a fast implementation using direct GMP library calls
         in Cython.
 
     OUTPUT:
@@ -2481,7 +2481,7 @@ def trial_division(n, bound=None):
 
     -  ``n`` - a positive integer
 
-    - ``bound`` - (optional) a positive integer
+    - ``bound`` -- (optional) a positive integer
 
     OUTPUT:
 
@@ -3576,7 +3576,7 @@ def CRT_basis(moduli):
 
     INPUT:
 
-    - ``moduli`` - list of pairwise coprime moduli `m` which admit an
+    - ``moduli`` -- list of pairwise coprime moduli `m` which admit an
        extended Euclidean algorithm
 
     OUTPUT:
@@ -4784,7 +4784,7 @@ def number_of_divisors(n):
 
     INPUT:
 
-    - ``n`` - a nonzero integer
+    - ``n`` -- a nonzero integer
 
     OUTPUT:
 
@@ -6042,7 +6042,7 @@ def fundamental_discriminant(D):
 
     INPUT:
 
-    - ``D`` - an integer
+    - ``D`` -- an integer
 
     OUTPUT:
 

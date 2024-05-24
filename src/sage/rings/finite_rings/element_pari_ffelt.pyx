@@ -1035,7 +1035,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
                This option is not implemented.
 
-        - ``all`` - bool (default: ``False``)
+        - ``all`` -- bool (default: ``False``)
 
         OUTPUT:
 

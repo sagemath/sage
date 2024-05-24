@@ -114,7 +114,7 @@ def sorting_keys(element):
 
     INPUT:
 
-    - ``element`` - A CohomologyClass
+    - ``element`` -- A CohomologyClass
 
     OUTPUT:
 
@@ -4185,8 +4185,8 @@ def exterior_algebra_basis(n, degrees):
 
     INPUT:
 
-    - ``n`` - integer
-    - ``degrees`` - iterable of integers
+    - ``n`` -- integer
+    - ``degrees`` -- iterable of integers
 
     Return list of lists, each list representing exponents for the
     corresponding generators. (So each list consists of 0's and 1's.)

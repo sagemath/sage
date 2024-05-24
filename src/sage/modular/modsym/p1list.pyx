@@ -49,7 +49,7 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     -  ``vv`` - an integer
 
-    - ``ss`` - an integer such that `(ss*uu, ss*vv)` is congruent to
+    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is congruent to
        `(u,v)` (mod `N`);
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
@@ -149,7 +149,7 @@ def p1_normalize_int(N, u, v):
 
     -  ``vv`` - an integer
 
-    - ``ss`` - an integer such that `(ss*uu, ss*vv)` is congruent to `(u,v)` (mod `N`);
+    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is congruent to `(u,v)` (mod `N`);
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
 
@@ -287,7 +287,7 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     -  ``vv`` - an integer
 
-    - ``ss`` - an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
+    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
 
@@ -414,7 +414,7 @@ def p1_normalize_llong(N, u, v):
 
     -  ``vv`` - an integer
 
-    - ``ss`` - an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
+    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
 
        if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
 

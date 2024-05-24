@@ -5798,8 +5798,8 @@ def to_set_partition(l, k=None):
 
     INPUT:
 
-    - ``l`` - a list of lists of integers
-    - ``k`` - integer (optional, default ``None``)
+    - ``l`` -- a list of lists of integers
+    - ``k`` -- integer (optional, default ``None``)
 
     OUTPUT:
 

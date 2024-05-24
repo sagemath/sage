@@ -4717,7 +4717,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``letter`` - a letter
+        - ``letter`` -- a letter
 
         OUTPUT:
 

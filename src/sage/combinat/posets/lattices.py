@@ -3049,7 +3049,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``elements_only`` - if ``True``, return the list of decomposing
+        - ``elements_only`` -- if ``True``, return the list of decomposing
           elements as defined above; if ``False`` (the default),
           return the list of sublattices so that the lattice is a
           vertical composition of them.

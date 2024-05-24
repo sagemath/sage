@@ -1070,9 +1070,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``key`` - any legal indexing (i.e., such that self[key] works)
+        - ``key`` -- any legal indexing (i.e., such that self[key] works)
 
-        - ``value`` - values that are used to set the elements indicated by key.
+        - ``value`` -- values that are used to set the elements indicated by key.
 
         EXAMPLES::
 
@@ -1803,7 +1803,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``rep_mapping`` - a dictionary or callable used to override
+        - ``rep_mapping`` -- a dictionary or callable used to override
           the usual representation of elements.
 
           If ``rep_mapping`` is a dictionary then keys should be
@@ -1819,23 +1819,23 @@ cdef class Matrix(sage.structure.element.Matrix):
           call :func:`repr` on elements which should have the default
           representation.
 
-        - ``zero`` - string (default: ``None``); if not ``None`` use
+        - ``zero`` -- string (default: ``None``); if not ``None`` use
           the value of ``zero`` as the representation of the zero
           element.
 
-        - ``plus_one`` - string (default: ``None``); if not ``None``
+        - ``plus_one`` -- string (default: ``None``); if not ``None``
           use the value of ``plus_one`` as the representation of the
           one element.
 
-        - ``minus_one`` - string (default: ``None``); if not ``None``
+        - ``minus_one`` -- string (default: ``None``); if not ``None``
           use the value of ``minus_one`` as the representation of the
           negative of the one element.
 
-        - ``unicode`` - boolean (default: ``False``).
+        - ``unicode`` -- boolean (default: ``False``).
           Whether to use Unicode symbols instead of ASCII symbols
           for brackets and subdivision lines.
 
-        - ``shape`` - one of ``"square"`` or ``"round"`` (default: ``None``).
+        - ``shape`` -- one of ``"square"`` or ``"round"`` (default: ``None``).
           Switches between round and square brackets.
           The default depends on the setting of the ``unicode`` keyword
           argument. For Unicode symbols, the default is round brackets
@@ -4081,10 +4081,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``skew`` - boolean (default: ``False``); Set to ``True`` to
+        - ``skew`` -- boolean (default: ``False``); Set to ``True`` to
           check if the matrix is skew-Hermitian instead of Hermitian.
 
-        - ``tolerance`` - a real number; the maximum difference we'll
+        - ``tolerance`` -- a real number; the maximum difference we'll
           tolerate between entries of the given matrix and its conjugate-
           transpose.
 
@@ -5253,9 +5253,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``v`` - free module element
+        - ``v`` -- free module element
 
-        - ``n`` - nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 

@@ -455,7 +455,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
-        - ``names`` - name of generator of output field
+        - ``names`` -- name of generator of output field
 
 
         OUTPUT:

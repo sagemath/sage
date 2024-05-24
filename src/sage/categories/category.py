@@ -1944,7 +1944,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``categories`` - a non empty list (or iterable) of categories
+        - ``categories`` -- a non empty list (or iterable) of categories
 
         .. SEEALSO:: :meth:`__or__` for a shortcut
 
