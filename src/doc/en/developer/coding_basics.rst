@@ -685,8 +685,8 @@ indentation:
 
         .. NOTE::
 
-            This function uses the algorithm of [BCDT2001]_ to determine
-            whether an elliptic curve `E` over `Q` is modular.
+            This function uses :func:`pow` to determine the fifth
+            power of ``x``.
 
         ...
 
