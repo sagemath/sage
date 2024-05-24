@@ -1725,13 +1725,11 @@ class IntegerPowerFunction():
 cdef dict builtin_functions = None
 cpdef dict get_builtin_functions():
     r"""
-    To handle ExpressionCall, we need to map from Sage and
-    Python functions to opcode names.
+    Return a dictionary from Sage and Python functions to opcode names.
 
-    This returns a dictionary which is that map.
+    The result is cached.
 
-    We delay building builtin_functions to break a circular import
-    between sage.calculus and this file.
+    The dictionary is used in :class:`ExpressionCall`.
 
     EXAMPLES::
 
