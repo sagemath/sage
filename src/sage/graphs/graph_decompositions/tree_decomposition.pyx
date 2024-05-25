@@ -798,6 +798,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
 
     return tree_decomp
 
+
 def make_nice_tree_decomposition(graph, tree_decomp):
     r"""
     Return a *nice* tree decomposition (TD) of the TD ``tree_decomp``.

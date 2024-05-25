@@ -363,32 +363,10 @@ WRAPPED_SCRIPTS="build install preinst pipinst postinst $INSTALLED_SCRIPTS"
 warning_for_experimental_packages() { ############################
 if [ x`cat "$PKG_SCRIPTS/type"` = x"experimental" ]; then
     if [ $YES != 1 -a -n "$PKG_NAME_UPSTREAM" ]; then
-        # We use /dev/tty here because our output may be redirected
-        # to a logfile, or line-buffered.
-        write_to_tty <<EOF
-=========================== WARNING ===========================
-You are about to download and install the experimental package
-$PKG_NAME.  This probably won't work at all for you! There
-is no guarantee that it will build correctly, or behave as
-expected. Use at your own risk!
-===============================================================
-EOF
-        if [ $? -ne 0 ]; then
-            echo "Terminal not available for prompting.  Use 'sage -i -y $PKG_BASE'"
-            echo "to install experimental packages in non-interactive mode."
-            YES=-1
-        fi
-        if [ $YES != -1 ]; then
-            read -p "Are you sure you want to continue [Y/n]? " answer < /dev/tty > /dev/tty 2>&1
-        else
-            answer=n
-        fi
-        case "$answer" in
-            n*|N*) exit 1;;
-        esac
-        # Confirm the user's input.  (This gives important
-        # feedback to the user when output is redirected to a logfile.)
-        echo > /dev/tty "OK, installing $PKG_NAME now..."
+        echo "Error: The package $PKG_NAME is marked as experimental."
+        echo "Use 'sage -i -y $PKG_BASE' to force installation of this package"
+        echo "or use the configure option --enable-experimental-packages"
+        exit 1
     fi
 fi
 } ############################## warning_for_experimental_packages

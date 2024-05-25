@@ -2504,6 +2504,7 @@ cdef class GapElement_Function(GapElement):
         cdef Obj result = NULL
         cdef Obj arg_list
         cdef int n = len(args)
+        cdef volatile Obj v2
 
         if n > 0 and n <= 3:
             libgap = self.parent()
@@ -2522,10 +2523,11 @@ cdef class GapElement_Function(GapElement):
                                            (<GapElement>a[0]).value,
                                            (<GapElement>a[1]).value)
             elif n == 3:
+                v2 = (<GapElement>a[2]).value
                 result = GAP_CallFunc3Args(self.value,
                                            (<GapElement>a[0]).value,
                                            (<GapElement>a[1]).value,
-                                           (<GapElement>a[2]).value)
+                                           v2)
             else:
                 arg_list = make_gap_list(args)
                 result = GAP_CallFuncList(self.value, arg_list)

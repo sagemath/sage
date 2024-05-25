@@ -214,7 +214,7 @@ AUTHOR:
 from itertools import product
 
 from sage.modules.module import Module
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.structure.all import parent
 from sage.structure.sequence import Sequence
 from .fgp_element import DEBUG, FGP_Element
@@ -280,10 +280,16 @@ def is_FGP_Module(x):
         sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
         sage: W = V.span([2*V.0 + 4*V.1, 9*V.0 + 12*V.1, 4*V.2]); Q = V/W
         sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(V)
+        doctest:warning...
+        DeprecationWarning: the function is_FGP_Module is deprecated;
+        use 'isinstance(..., FGP_Module_class)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         False
         sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(Q)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FGP_Module is deprecated; use 'isinstance(..., FGP_Module_class)' instead")
     return isinstance(x, FGP_Module_class)
 
 
@@ -356,9 +362,9 @@ class FGP_Module_class(Module):
             <class 'sage.modules.fg_pid.fgp_module.FGP_Module_class_with_category'>
         """
         if check:
-            if not is_FreeModule(V):
+            if not isinstance(V, FreeModule_generic):
                 raise TypeError("V must be a FreeModule")
-            if not is_FreeModule(W):
+            if not isinstance(W, FreeModule_generic):
                 raise TypeError("W must be a FreeModule")
             if not W.is_submodule(V):
                 raise ValueError("W must be a submodule of V")
@@ -441,7 +447,7 @@ class FGP_Module_class(Module):
             sage: Q._coerce_map_from_(V.scale(2))
             True
         """
-        if is_FGP_Module(S):
+        if isinstance(S, FGP_Module_class):
             return S.has_canonical_map_to(self)
         return self._V.has_coerce_map_from(S)
 
@@ -500,8 +506,8 @@ class FGP_Module_class(Module):
             sage: Q/Q
             Finitely generated module V/W over Integer Ring with invariants ()
         """
-        if not is_FGP_Module(other):
-            if is_FreeModule(other):
+        if not isinstance(other, FGP_Module_class):
+            if isinstance(other, FreeModule_generic):
                 other = other / other.zero_submodule()
             else:
                 raise TypeError("other must be an FGP module")
@@ -525,7 +531,7 @@ class FGP_Module_class(Module):
             sage: Q == V/V.zero_submodule()
             False
         """
-        if not is_FGP_Module(other):
+        if not isinstance(other, FGP_Module_class):
             return False
         return self._V == other._V and self._W == other._W
 
@@ -745,7 +751,7 @@ class FGP_Module_class(Module):
             ...
             ValueError: x.V() must be contained in self's V.
         """
-        if is_FGP_Module(x):
+        if isinstance(x, FGP_Module_class):
             if not x._W.is_submodule(self._W):
                 raise ValueError("x.W() must be contained in self's W.")
 
@@ -759,7 +765,7 @@ class FGP_Module_class(Module):
             raise TypeError("x must be a list, tuple, or FGP module")
 
         x = Sequence(x)
-        if is_FGP_Module(x.universe()):
+        if isinstance(x.universe(), FGP_Module_class):
             # TODO: possibly inefficient in some cases
             x = [self(v).lift() for v in x]
         V = self._V.submodule(x) + self._W
@@ -791,7 +797,7 @@ class FGP_Module_class(Module):
             False
 
         """
-        if not is_FGP_Module(A):
+        if not isinstance(A, FGP_Module_class):
             return False
         if self.cardinality() == 0 and self.base_ring() == A.base_ring():
             return True
@@ -1598,7 +1604,7 @@ class FGP_Module_class(Module):
                 N = codomain
                 im_gens = Sequence(im_gens, universe=N)
 
-        if is_FreeModule(N):
+        if isinstance(N, FreeModule_generic):
             # If im_smith_gens are not in an R-module, but are in a Free-module,
             # then we quotient out by the 0 submodule and get an R-module.
             N = FGP_Module(N, N.zero_submodule(), check=DEBUG)
@@ -2047,7 +2053,7 @@ def random_fgp_morphism_0(*args, **kwds):
         sage: mor = fgp.random_fgp_morphism_0(4)
         sage: mor.domain() == mor.codomain()
         True
-        sage: fgp.is_FGP_Module(mor.domain())
+        sage: isinstance(mor.domain(), fgp.FGP_Module_class)
         True
 
     Each generator is sent to a random multiple of itself::

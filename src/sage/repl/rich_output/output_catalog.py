@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Catalog of all available output container types.
 

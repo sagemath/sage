@@ -35,8 +35,8 @@ AUTHORS:
 from sage.schemes.berkovich.berkovich_cp_element import (Berkovich_Element_Cp_Affine,
                                                          Berkovich_Element_Cp_Projective)
 from sage.structure.parent import Parent
-from sage.schemes.affine.affine_space import is_AffineSpace
-from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
+from sage.schemes.affine.affine_space import AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.number_fields import NumberFields
 import sage.rings.abc
@@ -60,8 +60,13 @@ def is_Berkovich(space) -> bool:
         sage: B = Berkovich_Cp_Projective(3)
         sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
         sage: is_Berkovich(B)
+        doctest:warning...
+        DeprecationWarning: The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Berkovich is deprecated; use 'isinstance(..., Berkovich)' instead.")
     return isinstance(space, Berkovich)
 
 
@@ -77,10 +82,15 @@ def is_Berkovich_Cp(space) -> bool:
     EXAMPLES::
 
         sage: B = Berkovich_Cp_Projective(3)
-        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich
-        sage: is_Berkovich(B)
+        sage: from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
+        sage: is_Berkovich_Cp(B)
+        doctest:warning...
+        DeprecationWarning: The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_Berkovich_Cp is deprecated; use 'isinstance(..., Berkovich_Cp)' instead.")
     return isinstance(space, Berkovich_Cp)
 
 
@@ -433,7 +443,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
                 base = Qp(base)  # change to Qpbar
             else:
                 raise ValueError("non-prime passed into Berkovich space")
-        if is_AffineSpace(base):
+        if isinstance(base, AffineSpace_generic):
             base = base.base_ring()
         if base in NumberFields():
             if ideal is None:
@@ -630,7 +640,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
                 raise ValueError("non-prime passed into Berkovich space")
         if base in NumberFields() or isinstance(base, sage.rings.abc.pAdicField):
             base = ProjectiveSpace(base, 1)
-        if not is_ProjectiveSpace(base):
+        if not isinstance(base, ProjectiveSpace_ring):
             try:
                 base = ProjectiveSpace(base)
             except (TypeError, ValueError):

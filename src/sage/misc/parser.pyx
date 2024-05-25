@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 A parser for symbolic equations and expressions
 

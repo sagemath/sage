@@ -74,12 +74,18 @@ def is_MatrixSpace(x):
         sage: MS = MatrixSpace(QQ,2)
         sage: A = MS.random_element()
         sage: is_MatrixSpace(MS)
+        doctest:warning...
+        DeprecationWarning: the function is_MatrixSpace is deprecated;
+        use 'isinstance(..., MatrixSpace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_MatrixSpace(A)
         False
         sage: is_MatrixSpace(5)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_MatrixSpace is deprecated; use 'isinstance(..., MatrixSpace)' instead")
     return isinstance(x, MatrixSpace)
 
 
@@ -1265,10 +1271,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
             if op is operator.mul:
                 from . import action as matrix_action
                 if self_on_left:
-                    if is_MatrixSpace(S):
+                    if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
-                    elif sage.modules.free_module.is_FreeModule(S):
+                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.MatrixVectorAction(self, S)
                     elif isinstance(S, SchemeHomset_points):
                         return matrix_action.MatrixSchemePointAction(self, S)
@@ -1278,10 +1284,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         # action of base ring
                         return sage.structure.coerce_actions.RightModuleAction(S, self)
                 else:
-                    if is_MatrixSpace(S):
+                    if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(S, self)
-                    elif sage.modules.free_module.is_FreeModule(S):
+                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.VectorMatrixAction(self, S)
                     elif isinstance(S, SchemeHomset_generic):
                         return matrix_action.PolymapMatrixAction(self, S)

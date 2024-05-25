@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations on polynomial rings based on `\phi`-adic expansions
 

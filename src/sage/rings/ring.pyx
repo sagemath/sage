@@ -102,7 +102,6 @@ from sage.misc.superseded import deprecation
 from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
 from sage.structure.category_object cimport check_default_category
-from sage.structure.sequence import Sequence
 from sage.misc.prandom import randint
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
@@ -426,7 +425,7 @@ cdef class Ring(ParentWithGens):
             coerce = True
 
         from sage.rings.ideal import Ideal_generic
-        from sage.structure.parent import is_Parent
+        from sage.structure.parent import Parent
         gens = args
         while isinstance(gens, (list, tuple)) and len(gens) == 1:
             first = gens[0]
@@ -445,7 +444,7 @@ cdef class Ring(ParentWithGens):
                 break
             elif isinstance(first, (list, tuple)):
                 gens = first
-            elif is_Parent(first) and self.has_coerce_map_from(first):
+            elif isinstance(first, Parent) and self.has_coerce_map_from(first):
                 gens = first.gens()  # we have a ring as argument
             else:
                 break
@@ -1262,204 +1261,6 @@ cdef class CommutativeRing(Ring):
         R = self[name]
         I = R.ideal(R(poly.list()))
         return R.quotient(I, name)
-
-    def frobenius_endomorphism(self, n=1):
-        """
-        INPUT:
-
-        - ``n`` -- a nonnegative integer (default: 1)
-
-        OUTPUT:
-
-        The `n`-th power of the absolute arithmetic Frobenius
-        endomorphism on this finite field.
-
-        EXAMPLES::
-
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism(); Frob
-            Frobenius endomorphism x |--> x^5 of Power Series Ring in u
-             over Finite Field of size 5
-            sage: Frob(u)
-            u^5
-
-        We can specify a power::
-
-            sage: f = K.frobenius_endomorphism(2); f
-            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
-             over Finite Field of size 5
-            sage: f(1+u)
-            1 + u^25
-        """
-        from sage.rings.morphism import FrobeniusEndomorphism_generic
-        return FrobeniusEndomorphism_generic(self, n)
-
-    def derivation_module(self, codomain=None, twist=None):
-        r"""
-        Returns the module of derivations over this ring.
-
-        INPUT:
-
-        - ``codomain`` -- an algebra over this ring or a ring homomorphism
-          whose domain is this ring or ``None`` (default: ``None``); if it
-          is a morphism, the codomain of derivations will be the codomain
-          of the morphism viewed as an algebra over ``self`` through the
-          given morphism; if ``None``, the codomain will be this ring
-
-        - ``twist`` -- a morphism from this ring to ``codomain``
-          or ``None`` (default: ``None``); if ``None``, the coercion
-          map from this ring to ``codomain`` will be used
-
-        .. NOTE::
-
-            A twisted derivation with respect to `\theta` (or a
-            `\theta`-derivation for short) is an additive map `d`
-            satisfying the following axiom for all `x, y` in the domain:
-
-            .. MATH::
-
-                d(xy) = \theta(x) d(y) + d(x) y.
-
-        EXAMPLES::
-
-            sage: R.<x,y,z> = QQ[]
-            sage: M = R.derivation_module(); M                                          # needs sage.modules
-            Module of derivations over
-             Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: M.gens()                                                              # needs sage.modules
-            (d/dx, d/dy, d/dz)
-
-        We can specify a different codomain::
-
-            sage: K = R.fraction_field()
-            sage: M = R.derivation_module(K); M                                         # needs sage.modules
-            Module of derivations
-             from Multivariate Polynomial Ring in x, y, z over Rational Field
-               to Fraction Field of
-                  Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: M.gen() / x                                                           # needs sage.modules
-            1/x*d/dx
-
-        Here is an example with a non-canonical defining morphism::
-
-            sage: ev = R.hom([QQ(0), QQ(1), QQ(2)])
-            sage: ev
-            Ring morphism:
-              From: Multivariate Polynomial Ring in x, y, z over Rational Field
-              To:   Rational Field
-              Defn: x |--> 0
-                    y |--> 1
-                    z |--> 2
-            sage: M = R.derivation_module(ev)                                           # needs sage.modules
-            sage: M                                                                     # needs sage.modules
-            Module of derivations
-             from Multivariate Polynomial Ring in x, y, z over Rational Field
-               to Rational Field
-
-        Elements in `M` acts as derivations at `(0,1,2)`::
-
-            sage: # needs sage.modules
-            sage: Dx = M.gen(0); Dx
-            d/dx
-            sage: Dy = M.gen(1); Dy
-            d/dy
-            sage: Dz = M.gen(2); Dz
-            d/dz
-            sage: f = x^2 + y^2 + z^2
-            sage: Dx(f)  # = 2*x evaluated at (0,1,2)
-            0
-            sage: Dy(f)  # = 2*y evaluated at (0,1,2)
-            2
-            sage: Dz(f)  # = 2*z evaluated at (0,1,2)
-            4
-
-        An example with a twisting homomorphism::
-
-            sage: theta = R.hom([x^2, y^2, z^2])
-            sage: M = R.derivation_module(twist=theta); M                               # needs sage.modules
-            Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
-             over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
-
-        .. SEEALSO::
-
-            :meth:`derivation`
-
-        """
-        from sage.rings.derivation import RingDerivationModule
-        if codomain is None:
-            codomain = self
-        return RingDerivationModule(self, codomain, twist)
-
-    def derivation(self, arg=None, twist=None):
-        r"""
-        Return the twisted or untwisted derivation over this ring
-        specified by ``arg``.
-
-        .. NOTE::
-
-            A twisted derivation with respect to `\theta` (or a
-            `\theta`-derivation for short) is an additive map `d`
-            satisfying the following axiom for all `x, y` in the domain:
-
-            .. MATH::
-
-                d(xy) = \theta(x) d(y) + d(x) y.
-
-        INPUT:
-
-        - ``arg`` -- (optional) a generator or a list of coefficients
-          that defines the derivation
-
-        - ``twist`` -- (optional) the twisting homomorphism
-
-        EXAMPLES::
-
-            sage: R.<x,y,z> = QQ[]
-            sage: R.derivation()                                                        # needs sage.modules
-            d/dx
-
-        In that case, ``arg`` could be a generator::
-
-            sage: R.derivation(y)                                                       # needs sage.modules
-            d/dy
-
-        or a list of coefficients::
-
-            sage: R.derivation([1,2,3])                                                 # needs sage.modules
-            d/dx + 2*d/dy + 3*d/dz
-
-        It is not possible to define derivations with respect to a
-        polynomial which is not a variable::
-
-            sage: R.derivation(x^2)                                                     # needs sage.modules
-            Traceback (most recent call last):
-            ...
-            ValueError: unable to create the derivation
-
-        Here is an example with twisted derivations::
-
-            sage: R.<x,y,z> = QQ[]
-            sage: theta = R.hom([x^2, y^2, z^2])
-            sage: f = R.derivation(twist=theta); f                                      # needs sage.modules
-            0
-            sage: f.parent()                                                            # needs sage.modules
-            Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
-             over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
-
-        Specifying a scalar, the returned twisted derivation is the
-        corresponding multiple of `\theta - id`::
-
-            sage: R.derivation(1, twist=theta)                                          # needs sage.modules
-            [x |--> x^2, y |--> y^2, z |--> z^2] - id
-            sage: R.derivation(x, twist=theta)                                          # needs sage.modules
-            x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
-
-        """
-        if isinstance(arg, (list, tuple)):
-            codomain = Sequence([self(0)] + list(arg)).universe()
-        else:
-            codomain = self
-        return self.derivation_module(codomain, twist=twist)(arg)
 
 
 cdef class IntegralDomain(CommutativeRing):
