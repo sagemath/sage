@@ -32,7 +32,7 @@ Except for affine hull and affine hull projection.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import coerce_binop, is_Vector, is_Matrix
+from sage.structure.element import coerce_binop, Vector, Matrix
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

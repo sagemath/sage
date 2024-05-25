@@ -470,8 +470,8 @@ cdef class ntl_mat_GF2():
             True
         """
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
-        from sage.matrix.constructor import Matrix
-        m =  Matrix(FiniteField(2),self.x.NumRows(),self.x.NumCols())
+        from sage.matrix.constructor import matrix
+        m = matrix(FiniteField(2),self.x.NumRows(),self.x.NumCols())
 
         cdef Py_ssize_t i, j
 

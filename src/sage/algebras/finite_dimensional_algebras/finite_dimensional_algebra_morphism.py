@@ -243,7 +243,7 @@ class FiniteDimensionalAlgebraHomset(RingHomset_generic):
         elif isinstance(f, Matrix):
             return FiniteDimensionalAlgebraMorphism(self, f, check, unitary)
         try:
-            from sage.matrix.constructor import Matrix
-            return FiniteDimensionalAlgebraMorphism(self, Matrix(f), check, unitary)
+            from sage.matrix.constructor import matrix
+            return FiniteDimensionalAlgebraMorphism(self, matrix(f), check, unitary)
         except Exception:
             return RingHomset_generic.__call__(self, f, check)

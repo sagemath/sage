@@ -544,8 +544,8 @@ cdef class ntl_mat_GF2E():
 
         l = [e._sage_(k) for e in self.list()] # we actually can do faster than this
 
-        from sage.matrix.constructor import Matrix
-        return Matrix(k,self.x.NumRows(),self.x.NumCols(),l)
+        from sage.matrix.constructor import matrix
+        return matrix(k, self.x.NumRows(), self.x.NumCols(), l)
 
     def transpose(ntl_mat_GF2E self):
         """

@@ -4185,9 +4185,9 @@ cdef class BinaryCodeClassifier:
                                 dealloc_word_perm(hwp)
                                 break
                         if bingo2:
-                            from sage.matrix.constructor import Matrix
+                            from sage.matrix.constructor import matrix
                             from sage.rings.finite_rings.finite_field_constructor import GF
-                            M = Matrix(GF(2), B_aug.nrows, B_aug.ncols)
+                            M = matrix(GF(2), B_aug.nrows, B_aug.ncols)
                             for i from 0 <= i < B_aug.ncols:
                                 for j from 0 <= j < B_aug.nrows:
                                     M[j,i] = B_aug.is_one(1 << j, i)

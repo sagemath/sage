@@ -112,8 +112,8 @@ TESTS::
 # ****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.matrix.constructor import Matrix
-from sage.structure.element import Matrix, is_Vector
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix, Vector
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
@@ -174,7 +174,7 @@ def to_matrix_representation(v, sub_field=None, basis=None):
     n = v.length()
     m = base_field.degree()//sub_field.degree()
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
-    return Matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
+    return matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
 
 def from_matrix_representation(w, base_field=None, basis=None):
     r"""

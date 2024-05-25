@@ -24,7 +24,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.rational_field import is_RationalField
@@ -179,7 +179,7 @@ def Conic(base_field, F=None, names=None, unique=True):
                 L.append(Sequence([C[0]**2, C[0] * C[1],
                                    C[0] * C[2], C[1]**2,
                                    C[1] * C[2], C[2]**2], P.fraction_field()))
-            M = Matrix(L)
+            M = matrix(L)
             if unique and M.rank() != 5:
                 raise ValueError("points in F (=%s) do not define a unique "
                                  "conic" % F)

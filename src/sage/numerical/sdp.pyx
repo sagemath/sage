@@ -235,7 +235,7 @@ AUTHORS:
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import matrix
 from sage.structure.element import Matrix
 
 
@@ -675,7 +675,7 @@ cdef class SemidefiniteProgram(SageObject):
             if l[-1][0] == -1:
                 last_i,last_value = l.pop()
             else:
-                last_value = Matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
+                last_value = matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
             l.reverse()
             for j, c in l:
                 if c == 0:

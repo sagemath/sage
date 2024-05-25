@@ -43,7 +43,7 @@ from sage.quadratic_forms.ternary import (_basic_lemma,
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygens
-from sage.structure.element import Vector, is_Matrix
+from sage.structure.element import Vector, Matrix
 from sage.structure.sage_object import SageObject
 
 

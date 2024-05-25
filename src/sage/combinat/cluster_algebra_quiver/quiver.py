@@ -758,11 +758,11 @@ class ClusterQuiver(SageObject):
         """
         M = self.b_matrix()
         if self.m():
-            from sage.matrix.constructor import Matrix
+            from sage.matrix.constructor import matrix
             from sage.matrix.constructor import block_matrix
             M1 = M.matrix_from_rows(list(range(self.n())))
             M2 = M.matrix_from_rows(list(range(self.n(), self.n() + self.m())))
-            M3 = Matrix(self.m(), self.m())
+            M3 = matrix(self.m(), self.m())
             M = block_matrix([[M1, -M2.transpose()], [M2, M3]])
         dg = self.digraph()
         dg.plot(save_pos=True)
