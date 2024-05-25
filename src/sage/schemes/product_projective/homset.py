@@ -182,8 +182,8 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
         B = kwds.pop('bound', 0)
         X = self.codomain()
 
-        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if not is_ProductProjectiveSpaces(X) and X.base_ring() in Fields():
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+        if not isinstance(X, ProductProjectiveSpaces_ring) and X.base_ring() in Fields():
             # no points
             if X.dimension() == -1:
                 return []

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Basic Linear Algebra Subroutines on dictionaries
 
