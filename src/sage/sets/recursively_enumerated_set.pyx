@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Recursively Enumerated Sets
 
@@ -1489,6 +1488,7 @@ def _imap_and_filter_none(function, iterable):
         if x is not None:
             yield x
 
+
 def search_forest_iterator(roots, children, algorithm='depth'):
     r"""
     Return an iterator on the nodes of the forest having the given
@@ -1576,6 +1576,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
 
         yield node
         stack.append( iter(children(node)) )
+
 
 class RecursivelyEnumeratedSet_forest(Parent):
     r"""

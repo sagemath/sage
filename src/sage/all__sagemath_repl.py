@@ -97,8 +97,8 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
                                 r"removed from itertools in Python 3.14.")
 
 
-from .all__sagemath_objects import *
-from .all__sagemath_environment import *
+from sage.all__sagemath_objects import *
+from sage.all__sagemath_environment import *
 
 from sage.doctest.all    import *
 from sage.repl.all       import *

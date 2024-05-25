@@ -26,6 +26,10 @@ def is_RingHomset(H):
 
         sage: from sage.rings.homset import is_RingHomset as is_RH
         sage: is_RH(Hom(ZZ, QQ))
+        doctest:warning...
+        DeprecationWarning: the function is_RingHomset is deprecated;
+        use 'isinstance(..., RingHomset_generic)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         True
         sage: is_RH(ZZ)
         False
@@ -34,6 +38,8 @@ def is_RingHomset(H):
         sage: is_RH(Hom(FreeModule(ZZ,1), FreeModule(QQ,1)))                            # needs sage.modules
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_RingHomset is deprecated; use 'isinstance(..., RingHomset_generic)' instead")
     return isinstance(H, RingHomset_generic)
 
 

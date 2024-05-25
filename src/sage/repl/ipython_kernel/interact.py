@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Interacts for the Sage Jupyter notebook
 

@@ -52,7 +52,7 @@ from itertools import product
 
 from . import constructor
 from . import BSD
-from .ell_generic import is_EllipticCurve
+from .ell_generic import EllipticCurve_generic
 from . import ell_modular_symbols
 from .ell_number_field import EllipticCurve_number_field
 from . import ell_point
@@ -4985,7 +4985,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.is_isogenous(EE)
             False
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if other.base_field() is not QQ:
             raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")

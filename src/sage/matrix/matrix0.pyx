@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Base class for matrices, part 0
 

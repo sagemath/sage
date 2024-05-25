@@ -67,12 +67,17 @@ def is_SchemeHomset(H):
           Defn: Identity map
         sage: from sage.schemes.generic.homset import is_SchemeHomset
         sage: is_SchemeHomset(f)
+        doctest:warning...
+        DeprecationWarning: The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: is_SchemeHomset(f.parent())
         True
         sage: is_SchemeHomset('a string')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_SchemeHomset is deprecated; use 'isinstance(..., SchemeHomset_generic)' instead.")
     return isinstance(H, SchemeHomset_generic)
 
 
@@ -164,7 +169,7 @@ class SchemeHomsetFactory(UniqueFactory):
         if base is None:
             from sage.structure.element import coercion_model
             base = coercion_model.common_parent(X.base_ring(), Y.base_ring())
-        if is_AffineScheme(base):
+        if isinstance(base, AffineScheme):
             base_spec = base
             base_ring = base.coordinate_ring()
         elif base in _CommRings:
@@ -327,7 +332,7 @@ class SchemeHomset_generic(HomsetWithBase):
         """
         X = self.domain()
         Y = self.codomain()
-        if is_AffineScheme(Y) and Y.coordinate_ring() == X.base_ring():
+        if isinstance(Y, AffineScheme) and Y.coordinate_ring() == X.base_ring():
             return SchemeMorphism_structure_map(self)
         raise NotImplementedError
 
@@ -444,7 +449,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: SchemeHomset_points(Spec(QQ), AffineSpace(ZZ,2))
             Set of rational points of Affine Space of dimension 2 over Rational Field
         """
-        if check and not is_AffineScheme(X):
+        if check and not isinstance(X, AffineScheme):
             raise ValueError('The domain must be an affine scheme.')
         SchemeHomset_generic.__init__(self, X, Y, category=category, check=check, base=base)
 
@@ -730,7 +735,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             Rational Field
         """
         dom = self.domain()
-        if not is_AffineScheme(dom):
+        if not isinstance(dom, AffineScheme):
             raise ValueError("value rings are defined for affine domains only")
         return dom.coordinate_ring()
 
