@@ -317,12 +317,12 @@ class BoundarySpace(hecke.HeckeModule_generic):
         weight = int(weight)
         if weight <= 1:
             raise ArithmeticError("weight must be at least 2")
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group must be a congruence subgroup")
         sign = int(sign)
         if base_ring not in Rings().Commutative():
             raise TypeError("base_ring must be a commutative ring")
-        if character is None and arithgroup.is_Gamma0(group):
+        if character is None and isinstance(group, arithgroup.Gamma0_class):
             character = dirichlet.TrivialCharacter(group.level(), base_ring)
         (self.__group, self.__weight, self.__character,
          self.__sign, self.__base_ring) = (group, weight,

@@ -19,7 +19,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.modular.arithgroup.congroup_sl2z import is_SL2Z
+from sage.modular.arithgroup.congroup_sl2z import SL2Z_class
 from sage.modular.modform.constructor import EisensteinForms
 from sage.modular.modform.eis_series import eisenstein_series_qexp
 from sage.modular.modform.element import GradedModularFormElement
@@ -712,7 +712,7 @@ class QuasiModularFormsElement(ModuleElement):
         QM = self.parent()
         R = QM.base_ring()
         E2 = QM.gen(0)
-        if is_SL2Z(QM.group()):
+        if isinstance(QM.group(), SL2Z_class):
             E4 = QM.gen(1)
         else:
             E4 = QM(EisensteinForms(group=1, weight=4, base_ring=R).gen(0))
