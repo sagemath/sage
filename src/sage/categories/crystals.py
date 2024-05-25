@@ -1985,7 +1985,7 @@ class CrystalMorphism(Morphism):
             sage: H = Hom(T, B)
             sage: b = B.module_generators[0]
             sage: psi = H((None, b, b, None), generators=T.highest_weight_vectors())
-            sage: psi(None)
+            sage: psi(None)                                                             # needs sage.symbolic
             sage: [psi(v) for v in T.highest_weight_vectors()]
             [None, [[1, 1], [2]], [[1, 1], [2]], None]
         """
