@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-schemes
+
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
 from sage.schemes.hyperelliptic_curves.kummer_surface import KummerSurface
 from sage.schemes.hyperelliptic_curves.mestre import (

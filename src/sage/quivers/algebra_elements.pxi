@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 """
 Boilerplate functions for a cython implementation of elements of path algebras
 

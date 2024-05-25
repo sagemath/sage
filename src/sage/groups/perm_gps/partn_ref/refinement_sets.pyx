@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Partition backtrack functions for sets
 

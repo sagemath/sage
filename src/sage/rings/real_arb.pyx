@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 Arbitrary precision real balls
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 r"""
 Multivariate Polynomials via libSINGULAR
 

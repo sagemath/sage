@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-gap
+
 from sage.groups.perm_gps.permgroup_named import (SymmetricGroup, AlternatingGroup,
                                                   DihedralGroup, SplitMetacyclicGroup,
                                                   SemidihedralGroup, CyclicPermutationGroup,

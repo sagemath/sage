@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Enumerated set of lists of integers with constraints: base classes
 

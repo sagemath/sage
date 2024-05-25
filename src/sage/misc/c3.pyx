@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 The C3 algorithm
 

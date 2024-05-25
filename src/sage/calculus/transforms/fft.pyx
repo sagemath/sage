@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Fast Fourier Transforms Using GSL
 
