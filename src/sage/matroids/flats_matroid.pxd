@@ -1,16 +1,19 @@
-from sage.matroids.matroid cimport Matroid
+from .matroid cimport Matroid
 
 cdef class FlatsMatroid(Matroid):
-    cdef frozenset _groundset  # _E
-    cdef int _matroid_rank  # _R
+    cdef frozenset _groundset
+    cdef int _matroid_rank
     cdef dict _F  # flats
+    cdef object _L  # lattice of flats
     cpdef groundset(self)
     cpdef _rank(self, X)
     cpdef full_rank(self)
-    cpdef _is_independent(self, F)
+    cpdef _closure(self, X)
+    cpdef _is_closed(self, X)
 
     # enumeration
     cpdef flats(self, k)
+    cpdef whitney_numbers(self)
     cpdef whitney_numbers2(self)
 
     # isomorphism and relabeling

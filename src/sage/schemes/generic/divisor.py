@@ -48,8 +48,8 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.formal_sum import FormalSum
 
 from .morphism import is_SchemeMorphism
-from sage.schemes.affine.affine_space import is_AffineSpace
-from sage.schemes.projective.projective_space import is_ProjectiveSpace
+from sage.schemes.affine.affine_space import AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring
 
 
 def CurvePointToIdeal(C,P):
@@ -72,7 +72,7 @@ def CurvePointToIdeal(C,P):
     m = n-1
     while m > 0 and P[m] == 0:
         m += -1
-    if is_ProjectiveSpace(A):
+    if isinstance(A, ProjectiveSpace_ring):
         a_m = P[m]
         x_m = x[m]
         for i in range(m):
@@ -81,7 +81,7 @@ def CurvePointToIdeal(C,P):
                 polys.append(x[i])
             else:
                 polys.append(a_m*x[i]-ai*x_m)
-    elif is_AffineSpace(A):
+    elif isinstance(A, AffineSpace_generic):
         for i in range(m+1):
             ai = P[i]
             if ai == 0:
@@ -121,6 +121,29 @@ def is_Divisor(x):
 class Divisor_generic(FormalSum):
     r"""
     A Divisor.
+
+    TESTS::
+
+        sage: E = EllipticCurve([1, 2])
+        sage: P = E(-1, 0)
+        sage: Q = E(1, 2)
+        sage: Pd = E.divisor(P)
+        sage: Qd = E.divisor(Q)
+        sage: Pd + Qd == Qd + Pd
+        True
+        sage: Pd != Qd
+        True
+        sage: C = EllipticCurve([2, 1])
+        sage: R = C(1, 2)
+        sage: Rd = C.divisor(R)
+        sage: Qd == Rd
+        False
+        sage: Rd == Qd
+        False
+        sage: Qd == (2 * (Qd * 1/2))
+        True
+        sage: Qd == 1/2 * Qd
+        False
     """
 
     def __init__(self, v, parent, check=True, reduce=True):
@@ -363,14 +386,15 @@ class Divisor_curve(Divisor_generic):
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
 
-    def support(self):
+    def support(self) -> list:
         """
         Return the support of this divisor, which is the set of points that
         occur in this divisor with nonzero coefficients.
 
         EXAMPLES::
 
-            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
+            sage: A = AffineSpace(2, GF(5), names='xy')
+            sage: x, y = A.gens()
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]

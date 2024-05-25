@@ -94,7 +94,7 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.fraction_field import FractionField
 
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 
 from sage.schemes.elliptic_curves.weierstrass_morphism \
         import WeierstrassIsomorphism, _isomorphisms, baseWI, negation_morphism
@@ -1042,7 +1042,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                to Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 5252*x - 178837
                   over Rational Field
         """
-        if not is_EllipticCurve(E):
+        if not isinstance(E, EllipticCurve_generic):
             raise ValueError("given E is not an elliptic curve")
 
         if not isinstance(kernel, list) and kernel in E:
@@ -1854,7 +1854,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             codomain = compute_model(oldE2, model)
 
         else:  # codomain is not None
-            if not is_EllipticCurve(codomain):
+            if not isinstance(codomain, EllipticCurve_generic):
                 raise ValueError("given codomain is not an elliptic curve")
 
             if not oldE2.is_isomorphic(codomain):

@@ -8,7 +8,7 @@ Quartic curve constructor
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 
 from .quartic_generic import QuarticCurve_generic
@@ -59,7 +59,7 @@ def QuarticCurve(F, PP=None, check=False):
         raise ValueError("Argument F (=%s) must be a homogeneous polynomial of degree 4" % F)
 
     if PP is not None:
-        if not is_ProjectiveSpace(PP) and PP.dimension == 2:
+        if not isinstance(PP, ProjectiveSpace_ring) and PP.dimension == 2:
             raise ValueError(f"Argument PP (={PP}) must be a projective plane")
     else:
         PP = ProjectiveSpace(P)

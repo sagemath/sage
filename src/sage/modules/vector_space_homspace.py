@@ -221,6 +221,10 @@ def is_VectorSpaceHomspace(x):
         sage: type(H)
         <class 'sage.modules.vector_space_homspace.VectorSpaceHomspace_with_category'>
         sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace(H)
+        doctest:warning...
+        DeprecationWarning: the function is_VectorSpaceHomspace is deprecated;
+        use 'isinstance(..., VectorSpaceHomspace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
 
         sage: K = Hom(QQ^3, ZZ^2)
@@ -238,6 +242,8 @@ def is_VectorSpaceHomspace(x):
         sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_VectorSpaceHomspace is deprecated; use 'isinstance(..., VectorSpaceHomspace)' instead")
     return isinstance(x, VectorSpaceHomspace)
 
 

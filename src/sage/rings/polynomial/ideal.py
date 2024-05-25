@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Ideals in Univariate Polynomial Rings
 
