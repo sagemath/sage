@@ -1026,7 +1026,7 @@ class GammaH_class(CongruenceSubgroup):
             True
         """
 
-        from .all import Gamma0_class, is_Gamma1
+        from .all import Gamma0_class, Gamma1_class
         if not isinstance(other, GammaH_class):
             raise NotImplementedError
 

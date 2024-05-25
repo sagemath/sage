@@ -456,7 +456,7 @@ class ArithmeticSubgroup(Group):
         # Cheap trick: if self is a subgroup of something with no elliptic points,
         # then self has no elliptic points either.
 
-        from .all import Gamma0, is_CongruenceSubgroup
+        from .all import Gamma0, CongruenceSubgroupBase
         if isinstance(self, CongruenceSubgroupBase):
             if self.is_subgroup(Gamma0(self.level())) and Gamma0(self.level()).nu2() == 0:
                 return 0
@@ -496,7 +496,7 @@ class ArithmeticSubgroup(Group):
         # Cheap trick: if self is a subgroup of something with no elliptic points,
         # then self has no elliptic points either.
 
-        from .all import Gamma0, is_CongruenceSubgroup
+        from .all import Gamma0, CongruenceSubgroupBase
         if isinstance(self, CongruenceSubgroupBase):
             if self.is_subgroup(Gamma0(self.level())) and Gamma0(self.level()).nu3() == 0:
                 return 0

@@ -19,7 +19,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 from sage.modular.modform.element import Newform
-from sage.modular.arithgroup.all import Gamma0_class, is_Gamma1, is_GammaH
+from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class, GammaH_class
 
 from .abvar import ModularAbelianVariety_modsym_abstract
 from . import homspace
