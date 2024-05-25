@@ -2958,10 +2958,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``labels`` -- a string (default ``'pairs'``); can be one of
           the following:
 
-          * ``'pairs'`` - each element ``v`` in this poset will be
+          * ``'pairs'`` -- each element ``v`` in this poset will be
             named ``(0, v)`` and each element ``u`` in ``other`` will
             be named ``(1, u)`` in the result
-          * ``'integers'`` - the elements of the result will be
+          * ``'integers'`` -- the elements of the result will be
             relabeled with consecutive integers
 
         EXAMPLES::
@@ -3310,10 +3310,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
           * ``'lattice'`` (default) elements of the lattice will be
             lattices that correspond to sublattices of the original lattice
 
-          * ``'tuple'`` - elements are tuples of elements of the sublattices
+          * ``'tuple'`` -- elements are tuples of elements of the sublattices
             of the original lattice
 
-          * ``'integer'`` - elements are plain integers
+          * ``'integer'`` -- elements are plain integers
 
         EXAMPLES::
 
@@ -4224,13 +4224,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``type`` -- a string; can be one of the following:
 
-          * ``'interval'`` - allow only doublings of an interval
-          * ``'lower'`` - allow doublings of lower pseudo-interval; that is, a
+          * ``'interval'`` -- allow only doublings of an interval
+          * ``'lower'`` -- allow doublings of lower pseudo-interval; that is, a
             subset of the lattice with a unique minimal element
-          * ``'upper'`` - allow doublings of upper pseudo-interval; that is, a
+          * ``'upper'`` -- allow doublings of upper pseudo-interval; that is, a
             subset of the lattice with a unique maximal element
-          * ``'convex'`` - allow doubling of any convex set
-          * ``'any'`` - allow doubling of any set
+          * ``'convex'`` -- allow doubling of any convex set
+          * ``'any'`` -- allow doubling of any set
 
         EXAMPLES:
 
@@ -4817,10 +4817,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``labels`` -- string; the elements of the resulting
           lattice and can be one of the following:
 
-          * ``'tuple'`` - elements are tuples of elements of the original
+          * ``'tuple'`` -- elements are tuples of elements of the original
             lattice
-          * ``'lattice'`` - elements are sublattices of the original lattice
-          * ``'integer'`` - elements are labeled by integers
+          * ``'lattice'`` -- elements are sublattices of the original lattice
+          * ``'integer'`` -- elements are labeled by integers
 
         .. WARNING::
 

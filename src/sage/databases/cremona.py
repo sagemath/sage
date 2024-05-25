@@ -323,7 +323,7 @@ def parse_cremona_label(label, numerical_class_code=False):
     OUTPUT:
 
     -  ``int`` -- the conductor
-    -  ``str`` or ``int`` - the isogeny class label
+    -  ``str`` or ``int`` -- the isogeny class label
     -  ``int`` -- the number
 
     EXAMPLES::
@@ -429,7 +429,7 @@ def parse_lmfdb_label(label, numerical_class_code=False):
     OUTPUT:
 
     -  ``int`` -- the conductor
-    -  ``str`` or ``int`` - the isogeny class label
+    -  ``str`` or ``int`` -- the isogeny class label
     -  ``int`` -- the number
 
     EXAMPLES::

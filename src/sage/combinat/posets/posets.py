@@ -1908,11 +1908,11 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change element look:
 
-          * ``element_colors`` - a dictionary where keys are colors and values
+          * ``element_colors`` -- a dictionary where keys are colors and values
             are lists of elements
-          * ``element_color`` - a color for elements not set in
+          * ``element_color`` -- a color for elements not set in
             ``element_colors``
-          * ``element_shape`` - the shape of elements, like ``'s'`` for
+          * ``element_shape`` -- the shape of elements, like ``'s'`` for
             square; see https://matplotlib.org/api/markers_api.html for the list
           * ``element_size`` (default: 200) - the size of elements
           * ``label_elements`` (default: ``True``) - whether to display
@@ -1922,24 +1922,24 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change cover relation look:
 
-          * ``cover_colors`` - a dictionary where keys are colors and values
+          * ``cover_colors`` -- a dictionary where keys are colors and values
             are lists of cover relations given as pairs of elements
-          * ``cover_color`` - a color for elements not set in
+          * ``cover_color`` -- a color for elements not set in
             ``cover_colors``
-          * ``cover_style`` - style for cover relations: ``'solid'``,
+          * ``cover_style`` -- style for cover relations: ``'solid'``,
             ``'dashed'``, ``'dotted'`` or ``'dashdot'``
-          * ``cover_labels`` - a dictionary, list or function representing
+          * ``cover_labels`` -- a dictionary, list or function representing
             labels of the covers of the poset. When set to ``None`` (default)
             no label is displayed on the edges of the Hasse Diagram.
-          * ``cover_labels_background`` - a background color for cover
+          * ``cover_labels_background`` -- a background color for cover
             relations. The default is "white". To achieve a transparent
             background use "transparent".
 
         - Options to change overall look:
 
           * ``figsize`` (default: 8) - size of the whole plot
-          * ``title`` - a title for the plot
-          * ``fontsize`` - fontsize for the title
+          * ``title`` -- a title for the plot
+          * ``fontsize`` -- fontsize for the title
           * ``border`` (default: ``False``) - whether to draw a border over the
             plot
 

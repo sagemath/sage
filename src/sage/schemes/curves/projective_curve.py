@@ -764,10 +764,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
            specified, the patch corresponding to the last projective
            coordinate being nonzero
 
-        -  ``*args`` - optional tuples (variable, minimum, maximum) for
+        -  ``*args`` -- optional tuples (variable, minimum, maximum) for
            plotting dimensions
 
-        -  ``**kwds`` - optional keyword arguments passed on to
+        -  ``**kwds`` -- optional keyword arguments passed on to
            ``implicit_plot``
 
         EXAMPLES:

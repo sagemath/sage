@@ -1542,7 +1542,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         INPUT:
 
-        - ``*args``, ``*kwds`` - Parameters passed to the random integer
+        - ``*args``, ``*kwds`` -- Parameters passed to the random integer
           function.  See the documentation of ``ZZ.random_element()`` for
           details.
 

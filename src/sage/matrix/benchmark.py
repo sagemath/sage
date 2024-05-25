@@ -42,7 +42,7 @@ def report(F, title, systems=['sage', 'magma'], **kwds):
     - ``F`` -- a list of callables used for benchmarking
     - ``title`` -- a string describing this report
     - ``systems`` -- a list of systems (supported entries are 'sage' and 'magma')
-    - ``**kwds`` - keyword arguments passed to all functions in ``F``
+    - ``**kwds`` -- keyword arguments passed to all functions in ``F``
 
     EXAMPLES::
 
@@ -98,7 +98,7 @@ def report_ZZ(**kwds):
 
     INPUT:
 
-    - ``**kwds`` - passed through to :func:`report`
+    - ``**kwds`` -- passed through to :func:`report`
 
     EXAMPLES::
 
@@ -576,7 +576,7 @@ def report_GF(p=16411, **kwds):
     INPUT:
 
     - ``p`` -- ignored
-    - ``**kwds`` - passed through to :func:`report`
+    - ``**kwds`` -- passed through to :func:`report`
 
     .. note::
 

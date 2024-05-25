@@ -1048,7 +1048,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         INPUT:
 
-        ``R`` - a ring.
+        - ``R`` -- a ring.
 
         OUTPUT:
 
@@ -1585,7 +1585,7 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
 
         INPUT:
 
-        ``R`` - a ring.
+        - ``R`` -- a ring.
 
         OUTPUT:
 

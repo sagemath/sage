@@ -305,7 +305,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         INPUT:
 
-        ``F`` - numerical ring
+        ``F`` -- numerical ring
 
         kwds:
 

@@ -1784,7 +1784,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
 
         INPUT:
 
-        ``exp`` - boolean (default: False) - if True, return a dictionary with
+        ``exp`` -- boolean (default: False) - if True, return a dictionary with
         keys the possible widths and with values the number of cusp with that
         width.
 
@@ -2023,13 +2023,13 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         - ``tree`` -- a spanning tree (with an embedding) of the graph
           associated to the action of ``S2`` and ``S3`` on the cosets
 
-        - ``reps`` -- list of matrices in `\SL_2(\ZZ)` - representatives
+        - ``reps`` -- list of matrices in `\SL_2(\ZZ)` -- representatives
           of the cosets with respect to the spanning tree
 
-        - ``word_reps`` -- list of lists with ``s2`` and ``s3`` - word
+        - ``word_reps`` -- list of lists with ``s2`` and ``s3`` -- word
           representatives of the cosets with respect to the spanning tree.
 
-        - ``gens`` -- list of 3-tuples ``(in,out,label)`` - the list of edges in
+        - ``gens`` -- list of 3-tuples ``(in,out,label)`` -- the list of edges in
           the graph which are not in the spanning tree.
 
         EXAMPLES::
@@ -2152,13 +2152,13 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         - ``tree`` -- a spanning tree of the graph associated to the action of
           ``L`` and ``S2`` on the cosets
 
-        - ``reps`` -- list of matrices in `\SL_2(\ZZ)` - representatives of the
+        - ``reps`` -- list of matrices in `\SL_2(\ZZ)` -- representatives of the
           cosets with respect to the spanning tree
 
-        - ``word_reps`` -- list of string with ``s`` and ``l`` - word
+        - ``word_reps`` -- list of string with ``s`` and ``l`` -- word
           representatives of the cosets with respect to the spanning tree.
 
-        - ``gens`` -- list of 3-tuples ``(in,out,label)`` - the list of edges in
+        - ``gens`` -- list of 3-tuples ``(in,out,label)`` -- the list of edges in
           the graph which are not in the spanning tree.
 
         EXAMPLES::

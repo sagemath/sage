@@ -829,7 +829,9 @@ def format_src(s):
     If ``s`` contains a string of the form "<<<obj>>>", then it
     replaces it with the source code for "obj".
 
-    INPUT: ``s`` - string
+    INPUT:
+
+    - ``s`` -- string
 
     OUTPUT: string
 

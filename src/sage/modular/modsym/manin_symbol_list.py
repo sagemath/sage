@@ -973,7 +973,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         OUTPUT:
 
-        ``integer`` - the level of the symbols in this list.
+        ``integer`` -- the level of the symbols in this list.
 
         EXAMPLES::
 

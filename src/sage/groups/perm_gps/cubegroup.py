@@ -695,7 +695,7 @@ class CubeGroup(PermutationGroup_generic):
           -  ``str`` -- either cycle notation (passed to GAP) or
              a product of generators or Singmaster notation
 
-          -  ``perm_group element`` - returned as an element of ``self``
+          -  ``perm_group element`` -- returned as an element of ``self``
 
         - ``check`` -- check if the input is valid
 

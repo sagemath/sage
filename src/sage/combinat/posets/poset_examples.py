@@ -1323,11 +1323,11 @@ class Posets(metaclass=ClasscallMetaclass):
         - ``label`` -- (default: ``'permutations'``) a label for the elements
           of the poset returned by the function; the options are
 
-          * ``'permutations'`` - labels the elements by their
+          * ``'permutations'`` -- labels the elements by their
             one-line notation
-          * ``'reduced_words'`` - labels the elements by the
+          * ``'reduced_words'`` -- labels the elements by the
             lexicographically minimal reduced word
-          * ``'cycles'`` - labels the elements by their expression
+          * ``'cycles'`` -- labels the elements by their expression
             as a product of cycles
 
         EXAMPLES::

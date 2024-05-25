@@ -64,9 +64,9 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
 
     - ``implementation`` -- string (default: ``"specht"``), one of:
 
-      * ``"seminormal"`` - for Young's seminormal representation
-      * ``"orthogonal"`` - for Young's orthogonal representation
-      * ``"specht"`` - for Specht's representation
+      * ``"seminormal"`` -- for Young's seminormal representation
+      * ``"orthogonal"`` -- for Young's orthogonal representation
+      * ``"specht"`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 
@@ -190,9 +190,9 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
 
     - ``implementation`` -- string (default: ``"specht"``), one of:
 
-      * ``"seminormal"`` - for Young's seminormal representation
-      * ``"orthogonal"`` - for Young's orthogonal representation
-      * ``"specht"`` - for Specht's representation
+      * ``"seminormal"`` -- for Young's seminormal representation
+      * ``"orthogonal"`` -- for Young's orthogonal representation
+      * ``"specht"`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 

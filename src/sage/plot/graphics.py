@@ -469,7 +469,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``xmin, xmax, ymin, ymax`` - floats
+        -  ``xmin, xmax, ymin, ymax`` -- floats
 
 
         EXAMPLES::
@@ -1657,7 +1657,7 @@ class Graphics(WithEqualityById, SageObject):
 
         - ``show_legend`` -- (default: None) If True, show the legend
 
-        - ``legend_*`` - all the options valid for :meth:`set_legend_options`
+        - ``legend_*`` -- all the options valid for :meth:`set_legend_options`
             prefixed with ``legend_``
 
         - ``base`` -- (default: 10) the base of the logarithm if

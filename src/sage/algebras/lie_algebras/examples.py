@@ -434,8 +434,8 @@ def sl(R, n, representation='bracket'):
     - ``representation`` -- (default: ``'bracket'``) can be one of
       the following:
 
-      * ``'bracket'`` - use brackets and the Chevalley basis
-      * ``'matrix'`` - use matrices
+      * ``'bracket'`` -- use brackets and the Chevalley basis
+      * ``'matrix'`` -- use matrices
 
     EXAMPLES:
 
@@ -487,8 +487,8 @@ def su(R, n, representation='matrix'):
     - ``representation`` -- (default: ``'matrix'``) can be one of
       the following:
 
-      * ``'bracket'`` - use brackets and the Chevalley basis
-      * ``'matrix'`` - use matrices
+      * ``'bracket'`` -- use brackets and the Chevalley basis
+      * ``'matrix'`` -- use matrices
 
     EXAMPLES:
 
@@ -543,8 +543,8 @@ def so(R, n, representation='bracket'):
     - ``representation`` -- (default: ``'bracket'``) can be one of
       the following:
 
-      * ``'bracket'`` - use brackets and the Chevalley basis
-      * ``'matrix'`` - use matrices
+      * ``'bracket'`` -- use brackets and the Chevalley basis
+      * ``'matrix'`` -- use matrices
 
     EXAMPLES:
 
@@ -630,8 +630,8 @@ def sp(R, n, representation='bracket'):
     - ``representation`` -- (default: ``'bracket'``) can be one of
       the following:
 
-      * ``'bracket'`` - use brackets and the Chevalley basis
-      * ``'matrix'`` - use matrices
+      * ``'bracket'`` -- use brackets and the Chevalley basis
+      * ``'matrix'`` -- use matrices
 
     EXAMPLES:
 

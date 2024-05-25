@@ -1599,7 +1599,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
           - ``all`` -- compute using both algorithms and verify that
             the results are the same.
 
-        - ``**kwds`` - these are all ignored
+        - ``**kwds`` -- these are all ignored
 
         OUTPUT:
 
@@ -2294,7 +2294,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         - ``row1, row2`` -- the two rows to be transformed (within
           self)
 
-        -``start_col`` - the column of the pivots in ``row1`` and
+        -``start_col`` -- the column of the pivots in ``row1`` and
          ``row2``. It is assumed that all entries before ``start_col``
          in ``row1`` and ``row2`` are zero.
 

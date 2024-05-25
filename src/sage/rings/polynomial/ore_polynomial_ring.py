@@ -1069,7 +1069,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         -  ``monic`` -- if ``True``, returns a monic Ore polynomial
            (default: ``True``)
 
-        -  ``*args, **kwds`` - passed in to the ``random_element`` method for
+        -  ``*args, **kwds`` -- passed in to the ``random_element`` method for
            the base ring
 
         EXAMPLES::

@@ -223,8 +223,8 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
 
     - ``algorithm`` -- (default: ``'maxima'``) one of
 
-      * ``'maxima'`` - use maxima
-      * ``'fricas'`` - use FriCAS (the optional fricas spkg has to be installed)
+      * ``'maxima'`` -- use maxima
+      * ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
     OUTPUT:
 
@@ -812,8 +812,8 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
 
     - ``algorithm`` -- (default: ``'maxima'``) one of
 
-      * ``'maxima'`` - use maxima
-      * ``'fricas'`` - use FriCAS (the optional fricas spkg has to be installed)
+      * ``'maxima'`` -- use maxima
+      * ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
     EXAMPLES::
 

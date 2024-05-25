@@ -1105,7 +1105,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``self, other`` - modular abelian varieties
+        -  ``self, other`` -- modular abelian varieties
 
 
         OUTPUT: abelian variety
@@ -1297,9 +1297,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``M, t`` - integers level and `t`, or
+        -  ``M, t`` -- integers level and `t`, or
 
-        -  ``Mlist, tlist`` - if self is in a nontrivial
+        -  ``Mlist, tlist`` -- if self is in a nontrivial
            product ambient Jacobian, input consists of a list of levels and
            corresponding list of `t`'s.
 
@@ -1448,7 +1448,7 @@ class ModularAbelianVariety_abstract(Parent):
         OUTPUT:
 
 
-        -  ``abelian variety`` - quotient `Q` of self
+        -  ``abelian variety`` -- quotient `Q` of self
            by B
 
         -  ``morphism`` -- from self to the quotient

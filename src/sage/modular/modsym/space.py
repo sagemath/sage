@@ -388,7 +388,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - an arbitrary space of
+        -  ``ModularSymbols self`` -- an arbitrary space of
            modular symbols
 
         OUTPUT:
@@ -507,7 +507,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        - ``ModularSymbols self`` - arbitrary space of modular symbols.
+        - ``ModularSymbols self`` -- arbitrary space of modular symbols.
 
         OUTPUT:
 
@@ -626,7 +626,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         -  ``algorithm`` -- string:
 
-        -  ``'default' (default)`` - decide which algorithm to
+        -  ``'default' (default)`` -- decide which algorithm to
            use based on heuristics
 
         -  ``'hecke'`` -- compute basis by computing
@@ -1452,7 +1452,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - arbitrary space of modular
+        -  ``ModularSymbols self`` -- arbitrary space of modular
            symbols.
 
         OUTPUT:

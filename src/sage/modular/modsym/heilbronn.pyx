@@ -175,9 +175,9 @@ cdef class Heilbronn:
         INPUT:
 
 
-        -  ``u, v, N`` - integers
+        -  ``u, v, N`` -- integers
 
-        -  ``a, b`` - preallocated int arrays of the length
+        -  ``a, b`` -- preallocated int arrays of the length
            self.
 
 
@@ -853,7 +853,7 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
     """
     INPUT:
 
-    -  ``u, v, N`` - integers so that gcd(u,v,N) = 1
+    -  ``u, v, N`` -- integers so that gcd(u,v,N) = 1
     -  ``i`` -- integer with 0 <= i <= k-2
     -  ``k`` -- weight
     -  ``indices`` -- a list of positive integers

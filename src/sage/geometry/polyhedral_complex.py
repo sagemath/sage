@@ -175,15 +175,15 @@ class PolyhedralComplex(GenericCellComplex):
       computations on Sage polyhedra; if it is not given, then each cell has
       its own backend; otherwise it must be one of the following:
 
-      * ``'ppl'`` - the Parma Polyhedra Library
+      * ``'ppl'`` -- the Parma Polyhedra Library
 
-      * ``'cdd'`` - CDD
+      * ``'cdd'`` -- CDD
 
-      * ``'normaliz'`` - normaliz
+      * ``'normaliz'`` -- normaliz
 
-      * ``'polymake'`` - polymake
+      * ``'polymake'`` -- polymake
 
-      * ``'field'`` - a generic Sage implementation
+      * ``'field'`` -- a generic Sage implementation
 
     - ``ambient_dim`` -- integer (optional); used to set up an empty
       complex in the intended ambient space

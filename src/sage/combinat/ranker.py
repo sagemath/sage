@@ -30,7 +30,7 @@ def from_list(l):
 
     OUTPUT:
 
-    - ``[rank, unrank]`` - functions
+    - ``[rank, unrank]`` -- functions
 
     EXAMPLES::
 

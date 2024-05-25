@@ -1419,7 +1419,7 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - ``*args``, ``**kwds`` - parameters that can be forwarded to
+            - ``*args``, ``**kwds`` -- parameters that can be forwarded to
               the ``random_element`` method
 
             EXAMPLES::

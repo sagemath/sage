@@ -1084,7 +1084,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``*gens`` - list or tuple of generators (or several input arguments)
+        - ``*gens`` -- list or tuple of generators (or several input arguments)
 
         - ``coerce`` -- bool (default: ``True``); this must be a
           keyword argument. Only set it to ``False`` if you are certain
@@ -2007,7 +2007,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         INPUT:
 
         - ``x`` -- a list of elements in ``self.parent()``
-        - or ``**kwds`` - a dictionary of ``variable-name:value`` pairs.
+        - or ``**kwds`` -- a dictionary of ``variable-name:value`` pairs.
 
         EXAMPLES::
 
@@ -3448,7 +3448,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         INPUT:
 
         - ``fixed`` -- (optional) dict with variable:value pairs
-        - ``**kw`` - names parameters
+        - ``**kw`` -- names parameters
 
         OUTPUT: a new multivariate polynomial
 

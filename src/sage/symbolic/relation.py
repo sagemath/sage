@@ -594,7 +594,7 @@ def solve(f, *args, **kwds):
     -  ``f`` -- equation or system of equations (given by a
        list or tuple)
 
-    -  ``*args`` - variables to solve for.
+    -  ``*args`` -- variables to solve for.
 
     -  ``solution_dict`` -- bool (default: False); if True or non-zero,
        return a list of dictionaries containing the solutions. If there

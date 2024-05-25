@@ -4249,10 +4249,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
           information printed can be controlled via calls to
           :func:`set_verbose`.
 
-        - ``*args`` - additional parameters passed to the respective
+        - ``*args`` -- additional parameters passed to the respective
           implementations
 
-        - ``**kwds`` - additional keyword parameters passed to the
+        - ``**kwds`` -- additional keyword parameters passed to the
           respective implementations
 
         ALGORITHMS:
@@ -5202,10 +5202,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         - ``algorithm`` -- set this to 'surf' if you want 'surf' to
           plot the ideal (default: None)
 
-        - ``*args`` - optional tuples ``(variable, minimum, maximum)``
+        - ``*args`` -- optional tuples ``(variable, minimum, maximum)``
           for plotting dimensions
 
-        - ``**kwds`` - optional keyword arguments passed on to
+        - ``**kwds`` -- optional keyword arguments passed on to
           ``implicit_plot``
 
         EXAMPLES:

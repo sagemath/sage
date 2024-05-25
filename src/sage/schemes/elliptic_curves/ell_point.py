@@ -3721,7 +3721,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        ``p`` - integer: a prime ``absprec`` - integer (default: 20):
+        ``p`` -- integer: a prime ``absprec`` -- integer (default: 20):
         the initial `p`-adic absolute precision of the computation
 
         OUTPUT:

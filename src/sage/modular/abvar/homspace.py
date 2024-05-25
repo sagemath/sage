@@ -211,7 +211,7 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``domain, codomain`` - modular abelian varieties
+        -  ``domain, codomain`` -- modular abelian varieties
 
         -  ``cat`` -- category
 

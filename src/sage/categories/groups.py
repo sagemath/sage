@@ -211,15 +211,15 @@ class Groups(CategoryWithAxiom):
 
             - ``names`` -- the type of names used, values are:
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by :meth:`list`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.

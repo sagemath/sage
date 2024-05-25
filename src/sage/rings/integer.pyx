@@ -4321,9 +4321,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         OUTPUT:
 
-        -  ``v_p(self)`` - the p-adic valuation of ``self``
+        -  ``v_p(self)`` -- the p-adic valuation of ``self``
 
-        -  ``u_p(self)`` - ``self`` / `p^{v_p(\mathrm{self})}`
+        -  ``u_p(self)`` -- ``self`` / `p^{v_p(\mathrm{self})}`
 
         EXAMPLES::
 

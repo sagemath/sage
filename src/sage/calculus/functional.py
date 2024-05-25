@@ -345,7 +345,7 @@ def limit(f, dir=None, taylor=False, **argv):
        series, which allows more limits to be computed (but may also
        crash in some obscure cases due to bugs in Maxima).
 
-    - ``\*\*argv`` - 1 named parameter
+    - ``\*\*argv`` -- 1 named parameter
 
     ALIAS: You can also use lim instead of limit.
 
@@ -388,11 +388,11 @@ def taylor(f, *args):
 
     INPUT:
 
-    - ``*args`` - the following notation is supported
+    - ``*args`` -- the following notation is supported
 
     - ``x, a, n`` -- variable, point, degree
 
-    - ``(x, a), (y, b), ..., n`` - variables with points, degree of polynomial
+    - ``(x, a), (y, b), ..., n`` -- variables with points, degree of polynomial
 
     EXAMPLES::
 

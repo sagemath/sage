@@ -73,7 +73,7 @@ class DIMACS(SatSolver):
         - ``verbosity`` -- a verbosity level, where zero means silent
           and anything else means verbose output. (default: ``0``)
 
-        - ``**kwds`` - accepted for compatibility with other solves,
+        - ``**kwds`` -- accepted for compatibility with other solves,
           ignored.
 
         TESTS::

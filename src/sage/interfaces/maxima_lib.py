@@ -448,7 +448,7 @@ class MaximaLib(MaximaAbstract):
 
         - ``reformat`` -- boolean; whether to strip output or not
 
-        - ``**kwds`` - All other arguments are currently ignored.
+        - ``**kwds`` -- All other arguments are currently ignored.
 
         OUTPUT: string representing Maxima output
 

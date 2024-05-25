@@ -444,7 +444,7 @@ class HeckeModule_generic(Module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - an arbitrary space of modular symbols
+        -  ``ModularSymbols self`` -- an arbitrary space of modular symbols
 
         OUTPUT:
 
@@ -1405,10 +1405,10 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - Hecke equivariant space of
+        -  ``ModularSymbols self`` -- Hecke equivariant space of
            modular symbols
 
-        -  ``int n`` - an integer at least 1.
+        -  ``int n`` -- an integer at least 1.
 
         EXAMPLES::
 

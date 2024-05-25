@@ -52,7 +52,7 @@ Functionality and Examples
 
 The interface to GAP3 offers the following functionality.
 
-#.  ``gap3(expr)`` - Evaluation of arbitrary GAP3 expressions, with the
+#.  ``gap3(expr)`` -- Evaluation of arbitrary GAP3 expressions, with the
     result returned as a Sage object wrapping the corresponding GAP3 element::
 
         sage: # optional - gap3

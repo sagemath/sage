@@ -58,7 +58,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
       polynomials of ``F`` are used to construct exclusion clauses.
       (default: ``None``)
 
-    - ``**kwds`` - parameters can be passed to the converter and the
+    - ``**kwds`` -- parameters can be passed to the converter and the
        solver by prefixing them with ``c_`` and ``s_`` respectively. For
        example, to increase CryptoMiniSat's verbosity level, pass
        ``s_verbosity=1``.

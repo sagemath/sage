@@ -787,7 +787,7 @@ cdef class Element(SageObject):
 
         - ``in_dict`` -- (optional) dictionary of inputs
 
-        - ``**kwds`` - named parameters
+        - ``**kwds`` -- named parameters
 
         OUTPUT:
 

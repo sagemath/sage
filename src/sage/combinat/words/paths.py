@@ -1522,7 +1522,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
           default:dict(rgbcolor='red',arrowsize=20, width=3)) options
           for the end point arrow
 
-        - ``gridlines``- (boolean, default: False), show gridlines?
+        - ``gridlines``-- (boolean, default: False), show gridlines?
 
         - ``gridoptions`` -- (dict, default: {}), options for the gridlines
 
@@ -2317,7 +2317,7 @@ class FiniteWordPath_hexagonal_grid(FiniteWordPath_triangle_grid):
         - ``parent`` -- a parent object inheriting from Words_all
           that has the alphabet attribute defined
 
-        - ``*args, **kwds`` - arguments accepted by AbstractWord
+        - ``*args, **kwds`` -- arguments accepted by AbstractWord
 
         EXAMPLES::
 

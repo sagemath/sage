@@ -1438,11 +1438,11 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 #
 #     INPUT:
 #
-#     - ``x`` - integer (default: 1) the description of the
+#     - ``x`` -- integer (default: 1) the description of the
 #       argument x goes here.  If it contains multiple lines, all
 #       the lines after the first need to be indented.
 #
-#     - ``y`` - integer (default: 2) the ...
+#     - ``y`` -- integer (default: 2) the ...
 #
 #     EXAMPLES::
 #
@@ -1463,11 +1463,11 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 #
 #         INPUT:
 #
-#         - ``ambient_module`` - BruhatTitsHarmonicCocycles
+#         - ``ambient_module`` -- BruhatTitsHarmonicCocycles
 #
-#         - ``submodule`` - submodule of the ambient space.
+#         - ``submodule`` -- submodule of the ambient space.
 #
-#         - ``check`` - (default: False) whether to check that the
+#         - ``check`` -- (default: False) whether to check that the
 #           submodule is Hecke equivariant
 #
 #         EXAMPLES::

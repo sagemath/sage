@@ -1544,7 +1544,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         r"""
         Create the product of subschemes.
 
-        INPUT: ``right`` - a subscheme of similar type.
+        INPUT:
+
+        - ``right`` -- a subscheme of similar type
 
         OUTPUT: a subscheme of a the product of the ambient spaces.
 

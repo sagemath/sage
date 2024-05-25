@@ -332,7 +332,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     - a function from positive integers to non-negative integers (and
       `\infty`), e.g., ``lambda n: n+2``.  This corresponds to the
       list ``[3, 4, 5, ...]``.
-    - ``None`` or ``Infinity`` - use this for the profile function for
+    - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.  This corresponds to the list
       ``[Infinity, Infinity, Infinity, ...]``
 
@@ -364,7 +364,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
       ``(lambda n: n+2, lambda n: 1)``.  This corresponds to the
       pair ``([3, 4, 5, ...], [1, 1, 1, ...])``.
 
-    - ``None`` or ``Infinity`` - use this for the profile function for
+    - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.  This corresponds to the pair
       ``([Infinity, Infinity, Infinity, ...], [2, 2, 2, ...])``.
 
@@ -585,7 +585,7 @@ def milnor_mono_to_string(mono, latex=False, generic=False):
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
 
-    OUTPUT: ``rep`` - string
+    OUTPUT: ``rep`` -- string
 
     This returns a string like ``Sq(a,b,c,...)`` when `generic=False`, or a string
     like ``Q_e0 Q_e1 Q_e2 ... P(r1, r2, ...)`` when `generic=True`.
@@ -659,7 +659,7 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
 
-    OUTPUT: ``rep`` - string
+    OUTPUT: ``rep`` -- string
 
     This returns a string like ``Sq^{a} Sq^{b} Sq^{c} ...`` when
     `generic=False`, or a string like
@@ -737,7 +737,7 @@ def wood_mono_to_string(mono, latex=False):
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form
+    ``string`` -- concatenation of strings of the form
     ``Sq^{2^s (2^{t+1}-1)}`` for each pair (s,t)
 
     EXAMPLES::
@@ -783,7 +783,7 @@ def wall_mono_to_string(mono, latex=False):
 
     OUTPUT:
 
-    ``string`` - concatenation of strings ``Q^{m}_{k}`` for each pair (m,k)
+    ``string`` -- concatenation of strings ``Q^{m}_{k}`` for each pair (m,k)
 
     EXAMPLES::
 
@@ -824,7 +824,7 @@ def wall_long_mono_to_string(mono, latex=False):
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``Sq^(2^m)``
+    ``string`` -- concatenation of strings of the form ``Sq^(2^m)``
 
     EXAMPLES::
 
@@ -869,7 +869,7 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``X^{m}_{k}``
+    ``string`` -- concatenation of strings of the form ``X^{m}_{k}``
     for each pair (m,k)
 
     EXAMPLES::
@@ -911,7 +911,7 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``Sq(2^m)``
+    ``string`` -- concatenation of strings of the form ``Sq(2^m)``
 
     EXAMPLES::
 
@@ -958,7 +958,7 @@ def pst_mono_to_string(mono, latex=False, generic=False):
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``P^{s}_{t}``
+    ``string`` -- concatenation of strings of the form ``P^{s}_{t}``
     for each pair (s,t)
 
     EXAMPLES::
@@ -1021,7 +1021,7 @@ def comm_mono_to_string(mono, latex=False, generic=False):
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``c_{s,t}``
+    ``string`` -- concatenation of strings of the form ``c_{s,t}``
     for each pair (s,t)
 
     EXAMPLES::
@@ -1084,7 +1084,7 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
 
     OUTPUT:
 
-    ``string`` - concatenation of strings of the form ``s_{2^s... 2^(s+t-1)}``
+    ``string`` -- concatenation of strings of the form ``s_{2^s... 2^(s+t-1)}``
     for each pair (s,t)
 
     EXAMPLES::
@@ -1149,7 +1149,7 @@ def convert_perm(m):
 
     OUTPUT:
 
-    ``list`` - conversion of ``m`` to a permutation of the set
+    ``list`` -- conversion of ``m`` to a permutation of the set
     1,2,...,len(m)
 
     If ``m=(3,7,4)``, then one can view ``m`` as representing the

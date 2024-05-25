@@ -476,7 +476,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        - ``**kwds`` - see the ``SR`` constructor for accepted
+        - ``**kwds`` -- see the ``SR`` constructor for accepted
           parameters
 
         EXAMPLES::

@@ -1022,7 +1022,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``v`` - (optional) vertex name
+        - ``v`` -- (optional) vertex name
 
         OUTPUT:
 
@@ -2837,7 +2837,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``orbits`` - list of lists partitioning the vertices
+        - ``orbits`` -- list of lists partitioning the vertices
 
         OUTPUT:
 

@@ -201,10 +201,10 @@ class Braid(FiniteTypeArtinGroupElement):
           return the reduced or unreduced Burau representation, can
           be one of the following:
 
-          * ``True`` or ``'increasing'`` - returns the reduced form using
+          * ``True`` or ``'increasing'`` -- returns the reduced form using
             the basis given by `e_1 - e_i` for `2 \leq i \leq n`
-          * ``'unitary'`` - the unitary form according to Squier [Squ1984]_
-          * ``'simple'`` - returns the reduced form using the basis given
+          * ``'unitary'`` -- the unitary form according to Squier [Squ1984]_
+          * ``'simple'`` -- returns the reduced form using the basis given
             by simple roots `e_i - e_{i+1}`, which yields the matrices
             given on the Wikipedia page
 

@@ -337,7 +337,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         -  ``xmax`` -- float
 
-        -  ``*args, **kwds`` - passed to either plot or
+        -  ``*args, **kwds`` -- passed to either plot or
            point
 
 

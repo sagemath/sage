@@ -2314,7 +2314,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``a, b, c, ...`` - non-negative integers
+        -  ``a, b, c, ...`` -- non-negative integers
 
         OUTPUT:
 
@@ -3460,7 +3460,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             r"""
             Excess of element.
 
-            OUTPUT: ``excess`` - non-negative integer
+            OUTPUT: ``excess`` -- non-negative integer
 
             The excess of a Milnor basis element `\text{Sq}(a,b,c,...)` is
             `a + b + c + \cdots`. When `p` is odd, the excess of `Q_{0}^{e_0}
@@ -3559,7 +3559,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             r"""
             May's 'weight' of element.
 
-            OUTPUT: ``weight`` - non-negative integer
+            OUTPUT: ``weight`` -- non-negative integer
 
             If we let `F_* (A)` be the May filtration of the Steenrod
             algebra, the weight of an element `x` is the integer `k` so
@@ -4004,7 +4004,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
       to the value of ``truncation_type``.
     - a function from positive integers to non-negative integers (and
       `\infty`), e.g., ``lambda n: n+2``.
-    - ``None`` or ``Infinity`` - use this for the profile function for
+    - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.
 
     In the first and third cases, ``precision`` is ignored.  In the
@@ -4082,7 +4082,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
       integers to the set `\{1,2\}`, e.g., ``(lambda n: n+2, lambda n:
       1 if n<3 else 2)``.
 
-    - ``None`` or ``Infinity`` - use this for the profile function for
+    - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.
 
     You can also mix and match the first two, passing a pair with
@@ -4226,7 +4226,7 @@ def Sq(*nums):
 
     INPUT:
 
-    -  ``a, b, c, ...`` - non-negative integers
+    -  ``a, b, c, ...`` -- non-negative integers
 
     OUTPUT: element of the Steenrod algebra
 

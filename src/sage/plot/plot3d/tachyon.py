@@ -971,7 +971,7 @@ class Tachyon(WithEqualityById, SageObject):
         -  ``f`` -- Function of two variables, which returns a
            float (or coercible to a float) (xmin,xmax)
 
-        -  ``(ymin,ymax)`` - defines the rectangle to plot over
+        -  ``(ymin,ymax)`` -- defines the rectangle to plot over
            texture: Name of texture to be used Optional arguments:
 
         -  ``grad_f`` -- gradient function. If specified,

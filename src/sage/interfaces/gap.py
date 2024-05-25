@@ -9,13 +9,13 @@ computer; this should be the case, since GAP is included with Sage.
 The interface offers three pieces of functionality:
 
 
-#. ``gap_console()`` - A function that dumps you into
+#. ``gap_console()`` -- A function that dumps you into
    an interactive command-line GAP session.
 
-#. ``gap(expr)`` - Evaluation of arbitrary GAP
+#. ``gap(expr)`` -- Evaluation of arbitrary GAP
    expressions, with the result returned as a string.
 
-#. ``gap.new(expr)`` - Creation of a Sage object that
+#. ``gap.new(expr)`` -- Creation of a Sage object that
    wraps a GAP object. This provides a Pythonic interface to GAP. For
    example, if ``f=gap.new(10)``, then
    ``f.Factors()`` returns the prime factorization of

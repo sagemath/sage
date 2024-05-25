@@ -522,8 +522,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
           part of the group to the stabilizer of this partition
         - algorithm_type (optional) -- use one of the following options
 
-          * "semilinear" -  full group
-          * "linear" - no field automorphisms, i.e. `G = (GL(k,q) \times \GF{q}^n )`
+          * "semilinear" --  full group
+          * "linear" -- no field automorphisms, i.e. `G = (GL(k,q) \times \GF{q}^n )`
           * "permutational - no field automorphisms and no column multiplications
             i.e. `G = GL(k,q)`
 

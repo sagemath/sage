@@ -342,8 +342,8 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``*args`` - Arbitrary arguments suitable over the base ring
-            - ``**kwds`` - Arbitrary keyword arguments suitable over the base ring
+            - ``*args`` -- Arbitrary arguments suitable over the base ring
+            - ``**kwds`` -- Arbitrary keyword arguments suitable over the base ring
 
             OUTPUT:
 

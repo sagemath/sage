@@ -431,7 +431,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``a`` - Point in `\mathbb{P}^2`
+        INPUT:
+
+        - ``a`` -- Point in `\mathbb{P}^2`
 
         OUTPUT: A polynomial representing the fiber
 
@@ -506,7 +508,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``a`` - Point in `\mathbb{P}^2`
+        INPUT:
+
+        - ``a`` -- Point in `\mathbb{P}^2`
 
         OUTPUT: A subscheme representing the fiber
 
@@ -581,7 +585,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``b`` - Point in projective space
+        INPUT:
+
+        - ``b`` -- Point in projective space
 
         OUTPUT: A polynomial representing the fiber
 
@@ -617,7 +623,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``b`` - Point in `\mathbb{P}^2`
+        INPUT:
+
+        - ``b`` -- Point in `\mathbb{P}^2`
 
         OUTPUT: A subscheme representing the fiber
 
@@ -1981,7 +1989,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        -``p`` - a point in `\mathbb{P}^2`
+        - ``p`` -- a point in `\mathbb{P}^2`
 
         OUTPUT: The corresponding fiber (as a list)
 

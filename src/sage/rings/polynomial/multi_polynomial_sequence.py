@@ -1496,25 +1496,25 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         INPUT:
 
-        * ``self`` - a sequence of boolean polynomials
+        * ``self`` -- a sequence of boolean polynomials
 
-        * ``algorithm`` - the method to use. Possible values are
+        * ``algorithm`` -- the method to use. Possible values are
           ``polybori``, ``sat`` and ``exhaustive_search``. (default:
           ``polybori``, since it is always available)
 
-        * ``n`` - number of solutions to return. If ``n == +Infinity``
+        * ``n`` -- number of solutions to return. If ``n == +Infinity``
           then all solutions are returned. If `n < \infty` then `n`
           solutions are returned if the equations have at least `n`
           solutions. Otherwise, all the solutions are
           returned. (default: ``1``)
 
-        * ``eliminate_linear_variables`` - whether to eliminate
+        * ``eliminate_linear_variables`` -- whether to eliminate
           variables that appear linearly. This reduces the number of
           variables (makes solving faster a priori), but is likely to
           make the equations denser (may make solving slower depending
           on the method).
 
-        * ``verbose`` - whether to display progress and (potentially)
+        * ``verbose`` -- whether to display progress and (potentially)
           useful information while the computation runs. (default:
           ``False``)
 

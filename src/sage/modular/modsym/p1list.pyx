@@ -597,16 +597,16 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
     INPUT:
 
 
-    -  ``N, u, v`` - integers
+    -  ``N, u, v`` -- integers
 
     -  ``compute_s`` -- do not compute s if compute_s == 0.
 
-    -  ``t_g, t_a, t_b`` - int arrays of
+    -  ``t_g, t_a, t_b`` -- int arrays of
 
 
     OUTPUT:
 
-    -  ``uu, vv, ss`` - reduced representative and normalizing scalar.
+    -  ``uu, vv, ss`` -- reduced representative and normalizing scalar.
     """
     cdef int d, k, g, s, t, min_v, min_t, Ng, vNg
     if N == 1:
@@ -1000,7 +1000,7 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``u, v`` - integers, with `\gcd(u,v,N)=1`.
+        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
 
 
         OUTPUT:
@@ -1044,7 +1044,7 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``u, v`` - integers, with `\gcd(u,v,N)=1`.
+        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
 
 
         OUTPUT:
@@ -1131,7 +1131,7 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``u, v`` - integers, with `\gcd(u,v,N)=1`.
+        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
 
 
         OUTPUT:
@@ -1164,7 +1164,7 @@ cdef class P1List():
         INPUT:
 
 
-        -  ``u, v`` - integers, with `\gcd(u,v,N)=1`.
+        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
 
 
         OUTPUT:

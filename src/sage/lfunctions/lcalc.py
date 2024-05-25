@@ -145,7 +145,7 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``x, y, stepsize`` - positive floating point
+        -  ``x, y, stepsize`` -- positive floating point
            numbers
 
         -  ``L`` -- defines `L`-function (default:
@@ -211,7 +211,7 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``s0, s1`` - complex numbers
+        -  ``s0, s1`` -- complex numbers
 
         -  ``number_samples`` -- integer
 

@@ -3846,10 +3846,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``algorithm`` -- string:
 
-          * ``'sympow'`` - (default) use Mark Watkin's (newer) C
+          * ``'sympow'`` -- (default) use Mark Watkin's (newer) C
             program sympow
 
-          * ``'magma'`` - requires that MAGMA be installed (also
+          * ``'magma'`` -- requires that MAGMA be installed (also
             implemented by Mark Watkins)
 
         - ``M`` -- non-negative integer; the modular degree at level `MN`

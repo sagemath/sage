@@ -915,9 +915,9 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 - ``algorithm`` -- (default: ``None``) use one of the
                   following algorithms to determine the energy function:
 
-                  * ``'definition'`` - use the definition of the energy
+                  * ``'definition'`` -- use the definition of the energy
                     function;
-                  * ``'grading'`` - use the affine grading;
+                  * ``'grading'`` -- use the affine grading;
 
                   if not specified, then this uses ``'grading'`` if all
                   factors are perfect of the same level and otherwise

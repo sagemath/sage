@@ -5624,7 +5624,7 @@ def minkowski_sum(points1, points2):
 
     INPUT:
 
-    -  ``points1, points2`` - lists of objects that can be
+    -  ``points1, points2`` -- lists of objects that can be
        converted into vectors of the same dimension, treated as vertices
        of two polytopes.
 

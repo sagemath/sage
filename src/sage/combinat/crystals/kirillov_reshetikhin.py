@@ -168,13 +168,13 @@ def KirillovReshetikhinCrystal(cartan_type, r, s, model='KN'):
 
     - ``model`` -- (default: ``'KN'``) can be one of the following:
 
-      * ``'KN'`` or ``'KashiwaraNakashimaTableaux'`` - use the
+      * ``'KN'`` or ``'KashiwaraNakashimaTableaux'`` -- use the
         Kashiwara-Nakashima tableaux model
-      * ``'KR'`` or ``'KirillovReshetkihinTableaux'`` - use the
+      * ``'KR'`` or ``'KirillovReshetkihinTableaux'`` -- use the
         Kirillov-Reshetkihin tableaux model
-      * ``'RC'`` or ``'RiggedConfiguration'`` - use the rigged
+      * ``'RC'`` or ``'RiggedConfiguration'`` -- use the rigged
         configuration model
-      * ``'LSPaths'`` - use the LS path model
+      * ``'LSPaths'`` -- use the LS path model
 
     EXAMPLES::
 

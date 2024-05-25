@@ -376,7 +376,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         INPUT:
 
-        ``F`` - numerical ring
+        - ``F`` -- numerical ring
 
         kwds:
 

@@ -934,7 +934,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``self, right`` - spaces of modular forms
+        -  ``self, right`` -- spaces of modular forms
 
 
         OUTPUT: True if self embeds in right, and False otherwise.

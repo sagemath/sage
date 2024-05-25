@@ -54,7 +54,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
       function in each direction, when ``interpolation_type`` is not
       ``default``. By default for an `n\times n` array this is `n`.
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 
@@ -308,7 +308,7 @@ def list_plot3d_matrix(m, **kwds):
 
     OPTIONAL KEYWORDS:
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 
@@ -397,7 +397,7 @@ def list_plot3d_array_of_arrays(v, interpolation_type, **kwds):
 
     OPTIONAL KEYWORDS:
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 

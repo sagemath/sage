@@ -787,7 +787,7 @@ def is_VectorSpaceMorphism(x) -> bool:
 
     INPUT:
 
-    ``x`` - anything
+    - ``x`` -- anything
 
     OUTPUT:
 

@@ -2062,7 +2062,7 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`~DiGraph.reverse_edge` - Reverses a single edge.
+            :meth:`~DiGraph.reverse_edge` -- Reverses a single edge.
 
         EXAMPLES:
 

@@ -1423,7 +1423,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         -  ``fixed`` -- (optional) dictionary of inputs
 
-        -  ``**kwds`` - named parameters
+        -  ``**kwds`` -- named parameters
 
 
         OUTPUT: new :class:`MPolynomial`

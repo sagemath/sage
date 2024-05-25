@@ -623,10 +623,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         USAGE:
 
-        - ``A[i, j]`` - the i,j element (or elements, if i or j are
+        - ``A[i, j]`` -- the i,j element (or elements, if i or j are
           slices or lists) of A, or
 
-        - ``A[i:j]`` - rows of A, according to slice notation
+        - ``A[i:j]`` -- rows of A, according to slice notation
 
         EXAMPLES::
 
@@ -3594,7 +3594,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         -  ``cols`` -- a *sorted* list of integers.
 
-        -  ``(cols_index`` - ignored)
+        -  ``cols_index`` -- ignored
 
 
         EXAMPLES::

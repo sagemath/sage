@@ -3088,8 +3088,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``check_primes`` -- (optional) boolean: this signals whether to
             check whether each element in ``prime_list`` is a prime
 
-          * ``'BM'`` - the Bruin-Molnar algorithm [BM2012]_
-          * ``'HS'`` - the Hutz-Stoll algorithm [HS2018]_
+          * ``'BM'`` -- the Bruin-Molnar algorithm [BM2012]_
+          * ``'HS'`` -- the Hutz-Stoll algorithm [HS2018]_
 
         OUTPUT:
 
@@ -3269,8 +3269,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``algorithm`` -- (optional) string; can be one of the following:
 
-          * ``'BM'`` - the Bruin-Molnar algorithm [BM2012]_
-          * ``'HS'`` - for the Hutz-Stoll algorithm [HS2018]_
+          * ``'BM'`` -- the Bruin-Molnar algorithm [BM2012]_
+          * ``'HS'`` -- for the Hutz-Stoll algorithm [HS2018]_
 
           if not specified, properties of the map are utilized to choose
 
@@ -3589,8 +3589,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``algorithm``-- (optional) can be one of the following:
 
-          * ``'CRT'`` - Chinese Remainder Theorem
-          * ``'fixed_points'`` - fixed points algorithm
+          * ``'CRT'`` -- Chinese Remainder Theorem
+          * ``'fixed_points'`` -- fixed points algorithm
 
         - ``return_functions``-- (default: ``False``) boolean; ``True``
           returns elements as linear fractional transformations and
@@ -4676,8 +4676,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``algorithm`` -- (default: ``'variety'``) must be one of
           the following:
 
-          * ``'variety'`` - find the rational points on the appropriate variety
-          * ``'cyclegraph'`` - find the cycles from the cycle graph
+          * ``'variety'`` -- find the rational points on the appropriate variety
+          * ``'cyclegraph'`` -- find the cycles from the cycle graph
 
         - ``return_scheme`` -- return a subscheme of the ambient space
           that defines the ``n`` th periodic points

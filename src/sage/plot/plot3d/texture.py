@@ -195,7 +195,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
         - ``specular`` -- number (optional, default: 0)
         - ``shininess`` -- number (optional, default: 1)
         - ``name`` -- str (optional, default: None)
-        - ``**kwds`` - other valid keywords
+        - ``**kwds`` -- other valid keywords
 
         OUTPUT:
 

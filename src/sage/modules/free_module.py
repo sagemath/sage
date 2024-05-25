@@ -3276,11 +3276,11 @@ class FreeModule_generic(Module_free_ambient):
 
         INPUT:
 
-        -- ``prob`` - float. Each coefficient will be set to zero with
+        -- ``prob`` -- float. Each coefficient will be set to zero with
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        -- ``*args, **kwds`` - passed on to ``random_element()`` function
+        -- ``*args, **kwds`` -- passed on to ``random_element()`` function
            of base ring.
 
         EXAMPLES::
@@ -5949,7 +5949,7 @@ class FreeModule_ambient(FreeModule_generic):
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        - ``*args, **kwds`` - passed on to random_element function of base
+        - ``*args, **kwds`` -- passed on to random_element function of base
            ring.
 
 

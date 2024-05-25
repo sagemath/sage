@@ -860,7 +860,7 @@ def _normalize_2x2(G):
 
     INPUT:
 
-    ``G`` - a `2` by `2` matrix over `\ZZ_p`
+    ``G`` -- a `2` by `2` matrix over `\ZZ_p`
     with ``type='fixed-mod'`` of the form::
 
         [2a  b]

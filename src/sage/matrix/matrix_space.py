@@ -2407,7 +2407,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
            a ``float``, a proportion of entries is selected and randomized to
            non-zero elements of the ring
 
-        -  ``*args, **kwds`` - remaining parameters, which may be passed to
+        -  ``*args, **kwds`` -- remaining parameters, which may be passed to
            the random_element function of the base ring. ("may be", since this
            function calls the ``randomize`` function on the zero matrix, which
            need not call the ``random_element`` function of the base ring at
@@ -2594,7 +2594,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``*args``, ``**kwds`` - Parameters that can be forwarded to the
+        - ``*args``, ``**kwds`` -- Parameters that can be forwarded to the
           ``random_element`` method
 
         OUTPUT:

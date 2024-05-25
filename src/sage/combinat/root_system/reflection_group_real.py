@@ -304,10 +304,10 @@ class RealReflectionGroup(ComplexReflectionGroup):
         - ``algorithm`` (default: ``'breadth'``) -- must be one of
           the following:
 
-          * ``'breadth'`` - iterate over in a linear extension of the
+          * ``'breadth'`` -- iterate over in a linear extension of the
             weak order
-          * ``'depth'`` - iterate by a depth-first-search
-          * ``'parabolic'`` - iterate by using parabolic subgroups
+          * ``'depth'`` -- iterate by a depth-first-search
+          * ``'parabolic'`` -- iterate by using parabolic subgroups
 
         - ``tracking_words`` (default: ``True``) -- whether or not to keep
           track of the reduced words and store them in ``_reduced_word``
@@ -729,8 +729,8 @@ class RealReflectionGroup(ComplexReflectionGroup):
         - ``y`` -- an element in the group `W`
         - ``side`` (default: ``'upper'``) -- must be one of the following:
 
-          * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
-          * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+          * ``'upper'`` -- return the upper Bruhat cone of the interval [``x``, ``y``]
+          * ``'lower'`` -- return the lower Bruhat cone of the interval [``x``, ``y``]
 
         - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
 

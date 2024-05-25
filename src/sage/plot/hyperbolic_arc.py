@@ -183,9 +183,9 @@ class HyperbolicArc(HyperbolicArcCore):
     - ``A, B`` -- end points of the hyperbolic arc
     - ``model`` -- the hyperbolic model used, which is one of the following:
 
-      * ``'UHP'`` - upper half plane
-      * ``'PD'`` - Poincaré disk
-      * ``'KM'`` - Klein disk
+      * ``'UHP'`` -- upper half plane
+      * ``'PD'`` -- Poincaré disk
+      * ``'KM'`` -- Klein disk
 
     TESTS::
 
@@ -243,10 +243,10 @@ def hyperbolic_arc(a, b, model="UHP", **options):
     - ``model`` -- (default: ``'UHP'``) hyperbolic model used,
       which is one of the following:
 
-      * ``'UHP'`` - upper half plane
-      * ``'PD'`` - Poincaré disk
-      * ``'KM'`` - Klein disk
-      * ``'HM'`` - hyperboloid model
+      * ``'UHP'`` -- upper half plane
+      * ``'PD'`` -- Poincaré disk
+      * ``'KM'`` -- Klein disk
+      * ``'HM'`` -- hyperboloid model
 
     OPTIONS:
 

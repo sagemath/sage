@@ -2327,8 +2327,8 @@ cdef class Matrix(Matrix1):
         - ``algorithm`` (default: ``None``) -- string, the algorithm to use;
           currently the following algorithms have been implemented:
 
-          * ``'bfl'`` - using the Bär-Faddeev-LeVerrier algorithm
-          * ``'definition'`` - using the definition given by perfect
+          * ``'bfl'`` -- using the Bär-Faddeev-LeVerrier algorithm
+          * ``'definition'`` -- using the definition given by perfect
             matchings
 
         - ``check`` (default: ``True``) -- boolean determining whether to
@@ -9454,7 +9454,7 @@ cdef class Matrix(Matrix1):
            proportion of entries that are changed
         -  ``nonzero`` -- Bool (default: ``False``); if ``True``, then new
            entries will be nonzero
-        -  ``*args, **kwds`` - Remaining parameters may be passed to the
+        -  ``*args, **kwds`` -- Remaining parameters may be passed to the
            ``random_element`` function of the base ring
 
         EXAMPLES:
@@ -15552,7 +15552,7 @@ cdef class Matrix(Matrix1):
 
         -  ``1`` -- the largest column-sum norm
 
-        -  ``2 (default)`` - the Euclidean norm
+        -  ``2 (default)`` -- the Euclidean norm
 
         -  ``Infinity`` -- the largest row-sum norm
 

@@ -1272,7 +1272,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
           the degree of the polynomial is fixed before the modulo calculation.
           So when `degree` is bigger than the degree of the polynomial ring, the
           degree of the returned polynomial would be lower than `degree`.
-        - ``*args``, ``**kwds`` - Arguments for randomization that are passed
+        - ``*args``, ``**kwds`` -- Arguments for randomization that are passed
           on to the ``random_element`` method of the polynomial ring, and from
           there to the base ring
 

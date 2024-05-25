@@ -64,9 +64,9 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
 
     - ``n`` -- a (pointer to) a singular rational number
 
-    - ``*n`` - a pointer to a pointer like before
+    - ``*n`` -- a pointer to a pointer like before
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     OUTPUT:
@@ -136,7 +136,7 @@ cdef Integer si2sa_ZZ(number *n, ring *_ring):
 
     - ``n`` -- a (pointer to) a singular integer number
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     OUTPUT:
@@ -171,7 +171,7 @@ cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
 
     - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     - ``cache`` -- A Givaro number field
@@ -227,7 +227,7 @@ cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache):
 
     - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     - ``cache`` -- A ntl_gf2e number field
@@ -278,7 +278,7 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
 
     - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     - ``base`` -- A sage finite field
@@ -342,7 +342,7 @@ cdef object si2sa_transext_QQ(number *n, ring *_ring, object base):
     - ``n`` -- a (pointer to) a singular number in a transcendental extension
         of the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     - ``base`` -- A sage FractionField
@@ -431,7 +431,7 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
     - ``n`` -- a (pointer to) a singular number in a transcendental extension
       of the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     - ``base`` -- A sage FractionField
@@ -511,7 +511,7 @@ cdef object si2sa_NF(number *n, ring *_ring, object base):
     - ``n`` -- a (pointer to) a singular number in an algebraic extension of
       the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     - ``base`` -- A sage NumberField
@@ -576,7 +576,7 @@ cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base):
 
     - ``n`` -- a (pointer to) a singular number in a ring of integers modulo n
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     - ``base`` -- A sage IntegerModRing
@@ -1506,7 +1506,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     - ``elem`` -- a sage IntegerMod
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     TESTS::
 

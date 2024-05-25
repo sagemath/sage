@@ -208,7 +208,7 @@ def is_VectorSpaceHomspace(x):
 
     INPUT:
 
-    ``x`` - anything
+    - ``x`` -- anything
 
     EXAMPLES:
 

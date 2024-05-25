@@ -1180,7 +1180,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
       series, which allows more limits to be computed (but may also
       crash in some obscure cases due to bugs in Maxima).
 
-    - ``**argv`` - 1 named parameter
+    - ``**argv`` -- 1 named parameter
 
     .. note::
 

@@ -2011,8 +2011,8 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        * ``dcols`` - list of indices of columns to be deleted from self.
-        * ``check`` - checks whether any index in ``dcols`` is out of range. Defaults to ``True``.
+        * ``dcols`` -- list of indices of columns to be deleted from self.
+        * ``check`` -- checks whether any index in ``dcols`` is out of range. Defaults to ``True``.
 
         .. SEEALSO::
 

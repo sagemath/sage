@@ -3965,7 +3965,7 @@ cdef class BooleanPolynomial(MPolynomial):
         -  ``in_dict`` -- (optional) dict with variable:value
            pairs
 
-        -  ``**kwds`` - names parameters
+        -  ``**kwds`` -- names parameters
 
         EXAMPLES::
 

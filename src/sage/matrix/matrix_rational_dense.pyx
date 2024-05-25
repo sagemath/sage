@@ -1513,7 +1513,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'classical'``: just clear each column using Gauss elimination.
 
-        -  ``height_guess``, ``**kwds`` - all passed to the
+        -  ``height_guess``, ``**kwds`` -- all passed to the
            multimodular algorithm; ignored by other algorithms.
 
         -  ``proof`` -- bool or None (default: None, see
@@ -1948,7 +1948,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         -  ``'multimodular'`` -- use this if the answers have
            small height
 
-        -  ``**kwds`` - passed on to echelon function.
+        -  ``**kwds`` -- passed on to echelon function.
 
         .. NOTE::
 

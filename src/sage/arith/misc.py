@@ -1711,7 +1711,7 @@ class Sigma:
         -  ``join`` -- default: True; whether to join the
            points.
 
-        -  ``**kwds`` - passed on
+        -  ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -1970,12 +1970,12 @@ def xgcd(a, b):
 
     INPUT:
 
-    -  ``a, b`` - integers or more generally, element of a ring for which the
+    -  ``a, b`` -- integers or more generally, element of a ring for which the
        xgcd make sense (e.g. a field or univariate polynomials).
 
     OUTPUT:
 
-    -  ``g, s, t`` - such that `g = s\cdot a + t\cdot b`
+    -  ``g, s, t`` -- such that `g = s\cdot a + t\cdot b`
 
     .. NOTE::
 
@@ -3156,7 +3156,7 @@ class Euler_Phi:
         -  ``join`` -- default: True; whether to join the
            points.
 
-        -  ``**kwds`` - passed on
+        -  ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -3673,7 +3673,7 @@ def binomial(x, m, **kwds):
 
     INPUT:
 
-    -  ``x``, ``m`` - numbers or symbolic expressions. Either ``m``
+    -  ``x``, ``m`` -- numbers or symbolic expressions. Either ``m``
        or ``x-m`` must be an integer.
 
     OUTPUT: number or symbolic expression (if input is symbolic)
@@ -4626,7 +4626,7 @@ class Moebius:
         -  ``join`` -- default: True; whether to join the points
            (very helpful in seeing their order).
 
-        -  ``**kwds`` - passed on
+        -  ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -4822,7 +4822,7 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
     INPUT:
 
 
-    -  ``a, b`` - integers
+    -  ``a, b`` -- integers
 
     -  ``p`` -- integer; either prime or -1 (which
        represents the archimedean place)

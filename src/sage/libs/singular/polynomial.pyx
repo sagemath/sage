@@ -145,7 +145,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
     - ``args`` -- a list/tuple of elements which can be converted to
       Singular polynomials using the ``(get_element)`` function
       provided.
-    - ``(*get_element)`` - a function to turn a Sage element into a
+    - ``(*get_element)`` -- a function to turn a Sage element into a
       Singular element.
 
     EXAMPLES::

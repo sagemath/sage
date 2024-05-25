@@ -2215,7 +2215,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         OUTPUT:
 
 
-        -  ``positive integer`` - the index of the row span of
+        -  ``positive integer`` -- the index of the row span of
            this matrix in its saturation
 
 
@@ -3479,7 +3479,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``density`` -- a float between 0 and 1
 
-        -  ``x, y`` - if not ``None``, these are passed to the
+        -  ``x, y`` -- if not ``None``, these are passed to the
            ``ZZ.random_element`` function as the upper and lower endpoints in
            the  uniform distribution
 
@@ -4830,7 +4830,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``self`` -- a matrix over the integers
 
-        -  ``**kwds`` - these are passed onto to the
+        -  ``**kwds`` -- these are passed onto to the
            decomposition over QQ command.
 
 

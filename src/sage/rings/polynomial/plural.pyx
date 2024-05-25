@@ -877,7 +877,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``*gens`` - list or tuple of generators (or several input arguments)
+        - ``*gens`` -- list or tuple of generators (or several input arguments)
         - ``coerce`` -- bool (default: ``True``); this must be a
           keyword argument. Only set it to ``False`` if you are certain
           that each generator is already in the ring.

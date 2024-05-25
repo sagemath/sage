@@ -69,7 +69,9 @@ def list_function(x):
     r"""
     Returns the LaTeX code for a list ``x``.
 
-    INPUT: ``x`` - a list
+    INPUT:
+
+    - ``x`` -- a list
 
     EXAMPLES::
 

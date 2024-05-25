@@ -7304,9 +7304,9 @@ class Partitions_nk(Partitions):
         - ``algorithm`` -- (default: ``'hybrid'``) the algorithm to compute
           the cardinality and can be one of the following:
 
-          * ``'hybrid'`` - use a hybrid algorithm which uses heuristics to
+          * ``'hybrid'`` -- use a hybrid algorithm which uses heuristics to
             reduce the complexity
-          * ``'gap'`` - use GAP
+          * ``'gap'`` -- use GAP
 
         EXAMPLES::
 

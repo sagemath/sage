@@ -261,7 +261,7 @@ class LWE(SageObject):
 
           - "uniform" -- secret follows the uniform distribution in `\Zmod{q}`
           - "noise" -- secret follows the noise distribution
-          - ``(lb,ub)`` - the secret is chosen uniformly from ``[lb,...,ub]`` including both endpoints
+          - ``(lb,ub)`` -- the secret is chosen uniformly from ``[lb,...,ub]`` including both endpoints
 
         - ``m`` -- number of allowed samples or ``None`` if no such limit exists
           (default: ``None``)
@@ -730,7 +730,7 @@ def samples(m, n, lwe, seed=None, balanced=False, **kwds):
       shall be set (default: ``None``)
     - ``balanced`` -- use function :func:`balance_sample` to return balanced
       representations of finite field elements (default: ``False``)
-    - ``**kwds`` - passed through to LWE constructor
+    - ``**kwds`` -- passed through to LWE constructor
 
     EXAMPLES::
 

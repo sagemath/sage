@@ -398,7 +398,7 @@ class GenericCellComplex(SageObject):
     #
     #     INPUT:
     #
-    #     -  ``n`` - positive integer (optional, default 1): suspend this
+    #     -  ``n`` -- positive integer (optional, default 1): suspend this
     #        many times.
     #     """
     #     raise NotImplementedError

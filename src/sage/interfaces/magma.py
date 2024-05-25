@@ -14,15 +14,15 @@ theory, group theory, combinatorics and algebra.
 
 The Magma interface offers three pieces of functionality:
 
-#. ``magma_console()`` - A function that dumps you into an interactive command-line Magma session.
+#. ``magma_console()`` -- A function that dumps you into an interactive command-line Magma session.
 
-#. ``magma.new(obj)`` and alternatively ``magma(obj)`` - Creation of a Magma object from a Sage object ``obj``.
+#. ``magma.new(obj)`` and alternatively ``magma(obj)`` -- Creation of a Magma object from a Sage object ``obj``.
    This provides a Pythonic interface to Magma. For example, if ``f=magma.new(10)``, then
    ``f.Factors()`` returns the prime factorization of 10 computed using Magma. If obj is a string containing
    an arbitrary Magma expression, then the expression is evaluated in Magma to create a Magma object. An example
    is ``magma.new('10 div 3')``, which returns Magma integer 3.
 
-#. ``magma.eval(expr)`` - Evaluation of the Magma expression ``expr``, with the result returned as a string.
+#. ``magma.eval(expr)`` -- Evaluation of the Magma expression ``expr``, with the result returned as a string.
 
 Type ``magma.[tab]`` for a list of all functions available from your Magma.
 Type ``magma.Function?`` for Magma's help about the Magma ``Function``.
@@ -2719,9 +2719,9 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         OUTPUT:
 
 
-        -  ``magma element`` - the quotient object
+        -  ``magma element`` -- the quotient object
 
-        -  ``magma element`` - mapping from self to the
+        -  ``magma element`` -- mapping from self to the
            quotient object
 
 
@@ -2766,7 +2766,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         OUTPUT:
 
 
-        -  ``magma element`` - a Magma ideal
+        -  ``magma element`` -- a Magma ideal
 
 
         EXAMPLES::
