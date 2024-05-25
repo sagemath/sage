@@ -1353,9 +1353,9 @@ class MPolynomialIdeal_singular_repr(
         INPUT:
 
         - ``algorithm`` -- "TQ", "TQBlockHigh", "TQBlockLow" or "TQDegree"
-        - ``criteria`` -- "Without" (without any criteria)
-                        - "C1", "CritPartially" (partial involutive criteria)
-                        - "C1C2C3", "C1C2C3C4" (full involutive criteria)
+        - ``criteria``  -- "Without" (without any criteria)
+                        -- "C1", "CritPartially" (partial involutive criteria)
+                        -- "C1C2C3", "C1C2C3C4" (full involutive criteria)
 
         - ``division_interface`` -- either "Janet" or "JanetLike"
 
