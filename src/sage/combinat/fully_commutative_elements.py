@@ -28,15 +28,18 @@ Natalie Schoenhals for their contribution to the project and the code.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.parent import Parent
-from sage.structure.list_clone import NormalizedClonableList
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.structure.unique_representation import UniqueRepresentation
-from .root_system.coxeter_matrix import CoxeterMatrix
 from collections import deque
-from sage.combinat.posets.posets import Poset
+
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.misc.lazy_import import lazy_import
+from sage.structure.list_clone import NormalizedClonableList
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.posets.posets', 'Poset')
+lazy_import('sage.combinat.root_system.coxeter_group', 'CoxeterGroup')
+lazy_import('sage.combinat.root_system.coxeter_matrix', 'CoxeterMatrix')
 
 
 class FullyCommutativeElement(NormalizedClonableList):

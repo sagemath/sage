@@ -124,7 +124,7 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[]})
-            sage: list(H.linear_extensions())                                           # optional - sage.modules
+            sage: list(H.linear_extensions())                                           # needs sage.modules
             [[0, 1, 2, 3], [0, 2, 1, 3]]
         """
         from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
@@ -560,18 +560,18 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: P = posets.IntegerPartitions(4)                                       # optional - sage.combinat
-            sage: H = P._hasse_diagram; H                                               # optional - sage.combinat
+            sage: P = posets.IntegerPartitions(4)                                       # needs sage.combinat
+            sage: H = P._hasse_diagram; H                                               # needs sage.combinat
             Hasse diagram of a poset containing 5 elements
-            sage: H.dual()                                                              # optional - sage.combinat
+            sage: H.dual()                                                              # needs sage.combinat
             Hasse diagram of a poset containing 5 elements
 
         TESTS::
 
-            sage: H = posets.IntegerPartitions(4)._hasse_diagram                        # optional - sage.combinat
-            sage: H.is_isomorphic( H.dual().dual() )                                    # optional - sage.combinat
+            sage: H = posets.IntegerPartitions(4)._hasse_diagram                        # needs sage.combinat
+            sage: H.is_isomorphic( H.dual().dual() )                                    # needs sage.combinat
             True
-            sage: H.is_isomorphic( H.dual() )                                           # optional - sage.combinat
+            sage: H.is_isomorphic( H.dual() )                                           # needs sage.combinat
             False
         """
         H = self.reverse(immutable=False)
@@ -589,11 +589,11 @@ class HasseDiagram(DiGraph):
         EXAMPLES::
 
             sage: B4 = posets.BooleanLattice(4)
-            sage: B4.is_isoform()  # Slow                                               # optional - sage.combinat
+            sage: B4.is_isoform()  # Slow                                               # needs sage.combinat sage.modules
             True
             sage: B4._hasse_diagram._precompute_intervals()
             sage: B4 = posets.BooleanLattice(4)
-            sage: B4.is_isoform()  # Faster now                                         # optional - sage.combinat
+            sage: B4.is_isoform()  # Faster now                                         # needs sage.combinat sage.modules
             True
         """
         n = self.order()
@@ -1056,7 +1056,7 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-            sage: H.moebius_function_matrix()                                           # optional - sage.libs.flint sage.modules
+            sage: H.moebius_function_matrix()                                           # needs sage.libs.flint sage.modules
             [ 1 -1 -1 -1  1  0  1  0]
             [ 0  1  0  0 -1  0  0  0]
             [ 0  0  1  0 -1 -1 -1  2]
@@ -1068,7 +1068,7 @@ class HasseDiagram(DiGraph):
 
         TESTS::
 
-            sage: # needs sage.modules sage.libs.flint
+            sage: # needs sage.libs.flint sage.modules
             sage: H.moebius_function_matrix().is_immutable()
             True
             sage: hasattr(H,'_moebius_function_matrix')
@@ -1311,7 +1311,7 @@ class HasseDiagram(DiGraph):
 
             sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
             sage: H = P._hasse_diagram
-            sage: M = H._leq_matrix_boolean; M                                          # optional - sage.modules sage.rings.finite_rings
+            sage: M = H._leq_matrix_boolean; M                                          # needs sage.modules
             [1 1 1 1 1 1 1 1]
             [0 1 0 1 0 0 0 1]
             [0 0 1 1 1 0 1 1]
@@ -1320,7 +1320,7 @@ class HasseDiagram(DiGraph):
             [0 0 0 0 0 1 1 1]
             [0 0 0 0 0 0 1 1]
             [0 0 0 0 0 0 0 1]
-            sage: M.base_ring()                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: M.base_ring()                                                         # needs sage.modules
             Finite Field of size 2
         """
         n = self.order()
@@ -1344,7 +1344,7 @@ class HasseDiagram(DiGraph):
 
             sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
             sage: H = P._hasse_diagram
-            sage: M = H._leq_matrix; M                                                  # optional - sage.modules
+            sage: M = H._leq_matrix; M                                                  # needs sage.modules
             [1 1 1 1 1 1 1 1]
             [0 1 0 1 0 0 0 1]
             [0 0 1 1 1 0 1 1]
@@ -1353,7 +1353,7 @@ class HasseDiagram(DiGraph):
             [0 0 0 0 0 1 1 1]
             [0 0 0 0 0 0 1 1]
             [0 0 0 0 0 0 0 1]
-            sage: M.base_ring()                                                         # optional - sage.modules
+            sage: M.base_ring()                                                         # needs sage.modules
             Integer Ring
         """
         n = self.order()
@@ -1380,7 +1380,7 @@ class HasseDiagram(DiGraph):
 
             sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
             sage: H = P._hasse_diagram
-            sage: M = H.lequal_matrix(); M                                              # optional - sage.modules
+            sage: M = H.lequal_matrix(); M                                              # needs sage.modules
             [1 1 1 1 1 1 1 1]
             [0 1 0 1 0 0 0 1]
             [0 0 1 1 1 0 1 1]
@@ -1389,18 +1389,18 @@ class HasseDiagram(DiGraph):
             [0 0 0 0 0 1 1 1]
             [0 0 0 0 0 0 1 1]
             [0 0 0 0 0 0 0 1]
-            sage: M.base_ring()                                                         # optional - sage.modules
+            sage: M.base_ring()                                                         # needs sage.modules
             Integer Ring
 
             sage: P = posets.DiamondPoset(6)
             sage: H = P._hasse_diagram
-            sage: M = H.lequal_matrix(boolean=True)                                     # optional - sage.modules sage.rings.finite_rings
-            sage: M.base_ring()                                                         # optional - sage.modules sage.rings.finite_rings
+            sage: M = H.lequal_matrix(boolean=True)                                     # needs sage.modules
+            sage: M.base_ring()                                                         # needs sage.modules
             Finite Field of size 2
 
         TESTS::
 
-            sage: H.lequal_matrix().is_immutable()                                      # optional - sage.modules
+            sage: H.lequal_matrix().is_immutable()                                      # needs sage.modules
             True
         """
         if boolean:
@@ -1422,7 +1422,7 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[2], 1:[2], 2:[3], 3:[4], 4:[]})
-            sage: H.lequal_matrix()                                                     # optional - sage.modules
+            sage: H.lequal_matrix()                                                     # needs sage.modules
             [1 0 1 1 1]
             [0 1 1 1 1]
             [0 0 1 1 1]
@@ -1508,7 +1508,7 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-            sage: H._meet                                                               # optional - sage.modules
+            sage: H._meet                                                               # needs sage.modules
             [0 0 0 0 0 0 0 0]
             [0 1 0 0 1 0 0 1]
             [0 0 2 0 2 2 2 2]
@@ -1519,14 +1519,14 @@ class HasseDiagram(DiGraph):
             [0 1 2 3 4 5 6 7]
 
             sage: H = HasseDiagram({0:[2,3],1:[2,3]})
-            sage: H._meet                                                               # optional - sage.modules
+            sage: H._meet                                                               # needs sage.modules
             [ 0 -1  0  0]
             [-1  1  1  1]
             [ 0  1  2 -1]
             [ 0  1 -1  3]
 
             sage: H = HasseDiagram({0:[1,2],1:[3,4],2:[3,4]})
-            sage: H._meet                                                               # optional - sage.modules
+            sage: H._meet                                                               # needs sage.modules
             [ 0  0  0  0  0]
             [ 0  1  0  1  1]
             [ 0  0  2  2  2]
@@ -1536,9 +1536,9 @@ class HasseDiagram(DiGraph):
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                       # optional - sage.modules
-            sage: P = L.dual()                                                          # optional - sage.modules
-            sage: P.meet(2,3)                                                           # optional - sage.modules
+            sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                       # needs sage.modules
+            sage: P = L.dual()                                                          # needs sage.modules
+            sage: P.meet(2,3)                                                           # needs sage.modules
             4
         """
         self._meet_semilattice_failure = ()
@@ -1588,7 +1588,7 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-            sage: H.meet_matrix()                                                       # optional - sage.modules
+            sage: H.meet_matrix()                                                       # needs sage.modules
             [0 0 0 0 0 0 0 0]
             [0 1 0 0 1 0 0 1]
             [0 0 2 0 2 2 2 2]
@@ -1616,7 +1616,7 @@ class HasseDiagram(DiGraph):
             ValueError: not a meet-semilattice: no bottom element
 
             sage: H = HasseDiagram({0:[1,2],1:[3,4],2:[3,4]})
-            sage: H.meet_matrix()                                                       # optional - sage.modules
+            sage: H.meet_matrix()                                                       # needs sage.modules
             Traceback (most recent call last):
             ...
             LatticeError: no meet for ...
@@ -1640,19 +1640,19 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-            sage: H.is_meet_semilattice()                                               # optional - sage.modules
+            sage: H.is_meet_semilattice()                                               # needs sage.modules
             True
 
             sage: H = HasseDiagram({0:[1,2],1:[3],2:[3],3:[]})
-            sage: H.is_meet_semilattice()                                               # optional - sage.modules
+            sage: H.is_meet_semilattice()                                               # needs sage.modules
             True
 
             sage: H = HasseDiagram({0:[2,3],1:[2,3]})
-            sage: H.is_meet_semilattice()                                               # optional - sage.modules
+            sage: H.is_meet_semilattice()                                               # needs sage.modules
             False
 
             sage: H = HasseDiagram({0:[1,2],1:[3,4],2:[3,4]})
-            sage: H.is_meet_semilattice()                                               # optional - sage.modules
+            sage: H.is_meet_semilattice()                                               # needs sage.modules
             False
         """
         try:
@@ -1672,7 +1672,7 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-            sage: H._join                                                               # optional - sage.modules
+            sage: H._join                                                               # needs sage.modules
             [0 1 2 3 4 5 6 7]
             [1 1 4 7 4 7 7 7]
             [2 4 2 6 4 5 6 7]
@@ -1683,14 +1683,14 @@ class HasseDiagram(DiGraph):
             [7 7 7 7 7 7 7 7]
 
             sage: H = HasseDiagram({0:[2,3],1:[2,3]})
-            sage: H._join                                                               # optional - sage.modules
+            sage: H._join                                                               # needs sage.modules
             [ 0 -1  2  3]
             [-1  1  2  3]
             [ 2  2  2 -1]
             [ 3  3 -1  3]
 
             sage: H = HasseDiagram({0:[2,3],1:[2,3],2:[4],3:[4]})
-            sage: H._join                                                               # optional - sage.modules
+            sage: H._join                                                               # needs sage.modules
             [ 0 -1  2  3  4]
             [-1  1  2  3  4]
             [ 2  2  2  4  4]
@@ -1700,9 +1700,9 @@ class HasseDiagram(DiGraph):
         TESTS::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                       # optional - sage.modules
-            sage: P = L.dual()                                                          # optional - sage.modules
-            sage: P.join(2,3)                                                           # optional - sage.modules
+            sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                       # needs sage.modules
+            sage: P = L.dual()                                                          # needs sage.modules
+            sage: P.join(2,3)                                                           # needs sage.modules
             0
         """
         self._join_semilattice_failure = ()
@@ -1753,7 +1753,7 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-            sage: H.join_matrix()                                                       # optional - sage.modules
+            sage: H.join_matrix()                                                       # needs sage.modules
             [0 1 2 3 4 5 6 7]
             [1 1 4 7 4 7 7 7]
             [2 4 2 6 4 5 6 7]
@@ -1773,7 +1773,7 @@ class HasseDiagram(DiGraph):
             ValueError: not a join-semilattice: no top element
 
             sage: H = HasseDiagram({0:[2,3],1:[2,3],2:[4],3:[4]})
-            sage: H.join_matrix()                                                       # optional - sage.modules
+            sage: H.join_matrix()                                                       # needs sage.modules
             Traceback (most recent call last):
             ...
             LatticeError: no join for ...
@@ -1797,13 +1797,13 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,3,2],1:[4],2:[4,5,6],3:[6],4:[7],5:[7],6:[7],7:[]})
-            sage: H.is_join_semilattice()                                               # optional - sage.modules
+            sage: H.is_join_semilattice()                                               # needs sage.modules
             True
             sage: H = HasseDiagram({0:[2,3],1:[2,3]})
-            sage: H.is_join_semilattice()                                               # optional - sage.modules
+            sage: H.is_join_semilattice()                                               # needs sage.modules
             False
             sage: H = HasseDiagram({0:[2,3],1:[2,3],2:[4],3:[4]})
-            sage: H.is_join_semilattice()                                               # optional - sage.modules
+            sage: H.is_join_semilattice()                                               # needs sage.modules
             False
         """
         try:
@@ -1837,9 +1837,9 @@ class HasseDiagram(DiGraph):
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1, 2], 1:[3, 4], 2:[4, 5], 3:[6],
             ....:                   4:[6], 5:[6]})
-            sage: H.find_nonsemidistributive_elements('join') is None                   # optional - sage.modules
+            sage: H.find_nonsemidistributive_elements('join') is None                   # needs sage.modules
             False
-            sage: H.find_nonsemidistributive_elements('meet') is None                   # optional - sage.modules
+            sage: H.find_nonsemidistributive_elements('meet') is None                   # needs sage.modules
             True
         """
         if meet_or_join == 'join':
@@ -1923,11 +1923,11 @@ class HasseDiagram(DiGraph):
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
 
             sage: H = HasseDiagram({0:[1, 2], 1:[3], 2:[3], 3:[4]})
-            sage: H.is_complemented()                                                   # optional - sage.modules
+            sage: H.is_complemented()                                                   # needs sage.modules
             1
 
             sage: H = HasseDiagram({0:[1, 2, 3], 1:[4], 2:[4], 3:[4]})
-            sage: H.is_complemented() is None                                           # optional - sage.modules
+            sage: H.is_complemented() is None                                           # needs sage.modules
             True
         """
         mt = self.meet_matrix()
@@ -1968,11 +1968,11 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0: [1, 2], 1: [3], 2: [4], 3: [4]})
-            sage: H.pseudocomplement(2)                                                 # optional - sage.modules
+            sage: H.pseudocomplement(2)                                                 # needs sage.modules
             3
 
             sage: H = HasseDiagram({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-            sage: H.pseudocomplement(2) is None                                         # optional - sage.modules
+            sage: H.pseudocomplement(2) is None                                         # needs sage.modules
             True
         """
         e = self.order() - 1
@@ -1999,7 +1999,7 @@ class HasseDiagram(DiGraph):
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0:[1,2], 1:[3,4], 3:[5], 4:[5], 2:[6,7],
             ....:                   6:[8], 7:[8], 5:[9], 8:[9]})
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             [[9, 8, 5, 6, 7, 2, 3, 4, 1, 0], [9, 8, 5, 7, 6, 2, 4, 3, 1, 0]]
 
         ALGORITHM:
@@ -2020,54 +2020,54 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram()  # Empty
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             [[]]
             sage: H = HasseDiagram({0:[]})  # One element
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             [[0]]
             sage: H = HasseDiagram({0:[1]})  # Two elements
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             [[1, 0]]
 
         Trivial cases: odd number of elements, not self-dual, not complemented::
 
             sage: H = posets.DiamondPoset(5)._hasse_diagram
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             []
             sage: H = posets.ChainPoset(4)._hasse_diagram
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             []
             sage: H = HasseDiagram( ([[0, 1], [0, 2], [0, 3], [1, 4], [1, 8], [4, 6], [4, 7], [6, 9], [7, 9], [2, 5], [3, 5], [5, 8], [8, 9]]) )
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             []
             sage: H = HasseDiagram({0:[1, 2, 3], 1: [4], 2:[4], 3: [5], 4:[5]})
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             []
 
         Complemented, self-dual and even number of elements, but
         not orthocomplemented::
 
             sage: H = HasseDiagram( ([[0, 1], [1, 2], [2, 3], [0, 4], [4, 5], [0, 6], [3, 7], [5, 7], [6, 7]]) )
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             []
 
         Unique orthocomplementations; second is not uniquely complemented,
         but has only one orthocomplementation::
 
             sage: H = posets.BooleanLattice(4)._hasse_diagram  # Uniquely complemented
-            sage: len(list(H.orthocomplementations_iterator()))                         # optional - sage.groups
+            sage: len(list(H.orthocomplementations_iterator()))                         # needs sage.groups
             1
             sage: H = HasseDiagram({0:[1, 2], 1:[3], 2:[4], 3:[5], 4:[5]})
-            sage: len([_ for _ in H.orthocomplementations_iterator()])                  # optional - sage.groups
+            sage: len([_ for _ in H.orthocomplementations_iterator()])                  # needs sage.groups
             1
 
         "Lengthening diamond" must keep the number of orthocomplementations::
 
             sage: H = HasseDiagram( ([[0, 1], [0, 2], [0, 3], [0, 4], [1, 5], [2, 5], [3, 5], [4, 5]]) )
-            sage: n = len([_ for _ in H.orthocomplementations_iterator()]); n           # optional - sage.groups
+            sage: n = len([_ for _ in H.orthocomplementations_iterator()]); n           # needs sage.groups
             3
             sage: H = HasseDiagram('M]??O?@??C??OA???OA??@?A??C?A??O??')
-            sage: len([_ for _ in H.orthocomplementations_iterator()]) == n             # optional - sage.groups
+            sage: len([_ for _ in H.orthocomplementations_iterator()]) == n             # needs sage.groups
             True
 
         This lattice has an unique "possible orthocomplement" for every
@@ -2076,7 +2076,7 @@ class HasseDiagram(DiGraph):
         for chain 0-1-6-11 would be 11-7-8-0, which is not a chain::
 
             sage: H = HasseDiagram('KTGG_?AAC?O?o?@?@?E?@?@??')
-            sage: list(H.orthocomplementations_iterator())                              # optional - sage.groups
+            sage: list(H.orthocomplementations_iterator())                              # needs sage.groups
             []
         """
         n = self.order()
@@ -2239,7 +2239,7 @@ class HasseDiagram(DiGraph):
         TESTS::
 
             sage: H = Poset()._hasse_diagram
-            sage: list(H.antichains_iterator())                                         # optional - sage.modules
+            sage: list(H.antichains_iterator())                                         # needs sage.modules
             [[]]
         """
         # NOTE: Ordering of antichains as a prefix tree is crucial for
@@ -2506,9 +2506,9 @@ class HasseDiagram(DiGraph):
             sage: H.diamonds()
             ([(0, 1, 2, 3)], True)
 
-            sage: P = posets.YoungDiagramPoset(Partition([3, 2, 2]))                    # optional - sage.combinat
-            sage: H = P._hasse_diagram                                                  # optional - sage.combinat
-            sage: H.diamonds()                                                          # optional - sage.combinat
+            sage: P = posets.YoungDiagramPoset(Partition([3, 2, 2]))                    # needs sage.combinat sage.modules
+            sage: H = P._hasse_diagram                                                  # needs sage.combinat sage.modules
+            sage: H.diamonds()                                                          # needs sage.combinat sage.modules
             ([(0, 1, 3, 4), (3, 4, 5, 6)], False)
         """
         diamonds = []
@@ -2535,8 +2535,8 @@ class HasseDiagram(DiGraph):
             [3]
 
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: H = Posets.YoungDiagramPoset(Partition([3, 2, 2]))._hasse_diagram     # optional - sage.combinat
-            sage: H.common_upper_covers([4, 5])                                         # optional - sage.combinat
+            sage: H = Posets.YoungDiagramPoset(Partition([3, 2, 2]))._hasse_diagram     # needs sage.combinat sage.modules
+            sage: H.common_upper_covers([4, 5])                                         # needs sage.combinat sage.modules
             [6]
         """
         covers = set(self.neighbor_out_iterator(vertices.pop()))
@@ -2556,8 +2556,8 @@ class HasseDiagram(DiGraph):
             [0]
 
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: H = Posets.YoungDiagramPoset(Partition([3, 2, 2]))._hasse_diagram     # optional - sage.combinat
-            sage: H.common_lower_covers([4, 5])                                         # optional - sage.combinat
+            sage: H = Posets.YoungDiagramPoset(Partition([3, 2, 2]))._hasse_diagram     # needs sage.combinat sage.modules
+            sage: H.common_lower_covers([4, 5])                                         # needs sage.combinat sage.modules
             [3]
         """
         covers = set(self.neighbor_in_iterator(vertices.pop()))
@@ -2633,9 +2633,9 @@ class HasseDiagram(DiGraph):
             sage: H = HasseDiagram({0: [1, 2], 1:[3], 2:[3]})
             sage: it = H.sublattices_iterator(set(), 0); it
             <generator object ...sublattices_iterator at ...>
-            sage: next(it)                                                              # optional - sage.modules
+            sage: next(it)                                                              # needs sage.modules
             set()
-            sage: next(it)                                                              # optional - sage.modules
+            sage: next(it)                                                              # needs sage.modules
             {0}
         """
         yield elms
@@ -2665,9 +2665,9 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: L = posets.PentagonPoset()                                            # optional - sage.modules
-            sage: ms = L._hasse_diagram.maximal_sublattices()                           # optional - sage.modules
-            sage: sorted(ms, key=sorted)                                                # optional - sage.modules
+            sage: L = posets.PentagonPoset()                                            # needs sage.modules
+            sage: ms = L._hasse_diagram.maximal_sublattices()                           # needs sage.modules
+            sage: sorted(ms, key=sorted)                                                # needs sage.modules
             [{0, 1, 2, 4}, {0, 1, 3, 4}, {0, 2, 3, 4}]
         """
         jn = self.join_matrix()
@@ -2769,8 +2769,8 @@ class HasseDiagram(DiGraph):
 
         EXAMPLES::
 
-            sage: H = posets.PentagonPoset()._hasse_diagram                             # optional - sage.modules
-            sage: H.frattini_sublattice()                                               # optional - sage.modules
+            sage: H = posets.PentagonPoset()._hasse_diagram                             # needs sage.modules
+            sage: H.frattini_sublattice()                                               # needs sage.modules
             [0, 4]
         """
         # Just a direct computation, no optimization at all.
@@ -2854,7 +2854,7 @@ class HasseDiagram(DiGraph):
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0: [1, 2], 1: [3, 4], 2: [4],
             ....:                   3: [5], 4: [5]})
-            sage: H.skeleton()                                                          # optional - sage.modules
+            sage: H.skeleton()                                                          # needs sage.modules
             [5, 2, 0, 3]
         """
         p_atoms = []
@@ -2947,7 +2947,7 @@ class HasseDiagram(DiGraph):
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0: [1, 2], 1: [4], 2: [3], 3: [4, 5],
             ....:                   4: [6], 5: [6]})
-            sage: sorted(H.neutral_elements())                                          # optional - sage.modules
+            sage: sorted(H.neutral_elements())                                          # needs sage.modules
             [0, 4, 6]
 
         ALGORITHM:
@@ -3094,10 +3094,10 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: N5 = HasseDiagram({0: [1, 2], 1: [4], 2: [3], 3:[4]})
-            sage: N5.atoms_of_congruence_lattice()                                      # optional - sage.combinat
+            sage: N5.atoms_of_congruence_lattice()                                      # needs sage.combinat sage.modules
             [{{0}, {1}, {2, 3}, {4}}]
             sage: Hex = HasseDiagram({0: [1, 2], 1: [3], 2: [4], 3: [5], 4: [5]})
-            sage: Hex.atoms_of_congruence_lattice()                                     # optional - sage.combinat
+            sage: Hex.atoms_of_congruence_lattice()                                     # needs sage.combinat sage.modules
             [{{0}, {1}, {2, 4}, {3}, {5}}, {{0}, {1, 3}, {2}, {4}, {5}}]
 
         ALGORITHM:
@@ -3171,32 +3171,32 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0: [1, 2], 1: [3], 2: [4], 3: [4]})
-            sage: cong = H.congruence([[0, 1]]); cong                                   # optional - sage.modules
+            sage: cong = H.congruence([[0, 1]]); cong                                   # needs sage.modules
             {{0, 1, 3}, {2, 4}}
-            sage: H.congruence([[0, 2]], start=cong)                                    # optional - sage.modules
+            sage: H.congruence([[0, 2]], start=cong)                                    # needs sage.modules
             {{0, 1, 2, 3, 4}}
 
-            sage: H.congruence([[0, 1]], stop_pairs=[(1, 3)]) is None                   # optional - sage.modules
+            sage: H.congruence([[0, 1]], stop_pairs=[(1, 3)]) is None                   # needs sage.modules
             True
 
         TESTS::
 
             sage: H = HasseDiagram('HT@O?GO?OE?G@??')
-            sage: H.congruence([[0, 1]]).number_of_subsets()                            # optional - sage.modules
+            sage: H.congruence([[0, 1]]).number_of_subsets()                            # needs sage.modules
             1
             sage: H = HasseDiagram('HW_oC?@@O@?O@??')
-            sage: H.congruence([[0, 1]]).number_of_subsets()                            # optional - sage.modules
+            sage: H.congruence([[0, 1]]).number_of_subsets()                            # needs sage.modules
             1
 
         Check :issue:`21861`::
 
             sage: H = HasseDiagram({0: [1, 2], 1: [3], 2: [4], 3: [4]})
-            sage: tmp = H.congruence([[1, 3]])                                          # optional - sage.modules
-            sage: tmp.number_of_subsets()                                               # optional - sage.modules
+            sage: tmp = H.congruence([[1, 3]])                                          # needs sage.modules
+            sage: tmp.number_of_subsets()                                               # needs sage.modules
             4
-            sage: H.congruence([[0, 1]], start=tmp).number_of_subsets()                 # optional - sage.modules
+            sage: H.congruence([[0, 1]], start=tmp).number_of_subsets()                 # needs sage.modules
             2
-            sage: tmp.number_of_subsets()                                               # optional - sage.modules
+            sage: tmp.number_of_subsets()                                               # needs sage.modules
             4
         """
         from sage.sets.disjoint_set import DisjointSet
@@ -3317,11 +3317,11 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram({0: [1, 2], 1: [5], 2: [3, 4], 3: [5], 4: [5]})
-            sage: H.find_nontrivial_congruence()                                        # optional - sage.modules
+            sage: H.find_nontrivial_congruence()                                        # needs sage.modules
             {{0, 1}, {2, 3, 4, 5}}
 
             sage: H = HasseDiagram({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-            sage: H.find_nontrivial_congruence() is None                                # optional - sage.modules
+            sage: H.find_nontrivial_congruence() is None                                # needs sage.modules
             True
 
         ALGORITHM:
@@ -3376,12 +3376,12 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: N5 = HasseDiagram({0: [1, 2], 1: [4], 2: [3], 3: [4]})
-            sage: P, D = N5.principal_congruences_poset()                               # optional - sage.combinat
-            sage: P                                                                     # optional - sage.combinat
+            sage: P, D = N5.principal_congruences_poset()                               # needs sage.combinat sage.modules
+            sage: P                                                                     # needs sage.combinat sage.modules
             Finite poset containing 3 elements
-            sage: P.bottom()                                                            # optional - sage.combinat
+            sage: P.bottom()                                                            # needs sage.combinat sage.modules
             (2, 3)
-            sage: D[(2, 3)]                                                             # optional - sage.combinat
+            sage: D[(2, 3)]                                                             # needs sage.combinat sage.modules
             {{0}, {1}, {2, 3}, {4}}
         """
         from sage.combinat.set_partition import SetPartition, SetPartitions
@@ -3423,7 +3423,7 @@ class HasseDiagram(DiGraph):
             sage: H = HasseDiagram('GY@OQ?OW@?O?')
             sage: it = H.congruences_iterator(); it
             <generator object ...>
-            sage: sorted([cong.number_of_subsets() for cong in it])                     # optional - sage.combinat
+            sage: sorted([cong.number_of_subsets() for cong in it])                     # needs sage.combinat sage.modules
             [1, 2, 2, 2, 4, 4, 4, 8]
         """
         from sage.sets.disjoint_set import DisjointSet
@@ -3458,26 +3458,26 @@ class HasseDiagram(DiGraph):
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
             sage: H = HasseDiagram('IX?Q@?AG?OG?W?O@??')
-            sage: H.is_congruence_normal()                                              # optional - sage.combinat
+            sage: H.is_congruence_normal()                                              # needs sage.combinat sage.modules
             True
 
         The 5-element diamond is the smallest non-example::
 
             sage: H = HasseDiagram({0: [1, 2, 3], 1: [4], 2: [4], 3: [4]})
-            sage: H.is_congruence_normal()                                              # optional - sage.combinat
+            sage: H.is_congruence_normal()                                              # needs sage.combinat sage.modules
             False
 
         This is done by doubling a non-convex subset::
 
             sage: H = HasseDiagram('OQC?a?@CO?G_C@?GA?O??_??@?BO?A_?G??C??_?@???')
-            sage: H.is_congruence_normal()                                              # optional - sage.combinat
+            sage: H.is_congruence_normal()                                              # needs sage.combinat sage.modules
             False
 
         TESTS::
 
-            sage: HasseDiagram().is_congruence_normal()                                 # optional - sage.combinat
+            sage: HasseDiagram().is_congruence_normal()                                 # needs sage.combinat sage.modules
             True
-            sage: HasseDiagram({0: []}).is_congruence_normal()                          # optional - sage.combinat
+            sage: HasseDiagram({0: []}).is_congruence_normal()                          # needs sage.combinat sage.modules
             True
 
         ALGORITHM:

@@ -26,6 +26,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.sets_cat import Sets
@@ -37,7 +38,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import factorial
 from sage.rings.infinity import PlusInfinity
-from sage.matrix.special import zero_matrix
 
 from sage.structure.list_clone import ClonableList
 from sage.combinat.partition import Partition
@@ -48,6 +48,8 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.words.words import Words
 
 from sage.misc.persist import register_unpickle_override
+
+lazy_import('sage.matrix.special', 'zero_matrix')
 
 
 class SkewTableau(ClonableList,

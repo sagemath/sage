@@ -19,8 +19,10 @@ Yang-Baxter Graphs
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.combinat.partition import Partition
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.permutation import Permutation
+
+lazy_import('sage.combinat.partition', 'Partition')
 
 
 def YangBaxterGraph(partition=None, root=None, operators=None):

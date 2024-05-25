@@ -214,8 +214,6 @@ from __future__ import annotations
 from sage.misc.functional import det
 from sage.structure.sage_object import SageObject
 from sage.combinat.words.morphism import WordMorphism
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", "Graphics")
 lazy_import("sage.plot.colors", "Color")
@@ -225,6 +223,10 @@ from sage.rings.integer_ring import ZZ
 from sage.misc.latex import LatexExpr
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_by_eq_and_lt, richcmp_method
+
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.modules.free_module_element', 'vector')
+
 
 # matplotlib color maps, loaded on-demand
 cm = None

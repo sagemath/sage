@@ -25,6 +25,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+import itertools
+
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.arith.power import generic_power
@@ -37,19 +39,19 @@ from sage.combinat.combinat_cython import (perfect_matchings_iterator,
                                            set_partition_composition)
 from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
 from sage.combinat.set_partition_iterator import set_partition_iterator
-from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra_n
 from sage.combinat.permutation import Permutations
-from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.flatten import flatten
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import integer_floor as floor
 from sage.arith.misc import integer_ceil as ceil
 
-import itertools
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.combinat.symmetric_group_algebra', 'SymmetricGroupAlgebra_n')
 
 
 def partition_diagrams(k):
