@@ -1030,7 +1030,6 @@ cdef class GapElement(RingElement):
             GAP_Leave()
         return make_any_gap_element(self.parent(), result)
 
-
     cpdef _mul_(self, right):
         r"""
         Multiply two GapElement objects.
@@ -1623,9 +1622,8 @@ cdef class GapElement_Float(GapElement):
         return GAP_ValueMacFloat(self.value)
 
 
-
 ############################################################################
-### GapElement_IntegerMod #####################################################
+#  GapElement_IntegerMod  ##################################################
 ############################################################################
 
 cdef GapElement_IntegerMod make_GapElement_IntegerMod(parent, Obj obj):
@@ -1674,7 +1672,6 @@ cdef class GapElement_IntegerMod(GapElement):
             <class 'sage.libs.gap.element.GapElement_Integer'>
         """
         return self.Int()
-
 
     def sage(self, ring=None):
         r"""
@@ -1764,7 +1761,6 @@ cdef class GapElement_FiniteField(GapElement):
             return self.IntFFE()
         else:
             raise TypeError('not in prime subfield')
-
 
     def sage(self, ring=None, var='a'):
         r"""
@@ -2098,7 +2094,6 @@ cdef class GapElement_Ring(GapElement):
         characteristic = self.Characteristic().sage()
         return ZZ.quotient_ring(characteristic)
 
-
     def ring_finite_field(self, var='a'):
         """
         Construct an integer ring.
@@ -2111,7 +2106,6 @@ cdef class GapElement_Ring(GapElement):
         size = self.Size().sage()
         from sage.rings.finite_rings.finite_field_constructor import GF
         return GF(size, name=var)
-
 
     def ring_cyclotomic(self):
         """
@@ -2389,7 +2383,6 @@ cdef class GapElement_Function(GapElement):
         <class 'sage.libs.gap.element.GapElement_Function'>
     """
 
-
     def __repr__(self):
         r"""
         Return a string representation
@@ -2407,7 +2400,6 @@ cdef class GapElement_Function(GapElement):
         name = libgap.NameFunction(self)
         s = '<Gap function "'+name.sage()+'">'
         return s
-
 
     def __call__(self, *args):
         """
@@ -2539,8 +2531,6 @@ cdef class GapElement_Function(GapElement):
             return None
         return make_any_gap_element(self.parent(), result)
 
-
-
     def _instancedoc_(self):
         r"""
         Return the help string
@@ -2556,8 +2546,6 @@ cdef class GapElement_Function(GapElement):
         libgap = self.parent()
         from sage.interfaces.gap import gap
         return gap.help(libgap.NameFunction(self).sage(), pager=False)
-
-
 
 
 ############################################################################
@@ -2647,7 +2635,6 @@ cdef class GapElement_MethodProxy(GapElement_Function):
             return GapElement_Function.__call__(self, * ([self.first_argument] + list(args)))
         else:
             return GapElement_Function.__call__(self, self.first_argument)
-
 
 
 ############################################################################
@@ -2891,8 +2878,7 @@ cdef class GapElement_List(GapElement):
             sage: all( x in ZZ for x in _ )
             True
         """
-        return [ x.sage(**kwds) for x in self ]
-
+        return [x.sage(**kwds) for x in self]
 
     def matrix(self, ring=None):
         """
@@ -2984,7 +2970,6 @@ cdef class GapElement_List(GapElement):
         return vector(ring, n, self.sage(ring=ring))
 
     _vector_ = vector
-
 
 
 ############################################################################
@@ -3253,7 +3238,6 @@ cdef class GapElement_RecordIterator():
         """
         self.rec = rec
         self.i = 1
-
 
     def __next__(self):
         r"""

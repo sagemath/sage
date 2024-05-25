@@ -467,7 +467,6 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
         self.load(_saved_options)
 
 
-
 #############
 
 cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):

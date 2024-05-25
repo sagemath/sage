@@ -106,7 +106,6 @@ cdef class ntl_mat_ZZ():
                     tmp = ntl_ZZ(v[i*ncols+j])
                     mat_ZZ_setitem(&self.x, i, j, &tmp.x)
 
-
     def __reduce__(self):
         """
         EXAMPLES::

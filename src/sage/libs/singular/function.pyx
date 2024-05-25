@@ -394,6 +394,7 @@ def is_sage_wrapper_for_singular_ring(ring):
         return True
     return False
 
+
 cdef new_sage_polynomial(ring,  poly *p):
     if isinstance(ring, MPolynomialRing_libsingular):
         return new_MP(ring, p)
@@ -1159,8 +1160,6 @@ cdef class SingularFunction(SageObject):
     The base class for Singular functions either from the kernel or
     from the library.
     """
-
-
     def __init__(self, name):
         """
         INPUT:
@@ -1462,7 +1461,6 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
     global currentVoice
     global myynest
     global error_messages
-
 
     cdef ring *si_ring
     if isinstance(R, MPolynomialRing_libsingular):
@@ -1856,6 +1854,7 @@ def list_of_functions(packages=False):
                     ph = IDNEXT(ph)
         h = IDNEXT(h)
     return l
+
 
 cdef inline RingWrap new_RingWrap(ring* r):
     cdef RingWrap ring_wrap_result = RingWrap.__new__(RingWrap)

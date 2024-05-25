@@ -51,10 +51,6 @@ from cpython.object cimport Py_EQ, Py_NE
 from collections import defaultdict
 
 
-
-
-
-
 # mapping str --> SINGULAR representation
 order_dict = {
     "dp": ringorder_dp,
@@ -319,7 +315,6 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
-
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
@@ -346,12 +341,10 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
-
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
         _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
-
 
     elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
         characteristic = 1
