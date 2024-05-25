@@ -774,7 +774,7 @@ class SchemeMorphism_spec(SchemeMorphism):
 
     - ``phi`` -- a ring morphism with matching domain and codomain.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     EXAMPLES::
@@ -947,7 +947,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
     - ``polys`` -- a list/tuple/iterable of polynomials defining the
       scheme morphism.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     EXAMPLES:

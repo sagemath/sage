@@ -406,7 +406,7 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``n`` (int, Integer) - A non-negative integer.
+        - ``n`` -- non-negative integer
 
         EXAMPLES::
 

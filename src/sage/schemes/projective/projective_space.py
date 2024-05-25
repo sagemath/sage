@@ -783,7 +783,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT: A point of this projective space.

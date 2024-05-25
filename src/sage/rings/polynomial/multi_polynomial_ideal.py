@@ -3046,7 +3046,7 @@ class MPolynomialIdeal_singular_repr(
             sage: J.hilbert_series(grading=(10,3))                                      # needs sage.libs.flint
             (t^25 + t^24 + t^23 - t^15 - t^14 - t^13 - t^12 - t^11
              - t^10 - t^9 - t^8 - t^7 - t^6 - t^5 - t^4 - t^3 - t^2
-             - t - 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
+             - t -- 1)/(t^12 + t^11 + t^10 - t^2 - t - 1)
 
             sage: K = R.ideal([a^2*b^3, a*b^4 + a^3*b^2])
             sage: K.hilbert_series(grading=[1,2])                                       # needs sage.libs.flint
@@ -3502,8 +3502,8 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         INPUT:
 
-        - ``ring`` -- the g-algebra to which this ideal belongs
-        - ``gens`` -- the generators of this ideal
+        - ``ring`` - the g-algebra to which this ideal belongs
+        - ``gens`` - the generators of this ideal
         - ``coerce`` (optional - default True) - generators are
           coerced into the ring before creating the ideal
         - ``side`` -- optional string, either ``"left"`` (default)
@@ -3548,7 +3548,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         INPUT:
 
-        - ``cmd`` -- string, representing a Singular function
+        - ``cmd`` - string, representing a Singular function
         - ``arg`` (Default: None) - arguments for which cmd is called
 
         OUTPUT:

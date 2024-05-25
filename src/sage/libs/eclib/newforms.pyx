@@ -245,12 +245,12 @@ cdef class ECModularSymbol:
 
         INPUT:
 
-        - ``r`` (rational) - a rational number
+        - ``r`` (rational) -- a rational number
 
-        - ``sign`` (int) - either +1, -1 or 0.  If the sign of the
+        - ``sign`` (int) -- either +1, -1 or 0.  If the sign of the
           space is +1, only sign +1 is allowed.  Default: self.sign, or +1 when self.sign=0.
 
-        - ``base_at_infinity`` (bool) - if True, evaluates
+        - ``base_at_infinity`` (bool) -- if True, evaluates
           {oo,r}. otherwise (default) evaluates {0,r}.
 
         OUTPUT:

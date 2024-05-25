@@ -146,8 +146,8 @@ class LowerChristoffelWord(FiniteWord_list):
 
         - ``p`` -- integer coprime with ``q``.
         - ``q`` -- integer coprime with ``p``.
-        - ``alphabet`` -- sequence of two elements (optional, default: (0, 1)).
-        - ``algorithm`` -- construction method (optional, default: 'cf').
+        - ``alphabet`` -- sequence of two elements (default: (0, 1)).
+        - ``algorithm`` -- construction method (default: 'cf').
           It can be one of the following:
 
           - ``'linear'`` -- linear algorithm in the length of the word.
@@ -913,7 +913,7 @@ class WordGenerator:
 
         - ``cf`` -- iterator, the continued fraction expansion of a real
           number in `]0, 1[`.
-        - ``alphabet`` -- the alphabet (optional, default ``(0,1)``) of
+        - ``alphabet`` -- the alphabet (default: ``(0,1)``) of
           the output
 
         OUTPUT:
@@ -1125,10 +1125,10 @@ class WordGenerator:
 
         - ``alpha`` -- real number such that `0 \leq\alpha\leq 1`
 
-        - ``rho`` -- real number (optional, default: 0)
+        - ``rho`` -- real number (default: 0)
 
         - ``alphabet`` -- iterable of two elements or ``None``
-          (optional, default: ``None``)
+          (default: ``None``)
 
         OUTPUT:
 
@@ -1185,10 +1185,10 @@ class WordGenerator:
 
         - ``alpha`` -- real number such that `0 \leq\alpha\leq 1`
 
-        - ``rho`` -- real number (optional, default: 0)
+        - ``rho`` -- real number (default: 0)
 
         - ``alphabet`` -- iterable of two elements or ``None``
-          (optional, default: ``None``)
+          (default: ``None``)
 
         OUTPUT:
 
@@ -1687,7 +1687,7 @@ class WordGenerator:
 
         - ``letters`` -- A letter or a sequence of letters.
 
-        - ``morphisms`` -- dict, list, callable or ``None`` (optional, default
+        - ``morphisms`` -- dict, list, callable or ``None`` (default:
           ``None``) an object that maps indices to morphisms. If ``None``, then
           ``sequence`` must consist of morphisms.
 
@@ -1930,9 +1930,9 @@ class WordGenerator:
 
         INPUT:
 
-        - ``k`` -- positive integer (optional, default: 1)
+        - ``k`` -- positive integer (default: 1)
 
-        - ``alphabet`` -- iterable (optional, default: ``'ab'``) of size two
+        - ``alphabet`` -- iterable (default: ``'ab'``) of size two
 
         OUTPUT:
 

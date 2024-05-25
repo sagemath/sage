@@ -5366,7 +5366,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``right`` -- a matrix, vector or free module element, whose
           dimensions are compatible with ``self``.
 
-        - ``subdivide`` -- default: ``False`` - request the resulting
+        - ``subdivide`` -- default: ``False`` -- request the resulting
           matrix to have a new subdivision, separating ``self`` from ``right``.
 
         OUTPUT:

@@ -446,7 +446,7 @@ def smallest_poly(F, prec=53, norm_type='norm', emb=None):
 
     - ``F`` -- binary form of degree at least 3 with no multiple roots
 
-    - ``norm_type`` -- string - ``norm`` or ``height`` controlling what ``smallest``
+    - ``norm_type`` -- string; ``norm`` or ``height`` controlling what ``smallest``
       means for the coefficients.
 
     OUTPUT: pair [poly, matrix]

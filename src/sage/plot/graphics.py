@@ -393,7 +393,7 @@ class Graphics(WithEqualityById, SageObject):
         - ``font_size`` -- (default: 'medium') string, one of 'xx-small', 'x-small', 'small',
           'medium', 'large', 'x-large', 'xx-large' or an absolute font size (e.g. 12)
 
-        -  ``shadow`` -- (default: True) boolean - draw a shadow behind the legend
+        -  ``shadow`` -- (default: True) boolean -- draw a shadow behind the legend
 
         - ``fancybox`` -- (default: False) a boolean.  If True, draws a frame with a round
           fancybox.

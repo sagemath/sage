@@ -2498,7 +2498,7 @@ def special_supersingular_curve(F, *, endomorphism=False):
 
     - ``F`` -- finite field `\mathbb F_{p^r}`;
 
-    - ``endomorphism`` -- boolean (optional, default ``False``):
+    - ``endomorphism`` -- boolean (default: ``False``):
       When set to ``True``, it is required that `2 \mid r`, and
       the function then additionally returns `\vartheta`.
 

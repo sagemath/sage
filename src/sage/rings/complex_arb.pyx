@@ -1029,10 +1029,10 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
           balls, or elements of any parent that coerces into this ball field,
           e.g. rational or algebraic numbers.
 
-        - ``rel_tol`` (optional, default `2^{-p}` where `p` is the precision of
+        - ``rel_tol`` (default: `2^{-p}` where `p` is the precision of
           the ball field) -- relative accuracy goal
 
-        - ``abs_tol`` (optional, default `2^{-p}` where `p` is the precision of
+        - ``abs_tol`` (default: `2^{-p}` where `p` is the precision of
           the ball field) -- absolute accuracy goal
 
         Additionally, the following optional parameters can be used to control

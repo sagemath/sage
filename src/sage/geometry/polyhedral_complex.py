@@ -509,7 +509,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (optional, default ``False``) if ``True``, return
+        - ``increasing`` -- (default: ``False``) if ``True``, return
           maximal cells in increasing order of dimension.
           Otherwise it returns cells in decreasing order of dimension.
 

@@ -2008,7 +2008,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``n`` -- non-negative integer - length of the words in the language
+        - ``n`` -- non-negative integer; length of the words in the language
 
         - ``u`` -- a word used as a seed
 
@@ -2069,9 +2069,9 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``n`` -- non-negative integer - length of the words in the language
+        - ``n`` -- non-negative integer; length of the words in the language
 
-        - ``u`` -- a word or ``None`` (optional, default ``None``) - if set to
+        - ``u`` -- a word or ``None`` (default: ``None``); if set to
           ``None`` some letter of the alphabet is used
 
         OUTPUT: a Python set
@@ -2458,7 +2458,7 @@ class WordMorphism(SageObject):
 
         - ``self`` -- unimodular endomorphism defined on integers
           ``1, 2, \ldots, d``
-        - ``k`` -- integer (optional, default: 1)
+        - ``k`` -- integer (default: 1)
 
         OUTPUT:
 

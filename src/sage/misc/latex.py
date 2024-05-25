@@ -607,18 +607,18 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
 
     -  ``filename`` -- string; file to process, including full path
 
-    -  ``debug`` -- bool (optional, default ``False``); whether to print
+    -  ``debug`` -- bool (default: ``False``); whether to print
        verbose debugging output
 
-    -  ``density`` -- integer (optional, default 150); how big output
+    -  ``density`` -- integer (default: 150); how big output
        image is.
 
     -  ``engine`` -- string: latex engine to use.
 
-    -  ``png`` -- bool (optional, default ``False``); whether to produce a
+    -  ``png`` -- bool (default: ``False``); whether to produce a
        png file.
 
-    -  ``do_in_background`` -- bool (optional, default ``False``).  Unused,
+    -  ``do_in_background`` -- bool (default: ``False``).  Unused,
        kept for backwards compatibility.
 
     OUTPUT:

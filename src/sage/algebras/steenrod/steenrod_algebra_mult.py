@@ -704,9 +704,9 @@ def adem(a, b, c=0, p=2, generic=None):
 
     INPUT:
 
-    - `a`, `b`, `c` (optional) - nonnegative integers, corresponding
+    - `a`, `b`, `c` (optional) -- nonnegative integers, corresponding
       to either `P^a P^b` or (if `c` present) to `P^a \beta^b P^c`
-    - `p` -- positive prime number (optional, default 2)
+    - `p` -- positive prime number (default: 2)
     - `generic` -- whether to use the generic Steenrod algebra, (default: depends on prime)
 
     OUTPUT:

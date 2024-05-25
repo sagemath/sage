@@ -1108,7 +1108,7 @@ class GaloisRepresentation(SageObject):
 
         - a prime ``p``
 
-        - a natural number ``bound`` (optional, default=10000)
+        - a natural number ``bound`` (default:=10000)
 
         OUTPUT:
 

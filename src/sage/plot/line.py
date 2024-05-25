@@ -364,7 +364,7 @@ def line2d(points, **options):
        - ``"steps-post"`` (step function; horizontal line is to the
          right of point)
 
-    - ``marker`` -- The style of the markers, which is one of
+    - ``marker``  -- The style of the markers, which is one of
        - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
        - ``","`` (pixel), ``"."`` (point)
        - ``"_"`` (horizontal line), ``"|"`` (vertical line)

@@ -2360,12 +2360,12 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``element_class`` -- (optional, default: ``list``) an iterable type
+        - ``element_class`` -- (default: ``list``) an iterable type
 
         - ``exclude`` -- elements of the poset to be excluded
-          (optional, default: ``None``)
+          (default: ``None``)
 
-        - ``conversion`` -- (optional, default: ``None``) used to pass
+        - ``conversion`` -- (default: ``None``) used to pass
            the list of elements of the poset in their fixed order
 
         OUTPUT:

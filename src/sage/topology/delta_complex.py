@@ -1499,8 +1499,8 @@ class DeltaComplex(GenericCellComplex):
         INPUT:
 
         - ``n`` -- integer
-        - ``base_ring`` -- ring (optional, default `\ZZ`)
-        - ``cochains`` -- boolean (optional, default ``False``); if
+        - ``base_ring`` -- ring (default: `\ZZ`)
+        - ``cochains`` -- boolean (default: ``False``); if
           ``True``, return cochains instead
 
         Since the list of `n`-cells for a `\Delta`-complex may have
@@ -1551,7 +1551,7 @@ class DeltaComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` -- coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this

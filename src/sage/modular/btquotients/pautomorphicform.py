@@ -673,7 +673,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         - ``X`` -- A BruhatTitsQuotient object
 
-        - ``k`` -- integer - The weight. It must be even.
+        - ``k`` -- integer -- The weight. It must be even.
 
         - ``prec`` -- integer (default: None). If specified, the
           precision for the coefficient module

@@ -1240,11 +1240,11 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``v`` -- vector (optional, default: None) If None, the directive
+        - ``v`` -- vector (default: None) If None, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``ring`` -- ring (optional, default: None) where to do the
+        - ``ring`` -- ring (default: None) where to do the
           computations. If None, RealField(53) is used.
 
         OUTPUT:
@@ -1302,22 +1302,22 @@ class FiniteWordPath_all(SageObject):
 
         - ``self`` -- a word path in a 3 or 4 dimension vector space
 
-        - ``v`` -- vector (optional, default: None) If None, the directive
+        - ``v`` -- vector (default: None) If None, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``letters`` -- iterable (optional, default: None) of the letters
+        - ``letters`` -- iterable (default: None) of the letters
           to be projected. If None, then all the letters are considered.
 
-        - ``color`` -- dictionary (optional, default: None) of the letters
+        - ``color`` -- dictionary (default: None) of the letters
           mapped to colors. If None, automatic colors are chosen.
 
-        - ``ring`` -- ring (optional, default: None) where to do the
+        - ``ring`` -- ring (default: None) where to do the
           computations. If None, RealField(53) is used.
 
-        - ``size`` -- number (optional, default: ``12``) size of the points.
+        - ``size`` -- number (default: ``12``) size of the points.
 
-        - ``kind`` -- string (optional, default ``'right'``) either
+        - ``kind`` -- string (default: ``'right'``) either
           ``'right'`` or ``'left'``. The color of a letter is given to the
           projected prefix to the right or the left of the letter.
 
@@ -1423,11 +1423,11 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``v`` -- vector (optional, default: None) If None, the directive
+        - ``v`` -- vector (default: None) If None, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``ring`` -- ring (optional, default: None) where to do the
+        - ``ring`` -- ring (default: None) where to do the
           computations. If None, RealField(53) is used.
 
         OUTPUT:
@@ -2144,7 +2144,7 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
 
         INPUT:
 
-        - x, y -- starting point (optional, default (0, 0))
+        - x, y -- starting point (default: (0, 0))
 
         EXAMPLES::
 

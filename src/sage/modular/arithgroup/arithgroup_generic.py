@@ -290,7 +290,7 @@ class ArithmeticSubgroup(Group):
         - ``G`` -- intermediate subgroup (currently not implemented if different
           from SL(2,Z))
 
-        - ``on_right`` -- boolean (default: True) - if True return right coset
+        - ``on_right`` -- boolean (default: True); if True return right coset
           enumeration, if False return left one.
 
         This is *extremely* slow in general.

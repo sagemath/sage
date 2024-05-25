@@ -1147,20 +1147,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``n`` -- (default: 5) a positive integer
           Order of periodic points to use or preimages to take if starting points are specified.
 
-        - ``f_starting_point`` -- (optional, default: ``None``) value in the base number field or None.
+        - ``f_starting_point`` -- (default: ``None``) value in the base number field or None.
           If ``f_starting_point`` is None, we solve for points of period ``n`` for ``self``.
           Otherwise, we take ``n``-th preimages of the point given by ``f_starting_point``
           under ``f`` on the affine line.
 
-        - ``g_starting_point`` -- (optional, default: ``None``) value in the base number field or None.
+        - ``g_starting_point`` -- (default: ``None``) value in the base number field or None.
           If ``g_starting_point`` is None, we solve for points of period ``n`` for ``g``.
           Otherwise, we take ``n``-th preimages of the point given by ``g_starting_point``
           under ``g`` on the affine line.
 
-        - ``check_primes_of_bad_reduction`` -- (optional, default: ``False``) boolean.
+        - ``check_primes_of_bad_reduction`` -- (default: ``False``) boolean.
           Passed to the ``primes_of_bad_reduction`` function for ``self`` and ``g``.
 
-        - ``prec`` -- (optional, default: ``RealField`` default)
+        - ``prec`` -- (default: ``RealField`` default)
           default precision for RealField values which are returned.
 
         - ``noise_multiplier`` -- (default: 2) a real number.
@@ -2005,7 +2005,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``N`` -- (optional - default: 10) positive integer. number of
+        - ``N`` -- (default: 10) positive integer. number of
           terms of the series to use
 
         - ``prec`` -- (default: 100) positive integer, float point or

@@ -239,28 +239,28 @@ def ellipse(center, r1, r2, angle=0, **options):
 
     INPUT:
 
-    - ``center`` -- 2-tuple of real numbers - coordinates of the center
+    - ``center`` -- 2-tuple of real numbers; coordinates of the center
 
-    - ``r1``, ``r2`` -- positive real numbers - the radii of the ellipse
+    - ``r1``, ``r2`` -- positive real numbers; the radii of the ellipse
 
-    - ``angle`` -- real number (default: 0) - the angle between the first axis
+    - ``angle`` -- real number (default: 0) -- the angle between the first axis
       and the horizontal
 
     OPTIONS:
 
-    - ``alpha`` -- default: 1 - transparency
+    - ``alpha`` -- (default: 1); transparency
 
-    - ``fill`` -- default: False - whether to fill the ellipse or not
+    - ``fill`` -- (default: False); whether to fill the ellipse or not
 
-    - ``thickness`` -- default: 1 - thickness of the line
+    - ``thickness`` -- (default: 1); thickness of the line
 
-    - ``linestyle`` -- default: ``'solid'`` - The style of the line, which is one
+    - ``linestyle`` -- (default: ``'solid'``); The style of the line, which is one
       of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``,
       ``':'``, ``'-'``, ``'-.'``,  respectively.
 
-    - ``edgecolor`` -- default: 'black' - color of the contour
+    - ``edgecolor`` -- (default: 'black'); color of the contour
 
-    - ``facecolor`` -- default: 'red' - color of the filling
+    - ``facecolor`` -- (default: 'red'); color of the filling
 
     - ``rgbcolor`` -- 2D or 3D plotting.  This option overrides
       ``edgecolor`` and ``facecolor`` for 2D plotting.

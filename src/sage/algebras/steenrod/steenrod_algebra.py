@@ -520,12 +520,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         r"""
         INPUT:
 
-        - ``p`` -- positive prime integer (optional, default 2)
-        - ``basis`` -- string (optional, default = 'milnor')
-        - ``profile`` -- profile function (optional, default ``None``)
-        - ``truncation_type`` -- (optional, default 'auto')
-        - ``precision`` -- (optional, default ``None``)
-        - ``generic`` -- (optional, default 'auto')
+        - ``p`` -- positive prime integer (default: 2)
+        - ``basis`` -- string (default: = 'milnor')
+        - ``profile`` -- profile function (default: ``None``)
+        - ``truncation_type`` -- (default: 'auto')
+        - ``precision`` -- (default: ``None``)
+        - ``generic`` -- (default: 'auto')
 
         OUTPUT:
 
@@ -3807,12 +3807,12 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
 
     INPUT:
 
-    - ``p`` -- positive prime integer (optional, default = 2)
-    - ``basis`` -- string (optional, default = 'milnor')
-    - ``profile`` -- a profile function in form specified below (optional, default ``None``)
-    - ``truncation_type`` -- 0 or `\infty` or 'auto' (optional, default 'auto')
-    - ``precision`` -- integer or ``None`` (optional, default ``None``)
-    - ``generic`` -- (optional, default 'auto')
+    - ``p`` -- positive prime integer (default: = 2)
+    - ``basis`` -- string (default: = 'milnor')
+    - ``profile`` -- a profile function in form specified below (default: ``None``)
+    - ``truncation_type`` -- 0 or `\infty` or 'auto' (default: 'auto')
+    - ``precision`` -- integer or ``None`` (default: ``None``)
+    - ``generic`` -- (default: 'auto')
 
     OUTPUT:
 

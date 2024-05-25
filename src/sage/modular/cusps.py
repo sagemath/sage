@@ -488,7 +488,7 @@ class Cusp(Element):
         OUTPUT:
 
 
-        -  a boolean - True if self and other are equivalent
+        -  a boolean -- True if self and other are equivalent
 
         -  a matrix or an integer- returned only if transformation is 'matrix' or 'corner', respectively.
 

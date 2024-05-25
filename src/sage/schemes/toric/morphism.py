@@ -790,7 +790,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
       fans equal the fans of the domain and codomain in the ``parent``
       Hom-set.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     .. WARNING::

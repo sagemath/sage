@@ -253,7 +253,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     - ``path`` -- a directory name.
 
-    - ``distribution_filter`` -- (optional, default: ``None``)
+    - ``distribution_filter`` -- (default: ``None``)
       only consider ``all*.py`` files whose distribution (from a
       ``# sage_setup:`` ``distribution = PACKAGE`` directive in the source file)
       is an element of ``distribution_filter``.

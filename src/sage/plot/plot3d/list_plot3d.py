@@ -21,7 +21,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
 
       - a list of 3-tuples
 
-      - a list of lists (all of the same length) - this is treated the same as
+      - a list of lists (all of the same length) -- this is treated the same as
         a matrix.
 
     OPTIONAL KEYWORDS:

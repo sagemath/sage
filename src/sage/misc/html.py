@@ -276,7 +276,7 @@ class MathJax:
         -  ``locals`` -- extra local variables used when
            evaluating Sage code in ``x``.
 
-        - ``mode`` -- string (optional, default ``'display'``):
+        - ``mode`` -- string (default: ``'display'``):
            ``'display'`` for displaymath, ``'inline'`` for inline
            math, or ``'plain'`` for just the LaTeX code without the
            surrounding html and script tags.
@@ -586,7 +586,7 @@ def pretty_print_default(enable=True):
 
     INPUT:
 
-    -  ``enable`` -- bool (optional, default ``True``).  If ``True``, turn on
+    -  ``enable`` -- bool (default: ``True``).  If ``True``, turn on
        pretty printing; if ``False``, turn it off.
 
     EXAMPLES::

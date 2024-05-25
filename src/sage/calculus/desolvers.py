@@ -1264,9 +1264,9 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
         - if end_points is [a,b] we integrate between ``min(ics[0], a)`` and ``max(ics[0], b)``
 
-      - ``step`` -- (optional, default:0.1) the length of the step (positive number)
+      - ``step`` -- (default:0.1) the length of the step (positive number)
 
-      - ``output`` -- (optional, default: ``'list'``) one of ``'list'``,
+      - ``output`` -- (default: ``'list'``) one of ``'list'``,
         ``'plot'``, ``'slope_field'`` (graph of the solution with slope field)
 
     OUTPUT:
@@ -1414,7 +1414,7 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
       - if ``end_points`` is [a,b] we integrate on between ``min(ics[0], a)`` and ``max(ics[0], b)``
 
-    - ``step`` -- (optional, default: 0.1) the length of the step
+    - ``step`` -- (default: 0.1) the length of the step
 
     OUTPUT:
 

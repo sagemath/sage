@@ -787,7 +787,7 @@ def test(n, m, R, c=2):
     - ``n`` -- integer
     - ``m`` -- integer
     - ``R`` -- ring
-    - ``c`` -- integer (optional, default:2)
+    - ``c`` -- integer (default:2)
 
     EXAMPLES::
 

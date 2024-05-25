@@ -580,7 +580,7 @@ def milnor_mono_to_string(mono, latex=False, generic=False):
       if `generic=True`, pair of tuples of non-negative integers ((e0, e1, e2,
       ...), (r1, r2, ...))
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -654,7 +654,7 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
       or tuple (e0, n1, e1, n2, ...) when `generic=True`, where each ei is 0 or
       1, and each ni is positive
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -732,7 +732,7 @@ def wood_mono_to_string(mono, latex=False):
 
     - ``mono`` -- tuple of pairs of non-negative integers (s,t)
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     OUTPUT:
@@ -778,7 +778,7 @@ def wall_mono_to_string(mono, latex=False):
     - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     OUTPUT:
@@ -819,7 +819,7 @@ def wall_long_mono_to_string(mono, latex=False):
     - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     OUTPUT:
@@ -864,7 +864,7 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
     -  ``mono`` -- tuple of pairs of non-negative integers
        (m,k) with `m >= k`
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     OUTPUT:
@@ -906,7 +906,7 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
     - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     OUTPUT:
@@ -951,7 +951,7 @@ def pst_mono_to_string(mono, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -1014,7 +1014,7 @@ def comm_mono_to_string(mono, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -1077,7 +1077,7 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (optional, default False), if true, output
+    - ``latex`` -- boolean (default: False), if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)

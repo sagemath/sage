@@ -1146,7 +1146,7 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
 
     - ``grad_f`` -- gradient of f as a Python function
 
-    - ``color`` -- "automatic" - a rainbow of num_colors colors
+    - ``color`` -- "automatic"; a rainbow of num_colors colors
 
     - ``num_colors`` -- (default: 128) number of colors to use with default
        color

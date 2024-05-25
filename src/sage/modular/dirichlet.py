@@ -3041,7 +3041,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
            the list of orbits and the orbits themselves (slightly faster if
            ``False``).
 
-        -  ``check`` -- (optional, default: ``True``) whether or not
+        -  ``check`` -- (default: ``True``) whether or not
            to explicitly coerce each element of ``v`` into ``self``.
 
         The Galois group is the absolute Galois group of the prime subfield

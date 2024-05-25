@@ -1030,15 +1030,15 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        - ``arg`` -- (optional, default: ``None``) It can be one of the following:
+        - ``arg`` -- (default: ``None``) It can be one of the following:
 
           - ``None`` -- then the method iterates through all morphisms.
 
-          - tuple `(a, b)` of two integers  - It specifies the range
+          - tuple `(a, b)` of two integers  -- It specifies the range
             ``range(a, b)`` of values to consider for the sum of the length
             of the image of each letter in the alphabet.
 
-          - list of nonnegative integers - The length of the list must be
+          - list of nonnegative integers -- The length of the list must be
             equal to the size of the alphabet, and the i-th integer of
             ``arg`` determines the length of the word mapped to by the i-th
             letter of the (ordered) alphabet.

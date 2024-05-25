@@ -184,11 +184,11 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         kwds:
 
-        - ``bound`` -- real number (optional, default: 0). The bound for the
+        - ``bound`` -- real number (default: 0). The bound for the
           height of the coordinates. Only used for subschemes with
           dimension at least 1.
 
-        - ``zero_tolerance`` -- positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` -- positive real number (default:=10^(-10)).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
@@ -380,7 +380,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         kwds:
 
-        - ``zero_tolerance`` -- positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` -- positive real number (default:=10^(-10)).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 

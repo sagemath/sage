@@ -1497,7 +1497,7 @@ def mma_free_limit(expression, v, a, dir=None):
     - ``expression`` -- symbolic expression
     - ``v`` -- variable
     - ``a`` -- value where the variable goes to
-    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (optional, default: ``None``)
+    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (default: ``None``)
 
     EXAMPLES::
 

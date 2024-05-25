@@ -585,7 +585,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         INPUT:
 
 
-        -  ``var`` -- string - the variable name
+        -  ``var`` -- string; the variable name
 
 
         EXAMPLES::

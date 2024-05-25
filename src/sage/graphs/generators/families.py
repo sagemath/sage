@@ -2856,7 +2856,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
 
     Some facts about this graph with `p` pegs and `d` disks:
 
-    - only automorphisms are the "obvious" ones - renumber the pegs.
+    - only automorphisms are the "obvious" ones -- renumber the pegs.
     - chromatic number is less than or equal to `p`
     - independence number is `p^{d-1}`
 

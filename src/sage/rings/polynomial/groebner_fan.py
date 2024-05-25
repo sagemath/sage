@@ -1402,7 +1402,7 @@ class GroebnerFan(SageObject):
 
         OUTPUT:
 
-        - ``edges`` -- a list of edges in 3d - each list item is a pair of
+        - ``edges`` -- a list of edges in 3d; each list item is a pair of
           points
 
         EXAMPLES::
@@ -1672,9 +1672,9 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        - ``parameters`` (optional) - a list of variables to be
+        - ``parameters`` (optional) -- a list of variables to be
           considered as parameters
-        - ``symmetry_generators`` (optional) - generators of the symmetry group
+        - ``symmetry_generators`` (optional) -- generators of the symmetry group
 
         OUTPUT: a TropicalPrevariety object
 

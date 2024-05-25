@@ -1910,7 +1910,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``seed`` (optional, default: ``None``), if given must be a
+        - ``seed`` (default: ``None``), if given must be a
           subset of the domain of a base.  When used, an attempt to
           create a base containing all or part of ``seed`` will be
           made.

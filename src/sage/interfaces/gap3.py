@@ -790,7 +790,7 @@ class GAP3Record(GAP3Element):
 
         OUTPUT:
 
-        - list of strings - the field records
+        - list of strings -- the field records
 
         EXAMPLES::
 
@@ -815,7 +815,7 @@ class GAP3Record(GAP3Element):
 
         OUTPUT:
 
-        - list of strings - operations of the record
+        - list of strings -- operations of the record
 
         EXAMPLES::
 

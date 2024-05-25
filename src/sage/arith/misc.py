@@ -1038,7 +1038,7 @@ def primes(start=2, stop=None, proof=None):
 
     INPUT:
 
-    - ``start`` -- an integer (optional, default: 2) lower bound for the primes
+    - ``start`` -- an integer (default: 2) lower bound for the primes
 
     - ``stop`` -- an integer (or infinity) upper (open) bound for the
       primes

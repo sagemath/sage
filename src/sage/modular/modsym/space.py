@@ -1039,7 +1039,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        - ``prec`` (integer) - number of q-expansion terms to calculate.
+        - ``prec`` (integer) -- number of q-expansion terms to calculate.
 
         EXAMPLES::
 

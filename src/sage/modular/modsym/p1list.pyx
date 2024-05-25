@@ -505,7 +505,7 @@ def p1list(N):
 
     INPUT:
 
-    - N (integer) - a positive integer (less than 2^31).
+    - N (integer) -- a positive integer (less than 2^31).
 
     OUTPUT:
 

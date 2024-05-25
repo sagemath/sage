@@ -336,7 +336,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         -   ``i`` -- The power of x in the expression `Frob(x^i dx/y^j) / dx`
 
         -   ``j`` -- The (negative) power of y in the expression
-                    `Frob(x^i dx/y^j) / dx`
+                     `Frob(x^i dx/y^j) / dx`
 
         OUTPUT:
 
@@ -344,9 +344,9 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                       that represents the Frobenius expansion of
                       x^i dx/y^j modulo p^(N0 + 1)
 
-                     the entry (l, s) corresponds to the coefficient associated
-                     to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
-                     (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
+                      the entry (l, s) corresponds to the coefficient associated
+                      to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
+                      (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
 
         ALGORITHM:
 

@@ -1015,7 +1015,7 @@ def plot(funcs, *args, **kwds):
       taken from the strings above) or a dictionary (with keys in ``range(len(X))``
       and values taken from the strings above).
 
-    - ``marker`` -- The style of the markers, which is one of
+    - ``marker``  -- The style of the markers, which is one of
 
       - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
       - ``","`` (pixel), ``"."`` (point)

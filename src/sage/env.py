@@ -78,7 +78,7 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
     - ``fallbacks`` -- tuple containing ``str`` or ``None`` values.
 
-    - ``force`` -- boolean (optional, default is ``False``). If
+    - ``force`` -- boolean (default: is ``False``). If
       ``True``, skip the environment variable and only use the
       fallbacks.
 

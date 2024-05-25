@@ -696,7 +696,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
       diagonal entries.  This may not be specified in
       combination with a NumPy array.
 
-    - ``sparse`` -- default: ``True`` - whether or not
+    - ``sparse`` -- (default: ``True``); whether or not
       the result has a sparse implementation.
 
     OUTPUT:
@@ -1023,11 +1023,11 @@ def ones_matrix(ring, nrows=None, ncols=None, sparse=False):
 
     INPUT:
 
-    - ``ring`` -- default: ``ZZ`` - base ring for the matrix.
+    - ``ring`` -- (default: ``ZZ``); base ring for the matrix.
     - ``nrows`` -- number of rows in the matrix.
     - ``ncols`` -- number of columns in the matrix.
       If omitted, defaults to the number of rows, producing a square matrix.
-    - ``sparse`` -- default: ``False`` - if ``True`` creates a sparse representation.
+    - ``sparse`` -- (default: ``False``); if ``True`` creates a sparse representation.
 
     OUTPUT:
 
@@ -2168,7 +2168,7 @@ def jordan_block(eigenvalue, size, sparse=False):
 
     -  ``eigenvalue`` -- eigenvalue for the diagonal entries of the block
     -  ``size`` -- size of the square matrix
-    -  ``sparse`` -- (default: ``False``) - if ``True``, return a sparse matrix
+    -  ``sparse`` -- (default: ``False``); if ``True``, return a sparse matrix
 
     EXAMPLES::
 
@@ -2216,7 +2216,7 @@ def companion_matrix(poly, format='right'):
       A symbolic expression that might also be a polynomial is not
       proper input, see examples below.
 
-    - ``format`` -- default: 'right' - specifies one of four
+    - ``format`` -- (default: 'right'); specifies one of four
       variations of a companion matrix.  Allowable values are
       'right', 'left', 'top' and 'bottom', which indicates which
       border of the matrix contains the negatives of the coefficients.
@@ -3283,7 +3283,7 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
     - ``v`` -- vector
     - ``i`` -- integer
-    - ``ring`` -- ring (optional, default: ``None``) of the resulting matrix
+    - ``ring`` -- ring (default: ``None``) of the resulting matrix
 
     OUTPUT:
 
@@ -3354,7 +3354,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     - ``v`` -- vector
     - ``i`` -- integer
-    - ``ring`` -- ring (optional, default: ``None``) of the resulting matrix
+    - ``ring`` -- ring (default: ``None``) of the resulting matrix
 
     OUTPUT:
 
@@ -3474,7 +3474,7 @@ def hilbert(dim, ring=QQ):
 
     - ``dim`` -- integer, the dimension of the Hilbert matrix
 
-    - ``ring`` -- base ring (optional, default: \\QQ) of the resulting matrix
+    - ``ring`` -- base ring (default: \\QQ) of the resulting matrix
 
     EXAMPLES::
 
@@ -3508,7 +3508,7 @@ def vandermonde(v, ring=None):
 
     - ``v`` -- vector, the second column of the Vandermonde matrix
 
-    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: None) of the resulting matrix
 
     EXAMPLES:
 
@@ -3543,7 +3543,7 @@ def toeplitz(c, r, ring=None):
     - ``r`` -- vector, first row of the Toeplitz matrix, counting from the
       second column
 
-    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: None) of the resulting matrix
 
     EXAMPLES:
 
@@ -3592,10 +3592,10 @@ def hankel(c, r=None, ring=None):
 
     - ``c`` -- vector, first column of the Hankel matrix
 
-    - ``r`` -- vector (optional, default: None), last row of the Hankel matrix, from
+    - ``r`` -- vector (default: None), last row of the Hankel matrix, from
       the second to the last column
 
-    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: None) of the resulting matrix
 
     EXAMPLES:
 

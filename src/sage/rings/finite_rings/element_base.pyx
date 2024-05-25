@@ -545,7 +545,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``var`` -- default: ``None`` - a string for a new variable name to use.
+        - ``var`` -- (default: ``None``); a string for a new variable name to use.
 
         EXAMPLES::
 

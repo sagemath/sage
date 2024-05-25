@@ -34,7 +34,7 @@ class SageKernelSpec():
 
         INPUT:
 
-        - ``prefix`` -- (optional, default: ``sys.prefix``)
+        - ``prefix`` -- (default: ``sys.prefix``)
           directory for the installation prefix
 
         EXAMPLES::

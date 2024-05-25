@@ -45,7 +45,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
       indexing set for the basis of this module
 
     - ``element_class`` -- the class of which elements of this module
-      should be instances (optional, default None, in which case the
+      should be instances (default: None, in which case the
       elements are instances of
       :class:`~sage.modules.with_basis.indexed_element.IndexedFreeModuleElement`)
 

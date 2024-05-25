@@ -633,20 +633,20 @@ class SimplicialSets(Category_singleton):
                   chain complex in those dimensions, setting the chain groups
                   in all other dimensions to zero.
 
-                - ``augmented`` (optional, default ``False``) -- if ``True``,
+                - ``augmented`` (default: ``False``) -- if ``True``,
                   return the augmented chain complex (that is, include a class
                   in dimension `-1` corresponding to the empty cell).
 
-                - ``cochain`` (optional, default ``False``) -- if ``True``,
+                - ``cochain`` (default: ``False``) -- if ``True``,
                   return the cochain complex (that is, the dual of the chain
                   complex).
 
-                - ``verbose`` (optional, default ``False``) -- ignored.
+                - ``verbose`` (default: ``False``) -- ignored.
 
-                - ``subcomplex`` (optional, default ``None``) -- if present,
+                - ``subcomplex`` (default: ``None``) -- if present,
                   compute the chain complex relative to this subcomplex.
 
-                - ``check`` (optional, default ``False``) -- If ``True``, make
+                - ``check`` (default: ``False``) -- If ``True``, make
                   sure that the chain complex is actually a chain complex:
                   the differentials are composable and their product is zero.
 

@@ -781,10 +781,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``var`` -- (optional, default ``'x'``) the name of the variable
+        - ``var`` -- (default: ``'x'``) the name of the variable
           of the polynomial
 
-        - ``algorithm`` -- (optional, default ``None``) one of ``None``,
+        - ``algorithm`` -- (default: ``None``) one of ``None``,
           ``'linbox'``, or an algorithm accepted by
           :meth:`sage.matrix.matrix_sparse.Matrix_sparse.charpoly`
 
@@ -885,10 +885,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``var`` -- (optional, default ``'x'``) the name of the variable
+        - ``var`` -- (default: ``'x'``) the name of the variable
           of the polynomial
 
-        - ``algorithm`` -- (optional, default ``None``) one of ``None``,
+        - ``algorithm`` -- (default: ``None``) one of ``None``,
           ``'linbox'``, or an algorithm accepted by
           :meth:`sage.matrix.matrix_sparse.Matrix_sparse.minpoly`
 

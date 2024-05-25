@@ -314,9 +314,9 @@ def parse_cremona_label(label, numerical_class_code=False):
 
     INPUT:
 
-    -  ``label`` (string) - a valid Cremona elliptic curve label
+    -  ``label`` (string) -- a valid Cremona elliptic curve label
 
-    - ``numerical_class_code`` (boolean, default False) - if ``True``,
+    - ``numerical_class_code`` (boolean, default False) -- if ``True``,
        convert the isogeny class label from a letter code in base 26
        to an integer;  this is useful for sorting
 
@@ -422,7 +422,7 @@ def parse_lmfdb_label(label, numerical_class_code=False):
 
     -  ``label`` -- str
 
-    - ``numerical_class_code`` (boolean, default False) - if ``True``,
+    - ``numerical_class_code`` (boolean, default False) -- if ``True``,
        convert the isogeny class label from a letter code in base 26
        to an integer;  this is useful for sorting
 

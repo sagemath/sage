@@ -39,7 +39,7 @@ def sphinxify(docstring, format='html'):
 
     - ``docstring`` -- string -- a ReST-formatted docstring
 
-    - ``format`` -- string (optional, default 'html') -- either 'html' or
+    - ``format`` -- string (default: 'html') -- either 'html' or
       'text'
 
     OUTPUT:

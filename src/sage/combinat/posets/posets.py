@@ -2111,10 +2111,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``label_elements`` (default: ``True``) - whether to display
+        - ``label_elements`` (default: ``True``) -- whether to display
           element labels
 
-        - ``element_labels`` (default: ``None``) - a dictionary of
+        - ``element_labels`` (default: ``None``) -- a dictionary of
           element labels
 
         - ``cover_labels`` -- a dictionary, list or function representing labels
@@ -4940,10 +4940,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         INPUT:
 
         - ``element_constructor`` -- a function taking an iterable as
-          argument (optional, default: ``list``)
+          argument (default: ``list``)
 
         - ``exclude`` -- elements of the poset to be excluded
-          (optional, default: ``None``)
+          (default: ``None``)
 
         OUTPUT:
 

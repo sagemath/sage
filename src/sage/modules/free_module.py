@@ -626,13 +626,13 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
     - ``gens`` -- a list of either vectors or lists of ring elements
       used to generate the span
 
-    - ``base_ring`` -- default: ``None`` - a principal ideal domain
+    - ``base_ring`` -- (default: ``None``); a principal ideal domain
       for the ring of scalars
 
-    - ``check`` -- default: ``True`` - passed to the ``span()`` method
+    - ``check`` -- (default: ``True``); passed to the ``span()`` method
       of the ambient module
 
-    - ``already_echelonized`` -- default: ``False`` - set to ``True``
+    - ``already_echelonized`` -- (default: ``False``); set to ``True``
       if the vectors form the rows of a matrix in echelon form, in
       order to skip the computation of an echelonized basis for the
       span.
@@ -3276,11 +3276,11 @@ class FreeModule_generic(Module_free_ambient):
 
         INPUT:
 
-        -- ``prob`` -- float. Each coefficient will be set to zero with
+        - ``prob`` -- float. Each coefficient will be set to zero with
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        -- ``*args, **kwds`` -- passed on to ``random_element()`` function
+        - ``*args, **kwds`` -- passed on to ``random_element()`` function
            of base ring.
 
         EXAMPLES::
@@ -4980,11 +4980,11 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         - ``vectors`` -- A list of vectors, all from the same vector
           space.
 
-        - ``zeros`` -- default: ``'left'`` - ``'left'`` or ``'right'``
+        - ``zeros`` -- (default: ``'left'``); ``'left'`` or ``'right'``
           as a general preference for where zeros are located in the
           returned coefficients
 
-        - ``check`` -- default: ``True`` - if ``True`` each item in
+        - ``check`` -- (default: ``True``); if ``True`` each item in
           the list ``vectors`` is checked for membership in ``self``.
           Set to ``False`` if you can be certain the vectors come from
           the vector space.

@@ -3756,10 +3756,10 @@ class ClusterSeed(SageObject):
 
         - ``depth`` -- (default: infinity) integer, only seeds with distance
           at most ``depth`` from ``self`` are returned
-        - ``return_depth`` -- (default: ``False``) - if ``True``, ignored if
+        - ``return_depth`` -- (default: ``False``); if ``True``, ignored if
           ``depth`` is set; returns the depth of the mutation class, i.e.,
           the maximal distance from ``self`` of an element in the mutation class
-        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only
+        - ``up_to_equivalence`` -- (default: ``True``); if ``True``, only
           clusters up to equivalence are considered.
 
         EXAMPLES:

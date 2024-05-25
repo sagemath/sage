@@ -132,7 +132,7 @@ def _rmcmd(s, cmd, left='', right=''):
       command which takes a single argument, like 'emph' or 'url'; the
       command is removed, but its argument is not.
 
-    - ``left``, ``right`` -- (string, optional, default '') add these
+    - ``left``, ``right`` -- (string, default: '') add these
       strings at the left and right ends of the command. See the
       examples.
 
@@ -197,7 +197,7 @@ def detex(s, embedded=False):
     INPUT:
 
     - ``s`` -- string
-    - ``embedded`` -- boolean (optional, default False)
+    - ``embedded`` -- boolean (default: False)
 
     If ``embedded`` is False, then do the replacements in both
     ``math_substitutes`` and ``nonmath_substitutes``.  If True, then
@@ -550,7 +550,7 @@ def process_extlinks(s, embedded=False):
     INPUT:
 
     - ``s`` -- string, in practice a docstring
-    - ``embedded`` -- boolean (optional, default False)
+    - ``embedded`` -- boolean (default: False)
 
     This function is called by :func:`format`, and if in the notebook,
     it sets ``embedded`` to be ``True``, otherwise ``False``.
@@ -655,7 +655,7 @@ def format(s, embedded=False):
     INPUT:
 
     - ``s`` -- string
-    - ``embedded`` -- boolean (optional, default ``False``)
+    - ``embedded`` -- boolean (default: ``False``)
 
     OUTPUT: string
 
@@ -1057,29 +1057,29 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     - ``extra1``, ..., ``extra5`` -- additional strings to require when
       searching.  Lines must match all of these, as well as ``string``.
 
-    - ``whole_word`` (optional, default False) - if True, search for
+    - ``whole_word`` (default: False) -- if True, search for
       ``string`` and ``extra1`` (etc.) as whole words only.  This
       assumes that each of these arguments is a single word, not a
       regular expression, and it might have unexpected results if used
       with regular expressions.
 
-    - ``ignore_case`` (optional, default True) - if False, perform a
+    - ``ignore_case`` (default: True) -- if False, perform a
       case-sensitive search
 
-    - ``multiline`` (optional, default False) - if True, search more
+    - ``multiline`` (default: False) -- if True, search more
       than one line at a time.  In this case, print any matching file
       names, but don't print line numbers.
 
-    - ``interact`` (optional, default ``True``) - if ``False``, return
+    - ``interact`` (default: ``True``) -- if ``False``, return
       a string with all the matches. Otherwise, this function returns
       ``None``, and the results are displayed appropriately, according
       to whether you are using the notebook or the command-line
       interface. You should not ordinarily need to use this.
 
-    - ``path_re`` (optional, default '') - regular expression which
+    - ``path_re`` (default: '') -- regular expression which
       the filename (including the path) must match.
 
-    - ``module`` (optional, default 'sage') - the module in which to
+    - ``module`` (default: 'sage') -- the module in which to
       search.  The default is 'sage', the entire Sage library.  If
       ``module`` doesn't start with "sage", then the links in the
       notebook output may not function.
@@ -1622,7 +1622,7 @@ class _sage_doc:
 
         - ``name`` -- string, name of the documentation
 
-        - ``testing`` -- boolean (optional, default False): if True,
+        - ``testing`` -- boolean (default: False): if True,
           then just return the URL and path-name for this document;
           don't open the web browser.
 

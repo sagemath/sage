@@ -375,13 +375,13 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         -  2-tuple -- Given a 2-tuple (u,v), returns the element defined by
            the Manin symbol `[X^0 \cdot Y^{2-k}, (u,v)]`.
 
-        -  2-elements list - Given a list ``[alpha, beta]``,
+        -  2-elements list -- Given a list ``[alpha, beta]``,
            where `\alpha` and `\beta` are (coercible to)
            cusps, return the modular symbol `\{\alpha, \beta\}`. When
            the weight `k > 2` return
            `Y^{k-2} \{\alpha, \beta\}`.
 
-        -  3-element list - Given a list ``[i, alpha, beta]``,
+        -  3-element list -- Given a list ``[i, alpha, beta]``,
            where `i` is an integer, and `\alpha`,
            `\beta` are (coercible to) cusps, return the modular symbol
            `X^i Y^{k-2-i} \{\alpha, \beta\}`.
@@ -2191,7 +2191,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         INPUT:
 
 
-        -  ``algorithm`` -- string (default: 'default' - choose
+        -  ``algorithm`` -- string (default: 'default', choose
            heuristically)
 
            -  ``'pari'`` -- use pari for the HNF computation

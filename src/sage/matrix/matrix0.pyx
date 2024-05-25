@@ -3594,7 +3594,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         -  ``cols`` -- a *sorted* list of integers.
 
-        -  ``cols_index`` -- ignored
+        -  ``(cols_index`` -- ignored)
 
 
         EXAMPLES::

@@ -411,7 +411,7 @@ class Word_class(SageObject):
 
         -  ``other`` -- word
 
-        -  ``length`` -- string (optional, default: ``'unknown'``)
+        -  ``length`` -- string (default: ``'unknown'``)
            the length type of the resulting word if known. It may be one of
            the following:
 
@@ -506,7 +506,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``period`` -- positive integer (optional, default 1)
+        - ``period`` -- positive integer (default: 1)
 
         OUTPUT:
 
@@ -541,7 +541,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``period`` -- positive integer (optional, default 1)
+        - ``period`` -- positive integer (default: 1)
 
         OUTPUT:
 

@@ -1805,7 +1805,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``algorithm`` -- (optional, default: ``None``) If set to ``"gap"``,
+        - ``algorithm`` -- (default: ``None``) If set to ``"gap"``,
           call GAP. If set to ``"leon"``, call the option GAP package GUAVA and
           call a function therein by Jeffrey Leon (see warning below). If set to
           ``"binary"``, use an algorithm optimized for binary codes. The default
@@ -2212,7 +2212,7 @@ class LinearCode(AbstractLinearCode):
       defined over a finite ring but the matrices over that ring must have
       certain attributes, such as ``rank``); or a code over a finite field
 
-    - ``d`` -- (optional, default: ``None``) the minimum distance of the code
+    - ``d`` -- (default: ``None``) the minimum distance of the code
 
     .. NOTE::
 

@@ -57,7 +57,7 @@ class LCalc(SageObject):
     -  ``'tau'`` -- the L function of the Ramanujan delta
        function
 
-    -  elliptic curve E - where E is an elliptic curve over
+    -  elliptic curve E -- where E is an elliptic curve over
        `\QQ`; defines `L(E,s)`
 
 

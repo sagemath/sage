@@ -3663,7 +3663,7 @@ class DiGraph(GenericGraph):
           ``self.edges()``; so, if ``self.edges()`` outputs an edge in the form
           ``(1, 3, None)``, then ``(1, 3)`` will not do!
 
-        - ``ends`` -- (optional, default: ``(self.sources(), self.sinks())``) a
+        - ``ends`` -- (default: ``(self.sources(), self.sinks())``) a
           pair `(S, T)` of an iterable `S` and an iterable `T`.
 
         - ``backend`` -- string or ``None`` (default); the backend to use;

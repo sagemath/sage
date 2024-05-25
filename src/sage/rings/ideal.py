@@ -58,7 +58,7 @@ def Ideal(*args, **kwds):
 
     -  ``gens`` -- list of elements generating the ideal
 
-    -  ``coerce`` -- bool (optional, default: ``True``);
+    -  ``coerce`` -- bool (default: ``True``);
        whether ``gens`` need to be coerced into the ring.
 
 

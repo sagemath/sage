@@ -2529,7 +2529,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``g`` a row vector of size `4` whose entries represent a
           quaternion in our basis.
 
-        - ``exact`` boolean (default: False) - If True, tries to embed
+        - ``exact`` boolean (default: False) If True, tries to embed
           ``g`` into a matrix algebra over a number field. If False,
           the target is the matrix algebra over `\QQ_p`.
 
@@ -3213,7 +3213,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``as_edges`` -- boolean. If True, the inputs will be
           considered as edges instead of vertices.
 
-        - ``m`` -- integer - The valuation of the determinant of
+        - ``m`` -- integer -- The valuation of the determinant of
           ``v1``*``v2``.
 
         OUTPUT:
@@ -3784,7 +3784,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` -- integer - The weight. It must be even.
+        - ``k`` -- integer -- The weight. It must be even.
 
         - ``prec`` -- integer (default: None). If specified, the
           precision for the coefficient module

@@ -42,7 +42,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     - ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
       (u, u_min, u_max)
 
-    - ``vrange`` -- (optional - only used for surfaces) a
+    - ``vrange`` -- (optional, only used for surfaces) a
       2-tuple (v_min, v_max) or a 3-tuple (v, v_min, v_max)
 
     - ``plot_points`` -- (default: "automatic", which is

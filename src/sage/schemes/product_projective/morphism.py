@@ -176,7 +176,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
         - ``P`` -- a point in the domain.
 
-        - ``check`` -- Boolean - whether or not to perform the input checks
+        - ``check`` -- Boolean; whether or not to perform the input checks
           on the image point (Default: ``True``).
 
         OUTPUT: The image point in the codomain.

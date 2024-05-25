@@ -197,7 +197,7 @@ def _dg_canonical_form(dg, frozen=None):
 
     - ``dg`` -- a directed graph having edge labels (a, b) with a > 0
 
-    - ``frozen`` -- list (optional, default []) of frozen vertices
+    - ``frozen`` -- list (default: []) of frozen vertices
 
     OUTPUT:
 

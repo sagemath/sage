@@ -1109,7 +1109,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         - ``base`` -- non-zero field element
         - ``order`` -- integer (optional), the order of the base
-        - ``check`` -- boolean (optional, default ``False``): If set,
+        - ``check`` -- boolean (default: ``False``): If set,
           test whether the given ``order`` is correct.
 
         OUTPUT:

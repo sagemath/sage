@@ -666,7 +666,7 @@ class DiGraphGenerators:
                      the part number (first is 0) and the second is the number of
                      parts. Splitting is done per input graph independently.
 
-        - ``debug`` (boolean) -- default: ``False`` -- if ``True``
+        - ``debug`` (boolean) -- (default: ``False``); if ``True``
           directg standard error and standard output are displayed.
 
         EXAMPLES::

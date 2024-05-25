@@ -5548,11 +5548,11 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``n`` (default: ``None``) - if provided, should equal
+        - ``n`` (default: ``None``) -- if provided, should equal
           `q-1` where ``self.parent()`` is the field with `q`
           elements;  otherwise it will be computed.
 
-        - ``n_prime_divs`` (default: ``None``) - if provided, should
+        - ``n_prime_divs`` (default: ``None``) -- if provided, should
           be a list of the prime divisors of `n`; otherwise it
           will be computed.
 

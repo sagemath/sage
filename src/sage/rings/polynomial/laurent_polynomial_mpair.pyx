@@ -1734,7 +1734,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``root`` -- boolean (default ``False``) - if set to ``True``
+        - ``root`` -- boolean (default ``False``); if set to ``True``
           then return a pair ``(True, sqrt)`` with ``sqrt`` a square
           root of this Laurent polynomial when it exists or
           ``(False, None)``.

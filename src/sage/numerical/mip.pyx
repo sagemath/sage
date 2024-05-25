@@ -1899,7 +1899,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``name`` -- A name for the constraint.
 
-        - ``return_indices`` -- boolean (optional, default False),
+        - ``return_indices`` -- boolean (default: False),
           whether to return the indices of the added constraints.
 
         OUTPUT:

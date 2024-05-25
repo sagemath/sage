@@ -21,11 +21,11 @@ class IndexedGenerators():
     Options controlling the printing of elements:
 
     - ``prefix`` -- string, prefix used for printing elements of this
-      module (optional, default 'x').  With the default, a monomial
+      module (default: 'x').  With the default, a monomial
       indexed by 'a' would be printed as ``x['a']``.
 
     - ``latex_prefix`` -- string or ``None``, prefix used in the `\LaTeX`
-      representation of elements (optional, default ``None``). If this is
+      representation of elements (default: ``None``). If this is
       anything except the empty string, it prints the index as a
       subscript.  If this is ``None``, it uses the setting for ``prefix``,
       so if ``prefix`` is set to "B", then a monomial indexed by 'a'
@@ -43,7 +43,7 @@ class IndexedGenerators():
       (optional): same as ``names`` except using the `\LaTeX` representation
 
     - ``bracket`` -- ``None``, bool, string, or list or tuple of
-      strings (optional, default ``None``): if ``None``, use the value of the
+      strings (default: ``None``): if ``None``, use the value of the
       attribute ``self._repr_option_bracket``, which has default value
       ``True``.  (``self._repr_option_bracket`` is available for backwards
       compatibility.  Users should set ``bracket`` instead.  If
@@ -59,7 +59,7 @@ class IndexedGenerators():
       right bracket.
 
     - ``latex_bracket`` -- bool, string, or list or tuple of strings
-      (optional, default False): if ``False``, do not include brackets in
+      (default: False): if ``False``, do not include brackets in
       the LaTeX representation of elements.  This option is only
       relevant if ``latex_prefix`` is the empty string; otherwise,
       brackets are not used regardless.  If ``True``, use "\left[" and
@@ -71,7 +71,7 @@ class IndexedGenerators():
       right bracket.
 
     - ``scalar_mult`` -- string to use for scalar multiplication in
-      the print representation (optional, default "*")
+      the print representation (default: "*")
 
     - ``latex_scalar_mult`` -- string or ``None`` (default: ``None``),
       string to use for scalar multiplication in the latex

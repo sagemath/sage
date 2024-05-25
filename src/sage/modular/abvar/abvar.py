@@ -3205,7 +3205,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` -- (default: False) - if
+        -  ``none_if_not_known`` -- (default: False); if
            True, return None instead of attempting to compute the degen map's
            `t`, if it isn't known. This None result is not cached.
 

@@ -575,7 +575,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-          - ``normalized`` -- default ``False`` -- specifies whether the normal vector should be normalized.
+          - ``normalized`` -- (default ``False``); specifies whether the normal vector should be normalized.
 
         OUTPUT:
 

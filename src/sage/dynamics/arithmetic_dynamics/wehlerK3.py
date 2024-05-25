@@ -2163,7 +2163,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``P`` -- - a point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        - ``P`` -- a point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         - ``n`` -- an integer
 
@@ -2228,7 +2228,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``P`` -- - a point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        - ``P`` -- a point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         - ``n`` -- an integer
 

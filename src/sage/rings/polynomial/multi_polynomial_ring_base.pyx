@@ -1551,8 +1551,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         kwds:
 
-        - ``sparse`` -- boolean (optional - default: ``False``)
-          if ``True``, the function creates sparse matrices.
+        - ``sparse`` -- boolean (default: ``False``); if ``True``, the function
+          creates sparse matrices.
 
         OUTPUT:
 

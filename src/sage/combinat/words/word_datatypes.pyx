@@ -660,9 +660,9 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``sep`` -- string or word (optional, default: None)
+        - ``sep`` -- string or word (default: None)
 
-        - ``maxsplit`` -- positive integer (optional, default: None)
+        - ``maxsplit`` -- positive integer (default: None)
 
         OUTPUT:
 
