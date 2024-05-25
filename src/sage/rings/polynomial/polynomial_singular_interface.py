@@ -42,11 +42,6 @@ import sage.rings.fraction_field
 import sage.rings.abc
 import sage.rings.number_field as number_field
 
-try:
-    from sage.interfaces.singular import singular
-except ImportError:
-    singular = None
-
 from sage.rings.rational_field import is_RationalField
 from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import FiniteField
@@ -54,6 +49,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 
 import sage.rings.finite_rings.finite_field_constructor
+
 
 def _do_singular_init_(singular, base_ring, char, _vars, order):
     r"""
@@ -335,9 +331,11 @@ class PolynomialRing_singular_repr:
             - Singular represents precision of floating point numbers base 10
               while Sage represents floating point precision base 2.
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         try:
             R = self.__singular
-            if singular is not None and R.parent() is not singular:
+            if R.parent() is not singular:
                 raise ValueError
             elif singular is None:
                 from sage.interfaces.singular import singular
@@ -379,6 +377,9 @@ class PolynomialRing_singular_repr:
         else:
             _vars = str(self.gens())
             order = self.term_order().singular_str()
+
+        if singular is None:
+            from sage.interfaces.singular import singular
 
         self.__singular, self.__minpoly = _do_singular_init_(singular, self.base_ring(), self.characteristic(), _vars, order)
 
