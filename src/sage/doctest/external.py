@@ -429,8 +429,13 @@ class AvailableSoftware():
         features.update(all_features())
         self._features = sorted(features, key=lambda feature: feature.name)
         self._indices = {feature.name: idx for idx, feature in enumerate(self._features)}
-        self._seen = Array('i', len(self._features)) # initialized to zeroes
-        self._hidden = Array('i', len(self._features)) # initialized to zeroes
+        try:
+            from multiprocessing import Array
+            self._seen = Array('i', len(self._features)) # initialized to zeroes
+            self._hidden = Array('i', len(self._features)) # initialized to zeroes
+        except ImportError:  # module '_multiprocessing' is removed in Pyodide due to browser limitations
+            self._seen = [0] * len(self._features)
+            self._hidden = [0] * len(self._features)
 
     def __contains__(self, item):
         """
