@@ -98,14 +98,14 @@ def is_GammaH(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_GammaH
-        sage: is_GammaH(GammaH(13, [2]))
+        sage: from sage.modular.arithgroup.all import GammaH_class
+        sage: isinstance(GammaH(13, [2]), GammaH_class)
         True
-        sage: is_GammaH(Gamma0(6))
+        sage: isinstance(Gamma0(6), GammaH_class)
         True
-        sage: is_GammaH(Gamma1(6))
+        sage: isinstance(Gamma1(6), GammaH_class)
         True
-        sage: is_GammaH(sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5))
+        sage: isinstance(sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5), GammaH_class)
         False
     """
     return isinstance(x, GammaH_class)
@@ -1026,7 +1026,7 @@ class GammaH_class(CongruenceSubgroup):
             True
         """
 
-        from .all import is_Gamma0, is_Gamma1
+        from .all import Gamma0_class, is_Gamma1
         if not isinstance(other, GammaH_class):
             raise NotImplementedError
 
@@ -1035,10 +1035,10 @@ class GammaH_class(CongruenceSubgroup):
             return False
 
         # easy cases
-        if is_Gamma0(other):
+        if isinstance(other, Gamma0_class):
             return True  # recall self is a GammaH, so it's contained in Gamma0
 
-        if is_Gamma1(other) and len(self._generators_for_H()) > 0:
+        if isinstance(other, Gamma1_class) and len(self._generators_for_H()) > 0:
             return False
 
         else:

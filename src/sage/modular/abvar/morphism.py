@@ -446,11 +446,11 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             sage: t2(C)
             Finite subgroup with invariants [2, 2] over QQ of Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)
         """
-        from .abvar import is_ModularAbelianVariety
+        from .abvar import ModularAbelianVariety_abstract
         from .finite_subgroup import FiniteSubgroup
         if isinstance(X, TorsionPoint):
             return self._image_of_element(X)
-        elif is_ModularAbelianVariety(X):
+        elif isinstance(X, ModularAbelianVariety_abstract):
             return self._image_of_abvar(X)
         elif isinstance(X, FiniteSubgroup):
             return self._image_of_finite_subgroup(X)
@@ -743,11 +743,11 @@ class HeckeOperator(Morphism):
             sage: T2.parent()
             Endomorphism ring of Abelian variety J0(37) of dimension 2
         """
-        from .abvar import is_ModularAbelianVariety
+        from .abvar import ModularAbelianVariety_abstract
         n = ZZ(n)
         if n <= 0:
             raise ValueError("n must be positive")
-        if not is_ModularAbelianVariety(abvar):
+        if not isinstance(abvar, ModularAbelianVariety_abstract):
             raise TypeError("abvar must be a modular abelian variety")
         self.__abvar = abvar
         self.__n = n

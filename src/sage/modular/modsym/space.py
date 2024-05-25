@@ -57,9 +57,9 @@ def is_ModularSymbolsSpace(x):
     EXAMPLES::
 
         sage: M = ModularForms(3, 2)
-        sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M)
+        sage: sage.modular.modsym.space.isinstance(M, ModularSymbolsSpace)
         False
-        sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M.modular_symbols(sign=1))
+        sage: sage.modular.modsym.space.isinstance(M.modular_symbols(sign=1), ModularSymbolsSpace)
         True
     """
     return isinstance(x, ModularSymbolsSpace)
@@ -2288,7 +2288,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             raise ValueError("base ring must be QQ")
         if self.weight() != 2:
             raise NotImplementedError("only implemented when weight is 2")
-        if not is_Gamma0(self.group()):
+        if not isinstance(self.group(), Gamma0_class):
             # todo -- do Gamma1 and GammaH, which are easy
             raise NotImplementedError("only implemented when group is Gamma0")
         N = self.level()

@@ -44,7 +44,7 @@ from sage.misc.verbose import verbose
 from sage.modular.dirichlet import DirichletGroup
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modsym.p1list import lift_to_sl2z
-from sage.modular.modsym.space import is_ModularSymbolsSpace
+from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modules.free_module_element import vector
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.fast_arith import prime_range
@@ -1397,11 +1397,11 @@ class Newform(ModularForm_abstract):
             sage: f = Newforms(DirichletGroup(5).0, 7,names='a')[0]; f[2].trace(f.base_ring().base_field())
             -5*zeta4 - 5
         """
-        from .space import is_ModularFormsSpace
+        from .space import ModularFormsSpace
         if check:
-            if not is_ModularFormsSpace(parent):
+            if not isinstance(parent, ModularFormsSpace):
                 raise TypeError("parent must be a space of modular forms")
-            if not is_ModularSymbolsSpace(component):
+            if not isinstance(component, ModularSymbolsSpace):
                 raise TypeError("component must be a space of modular symbols")
             if parent.group() != component.group():
                 raise ValueError("parent and component must be defined by the same congruence subgroup")

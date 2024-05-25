@@ -557,11 +557,11 @@ class PollackStevensModularSymbolspace(Module):
         from sage.modular.arithgroup.all import (Gamma, is_Gamma, Gamma0,
                                                  is_Gamma0, Gamma1, is_Gamma1)
         G = self.group()
-        if is_Gamma0(G):
+        if isinstance(G, Gamma0_class):
             G = Gamma0(N * p)
-        elif is_Gamma1(G):
+        elif isinstance(G, Gamma1_class):
             G = Gamma1(N * p)
-        elif is_Gamma(G):
+        elif isinstance(G, Gamma_class):
             G = Gamma(N * p)
         else:
             raise NotImplementedError
