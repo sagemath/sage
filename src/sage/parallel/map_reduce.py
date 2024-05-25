@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Parallel computations using RecursivelyEnumeratedSet and Map-Reduce
 

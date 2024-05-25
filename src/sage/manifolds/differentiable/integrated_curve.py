@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integrated Curves and Geodesics in Manifolds
 

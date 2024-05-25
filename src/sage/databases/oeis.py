@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The On-Line Encyclopedia of Integer Sequences (OEIS)
 
@@ -111,7 +110,7 @@ primes ?
     sage: b.formulas()[0]
     'E.g.f.: exp(exp(x) - 1).'
     sage: [i for i in b.comments() if 'prime' in i][-1]
-    'Number n is prime if ...'
+    'When n is prime, ...'
     sage: [n for n in range(2, 20) if (b(n)-2) % n == 0]
     [2, 3, 5, 7, 11, 13, 17, 19]
 
@@ -500,7 +499,8 @@ class OEIS:
                    'start': str(first_result)}
         url = oeis_url + "search?" + urlencode(options)
         sequence_list = _fetch(url).split('\n\n')[2:-1]
-        return FancyTuple([self.find_by_entry(entry=_) for _ in sequence_list])
+        T = [self.find_by_entry(entry=s) for s in sequence_list]
+        return FancyTuple([s for s in T if not s.is_dead()])
 
     def find_by_subsequence(self, subsequence, max_results=3, first_result=0):
         r"""
@@ -729,6 +729,10 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         This method allows to handle the ``_fields`` dictionary in a lazy way.
 
+        INPUT:
+
+        - ``warn`` -- ignored
+
         TESTS::
 
             sage: s = oeis._imaginary_sequence()
@@ -742,7 +746,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             for line in self.raw_entry().splitlines():
                 fields[line[1]].append(line[11:])
             self._fields = fields
-            self.is_dead(warn_only=warn)
             return self._fields[key]
 
     def id(self, format='A'):
@@ -1103,25 +1106,18 @@ class OEISSequence(SageObject, UniqueRepresentation):
             from sage.rings.integer_ring import ZZ
             return Sequence(self.first_terms(), ZZ)
 
-    def is_dead(self, warn_only=False):
+    def is_dead(self, warn_only=False) -> bool:
         r"""
-        Tell whether the sequence is dead (i.e. erroneous).
+        Tell whether the sequence is dead.
 
         INPUT:
 
-        - warn_only -- (bool, default: ``False``), whether to warn when the
-          sequence is dead instead of returning a boolean.
+        - ``warn_only`` -- ignored
 
         EXAMPLES:
 
-        A warning is triggered if any field of a dead sequence is accessed,
-        unless :meth:`is_dead` is called before::
-
             sage: s = oeis(17)                      # optional -- internet
             sage: s                                 # optional -- internet
-            doctest:warning
-            ...
-            RuntimeWarning: This sequence is dead: "A000017: Erroneous version of A032522."
             A000017: Erroneous version of A032522.
 
         TESTS::
@@ -1135,20 +1131,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
             sage: u = oeis._imaginary_sequence(ident='A999994', keywords='dead')
             sage: u
-            doctest:warning
-            ...
-            RuntimeWarning: This sequence is dead: "A999994: The characteristic sequence of 42 plus one, starting from 38."
             A999994: The characteristic sequence of 42 plus one, starting from 38.
 
             sage: u.is_dead()
             True
         """
-        if warn_only:
-            if 'dead' in self.keywords(warn_only):
-                from warnings import warn
-                warn('This sequence is dead: "{}: {}"'.format(self.id(), self.name()), RuntimeWarning)
-        else:
-            return 'dead' in self.keywords(warn_only)
+        return 'dead' in self.keywords()
 
     def is_finite(self):
         r"""
@@ -1269,9 +1257,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
         Handle dead sequences, see :issue:`17330` ::
 
             sage: oeis(5000).first_terms(12)            # optional -- internet
-            doctest:warning
-            ...
-            RuntimeWarning: This sequence is dead: "A005000: Erroneous version of A006505."
             (1, 0, 0, 1, 1, 1, 11, 36, 92, 491, 2537)
 
         TESTS::
@@ -1559,13 +1544,14 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         def url_absolute(s):
             return re.sub(r'\"\/', '\"' + oeis_url, s)
+
         if browse is None:
             if format == 'guess':
                 return self.links(format='url')
             elif format == 'raw':
                 return FancyTuple(self._field('H'))
             elif format == 'html':
-                return HtmlFragment(FancyTuple([url_absolute(_) for _ in self._field('H')]))
+                return HtmlFragment(FancyTuple([url_absolute(f) for f in self._field('H')]))
             elif format == 'url':
                 url_list = flatten([_urls(url_absolute(string)) for string in self._field('H')])
                 return FancyTuple(url_list)
@@ -1602,7 +1588,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s = oeis._imaginary_sequence()
             sage: s.formulas()
             0: For n big enough, s(n+1) - s(n) = 0.
-
         """
         return FancyTuple(self._field('F'))
 
@@ -1618,7 +1603,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         OUTPUT:
 
         - if ``fetch`` is ``False``, return a list of OEIS IDs (strings).
-        - if ``fetch`` if ``True``, return a tuple of OEIS sequences.
+        - if ``fetch`` is ``True``, return a tuple of OEIS sequences.
 
         EXAMPLES::
 
@@ -1648,9 +1633,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         ref_list = re.findall('A[0-9]{6}', " ".join(self._field('Y')))
         if fetch:
-            return FancyTuple([oeis.find_by_id(_) for _ in ref_list])
-        else:
-            return tuple(ref_list)
+            T = [oeis.find_by_id(r) for r in ref_list]
+            return FancyTuple([s for s in T if not s.is_dead()])
+        return tuple(ref_list)
 
     def extensions_or_errors(self):
         r"""
@@ -1676,7 +1661,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s = oeis._imaginary_sequence()
             sage: s.extensions_or_errors()
             0: This sequence does not contain errors.
-
         """
         return FancyTuple(self._field('E'))
 
@@ -2010,13 +1994,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
             sage: s = oeis.find_by_id('A000154')        # optional -- internet
             sage: s.test_compile_sage_code()            # optional -- internet
-            doctest:warning
-            ...
-            RuntimeWarning: This sequence is dead: ...
             True
         """
         if self.is_dead():
-            self.is_dead(warn_only=True)
             return True
         filt = self.programs(language='sage')
         if filt:

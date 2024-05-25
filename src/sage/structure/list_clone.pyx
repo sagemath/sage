@@ -1774,7 +1774,6 @@ def _make_int_array_clone(clas, parent, lst, needs_check, is_immutable, dic):
     return res
 
 
-
 cdef class NormalizedClonableList(ClonableList):
     """
     List with clone protocol and normal form
