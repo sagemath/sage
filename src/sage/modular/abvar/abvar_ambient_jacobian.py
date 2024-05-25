@@ -20,7 +20,7 @@ from sage.rings.rational_field import QQ
 
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modform.constructor import Newforms
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
+from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
 from . import morphism
 
 
@@ -415,7 +415,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         if self.dimension() == 0:
             return []
         G = self.group()
-        if not (is_Gamma0(G) or is_Gamma1(G)):
+        if not (isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class)):
             return [S.newform(names=names) for S in self.decomposition()]
         Gtype = G.parent()
         N = G.level()

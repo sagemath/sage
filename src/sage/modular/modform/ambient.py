@@ -72,7 +72,7 @@ TESTS::
 from sage.arith.misc import is_prime, sigma
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.modular.arithgroup.all import is_CongruenceSubgroup, is_Gamma0, is_Gamma1
+from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0_class, Gamma1_class
 from sage.modular.dirichlet import TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
 from sage.modular.modsym.modsym import ModularSymbols
@@ -103,11 +103,11 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m.is_ambient()
             True
         """
-        if not is_CongruenceSubgroup(group):
+        if not isinstance(group, CongruenceSubgroupBase):
             raise TypeError('group (=%s) must be a congruence subgroup' % group)
         weight = Integer(weight)
 
-        if character is None and is_Gamma0(group):
+        if character is None and isinstance(group, Gamma0_class):
             character = TrivialCharacter(group.level(), base_ring)
 
         self._eis_only = eis_only
@@ -584,7 +584,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         if self._eis_only:
             return 0
-        if is_Gamma1(self.group()) and self.character() is not None:
+        if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_cusp_forms(self.weight(),
                                                      self.character())
         else:
@@ -615,7 +615,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: ModularForms(GammaH(40, [21]), 1).dimension() # indirect doctest
             16
         """
-        if is_Gamma1(self.group()) and self.character() is not None:
+        if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_eis(self.weight(), self.character())
         else:
             return self.group().dimension_eis(self.weight())
@@ -637,7 +637,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m._dim_cuspidal()
             22
         """
-        if is_Gamma1(self.group()) and self.character() is not None:
+        if isinstance(self.group(), Gamma1_class) and self.character() is not None:
             return self.group().dimension_new_cusp_forms(self.weight(), self.character())
         else:
             return self.group().dimension_new_cusp_forms(self.weight())
@@ -663,7 +663,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m._dim_eisenstein()
             8
         """
-        if is_Gamma0(self.group()) and self.weight() == 2:
+        if isinstance(self.group(), Gamma0_class) and self.weight() == 2:
             if is_prime(self.level()):
                 d = 1
             else:
@@ -694,7 +694,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         eps = self.character()
         if eps is None:
-            if is_Gamma1(self.group()):
+            if isinstance(self.group(), Gamma1_class):
                 eps = self.level()
             else:
                 raise NotImplementedError

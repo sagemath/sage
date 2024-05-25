@@ -94,12 +94,17 @@ def is_ModularFormsSpace(x):
 
         sage: from sage.modular.modform.space import is_ModularFormsSpace
         sage: is_ModularFormsSpace(ModularForms(11,2))
+        doctest:warning...
+        DeprecationWarning: The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_ModularFormsSpace(CuspForms(11,2))
         True
         sage: is_ModularFormsSpace(3)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.")
     return isinstance(x, ModularFormsSpace)
 
 
@@ -141,7 +146,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if WARN:
             print("Modular forms -- under development -- do not trust yet.")
             WARN = False
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group (=%s) must be a congruence subgroup" % group)
         weight = Integer(weight)
         if not ((character is None) or isinstance(character, dirichlet.DirichletCharacter)):
@@ -1504,8 +1509,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             raise NotImplementedError
         if self.__sturm_bound is None:
             G = self.group()
-            from sage.modular.arithgroup.all import is_Gamma1
-            if is_Gamma1(G) and self.character() is not None:
+            from sage.modular.arithgroup.all import Gamma1_class
+            if isinstance(G, Gamma1_class) and self.character() is not None:
                 from sage.modular.arithgroup.all import Gamma0
                 G = Gamma0(self.level())
             # the +1 below is because O(q^prec) has precision prec.

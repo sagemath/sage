@@ -44,10 +44,10 @@ from sage.matrix.constructor import matrix
 from sage.matrix.special import block_diagonal_matrix, identity_matrix
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-from sage.modular.arithgroup.congroup_gamma0 import is_Gamma0
-from sage.modular.arithgroup.congroup_gamma1 import is_Gamma1
-from sage.modular.arithgroup.congroup_gammaH import is_GammaH
-from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.modform.constructor import Newform
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modsym.space import ModularSymbolsSpace
@@ -92,6 +92,9 @@ def is_ModularAbelianVariety(x) -> bool:
 
         sage: from sage.modular.abvar.abvar import is_ModularAbelianVariety
         sage: is_ModularAbelianVariety(5)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularAbelianVariety is deprecated; use 'isinstance(..., ModularAbelianVariety_abstract)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: is_ModularAbelianVariety(J0(37))
         True
@@ -102,6 +105,8 @@ def is_ModularAbelianVariety(x) -> bool:
         sage: is_ModularAbelianVariety(EllipticCurve('37a'))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_ModularAbelianVariety is deprecated; use 'isinstance(..., ModularAbelianVariety_abstract)' instead.")
     return isinstance(x, ModularAbelianVariety_abstract)
 
 
@@ -162,7 +167,7 @@ class ModularAbelianVariety_abstract(Parent):
             if not isinstance(groups, tuple):
                 raise TypeError("groups must be a tuple")
             for G in groups:
-                if not is_CongruenceSubgroup(G):
+                if not isinstance(G, CongruenceSubgroupBase):
                     raise TypeError("each element of groups must be a congruence subgroup")
         self.__groups = groups
         if is_simple is not None:
@@ -216,7 +221,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: (J0(23) * J0(21)).is_J0()
             False
         """
-        return len(self.groups()) == 1 and is_Gamma0(self.groups()[0]) \
+        return len(self.groups()) == 1 and isinstance(self.groups()[0], Gamma0_class) \
             and self.is_ambient()
 
     def is_J1(self) -> bool:
@@ -238,7 +243,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: J1(23)[0].is_J1()
             False
         """
-        return len(self.groups()) == 1 and is_Gamma1(self.groups()[0]) \
+        return len(self.groups()) == 1 and isinstance(self.groups()[0], Gamma1_class) \
             and self.is_ambient()
 
     ##########################################################################
@@ -606,11 +611,11 @@ class ModularAbelianVariety_abstract(Parent):
             ValueError: self must be simple
         """
         N, G = self.newform_level()
-        if is_Gamma0(G):
+        if isinstance(G, Gamma0_class):
             group = ''
-        elif is_Gamma1(G):
+        elif isinstance(G, Gamma1_class):
             group = 'G1'
-        elif is_GammaH(G):
+        elif isinstance(G, GammaH_class):
             group = 'GH%s' % (str(G._generators_for_H()).replace(' ', ''))
         return '%s%s%s' % (N, cremona_letter_code(self.isogeny_number()), group)
 
@@ -766,7 +771,7 @@ class ModularAbelianVariety_abstract(Parent):
             ...
             NotImplementedError: _simple_isogeny only implemented when both abelian variety have the same ambient product Jacobian
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             raise TypeError("other must be a modular abelian variety")
 
         if not self.is_simple():
@@ -833,7 +838,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: A.in_same_ambient_variety(J0(11))
             False
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             return False
         if self.groups() != other.groups():
             return False
@@ -1084,7 +1089,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: A+B # long time
             Abelian subvariety of dimension 20 of J0(206)
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             if other == 0:
                 return self
             raise TypeError("other must be a modular abelian variety")
@@ -1173,7 +1178,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: d[0] * d[1] * J0(11)
             Abelian subvariety of dimension 4 of J0(65) x J0(65) x J0(11)
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             raise TypeError("other must be a modular abelian variety")
         if other.base_ring() != self.base_ring():
             raise TypeError("self and other must have the same base ring")
@@ -1969,7 +1974,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: A.is_subvariety(J)
             True
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             return False
         if self is other:
             return True
@@ -2105,11 +2110,11 @@ class ModularAbelianVariety_abstract(Parent):
         """
         v = []
         for G in self.groups():
-            if is_Gamma0(G):
+            if isinstance(G, Gamma0_class):
                 v.append('J0(%s)' % G.level())
-            elif is_Gamma1(G):
+            elif isinstance(G, Gamma1_class):
                 v.append('J1(%s)' % G.level())
-            elif is_GammaH(G):
+            elif isinstance(G, GammaH_class):
                 v.append('JH(%s,%s)' % (G.level(), G._generators_for_H()))
         return ' x '.join(v)
 
@@ -2126,11 +2131,11 @@ class ModularAbelianVariety_abstract(Parent):
         """
         v = []
         for G in self.groups():
-            if is_Gamma0(G):
+            if isinstance(G, Gamma0_class):
                 v.append('J_0(%s)' % G.level())
-            elif is_Gamma1(G):
+            elif isinstance(G, Gamma1_class):
                 v.append('J_1(%s)' % G.level())
-            elif is_GammaH(G):
+            elif isinstance(G, GammaH_class):
                 v.append('J_H(%s,%s)' % (G.level(), G._generators_for_H()))
         return ' \\times '.join(v)
 
@@ -4100,7 +4105,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
             sage: sum(D, D[0]) == A
             True
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             if other == 0:
                 return self
             raise TypeError("sum not defined")
@@ -4398,7 +4403,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
             sage: D[2].is_subvariety(D[0] + D[1])
             False
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             return False
         if not isinstance(other, ModularAbelianVariety_modsym_abstract):
             return ModularAbelianVariety_abstract.is_subvariety(self, other)
@@ -4696,7 +4701,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             self.__component_group[p] = (one, one, one)
             return one
         # Cases that we don't know how to handle yet.
-        if not is_Gamma0(self.group()):
+        if not isinstance(self.group(), Gamma0_class):
             raise NotImplementedError("computation of component group not implemented when group isn't Gamma0")
         if self.level() % (p * p) == 0:
             raise NotImplementedError("computation of component group not implemented when p^2 divides the level")
@@ -4880,7 +4885,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             mul = 1
         elif N.valuation(p) == 1:
             M = self.modular_symbols(sign=1)
-            if is_Gamma0(M.group()):
+            if isinstance(M.group(), Gamma0_class):
                 g = self.component_group_order(p)
                 W = M.atkin_lehner_operator(p).matrix()
                 if W == -1:
@@ -4942,7 +4947,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         except KeyError:
             pass
         p = Integer(p)
-        if not is_Gamma0(self.group()):
+        if not isinstance(self.group(), Gamma0_class):
             raise NotImplementedError("Brandt module only defined on Gamma0")
         if not p.is_prime():
             raise ValueError("p must be a prime integer")

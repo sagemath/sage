@@ -44,7 +44,7 @@ from sage.structure.all import Sequence, SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     rich_to_bool, richcmp_not_equal)
 
-from sage.modular.arithgroup.all import Gamma0, is_Gamma0  # for Sturm bound given a character
+from sage.modular.arithgroup.all import Gamma0, Gamma0_class  # for Sturm bound given a character
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.modular.modsym.element import ModularSymbolsElement
 
@@ -59,10 +59,15 @@ def is_ModularSymbolsSpace(x):
 
         sage: M = ModularForms(3, 2)
         sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularSymbolsSpace is deprecated; use 'isinstance(..., ModularForms)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M.modular_symbols(sign=1))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_ModularSymbolsSpace is deprecated; use 'isinstance(..., ModularForms)' instead.")
     return isinstance(x, ModularSymbolsSpace)
 
 
@@ -2289,7 +2294,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             raise ValueError("base ring must be QQ")
         if self.weight() != 2:
             raise NotImplementedError("only implemented when weight is 2")
-        if not is_Gamma0(self.group()):
+        if not isinstance(self.group(), Gamma0_class):
             # todo -- do Gamma1 and GammaH, which are easy
             raise NotImplementedError("only implemented when group is Gamma0")
         N = self.level()
