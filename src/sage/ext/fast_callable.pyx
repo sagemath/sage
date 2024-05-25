@@ -29,7 +29,7 @@ overhead from the evaluation, but all of the individual arithmetic
 operations are done using standard Sage arithmetic.  This is still a
 huge win over :mod:`sage.calculus`, which evidently has a lot of overhead.
 Compare the cost of evaluating Wilkinson's polynomial (in unexpanded
-form) at x=30::
+form) at `x = 30`::
 
     sage: # needs sage.symbolic
     sage: wilk = prod((x-i) for i in [1 .. 20]); wilk
@@ -59,7 +59,7 @@ To mitigate the costs, we check whether the value already has
 the correct parent before we call ``D``.
 
 We don't yet have a special interpreter with domain ``ZZ``, so we can see
-how that compares to the generic fc_wilk example above::
+how that compares to the generic ``fc_wilk`` example above::
 
     sage: timeit('fc_wilk_zz(30)')          # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 15.4 us per loop
@@ -105,9 +105,8 @@ And support for ``CDF``::
 
 Currently, :func:`fast_callable` can accept two kinds of objects:
 polynomials (univariate and multivariate) and symbolic expressions
-(elements of the Symbolic Ring).  (This list is likely to grow
-significantly in the near future.)  For polynomials, you can omit the
-'vars' argument; the variables will default to the ring generators (in
+(elements of the Symbolic Ring).  For polynomials, you can omit the
+``vars`` argument; the variables will default to the ring generators (in
 the order used when creating the ring). ::
 
     sage: K.<x,y,z> = QQ[]
@@ -216,12 +215,12 @@ EXAMPLES::
     sage: f.op_list()                                                                   # needs sage.symbolic
     [('load_arg', 0), ('ipow', 7), ('load_const', 1.0), 'add', 'sqrt', 'return']
 
-To interpret that last line, we load argument 0 ('x' in this case) onto
-the stack, push the constant 7.0 onto the stack, call the pow function
-(which takes 2 arguments from the stack), push the constant 1.0, add the
-top two arguments of the stack, and then call sqrt.
+To interpret that last line, we load argument 0 (``x`` in this case) onto
+the stack, push the constant `7.0` onto the stack, call the :func:`pow`
+functionn(which takes 2 arguments from the stack), push the constant `1.0`,
+add the top two arguments of the stack, and then call :func:`sqrt`.
 
-Here we take sin of the first argument and add it to f::
+Here we take :func:`sin` of the first argument and add it to ``f``::
 
     sage: from sage.ext.fast_callable import ExpressionTreeBuilder
     sage: etb = ExpressionTreeBuilder('x')
@@ -331,11 +330,11 @@ def fast_callable(x, domain=None, vars=None,
     would evaluate it -- addition maps to ``PyNumber_Add``, etc.  However,
     you can specify ``domain=D`` where ``D`` is some Sage parent or Python
     type; in this case, all arithmetic is done in that domain.  If we
-    have a special-purpose interpreter for that parent (like ``RDF`` or :class:`float`),
-    ``domain=...`` will trigger the use of that interpreter.
+    have a special-purpose interpreter for that parent (like ``RDF`` or
+    :class:`float`), ``domain=...`` will trigger the use of that interpreter.
 
     If ``vars`` is ``None`` and ``x`` is a polynomial, then we will use the
-    generators of parent(x) as the variables; otherwise, ``vars`` must be
+    generators of ``parent(x)`` as the variables; otherwise, ``vars`` must be
     specified (unless ``x`` is a symbolic expression with only one variable,
     and ``expect_one_var`` is ``True``, in which case we will use that variable).
 
@@ -414,8 +413,8 @@ def fast_callable(x, domain=None, vars=None,
         sage: fc(5, 7)
         0.5514266812416906
 
-    Check that :func:`fast_callable` also works for symbolic functions with evaluation
-    functions::
+    Check that :func:`fast_callable` also works for symbolic functions with
+    evaluation functions::
 
         sage: # needs sage.symbolic
         sage: def evalf_func(self, x, y, parent):
@@ -576,8 +575,8 @@ def function_name(fn):
     Given a function, return a string giving a name for the function.
 
     For functions we recognize, we use our standard opcode name for the
-    function (so :func:`operator.add` becomes ``'add'``, and :func:`sage.functions.trig.sin`
-    becomes ``'sin'``).
+    function (so :func:`operator.add` becomes ``'add'``, and
+    :func:`sage.functions.trig.sin` becomes ``'sin'``).
 
     For functions we don't recognize, we try to come up with a name,
     but the name will be wrapped in braces; this is a signal that
@@ -634,9 +633,9 @@ cdef class ExpressionTreeBuilder:
         Initialize an instance of :class:`ExpressionTreeBuilder`.
 
         Takes a list or tuple of variable names to use, and also an optional
-        ``domain``.  If a ``domain`` is given, then creating an :class:`ExpressionConstant`
-        node with the :meth:`__call__`, make, or constant methods will convert
-        the value into the given domain.
+        ``domain``.  If a ``domain`` is given, then creating an
+        :class:`ExpressionConstant` node with the :meth:`__call__`, make, or
+        constant methods will convert the value into the given domain.
 
         Note that this is the only effect of the domain parameter.  It
         is quite possible to use different domains for
@@ -669,9 +668,9 @@ cdef class ExpressionTreeBuilder:
         r"""
         Try to convert the given value to an :class:`Expression`.
 
-        If it is already an Expression, just return it.  If it has a :meth:`_fast_callable_`
-        method, then call the method with ``self`` as an argument.  Otherwise,
-        use ``self.constant()`` to turn it into a constant.
+        If it is already an Expression, just return it.  If it has a
+        :meth:`_fast_callable_` method, then call the method with ``self`` as
+        an argument.  Otherwise, use ``self.constant()`` to turn it into a constant.
 
         EXAMPLES::
 
@@ -796,8 +795,8 @@ cdef class ExpressionTreeBuilder:
         The arguments will be converted to Expressions using
         :meth:`ExpressionTreeBuilder.__call__`.
 
-        As a special case, notices if the function is :func:`operator.pow` and
-        the second argument is integral, and constructs an :class:`ExpressionIPow`
+        As a special case, notice if the function is :func:`operator.pow` and
+        the second argument is integral, and construct an :class:`ExpressionIPow`
         instead.
 
         EXAMPLES::
@@ -1727,13 +1726,11 @@ class IntegerPowerFunction():
 cdef dict builtin_functions = None
 cpdef dict get_builtin_functions():
     r"""
-    To handle ExpressionCall, we need to map from Sage and
-    Python functions to opcode names.
+    Return a dictionary from Sage and Python functions to opcode names.
 
-    This returns a dictionary which is that map.
+    The result is cached.
 
-    We delay building builtin_functions to break a circular import
-    between sage.calculus and this file.
+    The dictionary is used in :class:`ExpressionCall`.
 
     EXAMPLES::
 
@@ -2356,9 +2353,9 @@ cdef class InterpreterMetadata():
     (instruction name, :class:`CompilerInstrSpec`) pairs, and a range of exponents
     for which the ``'ipow'`` instruction can be used.  This range can be
     ``False`` (if the ``'ipow'`` instruction should never be used), a pair of
-    two integers ``(a, b)``, if ``'ipow'`` should be used for a<=n<=b, or ``True``,
-    if ``'ipow'`` should always be used.  When ``'ipow'`` cannot be used, then
-    we fall back on calling :class:`IntegerPowerFunction`.
+    two integers `(a, b)`, if ``'ipow'`` should be used for `a \le n \le b`, or
+    ``True``, if ``'ipow'`` should always be used.  When ``'ipow'`` cannot be
+    used, then we fall back on calling :class:`IntegerPowerFunction`.
 
     See the class docstring for :class:`CompilerInstrSpec` for more information.
 
