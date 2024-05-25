@@ -46,7 +46,7 @@ from cpython.mem cimport *
 from cpython.object cimport PyObject_RichCompare
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.timing import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
@@ -759,7 +759,7 @@ cdef class BinaryCode:
 
         self.radix = sizeof(int) << 3
 
-        if is_Matrix(arg1):
+        if isinstance(arg1, Matrix):
             self.ncols = arg1.ncols()
             self.nrows = arg1.nrows()
             nrows = self.nrows
@@ -795,7 +795,7 @@ cdef class BinaryCode:
         self_words = self.words
         self_basis = self.basis
 
-        if is_Matrix(arg1):
+        if isinstance(arg1, Matrix):
             rows = arg1.rows()
             for i from 0 <= i < nrows:
                 word = <codeword> 0
@@ -4185,9 +4185,9 @@ cdef class BinaryCodeClassifier:
                                 dealloc_word_perm(hwp)
                                 break
                         if bingo2:
-                            from sage.matrix.constructor import Matrix
+                            from sage.matrix.constructor import matrix
                             from sage.rings.finite_rings.finite_field_constructor import GF
-                            M = Matrix(GF(2), B_aug.nrows, B_aug.ncols)
+                            M = matrix(GF(2), B_aug.nrows, B_aug.ncols)
                             for i from 0 <= i < B_aug.ncols:
                                 for j from 0 <= j < B_aug.nrows:
                                     M[j,i] = B_aug.is_one(1 << j, i)

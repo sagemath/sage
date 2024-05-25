@@ -40,7 +40,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
@@ -119,7 +119,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
             A = A.matrix()
         except AttributeError:
             pass
-        if is_Matrix(A) and A.nrows() == A.ncols() == parent.degree()+1:
+        if isinstance(A, Matrix) and A.nrows() == A.ncols() == parent.degree()+1:
             g = A
             d = parent.degree()
             A = g.submatrix(0, 0, d, d)
@@ -130,7 +130,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
             b = parent.vector_space()(b)
         if check:
             # Note: the coercion framework expects that we raise TypeError for invalid input
-            if not is_Matrix(A):
+            if not isinstance(A, Matrix):
                 raise TypeError('A must be a matrix')
             if not (A.parent() is parent.matrix_space()):
                 raise TypeError('A must be an element of ' + str(parent.matrix_space()))

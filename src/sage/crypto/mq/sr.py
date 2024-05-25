@@ -320,7 +320,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import \
     BooleanPolynomialRing_constructor as BooleanPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from .mpolynomialsystemgenerator import MPolynomialSystemGenerator
 
@@ -1028,7 +1028,7 @@ class SR_generic(MPolynomialSystemGenerator):
         if d is None:
             return Matrix(k, r, c)
 
-        if is_Matrix(d):
+        if isinstance(d, Matrix):
             if d.nrows() == r*c*e:
                 return Matrix(k, c, r, self.antiphi(d).list()).transpose()
             elif d.ncols() == c and d.nrows() == r and d.base_ring() == k:
@@ -1056,7 +1056,7 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr.is_state_array( matrix(k, 4, 4) )
             False
         """
-        return is_Matrix(d) and \
+        return isinstance(d, Matrix) and \
                d.nrows() == self.r and \
                d.ncols() == self.c and \
                d.base_ring() == self.base_ring()
@@ -2185,7 +2185,7 @@ class SR_gf2n(SR_generic):
             sage: sr.is_vector(B)
             True
         """
-        return is_Matrix(d) and \
+        return isinstance(d, Matrix) and \
                d.nrows() == self.r*self.c*self.e and \
                d.ncols() == 1 and \
                d.base_ring() == self.base_ring()
@@ -2212,7 +2212,7 @@ class SR_gf2n(SR_generic):
             [a^2 + 1       0]
         """
         ret = []
-        if is_Matrix(l):
+        if isinstance(l, Matrix):
             for e in l.transpose().list():
                 ret += [e**(2**i) for i in range(self.e)]
         else:
@@ -2222,7 +2222,7 @@ class SR_gf2n(SR_generic):
             return ret
         elif isinstance(l, tuple):
             return tuple(ret)
-        elif is_Matrix(l):
+        elif isinstance(l, Matrix):
             return Matrix(l.base_ring(), l.ncols(), l.nrows()*self.e, ret).transpose()
         else:
             raise TypeError
@@ -2242,7 +2242,7 @@ class SR_gf2n(SR_generic):
             sage: sr.antiphi(sr.phi(A)) == A
             True
         """
-        if is_Matrix(l):
+        if isinstance(l, Matrix):
             ret = [e for e in l.transpose().list()[0:-1:self.e]]
         else:
             ret = [e for e in l[0:-1:self.e]]
@@ -2251,7 +2251,7 @@ class SR_gf2n(SR_generic):
             return ret
         elif isinstance(l, tuple):
             return tuple(ret)
-        elif is_Matrix(l):
+        elif isinstance(l, Matrix):
             return Matrix(self.base_ring(), l.ncols(), l.nrows() // self.e,
                           ret).transpose()
         else:
@@ -2526,7 +2526,7 @@ class SR_gf2(SR_generic):
 
         if d is None:
             return Matrix(k, r*c*e, 1)
-        elif is_Matrix(d) and d.ncols() == c and d.nrows() == r and d.base_ring() == self.k:
+        elif isinstance(d, Matrix) and d.ncols() == c and d.nrows() == r and d.base_ring() == self.k:
             l = flatten([self.phi(x) for x in d.transpose().list()], (Vector_modn_dense,list,tuple))
             return Matrix(k, r*c*e, 1, l)
         elif isinstance(d, (list, tuple)):
@@ -2565,7 +2565,7 @@ class SR_gf2(SR_generic):
             sage: sr.is_vector(B)
             True
         """
-        return is_Matrix(d) and \
+        return isinstance(d, Matrix) and \
                d.nrows() == self.r*self.c*self.e and \
                d.ncols() == 1 and \
                d.base_ring() == GF(2)
@@ -2599,7 +2599,7 @@ class SR_gf2(SR_generic):
         r, c, e = self.r, self.c, self.e
 
         # handle diffusion layer matrices first
-        if is_Matrix(l) and diffusion_matrix and \
+        if isinstance(l, Matrix) and diffusion_matrix and \
            l.nrows() == r*c and l.ncols() == r*c and \
            l.base_ring() == self.k:
             B = Matrix(GF(2), r*c*e, r*c*e)
@@ -2614,7 +2614,7 @@ class SR_gf2(SR_generic):
             return list(reversed(l._vector_()))
 
         # remaining matrices
-        if is_Matrix(l):
+        if isinstance(l, Matrix):
             for x in l.transpose().list():
                 ret += list(reversed(x._vector_()))
         # or lists
@@ -2626,7 +2626,7 @@ class SR_gf2(SR_generic):
             return ret
         elif isinstance(l, tuple):
             return tuple(ret)
-        elif is_Matrix(l):
+        elif isinstance(l, Matrix):
             return Matrix(GF(2), l.ncols(), l.nrows()*self.e, ret).transpose()
         else:
             raise TypeError
@@ -2649,7 +2649,7 @@ class SR_gf2(SR_generic):
         e = self.e
         V = self.k.vector_space(map=False)
 
-        if is_Matrix(l):
+        if isinstance(l, Matrix):
             l2 = l.transpose().list()
         else:
             l2 = l
@@ -2662,7 +2662,7 @@ class SR_gf2(SR_generic):
             return ret
         elif isinstance(l, tuple):
             return tuple(ret)
-        elif is_Matrix(l):
+        elif isinstance(l, Matrix):
             return Matrix(self.base_ring(), self.r * self.c, 1, ret)
         else:
             raise TypeError
@@ -2916,14 +2916,14 @@ class SR_gf2(SR_generic):
         else:
             if isinstance(x, (tuple, list)):
                 P = x[0].parent()
-            elif is_Matrix(x):
+            elif isinstance(x, Matrix):
                 P = x.base_ring()
             else:
                 raise TypeError("x not understood")
 
-            if is_Matrix(x):
+            if isinstance(x, Matrix):
                 x = x.column(0).list()
-            if is_Matrix(w):
+            if isinstance(w, Matrix):
                 w = w.column(0).list()
 
         if e == 4:
@@ -3091,7 +3091,7 @@ class SR_gf2(SR_generic):
         else:
             if isinstance(x, (tuple, list)):
                 P = x[0].parent()
-            elif is_Matrix(x):
+            elif isinstance(x, Matrix):
                 P = x.base_ring()
             else:
                 raise TypeError("x not understood")
@@ -3153,9 +3153,9 @@ class SR_gf2(SR_generic):
              x100*w101 + x100*w103 + x100*w104 + x101*w100 + x101*w102 + x101*w103 + x101*w107 + x102*w101 + x102*w102 + x102*w106 + x103*w100 + x103*w101 + x103*w105 + x104*w100 + x104*w104 + x105*w103 + x106*w102 + x107*w101,
              x100*w102 + x100*w104 + x100*w105 + x101*w101 + x101*w103 + x101*w104 + x102*w100 + x102*w102 + x102*w103 + x102*w107 + x103*w101 + x103*w102 + x103*w106 + x104*w100 + x104*w101 + x104*w105 + x105*w100 + x105*w104 + x106*w103 + x107*w102]
         """
-        if is_Matrix(xi):
+        if isinstance(xi, Matrix):
             xi = xi.list()
-        if is_Matrix(wi):
+        if isinstance(wi, Matrix):
             wi = wi.list()
 
         e = self.e

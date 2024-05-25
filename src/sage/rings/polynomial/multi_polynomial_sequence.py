@@ -291,7 +291,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         sage: PolynomialSequence(iter([(x,y), (z,)]), R)
         [x, y, z]
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     try:
         from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
     except ImportError:
@@ -305,7 +305,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     elif is_ring(arg2):
         ring, gens = arg2, arg1
 
-    elif is_Matrix(arg1):
+    elif isinstance(arg1, Matrix):
         ring, gens = arg1.base_ring(), arg1.list()
 
     elif isinstance(arg1, MPolynomialIdeal):
@@ -748,7 +748,7 @@ class PolynomialSequence_generic(Sequence_generic):
              2*a*b + 2*b*c + 2*c*d - b, b^2 + 2*a*c + 2*b*d - c)
         """
         from sage.modules.free_module_element import vector
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
 
         if order is None:
             v = sorted(self.monomials(), reverse=True)
@@ -759,7 +759,7 @@ class PolynomialSequence_generic(Sequence_generic):
                 raise ValueError("order argument can only accept list or tuple")
 
         y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
-        A = Matrix(self.ring().base_ring(), len(self), len(v), sparse=sparse)
+        A = matrix(self.ring().base_ring(), len(self), len(v), sparse=sparse)
         for x, poly in enumerate(self):
             for c, m in poly:
                 try:
@@ -825,13 +825,13 @@ class PolynomialSequence_generic(Sequence_generic):
             [      2*a*b + 2*b*c + 2*c*d - b]
             [        b^2 + 2*a*c + 2*b*d - c]
         """
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         from sage.misc.superseded import deprecation
         deprecation(37035, "the function coefficient_matrix is deprecated; use coefficients_monomials instead")
 
         R = self.ring()
         A, v = self.coefficients_monomials(sparse=sparse)
-        return A, Matrix(R,len(v),1,v)
+        return A, matrix(R,len(v),1,v)
 
     def subs(self, *args, **kwargs):
         """
@@ -1739,7 +1739,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             (a + b + c)
         """
         from sage.modules.free_module_element import vector
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         from sage.rings.polynomial.multi_polynomial_ring_base import \
             BooleanPolynomialRing_base
 
@@ -1754,7 +1754,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         R = self.ring()
         K = R.base_ring()
         y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
-        A = Matrix(K, len(self), len(v), sparse=sparse)
+        A = matrix(K, len(self), len(v), sparse=sparse)
 
         if isinstance(R, BooleanPolynomialRing_base):
             one = K.one()

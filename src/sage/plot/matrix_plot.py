@@ -568,10 +568,10 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     import numpy as np
     import scipy.sparse as scipysparse
     from sage.plot.all import Graphics
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     from sage.rings.real_double import RDF
     orig_mat = mat
-    if is_Matrix(mat):
+    if isinstance(mat, Matrix):
         sparse = mat.is_sparse()
         if sparse:
             entries = list(mat._dict().items())

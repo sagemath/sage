@@ -905,8 +905,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             :meth:`solve_right_series_trunc` .
         """
-        from sage.structure.element import is_Vector
-        if is_Vector(B):
+        from sage.structure.element import Vector
+        if isinstance(B, Vector):
             if self.ncols() != B.degree():
                 raise ValueError("number of columns of self must equal "
                                  "degree of right-hand side")
@@ -920,7 +920,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         try:
             # case where self is square, with invertible constant term
             precA = 1+self.degree()
-            if is_Vector(B):
+            if isinstance(B, Vector):
                 BB = B.row()
                 X = B.row().parent().zero().__copy__()
             else:
@@ -934,12 +934,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 BB = (BB - XX*self).shift(-precA)
                 # update X = X + x^(k*precA) * XX
                 X = X + XX.shift(k*precA)
-            return X.truncate(d)[0] if is_Vector(B) else X.truncate(d)
+            return X.truncate(d)[0] if isinstance(B, Vector) else X.truncate(d)
         except (ZeroDivisionError,ArithmeticError):
             # general case (possibly no solution)
             m = self.nrows()
             from sage.matrix.constructor import matrix
-            if is_Vector(B):
+            if isinstance(B, Vector):
                 F = matrix.block([[self],[-B.row()]])
                 s = [0]*m + [d]
             else:
@@ -953,7 +953,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             if P[m:,m:] != 1:
                 raise ValueError("matrix equation has no solutions")
             else:
-                return P[m][:m] if is_Vector(B) else P[m:,:m]
+                return P[m][:m] if isinstance(B, Vector) else P[m:,:m]
 
     def solve_right_series_trunc(self, B, d):
         r"""
@@ -1056,8 +1056,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             :meth:`solve_left_series_trunc` .
         """
-        from sage.structure.element import is_Vector
-        if is_Vector(B):
+        from sage.structure.element import Vector
+        if isinstance(B, Vector):
             try:
                 return self.transpose().solve_left_series_trunc(B, d)
             except ValueError as e:

@@ -83,7 +83,7 @@ from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan, is_Fan
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.misc import walltime
@@ -278,7 +278,7 @@ class FanMorphism(FreeModuleMorphism):
         if isinstance(morphism, FreeModuleMorphism):
             parent = morphism.parent()
             A = morphism.matrix()
-        elif is_Matrix(morphism):
+        elif isinstance(morphism, Matrix):
             A = morphism
             if codomain is None:
                 raise ValueError("codomain (fan) must be given explicitly if "
