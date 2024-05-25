@@ -1,7 +1,7 @@
 """
 Matrix plots
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -15,8 +15,8 @@ Matrix plots
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, suboptions
@@ -108,7 +108,7 @@ class MatrixPlot(GraphicPrimitive):
 
         TESTS:
 
-        We verify that :trac:`27891` is fixed::
+        We verify that :issue:`27891` is fixed::
 
             sage: p = matrix_plot(identity_matrix(5)) + point((2, 2), zorder=1)
             sage: sorted(p.get_minmax_data().items())
@@ -162,7 +162,7 @@ class MatrixPlot(GraphicPrimitive):
             sage: m = M[0]; m                                                           # needs sage.symbolic
             MatrixPlot defined by a 5 x 5 data grid
         """
-        return "MatrixPlot defined by a %s x %s data grid" % (self.xy_array_row, self.xy_array_col)
+        return "MatrixPlot defined by a {} x {} data grid".format(self.xy_array_row, self.xy_array_col)
 
     def _render_on_subplot(self, subplot):
         """
@@ -195,9 +195,9 @@ class MatrixPlot(GraphicPrimitive):
                 rowstyle = subdiv_options['style']
                 colstyle = subdiv_options['style']
             if rowstyle is None:
-                rowstyle = dict()
+                rowstyle = {}
             if colstyle is None:
-                colstyle = dict()
+                colstyle = {}
 
             # Make line objects for subdivisions
             from .line import line2d
@@ -224,10 +224,11 @@ class MatrixPlot(GraphicPrimitive):
             extent = (lim['xmin'], lim['xmax'],
                       lim['ymax' if flip_y else 'ymin'],
                       lim['ymin' if flip_y else 'ymax'])
-            opts = dict(cmap=cmap, interpolation='nearest', aspect='equal',
-                      norm=norm, vmin=options['vmin'], vmax=options['vmax'],
-                      origin=('upper' if flip_y else 'lower'),
-                      extent=extent, zorder=options.get('zorder'))
+            opts = {'cmap': cmap, 'interpolation': 'nearest',
+                    'aspect': 'equal', 'norm': norm,
+                    'vmin': options['vmin'], 'vmax': options['vmax'],
+                    'origin': ('upper' if flip_y else 'lower'),
+                    'extent': extent, 'zorder': options.get('zorder')}
             image = subplot.imshow(self.xy_data_array, **opts)
 
             if options.get('colorbar', False):
@@ -240,7 +241,7 @@ class MatrixPlot(GraphicPrimitive):
             subplot.xaxis.tick_top()
         else:
             subplot.xaxis.tick_bottom()
-        subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
+        subplot.xaxis.set_ticks_position('both')  # only tick marks, not tick labels
 
 
 @suboptions('colorbar', orientation='vertical', format=None)
@@ -545,7 +546,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sage: matrix_plot(sparse, subdivisions=True, subdivision_boundaries=[[2,4],[6,8]])
         Graphics object consisting of 1 graphics primitive
 
-    Test that matrix plots have aspect ratio one (see :trac:`15315`)::
+    Test that matrix plots have aspect ratio one (see :issue:`15315`)::
 
         sage: P = matrix_plot(random_matrix(RDF, 5))
         sage: P.aspect_ratio()

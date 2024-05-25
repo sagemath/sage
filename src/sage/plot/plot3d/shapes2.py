@@ -159,7 +159,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         sage: L = line3d(((0,0,0),(1,2,3)))
 
     This function should work for anything than can be turned into a
-    list, such as iterators and such (see :trac:`10478`)::
+    list, such as iterators and such (see :issue:`10478`)::
 
         sage: line3d(iter([(0,0,0), (sqrt(3), 2, 4)]))                                  # needs sage.symbolic
         Graphics3d Object
@@ -272,7 +272,7 @@ def bezier3d(path, **options):
 
     TESTS:
 
-    Check for :trac:`31640`::
+    Check for :issue:`31640`::
 
         sage: p2d = [[(3,0.0),(3,0.13),(2,0.2),(2,0.3)],
         ....:        [(2.7,0.4),(2.6,0.5),(2.5,0.5)], [(2.3,0.5),(2.2,0.4),(2.1,0.3)]]
@@ -942,9 +942,8 @@ class Point(PrimitiveObject):
 
         radius = self.size * TACHYON_PIXEL
         texture = self.texture.id
-        return ("Sphere center {center[0]!r} {center[1]!r} {center[2]!r} "
-                "Rad {radius!r} {texture}").format(center=cen, radius=radius,
-                                                   texture=texture)
+        return (f"Sphere center {cen[0]!r} {cen[1]!r} {cen[2]!r} "
+                f"Rad {radius!r} {texture}")
 
     def obj_repr(self, render_params):
         """
@@ -980,7 +979,7 @@ class Point(PrimitiveObject):
         name = render_params.unique_name('point')
         transform = render_params.transform
         cen = self.loc if transform is None else transform(self.loc)
-        return ["draw %s DIAMETER %s {%s %s %s}\n%s" % (name, int(self.size), cen[0], cen[1], cen[2], self.texture.jmol_str('$' + name))]
+        return ["draw {} DIAMETER {} {{{} {} {}}}\n{}".format(name, int(self.size), cen[0], cen[1], cen[2], self.texture.jmol_str('$' + name))]
 
     def threejs_repr(self, render_params):
         r"""
@@ -1010,7 +1009,7 @@ class Point(PrimitiveObject):
         color = '#' + str(self.texture.hex_rgb())
         opacity = float(self.texture.opacity)
         size = float(self.size)
-        point = dict(point=center, size=size, color=color, opacity=opacity)
+        point = {'point': center, 'size': size, 'color': color, 'opacity': opacity}
         return [('point', point)]
 
     def stl_binary_repr(self, render_params):
@@ -1064,7 +1063,7 @@ class Line(PrimitiveObject):
         sage: Line([(0,0,0),(1,0,0),(2,1,0),(0,1,0)], corner_cutoff=0)
         Graphics3d Object
 
-    Make sure that the ``corner_cutoff`` keyword works (:trac:`3859`)::
+    Make sure that the ``corner_cutoff`` keyword works (:issue:`3859`)::
 
         sage: N = 11
         sage: c = 0.4
@@ -1198,13 +1197,13 @@ class Line(PrimitiveObject):
             TP = P if T is None else T(P)
             if P in corners:
                 if cmd:
-                    cmds.append(cmd + " {%s %s %s} " % TP)
+                    cmds.append(cmd + " {{{} {} {}}} ".format(*TP))
                     cmds.append(self.texture.jmol_str('$' + name))
                 type = 'arrow' if self.arrow_head and P is last_corner else 'curve'
                 name = render_params.unique_name('line')
-                cmd = "draw %s diameter %s %s {%s %s %s} " % (name, int(self.thickness), type, TP[0], TP[1], TP[2])
+                cmd = "draw {} diameter {} {} {{{} {} {}}} ".format(name, int(self.thickness), type, TP[0], TP[1], TP[2])
             else:
-                cmd += " {%s %s %s} " % TP
+                cmd += " {{{} {} {}}} ".format(*TP)
         cmds.append(cmd)
         cmds.append(self.texture.jmol_str('$' + name))
         return cmds
@@ -1392,7 +1391,7 @@ class Line(PrimitiveObject):
             transform = render_params.transform
             if transform is not None:
                 points = [transform(p) for p in points]
-            line = dict(points=points, color=color, opacity=opacity, linewidth=thickness)
+            line = {'points': points, 'color': color, 'opacity': opacity, 'linewidth': thickness}
             reprs.append(('line', line))
         return reprs
 
@@ -1478,7 +1477,7 @@ def point3d(v, size=5, **kwds):
         import numpy
         sphinx_plot(point3d(numpy.array([[1,2,3], [4,5,6], [7,8,9]])))
 
-    We check that iterators of points are accepted (:trac:`13890`)::
+    We check that iterators of points are accepted (:issue:`13890`)::
 
         sage: point3d(iter([(1,1,2),(2,3,4),(3,5,8)]), size=20, color='red')
         Graphics3d Object

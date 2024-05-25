@@ -958,14 +958,14 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         ValueError: range variables should be distinct, but there are duplicates
 
 
-    From :trac:`2858`::
+    From :issue:`2858`::
 
         sage: parametric_plot3d((u,-u,v), (u,-10,10),(v,-10,10))
         Graphics3d Object
         sage: f(u)=u; g(v)=v^2; parametric_plot3d((g,f,f), (-10,10),(-10,10))
         Graphics3d Object
 
-    From :trac:`5368`::
+    From :issue:`5368`::
 
         sage: x, y = var('x,y')
         sage: plot3d(x*y^2 - sin(x), (x,-1,1), (y,-1,1))

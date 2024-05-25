@@ -401,14 +401,14 @@ def can_convert_to_singular(R):
 
     TESTS:
 
-    Avoid non absolute number fields (see :trac:`23535`)::
+    Avoid non absolute number fields (see :issue:`23535`)::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])                                 # needs sage.rings.number_field
         sage: can_convert_to_singular(K['s,t'])                                         # needs sage.rings.number_field
         False
 
-    Check for :trac:`33319`::
+    Check for :issue:`33319`::
 
         sage: # needs sage.rings.finite_rings
         sage: R.<x,y> = GF((2^31-1)^3)[]

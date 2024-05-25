@@ -802,7 +802,7 @@ class SmoothCharacterGroupGeneric(Parent):
                         g = I.small_residue(g)
                     else:  # I is an ideal of ZZ
                         g = g % (I.gen())
-                if not (g - 1 in I):
+                if g - 1 not in I:
                     T.fail("For generator g=%s, g^%s = %s, which is not 1 mod I" % (gens[i], exps[i], g))
             I = self.prime() if self.number_field() == QQ else self.ideal(1)
             T.assertEqual(gens[-1].valuation(I), 1)

@@ -1,10 +1,9 @@
-# -*- encoding: utf-8 -*-
 """
 String <-> bytes encoding/decoding
 
 TESTS:
 
-Check that this can be used outside of Sage (see :trac:`25549`)::
+Check that this can be used outside of Sage (see :issue:`25549`)::
 
     sage: cython(                                                                       # needs sage.misc.cython
     ....: '''

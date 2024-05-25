@@ -17,13 +17,16 @@ AUTHOR:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *************************************************************************
 
 from sage.categories.morphism import Morphism, is_Morphism
 from .fgp_module import DEBUG
 from sage.structure.richcmp import richcmp, op_NE
 from sage.misc.cachefunc import cached_method
+from sage.categories.homset import Homset
+import sage.misc.weak_dict
+
 
 class FGP_Morphism(Morphism):
     """
@@ -93,7 +96,7 @@ class FGP_Morphism(Morphism):
                 if phi.parent() != parent:
                     raise TypeError
             phi = phi._phi
-            check = False # no need
+            check = False  # no need
 
         # input: phi is a morphism from MO = M.optimized().V() to N.V()
         # that sends MO.W() to N.W()
@@ -274,8 +277,8 @@ class FGP_Morphism(Morphism):
             sage: phi(8*Q.1) == phi(x)
             True
         """
-        from .fgp_module import is_FGP_Module
-        if is_FGP_Module(x):
+        from .fgp_module import FGP_Module_class
+        if isinstance(x, FGP_Module_class):
             if not x.is_submodule(self.domain()):
                 raise ValueError("x must be a submodule or element of the domain")
             # perhaps can be optimized with a matrix multiply; but note
@@ -352,8 +355,8 @@ class FGP_Morphism(Morphism):
             ...
             ValueError: A must be a submodule of the codomain
         """
-        from .fgp_module import is_FGP_Module
-        if not is_FGP_Module(A):
+        from .fgp_module import FGP_Module_class
+        if not isinstance(A, FGP_Module_class):
             raise TypeError("A must be a finitely generated quotient module")
         if not A.is_submodule(self.codomain()):
             raise ValueError("A must be a submodule of the codomain")
@@ -443,10 +446,10 @@ class FGP_Morphism(Morphism):
 
         # Write back in terms of rows of B, and delete rows not corresponding to A,
         # since those corresponding to relations
-        v = (z*U)[:A.nrows()]
+        v = (z * U)[:A.nrows()]
 
         # Take the linear combination that v defines.
-        y = v*self.domain().optimized()[0].V().basis_matrix()
+        y = v * self.domain().optimized()[0].V().basis_matrix()
 
         # Return the finitely generated module element defined by y.
         y = self.domain()(y)
@@ -454,9 +457,6 @@ class FGP_Morphism(Morphism):
         return y
 
 
-from sage.categories.homset import Homset
-
-import sage.misc.weak_dict
 _fgp_homset = sage.misc.weak_dict.WeakValueDictionary()
 
 
@@ -506,8 +506,8 @@ class FGP_Homset_class(Homset):
             <class 'sage.modules.fg_pid.fgp_morphism.FGP_Homset_class_with_category'>
         """
         if category is None:
-            from sage.modules.free_module import is_FreeModule
-            if is_FreeModule(X) and is_FreeModule(Y):
+            from sage.modules.free_module import FreeModule_generic
+            if isinstance(X, FreeModule_generic) and isinstance(Y, FreeModule_generic):
                 from sage.categories.modules_with_basis import ModulesWithBasis
                 category = ModulesWithBasis(X.base_ring())
             else:

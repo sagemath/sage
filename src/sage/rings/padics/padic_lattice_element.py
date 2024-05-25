@@ -8,7 +8,7 @@ AUTHOR:
 TESTS:
 
 We create some rings and run the test suite for them. We skip the Smith form
-tests because they take a few minutes as of mid 2018, see :trac:`25431`::
+tests because they take a few minutes as of mid 2018, see :issue:`25431`::
 
     sage: R1 = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
@@ -209,7 +209,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         EXAMPLES::
 
             sage: K = QpLC(7)
-            sage: K.random_element()._is_base_elt(7)  # not tested, known bug (see :trac:`32126`)
+            sage: K.random_element()._is_base_elt(7)  # not tested, known bug (see :issue:`32126`)
             True
         """
         return p == self._parent.prime()

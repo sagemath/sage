@@ -105,7 +105,7 @@ cdef class Module(Parent):
 
      TESTS:
 
-     We check that :trac:`8119` has been resolved::
+     We check that :issue:`8119` has been resolved::
 
         sage: # needs sage.modules
         sage: M = ZZ^3
@@ -132,7 +132,7 @@ cdef class Module(Parent):
             category = Modules(base)
         Parent.__init__(self, base=base, category=category, names=names)
 
-    cpdef _coerce_map_from_(self, M) noexcept:
+    cpdef _coerce_map_from_(self, M):
         """
         Return a coercion map from `M` to ``self``, or None.
 
@@ -161,7 +161,7 @@ cdef class Module(Parent):
 
         TESTS:
 
-        Make sure :trac:`3638` is fixed::
+        Make sure :issue:`3638` is fixed::
 
             sage: vector(ZZ,[1,2,11]) == vector(Zmod(8),[1,2,3])                        # needs sage.modules
             True
@@ -174,9 +174,9 @@ cdef class Module(Parent):
 
         """
         try:
-            if (is_Module(M)
-                and self.base_ring().has_coerce_map_from(M.base_ring())
-                and M.change_ring(self.base_ring()).is_submodule(self)):
+            if (isinstance(M, Module)
+                    and self.base_ring().has_coerce_map_from(M.base_ring())
+                    and M.change_ring(self.base_ring()).is_submodule(self)):
                 return M.hom([self._element_constructor_(x) for x in M.gens()], self)
         except (TypeError, NotImplementedError, AttributeError, ArithmeticError):
             pass
@@ -270,6 +270,7 @@ cdef class Module(Parent):
         from sage.categories.homset import End
         return End(self)
 
+
 def is_Module(x):
     """
     Return ``True`` if ``x`` is a module, ``False`` otherwise.
@@ -283,12 +284,18 @@ def is_Module(x):
         sage: from sage.modules.module import is_Module
         sage: M = FreeModule(RationalField(),30)                                        # needs sage.modules
         sage: is_Module(M)                                                              # needs sage.modules
+        doctest:warning...
+        DeprecationWarning: the function is_Module is deprecated;
+        use 'isinstance(..., Module)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_Module(10)
         False
-
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(37924, "the function is_Module is deprecated; use 'isinstance(..., Module)' instead")
     return isinstance(x, Module)
+
 
 def is_VectorSpace(x):
     """
@@ -304,15 +311,25 @@ def is_VectorSpace(x):
         sage: from sage.modules.module import is_Module, is_VectorSpace
         sage: M = FreeModule(RationalField(),30)
         sage: is_VectorSpace(M)
+        doctest:warning...
+        DeprecationWarning: the function is_VectorSpace is deprecated;
+        use 'isinstance(..., Module)' and check the base ring instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: M = FreeModule(IntegerRing(),30)
         sage: is_Module(M)
+        doctest:warning...
+        DeprecationWarning: the function is_Module is deprecated;
+        use 'isinstance(..., Module)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_VectorSpace(M)
         False
 
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(37924, "the function is_VectorSpace is deprecated; use 'isinstance(..., Module)' and check the base ring instead")
     try:
-        return is_Module(x) and x.base_ring().is_field()
+        return isinstance(x, Module) and x.base_ring().is_field()
     except AttributeError:
         return False

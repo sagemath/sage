@@ -72,7 +72,7 @@ class UnionOfIntervals:
     .. TODO::
 
         Unify :class:`UnionOfIntervals` with the class ``RealSet``
-        introduced by :trac:`13125`; see :trac:`16063`.
+        introduced by :issue:`13125`; see :issue:`16063`.
     """
     def __init__(self, endpoints):
         r"""
@@ -805,8 +805,8 @@ class EllipticCurveCanonicalHeight:
             ValueError: EllipticCurveCanonicalHeight class can only be created
             from an elliptic curve defined over a number field
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(E):
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        if isinstance(E, EllipticCurve_generic):
             self.E = E
             from sage.rings.number_field.number_field_base import NumberField
             K = E.base_ring()
@@ -1950,7 +1950,7 @@ class EllipticCurveCanonicalHeight:
 
         TESTS:
 
-        This example from the LMFDB gave problems before the fix in :trac:`8829`::
+        This example from the LMFDB gave problems before the fix in :issue:`8829`::
 
             sage: # needs sage.rings.number_field
             sage: K.<phi> = NumberField(x^2 - x - 1)

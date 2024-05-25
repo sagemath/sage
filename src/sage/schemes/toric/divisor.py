@@ -185,7 +185,7 @@ from sage.rings.rational_field import QQ
 from sage.schemes.generic.divisor import Divisor_generic
 from sage.schemes.generic.divisor_group import DivisorGroup_generic
 from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
-from sage.schemes.toric.variety import CohomologyRing, is_ToricVariety
+from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import is_Vector
 
@@ -302,7 +302,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         ...
         TypeError: cannot deduce coefficient ring for [(u, u)]
     """
-    assert is_ToricVariety(toric_variety)
+    assert isinstance(toric_variety, ToricVariety_field)
 
     # First convert special arguments into lists
     # of multiplicities or (multiplicity,coordinate)
@@ -346,7 +346,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
     except (AssertionError, TypeError):
         n_rays = toric_variety.fan().nrays()
         assert len(arg) == n_rays, \
-            'Argument list {0} is not of the required length {1}!' \
+            'Argument list {} is not of the required length {}!' \
             .format(arg, n_rays)
         arg = list(zip(arg, toric_variety.gens()))
         reduce = False
@@ -567,7 +567,7 @@ class ToricDivisor_generic(Divisor_generic):
           returned.
 
         - If there is no such vector (i.e. ``self`` is not even a
-          `\QQ`-Cartier divisor), a ``ValueError`` is raised.
+          `\QQ`-Cartier divisor), a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -773,7 +773,7 @@ class ToricDivisor_generic(Divisor_generic):
         .. NOTE::
 
             A divisor that is Weil but not Cartier might be impossible
-            to move away. In this case, a ``ValueError`` is raised.
+            to move away. In this case, a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -1360,7 +1360,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: D._sheaf_cohomology( SimplicialComplex([[1,2],[2,3],[3,1]]) )
             (0, 0, 1)
 
-        A more complicated example to test that :trac:`10731` is fixed::
+        A more complicated example to test that :issue:`10731` is fixed::
 
             sage: cell24 = Polyhedron(vertices=[
             ....:  (1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1),(1,-1,-1,1),(0,0,-1,1),
@@ -1687,7 +1687,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: DivisorGroup(P2, ZZ) is ToricDivisorGroup(P2, ZZ)
             False
         """
-        assert is_ToricVariety(toric_variety), str(toric_variety) + ' is not a toric variety!'
+        assert isinstance(toric_variety, ToricVariety_field), str(toric_variety) + ' is not a toric variety!'
         super().__init__(toric_variety, base_ring)
 
     def _latex_(self):
@@ -1806,7 +1806,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
 
         TESTS:
 
-        Check for :trac:`12812`::
+        Check for :issue:`12812`::
 
             sage: TDiv(0)
             0

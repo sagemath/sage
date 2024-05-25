@@ -21,7 +21,7 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 # scipy 1.18 introduced reprecation warnings on a number of things they are moving to
 # numpy, e.g. DeprecationWarning: scipy.array is deprecated
 #             and will be removed in SciPy 2.0.0, use numpy.array instead
-# This affects networkx 2.2 up and including 2.4 (cf. :trac:29766)
+# This affects networkx 2.2 up and including 2.4 (cf. :issue:29766)
 warnings.filterwarnings('ignore', category=DeprecationWarning,
     module='(scipy|networkx)')
 
@@ -97,8 +97,8 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
                                 r"removed from itertools in Python 3.14.")
 
 
-from .all__sagemath_objects import *
-from .all__sagemath_environment import *
+from sage.all__sagemath_objects import *
+from sage.all__sagemath_environment import *
 
 from sage.doctest.all    import *
 from sage.repl.all       import *

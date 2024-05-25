@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Lazy strings
 
@@ -203,7 +202,7 @@ cdef class _LazyString():
         self.args = <tuple?>args
         self.kwargs = <dict?>kwargs
 
-    cdef val(self) noexcept:
+    cdef val(self):
         cdef f = self.func
         if isinstance(f, str):
             return f % self.args
@@ -313,7 +312,7 @@ cdef class _LazyString():
         Return the file system representation of ``self``, assuming that
         ``self`` is a path.
 
-        This is for Python 3 compatibility: see :trac:`24046`, and also
+        This is for Python 3 compatibility: see :issue:`24046`, and also
         :pep:`519` and
         https://docs.python.org/3/library/os.html#os.fspath
 
@@ -503,7 +502,7 @@ cdef class _LazyString():
         except Exception:
             return '<%s broken>' % self.__class__.__name__
 
-    cpdef update_lazy_string(self, args, kwds) noexcept:
+    cpdef update_lazy_string(self, args, kwds):
         """
         Change this lazy string in-place.
 

@@ -60,7 +60,7 @@ class Bimodules(CategoryWithParameters):
         r"""
         Return what the element/parent/... classes depend on.
 
-        Since :trac:`11935`, the element and parent classes of a
+        Since :issue:`11935`, the element and parent classes of a
         bimodule only depend on the categories of the left and right
         base ring.
 
@@ -75,14 +75,18 @@ class Bimodules(CategoryWithParameters):
             (Join of Category of number fields
                  and Category of quotient fields
                  and Category of metric spaces,
-             Join of Category of euclidean domains
+             Join of Category of Dedekind domains
+                 and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
 
             sage: Bimodules(Fields(), ZZ)._make_named_class_key('element_class')
             (Category of fields,
-             Join of Category of euclidean domains
+             Join of Category of Dedekind domains
+             and Category of euclidean domains
+             and Category of noetherian rings
              and Category of infinite enumerated sets
              and Category of metric spaces)
 
@@ -146,7 +150,7 @@ class Bimodules(CategoryWithParameters):
         """
         return self._right_base_ring
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -156,9 +160,9 @@ class Bimodules(CategoryWithParameters):
             {\mathbf{Bimodules}}_{\Bold{Q}, \Bold{Z}}
         """
         from sage.misc.latex import latex
-        return "{{{0}}}_{{{1}, {2}}}".format(Category._latex_(self),
-                                             latex(self._left_base_ring),
-                                             latex(self._right_base_ring))
+        return "{{{}}}_{{{}, {}}}".format(Category._latex_(self),
+                                          latex(self._left_base_ring),
+                                          latex(self._right_base_ring))
 
     def super_categories(self):
         """

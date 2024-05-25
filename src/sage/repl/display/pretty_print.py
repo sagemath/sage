@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 The Sage pretty printer
 
@@ -87,7 +86,7 @@ class SagePrettyPrinter(PrettyPrinter):
 
         These are overridden in IPython in a way that we feel is somewhat
         confusing, and we prefer to print them like plain Python which is
-        more informative. See :trac:`14466` ::
+        more informative. See :issue:`14466` ::
 
             sage: 'this is a string'
             'this is a string'

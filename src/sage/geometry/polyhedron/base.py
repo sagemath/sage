@@ -74,10 +74,15 @@ def is_Polyhedron(X):
         sage: p = polytopes.hypercube(2)
         sage: from sage.geometry.polyhedron.base import is_Polyhedron
         sage: is_Polyhedron(p)
+        doctest:warning...
+        DeprecationWarning: is_Polyhedron is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         True
         sage: is_Polyhedron(123456)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_Polyhedron is deprecated, use isinstance instead")
     return isinstance(X, Polyhedron_base)
 
 
@@ -278,7 +283,7 @@ class Polyhedron_base(Polyhedron_base7):
             ...
             TypeError: The PPL backend only supports rational data.
 
-        Test that equations are handled correctly (:trac:`24154`)::
+        Test that equations are handled correctly (:issue:`24154`)::
 
             sage: p = Polyhedron(vertices=[[19]])
             sage: lp, x = p.to_linear_program(return_variable=True)
@@ -504,7 +509,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         TESTS:
 
-        We check that :trac:`28464` is fixed::
+        We check that :issue:`28464` is fixed::
 
             sage: P = Polyhedron(vertices=[(-130658298093891402635075/416049251842505144482473,
             ....: 177469511761879509172000/1248147755527515433447419,
@@ -551,7 +556,7 @@ class Polyhedron_base(Polyhedron_base7):
             sage: P.is_inscribed()
             True
 
-        We check that :trac:`29125` is fixed::
+        We check that :issue:`29125` is fixed::
 
             sage: P = Polyhedron(vertices=[[-2,-1], [-2,1], [0,-1], [0,1]], backend='field')
             sage: P.is_inscribed()

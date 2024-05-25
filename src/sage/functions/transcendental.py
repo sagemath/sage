@@ -115,21 +115,21 @@ class Function_zeta(GinacFunction):
             sage: zeta(x).subs(x=1)                                                     # needs sage.symbolic
             Infinity
 
-        Check that :trac:`19799` is resolved::
+        Check that :issue:`19799` is resolved::
 
             sage: zeta(pi)                                                              # needs sage.symbolic
             zeta(pi)
             sage: zeta(pi).n()  # rel tol 1e-10                                         # needs sage.symbolic
             1.17624173838258
 
-        Check that :trac:`20082` is fixed::
+        Check that :issue:`20082` is fixed::
 
             sage: zeta(x).series(x==pi, 2)                                              # needs sage.symbolic
             (zeta(pi)) + (zetaderiv(1, pi))*(-pi + x) + Order((pi - x)^2)
             sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)                        # needs sage.symbolic
             zeta(2*I*pi)
 
-        Check that :trac:`20102` is fixed::
+        Check that :issue:`20102` is fixed::
 
             sage: (zeta(x)^2).series(x==1, 1)                                           # needs sage.symbolic
             1*(x - 1)^(-2) + (2*euler_gamma)*(x - 1)^(-1)
@@ -138,7 +138,7 @@ class Function_zeta(GinacFunction):
             4/3*euler_gamma*(3*euler_gamma^2 - 2*stieltjes(1))
             - 28/3*euler_gamma*stieltjes(1) + 2*stieltjes(2)
 
-        Check that the right infinities are returned (:trac:`19439`)::
+        Check that the right infinities are returned (:issue:`19439`)::
 
             sage: zeta(1.0)                                                             # needs sage.symbolic
             +infinity
@@ -173,7 +173,7 @@ class Function_stieltjes(GinacFunction):
 
         INPUT:
 
-        -  ``n`` - non-negative integer
+        -  ``n`` -- non-negative integer
 
         EXAMPLES::
 
@@ -265,11 +265,11 @@ class Function_HurwitzZeta(BuiltinFunction):
         r"""
         TESTS::
 
-            sage: hurwitz_zeta(11/10, 1/2).n()                                          # needs sage.symbolic
+            sage: hurwitz_zeta(11/10, 1/2).n()                                          # needs mpmath sage.symbolic
             12.1038134956837
-            sage: hurwitz_zeta(11/10, 1/2).n(100)                                       # needs sage.symbolic
+            sage: hurwitz_zeta(11/10, 1/2).n(100)                                       # needs mpmath sage.symbolic
             12.103813495683755105709077413
-            sage: hurwitz_zeta(11/10, 1 + 1j).n()
+            sage: hurwitz_zeta(11/10, 1 + 1j).n()                                       # needs mpmath sage.rings.real_mpfr
             9.85014164287853 - 1.06139499403981*I
         """
         return _mpmath_utils_call(_mpmath_zeta, s, x, parent=parent)
@@ -571,48 +571,54 @@ class DickmanRho(BuiltinFunction):
         """
         This function returns the power series about `n+1/2` used
         to evaluate Dickman's function. It is scaled such that the interval
-        `[n,n+1]` corresponds to x in `[-1,1]`.
+        `[n,n+1]` corresponds to `x` in `[-1,1]`.
 
         INPUT:
 
-        -  ``n`` - the lower endpoint of the interval for which
+        -  ``n`` -- the lower endpoint of the interval for which
            this power series holds
 
-        -  ``abs_prec`` - the absolute precision of the
+        -  ``abs_prec`` -- the absolute precision of the
            resulting power series
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: f = dickman_rho.power_series(2, 20); f
-            -9.9376e-8*x^11 + 3.7722e-7*x^10 - 1.4684e-6*x^9 + 5.8783e-6*x^8 - 0.000024259*x^7 + 0.00010341*x^6 - 0.00045583*x^5 + 0.0020773*x^4 - 0.0097336*x^3 + 0.045224*x^2 - 0.11891*x + 0.13032
+            -9.9376e-8*x^11 + 3.7722e-7*x^10 - 1.4684e-6*x^9 + 5.8783e-6*x^8
+             - 0.000024259*x^7 + 0.00010341*x^6 - 0.00045583*x^5 + 0.0020773*x^4
+             - 0.0097336*x^3 + 0.045224*x^2 - 0.11891*x + 0.13032
             sage: f(-1), f(0), f(1)
             (0.30685, 0.13032, 0.048608)
-            sage: dickman_rho(2), dickman_rho(2.5), dickman_rho(3)                      # needs sage.symbolic
+            sage: dickman_rho(2), dickman_rho(2.5), dickman_rho(3)
             (0.306852819440055, 0.130319561832251, 0.0486083882911316)
         """
         return self._compute_power_series(n, abs_prec, cache_ring=None)
 
     def _compute_power_series(self, n, abs_prec, cache_ring=None):
         """
-        Compute the power series giving Dickman's function on [n, n+1], by
-        recursion in n. For internal use; self.power_series() is a wrapper
+        Compute the power series giving Dickman's function on `[n, n+1]`, by
+        recursion in `n`. For internal use; ``self.power_series()`` is a wrapper
         around this intended for the user.
 
         INPUT:
 
-        -  ``n`` - the lower endpoint of the interval for which
+        -  ``n`` -- the lower endpoint of the interval for which
            this power series holds
 
-        -  ``abs_prec`` - the absolute precision of the
+        -  ``abs_prec`` -- the absolute precision of the
            resulting power series
 
-        -  ``cache_ring`` - for internal use, caches the power
+        -  ``cache_ring`` -- for internal use, caches the power
            series at this precision.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: f = dickman_rho.power_series(2, 20); f
-            -9.9376e-8*x^11 + 3.7722e-7*x^10 - 1.4684e-6*x^9 + 5.8783e-6*x^8 - 0.000024259*x^7 + 0.00010341*x^6 - 0.00045583*x^5 + 0.0020773*x^4 - 0.0097336*x^3 + 0.045224*x^2 - 0.11891*x + 0.13032
+            -9.9376e-8*x^11 + 3.7722e-7*x^10 - 1.4684e-6*x^9 + 5.8783e-6*x^8
+             - 0.000024259*x^7 + 0.00010341*x^6 - 0.00045583*x^5 + 0.0020773*x^4
+             - 0.0097336*x^3 + 0.045224*x^2 - 0.11891*x + 0.13032
         """
         if n <= 1:
             if n <= -1:

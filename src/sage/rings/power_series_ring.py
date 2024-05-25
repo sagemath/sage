@@ -109,7 +109,7 @@ AUTHORS:
 - William Stein: the code
 - Jeremy Cho (2006-05-17): some examples (above)
 - Niles Johnson (2010-09): implement multivariate power series
-- Simon King (2012-08): use category and coercion framework, :trac:`13412`
+- Simon King (2012-08): use category and coercion framework, :issue:`13412`
 
 TESTS::
 
@@ -327,7 +327,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         sage: L.default_prec()
         5
 
-    By :trac:`14084`, a power series ring belongs to the category of integral
+    By :issue:`14084`, a power series ring belongs to the category of integral
     domains, if the base ring does::
 
         sage: P = ZZ[['x']]
@@ -470,8 +470,13 @@ def is_PowerSeriesRing(R):
         False
         sage: is_PowerSeriesRing(QQ[['x']])
         True
+        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x'))
+        True
+        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
+        False
     """
-    if isinstance(R, PowerSeriesRing_generic):
+    from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+    if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
         return R.ngens() == 1
     else:
         return False
@@ -516,7 +521,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         EXAMPLES:
 
         This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-        Since :trac:`11900`, it is also initialised as such, and since :trac:`14084`
+        Since :issue:`11900`, it is also initialised as such, and since :issue:`14084`
         it is actually initialised as an integral domain::
 
             sage: R.<x> = ZZ[[]]
@@ -535,7 +540,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: TestSuite(R).run()
 
         It is checked that the default precision is non-negative
-        (see :trac:`19409`)::
+        (see :issue:`19409`)::
 
             sage: PowerSeriesRing(ZZ, 'x', default_prec=-5)
             Traceback (most recent call last):
@@ -553,7 +558,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             else:
                 implementation = 'poly'
             R = PolynomialRing(base_ring, name, sparse=sparse)
-        elif implementation not in ['pari', 'mpoly']:     # see :trac:`28996`
+        elif implementation not in ['pari', 'mpoly']:     # see :issue:`28996`
             R = PolynomialRing(base_ring, name, sparse=sparse, implementation=implementation)
             implementation = 'poly'
         else:
@@ -684,8 +689,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def _coerce_map_from_(self, S):
         """
-        A coercion from `S` exists, if `S` coerces into ``self``'s base ring,
-        or if `S` is a univariate polynomial or power series ring with the
+        A coercion from ``S`` exists, if ``S`` coerces into ``self``'s base ring,
+        or if ``S`` is a univariate polynomial or power series ring with the
         same variable name as self, defined over a base ring that coerces into
         ``self``'s base ring.
 
@@ -700,7 +705,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             False
             sage: A.has_coerce_map_from(ZZ[['x']])
             True
-
+            sage: A.has_coerce_map_from(LazyPowerSeriesRing(ZZ, 'x'))
+            True
         """
         if self.base_ring().has_coerce_map_from(S):
             return True
@@ -712,8 +718,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         Coerce object to this power series ring.
 
-        Returns a new instance unless the parent of f is self, in which
-        case f is returned (since f is immutable).
+        Returns a new instance unless the parent of ``f`` is ``self``, in
+        which case ``f`` is returned (since ``f`` is immutable).
 
         INPUT:
 
@@ -725,7 +731,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         -  ``check`` -- bool (default: ``True``), whether to verify
            that the coefficients, etc., coerce in correctly.
-
 
         EXAMPLES::
 
@@ -784,7 +789,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             1 + euler_gamma*y + (1/2*euler_gamma^2 + 1/12*pi^2)*y^2 + O(y^3)
 
         Laurent series with non-negative valuation are accepted (see
-        :trac:`6431`)::
+        :issue:`6431`)::
 
             sage: L.<q> = LaurentSeriesRing(QQ)
             sage: P = L.power_series_ring()
@@ -796,13 +801,21 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             TypeError: self is not a power series
 
         It is checked that the precision is non-negative
-        (see :trac:`19409`)::
+        (see :issue:`19409`)::
 
             sage: PowerSeriesRing(ZZ, 'x')(1, prec=-5)
             Traceback (most recent call last):
             ...
             ValueError: prec (= -5) must be non-negative
 
+        From lazy series::
+
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: R = PowerSeriesRing(QQ, 'x')
+            sage: R(1 / (1 + x^3))
+            1 - x^3 + x^6 - x^9 + x^12 - x^15 + x^18 + O(x^20)
+            sage: R(2 - x^2 + x^6)
+            2 - x^2 + x^6
         """
         if prec is not infinity:
             prec = integer.Integer(prec)
@@ -832,6 +845,16 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                                           f.degree(f.default_variable()), check=check)
                 else:
                     raise TypeError("Can only convert series into ring with same variable name.")
+        else:
+            from sage.rings.lazy_series import LazyPowerSeries
+            if isinstance(f, LazyPowerSeries):
+                if prec is infinity:
+                    try:
+                        f = f.polynomial()
+                    except ValueError:
+                        f = f.add_bigoh(self.default_prec())
+                else:
+                    f = f.add_bigoh(prec)
         return self.element_class(self, f, prec, check=check)
 
     def construction(self):
@@ -1152,7 +1175,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             2 - t - 5*t^2 + t^3 + O(t^4)
 
 
-        Further arguments are passed to the underlying base ring (:trac:`9481`)::
+        Further arguments are passed to the underlying base ring (:issue:`9481`)::
 
             sage: SZ = PowerSeriesRing(ZZ,'v')
             sage: SQ = PowerSeriesRing(QQ,'v')

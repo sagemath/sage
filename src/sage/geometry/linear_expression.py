@@ -534,7 +534,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
         return len(self._names)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

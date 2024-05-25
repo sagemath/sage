@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Lazy Series
 
@@ -730,7 +729,7 @@ class LazyModuleElement(Element):
             True
 
         We compare the shifting with converting to the fraction field
-        (see also :trac:`35293`)::
+        (see also :issue:`35293`)::
 
             sage: M = L.fraction_field()
             sage: f = L([1,2,3,4]); f
@@ -4746,6 +4745,9 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             R = PowerSeriesRing(S.base_ring(), name=name)
             return R([self[i] for i in range(prec)]).add_bigoh(prec)
 
+    add_bigoh = approximate_series
+    O = approximate_series
+
     def polynomial(self, degree=None, name=None):
         r"""
         Return ``self`` as a Laurent polynomial if ``self`` is actually so.
@@ -5160,7 +5162,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: T(1-x-2*y + x*y^2)(1/(1-a), 3)
             3 + 8*a + 8*a^2 + 8*a^3 + 8*a^4 + 8*a^5 + 8*a^6 + O(a,b)^7
 
-        Check that issue :trac:`35261` is fixed::
+        Check that issue :issue:`35261` is fixed::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
@@ -5398,7 +5400,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f.revert()
             (-z) + z^3 + (-z^4) + (-2*z^5) + 6*z^6 + z^7 + O(z^8)
 
-        Check that issue :trac:`35261` is fixed::
+        Check that issue :issue:`35261` is fixed::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: f = L(lambda n: 1 if ZZ(n).is_power_of(2) else 0)
@@ -6065,6 +6067,45 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             return R(self[0:m])
         return R.sum(self[0:m])
 
+    def add_bigoh(self, prec):
+        r"""
+        Return the power series of precision at most ``prec`` obtained by
+        adding `O(q^\text{prec})` to `f`, where `q` is the (tuple of)
+        variable(s).
+
+        EXAMPLES::
+
+            sage: L.<x,y> = LazyPowerSeriesRing(QQ)
+            sage: f = 1 / (1 - x + y)
+            sage: f
+            1 + (x-y) + (x^2-2*x*y+y^2) + (x^3-3*x^2*y+3*x*y^2-y^3)
+             + (x^4-4*x^3*y+6*x^2*y^2-4*x*y^3+y^4)
+             + (x^5-5*x^4*y+10*x^3*y^2-10*x^2*y^3+5*x*y^4-y^5)
+             + (x^6-6*x^5*y+15*x^4*y^2-20*x^3*y^3+15*x^2*y^4-6*x*y^5+y^6)
+             + O(x,y)^7
+            sage: f3 = f.add_bigoh(3); f3
+            1 + x - y + x^2 - 2*x*y + y^2 + O(x, y)^3
+            sage: f3.parent()
+            Multivariate Power Series Ring in x, y over Rational Field
+
+            sage: R.<t> = QQ[]
+            sage: L.<x> = LazyPowerSeriesRing(R)
+            sage: f = 1 / (1 - t^3*x)
+            sage: f
+            1 + t^3*x + t^6*x^2 + t^9*x^3 + t^12*x^4 + t^15*x^5 + t^18*x^6 + O(x^7)
+            sage: f3 = f.add_bigoh(3); f3
+            1 + t^3*x + t^6*x^2 + O(x^3)
+            sage: f3.parent()
+            Power Series Ring in x over Univariate Polynomial Ring in t
+             over Rational Field
+        """
+        from sage.rings.power_series_ring import PowerSeriesRing
+        P = self.parent()
+        PSR = PowerSeriesRing(P.base_ring(), names=P.variable_names())
+        return PSR(self.polynomial(degree=prec-1), prec=prec)
+
+    O = add_bigoh
+
     def _floordiv_(self, other):
         r"""
         Return ``self`` floor divided by ``other``.
@@ -6567,6 +6608,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         - `f = a + b p_1` with `a, b \neq 0`.
 
+        .. SEEALSO:: :meth:`legendre_transform`
+
         EXAMPLES::
 
             sage: # needs sage.modules
@@ -6673,6 +6716,60 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
     compositional_inverse = revert
 
+    def legendre_transform(self):
+        r"""
+        Return the Legendre transform of ``self``.
+
+        Given a symmetric function `f` of valuation 2, the Legendre
+        transform of `f` is the unique symmetric function `g` of
+        valuation 2 over the same base ring, such that
+
+        .. MATH::
+
+            g \circ \partial_{p_1} f + f = p_1 \partial_{p_1} f.
+
+        This implies that the derivatives of `f` and `g` with respect to `p_1`
+        are inverses of each other with respect to plethystic substitution.
+
+        The Legendre transform is an involution.
+
+        .. SEEALSO:: :meth:`revert`
+
+        EXAMPLES::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: lp = LazySymmetricFunctions(p)
+            sage: A = lp(s([2]))
+            sage: A.legendre_transform()
+            (1/2*p[1,1]-1/2*p[2]) + O^9
+
+            sage: def asso(n):
+            ....:     return p.sum_of_terms((Partition([d] * (n // d)),
+            ....:          euler_phi(d) / n) for d in divisors(n))
+
+            sage: A = lp(asso, valuation=2)
+            sage: A.legendre_transform()[:5]
+            [1/2*p[1, 1] - 1/2*p[2],
+            -1/3*p[1, 1, 1] - 2/3*p[3],
+            1/4*p[1, 1, 1, 1] + 1/4*p[2, 2] - 1/2*p[4]]
+
+        TESTS::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: lp = LazySymmetricFunctions(p)
+            sage: A = lp(p([1]))
+            sage: A.legendre_transform()
+            Traceback (most recent call last):
+            ...
+            ValueError: only for series of valuation 2
+        """
+        if self.valuation() != 2:
+            raise ValueError("only for series of valuation 2")
+        p1 = self.parent()([1])
+        derived_p1 = self.derivative_with_respect_to_p1()
+        return (p1 * derived_p1 - self).plethysm(derived_p1.revert())
+
     def derivative_with_respect_to_p1(self, n=1):
         r"""
         Return the symmetric function obtained by taking the
@@ -6733,6 +6830,30 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                                                lambda c: c.derivative_with_respect_to_p1(n),
                                                P.is_sparse())
         coeff_stream = Stream_shift(coeff_stream, -n)
+        return P.element_class(P, coeff_stream)
+
+    def suspension(self):
+        r"""
+        Return the suspension of `self``.
+
+        This is an involution, that maps the homogeneous component
+        `f_n` of degree `n` to `(-1)^{n - 1} \omega(f_n)`, where
+        `omega` is the usual involution of symmetric functions.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: ls = LazySymmetricFunctions(s)
+            sage: f = ls(lambda n: s([n]), valuation=1)
+            sage: g = f.revert().suspension(); g
+            s[1] + (s[1,1]) + (s[2,1]) + (s[2,1,1]+s[3,1]) + ...
+            sage: g.revert().suspension()
+            s[1] + s[2] + s[3] + s[4] + s[5] + ...
+        """
+        P = self.parent()
+        coeff_stream = Stream_map_coefficients(self._coeff_stream,
+                                               lambda c: (-1)**(c.degree() + 1) * c.omega(),
+                                               P.is_sparse())
         return P.element_class(P, coeff_stream)
 
     def functorial_composition(self, *args):

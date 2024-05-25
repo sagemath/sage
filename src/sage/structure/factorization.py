@@ -876,7 +876,7 @@ class Factorization(SageObject):
             -1 \cdot 2^{2} \cdot 5^{2}
             sage: f._latex_()
             '-1 \\cdot 2^{2} \\cdot 5^{2}'
-            sage: x = AA['x'].0; factor(x^2 + x + 1)._latex_() # trac 12178             # needs sage.rings.number_field
+            sage: x = AA['x'].0; factor(x^2 + x + 1)._latex_()  # Issue #12178          # needs sage.rings.number_field
             '(x^{2} + x + 1.000000000000000?)'
         """
         if len(self) == 0:

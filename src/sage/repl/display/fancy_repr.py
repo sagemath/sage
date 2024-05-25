@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Representations of objects
 """
@@ -316,7 +315,7 @@ class TallListRepr(ObjectReprABC):
             sage: format_list([1, 2, identity_matrix(2)])                               # needs sage.modules
             '[\n      [1 0]\n1, 2, [0 1]\n]'
 
-        Check that :trac:`18743` is fixed::
+        Check that :issue:`18743` is fixed::
 
             sage: class Foo():
             ....:     def __repr__(self):

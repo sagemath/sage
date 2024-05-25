@@ -68,15 +68,15 @@ from sage.rings.rational import Rational
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import IntegralDomain
+from sage.categories.integral_domains import IntegralDomains
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
+from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import HyperellipticCurve_generic
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
@@ -2391,14 +2391,14 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             R = Q.base_ring()
 
         x = PolynomialRing(R, 'xx').gen()
-        if is_EllipticCurve(Q):
+        if isinstance(Q, EllipticCurve_generic):
             E = Q
             if E.a1() != 0 or E.a2() != 0:
                 raise NotImplementedError("curve must be in Weierstrass normal form")
             Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
             self._curve = E
 
-        elif is_HyperellipticCurve(Q):
+        elif isinstance(Q, HyperellipticCurve_generic):
             C = Q
             if C.hyperelliptic_polynomials()[1] != 0:
                 raise NotImplementedError("curve must be of form y^2 = Q(x)")
@@ -3837,13 +3837,11 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             pass
 
         # The smallest y term of (1/j) d(x^i y^j) is constant for all j.
-        L = []
         x, y = self.base_ring().gens()
         n = self.degree()
-        for i in range(n):
-            L.append((y*x**i).diff().extract_pow_y(0))
+        L = [(y * x**i).diff().extract_pow_y(0) for i in range(n)]
         A = matrix(L).transpose()
-        if not isinstance(A.base_ring(), IntegralDomain):
+        if A.base_ring() not in IntegralDomains():
             # must be using integer_mod or something to approximate
             self._helper_matrix = (~A.change_ring(QQ)).change_ring(A.base_ring())
         else:

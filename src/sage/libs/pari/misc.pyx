@@ -3,7 +3,7 @@ from cypari2.paridecl cimport *
 from cypari2.stack cimport new_gen
 
 
-cdef Gen new_t_POL_from_int_star(int* vals, unsigned long length, long varnum) noexcept:
+cdef Gen new_t_POL_from_int_star(int* vals, unsigned long length, long varnum):
     """
     Convert an array of ints to a PARI polynomial.
 

@@ -816,7 +816,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         """
         if hasattr(self,'_canonical_label_group'):
             if inplace:
-                if not (self is self._canonical_label_group):
+                if self is not self._canonical_label_group:
                     self.__dict__ = self._canonical_label_group.__dict__
                     self._canonical_label_group = self
             else:
@@ -1811,7 +1811,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
                 c1 = min(L.orbit(inv(c0)))
                 cusps.remove(c1)
                 if exp:
-                    if not len(c) in widths:
+                    if len(c) not in widths:
                         widths[len(c)] = 0
                     widths[len(c)] += 1
                 else:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Callable dictionaries
 """
@@ -25,8 +24,8 @@ cdef class CallableDict(dict):
     that this object is not picklable. When this feature is desired, a
     :class:`CallableDict` can be used instead. Note however that, with
     the current implementation, :class:`CallableDict` is slightly
-    slower than ``d.__getitem__`` (see :trac:`6484` for benchmarks, and
-    :trac:`18330` for potential for improvement).
+    slower than ``d.__getitem__`` (see :issue:`6484` for benchmarks, and
+    :issue:`18330` for potential for improvement).
 
     EXAMPLES::
 

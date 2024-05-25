@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 GenericGraph Cython functions
 
@@ -258,7 +257,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
 
 @cython.cdivision(True)
-cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height) noexcept:
+cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height):
     r"""
     Find a locally optimal layout for this graph, according to the
     constraints that neighboring nodes want to be a fixed distance
@@ -656,7 +655,7 @@ cdef class SubgraphSearch:
 
         TESTS:
 
-        Test proper initialization and deallocation, see :trac:`14067`.
+        Test proper initialization and deallocation, see :issue:`14067`.
         We intentionally only create the class without doing any
         computations with it::
 
@@ -727,7 +726,7 @@ cdef class SubgraphSearch:
             6
 
         Check that the method is working even when vertices or edges are of
-        incomparable types (see :trac:`35904`)::
+        incomparable types (see :issue:`35904`)::
 
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: G = Graph()
@@ -778,7 +777,7 @@ cdef class SubgraphSearch:
 
         TESTS:
 
-        Check that :trac:`21828` is fixed::
+        Check that :issue:`21828` is fixed::
 
             sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # needs sage.modules
             True
@@ -1159,7 +1158,7 @@ def _test_vectors_equal_inferior():
 
 
 cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
-                             long backtrack_bound=1000, find_path=False) noexcept:
+                             long backtrack_bound=1000, find_path=False):
     r"""
     Randomized backtracking for finding Hamiltonian cycles and paths.
 
@@ -1285,7 +1284,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     TESTS:
 
-    :trac:`10206` -- Hamiltonian cycle in small (di)graphs::
+    :issue:`10206` -- Hamiltonian cycle in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1303,7 +1302,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (False, [0, 1])
         order 2 and size 2: (False, [0, 1])
 
-    :trac:`10206` -- Hamiltonian path in small (di)graphs::
+    :issue:`10206` -- Hamiltonian path in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1321,7 +1320,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (True, [0, 1])
         order 2 and size 2: (True, [0, 1])
 
-    :trac:`10206` -- disconnected graphs::
+    :issue:`10206` -- disconnected graphs::
 
         sage: G = graphs.CompleteGraph(4) + Graph(1)
         sage: fh(G, find_path=False)

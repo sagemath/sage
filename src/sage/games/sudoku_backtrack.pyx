@@ -4,6 +4,7 @@ This module contains Cython code for a backtracking algorithm to solve Sudoku pu
 Once Cython implements closures and the ``yield`` keyword is possible, this can be moved into the ``sage.games.sudoku`` module, as part of the ``Sudoku.backtrack`` method, and this module can be banned.
 """
 
+
 def backtrack_all(n, puzzle):
     r"""
     A routine to compute all the solutions to a Sudoku puzzle.

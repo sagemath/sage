@@ -535,7 +535,7 @@ def _sporadic_Q_data(j):
            1]),
          ([-3267, -280962], [1480352841, -56169531, -2829222, 10890, 429, 1])]
 
-    See :trac:`22328`.  This used to fail on l=37,
+    See :issue:`22328`.  This used to fail on l=37,
     j=-162677523113838677 for which the kernel polynomial is not
     integral::
 
@@ -564,7 +564,7 @@ def _sporadic_Q_data(j):
     w = w1 # real period
     if j in [-121, -24729001, -162677523113838677, QQ(-882216989)/131072]:
         w = 2*w2-w1 # imaginary period
-    kerpol = prod(([X-L.elliptic_exponential(n*w/ell)[0] for n in range(1,(ell+1)//2)]))
+    kerpol = prod([X-L.elliptic_exponential(n*w/ell)[0] for n in range(1,(ell+1)//2)])
     if j == -162677523113838677:
         kerpolcoeffs = [(37*c.real()).round()/37 for c in list(kerpol)]
     else:
@@ -1008,7 +1008,7 @@ def isogenies_5_1728(E, minimal_models=True):
             to Elliptic Curve defined by y^2 = x^3 + (-753/4*a^2-4399)*x + (-2779*a^3-65072*a)
                over Number Field in a with defining polynomial x^4 + 20*x^2 - 80]
 
-    See :trac:`19840`::
+    See :issue:`19840`::
 
         sage: # needs sage.rings.number_field
         sage: K.<a> = NumberField(x^4 - 5*x^2 + 5)
@@ -2110,7 +2110,7 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
         raise ValueError("%s must be one of %s." % (l,hyperelliptic_primes))
     F = E.base_field()
     if E.j_invariant() != 0:
-        raise ValueError(("j-invariant must be 0."))
+        raise ValueError("j-invariant must be 0.")
     if F.characteristic() in [2,3,l]:
         raise NotImplementedError("Not implemented in characteristic 2, 3 or l.")
 
@@ -2381,7 +2381,7 @@ def is_kernel_polynomial(E, m, f):
         False,
         False]
 
-    See :trac:`22232`::
+    See :issue:`22232`::
 
         sage: # needs sage.rings.finite_rings
         sage: K = GF(47^2)
@@ -2583,7 +2583,7 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
         sage: len(E.change_ring(GF(3^2,'a')).isogenies_prime_degree(13))                # needs sage.rings.finite_rings
         14
 
-    See :trac:`18589`: the following example took 20s before, now only 4s::
+    See :issue:`18589`: the following example took 20s before, now only 4s::
 
         sage: K.<i> = QuadraticField(-1)                                                # needs sage.rings.number_field
         sage: E = EllipticCurve(K,[0,0,0,1,0])                                          # needs sage.rings.number_field
@@ -2749,7 +2749,7 @@ def isogenies_prime_degree(E, l, minimal_models=True):
         sage: E.isogenies_prime_degree(73)      # long time
         []
 
-    Test that :trac:`32269` is fixed::
+    Test that :issue:`32269` is fixed::
 
         sage: K = QuadraticField(-11)                                                   # needs sage.rings.number_field
         sage: E = EllipticCurve(K, [0,1,0,-117,-541])                                   # needs sage.rings.number_field

@@ -1,13 +1,12 @@
-# -*- coding: utf-8
 r"""
-Univariate polynomials over `\CC` with interval coefficients using Arb.
+Univariate polynomials over `\CC` with Arb ball coefficients.
 
-This is a binding to the `Arb library <http://arblib.org>`_; it
-may be useful to refer to its documentation for more details.
+This is a binding to the `acb_poly module of FLINT <https://flintlib.org/doc/acb_poly.html>`_;
+it may be useful to refer to its documentation for more details.
 
-Parts of the documentation for this module are copied or adapted from
-Arb's own documentation, licenced under the GNU General Public License
-version 2, or later.
+Parts of the documentation for this module are copied or adapted from Arb's
+(now FLINT's) own documentation, licenced (at the time) under the GNU General
+Public License version 2, or later.
 
 .. SEEALSO::
 
@@ -25,7 +24,7 @@ TESTS:
 
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.libs.arb.acb cimport *
+from sage.libs.flint.acb cimport *
 from sage.libs.flint.fmpz cimport *
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.complex_arb cimport ComplexBall
@@ -39,7 +38,7 @@ cdef inline long prec(Polynomial_complex_arb pol) noexcept:
 
 cdef class Polynomial_complex_arb(Polynomial):
     r"""
-    Wrapper for `Arb <http://arblib.org>`_ polynomials of type
+    Wrapper for `FLINT <https://flintlib.org>`_ polynomials of type
     ``acb_poly_t``
 
     EXAMPLES::
@@ -87,7 +86,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         """
         acb_poly_clear(self._poly)
 
-    cdef Polynomial_complex_arb _new(self) noexcept:
+    cdef Polynomial_complex_arb _new(self):
         r"""
         Return a new polynomial with the same parent as this one.
         """
@@ -231,13 +230,13 @@ cdef class Polynomial_complex_arb(Polynomial):
         """
         return smallInteger(acb_poly_degree(self._poly))
 
-    cdef get_unsafe(self, Py_ssize_t n) noexcept:
+    cdef get_unsafe(self, Py_ssize_t n):
         cdef ComplexBall res = ComplexBall.__new__(ComplexBall)
         res._parent = self._parent._base
         acb_poly_get_coeff_acb(res.value, self._poly, n)
         return res
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         r"""
         Return the coefficient list of this polynomial.
 
@@ -271,7 +270,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
     # Ring and Euclidean arithmetic
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         r"""
         Return the sum of two polynomials.
 
@@ -291,7 +290,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         Return the opposite of this polynomial.
 
@@ -307,7 +306,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         r"""
         Return the difference of two polynomials.
 
@@ -327,7 +326,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         r"""
         Return the product of two polynomials.
 
@@ -348,7 +347,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _lmul_(self, Element a) noexcept:
+    cpdef _lmul_(self, Element a):
         r"""
         TESTS::
 
@@ -368,7 +367,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef _rmul_(self, Element a) noexcept:
+    cpdef _rmul_(self, Element a):
         r"""
         TESTS::
 
@@ -429,7 +428,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
     # Syntactic transformations
 
-    cpdef Polynomial truncate(self, long n) noexcept:
+    cpdef Polynomial truncate(self, long n):
         r"""
         Return the truncation to degree `n - 1` of this polynomial.
 
@@ -460,7 +459,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cdef _inplace_truncate(self, long n) noexcept:
+    cdef _inplace_truncate(self, long n):
         if n < 0:
             n = 0
         acb_poly_truncate(self._poly, n)
@@ -534,7 +533,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
     # Truncated and power series arithmetic
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial other, long n) noexcept:
+    cpdef Polynomial _mul_trunc_(self, Polynomial other, long n):
         r"""
         Return the product of ``self`` and ``other``, truncated before degree `n`.
 
@@ -562,7 +561,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef Polynomial inverse_series_trunc(self, long n) noexcept:
+    cpdef Polynomial inverse_series_trunc(self, long n):
         r"""
         Return the power series expansion at 0 of the inverse of this
         polynomial, truncated before degree `n`.
@@ -590,7 +589,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         sig_off()
         return res
 
-    cpdef Polynomial _power_trunc(self, unsigned long expo, long n) noexcept:
+    cpdef Polynomial _power_trunc(self, unsigned long expo, long n):
         r"""
         Return a power of this polynomial, truncated before degree `n`.
 
@@ -806,7 +805,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         For ``a = 1``, this computes the usual Riemann zeta function.
 
-        If ``deflate`` is True, evaluate ζ(s,a) + 1/(1-s), see the Arb
+        If ``deflate`` is True, evaluate ζ(s,a) + 1/(1-s), see the FLINT
         documentation for details.
 
         EXAMPLES::

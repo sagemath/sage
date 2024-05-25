@@ -983,7 +983,6 @@ cdef class Graphics3d(SageObject):
 </X3D>
 """%(self.viewpoint().x3d_str(), self.x3d_str())
 
-
     ################ TACHYON ################
 
     ####### insertion of camera parameters
@@ -2244,7 +2243,7 @@ end_scene""".format(
         """
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
-        Needed to support PLOT in docstrings, see :trac:`17498`
+        Needed to support PLOT in docstrings, see :issue:`17498`
 
         EXAMPLES::
 
@@ -2297,7 +2296,7 @@ class Graphics3dGroup(Graphics3d):
             sage: len(G.all)
             10
 
-        We check that :trac:`17258` is solved::
+        We check that :issue:`17258` is solved::
 
             sage: g = point3d([0,-2,-2]); g += point3d([2,-2,-2])
             sage: len(g.all)
@@ -2525,7 +2524,7 @@ class Graphics3dGroup(Graphics3d):
 
         TESTS:
 
-        Check that :trac:`23200` is fixed::
+        Check that :issue:`23200` is fixed::
 
             sage: G = sage.plot.plot3d.base.Graphics3dGroup()
             sage: G.texture_set()
@@ -3370,6 +3369,7 @@ def optimal_extra_kwds(v):
         a.update(b)
     return a
 
+
 def _flip_orientation(v):
     """
     Switch from LH to RH coords to be consistent with Java rendition
@@ -3380,4 +3380,4 @@ def _flip_orientation(v):
             sage: _flip_orientation((1, 2, 3))
             (1, -2, 3)
     """
-    return (v[0],-v[1],v[2])
+    return (v[0], -v[1], v[2])

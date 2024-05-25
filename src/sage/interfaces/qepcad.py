@@ -826,7 +826,7 @@ class Qepcad:
             sage: Qepcad(x^2 - 1 == 0)            # optional - qepcad
             QEPCAD object in phase 'Before Normalization'
 
-        To check that :trac:`20126` is fixed::
+        To check that :issue:`20126` is fixed::
 
             sage: (x, y, z) = var('x, y, z')
             sage: conds = [-z < 0, -y + z < 0, x^2 + x*y + 2*x*z + 2*y*z - x < 0, \

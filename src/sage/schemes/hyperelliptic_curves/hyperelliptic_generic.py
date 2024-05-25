@@ -51,8 +51,13 @@ def is_HyperellipticCurve(C):
         sage: R.<x> = QQ[]; C = HyperellipticCurve(x^3 + x - 1); C
         Hyperelliptic Curve over Rational Field defined by y^2 = x^3 + x - 1
         sage: is_HyperellipticCurve(C)
+        doctest:warning...
+        DeprecationWarning: The function is_HyperellipticCurve is deprecated; use 'isinstance(..., HyperellipticCurve_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_HyperellipticCurve is deprecated; use 'isinstance(..., HyperellipticCurve_generic)' instead.")
     return isinstance(C, HyperellipticCurve_generic)
 
 
@@ -885,7 +890,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             (1 : -1 : 1),
             (1 : 0 : 1)]
 
-        Check that :trac:`29509` is fixed for the LMFDB genus 2 curve
+        Check that :issue:`29509` is fixed for the LMFDB genus 2 curve
         `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`_::
 
             sage: C = HyperellipticCurve(R([0, 0, 0, 0, 1, 1]), R([1, 1, 0, 1]))

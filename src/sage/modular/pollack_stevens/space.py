@@ -56,14 +56,14 @@ classical modular symbols (or even elliptic curves) as follows::
     sage: phi.parent()
     Space of modular symbols for Congruence Subgroup Gamma0(37) with sign 0 and values in Sym^0 Q^2
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.modules.module import Module
 from sage.modular.dirichlet import DirichletCharacter
 from sage.modular.arithgroup.all import Gamma0
@@ -76,7 +76,7 @@ from sage.structure.factory import UniqueFactory
 
 from .distributions import OverconvergentDistributions, Symk
 from .modsym import (PSModularSymbolElement, PSModularSymbolElement_symk,
-                    PSModularSymbolElement_dist, PSModSymAction)
+                     PSModularSymbolElement_dist, PSModSymAction)
 from .manin_map import ManinMap
 from .sigma0 import Sigma0, Sigma0Element
 
@@ -887,7 +887,7 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
         sage: symb.values()
         [-1/6, 1/3, 1/2, 1/6, -1/6, 1/3, -1/3, -1/2, -1/6, 1/6, 0, -1/6, -1/6]
     """
-    if not (E.base_ring() is QQ):
+    if E.base_ring() is not QQ:
         raise ValueError("The elliptic curve must be defined over the "
                          "rationals.")
     sign = Integer(sign)

@@ -608,6 +608,7 @@ def function_name(fn):
     except AttributeError:
         return "{%r}" % fn
 
+
 cdef class ExpressionTreeBuilder:
     r"""
     A class with helper methods for building Expressions.
@@ -1578,7 +1579,7 @@ cdef class ExpressionChoice(Expression):
                                        repr(self._cond),
                                        repr(self._iffalse))
 
-cpdef _expression_binop_helper(s, o, op) noexcept:
+cpdef _expression_binop_helper(s, o, op):
     r"""
     Make an Expression for (s op o).  Either s or o (or both) must already
     be an expression.
@@ -1713,8 +1714,9 @@ class IntegerPowerFunction():
         """
         return x**self.exponent
 
+
 cdef dict builtin_functions = None
-cpdef dict get_builtin_functions() noexcept:
+cpdef dict get_builtin_functions():
     r"""
     To handle ExpressionCall, we need to map from Sage and
     Python functions to opcode names.
@@ -1768,7 +1770,7 @@ cpdef dict get_builtin_functions() noexcept:
 
 cdef class InstructionStream  # forward declaration
 
-cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
+cpdef generate_code(Expression expr, InstructionStream stream):
     r"""
     Generate code from an Expression tree; write the result into an
     InstructionStream.
@@ -1949,7 +1951,7 @@ cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
         1.00000095367477
 
     Make sure we do not overflow the stack with highly nested expressions
-    (:trac:`11766`)::
+    (:issue:`11766`)::
 
         sage: # needs sage.rings.real_mpfr
         sage: R.<x> = CC[]
@@ -2192,7 +2194,7 @@ cdef class InstructionStream:
         """
         self.instr0(opname, args)
 
-    cdef instr0(self, opname, tuple args) noexcept:
+    cdef instr0(self, opname, tuple args):
         """
         Cdef version of instr. (Can't cpdef because of star args.)
         """
@@ -2425,6 +2427,7 @@ class CompilerInstrSpec():
             "CompilerInstrSpec(0, 1, ['py_constants', 'n_inputs'])"
         """
         return "CompilerInstrSpec(%d, %d, %s)" % (self.n_inputs, self.n_outputs, self.parameters)
+
 
 def op_list(args, metadata):
     r"""

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-*
 r"""
 Integer factorization functions
 
@@ -30,7 +29,7 @@ from sage.misc.misc_c import prod
 cdef extern from "limits.h":
     long LONG_MAX
 
-cpdef aurifeuillian(n, m, F=None, bint check=True) noexcept:
+cpdef aurifeuillian(n, m, F=None, bint check=True):
     r"""
     Return the Aurifeuillian factors `F_n^\pm(m^2n)`.
 
@@ -120,7 +119,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True) noexcept:
     assert (not check or Fm.divides(F))
     return [Fm, F // Fm]
 
-cpdef factor_aurifeuillian(n, check=True) noexcept:
+cpdef factor_aurifeuillian(n, check=True):
     r"""
     Return Aurifeuillian factors of `n` if `n = x^{(2k-1)x} \pm 1`
     (where the sign is '-' if x = 1 mod 4, and '+' otherwise) else `n`
@@ -252,7 +251,7 @@ def factor_cunningham(m, proof=None):
     else:
         return IntegerFactorization(L)*n.factor(proof=proof)
 
-cpdef factor_trial_division(m, long limit=LONG_MAX) noexcept:
+cpdef factor_trial_division(m, long limit=LONG_MAX):
     r"""
     Return partial factorization of ``self`` obtained using trial division
     for all primes up to ``limit``, where ``limit`` must fit in a C ``signed long``.
@@ -272,7 +271,7 @@ cpdef factor_trial_division(m, long limit=LONG_MAX) noexcept:
 
     TESTS:
 
-    Test that :trac:`13692` is solved::
+    Test that :issue:`13692` is solved::
 
         sage: from sage.rings.factorint import factor_trial_division
         sage: list(factor_trial_division(8))

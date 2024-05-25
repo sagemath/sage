@@ -76,7 +76,7 @@ def set_modsym_print_mode(mode="manin"):
         sage: set_modsym_print_mode()
     """
     mode = str(mode).lower()
-    if not (mode in ['manin', 'modular', 'vector']):
+    if mode not in ['manin', 'modular', 'vector']:
         raise ValueError("mode must be one of 'manin', 'modular', or 'vector'")
     global _print_mode
     _print_mode = mode

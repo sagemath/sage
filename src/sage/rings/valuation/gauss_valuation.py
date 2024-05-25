@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Gauss valuations on polynomial rings
 

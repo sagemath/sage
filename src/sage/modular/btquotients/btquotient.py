@@ -695,7 +695,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - 2x2 integer matrix, representing the edge from ``v1`` to
           ``v2``.  If ``v1`` and ``v2`` are not at distance `1`, raise
-          a ``ValueError``.
+          a :class:`ValueError`.
 
         EXAMPLES::
 

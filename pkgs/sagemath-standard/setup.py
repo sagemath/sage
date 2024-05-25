@@ -24,6 +24,11 @@ try:
 except ImportError:
     pass
 
+# Different workaround: disable `walk_revctrl` in setuptools
+# This is needed for setuptools_scm >= 8, should work for any version
+import setuptools.command.egg_info
+setuptools.command.egg_info.walk_revctrl = lambda: ()
+
 #########################################################
 ### Set source directory
 #########################################################
@@ -47,28 +52,19 @@ setenv()
 
 from sage_setup.command.sage_build_cython import sage_build_cython
 from sage_setup.command.sage_build_ext import sage_build_ext
-from sage_setup.command.sage_install import sage_develop, sage_install_and_clean
+from sage_setup.command.sage_install import sage_develop, sage_install
 
 cmdclass = dict(build_cython=sage_build_cython,
                 build_ext=sage_build_ext,
                 develop=sage_develop,
-                install=sage_install_and_clean)
-
-#########################################################
-### Testing related stuff
-#########################################################
-
-# Remove (potentially invalid) star import caches
-import sage.misc.lazy_import_cache
-if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
-    os.unlink(sage.misc.lazy_import_cache.get_cache_file())
+                install=sage_install)
 
 #########################################################
 ### Discovering Sources
 #########################################################
 
 if any(x in sys.argv
-       for x in ['build', 'bdist_wheel', 'install']):
+       for x in ['build', 'build_ext', 'bdist_wheel', 'install']):
     log.info("Generating auto-generated sources")
     from sage_setup.autogen import autogen_all
     autogen_all()

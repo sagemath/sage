@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Interface to GAP
 
@@ -500,7 +499,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         TESTS:
 
         Whitespace is not stripped from the front of the result
-        (:trac:`28439`)::
+        (:issue:`28439`)::
 
             sage: gap.eval(r'Print("  -\n\\\\-  ")')
             '  -\n\\\\-'
@@ -662,7 +661,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             sage: rc = gap.interrupt(timeout=1)
             sage: gap._eval_using_file_cutoff = cutoff
 
-        The following tests against a bug fixed at :trac:`10296`::
+        The following tests against a bug fixed at :issue:`10296`::
 
             sage: gap(3)
             3
@@ -1257,7 +1256,7 @@ class Gap(Gap_generic):
 
         TESTS:
 
-        We make sure that :trac:`9938` (GAP does not start if the path
+        We make sure that :issue:`9938` (GAP does not start if the path
         to the GAP workspace file contains more than 82 characters) is
         fixed::
 
@@ -1498,7 +1497,7 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
 
     TESTS:
 
-    Check that the race condition from :trac:`14242` has been fixed.
+    Check that the race condition from :issue:`14242` has been fixed.
     We temporarily need to change the worksheet filename, and to set
     ``first_try=True`` to ensure that the new workspace is created::
 
@@ -1562,16 +1561,10 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
 
             sage: s = gap("[[1,2], [3/4, 5/6]]")
             sage: latex(s)
-            \left(\begin{array}{rr} 1&2\\ 3/4&\frac{5}{6}\\ \end{array}\right)
+            \left[\left[1, 2\right], \left[\frac{3}{4}, \frac{5}{6}\right]\right]
         """
-        P = self._check_valid()
-        try:
-            s = P.eval('LaTeXObj(%s)' % self.name())
-            s = s.replace('\\\\', '\\').replace('"', '')
-            s = s.replace('%\\n', ' ')
-            return s
-        except RuntimeError:
-            return str(self)
+        from sage.misc.latex import latex
+        return latex(self._sage_())
 
     @cached_method
     def _tab_completion(self):
@@ -1688,7 +1681,7 @@ def gfq_gap_to_sage(x, F):
 
     TESTS:
 
-    Check that :trac:`18048` is fixed::
+    Check that :issue:`18048` is fixed::
 
         sage: K.<a> = GF(16)
         sage: b = a^2 + a

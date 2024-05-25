@@ -144,10 +144,16 @@ def is_FilteredVectorSpace(X):
         sage: from sage.modules.filtered_vector_space import is_FilteredVectorSpace
         sage: V = FilteredVectorSpace(2, 1)
         sage: is_FilteredVectorSpace(V)
+        doctest:warning...:
+        DeprecationWarning: the function is_FilteredVectorSpace is deprecated;
+        use 'isinstance(..., FilteredVectorSpace_class)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_FilteredVectorSpace('ceci n\'est pas une pipe')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FilteredVectorSpace is deprecated; use 'isinstance(..., FilteredVectorSpace_class)' instead")
     return isinstance(X, FilteredVectorSpace_class)
 
 
@@ -806,7 +812,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             return 'RR'
         from sage.categories.finite_fields import FiniteFields
         if self.base_ring() in FiniteFields():
-            return 'GF({0})'.format(len(self.base_ring()))
+            return 'GF({})'.format(len(self.base_ring()))
         else:
             raise NotImplementedError()
 

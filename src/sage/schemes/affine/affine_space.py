@@ -46,12 +46,17 @@ def is_AffineSpace(x) -> bool:
 
         sage: from sage.schemes.affine.affine_space import is_AffineSpace
         sage: is_AffineSpace(AffineSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
         True
         sage: is_AffineSpace(Spec(ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.")
     return isinstance(x, AffineSpace_generic)
 
 
@@ -740,7 +745,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         TESTS:
 
-        Check that :trac:`25897` is fixed::
+        Check that :issue:`25897` is fixed::
 
             sage: A.<x,y> = AffineSpace(ZZ, 2)
             sage: A.projective_embedding(4)

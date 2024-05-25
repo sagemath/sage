@@ -322,6 +322,7 @@ def igusa_clebsch_invariants(f):
         sage: igusa_clebsch_invariants(x^5 + a*x^4 + b*x^3 + c*x^2 + d*x + e)[0]
         6*b^2 - 16*a*c + 40*d
 
+        sage: from sage.schemes.hyperelliptic_curves.invariants import absolute_igusa_invariants_wamelen
         sage: absolute_igusa_invariants_wamelen(GF(5)['x'](x^6 - 2*x))
         Traceback (most recent call last):
         ...

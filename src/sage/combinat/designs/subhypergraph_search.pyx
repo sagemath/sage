@@ -229,7 +229,7 @@ cdef inline void permute(hypergraph * h,int n1,int n2) noexcept:
         bs_set(h.sets[i],n1,b2)
         bs_set(h.sets[i],n2,b1)
 
-cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp) noexcept:
+cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp):
     r"""
     Fills tmp with the hypergraph induced by points {0,...,n-1} in h.
 
@@ -295,7 +295,7 @@ cdef int is_subhypergraph_admissible(hypergraph h1,hypergraph * h2_trace,int n,h
 
     return 1
 
-cdef int cmp_128_bits(void * a, void * b) noexcept nogil:
+cdef int cmp_128_bits(const void * a, const void * b) noexcept nogil:
     r"""
     Lexicographic order on 128-bits words
     """

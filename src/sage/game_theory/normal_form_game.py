@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Normal form games with N players.
 
@@ -236,8 +235,7 @@ currently available:
   `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_. At present this is
   the only gambit algorithm available in sage but further development will
   hope to implement more algorithms
-  (in particular for games with more than 2 players). To install it,
-  type ``sage -i gambit`` in the shell.
+  (in particular for games with more than 2 players).
 
 * ``'enumeration'``: Support enumeration for 2 player games. This
   algorithm is hard coded in Sage and checks through all potential
@@ -648,7 +646,6 @@ from sage.matrix.constructor import matrix
 from sage.matrix.constructor import vector
 from sage.misc.temporary_file import tmp_filename
 from sage.numerical.mip import MixedIntegerLinearProgram
-from sage.misc.package import PackageNotFoundError
 from sage.cpython.string import bytes_to_str
 
 try:
@@ -1705,7 +1702,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         if algorithm == "LCP":
             if Game is None:
-                raise PackageNotFoundError("gambit")
+                raise RuntimeError("gambit not found")  # should later become a FeatureNotFoundError
             return self._solve_LCP(maximization)
 
         if algorithm.startswith('lp'):
@@ -2413,7 +2410,7 @@ class NormalFormGame(SageObject, MutableMapping):
         search over supports which is a discrete search. A full explanation of
         this is given in [CK2015]_. This problem is known to be NP-Hard
         [Du2009]_.  Another possible implementation is via best response
-        polytopes, see :trac:`18958`.
+        polytopes, see :issue:`18958`.
 
         The game Rock-Paper-Scissors is an example of a non-degenerate game,::
 

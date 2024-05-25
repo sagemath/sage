@@ -908,7 +908,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return schur.SymmetricFunctionAlgebra_schur(self)
     s = schur
     Schur = schur # Currently needed by SymmetricFunctions.__init_extra__
-                  # and sfa.GradedSymmetricFunctionsBases.corresponding_basis_over
 
     def powersum(self):
         r"""
@@ -960,7 +959,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return monomial.SymmetricFunctionAlgebra_monomial(self)
     m = monomial
 
-    def witt(self, coerce_h=True, coerce_e=False, coerce_p=False):
+    def witt(self, coerce_h=None, coerce_e=None, coerce_p=None):
         r"""
         The Witt basis of the symmetric functions.
 
@@ -968,15 +967,22 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: SymmetricFunctions(QQ).witt()
             Symmetric Functions over Rational Field in the Witt basis
+
+        TESTS::
+
             sage: SymmetricFunctions(QQ).witt(coerce_p=True)
-            Symmetric Functions over Rational Field in the Witt basis
-            sage: SymmetricFunctions(QQ).witt(coerce_h=False, coerce_e=True, coerce_p=True)
+            doctest:warning
+            ...
+            DeprecationWarning: the coerce_* inputs are deprecated and ignored
+            See https://github.com/sagemath/sage/issues/37736 for details.
             Symmetric Functions over Rational Field in the Witt basis
         """
+        if coerce_h is not None or coerce_e is not None or coerce_p is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(37736, "the coerce_* inputs are deprecated and ignored")
         from . import witt
-        return witt.SymmetricFunctionAlgebra_witt(self, coerce_h=coerce_h, coerce_e=coerce_e, coerce_p=coerce_p)
+        return witt.SymmetricFunctionAlgebra_witt(self)
     w = witt
-    # Currently needed by sfa.GradedSymmetricFunctionsBases.corresponding_basis_over
     Witt = witt
 
     def irreducible_symmetric_group_character(self):
@@ -1018,8 +1024,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             ....:   for rho in Partitions(5)]))
             [4, 2, 0, 1, -1, 0, -1]
         """
-        from .character import irreducible_character_basis
-        return irreducible_character_basis(self, 'st')
+        from .character import IrreducibleCharacterBasis
+        return IrreducibleCharacterBasis(self)
 
     st = irreducible_symmetric_group_character
 
@@ -1074,8 +1080,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: [ht([1]).eval_at_permutation_roots(rho) for rho in Partitions(5)]
             [0, 1, 0, 2, 1, 3, 5]
         """
-        from .character import induced_trivial_character_basis
-        return induced_trivial_character_basis(self, 'ht')
+        from .character import InducedTrivialCharacterBasis
+        return InducedTrivialCharacterBasis(self)
 
     ht = induced_trivial_character
 

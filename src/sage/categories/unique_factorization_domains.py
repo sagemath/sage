@@ -160,7 +160,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: (-x^2 - 4*x - 5)^(3-2+1) * p == quo*q + rem
                 True
 
-            Check that :trac:`23620` has been resolved::
+            Check that :issue:`23620` has been resolved::
 
                 sage: # needs sage.rings.padics
                 sage: R.<x> = ZpFM(2)[]

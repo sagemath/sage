@@ -80,7 +80,9 @@ class GaloisRepresentation(SageObject):
         sage: E = EllipticCurve('11a1').change_ring(K)
         sage: rho = E.galois_representation()
         sage: rho
-        Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+        Compatible family of Galois representations associated to the Elliptic Curve
+         defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+         over Number Field in a with defining polynomial x^2 + 1
     """
 
     def __init__(self, E):
@@ -94,7 +96,9 @@ class GaloisRepresentation(SageObject):
             sage: E = EllipticCurve('11a1').change_ring(K)
             sage: rho = E.galois_representation()
             sage: rho
-            Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+            Compatible family of Galois representations associated to the Elliptic Curve
+             defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+             over Number Field in a with defining polynomial x^2 + 1
             sage: loads(rho.dumps()) == rho
             True
         """
@@ -111,12 +115,16 @@ class GaloisRepresentation(SageObject):
             sage: E = EllipticCurve('11a1').change_ring(K)
             sage: rho = E.galois_representation()
             sage: rho
-            Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+            Compatible family of Galois representations associated to the Elliptic Curve
+             defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+             over Number Field in a with defining polynomial x^2 + 1
 
             sage: K.<a> = NumberField(x^2-x+1)
             sage: E = EllipticCurve([0,0,0,a,0])
             sage: E.galois_representation()
-            Compatible family of Galois representations associated to the CM Elliptic Curve defined by y^2 = x^3 + a*x over Number Field in a with defining polynomial x^2 - x + 1
+            Compatible family of Galois representations associated to the
+             CM Elliptic Curve defined by y^2 = x^3 + a*x
+             over Number Field in a with defining polynomial x^2 - x + 1
         """
         if self.E.has_cm():
             return "Compatible family of Galois representations associated to the CM " + repr(self.E)
@@ -205,7 +213,7 @@ class GaloisRepresentation(SageObject):
 
         TESTS:
 
-        An example which failed until fixed at :trac:`19229`::
+        An example which failed until fixed at :issue:`19229`::
 
             sage: K.<a> = NumberField(x^2-x+1)
             sage: E = EllipticCurve([a+1,1,1,0,0])
@@ -225,10 +233,10 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        * ``p`` - int - a prime number.
+        * ``p`` -- a prime number.
 
-        * ``A`` - int - a bound on the number of traces of Frobenius to use
-                     while trying to prove surjectivity.
+        * ``A`` -- (integer) a bound on the number of traces of Frobenius to use
+          while trying to prove surjectivity.
 
         EXAMPLES::
 
@@ -258,7 +266,7 @@ class GaloisRepresentation(SageObject):
 
         For CM curves, the mod-p representation is never surjective::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_cm()
             True
@@ -320,7 +328,7 @@ class GaloisRepresentation(SageObject):
         `p` for which the mod-`p` representation is reducible, and [0]
         is returned::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_rational_cm()
             True
@@ -330,7 +338,7 @@ class GaloisRepresentation(SageObject):
 
         An example (an elliptic curve with everywhere good reduction
         over an imaginary quadratic field with quite large
-        discriminant), which failed until fixed at :trac:`21776`::
+        discriminant), which failed until fixed at :issue:`21776`::
 
             sage: K.<a> = NumberField(x^2 - x + 112941801)
             sage: E = EllipticCurve([a+1,a-1,a,-23163076*a + 266044005933275,57560769602038*a - 836483958630700313803])
@@ -403,7 +411,7 @@ class GaloisRepresentation(SageObject):
         `p` for which the mod-`p` representation is reducible, and [0]
         is returned::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_rational_cm()
             True
@@ -426,7 +434,7 @@ def _non_surjective(E, patience=100):
     - ``E`` -- EllipticCurve (over a number field).
 
     - ``A`` -- int (a bound on the number of traces of Frobenius to use
-                 while trying to prove surjectivity).
+      while trying to prove surjectivity).
 
     OUTPUT:
 
@@ -731,9 +739,7 @@ def _exceptionals(E, L, patience=1000):
         if (not D) or (patience == 0):
             break
 
-    for l in D:
-        output.append(l)
-
+    output.extend(D)
     output.sort()
     return output
 
@@ -844,11 +850,12 @@ def _semistable_reducible_primes(E, verbose=False):
         True
 
     This example, over a quintic field with Galois group `S_5`, took a
-    very long time before :trac:`22343`::
+    very long time before :issue:`22343`::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^5 - 6*x^3 + 8*x - 1)
-        sage: E = EllipticCurve(K, [a^3 - 2*a, a^4 - 2*a^3 - 4*a^2 + 6*a + 1, a + 1, -a^3 + a + 1, -a])
+        sage: E = EllipticCurve(K, [a^3 - 2*a, a^4 - 2*a^3 - 4*a^2 + 6*a + 1,
+        ....:                       a + 1, -a^3 + a + 1, -a])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import _semistable_reducible_primes
         sage: _semistable_reducible_primes(E)
         [2, 5, 53, 1117]
@@ -1406,7 +1413,7 @@ def Billerey_R_bound(E, max_l=200, num_l=8, small_prime_bound=None, debug=False)
 
     .. NOTE::
 
-        The purpose of the small_prime_bound is that it is faster to
+        The purpose of the ``small_prime_bound`` is that it is faster to
         deal with these using the local test; by ignoring them here,
         we enable the algorithm to terminate sooner when there are no
         large reducible primes, which is always the case in practice.
@@ -1544,7 +1551,7 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
 
     TESTS:
 
-    Test that this function works with non-integral models (see :trac:`34174`)::
+    Test that this function works with non-integral models (see :issue:`34174`)::
 
         sage: K.<a> = QuadraticField(4569)
         sage: j = 46969655/32768

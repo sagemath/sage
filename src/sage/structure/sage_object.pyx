@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Abstract base class for Sage objects
 """
@@ -346,7 +345,7 @@ cdef class SageObject:
             sage: type(_)
             <class 'sage.typeset.unicode_art.UnicodeArt'>
 
-        Check that breakpoints and baseline are preserved (:trac:`29202`)::
+        Check that breakpoints and baseline are preserved (:issue:`29202`)::
 
             sage: # needs sage.groups
             sage: F = FreeAbelianMonoid(index_set=ZZ)
@@ -626,7 +625,7 @@ cdef class SageObject:
             AssertionError: Not implemented method: bla
 
         Check that only errors triggered by ``AbstractMethod`` are caught
-        (:trac:`29694`)::
+        (:issue:`29694`)::
 
             sage: class NotAbstract(SageObject):
             ....:     @lazy_attribute

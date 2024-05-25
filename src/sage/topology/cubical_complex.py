@@ -1186,7 +1186,7 @@ class CubicalComplex(GenericCellComplex):
             sage: C1.homology(subcomplex=S0)
             {0: 0, 1: Z}
 
-        Check that :trac:`32203` has been fixed::
+        Check that :issue:`32203` has been fixed::
 
             sage: # needs sage.modules
             sage: Square = CubicalComplex([([0,1],[0,1])])
@@ -1688,30 +1688,6 @@ class CubicalComplex(GenericCellComplex):
         if base_ring is None:
             base_ring = QQ
         return algebraic_topological_model(self, base_ring)
-
-    def _chomp_repr_(self):
-        r"""
-        String representation of self suitable for use by the CHomP
-        program.  This lists each maximal cube on its own line.
-
-        This function is deprecated.
-
-        EXAMPLES::
-
-            sage: C = cubical_complexes.Cube(0).product(cubical_complexes.Cube(2))
-            sage: C.maximal_cells()
-            {[0,0] x [0,1] x [0,1]}
-            sage: C._chomp_repr_()
-            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://github.com/sagemath/sage/issues/33777 for details.
-            '[0,0] x [0,1] x [0,1]\n'
-        """
-        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
-        s = ""
-        for c in self.maximal_cells():
-            s += str(c)
-            s += "\n"
-        return s
 
     def _simplicial_(self):
         r"""

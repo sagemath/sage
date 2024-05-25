@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Discrete Gaussian Samplers for `\ZZ[x]`
 
@@ -23,7 +22,7 @@ EXAMPLES::
     (24.0, 24.0)
 
 """
-#******************************************************************************
+# ******************************************************************************
 #
 #                        DGS - Discrete Gaussian Samplers
 #
@@ -53,7 +52,7 @@ EXAMPLES::
 # The views and conclusions contained in the software and documentation are
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of the FreeBSD Project.
-#*****************************************************************************/
+# *****************************************************************************/
 
 from sage.rings.real_mpfr import RR
 from sage.rings.integer_ring import ZZ

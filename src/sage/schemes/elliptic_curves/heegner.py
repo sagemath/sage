@@ -441,7 +441,7 @@ class RingClassField(SageObject):
             sage: heegner_point(37,-7,7^2).ring_class_field().degree_over_H()
             49
 
-        Check that :trac:`15218` is solved::
+        Check that :issue:`15218` is solved::
 
             sage: E = EllipticCurve("19a");
             sage: s = E.heegner_point(-3,2).ring_class_field().galois_group().complex_conjugation()
@@ -3455,7 +3455,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P.x_poly_exact(500)
             x^6 + 1108754853727159228/72351048803252547*x^5 + 88875505551184048168/1953478317687818769*x^4 - 2216200271166098662132/3255797196146364615*x^3 + 14941627504168839449851/9767391588439093845*x^2 - 3456417460183342963918/3255797196146364615*x + 1306572835857500500459/5426328660243941025
 
-        See :trac:`34121`::
+        See :issue:`34121`::
 
             sage: E = EllipticCurve('11a1')
             sage: P = E.heegner_point(-7)
@@ -5762,8 +5762,8 @@ def kolyvagin_reduction_data(E, q, first_only=True):
         sage: kolyvagin_reduction_data(EllipticCurve('2350g1'), 5, first_only=False)
         (19, 239, -311, 19, 6480, 85680)
     """
-    from .ell_generic import is_EllipticCurve
-    if not is_EllipticCurve(E):
+    from .ell_generic import EllipticCurve_generic
+    if not isinstance(E, EllipticCurve_generic):
         raise TypeError("E must be an elliptic curve")
 
     q = ZZ(q)
@@ -7055,7 +7055,7 @@ def _heegner_index_in_EK(self, D):
     basis = [G(z) for z in E.gens()] + [G(phi(z)) for z in F.gens()]
     # Make a list of the 2-power order torsion points in E(K), including 0.
     T = [G(z) for z in G.torsion_subgroup().list() if z.order() == 1 or
-            ((z.order() % 2 == 0 and len(z.order().factor()) == 1))]
+            (z.order() % 2 == 0 and len(z.order().factor()) == 1)]
 
     r = len(basis)   # rank
     V = QQ**r
@@ -7066,9 +7066,8 @@ def _heegner_index_in_EK(self, D):
         if not v:
             continue
         P = sum([basis[i] for i in range(r) if v[i]])
-        for t in T:
-            if (P+t).is_divisible_by(2):
-                B.append(V(v)/2)
+        w = V(v) / 2
+        B.extend(w for t in T if (P + t).is_divisible_by(2))
 
     A = ZZ**r
     # Take span of our vectors in (1/2)*ZZ^r, along with ZZ^r.  This is E(K)/tor.

@@ -95,6 +95,12 @@ class FormalSum(ModuleElement):
         - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
           combine common terms
 
+        .. WARNING::
+
+            Setting ``reduce`` to ``False`` can cause issues when comparing
+            equal sums where terms are not combined in the same way (e.g.
+            `2x + 3x` and `4x + 1x` will compare as not equal).
+
         EXAMPLES::
 
             sage: FormalSum([(1,2/3), (3,2/3), (-5, 7)])
@@ -230,8 +236,19 @@ class FormalSum(ModuleElement):
             True
             sage: a == 0          # 0 is coerced into a.parent()(0)
             False
+
+        TESTS::
+
+            sage: a = FormalSum([(1, 3), (2, 5)])
+            sage: b = FormalSum([(2, 5), (1, 3)])
+            sage: a == b
+            True
+            sage: b == a
+            True
         """
-        return richcmp(self._data, other._data, op)
+        self_data = [(c, x) for (x, c) in sorted(self._data, key=str)]
+        other_data = [(c, x) for (x, c) in sorted(other._data, key=str)]
+        return richcmp(self_data, other_data, op)
 
     def _neg_(self):
         """
@@ -409,7 +426,7 @@ class FormalSums(UniqueRepresentation, Module):
             sage: F7 = FormalSums(ZZ).base_extend(GF(7)); F7
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
 
-        The following tests against a bug that was fixed at :trac:`18795`::
+        The following tests against a bug that was fixed at :issue:`18795`::
 
             sage: isinstance(F7, F7.category().parent_class)
             True

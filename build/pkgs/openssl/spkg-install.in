@@ -12,7 +12,7 @@ target=$($CC -dumpmachine 2> /dev/null)
 echo
 echo "Configuring openssl for target reported by $CC -dumpmachine: $target"
 case "$target" in
-    # Trac #31538: On 64 bit kernels running a 32 bit system, use the target of
+    # Issue #31538: On 64 bit kernels running a 32 bit system, use the target of
     # the configured compiler
     i?86-*linux*)
         extra_config_args="linux-x86"
