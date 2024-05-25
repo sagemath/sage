@@ -316,9 +316,7 @@ def _latex_product(coefficients, variables,
         else:
             t = latex(c)
             if '+' in t or '-' in t:
-                from sage.symbolic.ring import SR
-                if SR(c).operator() in [operator.add, operator.sub]:
-                    t = r"\left( " + t + r" \right)"
+                t = r"\left( " + t + r" \right)"
             t += " " + latex(v)
         entries.extend([sign, t])
     if drop_plus:   # Don't start with +
