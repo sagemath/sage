@@ -638,7 +638,7 @@ class DiGraph(GenericGraph):
         """
         msg = ''
         GenericGraph.__init__(self)
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
         if sparse is False:
             if data_structure != "sparse":
@@ -671,7 +671,7 @@ class DiGraph(GenericGraph):
             format = 'dig6'
             if data[:8] == ">>dig6<<":
                 data = data[8:]
-        if format is None and is_Matrix(data):
+        if format is None and isinstance(data, Matrix):
             if data.is_square():
                 format = 'adjacency_matrix'
             else:

@@ -170,7 +170,7 @@ REFERENCES:
 from sage.structure.unique_representation import UniqueRepresentation
 
 from bisect import bisect_left, bisect_right
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 
@@ -3181,7 +3181,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
         else:
             raise ValueError("invalid input")
 
-    if is_Matrix(obj1):
+    if isinstance(obj1, Matrix):
         obj1 = obj1.rows()
 
     output = rule.forward_rule(obj1, obj2, check_standard)

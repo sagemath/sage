@@ -6,7 +6,7 @@ Parametric plots
 from .parametric_surface import ParametricSurface
 from .shapes2 import line3d
 from sage.arith.srange import xsrange, srange
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.misc.decorators import rename_keyword
 
 
@@ -988,7 +988,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     # mesh_shading -- (default: None) how to shade regions between mesh divisions
     # plot_range -- (default: "automatic") range of values to include
 
-    if is_Vector(f):
+    if isinstance(f, Vector):
         f = tuple(f)
 
     if isinstance(f, (list, tuple)) and len(f) > 0 and isinstance(f[0], (list, tuple)):

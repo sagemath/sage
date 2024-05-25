@@ -378,8 +378,8 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         D = self.domain()
         C = self.codomain()
         side = kwds.get("side", "left")
-        from sage.structure.element import is_Matrix
-        if is_Matrix(A):
+        from sage.structure.element import Matrix
+        if isinstance(A, Matrix):
             pass
         elif isinstance(A, VectorSpaceMorphism):
             A = A.matrix()

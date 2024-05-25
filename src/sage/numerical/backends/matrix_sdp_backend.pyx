@@ -279,10 +279,10 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             'fun'
         """
         coefficients = list(coefficients)
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
         for t in coefficients:
             m = t[1]
-            if not is_Matrix(m):
+            if not isinstance(m, Matrix):
                 raise ValueError("The coefficients must be matrices")
             if not m.is_square():
                 raise ValueError("The matrix has to be a square")

@@ -3110,8 +3110,8 @@ class FreeModule_generic(Module_free_ambient):
             Domain: Vector space of dimension 2 over Rational Field
             Codomain: Vector space of dimension 2 over Rational Field
         """
-        from sage.structure.element import is_Matrix
-        if codomain is None and is_Matrix(im_gens):
+        from sage.structure.element import Matrix
+        if codomain is None and isinstance(im_gens, Matrix):
             side = kwds.get("side", "left")
             n = im_gens.nrows() if side == "right" else im_gens.ncols()
             from sage.categories.pushout import pushout

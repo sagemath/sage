@@ -36,7 +36,7 @@ from libc.math cimport log
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.stats.time_series cimport TimeSeries
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.randstate cimport current_randstate, randstate
 from cpython.object cimport PyObject_RichCompare
@@ -357,7 +357,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         if self._emission_symbols is not None:
             self._emission_symbols_dict = dict([(y,x) for x,y in enumerate(emission_symbols)])
 
-        if not is_Matrix(B):
+        if not isinstance(B, Matrix):
             B = matrix(B)
         if B.nrows() != self.N:
             raise ValueError("number of rows of B must equal number of states")

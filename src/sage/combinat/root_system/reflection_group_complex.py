@@ -211,7 +211,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.interfaces.gap3 import gap3
 from sage.modules.free_module_element import vector
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
@@ -244,7 +244,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 call_str = 'ComplexReflectionGroup(%s)' % W_type
             elif isinstance(W_type, CartanMatrix):
                 call_str = 'PermRootGroup(IdentityMat(%s),%s)' % (W_type._rank, str(W_type._M._gap_()))
-            elif is_Matrix(W_type):
+            elif isinstance(W_type, Matrix):
                 call_str = 'PermRootGroup(IdentityMat(%s),%s)' % (W_type._rank, str(W_type._gap_()))
             elif W_type in ZZ or (isinstance(W_type, tuple) and len(W_type) == 3):
                 call_str = 'ComplexReflectionGroup%s' % str(W_type)

@@ -89,9 +89,9 @@ cdef class ntl_mat_GF2():
         cdef Py_ssize_t i, j
         cdef GF2_c _elem
 
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
-        if is_Matrix(nrows):
+        if isinstance(nrows, Matrix):
             _nrows = nrows.nrows()
             _ncols = nrows.ncols()
             v = nrows

@@ -40,7 +40,7 @@ from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.all import Sequence
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from .con_field import ProjectiveConic_field
 from .con_finite_field import ProjectiveConic_finite_field
@@ -202,7 +202,7 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if isinstance(F, QuadraticForm):
         F = F.matrix()
-    if is_Matrix(F) and F.is_square() and F.ncols() == 3:
+    if isinstance(F, Matrix) and F.is_square() and F.ncols() == 3:
         if names is None:
             names = 'x,y,z'
         temp_ring = PolynomialRing(F.base_ring(), 3, names)

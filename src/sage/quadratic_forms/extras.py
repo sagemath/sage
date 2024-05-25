@@ -3,7 +3,7 @@ Extra functions for quadratic forms
 """
 
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.arith.misc import legendre_symbol
 from sage.rings.integer_ring import ZZ
 
@@ -103,7 +103,7 @@ def extend_to_primitive(A_input):
         [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
     """
     # Deal with a list of vectors
-    if not is_Matrix(A_input):
+    if not isinstance(A_input, Matrix):
         A = matrix(A_input)      # Make a matrix A with the given rows.
         vec_output_flag = True
     else:

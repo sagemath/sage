@@ -1441,9 +1441,9 @@ class Polyhedron_base5(Polyhedron_base4):
         """
         if isinstance(actor, Polyhedron_base5):
             return self.product(actor)
-        elif is_Vector(actor):
+        elif isinstance(actor, Vector):
             return self.translation(actor)
-        elif is_Matrix(actor):
+        elif isinstance(actor, Matrix):
             if self_on_left:
                 raise ValueError("matrices should act on the left")
             else:

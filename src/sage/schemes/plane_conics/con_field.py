@@ -30,10 +30,10 @@ import sage.rings.abc
 
 from sage.modules.free_module_element import vector
 from sage.structure.sequence import Sequence
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
@@ -715,7 +715,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
               Defn: Defined on coordinates by sending (x : y : z) to (t*x + z : y : z)
 
         """
-        if is_Matrix(x):
+        if isinstance(x, Matrix):
             from .constructor import Conic
             y = x.inverse()
             A = y.transpose()*self.matrix()*y
@@ -992,7 +992,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: d.rational_point()                                                    # needs sage.libs.pari
             (-1 : 1 : 0)
         """
-        if is_Vector(v):
+        if isinstance(v, Vector):
             v = Sequence(v)
         p = super().point(v, check=check)
         if self._rational_point is None:

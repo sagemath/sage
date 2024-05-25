@@ -807,7 +807,7 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau.parent().size()
             24
         """
-        if is_Matrix(tau):
+        if isinstance(tau, Matrix):
             n = tau.nrows()
             F = tau.base_ring()
             R = PolynomialRing(F, 't')

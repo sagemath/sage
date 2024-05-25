@@ -291,7 +291,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         sage: PolynomialSequence(iter([(x,y), (z,)]), R)
         [x, y, z]
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     try:
         from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
     except ImportError:
@@ -305,7 +305,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     elif is_ring(arg2):
         ring, gens = arg2, arg1
 
-    elif is_Matrix(arg1):
+    elif isinstance(arg1, Matrix):
         ring, gens = arg1.base_ring(), arg1.list()
 
     elif isinstance(arg1, MPolynomialIdeal):

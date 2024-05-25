@@ -236,7 +236,7 @@ from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
 from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 
 cdef class SemidefiniteProgram(SageObject):
@@ -1374,8 +1374,8 @@ cdef class SDPVariable(Element):
             sage: m * v
             (1.0, 3.0)*x_0 + (2.0, 4.0)*x_1
         """
-        from sage.structure.element import is_Matrix
-        if is_Matrix(mat):
+        from sage.structure.element import Matrix
+        if isinstance(mat, Matrix):
             return self._matrix_rmul_impl(mat) if self_on_left else self._matrix_lmul_impl(mat)
 
 

@@ -2,7 +2,7 @@
 List plots
 """
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.rings.real_double import RDF
 from sage.misc.superseded import deprecation
@@ -262,7 +262,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         if txtr == "automatic":
             txtr = "lightblue"
         kwds['color'] = txtr
-    if is_Matrix(v):
+    if isinstance(v, Matrix):
         if (interpolation_type == 'default' or
                 interpolation_type == 'linear' and 'num_points' not in kwds):
             return list_plot3d_matrix(v, **kwds)

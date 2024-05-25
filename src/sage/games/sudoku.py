@@ -76,9 +76,9 @@ def sudoku(m):
         ...
         ValueError: sudoku function expects puzzle to be a matrix, perhaps use the Sudoku class
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
 
-    if not is_Matrix(m):
+    if not isinstance(m, Matrix):
         raise ValueError('sudoku function expects puzzle to be a matrix, perhaps use the Sudoku class')
     solution = next(Sudoku(m).solve(algorithm='dlx'))
     return (solution.to_matrix() if solution else None)
@@ -170,12 +170,12 @@ class Sudoku(SageObject):
             ValueError: Sudoku puzzle has an invalid entry
         """
         from math import sqrt
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
         if isinstance(puzzle, list):
             puzzle_size = int(round(sqrt(len(puzzle))))
             self.puzzle = tuple(puzzle)
-        elif is_Matrix(puzzle):
+        elif isinstance(puzzle, Matrix):
             puzzle_size = puzzle.ncols()
             if verify_input and not puzzle.is_square():
                 raise ValueError('Sudoku puzzle must be a square matrix')

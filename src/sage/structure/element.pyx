@@ -3718,7 +3718,7 @@ cdef class Vector(ModuleElementWithMutability):
                     raise ZeroDivisionError("division by zero vector")
                 else:
                     raise ArithmeticError("vector is not in free module")
-        if is_Matrix(right):
+        if isinstance(right, Matrix):
             return right.solve_left(self)
         raise bin_op_exception('/', self, right)
 
@@ -4146,7 +4146,7 @@ cdef class Matrix(ModuleElement):
             sage: (b / a) * a == b
             True
         """
-        if is_Matrix(right):
+        if isinstance(right, Matrix):
             return right.solve_left(left)
         return coercion_model.bin_op(left, right, truediv)
 

@@ -16,7 +16,7 @@ Ideals of Finite Algebras
 from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 
 from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.rings.ideal import Ideal_generic
 from sage.structure.element import parent
 
@@ -63,7 +63,7 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
             B = [FiniteDimensionalAlgebraIdeal(A, x).basis_matrix() for x in gens]
             B = reduce(lambda x, y: x.stack(y), B, Matrix(k, 0, n))
             self._basis_matrix = B.echelon_form().image().basis_matrix()
-        elif is_Matrix(gens):
+        elif isinstance(gens, Matrix):
             gens = FiniteDimensionalAlgebraElement(A, gens)
         elif isinstance(gens, FiniteDimensionalAlgebraElement):
             gens = gens.vector()
