@@ -63,8 +63,12 @@ def is_LaurentSeriesRing(x):
         sage: K.<q> = LaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(K)
         True
+        sage: L.<z> = LazyLaurentSeriesRing(QQ)
+        sage: is_LaurentSeriesRing(L)
+        True
     """
-    return isinstance(x, LaurentSeriesRing)
+    from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
+    return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
 
 
 class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
@@ -440,6 +444,17 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             1/64*I*u^10 - 1/128*u^12 - 1/256*I*u^14 + 1/512*u^16 +
             1/1024*I*u^18 + O(u^20)
 
+        Lazy series::
+
+            sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+            sage: R = LaurentSeriesRing(QQ, names='z')
+            sage: R(z^-5 + 1/(1-z))
+            z^-5 + 1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + z^7 + z^8 + z^9 + z^10
+             + z^11 + z^12 + z^13 + z^14 + z^15 + z^16 + z^17 + z^18 + z^19 + O(z^20)
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: R(5 + z - 5*z^7)
+            5 + z - 5*z^7
+
         TESTS:
 
         Check that :issue:`28993` is fixed::
@@ -489,6 +504,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             x^-3
         """
         from sage.rings.fraction_field_element import is_FractionFieldElement
+        from sage.rings.lazy_series import LazyPowerSeries, LazyLaurentSeries
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.structure.element import parent
@@ -525,6 +541,14 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
               and isinstance(x.numerator(), (Polynomial, MPolynomial))):
             x = self(x.numerator()) / self(x.denominator())
             return (x << n).add_bigoh(prec)
+        elif isinstance(x, (LazyPowerSeries, LazyLaurentSeries)):
+            if prec is infinity:
+                try:
+                    x = self.power_series_ring()(x.polynomial())
+                except ValueError:
+                    x = x.add_bigoh(self.default_prec())
+            else:
+                x = x.add_bigoh(prec)
         return self.element_class(self, x, n).add_bigoh(prec)
 
     def random_element(self, algorithm='default'):
@@ -618,6 +642,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
             sage: S.has_coerce_map_from(S)
             True
+            sage: S.has_coerce_map_from(LazyLaurentSeriesRing(ZZ, 't'))
+            True
+            sage: S.has_coerce_map_from(LazyPowerSeriesRing(ZZ, 't'))
+            True
 
             sage: S.has_coerce_map_from(QQ)
             False
@@ -640,6 +668,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: R.has_coerce_map_from(ZZ['t']['x'])
             False
             sage: R.has_coerce_map_from(ZZ['x'])
+            True
+            sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ, 't'))
+            True
+            sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ['x'], 't'))
             True
         """
         A = self.base_ring()

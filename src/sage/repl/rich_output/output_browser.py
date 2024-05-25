@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Rich Output for the Browser
 """

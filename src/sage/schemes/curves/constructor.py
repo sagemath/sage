@@ -46,10 +46,10 @@ from sage.rings.rational_field import QQ
 
 from sage.structure.all import Sequence
 
-from sage.schemes.generic.ambient_space import is_AmbientSpace
-from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
-from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.generic.ambient_space import AmbientSpace
+from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
+from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.plane_conics.constructor import Conic
 
 from .projective_curve import (ProjectiveCurve,
@@ -233,10 +233,10 @@ def Curve(F, A=None):
         0
     """
     if A is None:
-        if is_AmbientSpace(F) and F.dimension() == 1:
+        if isinstance(F, AmbientSpace) and F.dimension() == 1:
             return Curve(F.coordinate_ring().zero(), F)
 
-        if is_AlgebraicScheme(F):
+        if isinstance(F, AlgebraicScheme):
             return Curve(F.defining_polynomials(), F.ambient_space())
 
         if isinstance(F, (list, tuple)):
@@ -291,7 +291,7 @@ def Curve(F, A=None):
         else:
             raise TypeError("F (={}) must be a multivariate polynomial".format(F))
     else:
-        if not is_AmbientSpace(A):
+        if not isinstance(A, AmbientSpace):
             raise TypeError("ambient space must be either an affine or projective space")
         if not isinstance(F, (list, tuple)):
             F = [F]
@@ -304,7 +304,7 @@ def Curve(F, A=None):
 
     k = A.base_ring()
 
-    if is_AffineSpace(A):
+    if isinstance(A, AffineSpace_generic):
         if n == 1:
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):
@@ -337,7 +337,7 @@ def Curve(F, A=None):
             return AffinePlaneCurve_field(A, F)
         return AffinePlaneCurve(A, F)
 
-    elif is_ProjectiveSpace(A):
+    elif isinstance(A, ProjectiveSpace_ring):
         if n == 1:
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):

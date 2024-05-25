@@ -92,7 +92,7 @@ REFERENCE:
 
 import sage.rings.abc
 from .ell_field import EllipticCurve_field
-from .ell_generic import is_EllipticCurve
+from .ell_generic import EllipticCurve_generic
 from .ell_point import EllipticCurvePoint_number_field
 from .constructor import EllipticCurve
 from sage.rings.integer_ring import ZZ
@@ -3176,7 +3176,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK.is_isogenous(EcK)      # long time (about 3.5 s)
             True
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True

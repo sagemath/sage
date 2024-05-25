@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The abstract Matroid class
 
@@ -1149,7 +1148,7 @@ cdef class Matroid(SageObject):
             - ``deletions`` is coindependent
             - ``contractions`` and ``deletions`` are disjoint.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -1260,7 +1259,7 @@ cdef class Matroid(SageObject):
         - ``hyperplanes`` -- the set of hyperplanes of a linear subclass of
           ``self``.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -4007,7 +4006,7 @@ cdef class Matroid(SageObject):
         - ``deletions`` -- (default: ``None``) an element or set of elements
           to be deleted
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. NOTE::
 
@@ -4295,7 +4294,7 @@ cdef class Matroid(SageObject):
         can be obtained by adding an element freely to the span of the matroid
         and then contracting that element.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -4494,7 +4493,7 @@ cdef class Matroid(SageObject):
           each of these. If not specified, the element is assumed to be in the
           span of the full groundset.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. NOTE::
 
@@ -4571,7 +4570,7 @@ cdef class Matroid(SageObject):
           of each of these. If not specified, the element is assumed to be in
           the cospan of the full groundset.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -4900,7 +4899,7 @@ cdef class Matroid(SageObject):
         parallel class (a closed set of rank 1, that is, each pair in it forms
         a circuit of length 2).
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -4936,7 +4935,7 @@ cdef class Matroid(SageObject):
         element from each series class (a coclosed set of rank 1, that is,
         each pair in it forms a cocircuit of length 2).
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -8569,9 +8568,9 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
-          label of ``e``; if ``mapping[e]`` is not defined then the identity
-          map is assumed
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`; if ``mapping[e]`` is not defined then the identity map
+          is assumed
 
         EXAMPLES::
 
@@ -8600,16 +8599,16 @@ cdef class Matroid(SageObject):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by
+        The output is obtained by relabeling each element `e` by
         ``mapping[e]``, where ``mapping`` is a given injective map. If
         ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
-          label of ``e``
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         EXAMPLES::
 

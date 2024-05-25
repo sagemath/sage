@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Discrete Gaussian Samplers for `\ZZ[x]`
 
