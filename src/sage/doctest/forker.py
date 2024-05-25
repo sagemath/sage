@@ -52,7 +52,6 @@ import time
 import signal
 import linecache
 import hashlib
-import multiprocessing
 import warnings
 import re
 import errno
@@ -80,7 +79,16 @@ from sage.cpython.string import bytes_to_str, str_to_bytes
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
 if os.uname().sysname == 'Darwin':
+    import multiprocessing
     multiprocessing.set_start_method('fork', force=True)
+
+try:
+    import multiprocessing
+    from multiprocessing import Process
+except ImportError:
+    multiprocessing = None
+    class Process:
+        pass
 
 
 def _sorted_dict_pprinter_factory(start, end):
@@ -1494,7 +1502,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 except KeyboardInterrupt:
                     # Assume this is a *real* interrupt. We need to
                     # escalate this to the master doctesting process.
-                    if not self.options.serial:
+                    if not self.options.serial and multiprocessing:
                         os.kill(os.getppid(), signal.SIGINT)
                     raise
                 finally:
@@ -1632,7 +1640,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 except KeyboardInterrupt:
                     # Assume this is a *real* interrupt. We need to
                     # escalate this to the master doctesting process.
-                    if not self.options.serial:
+                    if not self.options.serial and multiprocessing:
                         os.kill(os.getppid(), signal.SIGINT)
                     raise
                 finally:
@@ -2140,13 +2148,13 @@ class DocTestDispatcher(SageObject):
             sage -t .../sage/rings/big_oh.py
                 [... tests, ... s]
         """
-        if self.controller.options.serial:
+        if self.controller.options.serial or not multiprocessing:
             self.serial_dispatch()
         else:
             self.parallel_dispatch()
 
 
-class DocTestWorker(multiprocessing.Process):
+class DocTestWorker(Process):
     """
     The DocTestWorker process runs one :class:`DocTestTask` for a given
     source. It returns messages about doctest failures (or all tests if
@@ -2209,7 +2217,7 @@ class DocTestWorker(multiprocessing.Process):
                 cumulative wall time: ... seconds
             Features detected...
         """
-        multiprocessing.Process.__init__(self)
+        Process.__init__(self)
 
         self.source = source
         self.options = options
