@@ -73,7 +73,11 @@ if any(x in sys.argv
 print("Discovering Python/Cython source code....")
 t = time.time()
 from sage.misc.package import is_package_installed_and_updated
-distributions = ['']
+distributions = ['sagemath-categories',
+                 'sagemath-environment',
+                 'sagemath-objects',
+                 'sagemath-repl',
+                 '']
 optional_packages_with_extensions = os.environ.get('SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS', '').split(',')
 distributions += ['sagemath-{}'.format(pkg)
                   for pkg in optional_packages_with_extensions
