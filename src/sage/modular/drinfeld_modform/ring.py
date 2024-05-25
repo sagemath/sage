@@ -90,7 +90,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
       returns the graded ring of arbitrary type.
 
     - ``names`` string, tuple or list (default: ``None``) -- a single
-      character, a tuple or list of character, or comma seperated string
+      character, a tuple or list of character, or comma separated string
       of character representing the names of the generators. If this
       parameter is set to ``None`` and the rank is specified, then the
       default names for the generators will be:
@@ -99,8 +99,12 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
       * ``g1, g2, ..., hr`` for the arbitrary type forms.
 
-      If this parameter is a single character ``f`` and a rank is
-      specified, then the names will be of the form ``f1, f2, ..., fr``.
+      If this parameter is a single character, for example ``f``, and a
+      rank is specified, then the names will be of the form
+      ``f1, f2, ..., fr``. Finally, if this parameter is a list, a tupe
+      or a string of comma separated characters, then each character
+      will corresponds to a generator. Note that in this case, it not
+      necessary to specify the rank.
 
     EXAMPLES::
 
@@ -120,18 +124,21 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         sage: T*g1*g2 + g3
         g3 + T*g1*g2
 
-    When creating the ring, one can name and assign the generators in
-    various ways::
+    When creating the ring, one can name the generators in various
+    ways::
 
-        sage: M.<F, G> = DrinfeldModularForms(K, 2)
+        sage: M.<F, G, H> = DrinfeldModularForms(K)
         sage: M.gens()
-        [F, G]
-        sage: M = DrinfeldModularForms(K, 3, names='f')
+        [F, G, H]
+        sage: M = DrinfeldModularForms(K, 5, names='f')  # must specify the rank
         sage: M.gens()
-        [f1, f2, f3]
+        [f1, f2, f3, f4, f5]
         sage: M = DrinfeldModularForms(K, names='u, v, w, x')
         sage: M.gens()
         [u, v, w, x]
+        sage: M = DrinfeldModularForms(K, names=['F', 'G', 'H'])
+        sage: M.gens()
+        [F, G, H]
 
     Set the keyword parameter ``has_type`` to ``True`` in order to create
     the ring of Drinfeld modular forms of arbitrary type::
@@ -232,7 +239,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             sage: DrinfeldModularForms(Frac(GF(2)['T']), names=1)
             Traceback (most recent call last):
             ...
-            TypeError: names must be None, a comma seperated string or a list of string
+            TypeError: names must be None, a comma separated string or a list of string
 
             sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names='f1, f2, f3, f4')
             Traceback (most recent call last):
@@ -291,7 +298,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                     raise ValueError(f"the number of generators (={nb_names}) "
                                      f"must be equal to the rank (={rank})")
         else:
-            raise TypeError("names must be None, a comma seperated string "
+            raise TypeError("names must be None, a comma separated string "
                             "or a list of string")
         return cls.__classcall__(cls, base_ring, rank, group, has_type,
                                  tuple(names))
