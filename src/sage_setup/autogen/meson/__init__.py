@@ -72,7 +72,7 @@ def run(folder: Path, output_dir: Path, folder_rel_to_src=None, dry_run=False, f
     has_cython = False
 
     for subdir in subdirs:
-        if subdir.name.startswith('_') or subdir.name.startswith('.'):
+        if subdir.name.startswith('_') or subdir.name.startswith('.') or subdir.name.endswith('.egg-info'):
             continue
         subdir_distributions, subdir_has_cython = run(subdir, output_dir / subdir.name,
                                                       dry_run=dry_run, force=force, monolithic=monolithic)
