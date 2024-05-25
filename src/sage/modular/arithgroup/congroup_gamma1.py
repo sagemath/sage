@@ -587,7 +587,7 @@ class Gamma1_class(GammaH_class):
 
         - ``eps`` -- a Dirichlet character
 
-        -  ``p`` - a prime (default: 0); just the `p`-new subspace if given
+        -  ``p`` -- a prime (default: 0); just the `p`-new subspace if given
 
         - ``algorithm`` -- either "CohenOesterle" (the default) or "Quer". This
           specifies the method to use in the case of nontrivial character:

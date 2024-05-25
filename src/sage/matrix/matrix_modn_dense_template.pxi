@@ -2655,7 +2655,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        -  ``magma`` - a Magma session
+        -  ``magma`` -- a Magma session
 
         OUTPUT: string
 

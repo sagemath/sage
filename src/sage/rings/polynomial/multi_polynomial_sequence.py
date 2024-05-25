@@ -382,7 +382,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         - ``part`` -- a list of lists with polynomials
 
-        -  ``ring`` - a multivariate polynomial ring
+        -  ``ring`` -- a multivariate polynomial ring
 
         - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
@@ -841,8 +841,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        -  ``args`` - arguments to be passed to :meth:`MPolynomial.subs`
-        -  ``kwargs`` - keyword arguments to be passed to :meth:`MPolynomial.subs`
+        -  ``args`` -- arguments to be passed to :meth:`MPolynomial.subs`
+        -  ``kwargs`` -- keyword arguments to be passed to :meth:`MPolynomial.subs`
 
         EXAMPLES::
 

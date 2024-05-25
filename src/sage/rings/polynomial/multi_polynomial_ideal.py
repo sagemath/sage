@@ -314,7 +314,7 @@ def is_MPolynomialIdeal(x) -> bool:
 
     INPUT:
 
-    -  ``x`` - an arbitrary object
+    -  ``x`` -- an arbitrary object
 
     EXAMPLES::
 
@@ -346,7 +346,7 @@ class MPolynomialIdeal_magma_repr:
 
         INPUT:
 
-        -  ``magma`` - Magma instance
+        -  ``magma`` -- Magma instance
 
         EXAMPLES::
 
@@ -384,7 +384,7 @@ class MPolynomialIdeal_magma_repr:
         - ``prot`` -- if ``True`` Magma's protocol is printed to
           stdout.
 
-        -  ``magma`` - Magma instance or None (default instance) (default: None)
+        -  ``magma`` -- Magma instance or None (default instance) (default: None)
 
         EXAMPLES::
 
@@ -684,7 +684,7 @@ class MPolynomialIdeal_singular_repr(
         INPUT:
 
 
-        -  ``self`` - must be a principal ideal in 2 or 3 vars
+        -  ``self`` -- must be a principal ideal in 2 or 3 vars
            over `\QQ`.
 
 
@@ -1042,7 +1042,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        -  ``algorithm`` - string or None (default: None)
+        -  ``algorithm`` -- string or None (default: None)
 
         ALGORITHMS:
 
@@ -1423,7 +1423,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        -  ``algorithm`` - see below for available algorithms
+        -  ``algorithm`` -- see below for available algorithms
 
 
         ALGORITHMS:
@@ -1713,7 +1713,7 @@ class MPolynomialIdeal_singular_repr(
         """
         OUTPUT:
 
-        -  ``list`` - a list of prime ideals
+        -  ``list`` -- a list of prime ideals
 
         EXAMPLES::
 
@@ -2405,7 +2405,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        -  ``J`` - multivariate polynomial ideal
+        -  ``J`` -- multivariate polynomial ideal
 
         EXAMPLES::
 
@@ -4196,14 +4196,14 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         INPUT:
 
 
-        -  ``is_groebner_basis`` - bool (default False). if
+        -  ``is_groebner_basis`` -- bool (default False). if
            True, then I.gens() must be a Groebner basis with respect to the
            standard degree lexicographic term order.
 
-        -  ``symmetry`` - default: None; if not None, describes
+        -  ``symmetry`` -- default: None; if not None, describes
            symmetries of the ideal
 
-        -  ``verbose`` - default: False; if True, printout
+        -  ``verbose`` -- default: False; if True, printout
            useful info during computations
         """
         import sage.rings.polynomial.groebner_fan as groebner_fan
@@ -4840,7 +4840,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         INPUT:
 
 
-        -  ``P`` - a multivariate polynomial ring
+        -  ``P`` -- a multivariate polynomial ring
 
 
         EXAMPLES::
@@ -5018,7 +5018,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         INPUT:
 
 
-        -  ``h`` - variable name or variable in cover ring
+        -  ``h`` -- variable name or variable in cover ring
            (default: 'h')
 
 

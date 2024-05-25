@@ -466,31 +466,31 @@ class Tachyon(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``filename`` - (default: 'sage.png') output
+        -  ``filename`` -- (default: 'sage.png') output
            filename; the extension of the filename determines the type.
            Supported types include:
 
-        -  ``tga`` - 24-bit (uncompressed)
+        -  ``tga`` -- 24-bit (uncompressed)
 
-        -  ``bmp`` - 24-bit Windows BMP (uncompressed)
+        -  ``bmp`` -- 24-bit Windows BMP (uncompressed)
 
-        -  ``ppm`` - 24-bit PPM (uncompressed)
+        -  ``ppm`` -- 24-bit PPM (uncompressed)
 
-        -  ``rgb`` - 24-bit SGI RGB (uncompressed)
+        -  ``rgb`` -- 24-bit SGI RGB (uncompressed)
 
-        -  ``png`` - 24-bit PNG (compressed, lossless)
+        -  ``png`` -- 24-bit PNG (compressed, lossless)
 
-        -  ``verbose`` - integer (default: ``None``); if no verbosity setting
+        -  ``verbose`` -- integer (default: ``None``); if no verbosity setting
            is supplied, the verbosity level set by
            ``sage.misc.verbose.set_verbose`` is used.
 
-        -  ``0`` - silent
+        -  ``0`` -- silent
 
-        -  ``1`` - some output
+        -  ``1`` -- some output
 
-        -  ``2`` - very verbose output
+        -  ``2`` -- very verbose output
 
-        -  ``extra_opts`` - passed directly to tachyon command
+        -  ``extra_opts`` -- passed directly to tachyon command
            line. Use tachyon_rt.usage() to see some of the possibilities.
 
         EXAMPLES::
@@ -711,7 +711,7 @@ class Tachyon(WithEqualityById, SageObject):
         r"""
         INPUT:
 
-        -  ``type`` - (default: 0)
+        -  ``type`` -- (default: 0)
 
            0. No special texture, plain shading
            1. 3D checkerboard function, like a rubik's cube
@@ -725,9 +725,9 @@ class Tachyon(WithEqualityById, SageObject):
            8. Spherical Image Map, requires ppm filename (with path)
            9. Planar Image Map, requires ppm filename (with path)
 
-        -  ``center`` - (default: (0,0,0))
-        -  ``rotate`` - (default: (0,0,0))
-        -  ``scale`` - (default: (1,1,1))
+        -  ``center`` -- (default: (0,0,0))
+        -  ``rotate`` -- (default: (0,0,0))
+        -  ``scale`` -- (default: (1,1,1))
 
 
         EXAMPLES: We draw an infinite checkerboard::
@@ -749,28 +749,28 @@ class Tachyon(WithEqualityById, SageObject):
         r"""
         INPUT:
 
-        -  ``name`` - string; the name of the texture (to be
+        -  ``name`` -- string; the name of the texture (to be
            used later)
 
-        -  ``ambient`` - (default: 0.2)
+        -  ``ambient`` -- (default: 0.2)
 
-        -  ``diffuse`` - (default: 0.8)
+        -  ``diffuse`` -- (default: 0.8)
 
-        -  ``specular`` - (default: 0.0)
+        -  ``specular`` -- (default: 0.0)
 
-        -  ``opacity`` - (default: 1.0)
+        -  ``opacity`` -- (default: 1.0)
 
-        -  ``color`` - (default: (1.0,0.0,0.5))
+        -  ``color`` -- (default: (1.0,0.0,0.5))
 
-        -  ``texfunc`` - (default: 0); a texture function; this
+        -  ``texfunc`` -- (default: 0); a texture function; this
            is either the output of self.texfunc, or a number between 0 and 9,
            inclusive. See the docs for self.texfunc.
 
-        -  ``phong`` - (default: 0)
+        -  ``phong`` -- (default: 0)
 
-        -  ``phongsize`` - (default: 0.5)
+        -  ``phongsize`` -- (default: 0.5)
 
-        -  ``phongtype`` - (default: "PLASTIC")
+        -  ``phongtype`` -- (default: "PLASTIC")
 
         EXAMPLES:
 
@@ -968,27 +968,27 @@ class Tachyon(WithEqualityById, SageObject):
         r"""
         INPUT:
 
-        -  ``f`` - Function of two variables, which returns a
+        -  ``f`` -- Function of two variables, which returns a
            float (or coercible to a float) (xmin,xmax)
 
         -  ``(ymin,ymax)`` - defines the rectangle to plot over
            texture: Name of texture to be used Optional arguments:
 
-        -  ``grad_f`` - gradient function. If specified,
+        -  ``grad_f`` -- gradient function. If specified,
            smooth triangles will be used.
 
-        -  ``max_bend`` - Cosine of the threshold angle
+        -  ``max_bend`` -- Cosine of the threshold angle
            between triangles used to determine whether or not to recurse after
            the minimum depth
 
-        -  ``max_depth`` - maximum recursion depth. Maximum
+        -  ``max_depth`` -- maximum recursion depth. Maximum
            triangles plotted = `2^{2*max_depth}`
 
-        -  ``initial_depth`` - minimum recursion depth. No
+        -  ``initial_depth`` -- minimum recursion depth. No
            error-tolerance checking is performed below this depth. Minimum
            triangles plotted: `2^{2*min_depth}`
 
-        -  ``num_colors`` - Number of rainbow bands to color
+        -  ``num_colors`` -- Number of rainbow bands to color
            the plot with. Texture supplied will be cloned (with different
            colors) using the texture_recolor method of the Tachyon object.
 

@@ -2426,9 +2426,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``self`` - an nxn matrix
+        -  ``self`` -- an nxn matrix
 
-        -  ``f`` - a polynomial in n variables x=(x1,...,xn)
+        -  ``f`` -- a polynomial in n variables x=(x1,...,xn)
 
         OUTPUT: The polynomial f(self\*x).
 
@@ -3192,11 +3192,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         INPUT:
 
 
-        -  ``i`` - ith row
+        -  ``i`` -- ith row
 
-        -  ``s`` - scalar
+        -  ``s`` -- scalar
 
-        -  ``start_col`` - only rescale entries at this column
+        -  ``start_col`` -- only rescale entries at this column
            and to the right
 
 
@@ -3311,11 +3311,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         INPUT:
 
 
-        -  ``i`` - ith column
+        -  ``i`` -- ith column
 
-        -  ``s`` - scalar
+        -  ``s`` -- scalar
 
-        -  ``start_row`` - only rescale entries at this row
+        -  ``start_row`` -- only rescale entries at this row
            and lower
 
 
@@ -3586,13 +3586,13 @@ cdef class Matrix(sage.structure.element.Matrix):
         INPUT:
 
 
-        -  ``i`` - integer, index into the rows of self
+        -  ``i`` -- integer, index into the rows of self
 
-        -  ``A`` - a matrix
+        -  ``A`` -- a matrix
 
-        -  ``r`` - integer, index into rows of A
+        -  ``r`` -- integer, index into rows of A
 
-        -  ``cols`` - a *sorted* list of integers.
+        -  ``cols`` -- a *sorted* list of integers.
 
         -  ``(cols_index`` - ignored)
 
@@ -3888,7 +3888,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``v`` -  a list of scalars.  The length can be less than
+        -  ``v`` --  a list of scalars.  The length can be less than
            the number of rows of ``self`` but not greater.
 
         OUTPUT:
@@ -3965,7 +3965,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``v`` -  a list of scalars.  The length can be less than
+        -  ``v`` --  a list of scalars.  The length can be less than
            the number of columns of ``self`` but not greater.
 
         OUTPUT:
@@ -5148,7 +5148,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``v`` - a free module element.
+        -  ``v`` -- a free module element.
 
         OUTPUT: The vector times matrix product v\*A.
 

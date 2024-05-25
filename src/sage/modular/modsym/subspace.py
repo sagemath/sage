@@ -37,16 +37,16 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         INPUT:
 
 
-        -  ``ambient_hecke_module`` - the ambient space of
+        -  ``ambient_hecke_module`` -- the ambient space of
            modular symbols in which we're constructing a submodule
 
-        -  ``submodule`` - the underlying free module of the
+        -  ``submodule`` -- the underlying free module of the
            submodule
 
-        -  ``dual_free_module`` - underlying free module of
+        -  ``dual_free_module`` -- underlying free module of
            the dual of the submodule (optional)
 
-        -  ``check`` - (default: False) whether to check that
+        -  ``check`` -- (default: False) whether to check that
            the submodule is invariant under all Hecke operators T_p.
 
 
@@ -380,9 +380,9 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
         INPUT:
 
-        -  ``sign`` - int (either -1 or +1)
+        -  ``sign`` -- int (either -1 or +1)
 
-        -  ``compute_dual`` - bool (default: True) also
+        -  ``compute_dual`` -- bool (default: True) also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols

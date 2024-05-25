@@ -2800,16 +2800,16 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
     INPUT:
 
 
-    -  ``g`` - current position on the tree.
+    -  ``g`` -- current position on the tree.
 
-    -  ``aut_gens`` - list of generators of Aut(g), in
+    -  ``aut_gens`` -- list of generators of Aut(g), in
        list notation.
 
-    -  ``max_verts`` - when to retreat.
+    -  ``max_verts`` -- when to retreat.
 
-    -  ``property`` - check before traversing below g.
+    -  ``property`` -- check before traversing below g.
 
-    -  ``degree_sequence`` - specify a degree sequence to try to
+    -  ``degree_sequence`` -- specify a degree sequence to try to
        obtain.
 
 
@@ -2992,12 +2992,12 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, sparse=T
     INPUT:
 
 
-    -  ``g`` - current position on the tree.
+    -  ``g`` -- current position on the tree.
 
-    -  ``aut_gens`` - list of generators of Aut(g), in
+    -  ``aut_gens`` -- list of generators of Aut(g), in
        list notation.
 
-    -  ``property`` - check before traversing below g.
+    -  ``property`` -- check before traversing below g.
 
 
     EXAMPLES::

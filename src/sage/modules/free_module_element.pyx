@@ -2442,20 +2442,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         r"""
         INPUT:
 
-        -  ``xmin`` - (default: 0) start x position to start
+        -  ``xmin`` -- (default: 0) start x position to start
            plotting
 
-        -  ``xmax`` - (default: 1) stop x position to stop
+        -  ``xmax`` -- (default: 1) stop x position to stop
            plotting
 
-        -  ``eps`` - (default: determined by xmax) we view this
+        -  ``eps`` -- (default: determined by xmax) we view this
            vector as defining a function at the points xmin, xmin + eps, xmin
            + 2\*eps, ...,
 
-        -  ``res`` - (default: all points) total number of
+        -  ``res`` -- (default: all points) total number of
            points to include in the graph
 
-        -  ``connect`` - (default: True) if True draws a line;
+        -  ``connect`` -- (default: True) if True draws a line;
            otherwise draw a list of points.
 
 
@@ -2847,7 +2847,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         INPUT:
 
 
-        -  ``right`` - vector of the same degree as self. It
+        -  ``right`` -- vector of the same degree as self. It
            need not be in the same vector space as self, as long as the
            coefficients can be multiplied.
 
@@ -3865,10 +3865,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
               is sparse.
 
 
-        -  ``phi`` - arbitrary Python function or callable
+        -  ``phi`` -- arbitrary Python function or callable
            object
 
-        -  ``R`` - (optional) ring
+        -  ``R`` -- (optional) ring
 
 
         OUTPUT: a free module element over R

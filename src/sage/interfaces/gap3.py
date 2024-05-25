@@ -296,7 +296,7 @@ class Gap3(Gap_generic):
 
         INPUT:
 
-        -  command - string (default "gap3"); points to the gap3
+        -  command -- string (default "gap3"); points to the gap3
            executable on your system; by default, it is assumed the
            executable is in your path.
 

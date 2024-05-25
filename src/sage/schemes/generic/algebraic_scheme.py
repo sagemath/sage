@@ -899,9 +899,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     INPUT:
 
-    -  ``A`` - ambient space (e.g. affine or projective `n`-space)
+    -  ``A`` -- ambient space (e.g. affine or projective `n`-space)
 
-    -  ``polynomials`` - single polynomial, ideal or iterable of defining
+    -  ``polynomials`` -- single polynomial, ideal or iterable of defining
        polynomials; in any case polynomials must belong to the coordinate
        ring of the ambient space and define valid polynomial functions (e.g.
        they should be homogeneous in the case of a projective space)

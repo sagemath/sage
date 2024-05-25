@@ -748,7 +748,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``mon`` - a monomial
+        -  ``mon`` -- a monomial
 
 
         OUTPUT: coefficient in base ring
@@ -935,7 +935,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``degrees`` - Can be any of:
+        -  ``degrees`` -- Can be any of:
 
            -  a dictionary of degree restrictions
 
@@ -1304,7 +1304,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``var`` - an integer indicating which variable to
+        -  ``var`` -- an integer indicating which variable to
            use to homogenize (0 <= var < parent(self).ngens())
 
 
@@ -1421,7 +1421,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``fixed`` - (optional) dictionary of inputs
+        -  ``fixed`` -- (optional) dictionary of inputs
 
         -  ``**kwds`` - named parameters
 
@@ -1543,7 +1543,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``R`` - (default: None) :class:`PolynomialRing`
+        -  ``R`` -- (default: None) :class:`PolynomialRing`
 
 
         If this polynomial is not in at most one variable, then a
@@ -2392,7 +2392,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``I`` - a list of polynomials or an ideal
+        -  ``I`` -- a list of polynomials or an ideal
 
         EXAMPLES::
 

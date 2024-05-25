@@ -1310,7 +1310,7 @@ class ArithmeticSubgroup(Group):
 
         INPUT:
 
-        -  ``weight`` - an integer `\geq 2` (default: 2)
+        -  ``weight`` -- an integer `\geq 2` (default: 2)
 
         EXAMPLES::
 

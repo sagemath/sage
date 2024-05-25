@@ -591,12 +591,12 @@ def solve(f, *args, **kwds):
 
     INPUT:
 
-    -  ``f`` - equation or system of equations (given by a
+    -  ``f`` -- equation or system of equations (given by a
        list or tuple)
 
     -  ``*args`` - variables to solve for.
 
-    -  ``solution_dict`` - bool (default: False); if True or non-zero,
+    -  ``solution_dict`` -- bool (default: False); if True or non-zero,
        return a list of dictionaries containing the solutions. If there
        are no solutions, return an empty list (rather than a list containing
        an empty dictionary). Likewise, if there's only a single solution,
@@ -605,16 +605,16 @@ def solve(f, *args, **kwds):
     There are a few optional keywords if you are trying to solve a single
     equation.  They may only be used in that context.
 
-    -  ``multiplicities`` - bool (default: False); if True,
+    -  ``multiplicities`` -- bool (default: False); if True,
        return corresponding multiplicities.  This keyword is
        incompatible with ``to_poly_solve=True`` and does not make
        any sense when solving inequalities.
 
-    -  ``explicit_solutions`` - bool (default: False); require that
+    -  ``explicit_solutions`` -- bool (default: False); require that
        all roots be explicit rather than implicit. Not used
        when solving inequalities.
 
-    -  ``to_poly_solve`` - bool (default: False) or string; use
+    -  ``to_poly_solve`` -- bool (default: False) or string; use
        Maxima's ``to_poly_solver`` package to search for more possible
        solutions, but possibly encounter approximate solutions.
        This keyword is incompatible with ``multiplicities=True``
@@ -1479,11 +1479,11 @@ def solve_mod(eqns, modulus, solution_dict=False):
     INPUT:
 
 
-    -  ``eqns`` - equation or list of equations
+    -  ``eqns`` -- equation or list of equations
 
-    -  ``modulus`` - an integer
+    -  ``modulus`` -- an integer
 
-    -  ``solution_dict`` - bool (default: False); if True or non-zero,
+    -  ``solution_dict`` -- bool (default: False); if True or non-zero,
        return a list of dictionaries containing the solutions. If there
        are no solutions, return an empty list (rather than a list containing
        an empty dictionary). Likewise, if there's only a single solution,
@@ -1627,13 +1627,13 @@ def _solve_mod_prime_power(eqns, p, m, vars):
     INPUT:
 
 
-    -  ``eqns`` - equation or list of equations
+    -  ``eqns`` -- equation or list of equations
 
-    -  ``p`` - a prime
+    -  ``p`` -- a prime
 
-    -  ``i`` - an integer > 0
+    -  ``i`` -- an integer > 0
 
-    -  ``vars`` - a list of variables to solve for
+    -  ``vars`` -- a list of variables to solve for
 
 
     EXAMPLES::

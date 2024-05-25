@@ -1076,9 +1076,9 @@ def CirculantGraph(n, adjacency):
     INPUT:
 
 
-    -  ``n`` - number of vertices in the graph
+    -  ``n`` -- number of vertices in the graph
 
-    -  ``adjacency`` - the list of j values
+    -  ``adjacency`` -- the list of j values
 
 
     PLOTTING: Upon construction, the position dictionary is filled to
@@ -3602,7 +3602,7 @@ def trees(vertices):
 
     INPUT:
 
-    -  ``vertices`` - the size of the trees created.
+    -  ``vertices`` -- the size of the trees created.
 
     OUTPUT:
 

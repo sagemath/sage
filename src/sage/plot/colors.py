@@ -376,7 +376,7 @@ class Color:
 
         INPUT:
 
-        -  ``r,g,b`` - either a triple of floats between 0 and 1,
+        -  ``r,g,b`` -- either a triple of floats between 0 and 1,
            OR ``r`` - a color name string or HTML color hex string
 
         - ``space`` -- a string (default: 'rgb'); the coordinate system

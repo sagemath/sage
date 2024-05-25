@@ -333,9 +333,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        -  ``xmin`` - float
+        -  ``xmin`` -- float
 
-        -  ``xmax`` - float
+        -  ``xmax`` -- float
 
         -  ``*args, **kwds`` - passed to either plot or
            point
@@ -1975,14 +1975,14 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        -  ``root`` - whether or not to also return a square
+        -  ``root`` -- whether or not to also return a square
            root (default: ``False``)
 
         OUTPUT:
 
-        -  ``bool`` - whether or not a square
+        -  ``bool`` -- whether or not a square
 
-        -  ``root`` - (optional) an actual square root if
+        -  ``root`` -- (optional) an actual square root if
            found, and ``None`` otherwise.
 
         EXAMPLES::
@@ -3291,9 +3291,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        -  ``n`` - an integer
+        -  ``n`` -- an integer
 
-        -  ``value`` - value to set the n-th coefficient to
+        -  ``value`` -- value to set the n-th coefficient to
 
         OUTPUT: an :class:`IndexError` is always raised.
 
@@ -3486,9 +3486,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        -  ``self`` - Polynomial
+        -  ``self`` -- Polynomial
 
-        -  ``right`` - Polynomial (over same base ring as
+        -  ``right`` -- Polynomial (over same base ring as
            self)
 
 
@@ -5689,7 +5689,7 @@ cdef class Polynomial(CommutativePolynomial):
         OUTPUT:
 
 
-        -  ``bool`` - ``True`` if and only if this polynomial is
+        -  ``bool`` -- ``True`` if and only if this polynomial is
            constant
 
 
@@ -6611,7 +6611,7 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``n`` - (default: None); if given, an integer that
+        -  ``n`` -- (default: None); if given, an integer that
            is at least 0
 
 
@@ -6745,9 +6745,9 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``n`` - an integer (the number of iterations),
+        -  ``n`` -- an integer (the number of iterations),
 
-        -  ``x0`` - an initial guess `x_0`.
+        -  ``x0`` -- an initial guess `x_0`.
 
 
         OUTPUT: A list of numbers hopefully approximating a root of
@@ -8076,14 +8076,14 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``ring`` - the ring to find roots in
+        -  ``ring`` -- the ring to find roots in
 
-        -  ``multiplicities`` - bool (default: ``True``) if ``True``
+        -  ``multiplicities`` -- bool (default: ``True``) if ``True``
            return list of pairs `(r, n)`, where `r` is the root and `n` is the
            multiplicity. If ``False``, just return the unique roots, with no
            information about multiplicities.
 
-        -  ``algorithm`` - the root-finding algorithm to use.
+        -  ``algorithm`` -- the root-finding algorithm to use.
            We attempt to select a reasonable algorithm by default, but this
            lets the caller override our choice.
 
@@ -10470,7 +10470,7 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``p`` - (positive integer or +infinity) the degree
+        -  ``p`` -- (positive integer or +infinity) the degree
            of the norm
 
 

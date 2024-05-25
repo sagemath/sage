@@ -379,7 +379,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``other`` - word
+        -  ``other`` -- word
 
         OUTPUT:
 
@@ -409,9 +409,9 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``other`` - word
+        -  ``other`` -- word
 
-        -  ``length`` - string (optional, default: ``'unknown'``)
+        -  ``length`` -- string (optional, default: ``'unknown'``)
            the length type of the resulting word if known. It may be one of
            the following:
 
@@ -737,7 +737,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``morphism`` - Can be an instance of WordMorphism, or
+        -  ``morphism`` -- Can be an instance of WordMorphism, or
            anything that can be used to construct one.
 
         EXAMPLES::
@@ -842,7 +842,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: None) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         OUTPUT:
@@ -908,7 +908,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: None) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         OUTPUT:
@@ -998,10 +998,10 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: None) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
-        -  ``algorithm`` - string (default: ``'recursive'``) specifying which
+        -  ``algorithm`` -- string (default: ``'recursive'``) specifying which
            algorithm to be used when computing the iterated palindromic closure.
            It must be one of the two following values:
 
@@ -1455,11 +1455,11 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``self`` - word over natural numbers
+        -  ``self`` -- word over natural numbers
 
-        -  ``base`` - integer (default : 2), greater or equal to 2
+        -  ``base`` -- integer (default : 2), greater or equal to 2
 
-        -  ``mod`` - modulo (default: ``None``), can take the following
+        -  ``mod`` -- modulo (default: ``None``), can take the following
            values:
 
            - integer -- the modulo

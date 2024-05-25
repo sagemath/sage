@@ -1366,12 +1366,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``base`` - integer (default: 10)
+        -  ``base`` -- integer (default: 10)
 
-        -  ``digits`` - optional indexable object as source for
+        -  ``digits`` -- optional indexable object as source for
            the digits
 
-        -  ``padto`` - the minimal length of the returned list,
+        -  ``padto`` -- the minimal length of the returned list,
            sufficient number of zeros are added to make the list minimum that
            length (default: 0)
 
@@ -1698,7 +1698,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``base`` - integer (default: 10)
+        -  ``base`` -- integer (default: 10)
 
         EXAMPLES::
 
@@ -2320,9 +2320,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``n`` - integer `\geq 1` (must fit in the C ``int`` type).
+        -  ``n`` -- integer `\geq 1` (must fit in the C ``int`` type).
 
-        -  ``truncate_mode`` - boolean, whether to allow truncation if
+        -  ``truncate_mode`` -- boolean, whether to allow truncation if
            ``self`` is not an ``n``-th power.
 
         OUTPUT:
@@ -2611,7 +2611,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - integer `\geq 2`
+        -  ``m`` -- integer `\geq 2`
 
         AUTHORS:
 
@@ -2763,9 +2763,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - default: natural log base e
+        -  ``m`` -- default: natural log base e
 
-        -  ``prec`` - integer (default: ``None``): if ``None``, returns
+        -  ``prec`` -- integer (default: ``None``): if ``None``, returns
            symbolic, else to given bits of precision as in :class:`RealField`
 
         EXAMPLES::
@@ -2882,7 +2882,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
 
-        -  ``prec`` - integer (default: None): if None, returns
+        -  ``prec`` -- integer (default: None): if None, returns
            symbolic, else to given bits of precision as in :class:`RealField`
 
 
@@ -2918,7 +2918,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - Integer
+        -  ``m`` -- Integer
 
         OUTPUT: Integer
 
@@ -3401,13 +3401,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``other`` - the divisor
+        -  ``other`` -- the divisor
 
         OUTPUT:
 
-        -  ``q`` - the quotient of self/other
+        -  ``q`` -- the quotient of self/other
 
-        -  ``r`` - the remainder of self/other
+        -  ``r`` -- the remainder of self/other
 
         EXAMPLES::
 
@@ -3858,7 +3858,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``algorithm`` - string
+        -  ``algorithm`` -- string
 
            - ``'pari'`` -- (default) use the PARI library
 
@@ -4255,7 +4255,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``p`` - an integer at least 2.
+        -  ``p`` -- an integer at least 2.
 
         EXAMPLES::
 
@@ -4317,7 +4317,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``p`` - an integer at least 2.
+        -  ``p`` -- an integer at least 2.
 
         OUTPUT:
 
@@ -5862,7 +5862,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``proof`` - bool or None (default: None, see
+        -  ``proof`` -- bool or None (default: None, see
            ``proof.arithmetic`` or :mod:`sage.structure.proof`) Note that the global Sage
            default is ``proof=True``
 
@@ -6909,13 +6909,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``self`` - Integer
+        -  ``self`` -- Integer
 
-        -  ``n`` - Integer, or ideal of integer ring
+        -  ``n`` -- Integer, or ideal of integer ring
 
         OUTPUT:
 
-        -  ``x`` - Integer such that x\*self = 1 (mod m), or
+        -  ``x`` -- Integer such that x\*self = 1 (mod m), or
            raises ZeroDivisionError.
 
         IMPLEMENTATION:

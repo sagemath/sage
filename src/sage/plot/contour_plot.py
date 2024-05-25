@@ -328,7 +328,7 @@ def contour_plot(f, xrange, yrange, **options):
 
     - ``legend_label`` -- the label for this item in the legend
 
-    -  ``region`` - (default: None) If region is given, it must be a function
+    -  ``region`` -- (default: None) If region is given, it must be a function
         of two variables. Only segments of the surface where region(x,y)
         returns a number >0 will be included in the plot.
 

@@ -818,7 +818,7 @@ def lucas_number2(n, P, Q):
     INPUT:
 
 
-    -  ``n`` - integer
+    -  ``n`` -- integer
 
     -  ``P, Q`` - integer or rational numbers
 

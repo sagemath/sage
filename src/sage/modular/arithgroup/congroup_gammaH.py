@@ -1247,8 +1247,8 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        -  ``k`` - an integer (default: 2), the weight. Not fully implemented for k = 1.
-        -  ``p`` - integer (default: 0); if nonzero, compute the `p`-new subspace.
+        -  ``k`` -- an integer (default: 2), the weight. Not fully implemented for k = 1.
+        -  ``p`` -- integer (default: 0); if nonzero, compute the `p`-new subspace.
 
         OUTPUT: Integer
 

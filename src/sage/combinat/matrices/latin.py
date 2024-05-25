@@ -625,7 +625,7 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        -  ``self`` -- LatinSquare
 
         EXAMPLES::
 
@@ -742,11 +742,11 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        -  ``self`` -- LatinSquare
 
-        -  ``r`` - int; row of the latin square
+        -  ``r`` -- int; row of the latin square
 
-        -  ``c`` - int; column of the latin square
+        -  ``c`` -- int; column of the latin square
 
         EXAMPLES::
 
@@ -789,7 +789,7 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` - LatinSquare
+        -  ``self`` -- LatinSquare
 
         OUTPUT:
 
@@ -1598,7 +1598,7 @@ def beta1(rce, T1, T2):
     INPUT:
 
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    -  ``rce`` -- tuple (or list) (r, c, e) in T1
 
     -  ``T1, T2`` - latin bitrade
 
@@ -1638,7 +1638,7 @@ def beta2(rce, T1, T2):
 
     INPUT:
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    -  ``rce`` -- tuple (or list) (r, c, e) in T1
 
     -  ``T1, T2`` - latin bitrade
 
@@ -1681,7 +1681,7 @@ def beta3(rce, T1, T2):
     INPUT:
 
 
-    -  ``rce`` - tuple (or list) (r, c, e) in T1
+    -  ``rce`` -- tuple (or list) (r, c, e) in T1
 
     -  ``T1, T2`` - latin bitrade
 

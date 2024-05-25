@@ -4307,7 +4307,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``). If ``True``, return a list of
+        -  ``all`` -- bool (default: ``False``). If ``True``, return a list of
            all `n`-th roots as complex algebraic numbers.
 
         .. WARNING::

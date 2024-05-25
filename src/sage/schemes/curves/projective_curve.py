@@ -758,9 +758,9 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        -  ``self`` - an affine plane curve
+        -  ``self`` -- an affine plane curve
 
-        -  ``patch`` - (optional) the affine patch to be plotted; if not
+        -  ``patch`` -- (optional) the affine patch to be plotted; if not
            specified, the patch corresponding to the last projective
            coordinate being nonzero
 
@@ -2016,7 +2016,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         INPUT:
 
 
-        -  ``sort`` - bool (default: ``True``), if ``True`` return the
+        -  ``sort`` -- bool (default: ``True``), if ``True`` return the
            point list sorted. If ``False``, returns the points in the order
            computed by Singular.
 
@@ -2086,7 +2086,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         INPUT:
 
-        -  ``D`` - a divisor
+        -  ``D`` -- a divisor
 
         OUTPUT: A list of function field elements that form a basis of the
         Riemann-Roch space.

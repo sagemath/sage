@@ -916,9 +916,9 @@ class ManinSymbolList_character(ManinSymbolList):
 
         INPUT:
 
-        -  ``character`` - (DirichletCharacter) the Dirichlet character
+        -  ``character`` -- (DirichletCharacter) the Dirichlet character
 
-        -  ``weight`` - (integer) the weight
+        -  ``weight`` -- (integer) the weight
 
         EXAMPLES::
 

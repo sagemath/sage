@@ -580,12 +580,12 @@ class Singular(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``x`` - string (of code)
+        -  ``x`` -- string (of code)
 
-        -  ``allow_semicolon`` - default: False; if False then
+        -  ``allow_semicolon`` -- default: False; if False then
            raise a :class:`TypeError` if the input line contains a semicolon.
 
-        -  ``strip`` - ignored
+        -  ``strip`` -- ignored
 
         EXAMPLES::
 
@@ -883,7 +883,7 @@ class Singular(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``gens`` - list or tuple of Singular objects (or
+        -  ``gens`` -- list or tuple of Singular objects (or
            objects that can be made into Singular objects via evaluation)
 
 
@@ -1484,10 +1484,10 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         INPUT:
 
 
-        -  ``n`` - an integer *or* a 2-tuple (for setting
+        -  ``n`` -- an integer *or* a 2-tuple (for setting
            matrix elements)
 
-        -  ``value`` - anything (is coerced to a Singular
+        -  ``value`` -- anything (is coerced to a Singular
            object if it is not one already)
 
 
@@ -1713,13 +1713,13 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         INPUT:
 
 
-        -  ``R`` - (default: None); an optional polynomial ring.
+        -  ``R`` -- (default: None); an optional polynomial ring.
            If it is provided, then you have to make sure that it
            matches the current singular ring as, e.g., returned by
            singular.current_ring(). By default, the output of
            :meth:`sage_global_ring` is used.
 
-        -  ``kcache`` - (default: None); an optional dictionary
+        -  ``kcache`` -- (default: None); an optional dictionary
            for faster finite field lookups, this is mainly useful for finite
            extension fields
 
@@ -1922,7 +1922,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
         INPUT:
 
-        -  ``R`` - (default: None); an optional ring, over which
+        -  ``R`` -- (default: None); an optional ring, over which
            the resulting matrix is going to be defined.
            By default, the output of :meth:`sage_global_ring` is used.
 
@@ -2242,9 +2242,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         INPUT:
 
 
-        -  ``name`` - string to choose the attribute
+        -  ``name`` -- string to choose the attribute
 
-        -  ``value`` - boolean value or None for reading,
+        -  ``value`` -- boolean value or None for reading,
            (default:None)
 
 
@@ -2672,7 +2672,7 @@ class SingularGBDefaultContext:
 
         INPUT:
 
-        -  ``singular`` - Singular instance (default: default instance)
+        -  ``singular`` -- Singular instance (default: default instance)
 
         EXAMPLES::
 

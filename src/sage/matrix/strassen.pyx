@@ -253,9 +253,9 @@ def strassen_echelon(MatrixWindow A, cutoff):
 
     INPUT:
 
-    -  ``A`` - matrix window
+    -  ``A`` -- matrix window
 
-    -  ``cutoff`` - size at which algorithm reverts to
+    -  ``cutoff`` -- size at which algorithm reverts to
        naive Gaussian elimination and multiplication must be at least 1.
 
     OUTPUT: The list of pivot columns

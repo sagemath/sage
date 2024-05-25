@@ -639,9 +639,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         INPUT:
 
 
-        -  ``self`` - unit modulo `n`
+        -  ``self`` -- unit modulo `n`
 
-        -  ``b`` - a unit modulo `n`. If ``b`` is not given,
+        -  ``b`` -- a unit modulo `n`. If ``b`` is not given,
            ``R.multiplicative_generator()`` is used, where
            ``R`` is the parent of ``self``.
 
@@ -1110,12 +1110,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         INPUT:
 
-        -  ``extend`` - bool (default: ``True``);
+        -  ``extend`` -- bool (default: ``True``);
            if ``True``, return a square root in an extension ring,
            if necessary. Otherwise, raise a ``ValueError`` if the
            square root is not in the base ring.
 
-        -  ``all`` - bool (default: ``False``); if
+        -  ``all`` -- bool (default: ``False``); if
            ``True``, return {all} square roots of self, instead of
            just one.
 
@@ -2901,12 +2901,12 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         INPUT:
 
-        -  ``extend`` - bool (default: ``True``);
+        -  ``extend`` -- bool (default: ``True``);
            if ``True``, return a square root in an extension ring,
            if necessary. Otherwise, raise a ``ValueError`` if the
            square root is not in the base ring.
 
-        -  ``all`` - bool (default: ``False``); if
+        -  ``all`` -- bool (default: ``False``); if
            ``True``, return {all} square roots of self, instead of
            just one.
 

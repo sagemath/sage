@@ -807,7 +807,7 @@ class QuotientRingElement(RingElement):
 
         INPUT:
 
-        -  ``singular`` - a non-standard interpreter may be
+        -  ``singular`` -- a non-standard interpreter may be
            provided
 
         EXAMPLES::
@@ -943,7 +943,7 @@ class QuotientRingElement(RingElement):
 
         INPUT:
 
-        -  ``G`` - a list of quotient ring elements
+        -  ``G`` -- a list of quotient ring elements
 
         .. WARNING::
 

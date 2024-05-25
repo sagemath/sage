@@ -577,16 +577,16 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
+        -  ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
+        -  ``savefile`` -- file that the animated gif gets saved
            to
 
-        -  ``iterations`` - integer (default: 0); number of
+        -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: False); if True,
            print the path to the saved file
 
         - ``use_ffmpeg`` -- boolean (default: False); if True, use
@@ -1054,16 +1054,16 @@ class Animation(WithEqualityById, SageObject):
 
         Input:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
+        -  ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
+        -  ``savefile`` -- file that the animated gif gets saved
            to
 
-        -  ``iterations`` - integer (default: 0); number of
+        -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: False); if True,
            print the path to the saved file
 
         EXAMPLES::
@@ -1115,9 +1115,9 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``filename`` - (default: None) name of save file
+        -  ``filename`` -- (default: None) name of save file
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: False); if True,
            print the path to the saved file
 
         - ``use_ffmpeg`` -- boolean (default: False); if True, use

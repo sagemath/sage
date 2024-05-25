@@ -7,29 +7,29 @@ rendering is done using the matplotlib Python library.
 
 The following graphics primitives are supported:
 
--  :func:`~sage.plot.arrow.arrow` - an arrow from a min point to a max point.
+-  :func:`~sage.plot.arrow.arrow` -- an arrow from a min point to a max point.
 
--  :func:`~sage.plot.circle.circle` - a circle with given radius
+-  :func:`~sage.plot.circle.circle` -- a circle with given radius
 
--  :func:`~sage.plot.ellipse.ellipse` - an ellipse with given radii
+-  :func:`~sage.plot.ellipse.ellipse` -- an ellipse with given radii
    and angle
 
--  :func:`~sage.plot.arc.arc` - an arc of a circle or an ellipse
+-  :func:`~sage.plot.arc.arc` -- an arc of a circle or an ellipse
 
--  :func:`~sage.plot.disk.disk` - a filled disk (i.e. a sector or wedge of a circle)
+-  :func:`~sage.plot.disk.disk` -- a filled disk (i.e. a sector or wedge of a circle)
 
--  :func:`~sage.plot.line.line` - a line determined by a sequence of points (this need not
+-  :func:`~sage.plot.line.line` -- a line determined by a sequence of points (this need not
    be straight!)
 
--  :func:`~sage.plot.point.point` - a point
+-  :func:`~sage.plot.point.point` -- a point
 
--  :func:`~sage.plot.text.text` - some text
+-  :func:`~sage.plot.text.text` -- some text
 
--  :func:`~sage.plot.polygon.polygon` - a filled polygon
+-  :func:`~sage.plot.polygon.polygon` -- a filled polygon
 
 The following plotting functions are supported:
 
--  :func:`plot` - plot of a function or other Sage object (e.g., elliptic
+-  :func:`plot` -- plot of a function or other Sage object (e.g., elliptic
    curve).
 
 -  :func:`parametric_plot`
@@ -1015,7 +1015,7 @@ def plot(funcs, *args, **kwds):
       taken from the strings above) or a dictionary (with keys in ``range(len(X))``
       and values taken from the strings above).
 
-    - ``marker``  - The style of the markers, which is one of
+    - ``marker`` -- The style of the markers, which is one of
 
       - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
       - ``","`` (pixel), ``"."`` (point)

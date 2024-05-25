@@ -4262,9 +4262,9 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
         INPUT:
 
 
-        -  ``gens`` - a list of vector in self
+        -  ``gens`` -- a list of vector in self
 
-        -  ``check`` - whether or not to verify that each gen
+        -  ``check`` -- whether or not to verify that each gen
            is in the ambient vector space
 
 
@@ -4671,12 +4671,12 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         INPUT:
 
 
-        -  ``basis`` - list of vectors
+        -  ``basis`` -- list of vectors
 
-        -  ``check`` - boolean (default: ``True``): whether or not to
+        -  ``check`` -- boolean (default: ``True``): whether or not to
            coerce entries of gens into base field
 
-        -  ``already_echelonized`` - boolean (default: ``False``):
+        -  ``already_echelonized`` -- boolean (default: ``False``):
            set this if you know the gens are already in echelon form
 
 
@@ -4723,12 +4723,12 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         INPUT:
 
-        -  ``gens`` - list of vectors
+        -  ``gens`` -- list of vectors
 
-        -  ``check`` - boolean (default: ``True``) verify that gens
+        -  ``check`` -- boolean (default: ``True``) verify that gens
            are all in ``self``.
 
-        -  ``already_echelonized`` - boolean (default: ``False``) set
+        -  ``already_echelonized`` -- boolean (default: ``False``) set
            to True if you know the gens are in Echelon form.
 
         EXAMPLES:
@@ -5739,7 +5739,7 @@ class FreeModule_ambient(FreeModule_generic):
         OUTPUT:
 
 
-        -  ``Sequence`` - an immutable sequence with universe
+        -  ``Sequence`` -- an immutable sequence with universe
            this ambient free module
 
 
@@ -5878,9 +5878,9 @@ class FreeModule_ambient(FreeModule_generic):
 
         INPUT:
 
-        -  ``v`` - vector
+        -  ``v`` -- vector
 
-        -  ``check`` - boolean (default: ``True``); if True, also
+        -  ``check`` -- boolean (default: ``True``); if True, also
            verify that `v` is really in ``self``.
 
         OUTPUT: list
@@ -7050,9 +7050,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         INPUT:
 
-        -  ``v`` - vector
+        -  ``v`` -- vector
 
-        -  ``check`` - boolean (default: ``True``); if ``True``, also
+        -  ``check`` -- boolean (default: ``True``); if ``True``, also
            verify that `v` is really in ``self``.
 
         OUTPUT: list
@@ -7435,7 +7435,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         INPUT:
 
-        -  ``R`` - a principal ideal domain
+        -  ``R`` -- a principal ideal domain
 
         EXAMPLES::
 
@@ -7552,9 +7552,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         INPUT:
 
-        -  ``v`` - vector
+        -  ``v`` -- vector
 
-        -  ``check`` - boolean (default: ``True``); if ``True``, also
+        -  ``check`` -- boolean (default: ``True``); if ``True``, also
            verify that `v` is really in ``self``.
 
         Returns a list `c` such that if `B` is the echelonized basis

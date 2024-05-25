@@ -584,7 +584,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         INPUT:
 
 
-        -  ``rows`` - list or tuple of row indices
+        -  ``rows`` -- list or tuple of row indices
 
 
         EXAMPLES::

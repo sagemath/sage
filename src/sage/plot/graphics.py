@@ -206,7 +206,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``ratio`` - a positive real number or 'automatic'
+        -  ``ratio`` -- a positive real number or 'automatic'
 
 
         EXAMPLES: We create a plot of the upper half of a circle, but it
@@ -393,7 +393,7 @@ class Graphics(WithEqualityById, SageObject):
         - ``font_size`` -- (default: 'medium') string, one of 'xx-small', 'x-small', 'small',
           'medium', 'large', 'x-large', 'xx-large' or an absolute font size (e.g. 12)
 
-        -  ``shadow`` - (default: True) boolean - draw a shadow behind the legend
+        -  ``shadow`` -- (default: True) boolean - draw a shadow behind the legend
 
         - ``fancybox`` -- (default: False) a boolean.  If True, draws a frame with a round
           fancybox.
@@ -584,7 +584,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``s`` - integer, a font size in points.
+        -  ``s`` -- integer, a font size in points.
 
 
         If called with no input, return the current fontsize.
@@ -654,7 +654,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``show`` - bool
+        -  ``show`` -- bool
 
 
         If called with no input, return the current axes setting.
@@ -702,7 +702,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``c`` - an RGB color 3-tuple, where each tuple entry
+        -  ``c`` -- an RGB color 3-tuple, where each tuple entry
            is a float between 0 and 1
 
 
@@ -747,7 +747,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``l`` - (default: None) a list of two strings or
+        -  ``l`` -- (default: None) a list of two strings or
            None
 
 
@@ -814,7 +814,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``c`` - an RGB 3-tuple of numbers between 0 and 1
+        -  ``c`` -- an RGB 3-tuple of numbers between 0 and 1
 
 
         If called with no input, return the current axes_label_color
@@ -903,7 +903,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``c`` - an RGB 3-tuple of numbers between 0 and 1
+        -  ``c`` -- an RGB 3-tuple of numbers between 0 and 1
 
 
         If called with no input, return the current tick_label_color
@@ -2545,11 +2545,11 @@ class Graphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``vmin`` - the current min for this variable (e.g. xmin or ymin)
+        -  ``vmin`` -- the current min for this variable (e.g. xmin or ymin)
 
-        -  ``vmax`` - the current max for this variable (e.g. xmax or ymax)
+        -  ``vmax`` -- the current max for this variable (e.g. xmax or ymax)
 
-        -  ``basev`` - the base of the logarithmic scale for this variable
+        -  ``basev`` -- the base of the logarithmic scale for this variable
 
         - ``axes_pad`` -- the padding for the axis. It determines the
           exponent of the fraction of the minimum (resp. maximum) that is

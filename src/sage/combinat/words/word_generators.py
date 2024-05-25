@@ -377,10 +377,10 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``alphabet`` - (default: (0, 1) ) any container that is suitable to
+        -  ``alphabet`` -- (default: (0, 1) ) any container that is suitable to
            build an instance of OrderedAlphabet (list, tuple, str, ...)
 
-        -  ``base`` - an integer (default : 2) greater or equal to 2
+        -  ``base`` -- an integer (default : 2) greater or equal to 2
 
         EXAMPLES:
 
@@ -993,7 +993,7 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``alphabet`` - (default: (1,2)) an iterable of two positive
+        -  ``alphabet`` -- (default: (1,2)) an iterable of two positive
            integers
 
         OUTPUT:
@@ -1071,9 +1071,9 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``a`` - positive integer (default: 1), the first letter occurring
+        -  ``a`` -- positive integer (default: 1), the first letter occurring
            in the returned Kolakoski word.
-        -  ``b`` - positive integer (default: 2), the second and last letter
+        -  ``b`` -- positive integer (default: 2), the second and last letter
            occurring in the returned Kolakoski word.
 
         OUTPUT:
@@ -1251,7 +1251,7 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``directive_word`` - an infinite word or a period of a periodic
+        -  ``directive_word`` -- an infinite word or a period of a periodic
            infinite word
 
         EXAMPLES::
@@ -1297,7 +1297,7 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``directive_word`` - an infinite word or a finite word. If
+        -  ``directive_word`` -- an infinite word or a finite word. If
            directive_word is finite, then it is repeated to give
            an infinite word.
 
@@ -1371,7 +1371,7 @@ class WordGenerator:
 
         - ``n`` -- integer, the length of the word
         - ``m`` -- integer (default 2), the size of the output alphabet
-        -  ``alphabet`` - (default is `\{0,1,...,m-1\}`) any container of
+        -  ``alphabet`` -- (default is `\{0,1,...,m-1\}`) any container of
            length m that is suitable to build an instance of
            OrderedAlphabet (list, tuple, str, ...)
 
@@ -1422,7 +1422,7 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``alphabet`` - any container of length two that is
+        -  ``alphabet`` -- any container of length two that is
            suitable to build an instance of OrderedAlphabet (list, tuple, str,
            ...)
 

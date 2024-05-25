@@ -1997,7 +1997,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``S`` - a Sage object.
+        -  ``S`` -- a Sage object.
 
         The algebras that coerce into the mod p Steenrod algebra are:
 
@@ -2540,11 +2540,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``s`` - non-negative integer
+        -  ``s`` -- non-negative integer
 
-        -  ``t`` - positive integer
+        -  ``t`` -- positive integer
 
-        -  ``p`` - positive prime number
+        -  ``p`` -- positive prime number
 
         OUTPUT: element of the Steenrod algebra
 

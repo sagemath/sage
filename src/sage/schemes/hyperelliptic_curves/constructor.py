@@ -38,9 +38,9 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     INPUT:
 
-    -  ``f`` - univariate polynomial
+    -  ``f`` -- univariate polynomial
 
-    -  ``h`` - optional univariate polynomial
+    -  ``h`` -- optional univariate polynomial
 
     -  ``names``  (default: ``["x","y"]``) - names for the
        coordinate functions

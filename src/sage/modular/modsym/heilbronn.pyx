@@ -214,10 +214,10 @@ cdef class Heilbronn:
         r"""
         INPUT:
 
-        -  ``ans`` - fmpz_poly_t\*; pre-allocated an
+        -  ``ans`` -- fmpz_poly_t\*; pre-allocated an
            initialized array of self.length fmpz_poly_t's
-        -  ``i`` - integer
-        -  ``k`` - integer
+        -  ``i`` -- integer
+        -  ``k`` -- integer
 
         OUTPUT: sets entries of ans
         """
@@ -854,10 +854,10 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
     INPUT:
 
     -  ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    -  ``i`` - integer with 0 <= i <= k-2
-    -  ``k`` - weight
-    -  ``indices`` - a list of positive integers
-    -  ``R`` - matrix over QQ that writes each elements of
+    -  ``i`` -- integer with 0 <= i <= k-2
+    -  ``k`` -- weight
+    -  ``indices`` -- a list of positive integers
+    -  ``R`` -- matrix over QQ that writes each elements of
        P1 = P1List(N) in terms of a subset of P1.
 
     OUTPUT: a dense matrix with rational entries whose columns are the

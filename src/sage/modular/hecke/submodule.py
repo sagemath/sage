@@ -412,10 +412,10 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         INPUT:
 
 
-        -  ``level`` - int, the level of the codomain of the
+        -  ``level`` -- int, the level of the codomain of the
            map (positive int).
 
-        -  ``t`` - int, the parameter of the degeneracy map,
+        -  ``t`` -- int, the parameter of the degeneracy map,
            i.e., the map is related to `f(q)` - `f(q^t)`.
 
 
@@ -940,10 +940,10 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         INPUT:
 
 
-        -  ``V`` - submodule of ambient free module of the same
+        -  ``V`` -- submodule of ambient free module of the same
            rank as the rank of self.
 
-        -  ``check`` - whether to check that V is Hecke
+        -  ``check`` -- whether to check that V is Hecke
            equivariant.
 
 

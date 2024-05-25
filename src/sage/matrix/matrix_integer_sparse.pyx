@@ -996,23 +996,23 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         INPUT:
 
 
-        -  ``B`` - a matrix or vector
+        -  ``B`` -- a matrix or vector
 
-        -  ``algorithm`` - one of the following:
+        -  ``algorithm`` -- one of the following:
 
             - ``'linbox'`` or ``'linbox_default'`` - (default) use LinBox
               and let it chooses the appropriate algorithm
 
-            -  ``linbox_dense_elimination'`` - use LinBox dense elimination
+            -  ``linbox_dense_elimination'`` -- use LinBox dense elimination
 
             - ``'linbox_sparse_elimination'`` -- use LinBox sparse elimination
 
             -  ``'linbox_ blackbox'`` - LinBox via a Blackbox algorithm
 
-            -  ``'linbox_wiedemann'`` - use LinBox implementation of
+            -  ``'linbox_wiedemann'`` -- use LinBox implementation of
                Wiedemann's algorithm
 
-            -  ``'generic'`` - use the Sage generic implementation
+            -  ``'generic'`` -- use the Sage generic implementation
                (via inversion)
 
         - ``check_rank`` -- whether to check that the rank is maximal

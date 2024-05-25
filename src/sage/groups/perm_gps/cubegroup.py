@@ -686,13 +686,13 @@ class CubeGroup(PermutationGroup_generic):
 
         - ``mv`` -- Can one of the following:
 
-          -  ``list`` - list of facets (as returned by
+          -  ``list`` -- list of facets (as returned by
              self.facets())
 
-          -  ``dict`` - list of faces (as returned by
+          -  ``dict`` -- list of faces (as returned by
              ``self.faces()``)
 
-          -  ``str`` - either cycle notation (passed to GAP) or
+          -  ``str`` -- either cycle notation (passed to GAP) or
              a product of generators or Singmaster notation
 
           -  ``perm_group element`` - returned as an element of ``self``

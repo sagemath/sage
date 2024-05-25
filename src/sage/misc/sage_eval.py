@@ -22,16 +22,16 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     INPUT:
 
 
-    -  ``source`` - a string or object with a ``_sage_``
+    -  ``source`` -- a string or object with a ``_sage_``
        method
 
-    -  ``locals`` - evaluate in namespace of :mod:`sage.all` plus
+    -  ``locals`` -- evaluate in namespace of :mod:`sage.all` plus
        the locals dictionary
 
-    -  ``cmds`` - string; sequence of commands to be run
+    -  ``cmds`` -- string; sequence of commands to be run
        before source is evaluated.
 
-    -  ``preparse`` - (default: True) if True, preparse the
+    -  ``preparse`` -- (default: True) if True, preparse the
        string expression.
 
 

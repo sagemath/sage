@@ -1035,9 +1035,9 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``B`` - a matrix
+        -  ``B`` -- a matrix
 
-        -  ``check`` - bool (default: True); if False, if there
+        -  ``check`` -- bool (default: True); if False, if there
            is no solution this function will not detect that fact.
 
 
@@ -2653,7 +2653,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``phi`` - a morphism, so phi is callable and
+        -  ``phi`` -- a morphism, so phi is callable and
            phi.domain() and phi.codomain() are defined. The codomain must be a
            ring.
 
@@ -2702,9 +2702,9 @@ cdef class Matrix(Matrix1):
 
         - ``sparse`` -- True to make the output a sparse matrix; default False
 
-        -  ``phi`` - arbitrary Python function or callable object
+        -  ``phi`` -- arbitrary Python function or callable object
 
-        -  ``R`` - (optional) ring
+        -  ``R`` -- (optional) ring
 
         OUTPUT: a matrix over R
 
@@ -3278,7 +3278,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        -  ``var`` - (default: 'x') name of variable of charpoly
+        -  ``var`` -- (default: 'x') name of variable of charpoly
 
         EXAMPLES::
 
@@ -3409,7 +3409,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - a square matrix
+        -  ``self`` -- a square matrix
 
 
         OUTPUT: element of the base ring of self
@@ -3605,7 +3605,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        -  ``var`` - name of the indeterminate of the charpoly
+        -  ``var`` -- name of the indeterminate of the charpoly
 
         The characteristic polynomial is represented as a vector of ints,
         where the constant term of the characteristic polynomial is the 0th
@@ -5502,17 +5502,17 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - a matrix
+        -  ``self`` -- a matrix
 
-        -  ``algorithm`` - 'spin' (default): algorithm involves
+        -  ``algorithm`` -- 'spin' (default): algorithm involves
            iterating the action of self on a vector. 'kernel': naively just
            compute `ker(f_i(A))` for each factor `f_i`.
 
-        -  ``dual`` - bool (default: False): If True, also
+        -  ``dual`` -- bool (default: False): If True, also
            returns the corresponding decomposition of V under the action of
            the transpose of A. The factors are guaranteed to correspond.
 
-        -  ``is_diagonalizable`` - if the matrix is known to
+        -  ``is_diagonalizable`` -- if the matrix is known to
            be diagonalizable, set this to True, which might speed up the
            algorithm in some cases.
 
@@ -5833,9 +5833,9 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``V`` - vector subspace
+        -  ``V`` -- vector subspace
 
-        -  ``check`` - (optional) default: True; if False may
+        -  ``check`` -- (optional) default: True; if False may
            not check that V is invariant (hence can be faster).
 
 
@@ -5906,7 +5906,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``V`` - vector space (subspace of ambient space on
+        -  ``V`` -- vector space (subspace of ambient space on
            which self acts)
 
 
@@ -5942,7 +5942,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``V`` - vector space (space of degree
+        -  ``V`` -- vector space (space of degree
            ``self.ncols()``) that contains the image of self.
 
 
@@ -5981,15 +5981,15 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - Matrix
+        -  ``self`` -- Matrix
 
-        -  ``v`` - Vector
+        -  ``v`` -- Vector
 
 
         OUTPUT:
 
 
-        -  ``list`` - list of Vectors
+        -  ``list`` -- list of Vectors
 
 
         ALGORITHM: The current implementation just adds vectors to a vector
@@ -6039,9 +6039,9 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``i`` - an integer
+        -  ``i`` -- an integer
 
-        -  ``t`` - an integer (default: 0) if t is nonzero, use
+        -  ``t`` -- an integer (default: 0) if t is nonzero, use
            only the first t linear recurrence relations.
 
 
@@ -8820,7 +8820,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``cutoff`` - integer (default: 0 - let class
+        -  ``cutoff`` -- integer (default: 0 - let class
            decide).
 
 
@@ -9450,9 +9450,9 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        -  ``density`` - ``float`` (default: ``1``); upper bound for the
+        -  ``density`` -- ``float`` (default: ``1``); upper bound for the
            proportion of entries that are changed
-        -  ``nonzero`` - Bool (default: ``False``); if ``True``, then new
+        -  ``nonzero`` -- Bool (default: ``False``); if ``True``, then new
            entries will be nonzero
         -  ``*args, **kwds`` - Remaining parameters may be passed to the
            ``random_element`` function of the base ring
@@ -15311,10 +15311,10 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``f`` - a function that is evaluated on each
+        -  ``f`` -- a function that is evaluated on each
            element of this matrix.
 
-        -  ``indices`` - whether or not to return the indices
+        -  ``indices`` -- whether or not to return the indices
            and elements of this matrix that satisfy the function.
 
 
@@ -15546,17 +15546,17 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - a matrix whose entries are coercible into ``CDF``
+        -  ``self`` -- a matrix whose entries are coercible into ``CDF``
 
-        -  ``p`` - one of the following options:
+        -  ``p`` -- one of the following options:
 
-        -  ``1`` - the largest column-sum norm
+        -  ``1`` -- the largest column-sum norm
 
         -  ``2 (default)`` - the Euclidean norm
 
-        -  ``Infinity`` - the largest row-sum norm
+        -  ``Infinity`` -- the largest row-sum norm
 
-        -  ``'frob'`` - the Frobenius (sum of squares) norm
+        -  ``'frob'`` -- the Frobenius (sum of squares) norm
 
 
         OUTPUT: RDF number

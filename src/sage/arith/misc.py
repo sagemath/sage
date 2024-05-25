@@ -68,14 +68,14 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     INPUT:
 
 
-    -  ``z`` - real, complex, or `p`-adic number
+    -  ``z`` -- real, complex, or `p`-adic number
 
-    -  ``degree`` - an integer
+    -  ``degree`` -- an integer
 
-    -  ``height_bound`` - an integer (default: ``None``) specifying the maximum
+    -  ``height_bound`` -- an integer (default: ``None``) specifying the maximum
                           coefficient size for the returned polynomial
 
-    -  ``proof`` - a boolean (default: ``False``), requires height_bound to be set
+    -  ``proof`` -- a boolean (default: ``False``), requires height_bound to be set
 
 
     EXAMPLES::
@@ -404,13 +404,13 @@ def factorial(n, algorithm='gmp'):
 
     INPUT:
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
-    -  ``algorithm`` - string (default: 'gmp'):
+    -  ``algorithm`` -- string (default: 'gmp'):
 
-       -  ``'gmp'`` - use the GMP C-library factorial function
+       -  ``'gmp'`` -- use the GMP C-library factorial function
 
-       -  ``'pari'`` - use PARI's factorial function
+       -  ``'pari'`` -- use PARI's factorial function
 
     OUTPUT: an integer
 
@@ -688,9 +688,9 @@ def is_pseudoprime_power(n, get_data=False):
 
     INPUT:
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
-    -  ``get_data`` - (boolean) instead of a boolean return a pair `(p,k)` so
+    -  ``get_data`` -- (boolean) instead of a boolean return a pair `(p,k)` so
        that ``n`` equals `p^k` and `p` is a pseudoprime or `(n,0)` otherwise.
 
     EXAMPLES::
@@ -970,7 +970,7 @@ def eratosthenes(n):
 
     INPUT:
 
-    -  ``n`` - a positive integer
+    -  ``n`` -- a positive integer
 
     OUTPUT:
 
@@ -1179,7 +1179,7 @@ def next_probable_prime(n):
     INPUT:
 
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
 
     EXAMPLES::
@@ -1217,9 +1217,9 @@ def next_prime(n, proof=None):
     INPUT:
 
 
-    -  ``n`` - integer
+    -  ``n`` -- integer
 
-    -  ``proof`` - bool or None (default: None)
+    -  ``proof`` -- bool or None (default: None)
 
 
     EXAMPLES::
@@ -1395,9 +1395,9 @@ def random_prime(n, proof=None, lbound=2):
 
     INPUT:
 
-    -  ``n`` - an integer `\geq 2`.
+    -  ``n`` -- an integer `\geq 2`.
 
-    -  ``proof`` - bool or ``None`` (default: ``None``) If ``False``, the function uses a
+    -  ``proof`` -- bool or ``None`` (default: ``None``) If ``False``, the function uses a
        pseudo-primality test, which is much faster for really big numbers but
        does not provide a proof of primality. If ``None``, uses the global default
        (see :mod:`sage.structure.proof.proof`)
@@ -1507,7 +1507,7 @@ def divisors(n):
 
     INPUT:
 
-    -  ``n`` - the element
+    -  ``n`` -- the element
 
     EXAMPLES:
 
@@ -1595,9 +1595,9 @@ class Sigma:
     INPUT:
 
 
-    -  ``n`` - integer
+    -  ``n`` -- integer
 
-    -  ``k`` - integer (default: 1)
+    -  ``k`` -- integer (default: 1)
 
 
     OUTPUT: integer
@@ -1698,17 +1698,17 @@ class Sigma:
         INPUT:
 
 
-        -  ``xmin`` - default: 1
+        -  ``xmin`` -- default: 1
 
-        -  ``xmax`` - default: 50
+        -  ``xmax`` -- default: 50
 
-        -  ``k`` - default: 1
+        -  ``k`` -- default: 1
 
-        -  ``pointsize`` - default: 30
+        -  ``pointsize`` -- default: 30
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` - default: True; whether to join the
+        -  ``join`` -- default: True; whether to join the
            points.
 
         -  ``**kwds`` - passed on
@@ -1874,7 +1874,7 @@ def __GCD_sequence(v, **kwargs):
     INPUT:
 
 
-    -  ``v`` - A sequence (possibly empty)
+    -  ``v`` -- A sequence (possibly empty)
 
 
     OUTPUT: The gcd of the elements of the sequence as an element of
@@ -2479,13 +2479,13 @@ def trial_division(n, bound=None):
 
     INPUT:
 
-    -  ``n`` - a positive integer
+    -  ``n`` -- a positive integer
 
     - ``bound`` -- (optional) a positive integer
 
     OUTPUT:
 
-    -  ``int`` - a prime p=bound that divides n, or n if
+    -  ``int`` -- a prime p=bound that divides n, or n if
        there is no such prime.
 
 
@@ -3040,7 +3040,7 @@ class Euler_Phi:
     INPUT:
 
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
 
     EXAMPLES::
@@ -3145,15 +3145,15 @@ class Euler_Phi:
         INPUT:
 
 
-        -  ``xmin`` - default: 1
+        -  ``xmin`` -- default: 1
 
-        -  ``xmax`` - default: 50
+        -  ``xmax`` -- default: 50
 
-        -  ``pointsize`` - default: 30
+        -  ``pointsize`` -- default: 30
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` - default: True; whether to join the
+        -  ``join`` -- default: True; whether to join the
            points.
 
         -  ``**kwds`` - passed on
@@ -3626,13 +3626,13 @@ def CRT_vectors(X, moduli):
 
     INPUT:
 
-    -  ``X`` - list or tuple, consisting of lists/tuples/vectors/etc of
+    -  ``X`` -- list or tuple, consisting of lists/tuples/vectors/etc of
        integers of the same length
-    -  ``moduli`` - list of len(X) moduli
+    -  ``moduli`` -- list of len(X) moduli
 
     OUTPUT:
 
-    -  ``list`` - application of CRT componentwise.
+    -  ``list`` -- application of CRT componentwise.
 
     EXAMPLES::
 
@@ -4003,7 +4003,7 @@ def binomial_coefficients(n):
     INPUT:
 
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
 
     OUTPUT: dict
@@ -4050,8 +4050,8 @@ def multinomial_coefficients(m, n):
 
     INPUT:
 
-    -  ``m`` - integer
-    -  ``n`` - integer
+    -  ``m`` -- integer
+    -  ``n`` -- integer
 
     OUTPUT: dict
 
@@ -4213,9 +4213,9 @@ def legendre_symbol(x, p):
     INPUT:
 
 
-    -  ``x`` - integer
+    -  ``x`` -- integer
 
-    -  ``p`` - an odd prime number
+    -  ``p`` -- an odd prime number
 
 
     EXAMPLES::
@@ -4278,9 +4278,9 @@ def jacobi_symbol(a, b):
 
     INPUT:
 
-    -  ``a`` - an integer
+    -  ``a`` -- an integer
 
-    -  ``b`` - an odd integer
+    -  ``b`` -- an odd integer
 
     EXAMPLES::
 
@@ -4525,7 +4525,7 @@ class Moebius:
     INPUT:
 
 
-    -  ``n`` - anything that can be factored.
+    -  ``n`` -- anything that can be factored.
 
 
     OUTPUT: 0, 1, or -1
@@ -4615,15 +4615,15 @@ class Moebius:
         INPUT:
 
 
-        -  ``xmin`` - default: 0
+        -  ``xmin`` -- default: 0
 
-        -  ``xmax`` - default: 50
+        -  ``xmax`` -- default: 50
 
-        -  ``pointsize`` - default: 30
+        -  ``pointsize`` -- default: 30
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` - default: True; whether to join the points
+        -  ``join`` -- default: True; whether to join the points
            (very helpful in seeing their order).
 
         -  ``**kwds`` - passed on
@@ -4711,8 +4711,8 @@ def continuant(v, n=None):
 
     INPUT:
 
-    -  ``v`` - list or tuple of elements of a ring
-    -  ``n`` - optional integer
+    -  ``v`` -- list or tuple of elements of a ring
+    -  ``n`` -- optional integer
 
     OUTPUT: element of ring (integer, polynomial, etcetera).
 
@@ -4824,16 +4824,16 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
 
     -  ``a, b`` - integers
 
-    -  ``p`` - integer; either prime or -1 (which
+    -  ``p`` -- integer; either prime or -1 (which
        represents the archimedean place)
 
-    -  ``algorithm`` - string
+    -  ``algorithm`` -- string
 
-       -  ``'pari'`` - (default) use the PARI C library
+       -  ``'pari'`` -- (default) use the PARI C library
 
-       -  ``'direct'`` - use a Python implementation
+       -  ``'direct'`` -- use a Python implementation
 
-       -  ``'all'`` - use both PARI and direct and check that
+       -  ``'all'`` -- use both PARI and direct and check that
           the results agree, then return the common answer
 
 
@@ -5305,7 +5305,7 @@ def integer_floor(x):
 
     INPUT:
 
-    -  ``x`` - an object that has a floor method or is
+    -  ``x`` -- an object that has a floor method or is
        coercible to int
 
     OUTPUT: an Integer
@@ -5819,13 +5819,13 @@ def subfactorial(n):
     INPUT:
 
 
-    -  ``n`` - non negative integer
+    -  ``n`` -- non negative integer
 
 
     OUTPUT:
 
 
-    -  ``integer`` - function value
+    -  ``integer`` -- function value
 
 
     EXAMPLES::
@@ -6159,9 +6159,9 @@ def dedekind_sum(p, q, algorithm='default'):
     -  ``p``, ``q`` -- integers
     -  ``algorithm`` -- must be one of the following
 
-       -  ``'default'`` - (default) use FLINT
-       -  ``'flint'`` - use FLINT
-       -  ``'pari'`` - use PARI (gives different results if `p` and `q`
+       -  ``'default'`` -- (default) use FLINT
+       -  ``'flint'`` -- use FLINT
+       -  ``'pari'`` -- use PARI (gives different results if `p` and `q`
           are not coprime)
 
     OUTPUT: a rational number

@@ -258,7 +258,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
     INPUT:
 
-    -  ``n`` - number of variables (an integer > 1)
+    -  ``n`` -- number of variables (an integer > 1)
 
     - ``names`` -- names of ring variables, may be a string or
       list/tuple
@@ -1093,9 +1093,9 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         INPUT:
 
-        -  ``gens`` - list or tuple of generators
+        -  ``gens`` -- list or tuple of generators
 
-        -  ``coerce`` - bool (default: True) automatically
+        -  ``coerce`` -- bool (default: True) automatically
            coerce the given polynomials to this ring to form the ideal
 
         EXAMPLES::
@@ -1126,16 +1126,16 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         INPUT:
 
-        -  ``degree`` - maximum degree (default: 2 for len(var_set) > 1, 1 otherwise)
+        -  ``degree`` -- maximum degree (default: 2 for len(var_set) > 1, 1 otherwise)
 
         -  ``terms`` -- number of terms requested (default: 5). If more
            terms are requested than exist, then this parameter is
            silently reduced to the maximum number of available terms.
 
-        -  ``choose_degree`` - choose degree of monomials
+        -  ``choose_degree`` -- choose degree of monomials
            randomly first, rather than monomials uniformly random
 
-        -  ``vars_set`` - list of integer indices of
+        -  ``vars_set`` -- list of integer indices of
            generators of self to use in the generated polynomial
 
 
@@ -1262,18 +1262,18 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         INPUT:
 
-        -  ``degree`` - maximum degree
+        -  ``degree`` -- maximum degree
 
-        -  ``monom_counts`` - a list containing total number
+        -  ``monom_counts`` -- a list containing total number
            of monomials up to given degree
 
-        -  ``vars_set`` - list of variable indices to use in
+        -  ``vars_set`` -- list of variable indices to use in
            the generated polynomial
 
-        -  ``dfirst`` - if ``True`` choose degree
+        -  ``dfirst`` -- if ``True`` choose degree
            first, otherwise choose the monomial uniformly
 
-        -  ``l`` - number of monomials to generate
+        -  ``l`` -- number of monomials to generate
 
         EXAMPLES::
 
@@ -1302,10 +1302,10 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         INPUT:
 
-        -  ``monom_counts`` - list of number of monomials up
+        -  ``monom_counts`` -- list of number of monomials up
            to given degree
 
-        -  ``vars_set`` - list of variable indices to use in
+        -  ``vars_set`` -- list of variable indices to use in
            the generated monomial
 
         EXAMPLES::
@@ -1346,9 +1346,9 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         INPUT:
 
-        -  ``degree`` - maximum degree
+        -  ``degree`` -- maximum degree
 
-        -  ``vars_set`` - list of variable indices of self
+        -  ``vars_set`` -- list of variable indices of self
 
         EXAMPLES::
 
@@ -1445,7 +1445,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         INPUT:
 
-        -  ``magma`` - a magma instance
+        -  ``magma`` -- a magma instance
 
         EXAMPLES::
 
@@ -1474,10 +1474,10 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         INPUT:
 
-        -  ``zeros`` - the set of interpolation points mapped
+        -  ``zeros`` -- the set of interpolation points mapped
            to zero
 
-        -  ``ones`` - the set of interpolation points mapped to
+        -  ``ones`` -- the set of interpolation points mapped to
            one
 
         EXAMPLES:
@@ -1953,7 +1953,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
 
         INPUT:
 
-        -  ``i`` - an integer
+        -  ``i`` -- an integer
 
         EXAMPLES::
 
@@ -2521,7 +2521,7 @@ cdef class BooleanMonomial(MonoidElement):
 
         INPUT:
 
-        -  ``rhs`` - a boolean monomial
+        -  ``rhs`` -- a boolean monomial
 
         EXAMPLES::
 
@@ -2549,7 +2549,7 @@ cdef class BooleanMonomial(MonoidElement):
 
         INPUT:
 
-        -  ``rhs`` - a boolean monomial
+        -  ``rhs`` -- a boolean monomial
 
         EXAMPLES::
 
@@ -3802,7 +3802,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-        -  ``mon`` - a monomial
+        -  ``mon`` -- a monomial
 
         EXAMPLES::
 
@@ -3962,7 +3962,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-        -  ``in_dict`` - (optional) dict with variable:value
+        -  ``in_dict`` -- (optional) dict with variable:value
            pairs
 
         -  ``**kwds`` - names parameters
@@ -4363,7 +4363,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-        -  ``rhs`` - a boolean polynomial
+        -  ``rhs`` -- a boolean polynomial
 
         EXAMPLES::
 
@@ -4426,7 +4426,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-        -  ``deg`` - a degree
+        -  ``deg`` -- a degree
 
         EXAMPLES::
 
@@ -4480,7 +4480,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-        -  ``s`` - candidate points for evaluation to zero
+        -  ``s`` -- candidate points for evaluation to zero
 
         EXAMPLES::
 
@@ -4589,7 +4589,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-        -  ``I`` - a list/set of polynomials in self.parent().
+        -  ``I`` -- a list/set of polynomials in self.parent().
            If I is an ideal, the generators are used.
 
         EXAMPLES::
@@ -4813,9 +4813,9 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 
         INPUT:
 
-        -  ``ring`` - the ring this ideal is defined in
+        -  ``ring`` -- the ring this ideal is defined in
 
-        -  ``gens`` - a list of generators
+        -  ``gens`` -- a list of generators
 
         - ``coerce`` -- coerce all elements to the ring ``ring`` (default: ``True``)
 
@@ -7441,7 +7441,7 @@ def if_then_else(root, a, b):
 
     INPUT:
 
-    -  ``root`` - a variable
+    -  ``root`` -- a variable
 
     - ``a`` -- the if branch, a ``BooleSet`` or a ``BoolePolynomial``
 
@@ -7794,7 +7794,7 @@ cdef class BooleConstant:
 
         INPUT:
 
-        -  ``i`` - an integer
+        -  ``i`` -- an integer
 
         EXAMPLES::
 

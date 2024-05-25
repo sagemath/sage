@@ -55,7 +55,7 @@ class CyclicCover_generic(AffinePlaneCurve):
 
         - ``r`` -- degree of the cover
 
-        -  ``f`` - univariate polynomial
+        -  ``f`` -- univariate polynomial
 
         -  ``names``  (default: ``["x","y"]``) - names for the
            coordinate functions

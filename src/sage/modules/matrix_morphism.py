@@ -97,9 +97,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         INPUT:
 
-        -  ``parent`` - a homspace
+        -  ``parent`` -- a homspace
 
-        -  ``A`` - matrix
+        -  ``A`` -- matrix
 
 
         EXAMPLES::

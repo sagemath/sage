@@ -256,10 +256,10 @@ def implicit_multiplication(level=None):
     - ``level`` -- a boolean or integer (default: 5); how aggressive to be in
       placing \*'s
 
-      -  0 - Do nothing
-      -  1 - Numeric followed by alphanumeric
-      -  2 - Closing parentheses followed by alphanumeric
-      -  3 - Spaces between alphanumeric
+      -  0 -- Do nothing
+      -  1 -- Numeric followed by alphanumeric
+      -  2 -- Closing parentheses followed by alphanumeric
+      -  3 -- Spaces between alphanumeric
       - 10 - Adjacent parentheses (may mangle call statements)
 
     OUTPUT:

@@ -7600,9 +7600,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``base_ring`` - (optional) the base ring for the polynomial
+        -  ``base_ring`` -- (optional) the base ring for the polynomial
 
-        -  ``ring`` - (optional) the parent for the polynomial
+        -  ``ring`` -- (optional) the parent for the polynomial
 
         You can specify either the base ring (``base_ring``) you want
         the output Laurent polynomial to be over, or you can specify the full
@@ -11875,9 +11875,9 @@ cdef class Expression(Expression_abc):
         INPUT:
 
 
-        -  ``self`` - a symbolic expression
+        -  ``self`` -- a symbolic expression
 
-        -  ``dontfactor`` - list (default: []), a list of
+        -  ``dontfactor`` -- list (default: []), a list of
            variables with respect to which factoring is not to occur.
            Factoring also will not take place with respect to any variables
            which are less important (using the variable ordering assumed for

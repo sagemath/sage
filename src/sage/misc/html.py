@@ -271,9 +271,9 @@ class MathJax:
 
         - ``x`` -- a Sage object
 
-        -  ``globals`` - a globals dictionary
+        -  ``globals`` -- a globals dictionary
 
-        -  ``locals`` - extra local variables used when
+        -  ``locals`` -- extra local variables used when
            evaluating Sage code in ``x``.
 
         - ``mode`` -- string (optional, default ``'display'``):

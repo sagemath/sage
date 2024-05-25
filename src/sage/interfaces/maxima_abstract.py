@@ -840,7 +840,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        -  ``de`` - a string representing the ODE
+        -  ``de`` -- a string representing the ODE
 
         - ``vars`` -- a list of strings representing the two
            variables.

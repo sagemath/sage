@@ -540,7 +540,7 @@ cdef class PowerSeries(AlgebraElement):
         INPUT:
 
 
-        -  ``n`` - (optional) an integer that is at least 0. If ``n`` is
+        -  ``n`` -- (optional) an integer that is at least 0. If ``n`` is
            not given, it will be taken to be the precision of self,
            unless this is ``+Infinity``, in which case we just return
            ``self.list()``.
@@ -2349,15 +2349,15 @@ cdef class PowerSeries(AlgebraElement):
         INPUT:
 
 
-        -  ``self`` - the power series `a(t)`
+        -  ``self`` -- the power series `a(t)`
 
-        -  ``b`` - the power series `b(t)` (default is
+        -  ``b`` -- the power series `b(t)` (default is
            zero)
 
-        -  ``f0`` - the constant term of `f` ("initial
+        -  ``f0`` -- the constant term of `f` ("initial
            condition") (default is 1)
 
-        -  ``prec`` - desired precision of result (this will be
+        -  ``prec`` -- desired precision of result (this will be
            reduced if either a or b have less precision available)
 
 
@@ -2454,7 +2454,7 @@ cdef class PowerSeries(AlgebraElement):
         INPUT:
 
 
-        -  ``prec`` - integer; default is
+        -  ``prec`` -- integer; default is
            ``self.parent().default_prec``
 
 

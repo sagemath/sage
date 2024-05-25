@@ -1011,7 +1011,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        -  ``cmap`` - color map (default: ``'Set1'``). It can be one of the
+        -  ``cmap`` -- color map (default: ``'Set1'``). It can be one of the
            following:
 
            - string -- A coloring map. For available coloring map names type:

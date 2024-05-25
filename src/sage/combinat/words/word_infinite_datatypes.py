@@ -27,8 +27,8 @@ class WordDatatype_callable(WordDatatype):
         INPUT:
 
         - ``parent`` -- a parent
-        -  ``callable`` - a callable defined on ``range(stop=length)``
-        -  ``length`` - (default: ``None``) nonnegative integer or ``None``
+        -  ``callable`` -- a callable defined on ``range(stop=length)``
+        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -323,8 +323,8 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         INPUT:
 
         - ``parent`` -- a parent
-        -  ``callable`` - a callable defined on ``range(stop=length)``
-        -  ``length`` - (default: ``None``) nonnegative integer or ``None``
+        -  ``callable`` -- a callable defined on ``range(stop=length)``
+        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -590,8 +590,8 @@ class WordDatatype_iter(WordDatatype):
         INPUT:
 
         - ``parent`` -- a parent
-        -  ``iter`` - an iterator
-        -  ``length`` - (default: ``None``) the length of the word
+        -  ``iter`` -- an iterator
+        -  ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 
@@ -923,8 +923,8 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
         INPUT:
 
         - ``parent`` -- a parent
-        -  ``iter`` - an iterator
-        -  ``length`` - (default: ``None``) the length of the word
+        -  ``iter`` -- an iterator
+        -  ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 

@@ -861,7 +861,7 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    -  ``mono`` - tuple of pairs of non-negative integers
+    -  ``mono`` -- tuple of pairs of non-negative integers
        (m,k) with `m >= k`
 
     - ``latex`` -- boolean (optional, default False), if true, output

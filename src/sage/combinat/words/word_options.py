@@ -29,13 +29,13 @@ def WordOptions(**kwargs):
 
     INPUT:
 
-    -  ``display`` - 'string' (default), or 'list', words are displayed in
+    -  ``display`` -- 'string' (default), or 'list', words are displayed in
        string or list notation.
-    -  ``truncate`` - boolean (default: True), whether to truncate the string
+    -  ``truncate`` -- boolean (default: True), whether to truncate the string
        output of long words (see truncate_length below).
-    -  ``truncate_length`` - integer (default: 40), if the length of the word
+    -  ``truncate_length`` -- integer (default: 40), if the length of the word
        is greater than this integer, then the word is truncated.
-    -  ``letter_separator`` - (string, default: ",") if the string
+    -  ``letter_separator`` -- (string, default: ",") if the string
        representation of letters have length greater than 1, then
        the letters are separated by this string in the string
        representation of the word.

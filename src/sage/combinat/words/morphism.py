@@ -632,13 +632,13 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``w`` - word or sequence in the domain of self
+        -  ``w`` -- word or sequence in the domain of self
 
-        -  ``order`` - integer or plus ``Infinity`` (default: 1)
+        -  ``order`` -- integer or plus ``Infinity`` (default: 1)
 
         OUTPUT:
 
-        -  ``word`` - order-th iterated image under self of ``w``
+        -  ``word`` -- order-th iterated image under self of ``w``
 
         EXAMPLES:
 
@@ -956,7 +956,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``exp`` - a positive integer
+        -  ``exp`` -- a positive integer
 
         EXAMPLES::
 
@@ -1018,7 +1018,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``other`` - a WordMorphism.
+        -  ``other`` -- a WordMorphism.
 
         OUTPUT:
 
@@ -1747,10 +1747,10 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``self`` - an endomorphism (or more generally a self-composable
+        -  ``self`` -- an endomorphism (or more generally a self-composable
            morphism), must be prolongable on ``letter``
 
-        -  ``letter`` - in the domain of ``self``, the first letter
+        -  ``letter`` -- in the domain of ``self``, the first letter
            of the fixed point.
 
         OUTPUT:
@@ -2340,7 +2340,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of ``self``.
+        -  ``f`` -- involution (default: None) on the alphabet of ``self``.
            It must be callable on letters as well as words (e.g. WordMorphism).
 
         REFERENCES:
@@ -2418,7 +2418,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``f`` - involution (default: None) on the alphabet of ``self``.
+        -  ``f`` -- involution (default: None) on the alphabet of ``self``.
            It must be callable on letters as well as words (e.g. WordMorphism).
 
         REFERENCES:

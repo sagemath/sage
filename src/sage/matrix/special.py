@@ -1784,18 +1784,18 @@ def block_matrix(*args, **kwds):
     ``nrows`` and ``ncols`` to determine their layout), or a list
     of lists of matrices, where each list forms a row.
 
-    -  ``ring`` - the base ring
+    -  ``ring`` -- the base ring
 
-    -  ``nrows`` - the number of block rows
+    -  ``nrows`` -- the number of block rows
 
-    -  ``ncols`` - the number of block cols
+    -  ``ncols`` -- the number of block cols
 
-    -  ``sub_matrices`` - matrices (see below for syntax)
+    -  ``sub_matrices`` -- matrices (see below for syntax)
 
-    -  ``subdivide`` - boolean, whether or not to add
+    -  ``subdivide`` -- boolean, whether or not to add
        subdivision information to the matrix
 
-    -  ``sparse`` - boolean, whether to make the resulting matrix sparse
+    -  ``sparse`` -- boolean, whether to make the resulting matrix sparse
 
 
     EXAMPLES::

@@ -164,7 +164,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``new_prec`` - positive integer (default: None)
+        -  ``new_prec`` -- positive integer (default: None)
 
 
         OUTPUT: if new_prec is None, returns the current precision.
@@ -196,7 +196,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``new_prec`` - positive integer
+        -  ``new_prec`` -- positive integer
 
 
         EXAMPLES::
@@ -1857,15 +1857,15 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``f`` - a modular form or power series
+        -  ``f`` -- a modular form or power series
 
-        -  ``forms`` - (default: None) a specific list of
+        -  ``forms`` -- (default: None) a specific list of
            modular forms or q-expansions.
 
-        -  ``prec`` - if forms are given, compute with them to
+        -  ``prec`` -- if forms are given, compute with them to
            the given precision
 
-        -  ``indep`` - (default: True) whether the given list
+        -  ``indep`` -- (default: True) whether the given list
            of forms are assumed to form a basis.
 
 
