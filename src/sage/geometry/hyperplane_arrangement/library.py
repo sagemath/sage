@@ -288,7 +288,10 @@ class HyperplaneArrangementLibrary:
             sage: hyperplane_arrangements.Coxeter("A3").characteristic_polynomial()
             x^3 - 6*x^2 + 11*x - 6
         """
+        from sage.combinat.root_system.cartan_type import CartanType
+        from sage.combinat.root_system.root_system import RootSystem
         from sage.combinat.root_system.weyl_group import WeylGroup
+
         if data in NN:
             cartan_type = CartanType(["A", data - 1])
         else:

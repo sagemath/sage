@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Morphisms between toric lattices compatible with fans

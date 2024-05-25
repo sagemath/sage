@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.rings.real_double
 
 r"""
