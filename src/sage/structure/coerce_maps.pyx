@@ -557,6 +557,7 @@ cpdef Element _ccall_test_function(codomain, x):
     """
     return codomain(x*x*x-x)
 
+
 def test_CCallableConvertMap(domain, name=None):
     """
     For testing CCallableConvertMap_class.

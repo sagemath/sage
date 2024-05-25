@@ -609,6 +609,7 @@ def function_name(fn):
     except AttributeError:
         return "{%r}" % fn
 
+
 cdef class ExpressionTreeBuilder:
     r"""
     A class with helper methods for building Expressions.
@@ -1714,6 +1715,7 @@ class IntegerPowerFunction():
         """
         return x**self.exponent
 
+
 cdef dict builtin_functions = None
 cpdef dict get_builtin_functions():
     r"""
@@ -2426,6 +2428,7 @@ class CompilerInstrSpec():
             "CompilerInstrSpec(0, 1, ['py_constants', 'n_inputs'])"
         """
         return "CompilerInstrSpec(%d, %d, %s)" % (self.n_inputs, self.n_outputs, self.parameters)
+
 
 def op_list(args, metadata):
     r"""

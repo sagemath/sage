@@ -10,9 +10,6 @@ if [ "$SAGE_EDITABLE" = yes ]; then
         sdh_setup_bdist_wheel && sdh_store_wheel .
     fi
 else
-    if [ "$SAGE_WHEELS" = yes ]; then
-        # Modularized install via wheels
-        sdh_pip_install .
-    # else nothing to do in legacy direct installation.
-    fi
+    # Modularized install via wheels. Now implied: "$SAGE_WHEELS" = yes
+    sdh_pip_install .
 fi

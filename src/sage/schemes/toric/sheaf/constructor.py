@@ -14,7 +14,7 @@ equivariant with respect to the algebraic torus action.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.schemes.toric.variety import is_ToricVariety
+from sage.schemes.toric.variety import ToricVariety_field
 from sage.modules.filtered_vector_space import FilteredVectorSpace
 
 
@@ -37,7 +37,7 @@ def TangentBundle(X):
         sage: TangentBundle(dP7)
         Rank 2 bundle on 2-d CPR-Fano toric variety covered by 5 affine patches.
     """
-    if not is_ToricVariety(X):
+    if not isinstance(X, ToricVariety_field):
         raise ValueError('not a toric variety')
 
     fan = X.fan()
@@ -95,7 +95,7 @@ def TrivialBundle(X, rank=1):
         sage: I3.cohomology(weight=(0,0), dim=True)
         (3, 0, 0)
     """
-    if not is_ToricVariety(X):
+    if not isinstance(X, ToricVariety_field):
         raise ValueError('not a toric variety')
 
     base_ring = X.base_ring()
@@ -128,7 +128,7 @@ def LineBundle(X, D):
         sage: O_D.cohomology(dim=True, weight=(0,0))
         (1, 0, 0)
     """
-    if not is_ToricVariety(X):
+    if not isinstance(X, ToricVariety_field):
         raise ValueError('not a toric variety')
 
     base_ring = X.base_ring()
