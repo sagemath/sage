@@ -293,7 +293,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                 rank = ZZ(rank)
                 if nb_names == 1 and rank > 1:
                     g = names[0]
-                    names = [f'{g}{i}' for i in range(1, rank + 1, 1)]
+                    names = [f'{g}{i}' for i in range(1, rank + 1)]
                 elif nb_names != rank:
                     raise ValueError(f"the number of generators (={nb_names}) "
                                      f"must be equal to the rank (={rank})")
