@@ -414,19 +414,26 @@ class Package(object):
         return None
 
     @property
-    def dependencies(self):
+    def dependencies_build(self):
         """
-        Return a list of strings, the package names of the (ordinary) dependencies
+        Return a list of strings, the package names of the (ordinary) build dependencies
         """
-        # after a '|', we have order-only dependencies
-        return self.__dependencies.partition('|')[0].strip().split()
+        if self.__dependencies_build is None:
+            deps = self.__dependencies
+        else:
+            deps = self.__dependencies_build
+        return deps.partition('|')[0].strip().split()
 
     @property
     def dependencies_order_only(self):
         """
-        Return a list of strings, the package names of the order-only dependencies
+        Return a list of strings, the package names of the order-only build dependencies
         """
-        return self.__dependencies.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
+        if self.__dependencies_build is None:
+            deps = self.__dependencies
+        else:
+            deps = self.__dependencies_build
+        return deps.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
 
     @property
     def dependencies_optional(self):
@@ -592,6 +599,11 @@ class Package(object):
                 self.__dependencies_order_only = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies_order_only = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_build')) as f:
+                self.__dependencies_build = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__dependencies_build = None
 
     def _init_trees(self):
         try:
