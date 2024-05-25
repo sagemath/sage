@@ -1,6 +1,6 @@
 # This action automatically labels Pull-Requests
 # based on files edited and no of lines changed.
-name: Size Labeler/Checker
+name: Automatic Labeler / Checker
 on:
   pull_request_target:
     types:
@@ -12,7 +12,7 @@ on:
       - edited
 jobs:
   label-changes:
-    if: vars.SMALL_THRESHOLD && vars.MODERATE_THRESHOLD && vars.LARGE_THRESHOLD && github.event.pull_request.draft == false
+    if: vars.SMALL_THRESHOLD && vars.MODERATE_THRESHOLD && vars.LARGE_THRESHOLD && vars.CI_PATH && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -22,11 +22,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Add labels based on size
+      - name: Add labels based on size and directory of file changed
         run: |
           git fetch origin $BASE_SHA
-          chmod a+x .github/workflows/set_labels_by_changes.sh
-          .github/workflows/set_labels_by_changes.sh
+          chmod a+x .github/workflows/set_labels.sh
+          .github/workflows/set_labels.sh
         env:
           BASE_SHA: ${{ github.base_ref }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -37,3 +37,4 @@ jobs:
           SMALL_THRESHOLD: ${{ vars.SMALL_THRESHOLD }}
           MODERATE_THRESHOLD: ${{ vars.MODERATE_THRESHOLD }}
           LARGE_THRESHOLD: ${{ vars.LARGE_THRESHOLD }}
+          CI_PATH: ${{ vars.CI_PATH }}
