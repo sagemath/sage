@@ -2202,7 +2202,7 @@ def _construct_gs_difference_family_from_full(S1, S2, mu):
     `S_1, S_2`, and the multiplier `\mu`, the last two sets are computed as
     `S_3 = \mu S_2`, `S_4 =\mu S_3`.
 
-    The sets should contain elements of a group modulo `n`.
+    The sets should contain elements of a additive group of integers modulo `n`.
 
     INPUT:
 
@@ -2235,7 +2235,8 @@ def _construct_gs_difference_family_from_compact(rep1, rep2, H, mu):
     This construction is described in [Djo2024]_. Given a subgroup `H` of a group
     `G`, and two sets of representatives `rep_1, rep_2` we can construct the first
     two sets: `S_1 = \bigcup_{x \in rep_1} x H` and  `S_2 = \bigcup_{x \in rep_2} x H`.
-    The list ``H`` should contain elements of a group modulo `n`.
+    The list ``H`` should contain elements of a additive group of integers
+    modulo `n`.
 
     The other two sets are constructed using
     :func:`_construct_gs_difference_family_from_full`.
