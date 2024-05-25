@@ -1641,7 +1641,7 @@ def is_skew_hadamard_matrix(M, normalized=False, verbose=False):
 
 
 @matrix_method
-def hadamard_matrix(n, existence=False, check=True):
+def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     r"""
     Tries to construct a Hadamard matrix using the available methods.
 
@@ -1663,6 +1663,9 @@ def hadamard_matrix(n, existence=False, check=True):
     - ``check`` -- boolean (default: ``True``); whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed.
+    - ``construction_name`` -- boolean (default: ``False``); if it is ``True``,
+      ``existence`` is ``True``, and a matrix exists, output the construction name.
+      It has no effect if ``existence`` is set to ``False``.
 
     EXAMPLES::
 
@@ -1709,6 +1712,11 @@ def hadamard_matrix(n, existence=False, check=True):
         [ 1 -1| 1  1|-1 -1|-1 -1| 1  1| 1 -1]
         [ 1  1| 1 -1|-1  1|-1  1| 1 -1|-1 -1]
 
+    To find how the matrix is obtained, use ``construction_name`` ::
+
+        sage: matrix.hadamard(476, existence=True, construction_name=True)
+        'cooper-wallis small cases: 476'
+
     TESTS::
 
         sage: matrix.hadamard(10,existence=True)
@@ -1728,25 +1736,35 @@ def hadamard_matrix(n, existence=False, check=True):
         sage: matrix.hadamard(324, existence=True)
         True
     """
+    name = str(n)
+    if construction_name:
+        def report_name(nam):
+            return nam
+    else:
+        def report_name(nam):
+            return True
+
     if not (n % 4 == 0) and (n > 2):
         if existence:
             return False
         raise ValueError("The Hadamard matrix of order %s does not exist" % n)
     if n == 2:
         if existence:
-            return True
+            return report_name(name)
         M = matrix([[1, 1], [1, -1]])
     elif n == 1:
         if existence:
-            return True
+            return report_name(name)
         M = matrix([1])
     elif is_prime_power(n//2 - 1) and (n//2 - 1) % 4 == 1:
+        name = "paleyII " + name
         if existence:
-            return True
+            return report_name(name)
         M = hadamard_matrix_paleyII(n)
     elif n == 4 or n % 8 == 0 and hadamard_matrix(n//2, existence=True) is True:
+        name = "doubling " + name
         if existence:
-            return True
+            return report_name(name)
         had = hadamard_matrix(n//2, check=False)
         chad1 = matrix([list(r) + list(r) for r in had.rows()])
         mhad = (-1) * had
@@ -1755,44 +1773,53 @@ def hadamard_matrix(n, existence=False, check=True):
                        for i in range(R)])
         M = chad1.stack(chad2)
     elif is_prime_power(n - 1) and (n - 1) % 4 == 3:
+        name = "paleyI " + name
         if existence:
-            return True
+            return report_name(name)
         M = hadamard_matrix_paleyI(n)
     elif williamson_hadamard_matrix_smallcases(n, existence=True):
+        name = "small cases: " + name
         if existence:
-            return True
+            return report_name(name)
         M = williamson_hadamard_matrix_smallcases(n, check=False)
     elif n == 156:
         if existence:
-            return True
+            return report_name(name)
         M = hadamard_matrix_156()
     elif hadamard_matrix_cooper_wallis_smallcases(n, existence=True):
+        name = "cooper-wallis small cases: " + name
         if existence:
-            return True
+            return report_name(name)
         M = hadamard_matrix_cooper_wallis_smallcases(n, check=False)
     elif turyn_type_hadamard_matrix_smallcases(n, existence=True):
+        name = "turyn type small cases: " + name
         if existence:
-            return True
+            return report_name(name)
         M = turyn_type_hadamard_matrix_smallcases(n, check=False)
     elif hadamard_matrix_miyamoto_construction(n, existence=True):
+        name = "miyamoto " + name
         if existence:
-            return True
+            return report_name(name)
         M = hadamard_matrix_miyamoto_construction(n, check=False)
     elif hadamard_matrix_from_sds(n, existence=True):
+        name = "SDS " + name
         if existence:
-            return True
+            return report_name(name)
         M = hadamard_matrix_from_sds(n, check=False)
     elif hadamard_matrix_spence_construction(n, existence=True):
+        name = "spence " + name
         if existence:
-            return True
+            return report_name(name)
         M = hadamard_matrix_spence_construction(n, check=False)
     elif skew_hadamard_matrix(n, existence=True) is True:
+        name = "skew " + name
         if existence:
-            return True
+            return report_name(name)
         M = skew_hadamard_matrix(n, check=False)
     elif regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1, existence=True) is True:
+        name = "RSHCD " + name
         if existence:
-            return True
+            return report_name(name)
         M = regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1)
     else:
         if existence:
@@ -3054,7 +3081,8 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
 _skew_had_cache = {}
 
 
-def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
+def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
+                         construction_name=False):
     r"""
     Tries to construct a skew Hadamard matrix.
 
@@ -3079,6 +3107,9 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
     - ``check`` -- boolean (default: ``True``); whether to check that output is
       correct before returning it. As this is expected to be useless (but we are
       cautious guys), you may want to disable it whenever you want speed
+    - ``construction_name`` -- boolean (default: ``False``); if it is ``True``,
+      ``existence`` is ``True``, and a matrix exists, output the construction name.
+      It has no effect if ``existence`` is set to ``False``.
 
     EXAMPLES::
 
@@ -3092,6 +3123,8 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
         sage: skew_hadamard_matrix(2)
         [ 1  1]
         [-1  1]
+        sage: skew_hadamard_matrix(196, existence=True, construction_name=True)
+        'Williamson-Goethals-Seidel: 196'
 
     TESTS::
 
@@ -3136,52 +3169,62 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
     if n < 1:
         raise ValueError("parameter n must be strictly positive")
 
-    def true():
-        _skew_had_cache[n] = True
+    def true(nam):
+        _skew_had_cache[n] = nam
+        if construction_name:
+            return nam+": "+str(n)
         return True
     M = None
+    name = ''
     if existence and n in _skew_had_cache:
-        return True
+        return true(_skew_had_cache[n])
     if not (n % 4 == 0) and (n > 2):
         if existence:
             return False
         raise ValueError("A skew Hadamard matrix of order %s does not exist" % n)
     if n == 2:
         if existence:
-            return true()
+            return true(name)
         M = matrix([[1, 1], [-1, 1]])
     elif n == 1:
         if existence:
-            return true()
+            return true(name)
         M = matrix([1])
     elif skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=True):
+        name = "good matrices small cases"
         if existence:
-            return true()
+            return true(name)
         M = skew_hadamard_matrix_from_good_matrices_smallcases(n, check=False)
     elif is_prime_power(n - 1) and ((n - 1) % 4 == 3):
+        name = "paleyI"
         if existence:
-            return true()
+            return true(name)
         M = hadamard_matrix_paleyI(n, normalize=False)
     elif is_prime_power(n//2 - 1) and (n//2 - 1) % 8 == 5:
+        name = "spence"
         if existence:
-            return true()
+            return true(name)
         M = skew_hadamard_matrix_spence_construction(n, check=False)
     elif skew_hadamard_matrix_from_complementary_difference_sets(n, existence=True):
+        name = "complementary DS"
         if existence:
-            return true()
+            return true(name)
         M = skew_hadamard_matrix_from_complementary_difference_sets(n, check=False)
     elif skew_hadamard_matrix_spence_1975(n, existence=True):
+        name = "spence [Spe1975b]"
         if existence:
-            return true()
+            return true(name)
         M = skew_hadamard_matrix_spence_1975(n, check=False)
     elif skew_hadamard_matrix_from_orthogonal_design(n, existence=True):
+        name = "orthogonal design"
         if existence:
-            return true()
+            return true(name)
         M = skew_hadamard_matrix_from_orthogonal_design(n, check=False)
     elif n % 8 == 0:
         if skew_hadamard_matrix(n//2, existence=True) is True:  # (Lemma 14.1.6 in [Ha83]_)
+            name = "doubling"
             if existence:
-                return true()
+                return true(name)
             H = skew_hadamard_matrix(n//2, check=False)
             M = block_matrix([[H, H], [-H.T, H.T]])
 
@@ -3190,8 +3233,10 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
                 n1 = n//d
                 if is_prime_power(d - 1) and (d % 4 == 0) and (n1 % 4 == 0)\
                     and skew_hadamard_matrix(n1, existence=True) is True:
+                    from sage.arith.misc import factor
+                    name = "williamson - Lemma 14.1.5 [Ha83] ("+str(factor(d-1))+","+str(n1)+") "
                     if existence:
-                        return true()
+                        return true(name)
                     H = skew_hadamard_matrix(n1, check=False)-I(n1)
                     U = matrix(ZZ, d, lambda i, j: -1 if i == j == 0 else
                                         1 if i == j == 1 or (i > 1 and j-1 == d-i)
@@ -3203,8 +3248,9 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
                     break
     if M is None:  # try Williamson-Goethals-Seidel construction
         if GS_skew_hadamard_smallcases(n, existence=True) is True:
+            name = "Williamson-Goethals-Seidel"
             if existence:
-                return true()
+                return true(name)
             M = GS_skew_hadamard_smallcases(n)
 
         else:
@@ -3215,7 +3261,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
         M = normalise_hadamard(M, skew=True)
     if check:
         assert is_hadamard_matrix(M, normalized=skew_normalize, skew=True)
-    _skew_had_cache[n] = True
+    _skew_had_cache[n] = name
     return M
 
 

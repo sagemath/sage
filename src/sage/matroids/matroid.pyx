@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The abstract Matroid class
 

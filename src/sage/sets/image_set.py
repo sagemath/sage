@@ -27,7 +27,7 @@ from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.modules.free_module import FreeModule
 from sage.structure.element import Expression
-from sage.structure.parent import Parent, is_Parent
+from sage.structure.parent import Parent
 
 from .set import Set_base, Set_add_sub_operators, Set_boolean_operators
 
@@ -82,7 +82,7 @@ class ImageSubobject(Parent):
             sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
             ....:                         '_test_some_elements', '_test_elements'])
         """
-        if not is_Parent(domain_subset):
+        if not isinstance(domain_subset, Parent):
             from sage.sets.set import Set
             domain_subset = Set(domain_subset)
 

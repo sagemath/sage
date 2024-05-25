@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 
 """Utilities for interfacing with the standard library's atexit module."""
 

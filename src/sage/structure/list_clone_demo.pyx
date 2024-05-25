@@ -87,7 +87,6 @@ class IncreasingArrays(UniqueRepresentation, Parent):
     Element = IncreasingArray
 
 
-
 class IncreasingLists(IncreasingArrays):
     """
     A small (incomplete) parent for testing
@@ -100,6 +99,7 @@ class IncreasingLists(IncreasingArrays):
         <... 'sage.structure.list_clone_demo.IncreasingList'>
     """
     Element = IncreasingList
+
 
 cdef class IncreasingList(ClonableList):
     """
@@ -131,7 +131,6 @@ cdef class IncreasingList(ClonableList):
         for i in range(len(self)-1):
             if self._getitem(i) >= self._getitem(i+1):
                 raise ValueError("array is not increasing")
-
 
 
 cdef class IncreasingIntArray(ClonableIntArray):
@@ -167,6 +166,7 @@ cdef class IncreasingIntArray(ClonableIntArray):
             if self._getitem(i) >= self._getitem(i+1):
                 raise ValueError("array is not increasing")
 
+
 class IncreasingIntArrays(IncreasingArrays):
     """
     A small (incomplete) parent for testing
@@ -179,7 +179,6 @@ class IncreasingIntArrays(IncreasingArrays):
         <... 'sage.structure.list_clone_demo.IncreasingIntArray'>
     """
     Element = IncreasingIntArray
-
 
 
 cdef class SortedList(NormalizedClonableList):
@@ -230,6 +229,7 @@ cdef class SortedList(NormalizedClonableList):
         for i in range(len(self)-1):
             if self._getitem(i) >= self._getitem(i+1):
                 raise ValueError("list is not strictly increasing")
+
 
 class SortedLists(IncreasingLists):
     """

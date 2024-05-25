@@ -447,8 +447,8 @@ class gl(MatrixLieAlgebraFromAssociative):
         gens = []
         for i in range(n):
             for j in range(n):
-                names.append('E_{0}_{1}'.format(i,j))
-                mat = MS({(i,j):one})
+                names.append('E_{}_{}'.format(i, j))
+                mat = MS({(i, j): one})
                 mat.set_immutable()
                 gens.append(mat)
         self._n = n

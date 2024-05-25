@@ -135,8 +135,19 @@ AC_ARG_ENABLE([editable],
 AC_ARG_ENABLE([wheels],
               [AS_HELP_STRING([--enable-wheels],
                               [build wheels for the Sage library and update them on "sage -b"; if disabled, use "make wheels" to build wheels])],
-              [AC_SUBST([SAGE_WHEELS], [$enableval])],
-              [])
+              [dnl
+                 AS_VAR_IF([SAGE_EDITABLE], [yes], [dnl
+                 ], [dnl
+                   AC_MSG_NOTICE([direct installation of the Sage library (--disable-editable --disable-wheels) is no longer supported; ignoring --disable-wheels])
+                 ])
+                 AC_SUBST([SAGE_WHEELS], [$enableval])
+              ], [dnl
+                 AS_VAR_IF([SAGE_EDITABLE], [yes], [dnl
+                   AC_SUBST([SAGE_WHEELS], [no])
+                 ], [dnl
+                   AC_SUBST([SAGE_WHEELS], [yes])
+                 ])
+              ])
 
 # Check whether we are on a supported platform
 AC_CANONICAL_BUILD()

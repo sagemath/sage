@@ -509,8 +509,7 @@ class SimplicialSets(Category_singleton):
                                         lifted = h
                                         break
                                 grelems = [cells_dict[(f0.nondegenerate(), lifted)].apply_degeneracies(*f0.degeneracies())]
-                                for f in faces[1:]:
-                                    grelems.append(cells_dict[(f.nondegenerate(), g)].apply_degeneracies(*f.degeneracies()))
+                                grelems.extend(cells_dict[(f.nondegenerate(), g)].apply_degeneracies(*f.degeneracies()) for f in faces[1:])
                                 faces_dict[cell] = grelems
                 cover = SimplicialSet(faces_dict, base_point=cells_dict[(self.base_point(), G.one())])
                 cover_map_data = {c: s[0] for (s, c) in cells_dict.items()}
