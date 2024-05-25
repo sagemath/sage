@@ -49,6 +49,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.dynamic_class import DynamicMetaclass
 
+
 class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
     r"""
     An abstract class for construction functors `F` (eg `F` = Cartesian
@@ -510,6 +511,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         from sage.misc.latex import latex
         return "\\mathbf{%s}(%s)" % (self._short_name(), latex(self.base_category()))
 
+
 class CovariantConstructionCategory(FunctorialConstructionCategory):
     """
     Abstract class for categories `F_{Cat}` obtained through a
@@ -654,6 +656,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
             return self
         else:
             return None
+
 
 class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):
     """

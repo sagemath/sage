@@ -14,6 +14,7 @@ from sage.categories.fields import Fields
 
 from sage.structure.element import coerce_binop
 
+
 class QuotientFields(Category_singleton):
     """
     The category of quotient fields over an integral domain

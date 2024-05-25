@@ -31,6 +31,7 @@ from sage.categories.tensor import TensorProductsCategory
 from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom, Homset
 
+
 class Crystals(Category_singleton):
     r"""
     The category of crystals.
@@ -1822,6 +1823,7 @@ class Crystals(Category_singleton):
 ###############################################################################
 ## Morphisms
 
+
 class CrystalMorphism(Morphism):
     r"""
     A crystal morphism.
@@ -2020,6 +2022,7 @@ class CrystalMorphism(Morphism):
             Finite family {1: 2, 2: 2, 3: 1}
         """
         return self._scaling_factors
+
 
 class CrystalMorphismByGenerators(CrystalMorphism):
     r"""
@@ -2327,6 +2330,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
 
 ###############################################################################
 ## Homset
+
 
 class CrystalHomset(Homset):
     r"""

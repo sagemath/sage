@@ -32,6 +32,7 @@ from sage.categories.algebras import Algebras
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.tensor import TensorProductsCategory
 
+
 class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     r"""
     The category of finite dimensional algebras with a distinguished basis.

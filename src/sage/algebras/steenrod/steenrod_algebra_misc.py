@@ -567,6 +567,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
 ######################################################
 # string representations for elements
 
+
 def milnor_mono_to_string(mono, latex=False, generic=False):
     """
     String representation of element of the Milnor basis.
@@ -720,6 +721,7 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
                 index += 1
         return string.strip(" ")
 
+
 def wood_mono_to_string(mono, latex=False):
     """
     String representation of element of Wood's Y and Z bases.
@@ -764,6 +766,7 @@ def wood_mono_to_string(mono, latex=False):
                 str(2**s * (2**(t+1)-1)) + "} "
         return string.strip(" ")
 
+
 def wall_mono_to_string(mono, latex=False):
     """
     String representation of element of Wall's basis.
@@ -803,6 +806,7 @@ def wall_mono_to_string(mono, latex=False):
             string = string + "Q^{" + str(m) + "}_{" \
                 + str(k) + "} "
         return string.strip(" ")
+
 
 def wall_long_mono_to_string(mono, latex=False):
     """
@@ -848,6 +852,7 @@ def wall_long_mono_to_string(mono, latex=False):
                 string = string + sq + "^{" + str(2**i) + "} "
         return string.strip(" ")
 
+
 def arnonA_mono_to_string(mono, latex=False, p=2):
     """
     String representation of element of Arnon's A basis.
@@ -888,6 +893,7 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
             string = string + "X^{" + str(m) + "}_{" \
                 + str(k) + "} "
         return string.strip(" ")
+
 
 def arnonA_long_mono_to_string(mono, latex=False, p=2):
     """
@@ -932,6 +938,7 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
             for i in range(m,k-1,-1):
                 string = string + sq + "^{" + str(2**i) + "} "
         return string.strip(" ")
+
 
 def pst_mono_to_string(mono, latex=False, generic=False):
     r"""
@@ -995,6 +1002,7 @@ def pst_mono_to_string(mono, latex=False, generic=False):
                         + str(t) + "})^" + pow + " "
         return string.strip(" ")
 
+
 def comm_mono_to_string(mono, latex=False, generic=False):
     r"""
     String representation of element of a commutator basis.
@@ -1055,6 +1063,7 @@ def comm_mono_to_string(mono, latex=False, generic=False):
                     string = string + pow
                 string = string + " "
         return string.strip(" ")
+
 
 def comm_long_mono_to_string(mono, p, latex=False, generic=False):
     r"""
@@ -1127,6 +1136,7 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
         return string.strip(" ")
 
 # miscellany:
+
 
 def convert_perm(m):
     """

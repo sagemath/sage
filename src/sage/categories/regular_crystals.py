@@ -23,6 +23,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
 
+
 class RegularCrystals(Category_singleton):
     r"""
     The category of regular crystals.

@@ -127,6 +127,8 @@ class LoopCrystals(Category_singleton):
             return G
 
 # TODO: Should we make "regular" an axiom?
+
+
 class RegularLoopCrystals(Category_singleton):
     r"""
     The category of regular `U_q'(\mathfrak{g})`-crystals, where
@@ -163,6 +165,7 @@ class RegularLoopCrystals(Category_singleton):
             I0 = CT.index_set()
             La = CT.root_system().ambient_space().fundamental_weights()
             return sum(La[i] * (self.phi(i) - self.epsilon(i)) for i in I0)
+
 
 class KirillovReshetikhinCrystals(Category_singleton):
     """

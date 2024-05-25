@@ -26,6 +26,7 @@ from sage.arith.power import generic_power
 
 all_axioms += ("HTrivial", "Aperiodic", "LTrivial", "RTrivial", "JTrivial")
 
+
 class Semigroups(CategoryWithAxiom):
     """
     The category of (multiplicative) semigroups.
