@@ -167,7 +167,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         If ``x`` itself is not a module with basis, but there is a
         canonical one associated to it, the latter is returned::
 
-            sage: CQ(AbelianVariety(Gamma0(37)))  # indirect doctest                    # needs sage.modular sage.modules
+            sage: CQ(AbelianVariety(Gamma0(37)))  # indirect doctest                    # needs sage.libs.flint sage.modular sage.modules
             Vector space of dimension 4 over Rational Field
         """
         try:

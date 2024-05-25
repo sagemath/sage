@@ -1110,7 +1110,7 @@ class Rings(CategoryWithAxiom):
 
                 sage: k.<t> = GF(5^3)                                                   # needs sage.rings.finite_rings
                 sage: Frob = k.frobenius_endomorphism()                                 # needs sage.rings.finite_rings
-                sage: k['x', Frob]                                                      # needs sage.rings.finite_rings
+                sage: k['x', Frob]                                                      # needs sage.modules sage.rings.finite_rings
                 Ore Polynomial Ring in x over Finite Field in t of size 5^3
                  twisted by t |--> t^5
 
