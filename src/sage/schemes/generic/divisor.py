@@ -49,8 +49,8 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.formal_sum import FormalSum
 
 from .morphism import is_SchemeMorphism
-from sage.schemes.affine.affine_space import is_AffineSpace
-from sage.schemes.projective.projective_space import is_ProjectiveSpace
+from sage.schemes.affine.affine_space import AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring
 
 
 def CurvePointToIdeal(C,P):
@@ -73,7 +73,7 @@ def CurvePointToIdeal(C,P):
     m = n-1
     while m > 0 and P[m] == 0:
         m += -1
-    if is_ProjectiveSpace(A):
+    if isinstance(A, ProjectiveSpace_ring):
         a_m = P[m]
         x_m = x[m]
         for i in range(m):
@@ -82,7 +82,7 @@ def CurvePointToIdeal(C,P):
                 polys.append(x[i])
             else:
                 polys.append(a_m*x[i]-ai*x_m)
-    elif is_AffineSpace(A):
+    elif isinstance(A, AffineSpace_generic):
         for i in range(m+1):
             ai = P[i]
             if ai == 0:

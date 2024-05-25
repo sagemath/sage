@@ -160,6 +160,9 @@ def is_AlgebraicScheme(x):
           x^2 + y^2
         sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
         sage: is_AlgebraicScheme(V)
+        doctest:warning...
+        DeprecationWarning: The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
 
     Affine space is itself not an algebraic scheme, though the closed
@@ -191,6 +194,8 @@ def is_AlgebraicScheme(x):
         sage: is_AlgebraicScheme(S)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.")
     return isinstance(x, AlgebraicScheme)
 
 
@@ -228,7 +233,7 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S.category()
             Category of schemes over Integer Ring
         """
-        if not ambient_space.is_AmbientSpace(A):
+        if not isinstance(A, ambient_space.AmbientSpace):
             raise TypeError("A (=%s) must be an ambient space")
         self.__A = A
         self.__divisor_group = {}
@@ -676,7 +681,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
-        if sage.schemes.affine.affine_space.is_AffineSpace(self.ambient_space()):
+        if isinstance(self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic):
             t = "affine"
         else:
             t = "projective"
@@ -710,7 +715,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             sage: U._repr_()
             'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
         """
-        if sage.schemes.affine.affine_space.is_AffineSpace(self.ambient_space()):
+        if isinstance(self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic):
             t = "affine"
         else:
             t = "projective"
