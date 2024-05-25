@@ -112,8 +112,8 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
 
             target = parent.codomain().ambient_space()
             dom = parent.domain().ambient_space()
-            from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-            if is_ProductProjectiveSpaces(target):
+            from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+            if isinstance(target, ProductProjectiveSpaces_ring):
                 splitpolys = target._factors(polys)
                 for m in range(len(splitpolys)):
                     d = dom._degree(splitpolys[m][0])

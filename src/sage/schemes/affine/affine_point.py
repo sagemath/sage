@@ -372,8 +372,8 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             ...
             TypeError: this point must be a point on an affine subscheme
         """
-        from sage.schemes.affine.affine_space import is_AffineSpace
-        if is_AffineSpace(self.codomain()):
+        from sage.schemes.affine.affine_space import AffineSpace_generic
+        if isinstance(self.codomain(), AffineSpace_generic):
             raise TypeError("this point must be a point on an affine subscheme")
         return self.codomain().intersection_multiplicity(X, self)
 
@@ -397,8 +397,8 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             sage: Q2.multiplicity()                                                     # needs sage.libs.singular
             2
         """
-        from sage.schemes.affine.affine_space import is_AffineSpace
-        if is_AffineSpace(self.codomain()):
+        from sage.schemes.affine.affine_space import AffineSpace_generic
+        if isinstance(self.codomain(), AffineSpace_generic):
             raise TypeError("this point must be a point on an affine subscheme")
         return self.codomain().multiplicity(self)
 

@@ -112,7 +112,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: loads(A.dumps()) == A
             True
         """
-        if not sage.categories.homset.is_Homset(parent):
+        if not isinstance(parent, sage.categories.homset.Homset):
             raise TypeError("parent must be a Hom space")
         if side not in ["left", "right"]:
             raise ValueError("the argument side must be either 'left' or 'right'")
