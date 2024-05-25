@@ -1,17 +1,14 @@
 r"""
 Points on elliptic curves
 
-The base class ``EllipticCurvePoint_field``, derived from
-``AdditiveGroupElement``, provides support for points on elliptic
-curves defined over general fields.  The derived classes
-``EllipticCurvePoint_number_field`` and
-``EllipticCurvePoint_finite_field`` provide further support for point
-on curves defined over number fields (including the rational field
+The base class :class:`EllipticCurvePoint` currently provides little
+functionality of its own.  Its derived class
+:class:`EllipticCurvePoint_field` provides support for points on
+elliptic curves over general fields.  The derived classes
+:class:`EllipticCurvePoint_number_field` and
+:class:`EllipticCurvePoint_finite_field` provide further support for
+points on curves over number fields (including the rational field
 `\QQ`) and over finite fields.
-
-The class ``EllipticCurvePoint``, which is based on
-``SchemeMorphism_point_projective_ring``, currently has little extra
-functionality.
 
 EXAMPLES:
 
@@ -107,7 +104,6 @@ AUTHORS:
 
 - Mariah Lenox (March 2011) -- Added ``tate_pairing`` and ``ate_pairing``
   functions to ``EllipticCurvePoint_finite_field`` class
-
 """
 
 # ****************************************************************************
@@ -134,6 +130,8 @@ from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.real_mpfr import RealField
 from sage.rings.real_mpfr import RR
 import sage.groups.generic as generic
+
+from sage.structure.element import AdditiveGroupElement
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp
 
@@ -153,14 +151,41 @@ except ImportError:
     PariError = ()
 
 
-class EllipticCurvePoint(SchemeMorphism_point_projective_ring):
+class EllipticCurvePoint(AdditiveGroupElement,
+                         SchemeMorphism_point_projective_ring):
     """
     A point on an elliptic curve.
     """
-    pass
+    def curve(self):
+        """
+        Return the curve that this point is on.
+
+        This is a synonym for :meth:`scheme`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: P = E([-1, 1])
+            sage: P.curve()
+            Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
+
+            sage: E = EllipticCurve(QQ, [1, 1])
+            sage: P = E(0, 1)
+            sage: P.scheme()
+            Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
+            sage: P.scheme() == P.curve()
+            True
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 3,'a')                                      # needs sage.rings.number_field
+            sage: P = E.base_extend(K)(1, a)                                            # needs sage.rings.number_field
+            sage: P.scheme()                                                            # needs sage.rings.number_field
+            Elliptic Curve defined by y^2 = x^3 + x + 1 over Number Field in a with defining polynomial x^2 - 3
+        """
+        return self.scheme()
 
 
-class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
+class EllipticCurvePoint_field(EllipticCurvePoint,
+                               SchemeMorphism_point_abelian_variety_field):
     """
     A point on an elliptic curve over a field.  The point has coordinates
     in the base field.
@@ -275,7 +300,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             v = (R.zero(), R.one(), R.zero())
 
         SchemeMorphism_point_abelian_variety_field.__init__(self, point_homset, v, check=check)
-        # AdditiveGroupElement.__init__(self, point_homset)
 
         self.normalize_coordinates()
 
@@ -426,39 +450,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         else:
             return pari([0])
 
-    def scheme(self):
-        """
-        Return the scheme of this point, i.e., the curve it is on.
-        This is synonymous with :meth:`curve` which is perhaps more
-        intuitive.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(QQ,[1,1])
-            sage: P = E(0,1)
-            sage: P.scheme()
-            Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
-            sage: P.scheme() == P.curve()
-            True
-            sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 - 3,'a')                                      # needs sage.rings.number_field
-            sage: P = E.base_extend(K)(1, a)                                            # needs sage.rings.number_field
-            sage: P.scheme()                                                            # needs sage.rings.number_field
-            Elliptic Curve defined by y^2 = x^3 + x + 1
-            over Number Field in a with defining polynomial x^2 - 3
-        """
-        # The following text is just not true: it applies to the class
-        # EllipticCurvePoint, which appears to be never used, but does
-        # not apply to EllipticCurvePoint_field which is simply derived
-        # from AdditiveGroupElement.
-        #
-        # "Technically, points on curves in Sage are scheme maps from
-        #  the domain Spec(F) where F is the base field of the curve to
-        #  the codomain which is the curve.  See also domain() and
-        #  codomain()."
-
-        return self.codomain()
-
     def order(self):
         r"""
         Return the order of this point on the elliptic curve.
@@ -496,19 +487,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
                                   "not implemented over general fields.")
 
     additive_order = order
-
-    def curve(self):
-        """
-        Return the curve that this point is on.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve('389a')
-            sage: P = E([-1,1])
-            sage: P.curve()
-            Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
-        """
-        return self.scheme()
 
     def __bool__(self):
         """
@@ -1818,6 +1796,17 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: z.multiplicative_order()
             360
 
+        Another larger example::
+
+            sage: F = GF(65537^2, modulus=[3,-1,1], name='a')
+            sage: F.inject_variables()
+            Defining a
+            sage: E = EllipticCurve(F, [0,1])
+            sage: P = E(22, 28891)
+            sage: Q = E(-93, 2728*a + 64173)
+            sage: P.weil_pairing(Q, 7282, algorithm='sage')
+            53278*a + 36700
+
         An example over a number field::
 
             sage: # needs sage.rings.number_field
@@ -1833,16 +1822,20 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         TESTS:
 
-        Check that the original Sage implementation still works::
+        Check that the original Sage implementation still works and
+        that the result coincides with the PARI implementation::
 
             sage: # needs sage.rings.finite_rings
             sage: GF(65537^2).inject_variables()
             Defining z2
             sage: E = EllipticCurve(GF(65537^2), [0,1])
-            sage: P = E(22, 28891)
-            sage: Q = E(-93, 40438*z2 + 31573)
-            sage: P.weil_pairing(Q, 7282, algorithm='sage')
-            19937*z2 + 65384
+            sage: R, S = E.torsion_basis(7282)
+            sage: a, b = ZZ.random_element(), ZZ.random_element()
+            sage: P = a*R + b*S
+            sage: c, d = ZZ.random_element(), ZZ.random_element()
+            sage: Q = c*R + d*S
+            sage: P.weil_pairing(Q, 7282, algorithm='sage') == P.weil_pairing(Q, 7282, algorithm='pari')
+            True
 
         Passing an unknown ``algorithm=`` argument should fail::
 
@@ -2047,18 +2040,18 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Px.weil_pairing(Qx, 41)^e == num/den
             True
 
-        TESTS:
+        An example over a large base field::
 
-        Check that the PARI output matches the original Sage implementation::
-
-            sage: # needs sage.rings.finite_rings
-            sage: GF(65537^2).inject_variables()
+            sage: F = GF(65537^2, modulus=[3,46810,1], name='z2')
+            sage: F.inject_variables()
             Defining z2
-            sage: E = EllipticCurve(GF(65537^2), [0,1])
+            sage: E = EllipticCurve(F, [0,1])
             sage: P = E(22, 28891)
             sage: Q = E(-93, 40438*z2 + 31573)
             sage: P.tate_pairing(Q, 7282, 2)
             34585*z2 + 4063
+
+        TESTS:
 
         The point ``P (self)`` must have ``n`` torsion::
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Class to flatten polynomial rings over polynomial ring
 

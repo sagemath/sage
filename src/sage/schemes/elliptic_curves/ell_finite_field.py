@@ -1252,8 +1252,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E1.is_isogenous(E7,GF(13^30,'j'))
             False
         """
-        from .ell_generic import is_EllipticCurve
-        if not is_EllipticCurve(other):
+        from .ell_generic import EllipticCurve_generic
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True

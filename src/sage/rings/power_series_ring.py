@@ -470,8 +470,13 @@ def is_PowerSeriesRing(R):
         False
         sage: is_PowerSeriesRing(QQ[['x']])
         True
+        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x'))
+        True
+        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
+        False
     """
-    if isinstance(R, PowerSeriesRing_generic):
+    from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+    if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
         return R.ngens() == 1
     else:
         return False
@@ -684,8 +689,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
     def _coerce_map_from_(self, S):
         """
-        A coercion from `S` exists, if `S` coerces into ``self``'s base ring,
-        or if `S` is a univariate polynomial or power series ring with the
+        A coercion from ``S`` exists, if ``S`` coerces into ``self``'s base ring,
+        or if ``S`` is a univariate polynomial or power series ring with the
         same variable name as self, defined over a base ring that coerces into
         ``self``'s base ring.
 
@@ -700,7 +705,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             False
             sage: A.has_coerce_map_from(ZZ[['x']])
             True
-
+            sage: A.has_coerce_map_from(LazyPowerSeriesRing(ZZ, 'x'))
+            True
         """
         if self.base_ring().has_coerce_map_from(S):
             return True
@@ -712,8 +718,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         Coerce object to this power series ring.
 
-        Returns a new instance unless the parent of f is self, in which
-        case f is returned (since f is immutable).
+        Returns a new instance unless the parent of ``f`` is ``self``, in
+        which case ``f`` is returned (since ``f`` is immutable).
 
         INPUT:
 
@@ -725,7 +731,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
 
         -  ``check`` -- bool (default: ``True``), whether to verify
            that the coefficients, etc., coerce in correctly.
-
 
         EXAMPLES::
 
@@ -803,6 +808,14 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             ...
             ValueError: prec (= -5) must be non-negative
 
+        From lazy series::
+
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: R = PowerSeriesRing(QQ, 'x')
+            sage: R(1 / (1 + x^3))
+            1 - x^3 + x^6 - x^9 + x^12 - x^15 + x^18 + O(x^20)
+            sage: R(2 - x^2 + x^6)
+            2 - x^2 + x^6
         """
         if prec is not infinity:
             prec = integer.Integer(prec)
@@ -832,6 +845,16 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                                           f.degree(f.default_variable()), check=check)
                 else:
                     raise TypeError("Can only convert series into ring with same variable name.")
+        else:
+            from sage.rings.lazy_series import LazyPowerSeries
+            if isinstance(f, LazyPowerSeries):
+                if prec is infinity:
+                    try:
+                        f = f.polynomial()
+                    except ValueError:
+                        f = f.add_bigoh(self.default_prec())
+                else:
+                    f = f.add_bigoh(prec)
         return self.element_class(self, f, prec, check=check)
 
     def construction(self):

@@ -79,10 +79,11 @@ reconfigure:
 	fi
 
 # Preemptively download all source tarballs of normal packages.
+DOWNLOAD_PACKAGES=:all:
 download:
 	export SAGE_ROOT=$$(pwd) && \
 	export PATH=$$SAGE_ROOT/build/bin:$$PATH && \
-	sage-package download :all:
+	sage-package download $(DOWNLOAD_PACKAGES)
 
 dist: build/make/Makefile
 	./sage --sdist
@@ -350,6 +351,7 @@ ptestoptionallong-nodoc:
 # CONFIGURE_DEPENDENCIES is the list of files that influence the generation of 'configure'.
 CONFIGURE_DEPENDENCIES =							\
 	configure.ac src/bin/sage-version.sh m4/*.m4				\
+	src/pyproject.toml							\
 	build/pkgs/*/spkg-configure.m4						\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/checksums.ini build/pkgs/*/requirements.txt		\
