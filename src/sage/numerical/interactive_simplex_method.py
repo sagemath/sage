@@ -3910,7 +3910,16 @@ class LPDictionary(LPAbstractDictionary):
         c = copy(c)
         B = vector(basic_variables)
         N = vector(nonbasic_variables)
+        # Sadly, vector does not guarantee that the result is freshly allocated
+        # if the input was already a vector: #29101
+        if B is basic_variables:
+            B = copy(B)
+        if N is nonbasic_variables:
+            N = copy(N)
         self._AbcvBNz = [A, b, c, objective_value, B, N, polygen(ZZ, objective_name)]
+
+    def __copy__(self):
+        return type(self)(*self._AbcvBNz)
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2):
