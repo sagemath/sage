@@ -1,1 +1,2 @@
-sphinx >=5.2, <8
+# https://github.com/sagemath/sage/issues/37996
+sphinx >=5.2, <7.3
