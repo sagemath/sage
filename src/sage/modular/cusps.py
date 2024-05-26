@@ -34,7 +34,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ
-from sage.structure.element import Element, is_InfinityElement
+from sage.structure.element import Element, InfinityElement
 from sage.structure.element import Matrix
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
