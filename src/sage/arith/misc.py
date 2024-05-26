@@ -1468,11 +1468,11 @@ def random_prime(n, proof=None, lbound=2):
     lbound = max(2, lbound)
     if lbound > 2:
         if lbound == 3 or n <= 2*lbound - 2:
-        # check for Betrand's postulate (proved by Chebyshev)
+            # check for Betrand's postulate (proved by Chebyshev)
             if lbound < 25 or n <= 6*lbound/5:
-            # see J. Nagura, Proc. Japan Acad. 28, (1952). 177-181.
+                # see J. Nagura, Proc. Japan Acad. 28, (1952). 177-181.
                 if lbound < 2010760 or n <= 16598*lbound/16597:
-                # see L. Schoenfeld, Math. Comp. 30 (1976), no. 134, 337-360.
+                    # see L. Schoenfeld, Math. Comp. 30 (1976), no. 134, 337-360.
                     if proof:
                         smallest_prime = ZZ(lbound-1).next_prime()
                     else:
@@ -1791,6 +1791,30 @@ def gcd(a, b=None, **kwargs):
         sage: type(gcd([]))
         <class 'sage.rings.integer.Integer'>
 
+    It is possible to compute the gcd of a :class:`Factorization`::
+
+        sage: gcd(factor(12), factor(18))
+        2 * 3
+        sage: gcd([factor(12), factor(18)])
+        2 * 3
+        sage: gcd([factor(12), factor(18), factor(16)])
+        2
+
+    However, mixing :class:`sage.structure.factorization.Factorization` with
+    non-factorized objects is not allowed. One should either call
+    :meth:`sage.structure.factorization.Factorization.value` or :func:`factor`
+    first::
+
+        sage: lst = [factor(12), 6]
+        sage: gcd(lst)
+        Traceback (most recent call last):
+        ...
+        AttributeError: 'IntegerFactorization' object has no attribute 'sage'
+        sage: gcd([a.value() if isinstance(a, Factorization) else a for a in lst])
+        6
+        sage: gcd(map(factor, lst))
+        2 * 3
+
     TESTS:
 
     The following shows that indeed coercion takes place before computing
@@ -1821,14 +1845,13 @@ def gcd(a, b=None, **kwargs):
         sage: parent(gcd(SR(2), SR(4)))                                                 # needs sage.symbolic
         Symbolic Ring
 
-    Verify that objects without gcd methods but which cannot be
-    coerced to ZZ or QQ raise an error::
+    Verify that objects without gcd methods raise an error::
 
         sage: F.<a,b> = FreeMonoid(2)                                                   # needs sage.groups
         sage: gcd(a, b)                                                                 # needs sage.groups
         Traceback (most recent call last):
         ...
-        TypeError: unable to call gcd with a
+        AttributeError: 'FreeMonoid_with_category.element_class' object has no attribute 'gcd'
 
     Tests with numpy and gmpy2 numbers::
 
@@ -1843,76 +1866,27 @@ def gcd(a, b=None, **kwargs):
     """
     # Most common use case first:
     if b is not None:
-        try:
-            m = a.gcd
-        except (AttributeError, TypeError):
-            e = py_scalar_to_element(a)
-            if e is a:
-                raise TypeError("unable to call gcd with {!r}".format(a))
-            m = e.gcd
-
-        try:
-            return m(b, **kwargs)
-        except TypeError:
-            return m(py_scalar_to_element(b), **kwargs)
+        a = py_scalar_to_element(a)
+        b = py_scalar_to_element(b)
+        return a.gcd(b, **kwargs)
 
     from sage.structure.sequence import Sequence
     seq = Sequence(py_scalar_to_element(el) for el in a)
-    if seq.universe() is ZZ:
+    U = seq.universe()
+
+    if not seq:
+        return U(ZZ.zero())
+
+    if U is ZZ:
         return GCD_list(seq)
-    else:
-        return __GCD_sequence(seq, **kwargs)
+
+    g = seq[0]
+    for vi in seq[1:]:
+        g = vi.gcd(U(g), **kwargs)
+    return g
 
 
 GCD = gcd
-
-
-def __GCD_sequence(v, **kwargs):
-    """
-    Internal function returning the gcd of the elements of a sequence
-
-    INPUT:
-
-
-    -  ``v`` - A sequence (possibly empty)
-
-
-    OUTPUT: The gcd of the elements of the sequence as an element of
-    the sequence's universe, or the integer 0 if the sequence is
-    empty.
-
-    EXAMPLES::
-
-        sage: from sage.arith.misc import __GCD_sequence
-        sage: from sage.structure.sequence import Sequence
-        sage: l = ()
-        sage: __GCD_sequence(l)
-        0
-        sage: __GCD_sequence(Sequence(srange(10)))
-        1
-        sage: X=polygen(QQ)
-        sage: __GCD_sequence(Sequence((2*X+4,2*X^2,2)))
-        1
-        sage: X=polygen(ZZ)
-        sage: __GCD_sequence(Sequence((2*X+4,2*X^2,2)))
-        2
-        sage: __GCD_sequence(Sequence((1/1,1/2)))
-        1/2
-
-    TESTS::
-
-        sage: __GCD_sequence(Sequence((1,1/2,1/5)))
-        1/10
-    """
-    if len(v) == 0:
-        return ZZ(0)
-    if hasattr(v,'universe'):
-        g = v.universe()(0)
-    else:
-        g = ZZ(0)
-    for vi in v:
-        g = vi.gcd(g, **kwargs)
-    return g
 
 
 def xlcm(m, n):
