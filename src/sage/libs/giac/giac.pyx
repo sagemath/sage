@@ -1306,7 +1306,7 @@ cdef class Pygen(GiacMethods_base):
     #        url='file:'+url
     #        wwwbrowseropen(url)
 
-1    def _help(self):
+    def _help(self):
         return self.findhelp().__str__()
 
     def _sage_doc_(self):
