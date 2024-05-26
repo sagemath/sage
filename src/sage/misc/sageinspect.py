@@ -25,7 +25,7 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
