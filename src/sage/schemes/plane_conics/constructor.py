@@ -25,7 +25,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.rational_field import is_RationalField
@@ -41,7 +41,7 @@ from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.all import Sequence
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from .con_field import ProjectiveConic_field
 from .con_finite_field import ProjectiveConic_finite_field
@@ -180,7 +180,7 @@ def Conic(base_field, F=None, names=None, unique=True):
                 L.append(Sequence([C[0]**2, C[0] * C[1],
                                    C[0] * C[2], C[1]**2,
                                    C[1] * C[2], C[2]**2], P.fraction_field()))
-            M = Matrix(L)
+            M = matrix(L)
             if unique and M.rank() != 5:
                 raise ValueError("points in F (=%s) do not define a unique "
                                  "conic" % F)
@@ -203,7 +203,7 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if isinstance(F, QuadraticForm):
         F = F.matrix()
-    if is_Matrix(F) and F.is_square() and F.ncols() == 3:
+    if isinstance(F, Matrix) and F.is_square() and F.ncols() == 3:
         if names is None:
             names = 'x,y,z'
         temp_ring = PolynomialRing(F.base_ring(), 3, names)

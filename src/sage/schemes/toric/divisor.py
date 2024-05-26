@@ -188,7 +188,7 @@ from sage.schemes.generic.divisor_group import DivisorGroup_generic
 from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
 from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 
 lazy_import('sage.topology.simplicial_complex', 'SimplicialComplex')
 
@@ -2017,7 +2017,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
         """
         if is_ToricDivisor(x):
             x = self._projection_matrix * vector(x)
-        if is_Vector(x):
+        if isinstance(x, Vector):
             x = list(x)
         return self.element_class(self, x)
 

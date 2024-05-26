@@ -1148,9 +1148,9 @@ class IncidenceStructure:
             [1 1 0 0]
             [0 1 1 1]
         """
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         from sage.rings.integer_ring import ZZ
-        A = Matrix(ZZ, self.num_points(), self.num_blocks(), sparse=True)
+        A = matrix(ZZ, self.num_points(), self.num_blocks(), sparse=True)
         for j, b in enumerate(self._blocks):
             for i in b:
                 A[i, j] = 1

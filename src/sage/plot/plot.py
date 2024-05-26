@@ -2027,8 +2027,8 @@ def plot(funcs, *args, **kwds):
     original_opts = kwds.pop('__original_opts', {})
     do_show = kwds.pop('show',False)
 
-    from sage.structure.element import is_Vector
-    if kwds.get('parametric',False) and is_Vector(funcs):
+    from sage.structure.element import Vector
+    if kwds.get('parametric',False) and isinstance(funcs, Vector):
         funcs = tuple(funcs)
 
     if hasattr(funcs, 'plot'):

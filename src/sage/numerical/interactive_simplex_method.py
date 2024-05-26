@@ -200,8 +200,8 @@ lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "
 from sage.rings.infinity import Infinity
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import QQ
-from sage.rings.real_double import RDF
 from sage.rings.integer_ring import ZZ
 from sage.structure.all import SageObject
 
@@ -303,24 +303,27 @@ def _latex_product(coefficients, variables,
         (x, y)
         sage: print(_latex_product([-1, 3], [x, y]))                                    # needs sage.symbolic
         - \mspace{-6mu}&\mspace{-6mu} x \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 3 y
+        sage: var("x, y, z")
+        (x, y, z)
+        sage: print(_latex_product([-pi, log(2), pi**0], [x, y, z]))
+        - \mspace{-6mu}&\mspace{-6mu} \pi x \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \log\left(2\right) y \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} z
     """
     entries = []
     for c, v in zip(coefficients, variables):
-        if c == 0:
+        t = latex(c)
+        if t == '0':
             entries.extend(["", ""])
             continue
         sign = "+"
-        if latex(c).strip().startswith("-"):
+        if t.strip().startswith("-"):
             sign = "-"
             c = - c
-        if c == 1:
+        if t.strip() == '1' or t.strip() == '-1':
             t = latex(v)
         else:
             t = latex(c)
             if '+' in t or '-' in t:
-                from sage.symbolic.ring import SR
-                if SR(c).operator() in [operator.add, operator.sub]:
-                    t = r"\left( " + t + r" \right)"
+                t = r"\left( " + t + r" \right)"
             t += " " + latex(v)
         entries.extend([sign, t])
     if drop_plus:   # Don't start with +
@@ -654,7 +657,7 @@ class InteractiveLPProblem(SageObject):
         b = vector(b)
         c = vector(c)
         if base_ring is None:
-            base_ring = vector(A.list() + list(b) + list(c)).base_ring()
+            base_ring = vector(A.list() + list(b) + list(c) + [objective_constant_term]).base_ring()
         base_ring = base_ring.fraction_field()
         A = A.change_ring(base_ring)
         A.set_immutable()
@@ -676,7 +679,7 @@ class InteractiveLPProblem(SageObject):
         R = PolynomialRing(base_ring, x, order="neglex")
         x = vector(R, R.gens()) # All variables as a vector
         self._Abcx = A, b, c, x
-        self._constant_term = objective_constant_term
+        self._constant_term = base_ring(objective_constant_term)
 
         if constraint_type in ["<=", ">=", "=="]:
             constraint_type = (constraint_type, ) * m
@@ -1175,9 +1178,13 @@ class InteractiveLPProblem(SageObject):
             objective_constant_term=self._constant_term)
 
     @cached_method
-    def feasible_set(self):
+    def feasible_set(self, backend=None):
         r"""
         Return the feasible set of ``self``.
+
+        INPUT:
+
+        - ``backend`` -- (optional) a backend for :mod:`Polyhedron <sage.geometry.polyhedron.constructor>`
 
         OUTPUT:
 
@@ -1189,8 +1196,37 @@ class InteractiveLPProblem(SageObject):
             sage: b = (1000, 1500)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
-            sage: P.feasible_set()
+            sage: F = P.feasible_set(); F
             A 2-dimensional polyhedron in QQ^2
+            defined as the convex hull of 4 vertices
+            sage: F.backend()
+            'ppl'
+            sage: F_cdd = P.feasible_set(backend='cdd'); F_cdd
+            A 2-dimensional polyhedron in QQ^2
+            defined as the convex hull of 4 vertices
+            sage: F_cdd.backend()
+            'cdd'
+
+        An algebraic polyhedron::
+
+            sage: A = ([1, sqrt(2)], [sqrt(3), 1])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
+            sage: F = P.feasible_set(backend='number_field'); F
+            A 2-dimensional polyhedron in (Symbolic Ring)^2
+            defined as the convex hull of 4 vertices
+            sage: F.backend()
+            'number_field'
+
+        Using ``RDF``::
+
+            sage: A = ([RDF(1), RDF(1)], [RDF(3), RDF(1)])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
+            sage: P.feasible_set()
+            A 2-dimensional polyhedron in RDF^2
             defined as the convex hull of 4 vertices
         """
         ieqs = []
@@ -1207,13 +1243,9 @@ class InteractiveLPProblem(SageObject):
                 ieqs.append([0] + list(-n))
             elif r == ">=":
                 ieqs.append([0] + list(n))
-        if self.base_ring() is QQ:
-            R = QQ
-        else:
-            R = RDF
-            ieqs = [[R(_) for _ in ieq] for ieq in ieqs]
-            eqns = [[R(_) for _ in eqn] for eqn in eqns]
-        return Polyhedron(ieqs=ieqs, eqns=eqns, base_ring=R)
+        if backend is not None:
+            return Polyhedron(ieqs=ieqs, eqns=eqns, backend=backend)
+        return Polyhedron(ieqs=ieqs, eqns=eqns)
 
     def is_bounded(self):
         r"""
@@ -1852,7 +1884,7 @@ class InteractiveLPProblem(SageObject):
             c = - c
             constant_term = - constant_term
             objective_name = - objective_name
-        kwds["objective_name"] = objective_name
+        kwds["objective_name"] = objective_name  # polynomial, no longer a string
         kwds["problem_type"] = "-max" if is_negative else "max"
         kwds["is_primal"] = self.is_primal()
         kwds["objective_constant_term"] = constant_term
@@ -2019,7 +2051,10 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         if objective_name is None:
             objective_name = default_variable_name(
                 "primal objective" if is_primal else "dual objective")
-        self._objective_name = polygen(ZZ, objective_name)
+        if isinstance(objective_name, Polynomial):
+            self._objective_name = objective_name
+        else:
+            self._objective_name = polygen(ZZ, objective_name)
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2,
@@ -2660,6 +2695,56 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             Entering: $x_{2}$. Leaving: $x_{3}$.
             ...
             The optimal value: $6250$. An optimal solution: $\left(250,\,750\right)$.
+
+        TESTS::
+
+            sage: from sage.rings.real_double import RDF
+            sage: A = ([RDF(1), RDF(1)], [RDF(3), RDF(1)], [RDF(-1), RDF(-1)])
+            sage: b = (RDF(1000), RDF(1500), RDF(-400))
+            sage: c = (RDF(10), RDF(5))
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: P.run_simplex_method()
+            \begin{equation*}
+            ...
+            \end{equation*}
+            The initial dictionary is infeasible, solving auxiliary problem.
+            ...
+            Entering: $x_{0}$. Leaving: $x_{5}$.
+            ...
+            Entering: $x_{1}$. Leaving: $x_{0}$.
+            ...
+            Back to the original problem.
+            ...
+            Entering: $x_{5}$. Leaving: $x_{4}$.
+            ...
+            Entering: $x_{2}$. Leaving: $x_{3}$.
+            ...
+            The optimal value: $6250.0$. An optimal solution: $\left(249.99999999999997,\,750.0\right)$.
+
+        Using constants in the symbolic ring::
+
+            sage: A = Matrix(([1, 1], [3, 1], [-1, -1])) * pi
+            sage: b = vector((1000, 1500, -400)) * pi
+            sage: c = vector((10, 5)) * pi
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: P.run_simplex_method()
+            \begin{equation*}
+            ...
+            \end{equation*}
+            The initial dictionary is infeasible, solving auxiliary problem.
+            ...
+            Entering: $x_{0}$. Leaving: $x_{5}$.
+            ...
+            Entering: $x_{1}$. Leaving: $x_{0}$.
+            ...
+            Back to the original problem.
+            ...
+            Entering: $x_{5}$. Leaving: $x_{4}$.
+            ...
+            Entering: $x_{2}$. Leaving: $x_{3}$.
+            ...
+            The optimal value: $6250 \, \pi$. An optimal solution: $\left(250,\,750\right)$.
+
         """
         output = []
         d = self.initial_dictionary()
@@ -3907,7 +3992,35 @@ class LPDictionary(LPAbstractDictionary):
         c = copy(c)
         B = vector(basic_variables)
         N = vector(nonbasic_variables)
+        # Issue #29101: vector does not guarantee that the result is freshly allocated
+        # if the input was already a vector
+        if B is basic_variables:
+            B = copy(B)
+        if N is nonbasic_variables:
+            N = copy(N)
         self._AbcvBNz = [A, b, c, objective_value, B, N, polygen(ZZ, objective_name)]
+
+    def __copy__(self):
+        r"""
+        TESTS:
+
+        Test that copies do not share state with the original::
+
+            sage: A = ([1, 1], [3, 1])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: D = P.initial_dictionary()
+            sage: D_2 = copy(D)
+            sage: D is D_2
+            False
+            sage: D.enter('x1')
+            sage: D.leave('x3')
+            sage: D.update()
+            sage: D_2 == D
+            False
+        """
+        return type(self)(*self._AbcvBNz)
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2):

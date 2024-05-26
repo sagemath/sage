@@ -194,7 +194,7 @@ from sage.rings.infinity import Infinity
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix, identity_matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from sage.rings.integer_ring import ZZ
 
@@ -357,7 +357,7 @@ class Homspace(HomsetWithBase):
                 M = M.matrix()
             else:
                 raise ValueError("cannot convert %s into %s" % (M, self))
-        elif is_Matrix(M):
+        elif isinstance(M, Matrix):
             if M.base_ring() != ZZ:
                 M = M.change_ring(ZZ)
             if side == "left":

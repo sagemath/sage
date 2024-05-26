@@ -695,9 +695,9 @@ def delsarte_bound_Q_matrix(q, d, return_data=False,
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
     """
     from sage.numerical.mip import MIPSolverException
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
 
-    if not is_Matrix(q):
+    if not isinstance(q, Matrix):
         raise ValueError("Input to delsarte_bound_Q_matrix "
                          "should be a sage Matrix()")
 

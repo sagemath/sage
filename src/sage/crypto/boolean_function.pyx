@@ -1184,12 +1184,12 @@ cdef class BooleanFunction(SageObject):
             ...
             TypeError: cannot compute is_linear_structure() using parameter X
         """
-        from sage.structure.element import is_Vector
+        from sage.structure.element import Vector
         nvars = self._nvariables
 
         if isinstance(val, (tuple, list)):
             i = ZZ(val, base=2)
-        elif is_Vector(val):
+        elif isinstance(val, Vector):
             if val.base_ring() != GF(2):
                 raise TypeError("base ring of input vector must be GF(2)")
             elif val.parent().dimension() != nvars:
@@ -1303,12 +1303,12 @@ cdef class BooleanFunction(SageObject):
             ...
             IndexError: index out of bound
         """
-        from sage.structure.element import is_Vector
+        from sage.structure.element import Vector
         nvars = self._nvariables
 
         if isinstance(u, (tuple, list)):
             v = ZZ(u, base=2)
-        elif is_Vector(u):
+        elif isinstance(u, Vector):
             if u.base_ring() != GF(2):
                 raise TypeError("base ring of input vector must be GF(2)")
             elif u.parent().dimension() != nvars:

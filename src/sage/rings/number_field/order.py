@@ -84,7 +84,7 @@ from sage.rings.ring import IntegralDomain
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 import sage.rings.abc
-from sage.structure.element import is_Element
+from sage.structure.element import Element
 from sage.structure.factory import UniqueFactory
 from .number_field_element import OrderElement_absolute, OrderElement_relative
 
@@ -1610,7 +1610,7 @@ class Order_absolute(Order):
         """
         if isinstance(x, (tuple, list)):
             x = sum(xi*gi for xi, gi in zip(x, self.gens()))
-        if not is_Element(x) or x.parent() is not self._K:
+        if not isinstance(x, Element) or x.parent() is not self._K:
             x = self._K(x)
         V, _, embedding = self._K.vector_space()
         if not embedding(x) in self._module_rep:

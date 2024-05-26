@@ -17,12 +17,14 @@
 # Always use bash for make rules
 SHELL = @SHELL@
 
+ifndef DEBUG_RULES
 # Check a variable that is only set in build/make/install, but not in sage-env, for example
 ifndef SAGE_PKGCONFIG
 # Set by build/bin/sage-sdist, which invokes the Makefile directly in
 # order to download upstream packages for distribution.
 ifndef SAGE_SPKG_COPY_UPSTREAM
 $(error This Makefile needs to be invoked by build/make/install)
+endif
 endif
 endif
 

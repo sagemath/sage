@@ -462,10 +462,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 P = self(P)
             except TypeError:
                 return False
-        if P.curve() == self:
-            return True
-        x, y, a = P[0], P[1], self.ainvs()
-        return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
+        return P.curve() == self
 
     def __call__(self, *args, **kwds):
         r"""
@@ -578,10 +575,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         P = args[0]
         if isinstance(P, groups.AdditiveAbelianGroupElement) and isinstance(P.parent(),ell_torsion.EllipticCurveTorsionSubgroup):
             return self(P.element())
-        if isinstance(args[0],
-                      (ell_point.EllipticCurvePoint_field,
-                       ell_point.EllipticCurvePoint_number_field,
-                       ell_point.EllipticCurvePoint)):
+        if isinstance(args[0], ell_point.EllipticCurvePoint):
             if P.curve() is self:
                 return P
             # check if denominator of the point contains a factor of the

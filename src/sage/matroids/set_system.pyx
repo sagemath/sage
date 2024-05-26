@@ -210,13 +210,13 @@ cdef class SetSystem:
 
     cdef _relabel(self, mapping):
         """
-        Relabel each element ``e`` of the ground set as ``mapping[e]``, where
+        Relabel each element `e` of the ground set as ``mapping[e]``, where
         ``mapping`` is a given injective map.
 
         INPUT:
 
-        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
-          label of ``e``
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
 
         OUTPUT: ``None``
         """

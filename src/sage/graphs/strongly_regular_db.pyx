@@ -2385,8 +2385,8 @@ def strongly_regular_from_two_weight_code(L):
         sage: G.is_strongly_regular(parameters=True)                                    # needs sage.modules sage.rings.finite_rings
         (81, 50, 31, 30)
     """
-    from sage.structure.element import is_Matrix
-    if is_Matrix(L):
+    from sage.structure.element import Matrix
+    if isinstance(L, Matrix):
         L = LinearCode(L)
     V = [tuple(l) for l in L]
     w1, _ = sorted(set(sum(map(bool, x)) for x in V).difference([0]))

@@ -30,7 +30,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
@@ -1065,7 +1065,7 @@ def is_borcherds_cartan_matrix(M):
         sage: is_borcherds_cartan_matrix(O)
         False
     """
-    if not is_Matrix(M):
+    if not isinstance(M, Matrix):
         return False
     if not M.is_square():
         return False

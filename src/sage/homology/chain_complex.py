@@ -732,7 +732,7 @@ class ChainComplex_class(Parent):
             vectors = vectors._vec
         data = dict()
         for degree, vec in vectors.items():
-            if not is_Vector(vec):
+            if not isinstance(vec, Vector):
                 vec = vector(self.base_ring(), vec)
                 vec.set_immutable()
             if check and vec.degree() != self.free_module_rank(degree):

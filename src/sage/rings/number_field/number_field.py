@@ -108,7 +108,7 @@ from .unit_group import UnitGroup
 from .class_group import ClassGroup
 from .class_group import SClassGroup
 
-from sage.structure.element import is_Element
+from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 from sage.structure.factorization import Factorization
@@ -1940,7 +1940,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             -1/3*theta25 - 1
         """
         w = sage_eval(x, locals=self.gens_dict())
-        if not (is_Element(w) and w.parent() is self):
+        if not (isinstance(w, Element) and w.parent() is self):
             return self(w)
         else:
             return w

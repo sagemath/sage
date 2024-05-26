@@ -77,7 +77,7 @@ See :issue:`13321`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.categories.homset
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -98,6 +98,10 @@ def is_FreeModuleHomspace(x):
         sage: type(H)
         <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace(H)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeModuleHomspace is deprecated;
+        use 'isinstance(..., FreeModuleHomspace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
 
         sage: K = Hom(QQ^3, ZZ^2)
@@ -121,6 +125,8 @@ def is_FreeModuleHomspace(x):
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FreeModuleHomspace is deprecated; use 'isinstance(..., FreeModuleHomspace)' instead")
     return isinstance(x, FreeModuleHomspace)
 
 
@@ -197,7 +203,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         """
         from . import free_module_morphism
         side = kwds.get("side", "left")
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             # Compute the matrix of the morphism that sends the
             # generators of the domain to the elements of A.
             C = self.codomain()

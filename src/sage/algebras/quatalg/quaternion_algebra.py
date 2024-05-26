@@ -62,7 +62,7 @@ from sage.structure.parent import Parent
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import diagonal_matrix, matrix
 from sage.structure.sequence import Sequence
-from sage.structure.element import is_RingElement
+from sage.structure.element import RingElement
 from sage.structure.factory import UniqueFactory
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
@@ -249,7 +249,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
             # to the relevant Sage types. This is a bit inelegant.
             L = []
             for a in [arg0, arg1]:
-                if is_RingElement(a):
+                if isinstance(a, RingElement):
                     L.append(a)
                 elif isinstance(a, int):
                     L.append(Integer(a))

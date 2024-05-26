@@ -984,7 +984,6 @@ cdef class Graphics3d(SageObject):
 </X3D>
 """%(self.viewpoint().x3d_str(), self.x3d_str())
 
-
     ################ TACHYON ################
 
     ####### insertion of camera parameters
@@ -3371,6 +3370,7 @@ def optimal_extra_kwds(v):
         a.update(b)
     return a
 
+
 def _flip_orientation(v):
     """
     Switch from LH to RH coords to be consistent with Java rendition
@@ -3381,4 +3381,4 @@ def _flip_orientation(v):
             sage: _flip_orientation((1, 2, 3))
             (1, -2, 3)
     """
-    return (v[0],-v[1],v[2])
+    return (v[0], -v[1], v[2])

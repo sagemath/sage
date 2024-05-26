@@ -462,7 +462,7 @@ class NFCusp(Element):
             elif a in number_field:
                 self.__b = R(a.denominator())
                 self.__a = R(a * self.__b)
-            elif is_InfinityElement(a):
+            elif isinstance(a, InfinityElement):
                 self.__a = R.one()
                 self.__b = R.zero()
             elif isinstance(a, int):
@@ -503,8 +503,8 @@ class NFCusp(Element):
                     raise TypeError("unable to convert %r to a cusp "
                                     "of the number field" % a)
         else:  # 'b' is given
-            if is_InfinityElement(b):
-                if is_InfinityElement(a) or (isinstance(a, NFCusp) and a.is_infinity()):
+            if isinstance(b, InfinityElement):
+                if isinstance(a, InfinityElement) or (isinstance(a, NFCusp) and a.is_infinity()):
                     raise TypeError("unable to convert (%r, %r) "
                                     "to a cusp of the number field" % (a, b))
                 self.__a = R.zero()
@@ -527,7 +527,7 @@ class NFCusp(Element):
             else:
                 if a in R or a in number_field:
                     r = a / b
-                elif is_InfinityElement(a):
+                elif isinstance(a, InfinityElement):
                     self.__a = R.one()
                     self.__b = R.zero()
                     return

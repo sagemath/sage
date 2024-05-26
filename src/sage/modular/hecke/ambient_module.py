@@ -23,7 +23,7 @@ from . import degenmap
 from . import module
 from . import submodule
 
-from sage.modules.free_module import FreeModule, is_FreeModule
+from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.rings.integer import Integer
 
 import sage.arith.all as arith
@@ -947,7 +947,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
               Congruence Subgroup Gamma0(37) of weight 2 over Rational Field
         """
         if check:
-            if not is_FreeModule(M):
+            if not isinstance(M, FreeModule_generic):
                 V = self.free_module()
                 if isinstance(M, (list, tuple)):
                     M = V.span([V(x.element()) for x in M])

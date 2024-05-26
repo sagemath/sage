@@ -127,6 +127,7 @@ cimport cython
 # (De)allocation, copying
 #
 
+
 @cython.overflowcheck
 cdef bint biseq_init(biseq_t R, mp_size_t l, mp_bitcnt_t itemsize) except -1:
     """
@@ -1388,6 +1389,7 @@ cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize
     cdef BoundedIntegerSequence out = BoundedIntegerSequence.__new__(BoundedIntegerSequence)
     biseq_unpickle(out.data, bitset_data, itembitsize, length)
     return out
+
 
 def _biseq_stresstest():
     """

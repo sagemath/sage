@@ -1490,7 +1490,7 @@ def K5dual(groundset='abcdefghij'):
     EXAMPLES::
 
         sage: M = matroids.catalog.K5dual(); M
-        M*(K5): Matroid of rank 6 on 10 elements with 15 circuits
+        M*(K5): Dual of 'Graphic matroid of rank 4 on 10 elements'
         sage: M.is_3connected()
         True
         sage: G1 = M.automorphism_group()
@@ -1503,7 +1503,6 @@ def K5dual(groundset='abcdefghij'):
     [Oxl2011]_, p. 656.
     """
     M = CompleteGraphic(5).dual()
-    M = Matroid(circuits=list(M.circuits()))
     M = _rename_and_relabel(M, "M*(K5)", groundset)
     return M
 
@@ -2068,7 +2067,7 @@ def Z(r, t=True, groundset=None):
     - ``t`` -- boolean (default: ``True``); whether the spike is tipped
     - ``groundset`` -- a string (optional); the groundset of the matroid
 
-    OUTPUT: a matroid; the unique rank-`r` binary spike (tipped or tipless)
+    OUTPUT: matroid; the unique rank-`r` binary spike (tipped or tipless)
 
     EXAMPLES::
 
@@ -2174,7 +2173,7 @@ def Spike(r, t=True, C3=[], groundset=None):
       The default (i.e. the empty list) results in a free `r`-spike
     - ``groundset`` -- a string (optional); the groundset of the matroid
 
-    OUTPUT: a matroid; a rank-`r` spike (tipped or tipless)
+    OUTPUT: matroid; a rank-`r` spike (tipped or tipless)
 
     EXAMPLES::
 
@@ -2292,7 +2291,7 @@ def Theta(n, groundset=None):
     - ``n`` -- an integer (`n \ge 2`); the rank of the matroid
     - ``groundset`` -- a string (optional); the groundset of the matroid
 
-    OUTPUT: a matroid (`\Theta_n`)
+    OUTPUT: matroid (`\Theta_n`)
 
     EXAMPLES::
 
@@ -2365,7 +2364,7 @@ def Psi(r, groundset=None):
     - ``r`` -- an integer (`r \ge 3`); the rank of the matroid
     - ``groundset`` -- a string (optional); the groundset of the matroid
 
-    OUTPUT: a matroid (`\Psi_r`)
+    OUTPUT: matroid (`\Psi_r`)
 
     EXAMPLES::
 
@@ -5235,7 +5234,7 @@ def _rename_and_relabel(M, name=None, groundset=None):
     - ``name`` -- a string (optional)
     - ``groundset`` -- a string (optional)
 
-    OUTPUT: a matroid
+    OUTPUT: matroid
     """
     if groundset is not None:
         if len(groundset) != len(M.groundset()):

@@ -20,7 +20,7 @@ from sage.rings.integer_ring import ZZ
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.matrix.constructor import Matrix, matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.rings.ring import Algebra
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
@@ -137,7 +137,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         table = [b.base_extend(k) for b in table]
         for b in table:
             b.set_immutable()
-            if not (is_Matrix(b) and b.dimensions() == (n, n)):
+            if not (isinstance(b, Matrix) and b.dimensions() == (n, n)):
                 raise ValueError("input is not a multiplication table")
         table = tuple(table)
 
