@@ -160,6 +160,7 @@ def load_submodules(module=None, exclude_pattern=None):
     The second argument allows to exclude a pattern::
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry, "database$|lattice")
+        load sage.geometry.cone... succeeded
         load sage.geometry.cone_catalog... succeeded
         load sage.geometry.fan_isomorphism... succeeded
         ...
