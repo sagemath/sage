@@ -59,7 +59,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
 
     - ``radius`` -- (default: None)
 
-    - ``arrow_head`` -- (default: False)
+    - ``arrow_head`` -- (default: ``False``)
 
     - ``color`` -- a string (``"red"``, ``"green"`` etc)
       or a tuple (r, g, b) with r, g, b numbers between 0 and 1

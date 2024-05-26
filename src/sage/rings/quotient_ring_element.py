@@ -37,7 +37,7 @@ class QuotientRingElement(RingElement):
     - ``rep`` -- a representative of the element in `R`; this is used
       as the internal representation of the element
 
-    - ``reduce`` -- bool (default: True) -- if True, then the
+    - ``reduce`` -- bool (default: ``True``) -- if True, then the
       internal representation of the element is ``rep`` reduced modulo
       the ideal `I`
 

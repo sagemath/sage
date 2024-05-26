@@ -3506,7 +3506,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Most of the parameters are self-explanatory:
 
-        -  ``show_facets`` -- (default:True)
+        -  ``show_facets`` -- (default: ``True``)
 
         -  ``facet_opacity`` -- (default:0.5)
 
@@ -3515,29 +3515,29 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         -  ``facet_colors`` -- (default:None) if specified, must be a list of
            colors for each facet separately, used instead of ``facet_color``
 
-        -  ``show_edges`` -- (default:True) whether to draw
+        -  ``show_edges`` -- (default: ``True``) whether to draw
            edges as lines
 
         -  ``edge_thickness`` -- (default:3)
 
         -  ``edge_color`` -- (default:(0.5,0.5,0.5))
 
-        -  ``show_vertices`` -- (default:True) whether to draw
+        -  ``show_vertices`` -- (default: ``True``) whether to draw
            vertices as balls
 
         -  ``vertex_size`` -- (default:10)
 
         -  ``vertex_color`` -- (default:(1,0,0))
 
-        -  ``show_points`` -- (default:True) whether to draw
+        -  ``show_points`` -- (default: ``True``) whether to draw
            other points as balls
 
         -  ``point_size`` -- (default:10)
 
         -  ``point_color`` -- (default:(0,0,1))
 
-        -  ``show_vindices`` -- (default:same as
-           show_vertices) whether to show indices of vertices
+        -  ``show_vindices`` -- (default: same as
+           ``show_vertices``) whether to show indices of vertices
 
         -  ``vindex_color`` -- (default:(0,0,0)) color for
            vertex labels
@@ -3545,7 +3545,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         -  ``vlabels`` -- (default:None) if specified, must be a list of labels
            for each vertex, default labels are vertex indices
 
-        -  ``show_pindices`` -- (default:same as show_points)
+        -  ``show_pindices`` -- (default: same as ``show_points``)
            whether to show indices of other points
 
         -  ``pindex_color`` -- (default:(0,0,0)) color for
@@ -3903,7 +3903,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         -  ``keys`` -- a string of options passed to poly.x. The
            key "f" is added automatically.
 
-        -  ``reduce_dimension`` -- (default: False) if ``True`` and this
+        -  ``reduce_dimension`` -- (default: ``False``) if ``True`` and this
            polytope is not full-dimensional, poly.x will be called for the
            vertices of this polytope in some basis of the spanned affine space.
 
@@ -4907,7 +4907,7 @@ class NefPartition(SageObject, Hashable):
 
         - ``i`` -- an integer
 
-        - ``all_points`` -- (default: False) whether to list all lattice points
+        - ``all_points`` -- (default: ``False``) whether to list all lattice points
           or just vertices
 
         OUTPUT:
@@ -4941,7 +4941,7 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``all_points`` -- (default: False) whether to list all lattice points
+        - ``all_points`` -- (default: ``False``) whether to list all lattice points
           or just vertices
 
         OUTPUT:

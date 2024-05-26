@@ -510,7 +510,7 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
+        - ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
 
         OUTPUT:
 
@@ -1352,7 +1352,7 @@ class GammaH_class(CongruenceSubgroup):
         - ``sign`` (default: None): if not None, return only characters of the
           given sign
 
-        - ``galois_orbits`` (default: False): if True, return only one
+        - ``galois_orbits`` (default: ``False``): if True, return only one
           character from each Galois orbit.
 
         EXAMPLES::

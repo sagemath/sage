@@ -695,7 +695,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             - 3 entries: `[i, \alpha, \beta]` where `0\le i\le k-2`
               and `\alpha` and `\beta` are cusps;
 
-        - ``check`` (bool, default True) -- flag that determines
+        - ``check`` (bool, default: ``True``) -- flag that determines
           whether the input ``x`` needs processing: use check=False
           for efficiency if the input ``x`` is a list of length 3 whose
           first entry is an Integer, and whose second and third
@@ -777,7 +777,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
           polynomial over `\ZZ` of degree `k` and `\alpha` and `\beta`
           are cusps.
 
-        - ``check`` (bool, default True) -- if True check the validity
+        - ``check`` (bool, default: ``True``) -- if True check the validity
           of the input tuple ``x``
 
         OUTPUT:
@@ -1986,7 +1986,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         -  ``sign`` -- int (either -1 or +1)
 
-        -  ``compute_dual`` -- bool (default: True) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
 
@@ -2101,7 +2101,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
            useful to speed up certain calculations; it is the
            corresponding submodule of the ambient dual module;
 
-        - ``check`` (bool, default True) -- if True, check that `M` is
+        - ``check`` (bool, default: ``True``) -- if True, check that `M` is
            a submodule, i.e. is invariant under all Hecke operators.
 
         OUTPUT:

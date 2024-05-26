@@ -197,7 +197,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
        ``b=4``, all doubly even codes are generated). Must be an even positive
        integer.
 
-    -  ``parent``- -- Used in recursion (default: ``None``)
+    -  ``parent`` -- Used in recursion (default: ``None``)
 
     -  ``BC`` -- Used in recursion (default: ``None``)
 

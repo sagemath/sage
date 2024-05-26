@@ -658,7 +658,7 @@ class GAP3Element(GapElement_generic):
 
     - ``value`` -- the GAP3 command as a string
 
-    - ``is_name`` -- bool (default: False); if True, then ``value`` is
+    - ``is_name`` -- bool (default: ``False``); if True, then ``value`` is
       the variable name for the object
 
     - ``name`` -- str (default: ``None``); the variable name to use for the

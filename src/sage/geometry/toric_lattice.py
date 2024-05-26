@@ -645,7 +645,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         - ``sub`` -- sublattice of self;
 
-        - ``check`` -- (default: True) whether or not to check that ``sub`` is
+        - ``check`` -- (default: ``True``) whether or not to check that ``sub`` is
           a valid sublattice.
 
         If the quotient is one-dimensional and torsion free, the

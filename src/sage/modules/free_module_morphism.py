@@ -492,7 +492,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         INPUT:
 
-        - ``extend`` -- boolean (default: True) decides if base field
+        - ``extend`` -- boolean (default: ``True``) decides if base field
           extensions should be considered or not.
 
         EXAMPLES:
@@ -527,7 +527,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         INPUT:
 
-        - ``extend`` -- boolean (default: True) decides if base field
+        - ``extend`` -- boolean (default: ``True``) decides if base field
           extensions should be considered or not.
 
         OUTPUT:

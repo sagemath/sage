@@ -1175,7 +1175,7 @@ def SAbstractSimplex(simplex, dim):
 
     - ``simplex`` -- An abstract simplex of Kenzo.
 
-    - ``dim``-- The dimension of ``simplex``.
+    - ``dim`` -- The dimension of ``simplex``.
 
     OUTPUT:
 

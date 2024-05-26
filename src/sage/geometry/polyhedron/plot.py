@@ -1263,7 +1263,7 @@ class Projection(SageObject):
           recognize.
         - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets.
-        - ``axis`` -- Boolean (default: False) draw the axes at the origin or not.
+        - ``axis`` -- Boolean (default: ``False``) draw the axes at the origin or not.
         - ``output_type`` -- string (default: ``None``), valid values
           are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a :class:`LatexExpr` object (which inherits from Python

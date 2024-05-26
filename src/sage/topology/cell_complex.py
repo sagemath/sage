@@ -466,15 +466,15 @@ class GenericCellComplex(SageObject):
         :type subcomplex: optional, default empty
         :param generators: If ``True``, return generators for the homology
            groups along with the groups.
-        :type generators: boolean; optional, default False
+        :type generators: boolean; optional, default: ``False``
         :param cohomology: If True, compute cohomology rather than homology.
-        :type cohomology: boolean; optional, default False
+        :type cohomology: boolean; optional, default: ``False``
         :param algorithm: The options are 'auto', 'dhsw', or 'pari'.
            See below for a description of what they mean.
         :type algorithm: string; optional, default 'pari'
         :param verbose: If True, print some messages as the homology is
            computed.
-        :type verbose: boolean; optional, default False
+        :type verbose: boolean; optional, default: ``False``
         :param reduced: If ``True``, return the reduced homology.
         :type reduced: boolean; optional, default ``True``
 

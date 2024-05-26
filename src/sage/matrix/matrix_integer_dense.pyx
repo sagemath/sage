@@ -1800,13 +1800,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
           - ``'pari4'`` -- use PARI with flag 4 (use heuristic LLL)
 
-        -  ``proof`` -- (default: True); if proof=False certain
+        -  ``proof`` -- (default: ``True``); if proof=False certain
            determinants are computed using a randomized hybrid p-adic
            multimodular strategy until it stabilizes twice (instead of up to
            the Hadamard bound). It is *incredibly* unlikely that one would
            ever get an incorrect result with proof=False.
 
-        -  ``include_zero_rows`` -- (default: True) if False,
+        -  ``include_zero_rows`` -- (default: ``True``) if False,
            don't include zero rows
 
         -  ``transformation`` -- if given, also compute
@@ -4009,11 +4009,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``self`` -- an invertible matrix
 
-        -  ``use_nullspace`` -- (default: False): whether to
+        -  ``use_nullspace`` -- (default: ``False``): whether to
            use nullspace algorithm, which is slower, but doesn't require
            checking that the matrix is invertible as a precondition.
 
-        -  ``check_invertible`` -- (default: True) whether to
+        -  ``check_invertible`` -- (default: ``True``) whether to
            check that the matrix is invertible.
 
 
@@ -4207,7 +4207,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``B`` -- a matrix or vector
 
-        -  ``check_rank`` -- bool (default: True); if True
+        -  ``check_rank`` -- bool (default: ``True``); if True
            verify that in fact the rank is full.
 
         - ``algorithm`` -- ``'iml'`` (default) or ``'flint'``

@@ -134,7 +134,7 @@ cdef class Lfunction:
 
         - ``s`` --  a complex number
         - ``derivative`` -- integer (default: 0)  the derivative to be evaluated
-        - ``rotate`` -- (default: False) If True, this returns the value of the
+        - ``rotate`` -- (default: ``False``) If True, this returns the value of the
           Hardy Z-function (sometimes called the Riemann-Siegel Z-function or
           the Siegel Z-function).
 

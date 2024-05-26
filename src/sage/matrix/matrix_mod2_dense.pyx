@@ -1021,7 +1021,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         - k --  the parameter 'k' of the M4RI algorithm. It MUST be between 1
           and 16 (inclusive). If it is not specified it will be calculated as
           3/4 * log_2( min(nrows, ncols) ) as suggested in the M4RI paper.
-        - reduced -- return reduced row echelon form (default:True)
+        - reduced -- return reduced row echelon form (default: ``True``)
 
         EXAMPLES::
 
@@ -1818,7 +1818,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - approx -- return floating point approximation (default: False)
+        - approx -- return floating point approximation (default: ``False``)
 
         EXAMPLES::
 

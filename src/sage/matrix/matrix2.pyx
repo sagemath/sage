@@ -1037,7 +1037,7 @@ cdef class Matrix(Matrix1):
 
         -  ``B`` -- a matrix
 
-        -  ``check`` -- bool (default: True); if False, if there
+        -  ``check`` -- bool (default: ``True``); if False, if there
            is no solution this function will not detect that fact.
 
 
@@ -2700,7 +2700,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``sparse`` -- True to make the output a sparse matrix; default False
+        - ``sparse`` -- True to make the output a sparse matrix; default: ``False``
 
         -  ``phi`` -- arbitrary Python function or callable object
 
@@ -5203,7 +5203,7 @@ cdef class Matrix(Matrix1):
 
         - ``V`` -- vector subspace
 
-        - ``check`` -- (optional) default: True; whether to check that
+        - ``check`` -- (optional) default: ``True``; whether to check that
           V is invariant under the action of self.
 
         - ``poly`` -- (optional) default: None; if not None, compute instead
@@ -5508,7 +5508,7 @@ cdef class Matrix(Matrix1):
            iterating the action of self on a vector. 'kernel': naively just
            compute `ker(f_i(A))` for each factor `f_i`.
 
-        -  ``dual`` -- bool (default: False): If True, also
+        -  ``dual`` -- bool (default: ``False``): If True, also
            returns the corresponding decomposition of V under the action of
            the transpose of A. The factors are guaranteed to correspond.
 
@@ -5835,7 +5835,7 @@ cdef class Matrix(Matrix1):
 
         -  ``V`` -- vector subspace
 
-        -  ``check`` -- (optional) default: True; if False may
+        -  ``check`` -- (optional) default: ``True``; if False may
            not check that V is invariant (hence can be faster).
 
 
@@ -6550,7 +6550,7 @@ cdef class Matrix(Matrix1):
           the irreducible factors of the characteristic polynomial,
           even for linear factors.
 
-        - ``algebraic_multiplicity`` -- (default: False); whether or
+        - ``algebraic_multiplicity`` -- (default: ``False``); whether or
           not to include the algebraic multiplicity of each eigenvalue
           in the output.  See the discussion below.
 
@@ -9340,7 +9340,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
         - ``A`` -- a matrix
-        - ``subdivide`` -- (default: True); whether or not to return
+        - ``subdivide`` -- (default: ``True``); whether or not to return
           natural subdivisions with the matrix
 
         OUTPUT:
@@ -16138,7 +16138,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        ``i`` -- an integer
+        - ``i`` -- an integer
 
         OUTPUT:
 
@@ -16409,10 +16409,10 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-            - ``include_zero_rows`` -- bool (default: True); if False
+            - ``include_zero_rows`` -- bool (default: ``True``); if False
               the zero rows in the output matrix are deleted.
 
-            - ``transformation`` -- bool (default: False) a matrix U such that U*self == H.
+            - ``transformation`` -- bool (default: ``False``) a matrix U such that U*self == H.
 
         OUTPUT:
 
@@ -16838,7 +16838,7 @@ cdef class Matrix(Matrix1):
 
         - ``self`` -- a square matrix with entries from an exact field.
 
-        - ``transformation`` -- (default: False); if ``True`` return a
+        - ``transformation`` -- (default: ``False``); if ``True`` return a
           change-of-basis matrix relating the matrix and its ZigZag form.
 
         - ``subdivide`` -- (default: ``True``); if ``True`` the ZigZag

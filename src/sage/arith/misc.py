@@ -1708,7 +1708,7 @@ class Sigma:
 
         -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` -- default: True; whether to join the
+        -  ``join`` -- default: ``True``; whether to join the
            points.
 
         -  ``**kwds`` -- passed on
@@ -3153,7 +3153,7 @@ class Euler_Phi:
 
         -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` -- default: True; whether to join the
+        -  ``join`` -- default: ``True``; whether to join the
            points.
 
         -  ``**kwds`` -- passed on
@@ -4320,7 +4320,7 @@ def primitive_root(n, check=True):
     INPUT:
 
     - ``n`` -- a non-zero integer
-    - ``check`` -- bool (default: True); if False, then `n` is assumed
+    - ``check`` -- bool (default: ``True``); if False, then `n` is assumed
       to be a positive integer possessing a primitive root, and behavior
       is undefined otherwise.
 
@@ -4623,7 +4623,7 @@ class Moebius:
 
         -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` -- default: True; whether to join the points
+        -  ``join`` -- default: ``True``; whether to join the points
            (very helpful in seeing their order).
 
         -  ``**kwds`` -- passed on

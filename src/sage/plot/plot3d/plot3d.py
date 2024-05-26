@@ -814,15 +814,15 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     -  ``vrange`` -- a 2-tuple (v_min, v_max) or a 3-tuple
        (v, v_min, v_max)
 
-    -  ``adaptive`` -- (default: False) whether to use
+    -  ``adaptive`` -- (default: ``False``) whether to use
        adaptive refinement to draw the plot (slower, but may look better).
        This option does NOT work in conjunction with a transformation
        (see below).
 
-    -  ``mesh`` -- bool (default: False) whether to display
+    -  ``mesh`` -- bool (default: ``False``) whether to display
        mesh grid lines
 
-    -  ``dots`` -- bool (default: False) whether to display
+    -  ``dots`` -- bool (default: ``False``) whether to display
        dots at mesh grid points
 
     -  ``plot_points`` -- (default: "automatic") initial number of sample

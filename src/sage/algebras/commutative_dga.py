@@ -1873,7 +1873,7 @@ class GCAlgebra_multigraded(GCAlgebra):
         Basis in degree ``n``.
 
         - ``n`` -- degree or integer
-        - ``total`` (default: False) -- if True, return the
+        - ``total`` (default: ``False``) -- if True, return the
           basis in total degree ``n``.
 
         If ``n`` is an integer rather than a multi-index, then the

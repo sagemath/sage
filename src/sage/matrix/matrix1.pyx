@@ -974,7 +974,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` -- (default: True) if True, return a copy of the list
+        - ``copy`` -- (default: ``True``) if True, return a copy of the list
           of columns which is safe to change.
 
         If ``self`` is a sparse matrix, columns are returned as sparse vectors,
@@ -1030,7 +1030,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` -- (default: True) if True, return a copy of the list
+        - ``copy`` -- (default: ``True``) if True, return a copy of the list
           of rows which is safe to change.
 
         If ``self`` is a sparse matrix, rows are returned as sparse vectors,
@@ -1086,7 +1086,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` -- (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
           modify it safely
 
         EXAMPLES:
@@ -1149,7 +1149,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` -- (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
           modify it safely (note that the individual vectors in the copy
           should not be modified since they are mutable!)
 
@@ -1204,7 +1204,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` -- (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
            modify it safely
 
         EXAMPLES::
@@ -1280,7 +1280,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` -- (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
            modify it safely
 
         EXAMPLES::
@@ -1367,7 +1367,7 @@ cdef class Matrix(Matrix0):
 
         - ``i`` -- integer
 
-        - ``from_list`` -- bool (default: False); if true, returns the
+        - ``from_list`` -- bool (default: ``False``); if true, returns the
           ``i``'th element of ``self.columns()`` (see :func:`columns()`),
           which may be faster, but requires building a list of all
           columns the first time it is called after an entry of the
@@ -1427,7 +1427,7 @@ cdef class Matrix(Matrix0):
 
         - ``i`` -- integer
 
-        - ``from_list`` -- bool (default: False); if true, returns the
+        - ``from_list`` -- bool (default: ``False``); if true, returns the
           ``i``'th element of ``self.rows()`` (see :func:`rows`), which
           may be faster, but requires building a list of all rows the
           first time it is called after an entry of the matrix is

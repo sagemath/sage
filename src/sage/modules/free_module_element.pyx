@@ -2455,7 +2455,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         -  ``res`` -- (default: all points) total number of
            points to include in the graph
 
-        -  ``connect`` -- (default: True) if True draws a line;
+        -  ``connect`` -- (default: ``True``) if True draws a line;
            otherwise draw a list of points.
 
 

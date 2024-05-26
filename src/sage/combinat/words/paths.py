@@ -1061,7 +1061,7 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``include_last`` -- bool (default: True) whether to include the
+        - ``include_last`` -- bool (default: ``True``) whether to include the
           last point
 
         EXAMPLES:
@@ -1503,26 +1503,26 @@ class FiniteWordPath_2d(FiniteWordPath_all):
           default:dict(rgbcolor='red',thickness=3)), options for the
           path drawing
 
-        - ``fill`` -- (boolean, default: True), if fill is True and if
+        - ``fill`` -- (boolean, default: ``True``), if fill is True and if
           the path is closed, the inside is colored
 
         - ``filloptions`` -- (dict,
           default:dict(rgbcolor='red',alpha=0.2)), options for the
           inside filling
 
-        - ``startpoint`` -- (boolean, default: True), draw the start point?
+        - ``startpoint`` -- (boolean, default: ``True``), draw the start point?
 
         - ``startoptions`` -- (dict,
           default:dict(rgbcolor='red',pointsize=100)) options for the
           start point drawing
 
-        - ``endarrow`` -- (boolean, default: True), draw an arrow end at the end?
+        - ``endarrow`` -- (boolean, default: ``True``), draw an arrow end at the end?
 
         - ``arrowoptions`` -- (dict,
           default:dict(rgbcolor='red',arrowsize=20, width=3)) options
           for the end point arrow
 
-        - ``gridlines``-- (boolean, default: False), show gridlines?
+        - ``gridlines`` -- (boolean, default: ``False``), show gridlines?
 
         - ``gridoptions`` -- (dict, default: {}), options for the gridlines
 
@@ -2011,7 +2011,7 @@ class FiniteWordPath_3d(FiniteWordPath_all):
         - ``pathoptions`` -- (dict, default:dict(rgbcolor='red',arrow_head=True,
           thickness=3)), options for the path drawing
 
-        - ``startpoint`` -- (boolean, default: True), draw the start point?
+        - ``startpoint`` -- (boolean, default: ``True``), draw the start point?
 
         - ``startoptions`` -- (dict, default:dict(rgbcolor='red',size=10))
            options for the start point drawing

@@ -4091,7 +4091,7 @@ class CrystalDiagramAutomorphism(CrystalMorphism):
       weight elements
     - ``index_set`` -- (default: the empty set) the index set
     - ``automorphism`` -- (default: the identity) the twisting automorphism
-    - ``cache`` -- (default: True) cache the result
+    - ``cache`` -- (default: ``True``) cache the result
     """
 
     def __init__(self, C, on_hw, index_set=None, automorphism=None, cache=True):

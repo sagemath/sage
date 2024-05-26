@@ -1045,13 +1045,13 @@ class CyclotomicFieldFactory(UniqueFactory):
 
     -  ``n`` -- a nonnegative integer, default: ``0``
 
-    -  ``names`` -- name of generator (default:s to zetan)
+    -  ``names`` -- name of generator (default: ``zetan``)
 
     - ``bracket`` -- Defines the brackets in the case of ``n==0``, and
       is ignored otherwise. Can be any even length string, with ``"()"`` being the default.
 
     -  ``embedding`` -- bool or `n`-th root of unity in an
-       ambient field (default True)
+       ambient field (default: ``True``)
 
     EXAMPLES:
 
@@ -8132,7 +8132,7 @@ class NumberField_absolute(NumberField_generic):
 
         INPUT:
 
-        ``x`` -- an element of some number field
+        - ``x`` -- an element of some number field
 
         OUTPUT:
 

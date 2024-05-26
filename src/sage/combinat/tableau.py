@@ -277,7 +277,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 

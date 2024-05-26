@@ -97,7 +97,7 @@ class JSMolHtml(SageObject):
           :class:`sage.repl.rich_output.output_graphics3d.OutputSceneJmol`
           instance. The 3-d scene to show.
 
-        - ``path_to_jsmol`` -- string (default: is
+        - ``path_to_jsmol`` -- string (default:
           ``'/nbextensions/jupyter-jsmol/jsmol'``). The path (relative or absolute)
           where ``JSmol.min.js`` is served on the web server.
 

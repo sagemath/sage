@@ -582,7 +582,7 @@ class Singular(ExtraTabCompletion, Expect):
 
         -  ``x`` -- string (of code)
 
-        -  ``allow_semicolon`` -- default: False; if False then
+        -  ``allow_semicolon`` -- default: ``False``; if False then
            raise a :class:`TypeError` if the input line contains a semicolon.
 
         -  ``strip`` -- ignored
@@ -1926,7 +1926,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
            the resulting matrix is going to be defined.
            By default, the output of :meth:`sage_global_ring` is used.
 
-        - ``sparse`` -- (default: True); determines whether the
+        - ``sparse`` -- (default: ``True``); determines whether the
           resulting matrix is sparse or not.
 
         EXAMPLES::

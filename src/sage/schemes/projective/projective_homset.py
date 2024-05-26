@@ -305,7 +305,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         INPUT:
 
-        ``F`` -- numerical ring
+        - ``F`` -- numerical ring
 
         kwds:
 
@@ -486,7 +486,7 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
 
         INPUT:
 
-        - ``B`` -- integer (default:=0). The bound for the
+        - ``B`` -- integer (default: 0). The bound for the
           coordinates.
 
         EXAMPLES::

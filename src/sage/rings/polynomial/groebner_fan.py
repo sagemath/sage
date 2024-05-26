@@ -1608,7 +1608,7 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``check`` -- bool (default: True); if True raises a
+        -  ``check`` -- bool (default: ``True``); if True raises a
            ValueError exception if this ideal does not define a tropical curve
            (i.e., the condition that R/I has dimension equal to 1 + the
            dimension of the homogeneity space is not satisfied).
@@ -1888,7 +1888,7 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``restrict`` -- bool (default: False); if True, add
+        -  ``restrict`` -- bool (default: ``False``); if True, add
            an inequality for each coordinate, so that the cone is restricted
            to the positive orthant.
 

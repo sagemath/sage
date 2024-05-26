@@ -2348,11 +2348,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - ``prec`` --  integer, sets the precision (default: 300)
 
-        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: True)
+        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: ``True``)
 
         - ``error_limit`` -- sets the error tolerance (default: 0.000001)
 
-        - ``smallest_coeffs`` -- (default: True), boolean, whether to find the
+        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
         - ``norm_type`` -- either ``'norm'`` or ``'height'``. What type of norm

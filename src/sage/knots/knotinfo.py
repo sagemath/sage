@@ -1016,7 +1016,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``positive`` -- boolean (default: False) whether to check
+        - ``positive`` -- boolean (default: ``False``) whether to check
           if ``self`` is positive or negative amphicheiral (see documentation
           of :meth:`symmetry_type`)
 
@@ -2151,7 +2151,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``unique`` -- boolean (default:=``True``) if set to ``False``
+        - ``unique`` -- boolean (default: ``True``) if set to ``False``
           it is only checked if ``self`` is among the recovered items
 
         EXAMPLES::
@@ -2240,7 +2240,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default False) it only affects proper links.
+        - ``oriented`` -- boolean (default: ``False``) it only affects proper links.
           By default the items of the series will be again series of links
           collecting all orientation mutants of an unoriented name. To obtain
           the series of the individual links this keyword has to be set to
@@ -2654,7 +2654,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``unique`` -- boolean (default:=``True``) see
+        - ``unique`` -- boolean (default: ``True``) see
           :meth:`KnotInfoBase.is_recoverable`
         - ``max_samples`` -- non negative integer or ``infinity`` (optional,
           default ``8``) limits the number of items to check (random sample).

@@ -59,7 +59,7 @@ class IndexedGenerators():
       right bracket.
 
     - ``latex_bracket`` -- bool, string, or list or tuple of strings
-      (default: False): if ``False``, do not include brackets in
+      (default: ``False``): if ``False``, do not include brackets in
       the LaTeX representation of elements.  This option is only
       relevant if ``latex_prefix`` is the empty string; otherwise,
       brackets are not used regardless.  If ``True``, use "\left[" and

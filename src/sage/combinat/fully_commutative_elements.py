@@ -191,10 +191,10 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         - ``self`` -- list, a reduced word `w=s_0... s_{k-1}` of an FC element
 
-        - ``one_index`` -- boolean (default: False). Setting the value to True
+        - ``one_index`` -- boolean (default: ``False``). Setting the value to True
           will change the underlying set of the poset to `\{1, 2, \dots, n\}`
 
-        - ``display_labeling`` -- boolean (default: False). Setting the value to
+        - ``display_labeling`` -- boolean (default: ``False``). Setting the value to
           True will display the label `s_i` for each element `i` of the poset
 
         OUTPUT:

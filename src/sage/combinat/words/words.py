@@ -510,7 +510,7 @@ class FiniteWords(AbstractLanguage):
 
         -  ``data`` -- callable
         -  ``length`` -- integer or ``None`` or "infinite" or ``Infinity``
-        -  ``caching`` -- (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by the callable.
 
         EXAMPLES::
@@ -537,7 +537,7 @@ class FiniteWords(AbstractLanguage):
 
         -  ``length`` -- (optional) integer
 
-        -  ``caching`` -- (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by the iterator.
 
         EXAMPLES::
@@ -571,10 +571,10 @@ class FiniteWords(AbstractLanguage):
            "tuple", "iter", "callable" or "pickled_function". If None, then
            the function tries to guess this from the data.
 
-        -  ``caching`` -- (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by an iterator or callable.
 
-        -  ``check`` -- (default: True) True or False. Whether to check if
+        -  ``check`` -- (default: ``True``) True or False. Whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more
@@ -1432,7 +1432,7 @@ class InfiniteWords(AbstractLanguage):
 
         -  ``data`` -- callable
 
-        -  ``caching`` -- (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by the callable.
 
         EXAMPLES::
@@ -1455,7 +1455,7 @@ class InfiniteWords(AbstractLanguage):
 
         -  ``data`` -- iterable
 
-        -  ``caching`` -- (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by the iterator.
 
         EXAMPLES::
@@ -1480,10 +1480,10 @@ class InfiniteWords(AbstractLanguage):
            "pickled_function". If None, then the function tries to guess
            this from the data.
 
-        -  ``caching`` -- (default: True) True or False. Whether to keep a
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a
            cache of the letters computed by an iterator or callable.
 
-        -  ``check`` -- (default: True) True or False. Whether to check if
+        -  ``check`` -- (default: ``True``) True or False. Whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more
@@ -1792,10 +1792,10 @@ class FiniteOrInfiniteWords(AbstractLanguage):
            "tuple", "iter", "callable" or "pickled_function". If None, then
            the function tries to guess this from the data.
 
-        -  ``caching`` -- (default: True) True or False. Whether to keep a cache
+        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
            of the letters computed by an iterator or callable.
 
-        -  ``check`` -- (default: True) True or False. Whether to check if
+        -  ``check`` -- (default: ``True``) True or False. Whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more

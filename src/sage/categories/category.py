@@ -3228,7 +3228,7 @@ class JoinCategory(CategoryWithParameters):
 
         INPUT:
 
-        - ``as_join`` -- a boolean (default: False)
+        - ``as_join`` -- a boolean (default: ``False``)
 
         EXAMPLES::
 

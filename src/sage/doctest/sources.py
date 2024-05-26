@@ -1346,7 +1346,7 @@ class TexSource(SourceLanguage):
 
         - ``line`` -- a string, one line of an input file
 
-        - ``check_skip`` -- boolean (default True), used internally in starting_docstring.
+        - ``check_skip`` -- boolean (default: ``True``), used internally in starting_docstring.
 
         OUTPUT:
 

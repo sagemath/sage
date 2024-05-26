@@ -500,7 +500,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``reduce`` -- a boolean (default True) indicating
+        -  ``reduce`` -- a boolean (default: ``True``) indicating
            whether or not to apply LLL-reduction to the calculated basis
 
         EXAMPLES::

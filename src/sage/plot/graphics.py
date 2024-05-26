@@ -393,9 +393,9 @@ class Graphics(WithEqualityById, SageObject):
         - ``font_size`` -- (default: 'medium') string, one of 'xx-small', 'x-small', 'small',
           'medium', 'large', 'x-large', 'xx-large' or an absolute font size (e.g. 12)
 
-        -  ``shadow`` -- (default: True) boolean -- draw a shadow behind the legend
+        -  ``shadow`` -- (default: ``True``) boolean -- draw a shadow behind the legend
 
-        - ``fancybox`` -- (default: False) a boolean.  If True, draws a frame with a round
+        - ``fancybox`` -- (default: ``False``) a boolean.  If True, draws a frame with a round
           fancybox.
 
         These are all keyword arguments.
@@ -1488,7 +1488,7 @@ class Graphics(WithEqualityById, SageObject):
           inches, at the default ``dpi`` of 100 dpi, which is just shy of
           the maximum allowed value of 32768 dots (pixels).
 
-        - ``fig_tight`` -- (default: True) whether to clip the drawing
+        - ``fig_tight`` -- (default: ``True``) whether to clip the drawing
           tightly around drawn objects.  If True, then the resulting
           image will usually not have dimensions corresponding to
           ``figsize``.  If False, the resulting image will have
@@ -1502,7 +1502,7 @@ class Graphics(WithEqualityById, SageObject):
           high as it is wide.  If set to ``'automatic'``, the aspect ratio
           is determined by ``figsize`` and the picture fills the figure.
 
-        - ``axes`` -- (default: True)
+        - ``axes`` -- (default: ``True``)
 
         - ``axes_labels`` -- (default: None) list (or tuple) of two
           strings; the first is used as the label for the horizontal
@@ -1516,7 +1516,7 @@ class Graphics(WithEqualityById, SageObject):
           integer; used for axes labels; if you make this very large,
           you may have to increase figsize to see all labels.
 
-        - ``frame`` -- (default: False) draw a frame around the image
+        - ``frame`` -- (default: ``False``) draw a frame around the image
 
         - ``gridlines`` -- (default: None) can be any of the following:
 
@@ -1549,7 +1549,7 @@ class Graphics(WithEqualityById, SageObject):
           rendering of the grid lines, the horizontal grid lines or the
           vertical grid lines, respectively.
 
-        - ``transparent`` -- (default: False) If True, make the background transparent.
+        - ``transparent`` -- (default: ``False``) If True, make the background transparent.
 
         - ``axes_pad`` -- (default: 0.02 on ``"linear"`` scale, 1 on
           ``"log"`` scale).
@@ -1567,7 +1567,7 @@ class Graphics(WithEqualityById, SageObject):
             then the new minimum after padding the axis will be
             `m - m/b^{\mathrm{axes\_pad}}`.
 
-        - ``ticks_integer`` -- (default: False) guarantee that the ticks
+        - ``ticks_integer`` -- (default: ``False``) guarantee that the ticks
           are integers (the ``ticks`` option, if specified, will
           override this)
 
@@ -1694,10 +1694,10 @@ class Graphics(WithEqualityById, SageObject):
 
         - ``ymax`` -- ending y value in the rendered figure.
 
-        - ``flip_x`` -- (default: False) boolean. If True, flip the horizontal
+        - ``flip_x`` -- (default: ``False``) boolean. If True, flip the horizontal
           axis.
 
-        - ``flip_y`` -- (default: False) boolean. If True, flip the vertical
+        - ``flip_y`` -- (default: ``False``) boolean. If True, flip the vertical
           axis.
 
         - ``typeset`` -- (default: ``"default"``) string. The type of

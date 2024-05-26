@@ -4245,7 +4245,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        ``letter`` -- anything.
+        - ``letter`` -- anything.
 
         OUTPUT:
 
@@ -4275,7 +4275,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        ``word`` -- list of letters.
+        - ``word`` -- list of letters.
 
         OUTPUT:
 
@@ -4319,7 +4319,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        ``word`` -- list of letters
+        - ``word`` -- list of letters
 
         OUTPUT:
 

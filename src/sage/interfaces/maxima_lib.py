@@ -1167,7 +1167,7 @@ class MaximaLibElement(MaximaAbstractElement):
 
         INPUT:
 
-        - ``onscreen`` -- boolean (default: True); whether to print or return
+        - ``onscreen`` -- boolean (default: ``True``); whether to print or return
 
         OUTPUT:
 

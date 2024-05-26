@@ -94,26 +94,26 @@ def cython(filename, verbose=0, compile_message=False,
     - ``verbose`` (integer, default 0) -- level of verbosity. A negative
       value ensures complete silence.
 
-    - ``compile_message`` (bool, default False) -- if True, print
+    - ``compile_message`` (bool, default: ``False``) -- if True, print
       ``'Compiling <filename>...'`` to the standard error.
 
-    - ``use_cache`` (bool, default False) -- if True, check the
+    - ``use_cache`` (bool, default: ``False``) -- if True, check the
       temporary build directory to see if there is already a
       corresponding .so file. If so, and if the .so file is newer than the
       Cython file, don't recompile, just reuse the .so file.
 
-    - ``create_local_c_file`` (bool, default False) -- if True, save a
+    - ``create_local_c_file`` (bool, default: ``False``) -- if True, save a
       copy of the ``.c`` or ``.cpp`` file in the current directory.
 
-    - ``annotate`` (bool, default True) -- if True, create an html file which
+    - ``annotate`` (bool, default: ``True``) -- if True, create an html file which
       annotates the conversion from .pyx to .c. By default this is only created
       in the temporary directory, but if ``create_local_c_file`` is also True,
       then save a copy of the .html file in the current directory.
 
-    - ``sage_namespace`` (bool, default True) -- if True, import
+    - ``sage_namespace`` (bool, default: ``True``) -- if True, import
       ``sage.all``.
 
-    - ``create_local_so_file`` (bool, default False) -- if True, save a
+    - ``create_local_so_file`` (bool, default: ``False``) -- if True, save a
       copy of the compiled .so file in the current directory.
 
     OUTPUT: a tuple ``(name, dir)`` where ``name`` is the name

@@ -99,7 +99,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         - ``p0, p1, p2`` -- coefficients; must be coercible
           into parent.poly_ring()
 
-        - ``check`` -- bool (default True): whether to carry
+        - ``check`` -- bool (default: ``True``): whether to carry
           out coercion
 
         EXAMPLES::
@@ -607,7 +607,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         - ``p0, p1, p2`` -- coefficients; must be coercible
           into poly_ring()
 
-        - ``check`` -- bool (default True): whether to carry
+        - ``check`` -- bool (default: ``True``): whether to carry
           out coercion
 
         EXAMPLES::

@@ -4226,11 +4226,11 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``extend`` -- bool (default: True); ignored if self is in QQbar, or
+        - ``extend`` -- bool (default: ``True``); ignored if self is in QQbar, or
           positive in AA. If self is negative in AA, do the following: if True,
           return a square root of self in QQbar, otherwise raise a ValueError.
 
-        - ``all`` -- bool (default: False); if True, return a list of all square
+        - ``all`` -- bool (default: ``False``); if True, return a list of all square
           roots. If False, return just one square root, or raise an ValueError
           if self is a negative element of AA and extend=False.
 

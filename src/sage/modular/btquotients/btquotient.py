@@ -688,7 +688,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``v2`` -- 2x2 integer matrix
 
-        - ``normalized`` -- boolean (default: False), whether the
+        - ``normalized`` -- boolean (default: ``False``), whether the
           vertices are normalized.
 
         OUTPUT:
@@ -1013,7 +1013,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``v2`` -- 2x2 integer matrix representing a vertex
 
-        - ``normalized`` -- boolean (default: True)
+        - ``normalized`` -- boolean (default: ``True``)
 
         OUTPUT:
 
@@ -1395,7 +1395,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
     - ``character`` -- a Dirichlet character (Default: None) of modulus
       `pN^-N^+`.
 
-    - ``use_magma`` -- boolean (default: False). If True, uses Magma
+    - ``use_magma`` -- boolean (default: ``False``). If True, uses Magma
       for quaternion arithmetic.
 
     - ``magma_session`` -- (default: None). If specified, the Magma session
@@ -2529,7 +2529,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``g`` a row vector of size `4` whose entries represent a
           quaternion in our basis.
 
-        - ``exact`` boolean (default: False) If True, tries to embed
+        - ``exact`` boolean (default: ``False``) If True, tries to embed
           ``g`` into a matrix algebra over a number field. If False,
           the target is the matrix algebra over `\QQ_p`.
 

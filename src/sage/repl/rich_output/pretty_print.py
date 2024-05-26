@@ -219,11 +219,11 @@ def pretty_print(*args, **kwds):
 
         - ``figsize``- [width, height] (same for square aspect)
 
-        - ``axes`` -- (default: True)
+        - ``axes`` -- (default: ``True``)
 
         - ``fontsize`` -- positive integer
 
-        - ``frame`` -- (default: False) draw a MATLAB-like frame around
+        - ``frame`` -- (default: ``False``) draw a MATLAB-like frame around
           the image
 
     EXAMPLES::

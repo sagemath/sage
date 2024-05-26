@@ -1334,7 +1334,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         - ``n`` -- integer `\geq 1`
 
-        - ``extend`` -- bool (default: True); if True, return an nth
+        - ``extend`` -- bool (default: ``True``); if True, return an nth
           root in an extension ring, if necessary. Otherwise, raise a
           ValueError if the root is not in the base ring.  Warning:
           this option is not implemented!

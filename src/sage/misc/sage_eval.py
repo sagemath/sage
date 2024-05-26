@@ -31,7 +31,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     -  ``cmds`` -- string; sequence of commands to be run
        before source is evaluated.
 
-    -  ``preparse`` -- (default: True) if True, preparse the
+    -  ``preparse`` -- (default: ``True``) if True, preparse the
        string expression.
 
 

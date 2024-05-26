@@ -1689,7 +1689,7 @@ def formatannotation(annotation, base_module=None):
     INPUT:
 
     - ``annotation`` -- annotation for a function
-    - ``base_module``-- (default: ``None``)
+    - ``base_module`` -- (default: ``None``)
 
     This is only relevant with Python 3, so the doctests are marked
     accordingly.

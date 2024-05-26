@@ -341,7 +341,7 @@ def limit(f, dir=None, taylor=False, **argv):
        for a limit from below, or may be omitted (implying a two-sided
        limit is to be computed).
 
-    - ``taylor`` -- (default: False); if True, use Taylor
+    - ``taylor`` -- (default: ``False``); if True, use Taylor
        series, which allows more limits to be computed (but may also
        crash in some obscure cases due to bugs in Maxima).
 

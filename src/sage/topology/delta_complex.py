@@ -68,7 +68,7 @@ class DeltaComplex(GenericCellComplex):
 
     :param data: see below for a description of the options
     :param check_validity: If True, check that the simplicial identities hold.
-    :type check_validity: boolean; optional, default True
+    :type check_validity: boolean; optional, default: ``True``
     :return: a `\Delta`-complex
 
     Use ``data`` to define a `\Delta`-complex.  It may be in any of
@@ -587,17 +587,17 @@ class DeltaComplex(GenericCellComplex):
            (that is, include a class in dimension `-1` corresponding
            to the empty cell).  This is ignored if ``dimensions`` is
            specified or if ``subcomplex`` is nonempty.
-        :type augmented: boolean; optional, default False
+        :type augmented: boolean; optional, default: ``False``
         :param cochain: If True, return the cochain complex (that is,
            the dual of the chain complex).
-        :type cochain: boolean; optional, default False
+        :type cochain: boolean; optional, default: ``False``
         :param verbose: If True, print some messages as the chain
            complex is computed.
-        :type verbose: boolean; optional, default False
+        :type verbose: boolean; optional, default: ``False``
         :param check: If True, make sure that the chain complex
            is actually a chain complex: the differentials are
            composable and their product is zero.
-        :type check: boolean; optional, default False
+        :type check: boolean; optional, default: ``False``
 
         .. note::
 

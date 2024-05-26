@@ -179,7 +179,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
     - ``eps`` -- Dirichlet character
 
-    - ``already_echelonized`` -- bool (default: False); if True, use that the
+    - ``already_echelonized`` -- bool (default: ``False``); if True, use that the
       basis is already in Echelon form, which saves a lot of time.
 
     EXAMPLES::

@@ -149,7 +149,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
       for giac. If None, the global ``giacpy_sage.giacsettings.threads`` is
       considered.
 
-    - ``prot`` -- (default: False) if True print detailled informations
+    - ``prot`` -- (default: ``False``) if True print detailled informations
 
     - ``elim_variables`` -- (default: None) a list of variables to eliminate
       from the ideal.

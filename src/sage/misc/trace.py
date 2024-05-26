@@ -16,7 +16,7 @@ def trace(code, preparse=True):
 
     -  ``code`` -- str
 
-    -  ``preparse`` -- bool (default: True); if True, run
+    -  ``preparse`` -- bool (default: ``True``); if True, run
        expression through the Sage preparser.
 
 

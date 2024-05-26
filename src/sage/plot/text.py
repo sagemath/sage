@@ -253,9 +253,9 @@ def text(string, xy, **options):
 
     - ``zorder`` -- The layer level in which to draw
 
-    - ``clip`` -- (default: False) Whether to clip or not
+    - ``clip`` -- (default: ``False``) Whether to clip or not
 
-    - ``axis_coords`` -- (default: False) If True, use axis coordinates, so that
+    - ``axis_coords`` -- (default: ``False``) If True, use axis coordinates, so that
       (0,0) is the lower left and (1,1) upper right, regardless of the x and y
       range of plotted values.
 

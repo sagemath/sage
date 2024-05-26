@@ -1275,7 +1275,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
         - ``weight`` -- the weight of the `k`-tableaux
         - ``inner_shape`` -- the inner shape of the skew `k`-tableaux represented as a
           `(k+1)`-core;  for straight tableaux the inner shape does not need to be
-          specified (default: [])
+          specified (default: ``[]``)
 
         TESTS::
 
@@ -4126,7 +4126,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         - ``k``, ``size`` -- positive integers
         - ``outer_shape`` -- a list representing a `k+1`-core (default: ``None``)
-        - ``inner_shape`` -- a list representing a `k+1`-core (default: [])
+        - ``inner_shape`` -- a list representing a `k+1`-core (default: ``[]``)
 
         OUTPUT:
 
@@ -4381,7 +4381,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         - ``k`` -- a positive integer
         - ``size`` -- a positive integer
         - ``outer_shape`` -- a list which is a `k+1`-core (default: ``None``)
-        - ``inner_shape`` -- a list which is a `k+1`-core (default: [])
+        - ``inner_shape`` -- a list which is a `k+1`-core (default: ``[]``)
 
         OUTPUT:
 

@@ -197,7 +197,7 @@ def detex(s, embedded=False):
     INPUT:
 
     - ``s`` -- string
-    - ``embedded`` -- boolean (default: False)
+    - ``embedded`` -- boolean (default: ``False``)
 
     If ``embedded`` is False, then do the replacements in both
     ``math_substitutes`` and ``nonmath_substitutes``.  If True, then
@@ -550,7 +550,7 @@ def process_extlinks(s, embedded=False):
     INPUT:
 
     - ``s`` -- string, in practice a docstring
-    - ``embedded`` -- boolean (default: False)
+    - ``embedded`` -- boolean (default: ``False``)
 
     This function is called by :func:`format`, and if in the notebook,
     it sets ``embedded`` to be ``True``, otherwise ``False``.
@@ -1057,16 +1057,16 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     - ``extra1``, ..., ``extra5`` -- additional strings to require when
       searching.  Lines must match all of these, as well as ``string``.
 
-    - ``whole_word`` (default: False) -- if True, search for
+    - ``whole_word`` (default: ``False``) -- if True, search for
       ``string`` and ``extra1`` (etc.) as whole words only.  This
       assumes that each of these arguments is a single word, not a
       regular expression, and it might have unexpected results if used
       with regular expressions.
 
-    - ``ignore_case`` (default: True) -- if False, perform a
+    - ``ignore_case`` (default: ``True``) -- if False, perform a
       case-sensitive search
 
-    - ``multiline`` (default: False) -- if True, search more
+    - ``multiline`` (default: ``False``) -- if True, search more
       than one line at a time.  In this case, print any matching file
       names, but don't print line numbers.
 
@@ -1622,7 +1622,7 @@ class _sage_doc:
 
         - ``name`` -- string, name of the documentation
 
-        - ``testing`` -- boolean (default: False): if True,
+        - ``testing`` -- boolean (default: ``False``): if True,
           then just return the URL and path-name for this document;
           don't open the web browser.
 

@@ -613,7 +613,7 @@ class AffinePlaneCurve(AffineCurve):
 
         - ``P`` -- a point on this curve
 
-        - ``factor`` -- (default: True) whether to attempt computing the
+        - ``factor`` -- (default: ``True``) whether to attempt computing the
           polynomials of the individual tangent lines over the base field of this
           curve, or to just return the polynomial corresponding to the union of
           the tangent lines (which requires fewer computations)
@@ -1420,7 +1420,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``extend`` -- (default: False) specifies whether to extend the base
+        - ``extend`` -- (default: ``False``) specifies whether to extend the base
           field when necessary to find all singular points when this curve is
           defined over a number field. If ``extend`` is ``False``, then only
           singularities with coordinates in the base field of this curve will be

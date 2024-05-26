@@ -1253,7 +1253,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         INPUT:
 
-        - ``i``-- integer
+        - ``i`` -- integer
 
         OUTPUT:
 

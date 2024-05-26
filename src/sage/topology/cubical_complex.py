@@ -743,7 +743,7 @@ class CubicalComplex(GenericCellComplex):
 
     :param maximal_faces: set of maximal faces
     :param maximality_check: see below
-    :type maximality_check: boolean; optional, default True
+    :type maximality_check: boolean; optional, default: ``True``
     :return: a cubical complex
 
     ``maximal_faces`` should be a list or tuple or set (or anything
@@ -1149,17 +1149,17 @@ class CubicalComplex(GenericCellComplex):
            (that is, include a class in dimension `-1` corresponding
            to the empty cell).  This is ignored if ``dimensions`` is
            specified.
-        :type augmented: boolean; optional, default False
+        :type augmented: boolean; optional, default: ``False``
         :param cochain: If True, return the cochain complex (that is,
            the dual of the chain complex).
-        :type cochain: boolean; optional, default False
+        :type cochain: boolean; optional, default: ``False``
         :param verbose: If True, print some messages as the chain
            complex is computed.
-        :type verbose: boolean; optional, default False
+        :type verbose: boolean; optional, default: ``False``
         :param check: If True, make sure that the chain complex
            is actually a chain complex: the differentials are
            composable and their product is zero.
-        :type check: boolean; optional, default False
+        :type check: boolean; optional, default: ``False``
 
         .. note::
 
@@ -1871,7 +1871,7 @@ class CubicalComplexExamples:
         :param g: the genus
         :type g: non-negative integer
         :param orientable: whether the surface should be orientable
-        :type orientable: bool, optional, default True
+        :type orientable: bool, optional, default: ``True``
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with

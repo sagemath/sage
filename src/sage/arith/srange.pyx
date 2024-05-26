@@ -53,7 +53,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
       automatically detected universe)
 
     - ``include_endpoint`` -- whether or not to include the endpoint
-      (default: False). This is only relevant if ``end`` is actually of
+      (default: ``False``). This is only relevant if ``end`` is actually of
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the
@@ -199,7 +199,7 @@ def srange(*args, **kwds):
       automatically detected universe)
 
     - ``include_endpoint`` -- whether or not to include the endpoint
-      (default: False). This is only relevant if ``end`` is actually of
+      (default: ``False``). This is only relevant if ``end`` is actually of
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the

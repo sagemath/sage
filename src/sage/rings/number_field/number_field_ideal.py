@@ -1100,7 +1100,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         - ``proof`` -- proof flag.  If ``proof=False``, assume GRH.
 
-        - ``gens`` -- (default: False) if True, also computes the reduced
+        - ``gens`` -- (default: ``False``) if True, also computes the reduced
           generators of the ideal.
 
         OUTPUT:

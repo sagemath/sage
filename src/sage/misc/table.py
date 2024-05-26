@@ -782,7 +782,7 @@ class table(SageObject):
         - ``row`` -- a list with the same number of entries as each row
           of the table.
 
-        - ``header`` -- bool (default False). If True, treat this as a
+        - ``header`` -- bool (default: ``False``). If True, treat this as a
           header row, using ``<th>`` instead of ``<td>``.
 
         OUTPUT:

@@ -521,11 +521,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         INPUT:
 
         - ``p`` -- positive prime integer (default: 2)
-        - ``basis`` -- string (default: = 'milnor')
+        - ``basis`` -- string (default: ``'milnor'``)
         - ``profile`` -- profile function (default: ``None``)
-        - ``truncation_type`` -- (default: 'auto')
+        - ``truncation_type`` -- (default: ``'auto'``)
         - ``precision`` -- (default: ``None``)
-        - ``generic`` -- (default: 'auto')
+        - ``generic`` -- (default: ``'auto'``)
 
         OUTPUT:
 
@@ -2314,7 +2314,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``a, b, c, ...`` -- non-negative integers
+        -  ``a``, ``b``, ``c``, ... -- non-negative integers
 
         OUTPUT:
 
@@ -3807,12 +3807,12 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
 
     INPUT:
 
-    - ``p`` -- positive prime integer (default: = 2)
-    - ``basis`` -- string (default: = 'milnor')
+    - ``p`` -- positive prime integer (default: 2)
+    - ``basis`` -- string (default: ``'milnor'``)
     - ``profile`` -- a profile function in form specified below (default: ``None``)
-    - ``truncation_type`` -- 0 or `\infty` or 'auto' (default: 'auto')
+    - ``truncation_type`` -- 0 or `\infty` or 'auto' (default: ``'auto'``)
     - ``precision`` -- integer or ``None`` (default: ``None``)
-    - ``generic`` -- (default: 'auto')
+    - ``generic`` -- (default: ``'auto'``)
 
     OUTPUT:
 
@@ -4226,7 +4226,7 @@ def Sq(*nums):
 
     INPUT:
 
-    -  ``a, b, c, ...`` -- non-negative integers
+    -  ``a``, ``b``, ``c``, ... -- non-negative integers
 
     OUTPUT: element of the Steenrod algebra
 

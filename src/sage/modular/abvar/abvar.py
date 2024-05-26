@@ -2039,7 +2039,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` -- (default: False) if True,
+        -  ``none_if_not_known`` -- (default: ``False``) if True,
            return None instead of attempting to compute the newform level, if
            it isn't already known. This None result is not cached.
 
@@ -2294,7 +2294,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        - ``proof`` -- a boolean (default: True)
+        - ``proof`` -- a boolean (default: ``True``)
 
         OUTPUT:
 
@@ -3205,7 +3205,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` -- (default: False); if
+        -  ``none_if_not_known`` -- (default: ``False``); if
            True, return None instead of attempting to compute the degen map's
            `t`, if it isn't known. This None result is not cached.
 
@@ -3304,7 +3304,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` -- bool (default: False); if
+        -  ``none_if_not_known`` -- bool (default: ``False``); if
            True then this function may return None instead of True of False if
            we don't already know whether or not self is simple.
 
@@ -3335,7 +3335,7 @@ class ModularAbelianVariety_abstract(Parent):
         Return a sequence of abelian subvarieties of self that are all
         simple, have finite intersection and sum to self.
 
-        INPUT: simple- bool (default: True) if True, all factors are
+        INPUT: simple- bool (default: ``True``) if True, all factors are
         simple. If False, each factor returned is isogenous to a power of a
         simple and the simples in each factor are distinct.
 
@@ -3548,7 +3548,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``simple`` -- bool (default: True)
+        -  ``simple`` -- bool (default: ``True``)
 
         -  ``bound`` -- integer (default: None); if given,
            passed onto decomposition function
@@ -4530,7 +4530,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         Decompose this modular abelian variety as a product of abelian
         subvarieties, up to isogeny.
 
-        INPUT: simple- bool (default: True) if True, all factors are
+        INPUT: simple- bool (default: ``True``) if True, all factors are
         simple. If False, each factor returned is isogenous to a power of a
         simple and the simples in each factor are distinct.
 

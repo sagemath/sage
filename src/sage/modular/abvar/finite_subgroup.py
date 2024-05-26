@@ -856,7 +856,7 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
         -  ``field_of_definition`` -- the field of definition
            of this finite group scheme
 
-        -  ``check`` -- bool (default: True) whether or not to
+        -  ``check`` -- bool (default: ``True``) whether or not to
            check that lattice contains the abvar lattice.
 
 

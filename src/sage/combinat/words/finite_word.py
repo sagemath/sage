@@ -3762,7 +3762,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        ``other`` -- a finite word
+        - ``other`` -- a finite word
 
         EXAMPLES::
 
@@ -4617,7 +4617,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        ``other`` -- a non empty word
+        - ``other`` -- a non empty word
 
         EXAMPLES::
 

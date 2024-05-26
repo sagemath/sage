@@ -928,7 +928,7 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
     - ``dynatomic`` -- boolean. whether ``F`` is the periodic points or the
       formal periodic points of period ``m`` for ``f``
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``emb`` -- embedding into CC
 
@@ -1004,7 +1004,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
     - ``start_n`` -- positive integer. the period used to start trying to
       create associate binary form ``F``
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``emb`` -- embedding into CC
 

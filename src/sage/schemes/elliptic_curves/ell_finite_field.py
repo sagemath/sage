@@ -1177,7 +1177,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
           field of the other, in which case it will test over the
           larger base field.
 
-        - ``proof`` (default True) -- this parameter is here only to
+        - ``proof`` (default: ``True``) -- this parameter is here only to
           be consistent with versions for other types of elliptic
           curves.
 
@@ -1290,7 +1290,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``proof`` (boolean, default True) -- If True, returns a
+        - ``proof`` (boolean, default: ``True``) -- If True, returns a
           proved result.  If False, then a return value of False is
           certain but a return value of True may be based on a
           probabilistic test.  See the documentation of the function
@@ -1324,7 +1324,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``proof`` (boolean, default True) -- If True, returns a
+        - ``proof`` (boolean, default: ``True``) -- If True, returns a
           proved result.  If False, then a return value of True is
           certain but a return value of False may be based on a
           probabilistic test.  See the documentation of the function
@@ -2348,7 +2348,7 @@ def is_j_supersingular(j, proof=True):
 
     - ``j`` (finite field element) -- an element of a finite field
 
-    - ``proof`` (boolean, default True) -- If True, returns a proved
+    - ``proof`` (boolean, default: ``True``) -- If True, returns a proved
       result.  If False, then a return value of False is certain but a
       return value of True may be based on a probabilistic test.  See
       the ALGORITHM section below for more details.

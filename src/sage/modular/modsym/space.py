@@ -1791,7 +1791,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``compute_dual`` -- bool (default: True) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols

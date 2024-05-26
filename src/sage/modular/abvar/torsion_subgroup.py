@@ -414,7 +414,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         INPUT:
 
-        - ``proof`` -- a boolean (default: True)
+        - ``proof`` -- a boolean (default: ``True``)
 
         The computation of the rational torsion order of J1(p) is conjectural
         and will only be used if proof=False. See Section 6.2.3 of [CES2003]_.

@@ -3821,9 +3821,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default:False) if True and ``self`` is (skew)-symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``skew`` -- bool(default:False) if True, (skew-)symmetrizability is checked.
-        - ``positive`` -- bool(default:True) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is (skew)-symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``skew`` -- bool(default: ``False``) if True, (skew-)symmetrizability is checked.
+        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
 
         OUTPUT:
 
@@ -4460,8 +4460,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default:False) if True and ``self`` is symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``positive`` -- bool(default:True) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
 
         OUTPUT:
 
@@ -4503,8 +4503,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default:False) if True and ``self`` is skew-symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``positive`` -- bool(default:True) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is skew-symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
 
         OUTPUT:
 

@@ -2847,7 +2847,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             OPTIONAL:
 
             - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``positive`` -- True or False (default: False)
+            - ``positive`` -- True or False (default: ``False``)
 
             EXAMPLES::
 

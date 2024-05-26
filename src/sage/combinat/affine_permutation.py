@@ -55,7 +55,7 @@ class AffinePermutation(ClonableArray):
 
         - ``lst`` -- list giving the base window of the affine permutation
 
-        - ``check``-- whether to test if the affine permutation is valid
+        - ``check`` -- whether to test if the affine permutation is valid
 
         EXAMPLES::
 

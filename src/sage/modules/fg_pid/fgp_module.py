@@ -1267,7 +1267,7 @@ class FGP_Module_class(Module):
 
         - ``x`` -- element of ``self``
 
-        - ``reduce`` -- (default: False); if ``True``, reduce
+        - ``reduce`` -- (default: ``False``); if ``True``, reduce
           coefficients modulo invariants; this is
           ignored if the base ring is not ``ZZ``.
 

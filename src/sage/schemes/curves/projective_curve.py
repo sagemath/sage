@@ -691,7 +691,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         - ``pt`` -- a rational point on X which is not a point of ramification
            for the projection `(x,y) \to x`.
 
-        - ``n``-- the number of terms desired
+        - ``n`` -- the number of terms desired
 
         OUTPUT: `x = x0 + t`, `y = y0` + power series in `t`
 

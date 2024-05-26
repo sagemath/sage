@@ -1474,11 +1474,11 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``verbose`` -- bool (default: True); whether to
+        -  ``verbose`` -- bool (default: ``True``); whether to
            verbosely output status info the first time the command list is
            built
 
-        -  ``use_disk_cache`` -- bool (default: True); use
+        -  ``use_disk_cache`` -- bool (default: ``True``); use
            cached command list, which is saved to disk.
 
 

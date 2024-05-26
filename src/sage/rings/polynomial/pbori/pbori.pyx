@@ -1095,7 +1095,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         -  ``gens`` -- list or tuple of generators
 
-        -  ``coerce`` -- bool (default: True) automatically
+        -  ``coerce`` -- bool (default: ``True``) automatically
            coerce the given polynomials to this ring to form the ideal
 
         EXAMPLES::

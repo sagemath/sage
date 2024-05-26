@@ -250,7 +250,7 @@ def ellipse(center, r1, r2, angle=0, **options):
 
     - ``alpha`` -- (default: 1); transparency
 
-    - ``fill`` -- (default: False); whether to fill the ellipse or not
+    - ``fill`` -- (default: ``False``); whether to fill the ellipse or not
 
     - ``thickness`` -- (default: 1); thickness of the line
 

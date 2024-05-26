@@ -55,7 +55,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
     - ``A`` -- an invertible matrix, or something defining a
       matrix if ``convert==True``
 
-    - ``b``-- a vector, or something defining a vector if
+    - ``b`` -- a vector, or something defining a vector if
       ``convert==True`` (default: ``0``, defining the zero
       vector)
 

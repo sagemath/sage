@@ -1865,7 +1865,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         -  ``prec`` -- if forms are given, compute with them to
            the given precision
 
-        -  ``indep`` -- (default: True) whether the given list
+        -  ``indep`` -- (default: ``True``) whether the given list
            of forms are assumed to form a basis.
 
 

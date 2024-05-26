@@ -23510,7 +23510,7 @@ class GenericGraph(GenericGraph_pyx):
 
         -  ``partition`` -- a list of lists
 
-        -  ``quotient_matrix`` -- (default False) if True, and
+        -  ``quotient_matrix`` -- (default: ``False``) if True, and
            the partition is equitable, returns a matrix over the integers
            whose rows and columns represent cells of the partition, and whose
            i,j entry is the number of vertices in cell j adjacent to each

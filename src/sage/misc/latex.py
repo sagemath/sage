@@ -1585,11 +1585,11 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
     - ``math_right`` -- string (default: '\\]'), right delimiter for math mode
 
-    - ``debug`` -- bool (default: False); print verbose output
+    - ``debug`` -- bool (default: ``False``); print verbose output
 
     - ``sep`` -- string (default: ``''``); separator between math objects
 
-    - ``tiny`` -- bool (default: False); use 'tiny' font.
+    - ``tiny`` -- bool (default: ``False``); use 'tiny' font.
 
     - ``extra_preamble`` -- string (default: ``''``); extra LaTeX commands,
        inserted before ``"\\begin{document}"``

@@ -78,7 +78,7 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
     - ``fallbacks`` -- tuple containing ``str`` or ``None`` values.
 
-    - ``force`` -- boolean (default: is ``False``). If
+    - ``force`` -- boolean (default: ``False``). If
       ``True``, skip the environment variable and only use the
       fallbacks.
 
@@ -281,7 +281,7 @@ def sage_include_directories(use_sources=False):
 
     INPUT:
 
-    -  ``use_sources`` -- (default: False) a boolean
+    -  ``use_sources`` -- (default: ``False``) a boolean
 
     OUTPUT:
 

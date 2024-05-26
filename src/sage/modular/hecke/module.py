@@ -930,7 +930,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``anemic`` -- bool (default: True), if True, use only
+        -  ``anemic`` -- bool (default: ``True``), if True, use only
            Hecke operators of index coprime to the level.
 
         -  ``bound`` -- int or None, (default: None). If None,

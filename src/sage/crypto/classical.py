@@ -3495,7 +3495,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S``-- a string monoid over some alphabet
+    - ``S`` -- a string monoid over some alphabet
 
     - ``n`` -- integer `> 0`; block length of an encryption/decryption key
 

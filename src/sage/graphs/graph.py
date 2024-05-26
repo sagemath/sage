@@ -9642,7 +9642,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``nonedgesonly``-- boolean (default: ``True``); if ``True``, assigns
+        - ``nonedgesonly`` -- boolean (default: ``True``); if ``True``, assigns
           `0` value to adjacent vertices.
 
         - ``vertices`` -- list (default: ``None``); the ordering of the
@@ -9778,7 +9778,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``nonedgesonly``-- boolean (default: ``True``); if ``True``, assigns
+        - ``nonedgesonly`` -- boolean (default: ``True``); if ``True``, assigns
           `0` value to adjacent vertices.
 
         OUTPUT: list of tuples of edge pairs

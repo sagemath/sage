@@ -242,7 +242,7 @@ def circle(center, radius, **options):
 
     - ``alpha`` -- default: 1
 
-    - ``fill`` -- default: False
+    - ``fill`` -- default: ``False``
 
     - ``thickness`` -- default: 1
 

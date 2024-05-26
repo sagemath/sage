@@ -819,7 +819,7 @@ cdef class Ring(ParentWithGens):
 
         - ``n`` -- positive integer
 
-        - ``all`` -- bool (default: False); whether to return
+        - ``all`` -- bool (default: ``False``); whether to return
           a list of all primitive `n`-th roots of unity. If True, raise a ``ValueError``
           if ``self`` is not an integral domain.
 

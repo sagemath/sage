@@ -146,7 +146,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``s`` -- string; argument to the function
 
-        - ``redirect`` -- boolean (default: True); if redirect is set to False,
+        - ``redirect`` -- boolean (default: ``True``); if redirect is set to False,
           then the output of the command is not returned as a string.
           Instead, it behaves like os.system. This is used for interactive
           things like Maxima's demos. See maxima.demo?
@@ -269,7 +269,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``s`` -- string
 
-        - ``verbose`` -- boolean (default: True)
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: array of strings
 
@@ -301,7 +301,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: True)
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: array of strings
 
@@ -332,9 +332,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: True)
+        - ``verbose`` -- boolean (default: ``True``)
 
-        - ``use_disk_cache`` -- boolean (default: True); if set to True,
+        - ``use_disk_cache`` -- boolean (default: ``True``); if set to True,
           try to read cached result from disk
 
         OUTPUT: array of strings
@@ -669,7 +669,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
 #         INPUT:
 
-#         flag -- bool (default: True)
+#         flag -- bool (default: ``True``)
 
 #         EXAMPLES::
 

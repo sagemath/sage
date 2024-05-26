@@ -11016,7 +11016,7 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- symbolic expression
 
-        - ``expand`` -- (default:True) if True, expands trigonometric
+        - ``expand`` -- (default: ``True``) if True, expands trigonometric
           and hyperbolic functions of sums of angles and of multiple
           angles occurring in ``self`` first. For best results,
           ``self`` should be expanded. See also :meth:`expand_trig` to
@@ -11877,7 +11877,7 @@ cdef class Expression(Expression_abc):
 
         -  ``self`` -- a symbolic expression
 
-        -  ``dontfactor`` -- list (default: []), a list of
+        -  ``dontfactor`` -- list (default: ``[]``), a list of
            variables with respect to which factoring is not to occur.
            Factoring also will not take place with respect to any variables
            which are less important (using the variable ordering assumed for

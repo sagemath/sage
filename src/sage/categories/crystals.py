@@ -1009,7 +1009,7 @@ class Crystals(Category_singleton):
 
             - ``thicklines`` -- (default: ``True``) for thicker edges
 
-            - ``labels`` -- (default: False) to suppress labeling of the vertices
+            - ``labels`` -- (default: ``False``) to suppress labeling of the vertices
 
             - ``scaling_factor`` -- (default: ``1.0``) Increasing or decreasing the
               scaling factor changes the size of the image

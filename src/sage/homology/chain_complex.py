@@ -1153,7 +1153,7 @@ class ChainComplex_class(Parent):
           homology in every degree in which the chain complex is
           possibly nonzero.
 
-        - ``base_ring`` -- a commutative ring (default: is the
+        - ``base_ring`` -- a commutative ring (default: the
           base ring for the chain complex); must be either the
           integers `\ZZ` or a field
 
@@ -1398,7 +1398,7 @@ class ChainComplex_class(Parent):
           degree, or if an element of the grading group, then return
           the Betti number in that degree
 
-        - ``base_ring`` -- a commutative ring (default: is the
+        - ``base_ring`` -- a commutative ring (default: the
           base ring for the chain complex); compute homology with
           these coefficients -- must be either the integers or a
           field

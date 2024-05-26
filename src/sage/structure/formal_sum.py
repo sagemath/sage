@@ -376,9 +376,9 @@ class FormalSums(UniqueRepresentation, Module):
 
         - ``x`` -- formal sum, list or number
 
-        - ``check`` -- bool (default: True)
+        - ``check`` -- bool (default: ``True``)
 
-        - ``reduce`` -- bool (default: True); whether to combine terms
+        - ``reduce`` -- bool (default: ``True``); whether to combine terms
 
         EXAMPLES::
 

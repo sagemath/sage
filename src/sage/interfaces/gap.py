@@ -463,13 +463,13 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         -  ``s`` -- string containing GAP code.
 
-        -  ``newlines`` -- bool (default: True); if False,
+        -  ``newlines`` -- bool (default: ``True``); if False,
            remove all backslash-newlines inserted by the GAP output
            formatter.
 
         -  ``strip`` -- ignored
 
-        -  ``split_lines`` -- bool (default: True); if True then each
+        -  ``split_lines`` -- bool (default: ``True``); if True then each
            line is evaluated separately.  If False, then the whole
            block of code is evaluated all at once.
 

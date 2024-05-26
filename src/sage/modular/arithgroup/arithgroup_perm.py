@@ -314,10 +314,10 @@ def ArithmeticSubgroup_Permutation(
       right cosets (each coset is identified to an element of `\{1,\dots,n\}`
       where `1` is reserved for the identity coset).
 
-    - ``relabel`` -- boolean (default: False); if True, renumber the cosets in a
+    - ``relabel`` -- boolean (default: ``False``); if True, renumber the cosets in a
       canonical way.
 
-    - ``check`` -- boolean (default: True); check that the input is valid (it
+    - ``check`` -- boolean (default: ``True``); check that the input is valid (it
       may be time efficient but less safe to set it to False)
 
     EXAMPLES::
@@ -1188,15 +1188,15 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
         INPUT:
 
-        - ``right_cosets`` -- bool (default: False); right or left coset graph
+        - ``right_cosets`` -- bool (default: ``False``); right or left coset graph
 
-        - ``s2_edges`` -- bool (default: True); put edges associated to s2
+        - ``s2_edges`` -- bool (default: ``True``); put edges associated to s2
 
-        - ``s3_edges`` -- bool (default: True); put edges associated to s3
+        - ``s3_edges`` -- bool (default: ``True``); put edges associated to s3
 
-        - ``l_edges`` -- bool (default: False); put edges associated to l
+        - ``l_edges`` -- bool (default: ``False``); put edges associated to l
 
-        - ``r_edges`` -- bool (default: False); put edges associated to r
+        - ``r_edges`` -- bool (default: ``False``); put edges associated to r
 
         - ``s2_label``, ``s3_label``, ``l_label``, ``r_label`` -- the labels to
           put on the edges corresponding to the generators action. Use ``None``
@@ -1784,9 +1784,9 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
 
         INPUT:
 
-        ``exp`` -- boolean (default: False) - if True, return a dictionary with
-        keys the possible widths and with values the number of cusp with that
-        width.
+        - ``exp`` -- boolean (default: ``False``) - if True, return a dictionary with
+          keys the possible widths and with values the number of cusp with that
+          width.
 
         EXAMPLES::
 

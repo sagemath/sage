@@ -3494,7 +3494,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         INPUT:
 
-        - ``extended`` -- Boolean (default:False). Whether to
+        - ``extended`` -- Boolean (default: ``False``). Whether to
           construct the extended complex, that is, including the
           `\ZZ`-term at degree -1 or not.
 

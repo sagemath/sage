@@ -2007,7 +2007,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
            this will cause problems if the two factors have any
            vertices with names in common.
 
-        :type rename_vertices: boolean; optional, default True
+        :type rename_vertices: boolean; optional, default: ``True``
 
         EXAMPLES::
 

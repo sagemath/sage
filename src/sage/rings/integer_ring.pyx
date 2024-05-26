@@ -606,7 +606,7 @@ cdef class IntegerRing_class(CommutativeRing):
 
         - ``x``, ``y`` integers -- bounds for the result.
 
-        - ``distribution``-- a string:
+        - ``distribution`` -- a string:
 
           - ``'uniform'``
           - ``'mpz_rrandomb'``

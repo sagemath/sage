@@ -300,7 +300,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
       can also type ``import matplotlib.cm; matplotlib.cm.datad.keys()`` to list
       their names.
 
-    - ``colorbar`` -- boolean (default: False) Show a colorbar or not (dense matrices only).
+    - ``colorbar`` -- boolean (default: ``False``) Show a colorbar or not (dense matrices only).
 
       The following options are used to adjust the style and placement
       of colorbars.  They have no effect if a colorbar is not shown.
@@ -325,7 +325,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     - ``vmax`` -- The maximum value (values above this are set to this value)
 
-    - ``flip_y`` -- (default: True) boolean.  If False, the first row of the
+    - ``flip_y`` -- (default: ``True``) boolean.  If False, the first row of the
       matrix is on the bottom of the graph.  Otherwise, the first row is on the
       top of the graph.
 

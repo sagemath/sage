@@ -262,7 +262,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         -  ``t`` -- divisor of quotient of level of self and
            level
 
-        -  ``check`` -- bool (default: True); if True do some
+        -  ``check`` -- bool (default: ``True``); if True do some
            checks on the input
 
 

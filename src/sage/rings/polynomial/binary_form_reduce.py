@@ -56,7 +56,7 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
     - ``z0_cov`` -- boolean, compute only the `z_0` invariant. Otherwise, solve
       the minimization problem
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``emb`` -- embedding into CC
 
@@ -272,7 +272,7 @@ def epsinv(F, target, prec=53, target_tol=0.001, z=None, emb=None):
     - ``target`` --  positive real number. The value we want to attain, i.e.,
       the value we are taking the inverse of
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``target_tol`` -- positive real number. The tolerance with which we
       attain the target value.
@@ -390,7 +390,7 @@ def get_bound_poly(F, prec=53, norm_type='norm', emb=None):
 
     - ``F`` -- binary form of degree at least 3 with no multiple roots
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``norm_type`` -- string, either norm or height
 

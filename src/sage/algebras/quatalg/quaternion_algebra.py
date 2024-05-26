@@ -2268,7 +2268,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``include_basis`` -- bool (default: False), if True also
+        - ``include_basis`` -- bool (default: ``False``), if True also
           return a basis for the dimension 3 subspace `G`
 
         OUTPUT:
@@ -2337,7 +2337,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``conjugator`` -- bool (default: False), if True this
+        - ``conjugator`` -- bool (default: ``False``), if True this
           method returns a single quaternion `\gamma \in O \cap O'`
           of minimal norm such that `O' = \gamma^{-1} O \gamma`,
           rather than the ring isomorphism it defines.
@@ -2622,7 +2622,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - `\alpha` -- element of quaternion algebra
 
-        - ``left`` -- bool (default: False); if true multiply
+        - ``left`` -- bool (default: ``False``); if true multiply
           `\alpha` on the left, otherwise multiply `\alpha` on the right
 
         OUTPUT:

@@ -287,8 +287,8 @@ def have_prerequisites(debug=True):
 
     INPUT:
 
-    ``debug`` -- boolean (default: ``True``). Whether to print debug
-    information in case that prerequisites are missing.
+    - ``debug`` -- boolean (default: ``True``). Whether to print debug
+      information in case that prerequisites are missing.
 
     OUTPUT:
 

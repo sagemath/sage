@@ -1467,7 +1467,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 #
 #         - ``submodule`` -- submodule of the ambient space.
 #
-#         - ``check`` -- (default: False) whether to check that the
+#         - ``check`` -- (default: ``False``) whether to check that the
 #           submodule is Hecke equivariant
 #
 #         EXAMPLES::
@@ -2105,7 +2105,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
           algorithm to use (alternative is 'riemann_sum', which is
           unsuitable for computations requiring high precision)
 
-        - ``mult`` -- boolean (default: False). Whether to compute the
+        - ``mult`` -- boolean (default: ``False``). Whether to compute the
           multiplicative version.
 
         OUTPUT:
@@ -2611,7 +2611,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         INPUT:
 
         - f -- a `p`-adic automorphic form.
-        - scale -- (default: True) whether to scale by the appropriate power of `p`
+        - scale -- (default: ``True``) whether to scale by the appropriate power of `p`
           at each iteration.
 
         EXAMPLES::

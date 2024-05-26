@@ -69,7 +69,7 @@ class OverconvergentDistributions_factory(UniqueFactory):
     - ``base`` -- ring or None
     - ``character`` -- a Dirichlet character or None
     - ``adjuster`` -- None or callable that turns 2 x 2 matrices into a 4-tuple
-    - ``act_on_left`` -- bool (default: False)
+    - ``act_on_left`` -- bool (default: ``False``)
     - ``dettwist`` -- integer or None (interpreted as 0)
     - ``act_padic`` -- whether monoid should allow `p`-adic coefficients
     - ``implementation`` -- string (default: None).
@@ -158,7 +158,7 @@ class Symk_factory(UniqueFactory):
     - ``character`` -- (Dirichlet character or None, default None) the character
     - ``adjuster`` -- (None or a callable that turns
       `2 \times 2` matrices into a 4-tuple, default None)
-    - ``act_on_left`` -- (boolean, default False) whether to have the group acting
+    - ``act_on_left`` -- (boolean, default: ``False``) whether to have the group acting
       on the left rather than the right.
     - ``dettwist`` (integer or None) -- power of determinant to twist by
 
@@ -241,9 +241,9 @@ class OverconvergentDistributions_abstract(Module):
     - ``base``        -- None or the base ring over which to construct the distributions
     - ``character``   -- None or Dirichlet character
     - ``adjuster``    -- None or a way to specify the action among different conventions
-    - ``act_on_left`` -- bool (default: False)
+    - ``act_on_left`` -- bool (default: ``False``)
     - ``dettwist``    -- None or integer (twist by determinant). Ignored for Symk spaces
-    - ``act_padic``   -- bool (default: False) If true, will allow
+    - ``act_padic``   -- bool (default: ``False``) If true, will allow
       action by `p`-adic matrices.
     - ``implementation`` -- string (default: None) Either automatic (if None),
       'vector' or 'long'.

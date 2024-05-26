@@ -786,8 +786,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        ``gap`` -- (optional GAP instance) Interface to which the
-                   string is addressed.
+        - ``gap`` -- (optional GAP instance) Interface to which the
+          string is addressed.
 
         NOTE:
 

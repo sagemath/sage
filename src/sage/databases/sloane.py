@@ -191,7 +191,7 @@ class SloaneEncyclopediaClass:
           The URL of the names.gz encyclopedia file.  If you do not want to
           download this file, set names_url=None.
 
-        - ``overwrite`` -- boolean (default: False) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
           already installed and overwrite=True, download and install the latest
           version over the installed one.
         """
@@ -232,7 +232,7 @@ class SloaneEncyclopediaClass:
         - ``names_file`` -- string.  The name of the names.gz OEIS file, or
           None if the user does not want it installed.
 
-        - ``overwrite`` -- boolean (default: False) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
           already installed and overwrite=True, install 'filename' over the
           old encyclopedia.
         """

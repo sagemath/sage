@@ -88,7 +88,7 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
         INPUT:
 
 
-        -  ``rational_only`` -- bool (default: False); if
+        -  ``rational_only`` -- bool (default: ``False``); if
            ``True``, only use rational cusps.
 
 

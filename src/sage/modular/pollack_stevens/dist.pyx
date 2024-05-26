@@ -305,7 +305,7 @@ cdef class Dist(ModuleElement):
         - ``M`` -- (default: None) an integer, the relative precision
           to which the scalar must be determined
 
-        - ``check`` -- (default: True) boolean, whether to validate
+        - ``check`` -- (default: ``True``) boolean, whether to validate
           that ``other`` is actually a multiple of this element.
 
         OUTPUT:
@@ -430,7 +430,7 @@ cdef class Dist(ModuleElement):
         - ``M`` -- (default: None) an integer, the relative precision
           to which the scalar must be determined
 
-        - ``check`` -- (default: True) boolean, whether to validate
+        - ``check`` -- (default: ``True``) boolean, whether to validate
           that ``other`` is actually a multiple of this element.
 
         OUTPUT:
@@ -741,7 +741,7 @@ cdef class Dist_vector(Dist):
     - ``ordp`` -- an integer.  This MUST be zero in the case of Symk
       of an exact ring.
 
-    - ``check`` -- (default: True) boolean, whether to validate input
+    - ``check`` -- (default: ``True``) boolean, whether to validate input
 
     EXAMPLES::
 

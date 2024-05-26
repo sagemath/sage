@@ -1971,7 +1971,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``base_of_group`` (optional) -- (default: ``[1, 2, 3, ..., d]``)
+        - ``base_of_group`` -- (default: ``[1, 2, 3, ..., d]``)
           a list containing the integers `1, 2, \ldots , d` in any order,
           where `d` is the degree of ``self``
 

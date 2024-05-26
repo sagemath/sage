@@ -195,7 +195,7 @@ def normalize_extra_units(base_ring, add_units, warning=True):
 
     - ``base_ring`` -- an instance of :class:`IntegralDomain`
     - ``add_units`` -- list of elements from base ring
-    - ``warning`` -- (default: True) to suppress a warning which is thrown if no normalization was possible
+    - ``warning`` -- (default: ``True``) to suppress a warning which is thrown if no normalization was possible
 
     OUTPUT:
 
@@ -591,9 +591,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
     - ``base_ring`` -- an instance of :class:`Ring` allowing the construction of :meth:`fraction_field` (that is an integral domain)
     - ``extra_units`` -- tuple of elements of ``base_ring`` which should be turned into units
     - ``names`` -- passed to :class:`IntegralDomain`
-    - ``normalize`` -- (default: True) passed to :class:`IntegralDomain`
+    - ``normalize`` -- (default: ``True``) passed to :class:`IntegralDomain`
     - ``category`` -- (default: None) passed to :class:`IntegralDomain`
-    - ``warning`` -- (default: True) to suppress a warning which is thrown if self cannot be represented uniquely
+    - ``warning`` -- (default: ``True``) to suppress a warning which is thrown if self cannot be represented uniquely
 
     REFERENCES:
 

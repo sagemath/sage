@@ -581,7 +581,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         INPUT:
 
         - height_guess -- integer or None
-        - proof -- boolean (default: True)
+        - proof -- boolean (default: ``True``)
         """
         from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
