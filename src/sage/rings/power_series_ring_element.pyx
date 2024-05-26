@@ -2764,9 +2764,13 @@ cdef class PowerSeries(AlgebraElement):
     def egf_to_ogf(self):
         r"""
         Return the ordinary generating function power series,
-        assuming self is an exponential generating function power series.
+        assuming ``self`` is an exponential generating function power series.
 
-        This function is known as ``serlaplace`` in PARI/GP.
+        This is a formal Laplace transform.
+
+        This function is known as :pari:`serlaplace` in PARI/GP.
+
+        .. SEEALSO:: :meth:`ogf_to_egf` for the inverse method.
 
         EXAMPLES::
 
@@ -2775,14 +2779,18 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.egf_to_ogf()
             t + t^2 + 2*t^3
         """
-        return self.parent()([self[i] * arith.factorial(i) for i in range(self.degree()+1)])
+        return self.parent()([self[i] * arith.factorial(i) for i in range(self.degree() + 1)])
 
     def ogf_to_egf(self):
         r"""
         Return the exponential generating function power series,
-        assuming self is an ordinary generating function power series.
+        assuming ``self`` is an ordinary generating function power series.
+
+        This is a formal Borel transform.
 
         This can also be computed as ``serconvol(f,exp(t))`` in PARI/GP.
+
+        .. SEEALSO:: :meth:`egf_to_ogf` for the inverse method.
 
         EXAMPLES::
 
@@ -2791,7 +2799,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.ogf_to_egf()
             t + 1/2*t^2 + 1/3*t^3
         """
-        return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree()+1)])
+        return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree() + 1)])
 
     def __pari__(self):
         """
