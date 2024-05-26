@@ -522,8 +522,8 @@ class GenDictWithBasering:
         """
         INPUT:
 
-        - ``parent`` -- a rin
-        - ``start`` -- some dictionary, usually the dictionary of variables of ``parent``.
+        - ``parent`` -- a ring
+        - ``start`` -- some dictionary, usually the dictionary of variables of ``parent``
 
         EXAMPLES::
 
@@ -669,9 +669,9 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         """
         INPUT:
 
-        - ``R`` -- base rin
-        - ``names`` -- list of generator name
-        - ``order`` -- string determining the monomial order of the infinite polynomial ring.
+        - ``R`` -- base ring
+        - ``names`` -- list of generator names
+        - ``order`` -- string determining the monomial order of the infinite polynomial ring
 
         EXAMPLES::
 

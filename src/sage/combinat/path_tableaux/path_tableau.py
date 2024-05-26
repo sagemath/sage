@@ -223,7 +223,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``i`` -- a positive integ
+        - ``i`` -- a positive integer
         - ``j`` -- a positive integer weakly greater than ``i``
 
         EXAMPLES::

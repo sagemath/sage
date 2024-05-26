@@ -184,8 +184,8 @@ class SymmetricIdeal(Ideal_generic):
         """
         INPUT:
 
-        - ``ring`` -- an infinite polynomial ri
-        - ``gens`` -- generators of this ide
+        - ``ring`` -- an infinite polynomial ring
+        - ``gens`` -- generators of this ideal
         - ``coerce`` -- (bool, default ``True``) coerce the given generators into ``ring``
 
         EXAMPLES::
