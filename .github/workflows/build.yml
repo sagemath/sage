@@ -287,8 +287,8 @@ jobs:
       fail-fast: false
       matrix:
         tests:
-          - "src/sage/[a-g]*"
-          - "src/sage/[h-o]*"
+          - "src/sage/[a-f]*"
+          - "src/sage/[g-o]*"
           - "src/sage/[p-z]*"
           - "src/doc src/sage_docbuild src/sage_setup"
     steps:
@@ -373,6 +373,12 @@ jobs:
           ./sage -python -m pip install coverage
           ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
+
+      - name: Combine coverage results
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        run: |
+          ./sage -python -m coverage combine --rcfile=src/tox.ini
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Prepare upload
         id: copy-coverage
