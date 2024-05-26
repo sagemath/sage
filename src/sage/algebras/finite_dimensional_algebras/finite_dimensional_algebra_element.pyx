@@ -15,7 +15,6 @@ Elements of Finite Algebras
 import re
 
 from sage.matrix.matrix_space import MatrixSpace
-from sage.structure.element import Matrix
 from sage.rings.integer import Integer
 
 from cpython.object cimport PyObject_RichCompare as richcmp
