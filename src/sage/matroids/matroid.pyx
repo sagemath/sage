@@ -348,7 +348,7 @@ from itertools import combinations, product
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
-from sage.misc.superseded import deprecation
+from sage.misc.superseded import deprecation, deprecated_function_alias
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
@@ -2683,6 +2683,8 @@ cdef class Matroid(SageObject):
             if not self._is_independent(X):
                 yield X
 
+    dependent_r_sets = deprecated_function_alias(38057, dependent_k_sets)
+
     cpdef SetSystem dependent_k_sets(self, long k):
         r"""
         Return the list of dependent subsets of fixed size.
@@ -2867,6 +2869,8 @@ cdef class Matroid(SageObject):
                 r += 1
             else:
                 r -= 1
+
+    independent_r_sets = deprecated_function_alias(38057, independent_k_sets)
 
     cpdef SetSystem independent_k_sets(self, long k):
         r"""
