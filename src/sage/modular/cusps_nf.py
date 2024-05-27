@@ -74,7 +74,7 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 # ****************************************************************************
 
 from sage.structure.parent import Parent
-from sage.structure.element import Element, is_InfinityElement
+from sage.structure.element import Element, InfinityElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 
