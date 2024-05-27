@@ -2648,7 +2648,7 @@ def category_graph(categories=None):
         sage: G.plot()                                                                  # needs sage.graphs sage.plot
         Graphics object consisting of 20 graphics primitives
 
-        sage: sage.categories.category.category_graph().plot()                          # needs sage.graphs sage.plot
+        sage: sage.categories.category.category_graph().plot()                          # needs sage.graphs sage.groups sage.plot
         Graphics object consisting of ... graphics primitives
     """
     from sage import graphs

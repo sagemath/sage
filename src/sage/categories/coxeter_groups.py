@@ -2911,7 +2911,7 @@ class CoxeterGroups(Category_singleton):
 
             Number of `c`-sortable elements in `A_3` (Catalan number)::
 
-                sage: len([w for w in W if w.is_coxeter_sortable(c)])
+                sage: len([w for w in W if w.is_coxeter_sortable(c)])                   # needs sage.rings.number_field
                 14
 
             TESTS::
