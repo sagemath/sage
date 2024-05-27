@@ -192,7 +192,7 @@ from . import morphism
 from sage.rings.infinity import Infinity
 
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.constructor import Matrix, identity_matrix
+from sage.matrix.constructor import matrix, identity_matrix
 from sage.structure.element import Matrix
 
 from sage.rings.integer_ring import ZZ
@@ -929,7 +929,7 @@ class EndomorphismSubring(Homspace):
             2
         """
         g = self.gens()
-        M = Matrix(ZZ, len(g), [(g[i]*g[j]).trace()
+        M = matrix(ZZ, len(g), [(g[i]*g[j]).trace()
                                 for i in range(len(g)) for j in range(len(g))])
         return M.determinant()
 
