@@ -190,15 +190,6 @@ from sage.misc.copying import license
 copying = license
 copyright = license
 
-def quit_sage(verbose=True):
-    """
-    Does nothing. Code that needs cleanup should register its own
-    handler using the atexit module.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(8784, 'quit_sage is deprecated and now does nothing; please simply delete it')
-
-
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.categories.category', 'Sets', Sets)
 register_unpickle_override('sage.categories.category_types', 'HeckeModules', HeckeModules)
