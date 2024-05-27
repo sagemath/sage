@@ -115,13 +115,15 @@ REFERENCES:
 from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 from sage.categories.simplicial_complexes import SimplicialComplexes
-from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.cone import Cone
 from sage.combinat.subword_complex_c import _flip_c, _construct_facets_c
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.geometry.cone', 'Cone')
 
 
 class SubwordComplexFacet(Simplex, Element):

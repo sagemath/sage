@@ -28,7 +28,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.integer_lists import IntegerListsLex
 from itertools import product
 from collections.abc import Sequence
 import numbers
@@ -1723,6 +1722,8 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
         """
+        from sage.combinat.integer_lists import IntegerListsLex
+
         if self.n is None:
             if self.k is not None and 'max_part' in self.constraints:
                 n_list = range((self.constraints['max_part'] + 1) * self.k)

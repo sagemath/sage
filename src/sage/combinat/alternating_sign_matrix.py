@@ -45,15 +45,17 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.arith.misc import factorial
 from sage.rings.integer import Integer
-from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPatternsTopRow
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction
 from sage.combinat.permutation import Permutation
 from sage.combinat.six_vertex_model import SquareIceModel
+
+lazy_import('sage.combinat.posets.lattices', 'LatticePoset')
 
 
 def _inplace_height_function_gyration(hf):

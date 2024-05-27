@@ -1034,7 +1034,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: A = posets.StandardExample(3); A
             Finite poset containing 6 elements
-            sage: A.dimension()
+            sage: A.dimension()                                                         # needs networkx
             3
 
         REFERENCES:
@@ -1887,7 +1887,7 @@ def _random_lattice(n, p):
         meet for `e, m` for all `m \in M`. We do that by keeping
         track of meet matrix and list of maximal elements.
     """
-    from sage.functions.other import floor
+    from sage.arith.misc import integer_floor as floor
     from sage.misc.functional import sqrt
     from sage.misc.prandom import random
 

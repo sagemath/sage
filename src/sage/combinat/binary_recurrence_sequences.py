@@ -61,16 +61,18 @@ See [SV2013]_, [BMS2006]_, and [SS1983]_.
 
 
 from sage.structure.sage_object import SageObject
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
-from sage.rings.number_field.number_field import QuadraticField
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
 from sage.arith.functions import lcm
 from sage.arith.misc import is_prime, next_prime, next_prime_power, legendre_symbol
-from sage.functions.log import log
+from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import sqrt
+
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.rings.number_field.number_field", "QuadraticField")
+lazy_import("sage.matrix.constructor", "matrix")
+lazy_import("sage.modules.free_module_element", "vector")
 
 
 class BinaryRecurrenceSequence(SageObject):
