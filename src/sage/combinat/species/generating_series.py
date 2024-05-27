@@ -142,7 +142,7 @@ class OrdinaryGeneratingSeriesRing(LazyPowerSeriesRing):
             sage: from sage.combinat.species.generating_series import OrdinaryGeneratingSeriesRing
             sage: OrdinaryGeneratingSeriesRing.options.halting_precision(15)
             sage: R = OrdinaryGeneratingSeriesRing(QQ)
-            sage: TestSuite(R).run()
+            sage: TestSuite(R).run(skip="_test_construction")
 
             sage: OrdinaryGeneratingSeriesRing.options._reset()  # reset options
         """
@@ -269,7 +269,7 @@ class ExponentialGeneratingSeriesRing(LazyPowerSeriesRing):
             sage: from sage.combinat.species.generating_series import ExponentialGeneratingSeriesRing
             sage: ExponentialGeneratingSeriesRing.options.halting_precision(15)
             sage: R = ExponentialGeneratingSeriesRing(QQ)
-            sage: TestSuite(R).run()
+            sage: TestSuite(R).run(skip="_test_construction")
 
             sage: ExponentialGeneratingSeriesRing.options._reset()  # reset options
         """

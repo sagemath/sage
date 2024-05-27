@@ -416,7 +416,7 @@ cdef class MPolynomial(CommutativePolynomial):
         del Z[ind]
 
         # Make polynomial ring over all variables except var.
-        S = R.base_ring()[tuple(Z)]
+        S = PolynomialRing(R.base_ring(), Z)
         ring = S[var]
         if not self:
             return ring(0)

@@ -575,7 +575,6 @@ class LazyModuleElement(Element):
             sage: f = z + z^2 + z^3
             sage: f.map_coefficients(lambda c: c + 1)
             2*z + 2*z^2 + 2*z^3
-
         """
         P = self.parent()
         coeff_stream = self._coeff_stream
@@ -851,12 +850,11 @@ class LazyModuleElement(Element):
             coeff_stream = Stream_exact(init_coeff,
                                         constant=self._coeff_stream._constant,
                                         order=valuation, degree=degree)
+        elif (P._minimal_valuation is not None
+              and P._minimal_valuation > self._coeff_stream._approximate_order + n):
+            coeff_stream = Stream_truncated(self._coeff_stream, n, P._minimal_valuation)
         else:
-            if (P._minimal_valuation is not None
-                and P._minimal_valuation > self._coeff_stream._approximate_order + n):
-                coeff_stream = Stream_truncated(self._coeff_stream, n, P._minimal_valuation)
-            else:
-                coeff_stream = Stream_shift(self._coeff_stream, n)
+            coeff_stream = Stream_shift(self._coeff_stream, n)
 
         return P.element_class(P, coeff_stream)
 
@@ -1531,7 +1529,9 @@ class LazyModuleElement(Element):
             sage: f
             1 + 3*x + 16*x^2 + 87*x^3 + 607*x^4 + 4518*x^5 + 30549*x^6 + O(x^7)
         """
-        if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
+        if (not isinstance(self._coeff_stream, Stream_uninitialized)
+            or self._coeff_stream._target is not None
+            or self._coeff_stream._eqs is not None):
             raise ValueError("series already defined")
 
         if not isinstance(s, LazyModuleElement):
@@ -1543,7 +1543,7 @@ class LazyModuleElement(Element):
             self._coeff_stream = coeff_stream
             return
 
-        self._coeff_stream._target = coeff_stream
+        self._coeff_stream.define(coeff_stream)
 
     # an alias for compatibility with padics
     set = define
@@ -2698,7 +2698,6 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(SR); x = var("x")                       # needs sage.symbolic
             sage: asinh(z)[0:6] == asinh(x).series(x, 6).coefficients(sparse=False)     # needs sage.symbolic
             True
-
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
@@ -2736,7 +2735,6 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(SR); x = var("x")                       # needs sage.symbolic
             sage: atanh(z)[0:6] == atanh(x).series(x, 6).coefficients(sparse=False)     # needs sage.symbolic
             True
-
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
@@ -2771,7 +2769,6 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(SR); x = var("x")                       # needs sage.symbolic
             sage: z.hypergeometric([1,1],[1])[0:6] == hypergeometric([1,1],[1], x).series(x, 6).coefficients(sparse=False)                                      # needs sage.symbolic
             True
-
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         from sage.arith.misc import rising_factorial
@@ -3648,7 +3645,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
         int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
                                        False, 0)
-        f._coeff_stream._target = int_d_self_f
+        f._coeff_stream.define(int_d_self_f)
         return f
 
     def log(self):
@@ -4123,7 +4120,6 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             sage: g = L([2])
             sage: f(g)
             0
-
         """
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
@@ -4544,7 +4540,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
           constants for the integrals of ``self`` (the last constant
           corresponds to the first integral)
 
-        If the first argument is a list, then this method iterprets it as
+        If the first argument is a list, then this method interprets it as
         integration constants. If it is a positive integer, the method
         interprets it as the number of times to integrate the function.
         If ``variable`` is not the variable of the Laurent series, then
@@ -4807,7 +4803,6 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
 
             sage: L.zero().polynomial()
             0
-
         """
         S = self.parent()
 
@@ -4977,7 +4972,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f = 1/(1+x*q-t)
             sage: f._im_gens_(S, [s, x*s], base_map=cc)
             1 + 2*x*s + 4*x^2*s^2 + 8*x^3*s^3 + 16*x^4*s^4 + 32*x^5*s^5 + 64*x^6*s^6 + O(s^7)
-
         """
         if base_map is None:
             return codomain(self(*im_gens))
@@ -5187,8 +5181,9 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         cm = get_coercion_model()
         P = cm.common_parent(self.base_ring(), *[parent(h) for h in g])
 
+        coeff_stream = self._coeff_stream
         # f = 0
-        if isinstance(self._coeff_stream, Stream_zero):
+        if isinstance(coeff_stream, Stream_zero):
             return P.zero()
 
         # g = (0, ..., 0)
@@ -5199,8 +5194,8 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             return P(self[0])
 
         # f has finite length and f != 0
-        if (isinstance(self._coeff_stream, Stream_exact)
-            and not self._coeff_stream._constant):
+        if (isinstance(coeff_stream, Stream_exact)
+            and not coeff_stream._constant):
             # constant polynomial
             poly = self.polynomial()
             if poly.is_constant():
@@ -5250,7 +5245,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                     h._coeff_stream._approximate_order = 2
 
         # We now have that every element of g has a _coeff_stream
-        sorder = self._coeff_stream._approximate_order
+        sorder = coeff_stream._approximate_order
         if len(g) == 1:
             g0 = g[0]
             if isinstance(g0, LazyDirichletSeries):
@@ -5258,25 +5253,37 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                 def coefficient(n):
                     return sum(self[i] * (g0**i)[n] for i in range(n+1))
 
-                coeff_stream = Stream_function(coefficient, P._sparse, 1)
-                return P.element_class(P, coeff_stream)
+                return P.element_class(P, Stream_function(coefficient,
+                                                          P._sparse, 1))
 
-            coeff_stream = Stream_cauchy_compose(self._coeff_stream,
-                                                 g0._coeff_stream,
-                                                 P.is_sparse())
-            return P.element_class(P, coeff_stream)
+            return P.element_class(P, Stream_cauchy_compose(coeff_stream,
+                                                            g0._coeff_stream,
+                                                            P.is_sparse()))
 
         # The arity is at least 2
         gv = min(h._coeff_stream._approximate_order for h in g)
+        gR = None
 
         def coefficient(n):
+            nonlocal gR
             r = R.zero()
             for i in range(n // gv + 1):
-                # Make sure the element returned from the composition is in P
-                r += P(self[i](g))[n]
+                c = coeff_stream[i]
+                if c.parent() == self.base_ring():
+                    c = P(c)
+                    r += c[n]
+                elif c.parent().base_ring() is self.base_ring():
+                    r += c(g)[n]
+                else:
+                    if gR is None:
+                        S = c.parent().base_ring()
+                        gR = [h.change_ring(S).map_coefficients(S) for h in g]
+                    s = c(gR)[n]
+                    r += s
             return r
-        coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)
-        return P.element_class(P, coeff_stream)
+
+        return P.element_class(P, Stream_function(coefficient,
+                                                  P._sparse, sorder * gv))
 
     compose = __call__
 
@@ -5700,7 +5707,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         specified; the integration constant is taken to be `0`.
 
         Now we assume the series is univariate. If the first argument is a
-        list, then this method iterprets it as integration constants. If it
+        list, then this method interprets it as integration constants. If it
         is a positive integer, the method interprets it as the number of times
         to integrate the function. If ``variable`` is not the variable of
         the power series, then the coefficients are integrated with respect
@@ -6670,7 +6677,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         - Andrew Gainer-Dewar
         - Martin Rubey
-
         """
         P = self.parent()
         if P._arity != 1:
@@ -7197,7 +7203,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
             sage: L(s([2])).arithmetic_product(s([1,1,1]))                              # needs sage.modules
             s[2, 2, 1, 1] + s[3, 1, 1, 1] + s[3, 2, 1] + s[3, 3]
-
         """
         if len(args) != self.parent()._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
@@ -7322,7 +7327,6 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             0
             sage: f4.symmetric_function(0)                                              # needs lrcalc_python
             s[]
-
         """
         S = self.parent()
         R = S._laurent_poly_ring
