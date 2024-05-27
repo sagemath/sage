@@ -164,14 +164,14 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         weight = int(weight)
         if weight <= 1:
             raise ValueError("Weight (=%s) Modular symbols of weight <= 1 not defined." % weight)
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group must be a congruence subgroup")
 
         sign = int(sign)
         if base_ring not in Fields():
             raise TypeError("base_ring must be a field")
 
-        if character is None and arithgroup.is_Gamma0(group):
+        if character is None and isinstance(group, arithgroup.Gamma0_class):
             character = TrivialCharacter(group.level(), base_ring)
 
         ModularSymbolsSpace.__init__(self, group, weight,
@@ -2691,9 +2691,9 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
         # 1. Find coset representatives H for Gamma_0(M.level()) \ Gamma_0(self.level())
         #    (need to be careful in some small levels, cf. #13198)
 
-        if arithgroup.is_Gamma0(M.group()):
+        if isinstance(M.group(), arithgroup.Gamma0_class):
             H = arithgroup.degeneracy_coset_representatives_gamma0(level, N, 1)
-        elif arithgroup.is_Gamma1(M.group()):
+        elif isinstance(M.group(), arithgroup.Gamma1_class):
             H = arithgroup.degeneracy_coset_representatives_gamma1(level, N, 1)
         else:
             raise NotImplementedError("Degeneracy raising maps not implemented for GammaH levels")

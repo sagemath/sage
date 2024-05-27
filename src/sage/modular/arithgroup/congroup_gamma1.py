@@ -29,6 +29,9 @@ def is_Gamma1(x):
 
         sage: from sage.modular.arithgroup.all import is_Gamma1
         sage: is_Gamma1(SL2Z)
+        doctest:warning...
+        DeprecationWarning: The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: is_Gamma1(Gamma1(13))
         True
@@ -39,6 +42,8 @@ def is_Gamma1(x):
         sage: is_Gamma1(GammaH(12, [5]))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.")
     #from congroup_sl2z import is_SL2Z
     #return (isinstance(x, Gamma1_class) or is_SL2Z(x))
     return isinstance(x, Gamma1_class)
@@ -181,7 +186,7 @@ class Gamma1_class(GammaH_class):
         """
         if right.level() == 1:
             return True
-        if is_GammaH(right):
+        if isinstance(right, GammaH_class):
             return self.level() % right.level() == 0
         else:
             raise NotImplementedError

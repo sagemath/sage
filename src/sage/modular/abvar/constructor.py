@@ -15,8 +15,8 @@ import weakref
 
 from sage.rings.integer import Integer
 
-from sage.modular.arithgroup.all import is_CongruenceSubgroup, Gamma0
-from sage.modular.modsym.space import is_ModularSymbolsSpace
+from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0
+from sage.modular.modsym.space import ModularSymbolsSpace
 from .abvar_newform import ModularAbelianVariety_newform
 import sage.modular.modform.element
 from . import abvar
@@ -172,7 +172,7 @@ def AbelianVariety(X):
     """
     if isinstance(X, (int, Integer)):
         X = Gamma0(X)
-    if is_CongruenceSubgroup(X):
+    if isinstance(X, CongruenceSubgroupBase):
         X = X.modular_symbols().cuspidal_submodule()
     elif isinstance(X, str):
         from sage.modular.modform.constructor import Newform
@@ -181,10 +181,10 @@ def AbelianVariety(X):
     elif isinstance(X, sage.modular.modform.element.Newform):
         return ModularAbelianVariety_newform(X)
 
-    if is_ModularSymbolsSpace(X):
+    if isinstance(X, ModularSymbolsSpace):
         return abvar.ModularAbelianVariety_modsym(X)
 
-    if isinstance(X, (tuple,list)) and all(is_CongruenceSubgroup(G) for G in X):
+    if isinstance(X, (tuple,list)) and all(isinstance(G, CongruenceSubgroupBase) for G in X):
         return abvar.ModularAbelianVariety(X)
 
     raise TypeError("X must be an integer, string, newform, modsym space, congruence subgroup or tuple of congruence subgroups")
