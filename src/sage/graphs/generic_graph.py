@@ -9645,13 +9645,13 @@ class GenericGraph(GenericGraph_pyx):
 
         Now, using the backtrack algorithm in the Heawood graph ::
 
-            sage: G=graphs.HeawoodGraph()
+            sage: G = graphs.HeawoodGraph()
             sage: G.hamiltonian_cycle(algorithm='backtrack')
             (True, [...])
 
         And now in the Petersen graph ::
 
-            sage: G=graphs.PetersenGraph()
+            sage: G = graphs.PetersenGraph()
             sage: B, P = G.hamiltonian_cycle(algorithm='backtrack')
             sage: B
             False
@@ -9662,7 +9662,7 @@ class GenericGraph(GenericGraph_pyx):
 
         Finally, we test the algorithm in a cube graph, which is Hamiltonian ::
 
-            sage: G=graphs.CubeGraph(3)
+            sage: G = graphs.CubeGraph(3)
             sage: G.hamiltonian_cycle(algorithm='backtrack')
             (True, [...])
 
@@ -18192,8 +18192,9 @@ class GenericGraph(GenericGraph_pyx):
              4: {0: 4, 1: 0, 2: 3, 3: 4, 4: None}}
             sage: pred[0]
             {0: None, 1: 0, 2: 1, 3: 2, 4: 0}
-            sage: G = Graph( { 0: {1: {'weight':1}}, 1: {2: {'weight':1}}, 2: {3: {'weight':1}}, 3: {4: {'weight':2}}, 4: {0: {'weight':2}} }, sparse=True)
-            sage: dist, pred = G.shortest_path_all_pairs(weight_function = lambda e:e[2]['weight'])
+            sage: G = Graph({0: {1: {'weight':1}}, 1: {2: {'weight':1}}, 2: {3: {'weight':1}},
+            ....:            3: {4: {'weight':2}}, 4: {0: {'weight':2}}}, sparse=True)
+            sage: dist, pred = G.shortest_path_all_pairs(weight_function=lambda e: e[2]['weight'])
             sage: dist
             {0: {0: 0, 1: 1, 2: 2, 3: 3, 4: 2},
              1: {0: 1, 1: 0, 2: 1, 3: 2, 4: 3},
@@ -18214,7 +18215,7 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
-            sage: G = Graph( { 0: {1:None}, 1: {2:None}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2} }, sparse=True )
+            sage: G = Graph({0: {1:None}, 1: {2:None}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True)
             sage: G.shortest_path_all_pairs()
             ({0: {0: 0, 1: 1, 2: 2, 3: 2, 4: 1},
             1: {0: 1, 1: 0, 2: 1, 3: 2, 4: 2},
@@ -18349,7 +18350,7 @@ class GenericGraph(GenericGraph_pyx):
 
         Algorithms that do not work with weights::
 
-            sage: g = Graph({0: {1:1}, 1: {2:1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True )
+            sage: g = Graph({0: {1:1}, 1: {2:1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, sparse=True)
             sage: g.shortest_path_all_pairs(algorithm="BFS", by_weight=True)
             Traceback (most recent call last):
             ...
