@@ -69,10 +69,10 @@ from itertools import combinations
 from sage.data_structures.bitset_base cimport *
 from sage.misc.decorators import rename_keyword
 from sage.structure.richcmp cimport rich_to_bool
-from .matroid cimport Matroid
-from .basis_exchange_matroid cimport BasisExchangeMatroid
-from .set_system cimport SetSystem
-from .utilities import cmp_elements_key
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.set_system cimport SetSystem
+from sage.matroids.utilities import cmp_elements_key
 
 # class of general matroids, represented by their list of bases
 

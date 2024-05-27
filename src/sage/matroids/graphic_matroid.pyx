@@ -86,9 +86,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .matroid cimport Matroid
+from sage.matroids.matroid cimport Matroid
 from copy import copy, deepcopy
-from .utilities import newlabel, split_vertex, sanitize_contractions_deletions
+from sage.matroids.utilities import newlabel, split_vertex, sanitize_contractions_deletions
 from itertools import combinations
 from sage.rings.integer import Integer
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
@@ -452,7 +452,7 @@ cdef class GraphicMatroid(Matroid):
             sage: loads(dumps(M))
             Graphic matroid of rank 9 on 15 elements
         """
-        from .unpickling import unpickle_graphic_matroid
+        from sage.matroids.unpickling import unpickle_graphic_matroid
         data = (self._G, self.get_custom_name())
         version = 0
         return unpickle_graphic_matroid, (version, data)

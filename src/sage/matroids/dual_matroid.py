@@ -51,7 +51,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .matroid import Matroid
+from sage.matroids.matroid import Matroid
 
 class DualMatroid(Matroid):
     r"""

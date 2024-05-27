@@ -74,8 +74,8 @@ Methods
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .matroid import Matroid
-from .utilities import setprint_s
+from sage.matroids.matroid import Matroid
+from sage.matroids.utilities import setprint_s
 
 
 class MinorMatroid(Matroid):

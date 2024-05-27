@@ -52,16 +52,16 @@ AUTHORS:
 
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
-from .minor_matroid import MinorMatroid
-from .dual_matroid import DualMatroid
-from .rank_matroid import RankMatroid
-from .circuits_matroid import CircuitsMatroid
-from .circuit_closures_matroid import CircuitClosuresMatroid
-from .basis_matroid import BasisMatroid
-from .flats_matroid import FlatsMatroid
-from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from .utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cross_ratios, lift_map
-from . import lean_matrix
-from .extension import LinearSubclasses, MatroidExtensions
-from .union_matroid import MatroidUnion, MatroidSum, PartitionMatroid
-from .graphic_matroid import GraphicMatroid
+from sage.matroids.minor_matroid import MinorMatroid
+from sage.matroids.dual_matroid import DualMatroid
+from sage.matroids.rank_matroid import RankMatroid
+from sage.matroids.circuits_matroid import CircuitsMatroid
+from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
+from sage.matroids.basis_matroid import BasisMatroid
+from sage.matroids.flats_matroid import FlatsMatroid
+from sage.matroids.linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from sage.matroids.utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cross_ratios, lift_map
+from sage.matroids import lean_matrix
+from sage.matroids.extension import LinearSubclasses, MatroidExtensions
+from sage.matroids.union_matroid import MatroidUnion, MatroidSum, PartitionMatroid
+from sage.matroids.graphic_matroid import GraphicMatroid

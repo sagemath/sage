@@ -25,8 +25,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .matroid cimport Matroid
-from .set_system cimport SetSystem
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.set_system cimport SetSystem
 from sage.data_structures.bitset_base cimport *
 
 cdef class BasisExchangeMatroid(Matroid):

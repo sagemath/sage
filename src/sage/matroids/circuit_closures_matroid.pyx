@@ -60,9 +60,9 @@ AUTHORS:
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool, richcmp
-from .matroid cimport Matroid
-from .set_system cimport SetSystem
-from .utilities import setprint_s, cmp_elements_key
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.set_system cimport SetSystem
+from sage.matroids.utilities import setprint_s, cmp_elements_key
 
 cdef class CircuitClosuresMatroid(Matroid):
     r"""

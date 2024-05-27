@@ -32,8 +32,8 @@ AUTHORS:
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool, richcmp
-from .matroid cimport Matroid
-from .set_system cimport SetSystem
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.set_system cimport SetSystem
 from sage.combinat.posets.lattices import LatticePoset, FiniteLatticePoset
 
 cdef class FlatsMatroid(Matroid):

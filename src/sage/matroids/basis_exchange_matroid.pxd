@@ -1,7 +1,7 @@
 from sage.data_structures.bitset cimport *
 from sage.data_structures.bitset_base cimport bitset_t, bitset_s
-from .matroid cimport Matroid
-from .set_system cimport SetSystem
+from sage.matroids.matroid cimport Matroid
+from sage.matroids.set_system cimport SetSystem
 
 cdef class BasisExchangeMatroid(Matroid):
     cdef long _groundset_size, _matroid_rank, _bitset_size
