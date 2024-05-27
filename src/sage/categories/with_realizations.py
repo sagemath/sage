@@ -283,6 +283,7 @@ def WithRealizations(self):
 
 Category.WithRealizations = WithRealizations
 
+
 class WithRealizationsCategory(RegressiveCovariantConstructionCategory):
     """
     An abstract base class for all categories of parents with multiple

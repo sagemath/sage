@@ -326,6 +326,7 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
     class Element(LieAlgebraElement):
         pass
 
+
 def _basis_key(x):
     """
     Helper function that generates a key for the basis elements
@@ -343,6 +344,7 @@ def _basis_key(x):
         from sage.rings.infinity import infinity
         return infinity
     return x
+
 
 class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""
@@ -651,6 +653,7 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
 
 #####################################################################
 ## Representations
+
 
 class ChargelessRepresentation(CombinatorialFreeModule):
     r"""

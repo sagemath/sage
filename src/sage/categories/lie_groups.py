@@ -14,6 +14,7 @@ from sage.categories.category_types import Category_over_base_ring
 from sage.categories.groups import Groups
 from sage.categories.manifolds import Manifolds
 
+
 class LieGroups(Category_over_base_ring):
     r"""
     The category of Lie groups.

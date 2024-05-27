@@ -1024,6 +1024,7 @@ class LieAlgebras(Category_over_base_ring):
                 lie_group = self.parent().lie_group()
             return lie_group.exp(self)
 
+
 class LiftMorphism(Morphism):
     """
     The natural lifting morphism from a Lie algebra to its
