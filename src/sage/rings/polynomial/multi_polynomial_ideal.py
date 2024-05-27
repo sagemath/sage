@@ -260,7 +260,6 @@ try:
     from sage.libs.singular.standard_options import \
         libsingular_gb_standard_options
 except ImportError:
-    singular_default = None
     singular_gb_standard_options = libsingular_gb_standard_options = MethodDecorator
 
 try:
@@ -616,7 +615,7 @@ class MPolynomialIdeal_singular_repr(
     An ideal in a multivariate polynomial ring, which has an
     underlying Singular ring associated to it.
     """
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Return Singular ideal corresponding to this ideal.
 
@@ -629,6 +628,8 @@ class MPolynomialIdeal_singular_repr(
             x^3+y,
             y
         """
+        if singular is None:
+            singular = singular_default
         try:
             self.ring()._singular_(singular).set_ring()
             I = self.__singular
@@ -674,7 +675,7 @@ class MPolynomialIdeal_singular_repr(
 
         return GroebnerStrategy(MPolynomialIdeal(self.ring(), self.groebner_basis()))
 
-    def plot(self, singular=singular_default):
+    def plot(self, singular=None):
         r"""
         If you somehow manage to install surf, perhaps you can use
         this function to implicitly plot the real zero locus of this
@@ -723,6 +724,8 @@ class MPolynomialIdeal_singular_repr(
             raise TypeError("base ring must have characteristic 0")
         if not self.is_principal():
             raise TypeError("self must be principal")
+        if singular is None:
+            singular = singular_default
         singular.lib('surf')
         I = singular(self)
         I.plot()
@@ -1027,7 +1030,7 @@ class MPolynomialIdeal_singular_repr(
     @handle_AA_and_QQbar
     @singular_gb_standard_options
     @libsingular_gb_standard_options
-    def triangular_decomposition(self, algorithm=None, singular=singular_default):
+    def triangular_decomposition(self, algorithm=None, singular=None):
         """
         Decompose zero-dimensional ideal ``self`` into triangular
         sets.
@@ -1163,7 +1166,7 @@ class MPolynomialIdeal_singular_repr(
 
     @require_field
     @handle_AA_and_QQbar
-    def dimension(self, singular=singular_default):
+    def dimension(self, singular=None):
         """
         The dimension of the ring modulo this ideal.
 
@@ -1478,7 +1481,7 @@ class MPolynomialIdeal_singular_repr(
         return S
 
     @cached_method
-    def _groebner_basis_singular_raw(self, algorithm="groebner", singular=singular_default, *args, **kwds):
+    def _groebner_basis_singular_raw(self, algorithm="groebner", singular=None, *args, **kwds):
         r"""
         Return a Groebner basis in Singular format.
 
@@ -1501,6 +1504,8 @@ class MPolynomialIdeal_singular_repr(
              b*d^4 - b + d^5 - d, b*c - b*d + c^2*d^4 + c*d - 2*d^2,
              b^2 + 2*b*d + d^2, a + b + c + d]
         """
+        if singular is None:
+            singular = singular_default
         #try:
         #    return self.__gb_singular
         #except AttributeError:
@@ -1790,7 +1795,7 @@ class MPolynomialIdeal_singular_repr(
 
     @require_field
     @libsingular_gb_standard_options
-    def integral_closure(self, p=0, r=True, singular=singular_default):
+    def integral_closure(self, p=0, r=True, singular=None):
         """
         Let `I` = ``self``.
 
@@ -2025,7 +2030,7 @@ class MPolynomialIdeal_singular_repr(
     @cached_method
     @handle_AA_and_QQbar
     @singular_gb_standard_options
-    def basis_is_groebner(self, singular=singular_default):
+    def basis_is_groebner(self, singular=None):
         r"""
         Return ``True`` if the generators of this ideal
         (``self.gens()``) form a Groebner basis.
@@ -2152,6 +2157,8 @@ class MPolynomialIdeal_singular_repr(
                 return False
             return True
         except TypeError:
+            if singular is None:
+                singular = singular_default
             R._singular_().set_ring()
             F = singular( tuple(self.gens()), "module" )
             LTF = singular( [f.lt() for f in self.gens()] , "module" )
@@ -2168,7 +2175,7 @@ class MPolynomialIdeal_singular_repr(
     @handle_AA_and_QQbar
     @singular_gb_standard_options
     @libsingular_gb_standard_options
-    def transformed_basis(self, algorithm="gwalk", other_ring=None, singular=singular_default):
+    def transformed_basis(self, algorithm="gwalk", other_ring=None, singular=None):
         """
         Return a lex or ``other_ring`` Groebner Basis for this ideal.
 
@@ -2260,6 +2267,8 @@ class MPolynomialIdeal_singular_repr(
                 nR = R.change_ring(order='lex')
             else:
                 nR = other_ring
+            if singular is None:
+                singular = singular_default
             Rs = singular(R)
             Is = singular(I)
             Is.attrib('isSB',1)
@@ -3139,9 +3148,9 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS::
 
-            sage: I.hilbert_numerator() == I.hilbert_numerator(algorithm='singular')                                    # needs sage.libs.flint
+            sage: I.hilbert_numerator() == I.hilbert_numerator(algorithm='singular')    # needs sage.libs.flint
             True
-            sage: J.hilbert_numerator() == J.hilbert_numerator(algorithm='singular')                                    # needs sage.libs.flint
+            sage: J.hilbert_numerator() == J.hilbert_numerator(algorithm='singular')    # needs sage.libs.flint
             True
             sage: J.hilbert_numerator(grading=(10,3)) == J.hilbert_numerator(grading=(10,3), algorithm='singular')      # needs sage.libs.flint
             True
@@ -3279,7 +3288,7 @@ class MPolynomialIdeal_singular_repr(
     @require_field
     @handle_AA_and_QQbar
     def normal_basis(self, degree=None, algorithm='libsingular',
-                     singular=singular_default):
+                     singular=None):
         """
         Return a vector space basis of the quotient ring of this ideal.
 
@@ -3360,6 +3369,8 @@ class MPolynomialIdeal_singular_repr(
         if algorithm == 'libsingular':
             return self._normal_basis_libsingular(degree, weights=weights)
         else:
+            if singular is None:
+                singular = singular_default
             gb = self.groebner_basis()
             R = self.ring()
             if degree is None:
