@@ -50,7 +50,7 @@ from copy import copy
 from functools import reduce
 
 from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement, is_Vector, coercion_model
+from sage.structure.element import ModuleElement, Vector, coercion_model
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer_ring import ZZ
