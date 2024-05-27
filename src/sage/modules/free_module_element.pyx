@@ -983,10 +983,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: u.monomial_coefficients()
             {0: 2, 1: 3}
         """
-        if self.parent().is_ambient():
+        base_ring = self.parent().base_ring()
+        if self.parent().is_ambient() and base_ring == self.parent().coordinate_ring():
             return self.dict(copy=copy)
         else:
-            base_ring = self.parent().base_ring()
             coordinates = self.parent().coordinate_vector(self)
             # coordinate_vector returns coefficients in the fraction field.
             # convert back to the base ring.
