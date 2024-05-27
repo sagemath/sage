@@ -280,7 +280,7 @@ class Homspace(HomsetWithBase):
         TESTS::
 
             sage: t = J0(33).hecke_operator(2)
-            sage: t.parent().has_coerce_map_from(1)
+            sage: t.parent().has_coerce_map_from(ZZ)
             True
         """
         if self.matrix_space().has_coerce_map_from(other):
