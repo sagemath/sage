@@ -83,8 +83,6 @@ from sage.arith.misc import (
     valuation,
 )
 
-lazy_import("sage.arith.misc", ("Sigma", "Moebius", "Euler_Phi"), deprecation=30322)
-
 from sage.arith.functions import lcm
 
 LCM = lcm
