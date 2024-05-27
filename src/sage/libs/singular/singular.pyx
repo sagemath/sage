@@ -476,8 +476,6 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
 
     while numer:
 
-
-
         c = p_GetCoeff(numer, cfRing)
         coeff = base(cfRing.cf.cfInt(c, cfRing.cf))
         numer.coef = c
@@ -1779,7 +1777,6 @@ cdef init_libsingular():
     global error_messages
 
     cdef void *handle = NULL
-
 
     # This is a workaround for https://github.com/Singular/Singular/issues/1113
     # and can be removed once that fix makes it into release of Singular that
