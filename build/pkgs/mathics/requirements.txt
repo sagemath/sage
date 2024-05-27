@@ -1,2 +1,2 @@
-Mathics3 @ git+https://github.com/Mathics3/mathics-core@c3c1791e2eff66c6d7883b4265019c35e4959df6
+Mathics3 @ git+https://github.com/mkoeppe/mathics-core@99536fd39869a72155ca71e2f45b63f68931169a
 -c ${SAGE_VENV}/var/lib/sage/scripts/numpy/spkg-requirements.txt
