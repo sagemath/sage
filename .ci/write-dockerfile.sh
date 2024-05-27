@@ -88,7 +88,7 @@ case $SYSTEM in
                 cat <<EOF
 RUN if command -v unminimize > /dev/null; then  \
         (yes | unminimize) || echo "(ignored)"; \
-        rm -f "$(command -v unminimize)";       \
+        rm -f "\$(command -v unminimize)";       \
     fi
 EOF
                 if [ -n "$DIST_UPGRADE" ]; then
