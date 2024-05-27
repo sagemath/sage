@@ -121,13 +121,13 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     ])
     AC_LANG_POP()
 
-    # Save the value of CXX without special flags to enable C++11 support
+    # Save the value of CXX without special flags to enable C++17 support
     AS_VAR_SET([SAGE_CXX_WITHOUT_STD], [$CXX])
     AC_SUBST(SAGE_CXX_WITHOUT_STD)
-    # Modify CXX to include an option that enables C++11 support if necessary
-    AX_CXX_COMPILE_STDCXX_11([], optional)
-    if test $HAVE_CXX11 != 1; then
-        SAGE_MUST_INSTALL_GCC([your C++ compiler does not support C++11])
+    # Modify CXX to include an option that enables C++17 support if necessary
+    AX_CXX_COMPILE_STDCXX_17([], optional)
+    if test $HAVE_CXX17 != 1; then
+        SAGE_MUST_INSTALL_GCC([your C++ compiler does not support C++17])
     fi
     AC_SUBST(CXX)
 
