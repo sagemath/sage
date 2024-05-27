@@ -46,7 +46,7 @@ from cpython.mem cimport *
 from cpython.object cimport PyObject_RichCompare
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
-from sage.structure.element import Matrix
+from sage.structure.element cimport Matrix
 from sage.misc.timing import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
