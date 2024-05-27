@@ -476,9 +476,9 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
     # where ``V`` is the dehomogenized dual point configuration.
     # If we append a row of ones to ``vectors``, ``V`` is just the right kernel.
     if base_ring:
-        m = matrix(base_ring, vectors).transpose().stack(Matrix(base_ring, [[1]*len(vectors)]))
+        m = matrix(base_ring, vectors).transpose().stack(matrix(base_ring, [[1]*len(vectors)]))
     else:
-        m = matrix(vectors).transpose().stack(Matrix([[1]*len(vectors)]))
+        m = matrix(vectors).transpose().stack(matrix([[1]*len(vectors)]))
 
     if m.rank() != len(vectors[0]) + 1:
         # The given vectors do not span the ambient space,
