@@ -49,10 +49,10 @@ You may change default plotting options as follows::
 from copy import copy
 from math import pi
 
-from sage.functions.all import arccos, arctan2, ceil, floor
+from sage.arith.misc import integer_ceil as ceil, integer_floor as floor
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.modules.free_module_element import vector
 from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import vector
 lazy_import("sage.plot.all", ["Color", "Graphics",
                               "arrow", "disk", "line", "point",
                               "polygon", "rainbow", "text"])
@@ -404,7 +404,7 @@ class ToricPlotter(SageObject):
         thickness = self.generator_thickness
         zorder = self.generator_zorder
         for generator, ray, color in zip(generators, self.rays, colors):
-            if ray.norm() < generator.norm():
+            if ray.dot_product(ray) < generator.dot_product(generator):
                 result += line([origin, ray],
                                color=color, thickness=thickness,
                                zorder=zorder, **extra_options)
@@ -496,7 +496,7 @@ class ToricPlotter(SageObject):
                       for z in range(ceil(self.zmin), floor(self.zmax) + 1))
         if self.mode == "round":
             r = 1.01 * self.radius # To make sure integer values work OK.
-            points = (pt for pt in points if vector(pt).norm() <= r)
+            points = (pt for pt in points if vector(pt).dot_product(vector(pt)) <= r)
         f = self.lattice_filter
         if f is not None:
             points = (pt for pt in points if f(pt))
@@ -1113,6 +1113,8 @@ def sector(ray1, ray2, **extra_options):
         sage: sector((3,2,1), (1,2,3))                                                  # needs sage.plot
         Graphics3d Object
     """
+    from sage.functions.all import arccos, arctan2
+
     ray1 = vector(RDF, ray1)
     ray2 = vector(RDF, ray2)
     r = ray1.norm()

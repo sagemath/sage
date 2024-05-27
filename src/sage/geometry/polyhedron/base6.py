@@ -1548,13 +1548,16 @@ class Polyhedron_base6(Polyhedron_base5):
                                                          orthogonal=True,
                                                          extend=True))
             if AA is not None:
-                data_sets.append(self.affine_hull_projection(return_all_data=True,
-                                                             orthonormal=True,
-                                                             extend=True))
-                data_sets.append(self.affine_hull_projection(return_all_data=True,
-                                                             orthonormal=True,
-                                                             extend=True,
-                                                             minimal=True))
+                try:
+                    data_sets.append(self.affine_hull_projection(return_all_data=True,
+                                                                 orthonormal=True,
+                                                                 extend=True))
+                    data_sets.append(self.affine_hull_projection(return_all_data=True,
+                                                                 orthonormal=True,
+                                                                 extend=True,
+                                                                 minimal=True))
+                except ModuleNotFoundError:
+                    pass
 
         for i, data in enumerate(data_sets):
             if verbose:
