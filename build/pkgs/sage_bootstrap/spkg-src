@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#
+# Script to prepare an sdist tarball for sage-bootstrap
+# This script is not used during build.
+#
+# HOW TO MAKE THE TARBALL:
+# ./sage --sh build/pkgs/sage_bootstrap/spkg-src
+
+if [ -z "$SAGE_ROOT" ] ; then
+    echo >&2 "Error - SAGE_ROOT undefined ... exiting"
+    echo >&2 "Maybe run 'sage -sh'?"
+    exit 1
+fi
+
+# Exit on failure
+set -e
+
+cd build/pkgs/sage_bootstrap
+
+cd src
+python3 -u setup.py --no-user-cfg sdist --dist-dir "$SAGE_DISTFILES"
