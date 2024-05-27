@@ -970,7 +970,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.monomial_coefficients()
             {0: 1, 2: 5}
 
-        Check that it works for submodules (:trac:`34455`)::
+        Check that it works for submodules (:issue:`34455`)::
 
             sage: V = ZZ^3
             sage: U = V.submodule([[1, 2, 3], [1, 1, 1]])
