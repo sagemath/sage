@@ -13,6 +13,7 @@ This adds the following to the main namespace:
         - :class:`MinorMatroid <sage.matroids.minor_matroid.MinorMatroid>`
         - :class:`DualMatroid <sage.matroids.dual_matroid.DualMatroid>`
         - :class:`RankMatroid <sage.matroids.rank_matroid.RankMatroid>`
+        - :class:`CircuitsMatroid <sage.matroids.circuits_matroid.CircuitsMatroid>`
         - :class:`CircuitClosuresMatroid <sage.matroids.circuit_closures_matroid.CircuitClosuresMatroid>`
         - :class:`BasisMatroid <sage.matroids.basis_matroid.BasisMatroid>`
         - :class:`FlatsMatroid <sage.matroids.flats_matroid.FlatsMatroid>`

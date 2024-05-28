@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations which are defined as limits of valuations.
 

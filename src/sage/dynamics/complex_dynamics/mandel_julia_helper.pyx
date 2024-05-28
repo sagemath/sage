@@ -59,6 +59,7 @@ def _color_to_RGB(color):
         color = [int(255.0 * k) for k in Color(color)]
     return tuple(color)
 
+
 cpdef fast_mandelbrot_plot(double x_center, double y_center,
  double image_width, long max_iteration, long pixel_count,
  long level_sep, long color_num, base_color):

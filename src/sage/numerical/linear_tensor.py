@@ -269,8 +269,8 @@ class LinearTensorParent_class(Parent):
             sage: LF.tensor(RDF^(2,2)).is_vector_space()
             False
         """
-        from sage.modules.free_module import is_FreeModule
-        return is_FreeModule(self.free_module())
+        from sage.modules.free_module import FreeModule_generic
+        return isinstance(self.free_module(), FreeModule_generic)
 
     def is_matrix_space(self):
         """
@@ -290,8 +290,8 @@ class LinearTensorParent_class(Parent):
             sage: LF.tensor(RDF^(2,2)).is_matrix_space()
             True
         """
-        from sage.matrix.matrix_space import is_MatrixSpace
-        return is_MatrixSpace(self.free_module())
+        from sage.matrix.matrix_space import MatrixSpace
+        return isinstance(self.free_module(), MatrixSpace)
 
     def linear_functions(self):
         """

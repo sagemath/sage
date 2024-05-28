@@ -88,7 +88,7 @@ from sage.modular.modsym.manin_symbol_list import (ManinSymbolList_gamma0,
                                                    ManinSymbolList_gamma1,
                                                    ManinSymbolList_gamma_h,
                                                    ManinSymbolList_character)
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -2133,7 +2133,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
            Stein, 2007-07-27
         """
         if check:
-            if not is_FreeModule(M):
+            if not isinstance(M, FreeModule_generic):
                 V = self.free_module()
                 if not isinstance(M, (list, tuple)):
                     M = M.gens()

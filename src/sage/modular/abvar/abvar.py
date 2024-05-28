@@ -51,7 +51,7 @@ from sage.modular.modform.constructor import Newform
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modular.quatalg.brandt import BrandtModule
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import vector
 from sage.rings.fast_arith import prime_range
 from sage.rings.infinity import infinity
@@ -4009,7 +4009,7 @@ class ModularAbelianVariety(ModularAbelianVariety_abstract):
             lattice = ZZ**(2 * self._ambient_dimension())
         if check:
             n = self._ambient_dimension()
-            if not is_FreeModule(lattice):
+            if not isinstance(lattice, FreeModule_generic):
                 raise TypeError("lattice must be a free module")
             if lattice.base_ring() != ZZ:
                 raise TypeError("lattice must be over ZZ")

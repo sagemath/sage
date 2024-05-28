@@ -52,10 +52,16 @@ def is_HeckeAlgebra(x) -> bool:
 
         sage: from sage.modular.hecke.algebra import is_HeckeAlgebra
         sage: is_HeckeAlgebra(CuspForms(1, 12).anemic_hecke_algebra())
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeAlgebra is deprecated;
+        use 'isinstance(..., HeckeAlgebra_base)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_HeckeAlgebra(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeAlgebra is deprecated; use 'isinstance(..., HeckeAlgebra_base)' instead")
     return isinstance(x, HeckeAlgebra_base)
 
 
@@ -177,8 +183,8 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
         """
         if isinstance(M, tuple):
             M = M[0]
-        from . import module
-        if not module.is_HeckeModule(M):
+        from .module import HeckeModule_generic
+        if not isinstance(M, HeckeModule_generic):
             msg = f"M (={M}) must be a HeckeModule"
             raise TypeError(msg)
         self.__M = M
@@ -246,7 +252,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             TypeError: Don't know how to construct an element of Anemic Hecke algebra acting on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field from Hecke operator T_11 on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field
 
         """
-        from .hecke_operator import HeckeAlgebraElement_matrix, HeckeOperator, is_HeckeOperator, is_HeckeAlgebraElement
+        from .hecke_operator import HeckeAlgebraElement_matrix, HeckeOperator, HeckeAlgebraElement
 
         if not isinstance(x, Element):
             x = self.base_ring()(x)
@@ -259,13 +265,13 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
         if parent is self:
             return x
 
-        if is_HeckeOperator(x):
+        if isinstance(x, HeckeOperator):
             if x.parent() == self \
                     or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()) \
                     or (self.is_anemic() and x.parent().anemic_subalgebra() == self and gcd(x.index(), self.level()) == 1):
                 return HeckeOperator(self, x.index())
 
-        if is_HeckeAlgebraElement(x):
+        if isinstance(x, HeckeAlgebraElement):
             if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
                 if x.parent().module().basis_matrix() == self.module().basis_matrix():
                     return HeckeAlgebraElement_matrix(self, x.matrix())
