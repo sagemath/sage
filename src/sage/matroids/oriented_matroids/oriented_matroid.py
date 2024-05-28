@@ -67,7 +67,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
     INPUT:
 
-    - ``groundset`` -- (default: ``None``) is the ground set that will be
+    - ``groundset`` -- (default: ``None``) is the groundset that will be
       used for the oriented matroid.
 
     - ``data`` -- (default: ``None``) the data that will be used to define
@@ -149,7 +149,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
     .. TODO::
 
-        - Currently chirotopes are not implemented
+        - Currently, chirotopes are not implemented.
 
     .. SEEALSO::
 
@@ -269,7 +269,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
 def deep_tupler(obj):
     r"""
-    changes a (nested) list or set into a (nested) tuple to be hashable
+    Change a (nested) list or set into a (nested) tuple to be hashable.
     """
     if isinstance(obj, list) or isinstance(obj, set):
         return tuple([deep_tupler(i) for i in obj])

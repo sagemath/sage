@@ -1,6 +1,5 @@
 r"""
 Oriented matroid with circuit axioms
--------------------------------------
 
 This implements an oriented matroid using the circuit axioms.
 
@@ -28,7 +27,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
     An oriented matroid implemented using circuit axioms.
 
     This implements an oriented matroid using the circuit axioms. For this
-    let `\mathcal{C}` be a set of signed subsets and `E` a ground set. Then
+    let `\mathcal{C}` be a set of signed subsets and `E` a groundset. Then
     a pair `M = (E,\mathcal{C})` is an oriented matroid using the circuit
     axioms if (see Definition 3.2.1 in [BLSWZ1999]_):
 
@@ -51,12 +50,12 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
     EXAMPLES::
 
         sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-        sage: M = OrientedMatroid([[1],[-1]],key='circuit'); M
+        sage: M = OrientedMatroid([[1],[-1]], key='circuit'); M
         Circuit oriented matroid of rank 0
         sage: M.groundset()
         (0,)
 
-        sage: C = [ ((1,4),(2,3)) , ((2,3),(1,4)) ]
+        sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
         sage: M = OrientedMatroid(C,key='circuit'); M
         Circuit oriented matroid of rank 3
         sage: M.groundset()
@@ -79,10 +78,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         """
         if category is None:
             category = Sets()
-        return super().__classcall__(cls,
-                                     data=data,
-                                     groundset=groundset,
-                                     category=category)
+        return super().__classcall__(cls, data=data, groundset=groundset, category=category)
 
     def __init__(self, data, groundset=None, category=None):
         """
@@ -95,9 +91,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         if data:
             for d in data:
                 # Convert to the appropriate element class
-                circuits.append(self.element_class(self,
-                                                   data=d,
-                                                   groundset=groundset))
+                circuits.append(self.element_class(self, data=d, groundset=groundset))
 
         # If our groundset is none, make sure the groundsets are the same for
         # all elements
@@ -105,7 +99,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
             if len(data[0]) < 3:
                 groundset = []
                 for X in circuits:
-                    groundset = list(set(groundset+X.groundset()))
+                    groundset = list(set(groundset + X.groundset()))
             else:
                 groundset = circuits[0].groundset()
                 for X in circuits:
@@ -127,34 +121,34 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [ ((1,4),(2,3)) , ((2,3),(1,4)) ]
+            sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
             sage: M = OrientedMatroid(C,key='circuit')
             sage: M.is_valid()
             True
-            sage: C2 = [ ((1,4),(2,3)) , ((1,3),(2,4)) , ((2,3),(1,4)) ]
+            sage: C2 = [((1,4),(2,3)), ((1,3),(2,4)), ((2,3),(1,4))]
             sage: OrientedMatroid(C2,key='circuit')
             Traceback (most recent call last):
             ...
             ValueError: Only same/opposites can have same support
 
-            sage: C3 = [ ((),()) , ((1,4),(2,3)) , ((2,3),(1,4)) ]
+            sage: C3 = [((),()), ((1,4),(2,3)), ((2,3),(1,4))]
             sage: OrientedMatroid(C3,key='circuit',groundset=[1,2,3,4])
             Traceback (most recent call last):
             ...
             ValueError: Empty set not allowed
 
-            sage: C4= [ ((1,),()) , ((1,4),(2,3)) , ((2,3),(1,4)) ]
+            sage: C4= [((1,),()), ((1,4),(2,3)), ((2,3),(1,4))]
             sage: OrientedMatroid(C4,key='circuit',groundset=[1,2,3,4])
             Traceback (most recent call last):
             ...
             ValueError: Every element needs an opposite
 
-            sage: C5 = [((1,),(3,),(2,)), ((1,2),(3,),(4,)), ((3,),(1,),(2,)), ((3,),(1,2),(4,))]
+            sage: C5 = [((1,),(3,),(2,)), ((1,2),(3,),(4,)),
+            ....:       ((3,),(1,),(2,)), ((3,),(1,2),(4,))]
             sage: OrientedMatroid(C5,key='circuit')
             Traceback (most recent call last):
             ...
             ValueError: Groundsets must be the same
-
         """
         circuits = self.circuits()
 
@@ -197,10 +191,9 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [ ((1,),(2,)) , ((2,),(1,)) , ((3,),(4,)) , ((4,),(3,))]
-            sage: OrientedMatroid(C,key='circuit',groundset=[1,2,3,4])
+            sage: C = [((1,),(2,)), ((2,),(1,)), ((3,),(4,)), ((4,),(3,))]
+            sage: OrientedMatroid(C, key='circuit', groundset=[1,2,3,4])
             Circuit oriented matroid of rank 2
-
         """
         try:
             rep = f"Circuit oriented matroid of rank {self.rank()}"
@@ -213,18 +206,17 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         Return the underlying matroid.
 
         Given an oriented matroid defined using circuits, the *underlying
-        matroid* is the (circuit) matroid whose ground set is the ground set of
+        matroid* is the (circuit) matroid whose groundset is the groundset of
         the oriented matroid and the circuits are the set of supports of all
         the signed subsets.
 
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [ ((1,),(2,)) , ((2,),(1,)) , ((3,),(4,)) , ((4,),(3,))]
-            sage: M = OrientedMatroid(C,key='circuit',groundset=[1,2,3,4])
+            sage: C = [((1,),(2,)), ((2,),(1,)), ((3,),(4,)), ((4,),(3,))]
+            sage: M = OrientedMatroid(C, key='circuit', groundset=[1,2,3,4])
             sage: M.matroid()
             Matroid of rank 2 on 4 elements with 2 circuits
-
         """
         from sage.matroids.constructor import Matroid
         circs = list(set([frozenset(X.support()) for X in self.elements()]))
