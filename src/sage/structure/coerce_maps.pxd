@@ -24,4 +24,4 @@ cdef class CallableConvertMap(Map):
     cdef _func
 
 
-cdef Map CCallableConvertMap(domain, codomain, void* func, name) noexcept
+cdef Map CCallableConvertMap(domain, codomain, void* func, name)

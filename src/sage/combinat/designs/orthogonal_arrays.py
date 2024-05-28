@@ -1563,7 +1563,7 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
         OA = [[matrix[i][j] if j is not None else None for i,j in enumerate(R)] for R in OA]
 
     if symbol_list:
-        mapping = {index: symbol for index, symbol in enumerate(symbol_list)}
+        mapping = dict(enumerate(symbol_list))
         OA = [[mapping[element] for element in row] for row in OA]
     return OA
 

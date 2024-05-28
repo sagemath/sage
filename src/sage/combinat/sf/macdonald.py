@@ -97,7 +97,25 @@ class Macdonald(UniqueRepresentation):
         """
         return self._name
 
-    def __init__(self, Sym, q='q', t='t'):
+    @staticmethod
+    def __classcall__(cls, Sym, q='q', t='t'):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).macdonald().P()
+            sage: B2 = SymmetricFunctions(R).macdonald(q, t).P()
+            sage: B3 = SymmetricFunctions(R).macdonald(t, q).P()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(q), Sym.base_ring()(t))
+
+    def __init__(self, Sym, q, t):
         r"""
         Macdonald Symmetric functions including `P`, `Q`, `J`, `H`, `Ht` bases
         also including the S basis which is the plethystic transformation
@@ -119,8 +137,8 @@ class Macdonald(UniqueRepresentation):
         """
         self._sym = Sym
         self._s = Sym.s()
-        self.q = Sym.base_ring()(q)
-        self.t = Sym.base_ring()(t)
+        self.q = q
+        self.t = t
         self._name_suffix = ""
         if str(q) != 'q':
             self._name_suffix += " with q=%s" % q
@@ -766,6 +784,25 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             category = ModulesWithBasis(self.base_ring())
             self.register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
             self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['q']))
+            sage: J = Sym.macdonald(t=2).J()
+            sage: J.construction()
+            (SymmetricFunctionsFunctor[Macdonald J with t=2],
+             Fraction Field of Univariate Polynomial Ring in q over Rational Field)
+        """
+        return (sfa.SymmetricFunctionsFamilyFunctor(self, Macdonald,
+                                                    self.basis_name(),
+                                                    self.q, self.t),
+                self.base_ring())
 
     def _s_to_self(self, x):
         r"""

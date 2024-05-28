@@ -8,7 +8,7 @@
 #   Determine if the system copy of a python package can be used by sage.
 #
 #   This macro uses setuptools.version's pkg_resources to check that the
-#   "install-requires.txt" file for the named package is satisfied, and
+#   "version_requirements.txt" file for the named package is satisfied, and
 #   it can typically fail in four ways:
 #
 #     1. If --enable-system-site-packages was not passed to ./configure,
@@ -19,7 +19,7 @@
 #
 #     4. If setuptools is not available to the system python,
 #
-#     5. If the contents of install-requires.txt are not met (wrong
+#     5. If the contents of version_requirements.txt are not met (wrong
 #        version, no version, etc.) by the system python.
 #
 #   In any of those cases, we set sage_spkg_install_$package to "yes"
@@ -56,7 +56,7 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
                                   config.venv            dnl
                                   2>&AS_MESSAGE_LOG_FD], [
       AC_MSG_RESULT(yes)
-      dnl strip all comments from install-requires.txt; this should leave
+      dnl strip all comments from version_requirements.txt; this should leave
       dnl only a single line containing the version specification for this
       dnl package. Afterwards, convert all double-quotes to single quotes.
       dnl Both work, but only single quotes are documented. However, at the
@@ -67,7 +67,7 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
       SAGE_PKG_VERSPEC=$(sed                   \
         -e '/^#/d'                             \
         -e "s/\"/'/g"                          \
-        "./build/pkgs/$1/install-requires.txt"
+        "./build/pkgs/$1/version_requirements.txt"
       )
       AC_MSG_CHECKING([for python package $1 ("${SAGE_PKG_VERSPEC}")])
 

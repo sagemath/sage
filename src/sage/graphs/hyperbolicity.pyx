@@ -263,7 +263,7 @@ cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d) 
 
 cdef tuple hyperbolicity_basic_algorithm(int N,
                                          unsigned short** distances,
-                                         verbose) noexcept:
+                                         verbose):
     """
     Return **twice** the hyperbolicity of a graph, and a certificate.
 
@@ -368,7 +368,7 @@ def _greedy_dominating_set(H, verbose=False):
 cdef inline distances_and_far_apart_pairs(gg,
                                           unsigned short* distances,
                                           unsigned short* far_apart_pairs,
-                                          list int_to_vertex) noexcept:
+                                          list int_to_vertex):
     """
     Compute both distances between all pairs and far-apart pairs.
 
@@ -583,7 +583,7 @@ cdef tuple hyperbolicity_BCCM(int N,
                               int h_LB,
                               float approximation_factor,
                               float additive_gap,
-                              verbose=False) noexcept:
+                              verbose=False):
     """
     Return the hyperbolicity of a graph.
 
@@ -841,7 +841,7 @@ cdef tuple hyperbolicity_CCL(int N,
                              int h_LB,
                              float approximation_factor,
                              float additive_gap,
-                             verbose=False) noexcept:
+                             verbose=False):
     """
     Return the hyperbolicity of a graph.
 
@@ -1465,7 +1465,7 @@ def hyperbolicity(G,
 # Distribution of the hyperbolicity of 4-tuples
 ######################################################################
 
-cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances) noexcept:
+cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances):
     """
     Return the distribution of the hyperbolicity of the 4-tuples of the graph.
 
@@ -1526,7 +1526,7 @@ cdef extern from "stdlib.h":
     void c_libc_srandom "srandom"(unsigned int seed)
 
 
-cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size) noexcept:
+cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size):
     """
     Return a sampling of the hyperbolicity distribution of the graph.
 

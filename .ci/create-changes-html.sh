@@ -19,8 +19,8 @@ echo '<script>hljs.highlightAll();</script>' >> CHANGES.html
 cat >> CHANGES.html << EOF
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+const baseDocURL = 'https://sagemath.netlify.app'
 const diffSite = 'https://pianomister.github.io/diffsite'
-const baseDocURL = 'https://sagemath-tobias.netlify.app'
 const diffParagraphs = document.querySelectorAll('p.diff');
 diffParagraphs.forEach(paragraph => {
   const rootURL = window.location.origin;
@@ -51,7 +51,7 @@ diffParagraphs.forEach(paragraph => {
 EOF
 echo '</head>' >> CHANGES.html
 echo '<body>' >> CHANGES.html
-(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html) > diff.txt
+(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- "*.html") > diff.txt
 python3 - << EOF
 import os, re, html
 with open('diff.txt', 'r') as f:

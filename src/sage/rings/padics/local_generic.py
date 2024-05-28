@@ -21,13 +21,14 @@ AUTHORS:
 # *****************************************************************************
 
 from copy import copy
-from sage.rings.ring import CommutativeRing
+
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields
 from sage.structure.category_object import check_default_category
-from sage.structure.parent import Parent
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
+from sage.rings.ring import CommutativeRing
+
 
 class LocalGeneric(CommutativeRing):
     def __init__(self, base, prec, names, element_class, category=None):
@@ -73,7 +74,8 @@ class LocalGeneric(CommutativeRing):
         category = category.Metric().Complete().Infinite()
         if default_category is not None:
             category = check_default_category(default_category, category)
-        Parent.__init__(self, base, names=(names,), normalize=False, category=category)
+        CommutativeRing.__init__(self, base, names=(names,),
+                                 normalize=False, category=category)
 
     def is_capped_relative(self):
         r"""
@@ -451,7 +453,7 @@ class LocalGeneric(CommutativeRing):
                 kwds['type'] = 'capped-rel'
             elif self._prec_type() == 'fixed-mod':
                 kwds['type'] = 'floating-point'
-                kwds['show_prec'] = False # This can be removed once printing of fixed mod elements is changed.
+                kwds['show_prec'] = False  # This can be removed once printing of fixed mod elements is changed.
 
         # There are two kinds of functors possible:
         # CompletionFunctor and AlgebraicExtensionFunctor
@@ -488,7 +490,7 @@ class LocalGeneric(CommutativeRing):
             # Labels for lattice precision
             if 'label' in kwds:
                 functor.extras['label'] = kwds.pop('label')
-            elif 'label' in functor.extras and functor.type not in ['lattice-cap','lattice-float']:
+            elif 'label' in functor.extras and functor.type not in ['lattice-cap', 'lattice-float']:
                 del functor.extras['label']
             for atr in ('ram_name', 'var_name'):
                 if atr in kwds:
@@ -659,9 +661,9 @@ class LocalGeneric(CommutativeRing):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if exact:
             from sage.rings.integer_ring import ZZ
-            return PolynomialRing(ZZ,var).gen()
+            return PolynomialRing(ZZ, var).gen()
         else:
-            return PolynomialRing(self,var).gen()
+            return PolynomialRing(self, var).gen()
 
     def ground_ring(self):
         r"""
@@ -1117,7 +1119,7 @@ class LocalGeneric(CommutativeRing):
                 tester.assertLessEqual(y.precision_absolute(), -1)
 
             # make sure that we handle very large values correctly
-            if self._prec_type() not in [ 'lattice-float', 'relaxed' ]:   # no cap in these models
+            if self._prec_type() not in ['lattice-float', 'relaxed']:  # no cap in these models
                 absprec = Integer(2)**1000
                 tester.assertEqual(x.add_bigoh(absprec), x)
 
@@ -1194,15 +1196,15 @@ class LocalGeneric(CommutativeRing):
         cap = parent.precision_cap()
         n = M.nrows()
         m = M.ncols()
-        shift_rows = n * [ ZZ(0) ]
-        shift_cols = m * [ ZZ(0) ]
+        shift_rows = n * [ZZ.zero()]
+        shift_cols = m * [ZZ.zero()]
         for i in range(n):
-            prec = min(M[i,j].precision_absolute() for j in range(m))
+            prec = min(M[i, j].precision_absolute() for j in range(m))
             if prec is Infinity or prec == cap:
                 continue
             shift_rows[i] = s = cap - prec
             for j in range(m):
-                M[i,j] <<= s
+                M[i, j] <<= s
         for j in range(m):
             prec = min(M[i,j].precision_absolute() for i in range(n))
             if prec is Infinity or prec == cap:

@@ -127,7 +127,7 @@ smart_quotes = no""")
     builtins.__dict__.pop('_', None)
 
     if os.path.exists(output_name):
-        with open(output_name, 'r') as f:
+        with open(output_name) as f:
             output = f.read()
         output = output.replace('<pre>', '<pre class="literal-block">')
 

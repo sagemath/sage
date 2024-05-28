@@ -68,7 +68,7 @@ richcmp_slotdef[Py_LE] = get_slotdef(bytes.__le__)
 richcmp_slotdef[Py_GE] = get_slotdef(bytes.__ge__)
 
 
-cpdef richcmp_item(x, y, int op) noexcept:
+cpdef richcmp_item(x, y, int op):
     """
     This function is meant to implement lexicographic rich comparison
     of sequences (lists, vectors, polynomials, ...).
@@ -266,7 +266,7 @@ cpdef richcmp_item(x, y, int op) noexcept:
     return NotImplemented
 
 
-cdef slot_tp_richcompare(self, other, int op) noexcept:
+cdef slot_tp_richcompare(self, other, int op):
     """
     Function to put in the ``tp_richcompare`` slot.
     """

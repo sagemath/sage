@@ -249,7 +249,7 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
     return QF(Gnew)
 
 
-def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
+def neighbor_iteration(seeds, p, mass=None, max_classes=None,
                        algorithm=None, max_neighbors=1000, verbose=False):
     r"""
     Return all classes in the `p`-neighbor graph of ``self``.
@@ -308,9 +308,11 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         Warning: not all classes in the genus were found
         []
     """
-    p = ZZ(p)
     from sage.quadratic_forms.quadratic_form import QuadraticForm
     from warnings import warn
+    p = ZZ(p)
+    if max_classes is None:
+        max_classes = 1000
     if not all(isinstance(s, QuadraticForm) for s in seeds):
         raise ValueError("seeds must be a list of quadratic forms")
     if algorithm is None:

@@ -4695,6 +4695,20 @@ class TensorField(ModuleElementWithMutability):
             sage: v.display(X.frame(), X)
             (x + y)*(x - y) ∂/∂x + 2*pi*(pi - 1)*x ∂/∂y
 
+        TESTS:
+
+        Check that the cached quantities derived from the components are
+        erased::
+
+            sage: w = M.vector_field(a*x, 0)
+            sage: diff(w[[0]]).display()
+            a dx
+            sage: w.apply_map(lambda t: t.subs(a=-2))
+            sage: w.display()
+            -2*x ∂/∂x
+            sage: diff(w[[0]]).display()
+            -2 dx
+
         """
         # The dictionary of components w.r.t. frame:
         if keep_other_components:
@@ -4712,3 +4726,4 @@ class TensorField(ModuleElementWithMutability):
                 for ch, fct in scalar._express.items():
                     cfunc_dict[ch] = ch.function(fun(fct.expr()))
                 scalar._express = cfunc_dict
+                scalar._del_derived()

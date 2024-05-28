@@ -15,7 +15,6 @@ In the latter case, the caller must provide an identity, ``inverse()`` and
     multiplication_names = ('multiplication', 'times', 'product', '*')
     addition_names       = ('addition', 'plus', 'sum', '+')
 
-
 Also included are a generic function for computing multiples (or
 powers), and an iterator for general multiples and powers.
 
@@ -401,10 +400,12 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     An integer `n` such that `a^n = b` (or `na = b`).  If no
     such `n` exists, this function raises a :class:`ValueError` exception.
 
-    NOTE: This is a generalization of discrete logarithm.  One
-    situation where this version is useful is to find the order of
-    an element in a group where we only have bounds on the group
-    order (see the elliptic curve example below).
+    .. NOTE::
+
+        This is a generalization of discrete logarithm.  One
+        situation where this version is useful is to find the order of
+        an element in a group where we only have bounds on the group
+        order (see the elliptic curve example below).
 
     ALGORITHM: Baby step giant step.  Time and space are soft
     `O(\sqrt{n})` where `n` is the difference between upper and lower
@@ -533,7 +534,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     - ``hash_function`` -- having an efficient hash function is critical
       for this algorithm (see examples)
 
-    OUTPUT: an integer `n` such that `a = base^n` (or `a = n*base`)
+    OUTPUT: integer `n` such that `a = base^n` (or `a = n*base`)
 
     ALGORITHM: Pollard rho for discrete logarithm, adapted from the
     article of Edlyn Teske, 'A space efficient algorithm for group
@@ -599,7 +600,6 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     AUTHOR:
 
     - Yann Laigle-Chapuy (2009-09-05)
-
     """
     from sage.rings.integer import Integer
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -698,9 +698,10 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``bounds`` -- a priori bounds on the log
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the group's identity
-    - ``inverse()`` - function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
-    - ``algorithm`` -- string denoting what algorithm to use for prime-order logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
+    - ``algorithm`` -- string denoting what algorithm to use for prime-order
+      logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
 
     ``a`` and ``base`` must be elements of some group with identity
     given by ``identity``, inverse of ``x`` by ``inverse(x)``, and group
@@ -718,7 +719,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
 
     If no such `n` exists, this function raises a :class:`ValueError` exception.
 
-    .. warning::
+    .. WARNING::
 
        If ``x`` has a ``log`` method, it is likely to be vastly faster
        than using this function.  E.g., if ``x`` is an integer modulo
@@ -901,7 +902,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
     if bounds:
         lb, ub = map(integer_ring.ZZ, bounds)
-    if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names+multiplication_names:
+    if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names + multiplication_names:
         raise ValueError("ord, op, identity, and inverse must all be specified for this operation")
     if ord is None:
         if operation in multiplication_names:
@@ -992,7 +993,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     - op() -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
     - hash_function -- having an efficient hash function is critical for this algorithm
 
-    OUTPUT: Returns an integer `n` such that `a=base^n` (or `a=n*base`)
+    OUTPUT: integer `n` such that `a=base^n` (or `a=n*base`)
 
     ALGORITHM: Pollard Lambda, if bounds are (lb,ub) it has time complexity
         O(sqrt(ub-lb)) and space complexity O(log(ub-lb))
@@ -1199,24 +1200,24 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
 
     INPUT:
 
-    - ``P`` -- a Sage object which is a group element;
+    - ``P`` -- a Sage object which is a group element
     - ``m`` -- a Sage integer which is a multiple of the order of ``P``,
-      i.e. we require that ``m*P=0`` (or ``P**m=1``);
+      i.e. we require that ``m*P=0`` (or ``P**m=1``)
     - ``check`` -- a Boolean (default: ``True``), indicating whether we check if ``m``
-      really is a multiple of the order;
+      really is a multiple of the order
     - ``factorization`` -- the factorization of ``m``, or ``None`` in which
-      case this function will need to factor ``m``;
+      case this function will need to factor ``m``
     - ``plist`` -- a list of the prime factors of ``m``, or ``None``. Kept for compatibility only,
-      prefer the use of ``factorization``;
-    - ``operation`` -- string: ``'+'`` (default), ``'*'`` or ``None``;
-    - ``identity`` -- the identity element of the group;
-    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``;
-    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group.
+      prefer the use of ``factorization``
+    - ``operation`` -- string: ``'+'`` (default), ``'*'`` or ``None``
+    - ``identity`` -- the identity element of the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
 
-    .. note::
+    .. NOTE::
 
-       It is more efficient for the caller to factor ``m`` and cache
-       the factors for subsequent calls.
+        It is more efficient for the caller to factor ``m`` and cache
+        the factors for subsequent calls.
 
     EXAMPLES::
 
@@ -1297,7 +1298,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     # we use an internal recursive function to avoid unnecessary computations.
     def _order_from_multiple_helper(Q, L, S):
         """
-        internal use, to minimize the number of group operations.
+        For internal use, to minimize the number of group operations.
         """
         l = len(L)
         if l == 1:
@@ -1348,10 +1349,10 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     - ``P`` -- a Sage object which is a group element
 
     - ``bounds`` -- a 2-tuple ``(lb,ub)`` such that ``m*P=0`` (or
-      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``.
+      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``
 
     - ``d`` -- (optional) a positive integer; only ``m`` which are
-      multiples of this will be considered.
+      multiples of this will be considered
 
     - ``operation`` -- string: ``'+'`` (default ) or ``'*'`` or other.
       If other, the following must be supplied:
@@ -1362,8 +1363,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
       - ``op()`` -- a function of 2 arguments defining the group binary
         operation.
 
-
-    .. note::
+    .. NOTE::
 
        Typically ``lb`` and ``ub`` will be bounds on the group order,
        and from previous calculation we know that the group order is
@@ -1500,7 +1500,6 @@ def has_order(P, n, operation='+'):
             return False
         n = n.factor()
 
-    G = P.parent()
     if operation in addition_names:
         isid = lambda el: not el
         mult = lambda el, n: multiple(el, n, operation='+')
@@ -1550,9 +1549,7 @@ def merge_points(P1, P2, operation='+',
       - ``op()`` -- a function of 2 arguments defining the group
         binary operation.
 
-    OUTPUT:
-
-    A pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`.
+    OUTPUT: a pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`
 
     EXAMPLES::
 
@@ -1629,12 +1626,10 @@ def structure_description(G, latex=False):
 
     INPUT:
 
-    - ``latex`` -- a boolean (default: ``False``). If ``True``, return a
-      LaTeX formatted string.
+    - ``latex`` -- a boolean (default: ``False``); if ``True``, return a
+      LaTeX formatted string
 
-    OUTPUT:
-
-    string
+    OUTPUT: string
 
     .. WARNING::
 
