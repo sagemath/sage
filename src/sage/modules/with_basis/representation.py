@@ -33,7 +33,10 @@ class Representation_abstract:
     INPUT:
 
     - ``semigroup`` -- a semigroup
-    - ``base_ring`` -- a commutative ring
+    - ``side`` -- (default: ``"left"``) whether this is a
+      ``"left"`` or ``"right"`` representation
+    - ``algebra`` -- (default: ``semigroup.algebra(self.base_ring())``)
+      the semigroup algebra
 
     .. NOTE::
 
@@ -50,7 +53,7 @@ class Representation_abstract:
             sage: T = G.trivial_representation()
             sage: TestSuite(T).run()
 
-        Verify that the dynamic mixin classes works::
+        Verify that the dynamic mixin classes work::
 
             sage: SGA = SymmetricGroupAlgebra(QQ, 3)
             sage: S21 = SGA.specht_module([2,1])
@@ -652,7 +655,9 @@ class Representation_abstract:
 
         - ``gens`` -- the generators of the submodule
         - ``check`` -- ignored
-        - ``already_echelonized`` --
+        - ``already_echelonized`` -- (default: ``False``) whether
+           the elements of ``gens`` are already in (not necessarily
+           reduced) echelon form
         - ``is_closed`` -- (keyword only; default: ``False``) whether ``gens``
           already spans the subspace closed under the semigroup action
 
@@ -780,8 +785,8 @@ class Representation_abstract:
                     S_basis = [self.element_class(self, linear_combination((V._basis[i]._monomial_coefficients, coeff)
                                                                            for i, coeff in b._monomial_coefficients.items()))
                                for b in S._basis]
-                # Lift the basis of W', which is W as a subrepr of ``self ``
-                # This is equivanlent to [b.lift() for b in series[cur+1].basis()]
+                # Lift the basis of W', which is W as a subrepresentation of ``self``
+                # This is equivalent to [b.lift() for b in series[cur+1].basis()]
                 Wp_basis = list(series[cur+1]._basis)
                 Wp = self.subrepresentation(S_basis + Wp_basis, is_closed=True)
                 series.insert(cur+1, Wp)

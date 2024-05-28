@@ -1464,11 +1464,11 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
                 -gp1 - gp2 - gp3
                 sage: g = SGA.group().an_element(); g
                 [4, 1, 2, 3]
-                sage: g * v
+                sage: g * v  # indirect doctest
                 gp3
-                sage: x * v
+                sage: x * v  # indirect doctest
                 gp3
-                sage: 2 * v
+                sage: 2 * v  # indirect doctest
                 gp1 + gp2 + gp3
             """
             P = self.parent()
