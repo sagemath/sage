@@ -754,9 +754,11 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         TESTS::
 
-            sage: f = phi.codomain().defining_polynomial()                              # needs sage.rings.finite_rings
-            sage: g = E.defining_polynomial().subs({2:1})                               # needs sage.rings.finite_rings
-            sage: f(*phi.rational_maps(), 1) % g                                        # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: f = phi.codomain().defining_polynomial()
+            sage: g = E.defining_polynomial().subs({2:1})
+            sage: h = f(*phi.rational_maps(), 1)
+            sage: h.numerator() % h.numerator().parent()(g)
             0
 
         ::
