@@ -656,7 +656,8 @@ class MPowerSeries(PowerSeries):
         Check that :issue:`37729` has been fixed::
 
             sage: A.<a,b> = PowerSeriesRing(ZZ)
-            sage: A.hom([0,0],ZZ)(1 - a^3 + b^5)
+            sage: phi = A.hom([0,0], ZZ)
+            sage: phi(1 - a^3 + b^5)
             1
         """
         if base_map is None:
