@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Access functions to online databases for coding theory
 """
@@ -6,6 +6,11 @@ from sage.features.gap import GapPackage
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.libs.gap.libgap', 'libgap')
+
+# Import the following function so that it is available as
+# sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
+# somewhat like a catalog in this respect.
+lazy_import('sage.coding.self_dual_codes', 'self_dual_binary_codes')
 
 del lazy_import
 
@@ -210,6 +215,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all self-orthogonal codes of length up to 7 and dimension up
     to 3::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,3):
         ....:    print(B)
         [2, 1] linear code over GF(2)
@@ -224,6 +230,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all doubly-even codes of length up to 7 and dimension up
     to 3::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,3,4):
         ....:    print(B); print(B.generator_matrix())
         [4, 1] linear code over GF(2)
@@ -239,6 +246,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all doubly-even codes of length up to 7 and dimension up
     to 2::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(7,2,4):
         ....:    print(B); print(B.generator_matrix())
         [4, 1] linear code over GF(2)
@@ -250,6 +258,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     Generate all self-orthogonal codes of length equal to 8 and
     dimension equal to 4::
 
+        sage: # needs sage.groups
         sage: for B in codes.databases.self_orthogonal_binary_codes(8, 4, equal=True):
         ....:     print(B); print(B.generator_matrix())
         [8, 4] linear code over GF(2)
@@ -308,9 +317,3 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
                     for N in self_orthogonal_binary_codes(n, k, d, child, BC, in_test=in_test):
                         if out_test(N):
                             yield N
-
-
-# Import the following function so that it is available as
-# sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
-# somewhat like a catalog in this respect.
-from sage.coding.self_dual_codes import self_dual_binary_codes

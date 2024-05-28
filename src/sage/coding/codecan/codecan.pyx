@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Canonical forms and automorphism group computation for linear codes over finite fields
 
