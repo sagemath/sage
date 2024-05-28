@@ -5216,7 +5216,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M._basic_representation()                                             # needs sage.rings.finite_rings
             5 x 10 QuaternaryMatrix
             [100001x00y]
@@ -5259,7 +5259,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M._reduced_representation()                                           # needs sage.rings.finite_rings
             5 x 5 QuaternaryMatrix
             [1x00y]
@@ -5287,7 +5287,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M._invariant()  # indirect doctest                                    # needs sage.rings.finite_rings
             (0, 0, 5, 5, 20, 10, 25)
         """
@@ -5366,7 +5366,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M._invariant()                                                        # needs sage.rings.finite_rings
             (0, 0, 5, 5, 20, 10, 25)
         """
@@ -5391,7 +5391,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M.bicycle_dimension()                                                 # needs sage.rings.finite_rings
             0
         """
@@ -5457,8 +5457,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-           sage: M = matroids.catalog.Q10().delete('a')                          # needs sage.rings.finite_rings
-           sage: N = matroids.catalog.Q10().delete('b')                          # needs sage.rings.finite_rings
+           sage: M = matroids.catalog.Q10().delete('a')                                 # needs sage.rings.finite_rings
+           sage: N = matroids.catalog.Q10().delete('b')                                 # needs sage.rings.finite_rings
            sage: M._fast_isom_test(N) is None                                           # needs sage.rings.finite_rings
            True
         """
@@ -5493,7 +5493,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: N = M._minor(contractions=set(['a']), deletions=set([]))              # needs sage.rings.finite_rings
             sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))             # needs sage.rings.finite_rings
             Quaternary matroid of rank 4 on 7 elements

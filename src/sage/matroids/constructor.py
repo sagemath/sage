@@ -634,7 +634,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
             sage: M = Matroid(circuit_closures=[(2, 'abd'), (3, 'abcdef'),
             ....:                               (2, 'bce')])
-            sage: M.equals(matroids.catalog.Q6())                                # needs sage.rings.finite_rings
+            sage: M.equals(matroids.catalog.Q6())                                       # needs sage.rings.finite_rings
             True
 
     #.  RevLex-Index:

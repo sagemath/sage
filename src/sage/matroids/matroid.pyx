@@ -3052,7 +3052,7 @@ cdef class Matroid(SageObject):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q6()                                      # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q6()                                             # needs sage.rings.finite_rings
             sage: sorted([sorted(F) for F in M.coflats(2)])                             # needs sage.rings.finite_rings
             [['a', 'b'], ['a', 'c'], ['a', 'd', 'f'], ['a', 'e'], ['b', 'c'],
             ['b', 'd'], ['b', 'e'], ['b', 'f'], ['c', 'd'], ['c', 'e', 'f'],
@@ -5383,7 +5383,7 @@ cdef class Matroid(SageObject):
             ....:             groundset='abcdef')
             sage: N.is_kconnected(3)
             False
-            sage: matroids.catalog.BetsyRoss().is_kconnected(3)                  # needs sage.graphs
+            sage: matroids.catalog.BetsyRoss().is_kconnected(3)                         # needs sage.graphs
             True
             sage: matroids.AG(5,2).is_kconnected(4)
             True
