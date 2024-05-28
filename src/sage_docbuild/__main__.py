@@ -12,14 +12,14 @@ given, it returns information about ``DOCUMENT``.
 Run ``sage --docbuild`` to get detailed explanations about
 arguments and options.
 
-positional arguments::
+Positional arguments::
 
   DOCUMENT              name of the document to build. It can be either one of
                         the documents listed by -D or 'file=/path/to/FILE' to
                         build documentation for this specific file.
   FORMAT or COMMAND     document output format (or command)
 
-Standard::
+Standard options::
 
   -h, --help            show a help message and exit
   -H, --help-all        show an extended help message and exit
@@ -57,7 +57,7 @@ Standard::
   -o DIR, --output DIR  if DOCUMENT is a single file ('file=...'), write output
                         to this directory
 
-Advanced::
+Advanced options::
 
   Use these options with care.
 
