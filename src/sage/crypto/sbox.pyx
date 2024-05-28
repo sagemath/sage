@@ -1330,9 +1330,9 @@ cdef class SBox(SageObject):
         TESTS::
 
             sage: from sage.crypto.sboxes import SBox
-            sage: sb = SBox(7, 6, 0, 4, 2, 5, 1, 3)
-            sage: sb.component_function([1, 0, 0])
-            Boolean function with 3 variables
+            sage: sb = SBox([0, 1, 2, 3, 0, 1, 2, 3])
+            sage: sb.component_function([1, 0])
+            Boolean function with 3 variabl
         """
         cdef Py_ssize_t m = self.m
         cdef Py_ssize_t n = self.n
