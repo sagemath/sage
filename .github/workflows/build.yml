@@ -483,13 +483,14 @@ jobs:
           pattern: coverage-*
 
       - name: Coverage report
+        # Using --omit to avoid "CoverageWarning: Couldn't parse '/tmp/tmp06qizzie/tmp_ldpu46ob.py': No source for code"
         run: |
           rm -rf /sage/.coverage
           ln -s $(pwd)/.coverage /sage/
           cd /sage
           ./sage -python -m pip install coverage
           ./sage -python -m coverage combine --rcfile=src/tox.ini .coverage/coverage-*/.coverage
-          ./sage -python -m coverage xml --rcfile=src/tox.ini
+          ./sage -python -m coverage xml --rcfile=src/tox.ini --omit="/tmp/*"
           mkdir -p .coverage/coverage-report
           mv coverage.xml .coverage/coverage-report/
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
