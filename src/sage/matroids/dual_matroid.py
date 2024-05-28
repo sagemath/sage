@@ -4,7 +4,7 @@ Dual matroids
 Theory
 ======
 
-Let `M` be a matroid with ground set `E`. If `B` is the set of bases of `M`,
+Let `M` be a matroid with groundset `E`. If `B` is the set of bases of `M`,
 then the set `\{E - b : b \in B\}` is the set of bases of another matroid, the
 dual of `M`.
 
@@ -24,10 +24,9 @@ Implementation
 
 The class ``DualMatroid`` wraps around a matroid instance to represent its
 dual. Only useful for classes that don't have an explicit construction of the
-dual (such as :class:`RankMatroid <sage.matroids.rank_matroid.RankMatroid>`
-and
+dual (such as :class:`RankMatroid <sage.matroids.rank_matroid.RankMatroid>` and
 :class:`CircuitClosuresMatroid <sage.matroids.circuit_closures_matroid.CircuitClosuresMatroid>`).
-It is also used as default implementation of the method
+It is also used as the default implementation of the method
 :meth:`M.dual() <sage.matroids.matroid.Matroid.dual>`.
 For direct access to the ``DualMatroid`` constructor, run::
 
@@ -35,14 +34,11 @@ For direct access to the ``DualMatroid`` constructor, run::
 
 See also :mod:`sage.matroids.advanced`.
 
-
 AUTHORS:
 
 - Rudi Pendavingh, Michael Welsh, Stefan van Zwam (2013-04-01): initial version
-
-Methods
-=======
 """
+
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz>
@@ -57,19 +53,18 @@ Methods
 
 from .matroid import Matroid
 
-
 class DualMatroid(Matroid):
     r"""
     Dual of a matroid.
 
     For some matroid representations it can be computationally expensive to
     derive an explicit representation of the dual. This class wraps around any
-    matroid to provide an abstract dual. It also serves as default
-    implementation.
+    matroid to provide an abstract dual. It also serves as the default
+    implementation of the dual.
 
     INPUT:
 
-    - ``matroid`` - a matroid.
+    - ``matroid`` -- matroid
 
     EXAMPLES::
 
@@ -103,9 +98,17 @@ class DualMatroid(Matroid):
                  {'a', 'b', 'g', 'h'}, {'c', 'd', 'e', 'f'},
                  {'e', 'f', 'g', 'h'}},
              4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}'
+
+        TESTS::
+
+            sage: from sage.matroids.dual_matroid import DualMatroid
+            sage: DualMatroid([])
+            Traceback (most recent call last):
+            ...
+            TypeError: no matroid provided to take the dual of
         """
         if not isinstance(matroid, Matroid):
-            raise TypeError("no matroid provided to take dual of.")
+            raise TypeError("no matroid provided to take the dual of")
         self._matroid = matroid
 
     def groundset(self):
@@ -114,9 +117,7 @@ class DualMatroid(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -135,11 +136,9 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface.
+        - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        The rank of ``X`` in the matroid.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -155,12 +154,10 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The corank of ``X``.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -176,12 +173,10 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A maximal independent subset of ``X``.
+        OUTPUT: a maximal independent subset of ``X``
 
         EXAMPLES::
 
@@ -202,13 +197,11 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A circuit contained in ``X``, if it exists. Otherwise an error is
-        raised.
+        OUTPUT: a circuit contained in ``X``, if it exists; otherwise, an error is
+        raised
 
         EXAMPLES::
 
@@ -230,12 +223,10 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The smallest closed set containing ``X``.
+        OUTPUT: the smallest closed set containing ``X``
 
         EXAMPLES::
 
@@ -251,12 +242,10 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A maximal coindependent subset of ``X``.
+        OUTPUT: a maximal coindependent subset of ``X``
 
         EXAMPLES::
 
@@ -277,12 +266,10 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        The smallest coclosed set containing ``X``.
+        OUTPUT: the smallest coclosed set containing ``X``
 
         EXAMPLES::
 
@@ -298,13 +285,11 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- An object with Python's ``frozenset`` interface containing
-          a subset of ``self.groundset()``.
+        - ``X`` -- an object with Python's ``frozenset`` interface containing
+          a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A cocircuit contained in ``X``, if it exists. Otherwise an error is
-        raised.
+        OUTPUT: a cocircuit contained in ``X``, if it exists; otherwise, an error is
+        raised
 
         EXAMPLES::
 
@@ -324,14 +309,12 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``contractions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
-        - ``deletions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
+        - ``contractions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
+        - ``deletions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
 
-        OUTPUT:
-
-        A ``DualMatroid`` instance representing
+        OUTPUT: a :class:`DualMatroid` representing
         `(``self._matroid`` / ``deletions`` \ ``contractions``)^*`
 
         .. NOTE::
@@ -339,8 +322,8 @@ class DualMatroid(Matroid):
             This method does NOT do any checks. Besides the assumptions above,
             we assume the following:
 
-            - ``contractions`` is independent
-            - ``deletions`` is coindependent
+            - ``contractions`` is independent;
+            - ``deletions`` is coindependent;
             - ``contractions`` and ``deletions`` are disjoint.
 
         EXAMPLES::
@@ -364,16 +347,13 @@ class DualMatroid(Matroid):
         r"""
         Return the dual of the matroid.
 
-        Let `M` be a matroid with ground set `E`. If `B` is the set of bases
+        Let `M` be a matroid with groundset `E`. If `B` is the set of bases
         of `M`, then the set `\{E - b : b \in B\}` is the set of bases of
         another matroid, the *dual* of `M`. Note that the dual of the dual of
-        `M` equals `M`, so if this is the
-        :class:`DualMatroid` instance
+        `M` equals `M`, so if this is the :class:`DualMatroid` instance
         wrapping `M` then the returned matroid is `M`.
 
-        OUTPUT:
-
-        The dual matroid.
+        OUTPUT: the dual matroid
 
         EXAMPLES::
 
@@ -439,11 +419,9 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -471,11 +449,9 @@ class DualMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -526,3 +502,64 @@ class DualMatroid(Matroid):
         data = (self._matroid, self.get_custom_name())
         version = 0
         return sage.matroids.unpickling.unpickle_dual_matroid, (version, data)
+
+    def relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element `e` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
+
+        OUTPUT: matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.K5dual(range(10))
+            sage: type(M)
+            <class 'sage.matroids.dual_matroid.DualMatroid'>
+            sage: sorted(M.groundset())
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: N = M.dual().relabel({0:10})
+            sage: sorted(N.groundset())
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            sage: N.is_isomorphic(matroids.catalog.K5())
+            True
+
+        TESTS::
+
+            sage: M = matroids.catalog.K5dual(range(10))
+            sage: f = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e',
+            ....:      5: 'f', 6: 'g', 7: 'h', 8: 'i', 9: 'j'}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        M = self._matroid.relabel(mapping).dual()
+        return M
+
+    def is_valid(self):
+        """
+        Test if ``self`` obeys the matroid axioms.
+
+        For a :class:`DualMatroid`, we check its dual.
+
+        OUTPUT: boolean
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.K5dual()
+            sage: type(M)
+            <class 'sage.matroids.dual_matroid.DualMatroid'>
+            sage: M.is_valid()
+            True
+            sage: M = Matroid([[0, 1], [2, 3]])
+            sage: M.dual().is_valid()
+            False
+        """
+        return self._matroid.is_valid()

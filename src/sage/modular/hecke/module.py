@@ -38,12 +38,18 @@ def is_HeckeModule(x):
 
         sage: from sage.modular.hecke.module import is_HeckeModule
         sage: is_HeckeModule(ModularForms(Gamma0(7), 4))
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeModule is deprecated;
+        use 'isinstance(..., HeckeModule_generic)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_HeckeModule(QQ^3)
         False
         sage: is_HeckeModule(J0(37).homology())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeModule is deprecated; use 'isinstance(..., HeckeModule_generic)' instead")
     return isinstance(x, HeckeModule_generic)
 
 
@@ -652,7 +658,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: M._element_eigenvalue(M.0)
             1
         """
-        if not element.is_HeckeModuleElement(x):
+        if not isinstance(x, element.HeckeModuleElement):
             raise TypeError("x must be a Hecke module element.")
         if x not in self.ambient_hecke_module():
             raise ArithmeticError("x must be in the ambient Hecke module.")

@@ -295,8 +295,8 @@ def _isomorphisms(E, F):
         sage: all({iso2*iso1 for iso1 in Iso} == set(Aut) for iso2 in F.isomorphisms(E))
         True
     """
-    from .ell_generic import is_EllipticCurve
-    if not is_EllipticCurve(E) or not is_EllipticCurve(F):
+    from .ell_generic import EllipticCurve_generic
+    if not isinstance(E, EllipticCurve_generic) or not isinstance(F, EllipticCurve_generic):
         raise ValueError("arguments are not elliptic curves")
 
     j = E.j_invariant()
@@ -459,13 +459,13 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: type(iso.degree())                                                    # needs sage.rings.finite_rings
             <class 'sage.rings.integer.Integer'>
         """
-        from .ell_generic import is_EllipticCurve
+        from .ell_generic import EllipticCurve_generic
 
         if E is not None:
-            if not is_EllipticCurve(E):
+            if not isinstance(E, EllipticCurve_generic):
                 raise ValueError("first argument must be an elliptic curve or None")
         if F is not None:
-            if not is_EllipticCurve(F):
+            if not isinstance(F, EllipticCurve_generic):
                 raise ValueError("third argument must be an elliptic curve or None")
         if urst is not None:
             if len(urst) != 4:

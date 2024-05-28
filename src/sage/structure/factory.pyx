@@ -570,6 +570,7 @@ cdef class UniqueFactory(SageObject):
 # This is used to handle old UniqueFactory pickles
 factory_unpickles = {}
 
+
 def register_factory_unpickle(name, callable):
     """
     Register a callable to handle the unpickling from an old
@@ -631,6 +632,7 @@ def register_factory_unpickle(name, callable):
     """
     #global factory_unpickles
     factory_unpickles[name] = callable
+
 
 def generic_factory_unpickle(factory, *args):
     """
@@ -729,6 +731,7 @@ def generic_factory_unpickle(factory, *args):
     # strip this.
     return factory(*args[1], **args[2])
 
+
 def generic_factory_reduce(self, proto):
     """
     Used to provide a ``__reduce__`` method if one does not already exist.
@@ -743,6 +746,7 @@ def generic_factory_reduce(self, proto):
         raise NotImplementedError("__reduce__ not implemented for %s" % type(self))
     else:
         return self._factory_data[0].reduce_data(self)
+
 
 def lookup_global(name):
     """
