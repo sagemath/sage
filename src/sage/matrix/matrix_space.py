@@ -2649,7 +2649,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         INPUT:
 
         - ``coerce`` -- boolean; coerce the coefficients to the base ring
-        - ``remove_zeroes`` -- ignored; for compatibility
+        - ``remove_zeros`` -- ignored; for compatibility
 
         EXAMPLES::
 
