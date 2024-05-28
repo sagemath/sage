@@ -101,7 +101,7 @@ class FGP_Morphism(Morphism):
         # input: phi is a morphism from MO = M.optimized().V() to N.V()
         # that sends MO.W() to N.W()
         if check:
-            if not is_Morphism(phi) and M == N:
+            if not isinstance(phi, Morphism) and M == N:
                 A = M.optimized()[0].V()
                 B = N.V()
                 s = M.base_ring()(phi) * B.coordinate_module(A).basis_matrix()
