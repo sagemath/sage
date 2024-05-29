@@ -194,7 +194,8 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
     class Element(LieAlgebraElement):
         pass
 
-class HeisenbergAlgebra_fd():
+
+class HeisenbergAlgebra_fd:
     """
     Common methods for finite-dimensional Heisenberg algebras.
     """
@@ -417,7 +418,8 @@ class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
             sage: lie_algebras.Heisenberg(QQ, 3)
             Heisenberg algebra of rank 3 over Rational Field
         """
-        return "Heisenberg algebra of rank {0} over {1}".format(self._n, self.base_ring())
+        return "Heisenberg algebra of rank {} over {}".format(self._n, self.base_ring())
+
 
 class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenerators):
     r"""

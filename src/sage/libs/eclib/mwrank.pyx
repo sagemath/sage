@@ -530,6 +530,7 @@ def parse_point_list(s):
     pts = s[2:-2].split('],[')
     return [[Integer(x) for x in pt.split(",")] for pt in pts]
 
+
 cdef class _mw:
     """
     Cython class wrapping eclib's mw class.

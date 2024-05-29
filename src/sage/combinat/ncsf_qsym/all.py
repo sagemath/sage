@@ -12,5 +12,5 @@ Non-commutative symmetric functions and quasi-symmetric functions
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
 
-from .qsym import QuasiSymmetricFunctions
-from .ncsf import NonCommutativeSymmetricFunctions
+from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions
+from sage.combinat.ncsf_qsym.ncsf import NonCommutativeSymmetricFunctions

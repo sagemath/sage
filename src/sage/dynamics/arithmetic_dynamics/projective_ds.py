@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Dynamical systems on projective schemes
 
@@ -103,12 +102,12 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
-from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
+from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
 from sage.schemes.projective.projective_morphism import (
     SchemeMorphism_polynomial_projective_space,
     SchemeMorphism_polynomial_projective_space_field,
     SchemeMorphism_polynomial_projective_space_finite_field)
-from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
 
@@ -374,7 +373,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             polys = list(morphism_or_polys)
             if domain != morphism_or_polys.codomain():
                 raise ValueError('domain and codomain do not agree')
-            if not is_ProjectiveSpace(domain) and not isinstance(domain, AlgebraicScheme_subscheme_projective):
+            if not isinstance(domain, ProjectiveSpace_ring) and not isinstance(domain, AlgebraicScheme_subscheme_projective):
                 raise ValueError('"domain" must be a projective scheme')
             if R not in Fields():
                 return typecall(cls, polys, domain)
@@ -430,7 +429,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if isinstance(R, sage.rings.abc.SymbolicRing):
             raise TypeError("the base ring cannot be the Symbolic Ring or a symbolic subring")
 
-        if is_ProductProjectiveSpaces(domain):
+        if isinstance(domain, ProductProjectiveSpaces_ring):
             splitpolys = domain._factors(polys)
             for split_poly in splitpolys:
                 split_d = domain._degree(split_poly[0])
@@ -451,7 +450,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             msg = 'polys (={}) must be of the same degree'
             raise ValueError(msg.format(polys))
 
-        if not is_ProjectiveSpace(domain) and not isinstance(domain, AlgebraicScheme_subscheme_projective):
+        if not isinstance(domain, ProjectiveSpace_ring) and not isinstance(domain, AlgebraicScheme_subscheme_projective):
             raise ValueError('"domain" must be a projective scheme')
         if R not in Fields():
             return typecall(cls, polys, domain)
@@ -1264,7 +1263,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if n <= 0:
             raise ValueError("Period must be a positive integer.")
 
-        if not (is_ProjectiveSpace(f_domain) and is_ProjectiveSpace(g_domain)):
+        if not (isinstance(f_domain, ProjectiveSpace_ring) and isinstance(g_domain, ProjectiveSpace_ring)):
             raise NotImplementedError("Not implemented for subschemes.")
 
         if f_domain.dimension_relative() > 1:
@@ -1804,7 +1803,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.primes_of_bad_reduction()                                           # needs sage.rings.function_field
             [5, 37, 2239, 304432717]
         """
-        if (not is_ProjectiveSpace(self.domain())) or (not is_ProjectiveSpace(self.codomain())):
+        if (not isinstance(self.domain(), ProjectiveSpace_ring)) or (not isinstance(self.codomain(), ProjectiveSpace_ring)):
             raise NotImplementedError("not implemented for subschemes")
         K = FractionField(self.codomain().base_ring())
         #The primes of bad reduction are the support of the resultant for number fields
@@ -3771,7 +3770,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             TypeError: the function is not a morphism
         """
         PS = self.domain()
-        if not is_ProjectiveSpace(PS):
+        if not isinstance(PS, ProjectiveSpace_ring):
             raise NotImplementedError("not implemented for subschemes")
         if not self.is_morphism():
             raise TypeError("the function is not a morphism")
@@ -4080,7 +4079,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             False
         """
         P = self.codomain()
-        if not is_ProjectiveSpace(P):
+        if not isinstance(P, ProjectiveSpace_ring):
             raise NotImplementedError('only implemented for dynamical systems on projective space')
         if P.dimension_relative() != 1:
             raise NotImplementedError('only implemented for maps on projective space of dimension 1')
@@ -5238,7 +5237,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         if (n < 1):
             raise ValueError("period must be a positive integer")
-        if not is_ProjectiveSpace(PS):
+        if not isinstance(PS, ProjectiveSpace_ring):
             raise NotImplementedError("not implemented for subschemes")
 
         if PS.dimension_relative() > 1:
@@ -5746,7 +5745,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if n < 1:
             raise ValueError("period must be a positive integer")
         dom = self.domain()
-        if not is_ProjectiveSpace(dom):
+        if not isinstance(dom, ProjectiveSpace_ring):
             raise NotImplementedError("not implemented for subschemes")
         if self.degree() <= 1:
             raise TypeError("must have degree at least 2")
@@ -6397,7 +6396,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             True
         """
         codomain = self.codomain()
-        if not is_ProjectiveSpace(codomain):
+        if not isinstance(codomain, ProjectiveSpace_ring):
             # in order to calculate the canonical height, we need
             # this map to be a morphism of projective space
             ambient_space = codomain.ambient_space()
@@ -6516,7 +6515,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: g.postcritical_set()
             [(1 : 0), (0 : 1), (a + 2 : 1)]
         """
-        if not is_ProjectiveSpace(self.domain()):
+        if not isinstance(self.domain(), ProjectiveSpace_ring):
             raise ValueError('must be a dynamical system on projective space')
         if self.domain().dimension_relative() != 1:
             raise ValueError('must be defined on projective space of dimension 1')
@@ -9106,7 +9105,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
         """
         V = []
         E = []
-        if is_ProjectiveSpace(self.domain()):
+        if isinstance(self.domain(), ProjectiveSpace_ring):
             for P in self.domain():
                 V.append(P)
                 try:

@@ -140,12 +140,17 @@ def is_ProjectiveSpace(x):
 
         sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
         sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
         True
         sage: is_ProjectiveSpace(Spec(ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.")
     return isinstance(x, ProjectiveSpace_ring)
 
 
@@ -1539,7 +1544,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if CS is None:
             CS = ProjectiveSpace(self.base_ring(), binomial(N + d, d) - 1)
         else:
-            if not is_ProjectiveSpace(CS):
+            if not isinstance(CS, ProjectiveSpace_ring):
                 raise TypeError("(=%s) must be a projective space" % CS)
             if CS.dimension() != binomial(N + d, d) - 1:
                 raise TypeError("(=%s) has the wrong dimension to serve as the codomain space" % CS)
