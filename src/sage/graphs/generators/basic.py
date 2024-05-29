@@ -1161,8 +1161,8 @@ def MoebiusLadderGraph(n):
     information.
 
     Note that :mod:`MoebiusLadderGraph(n)` is precisely the same graph as the
-    circulant graph :mod:`graphs.CirculantGraph(2 * n, [1, n])`. For more information
-    See :meth:`GraphGenerators.CirculantGraph`.
+    circulant graph :mod:`graphs.CirculantGraph(2 * n, [1, n])`. For more information,
+    see :meth:`GraphGenerators.CirculantGraph`.
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, each Möbius ladder graph will be
