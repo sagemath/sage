@@ -1160,6 +1160,10 @@ def MoebiusLadderGraph(n):
     antipodal pairs of vertices. See the :wikipedia:`Möbius_ladder` for more
     information.
 
+    Note that :mod:`MoebiusLadderGraph(n)` is precisely the same graph as the
+    circulant graph :mod:`graphs.CirculantGraph(2 * n, [1, n])`. For more information
+    See :meth:`GraphGenerators.CirculantGraph`.
+
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, each Möbius ladder graph will be
     displayed with the first (0) node at the top, with the rest following in a
