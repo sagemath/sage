@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Lazy Series
 
@@ -4746,6 +4745,9 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             R = PowerSeriesRing(S.base_ring(), name=name)
             return R([self[i] for i in range(prec)]).add_bigoh(prec)
 
+    add_bigoh = approximate_series
+    O = approximate_series
+
     def polynomial(self, degree=None, name=None):
         r"""
         Return ``self`` as a Laurent polynomial if ``self`` is actually so.
@@ -6064,6 +6066,45 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         if S._arity == 1:
             return R(self[0:m])
         return R.sum(self[0:m])
+
+    def add_bigoh(self, prec):
+        r"""
+        Return the power series of precision at most ``prec`` obtained by
+        adding `O(q^\text{prec})` to `f`, where `q` is the (tuple of)
+        variable(s).
+
+        EXAMPLES::
+
+            sage: L.<x,y> = LazyPowerSeriesRing(QQ)
+            sage: f = 1 / (1 - x + y)
+            sage: f
+            1 + (x-y) + (x^2-2*x*y+y^2) + (x^3-3*x^2*y+3*x*y^2-y^3)
+             + (x^4-4*x^3*y+6*x^2*y^2-4*x*y^3+y^4)
+             + (x^5-5*x^4*y+10*x^3*y^2-10*x^2*y^3+5*x*y^4-y^5)
+             + (x^6-6*x^5*y+15*x^4*y^2-20*x^3*y^3+15*x^2*y^4-6*x*y^5+y^6)
+             + O(x,y)^7
+            sage: f3 = f.add_bigoh(3); f3
+            1 + x - y + x^2 - 2*x*y + y^2 + O(x, y)^3
+            sage: f3.parent()
+            Multivariate Power Series Ring in x, y over Rational Field
+
+            sage: R.<t> = QQ[]
+            sage: L.<x> = LazyPowerSeriesRing(R)
+            sage: f = 1 / (1 - t^3*x)
+            sage: f
+            1 + t^3*x + t^6*x^2 + t^9*x^3 + t^12*x^4 + t^15*x^5 + t^18*x^6 + O(x^7)
+            sage: f3 = f.add_bigoh(3); f3
+            1 + t^3*x + t^6*x^2 + O(x^3)
+            sage: f3.parent()
+            Power Series Ring in x over Univariate Polynomial Ring in t
+             over Rational Field
+        """
+        from sage.rings.power_series_ring import PowerSeriesRing
+        P = self.parent()
+        PSR = PowerSeriesRing(P.base_ring(), names=P.variable_names())
+        return PSR(self.polynomial(degree=prec-1), prec=prec)
+
+    O = add_bigoh
 
     def _floordiv_(self, other):
         r"""

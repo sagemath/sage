@@ -124,7 +124,7 @@ def interval_products(M0, M1, target):
     cdef vector[ZZ_c] targ
     cdef ntl_ZZ_pContext_class c = \
         (<ntl_ZZ_pContext_factory>ZZ_pContext_factory).make_c(
-        ntl_ZZ(M0.base_ring().characteristic()))
+            ntl_ZZ(M0.base_ring().characteristic()))
     cdef long dim = M0.nrows()
     sig_on()
     c.restore_c()

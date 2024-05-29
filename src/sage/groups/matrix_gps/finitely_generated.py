@@ -72,7 +72,7 @@ AUTHORS:
 from sage.groups.matrix_gps.group_element import is_MatrixGroupElement
 from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
 from sage.matrix.constructor import matrix
-from sage.matrix.matrix_space import is_MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import is_Matrix
@@ -130,7 +130,7 @@ def normalize_square_matrices(matrices):
         raise ValueError('not all matrices have the same size')
     gens = Sequence(gens, immutable=True)
     MS = gens.universe()
-    if not is_MatrixSpace(MS):
+    if not isinstance(MS, MatrixSpace):
         raise TypeError('all generators must be matrices')
     if MS.nrows() != MS.ncols():
         raise ValueError('matrices must be square')

@@ -805,8 +805,8 @@ class EllipticCurveCanonicalHeight:
             ValueError: EllipticCurveCanonicalHeight class can only be created
             from an elliptic curve defined over a number field
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(E):
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        if isinstance(E, EllipticCurve_generic):
             self.E = E
             from sage.rings.number_field.number_field_base import NumberField
             K = E.base_ring()

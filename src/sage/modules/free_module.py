@@ -853,11 +853,17 @@ def is_FreeModule(M):
         sage: from sage.modules.free_module import is_FreeModule
         sage: V = ZZ^3
         sage: is_FreeModule(V)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeModule is deprecated;
+        use 'isinstance(..., FreeModule_generic)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: W = V.span([ V.random_element() for i in range(2) ])
         sage: is_FreeModule(W)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FreeModule is deprecated; use 'isinstance(..., FreeModule_generic)' instead")
     return isinstance(M, FreeModule_generic)
 
 
@@ -2745,7 +2751,7 @@ class FreeModule_generic(Module_free_ambient):
             [  0   1  -3   0   0   0]
             [  0   0   0 1/2   4   2]
         """
-        if not is_FreeModule(other):
+        if not isinstance(other, FreeModule_generic):
             raise TypeError("other must be a free module")
         if other.base_ring() != self.base_ring():
             raise TypeError("base rings of self and other must be the same")
@@ -2867,7 +2873,7 @@ class FreeModule_generic(Module_free_ambient):
             [ 0  1  1  0 -2  1 -1  1 -1 -2  2  0  0  0  0  0  0  0  0]
             [ 0  0  3  0 -3  2 -1  2 -1 -4  2 -1 -2  1  2  0  0 -1  1]
         """
-        if not is_FreeModule(V):
+        if not isinstance(V, FreeModule_generic):
             raise ValueError("V must be a free module")
         A = self.basis_matrix()
         A = A.matrix_from_columns(A.pivots()).transpose()
@@ -4144,7 +4150,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             ...
             ValueError: The given basis vectors must be linearly independent.
         """
-        if is_FreeModule(basis):
+        if isinstance(basis, FreeModule_generic):
             basis = basis.gens()
         if base_ring is None or base_ring == self.base_ring():
             try:
@@ -4306,7 +4312,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             Basis matrix:
             [  1 3/2   2]
         """
-        if is_FreeModule(gens):
+        if isinstance(gens, FreeModule_generic):
             gens = gens.gens()
         return FreeModule_submodule_field(self.ambient_vector_space(), gens, check=check)
 
@@ -4360,7 +4366,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
         """
         # Calling is_subspace may be way too slow and repeat work done below.
         # It will be very desirable to somehow do this step better.
-        if check and (not is_FreeModule(sub) or not sub.is_submodule(self)):
+        if check and (not isinstance(sub, FreeModule_generic) or not sub.is_submodule(self)):
             try:
                 sub = self.submodule(sub)
             except (TypeError, ArithmeticError):
@@ -4695,7 +4701,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             ...
             ValueError: The given basis vectors must be linearly independent.
         """
-        if is_FreeModule(basis):
+        if isinstance(basis, FreeModule_generic):
             basis = basis.gens()
         if base_ring is None:
             return FreeModule_submodule_with_basis_field(
@@ -5189,9 +5195,9 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         """
         # Calling is_submodule may be way too slow and repeat work done below.
         # It will be very desirable to somehow do this step better.
-        if is_FreeModule(sub) and self.base_ring() != sub.base_ring():
+        if isinstance(sub, FreeModule_generic) and self.base_ring() != sub.base_ring():
             raise ValueError("base rings must be the same")
-        if check and (not is_FreeModule(sub) or not sub.is_subspace(self)):
+        if check and (not isinstance(sub, FreeModule_generic) or not sub.is_subspace(self)):
             try:
                 sub = self.subspace(sub)
             except (TypeError, ArithmeticError):
@@ -5342,7 +5348,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         """
         # Calling is_subspace may be way too slow and repeat work done below.
         # It will be very desirable to somehow do this step better.
-        if check and (not is_FreeModule(sub) or not sub.is_subspace(self)):
+        if check and (not isinstance(sub, FreeModule_generic) or not sub.is_subspace(self)):
             try:
                 sub = self.subspace(sub)
             except (TypeError, ArithmeticError):
@@ -5804,8 +5810,8 @@ class FreeModule_ambient(FreeModule_generic):
         """
         if self.base_ring() is R:
             return self
-        from sage.modules.free_quadratic_module import is_FreeQuadraticModule
-        if is_FreeQuadraticModule(self):
+        from sage.modules.free_quadratic_module import FreeQuadraticModule_generic
+        if isinstance(self, FreeQuadraticModule_generic):
             return FreeModule(R, self.rank(),
                               inner_product_matrix=self.inner_product_matrix(),
                               sparse=self.is_sparse())
@@ -8015,7 +8021,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
             [ 1  0 -1]
             [ 0  1  2]
         """
-        if is_FreeModule(gens):
+        if isinstance(gens, FreeModule_generic):
             gens = gens.gens()
         FreeModule_submodule_with_basis_field.__init__(self, ambient,
                                                        basis=gens, check=check,

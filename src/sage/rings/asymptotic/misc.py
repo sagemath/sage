@@ -95,8 +95,8 @@ def repr_short_to_parent(s):
     if type(P) is LazyImport:
         P = P._get_object()
 
-    from sage.structure.parent import is_Parent
-    if not is_Parent(P):
+    from sage.structure.parent import Parent
+    if not isinstance(P, Parent):
         raise ValueError("'%s' does not describe a parent." % (s,))
     return P
 
