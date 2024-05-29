@@ -1367,13 +1367,13 @@ cdef class BooleanFunction(SageObject):
         """
         self._clear_cache()
 
-        if self._hamming_weight != -1 and self(int(i)) != int(y) & 1:
-            if int(y) & 1:
-                self._hamming_weight += 1
-            else:
-                self._hamming_weight -= 1
-        
-        bitset_set_to(self._truth_table, int(i), int(y)&1)
+        if self(int(i)) != int(y) & 1:
+            if self._hamming_weight != -1:
+                if int(y) & 1:
+                    self._hamming_weight += 1
+                else:
+                    self._hamming_weight -= 1
+            bitset_set_to(self._truth_table, int(i), int(y)&1)
 
     def __getitem__(self, i):
         """

@@ -4162,7 +4162,7 @@ cdef class BooleanPolynomial(MPolynomial):
         from sage.crypto.boolean_function import BooleanFunction
 
         if threshold > 30:
-            raise ValueError("the threshold should be at most than 30")
+            raise ValueError("the threshold should be at most 30")
 
         for var in self.variables():
             if self / var == 1:
