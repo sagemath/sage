@@ -18,7 +18,7 @@
 των Maple, Mathematica, Magma, και MATLAB.
 
 Αυτό το σεμινάριο είναι ο καλύτερος τρόπος για να εξοικειωθείτε με το Sage
-σε λίγες ώρες. Μπορείτε να το διαβάσετε σε εκδόσεις HTML ή PDF ή από το
+σε λίγη ώρα. Μπορείτε να το διαβάσετε σε εκδόσεις HTML ή PDF ή από το
 σημειωματάριο Sage (κάντε κλικ στην επιλογή ``Help`` και, στη συνέχεια, κάντε
 κλικ στην επιλογή ``Tutorial`` για να διαδράσετε με το σεμινάριο μέσα από το
 Sage).
@@ -32,18 +32,4 @@ __ http://creativecommons.org/licenses/by-sa/3.0/
    :maxdepth: 2
 
    introduction
-   tour
    interactive_shell
-   interfaces
-   latex
-   programming
-   sagetex
-   afterword
-   appendix
-   bibliography
-
-Ευρετήριο και πίνακες
-=====================
-
-* :ref:`genindex`
-* :ref:`search`
