@@ -626,7 +626,7 @@ fi
 
 # Run the pre-install script, if any
 if [ -f spkg-preinst ]; then
-    sage-logger -P spkg-preinst "$SAGE_SUDO ./spkg-preinst" spkg-preinst || exit_with_error_msg "Error running the preinst script for $PKG_NAME."
+    sage-logger -P spkg-preinst "$SAGE_SUDO ./spkg-preinst" || exit_with_error_msg "Error running the preinst script for $PKG_NAME."
 fi
 
 if [ -f spkg-build ]; then
