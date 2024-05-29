@@ -621,7 +621,6 @@ class DrinfeldModuleHomset(Homset):
                     basis_poly += basis_vector[n*i + j].subs(tau**n)*K_basis[j]*tau**i
             basis.append(self(basis_poly))
         return basis
-    
 
     def motive_power_decomposition(self, upper):
         r"""
@@ -639,26 +638,20 @@ class DrinfeldModuleHomset(Homset):
         K = domain.base_over_constants_field()
         coeff = domain.coefficients(sparse=False)
         recurrence_relation = [K(coeff[i]/coeff[r]) for i in range(r)]
-#	base_expansions = matrix.identity(r)
         expansion_list = [[K(1) if i == j else K(0) for j in range(r)] for i in range(r)]
-        for i in range(0, upper - r):
-            #print(f'x: {x}')
+        for i in range(0, upper - r + 1):
             z = K.gen()
-            #print(f'genr: {z}')
-            #print(f'multi: {x*z}')
-            #print(f'{[expansion_list[i][k] for k in range(r)]}')
-            #print(f'expansions: {[K(expansion_list[i][k])*x for k in range(r)]}')
             next_expansion = [-1*sum([recurrence_relation[j].frobenius(i*qord)*expansion_list[i+j][k] \
-                                for j in range(r)]) + expansion_list[i][k]*x for k in range(r)]
+                                for j in range(r)]) + (expansion_list[i][k]/K(coeff[r]).frobenius(i*qord))*x for k in range(r)]
             expansion_list.append(next_expansion)
         return expansion_list
-				
 
     def motive_basis(self):
         r"""
 	
         """
         domain, codomain = self.domain(), self.codomain()
+        A = domain.function_ring()
         Fq = domain._Fq
         K = domain.base_over_constants_field()
         q = Fq.cardinality()
@@ -666,7 +659,13 @@ class DrinfeldModuleHomset(Homset):
         r = domain.rank()
         n = K.degree(Fq)
         qorder = logb(q, char)
+        basis_expansions = self.motive_power_decomposition(2*r - 2)
 
+        sys = Matrix(A, r*n)
+        for alpha in range(r-1):
+            for k in range(r-1):
+                for i in range(r-1):
+                    pass
 
     def _frobenius_matrix(self, order=1, K_basis=None):
         r"""
