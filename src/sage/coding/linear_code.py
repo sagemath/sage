@@ -1144,18 +1144,20 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [15, 7] BCH Code over GF(2) with designed distance 5
             sage: C.is_subcode(D)
             True
-            sage: C.minimum_distance()                                                  # needs sage.libs.gap
+
+            sage: # needs sage.libs.gap
+            sage: C.minimum_distance()
             7
-            sage: D.minimum_distance()                                                  # needs sage.libs.gap
+            sage: D.minimum_distance()
             5
             sage: aux = codes.HammingCode(GF(2),2)
             sage: aux = aux.dual_code()
-            sage: aux.minimum_distance()                                                # needs sage.libs.gap
+            sage: aux.minimum_distance()
             2
             sage: Cx = D.construction_x(C,aux)
             sage: Cx
             [18, 7] linear code over GF(2)
-            sage: Cx.minimum_distance()                                                 # needs sage.libs.gap
+            sage: Cx.minimum_distance()
             7
         """
         if not other.is_subcode(self):
