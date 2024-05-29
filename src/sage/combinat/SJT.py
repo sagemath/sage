@@ -1,18 +1,14 @@
 r"""
-Steinhaus-Johnson-Trotter algorithm.
+The Steinhaus-Johnson-Trotter algorithm generates all permutations of a list in
+an order such that each permutation is obtained by transposing two adjacent
+elements from the previous permutation.
 
-The Steinhaus-Johnson-Trotter algorithm generates permutations in a specific
-order by transposing only two elements from the list at each operation. The
-algorithm stores an internal state for every element in the permutated list
-which corresponds to their direction. To know which elements to move, the
-internal state table is accessed and the transposition of two elements is then
-done.
+Each element of the list has a direction (initialized at -1) that changes at
+each permutation and that is used to determine which elements to transpose. Thus
+in addition to the permutation itself, the direction of each element is also
+stored.
 
-It is important to notice that the permutations are generated in a different
-order than the default lexicographic algorithm.
-
-The class defined here is meant to be used in the ``Permutation`` class when
-called with the parameter ``algorithm='sjt'``.
+Note that the permutations are not generated in lexicographic order.
 
 AUTHORS:
 
@@ -28,46 +24,128 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-class SJT:
+from sage.combinat.combinat import CombinatorialElement
+
+class SJT(CombinatorialElement):
+    r"""
+    A representation of a list permuted using the Steinhaus-Johnson-Trotter
+    algorithm.
+
+    Each element of the list has a direction (initialized at -1) that changes at
+    each permutation and that is used to determine which elements to transpose.
+    The directions have three possible values:
+
+    - ``-1``: element tranposes to the left
+
+    - ``1``: element transposes to the right
+
+    - ``0``: element does not move
+
+    Thus in addition to the permutation itself, the direction of each element is
+    also stored.
+
+    Note that the permutations are not generated in lexicographic order.
+
+    .. WARNING::
+
+        An ``SJT`` object should always be created with identity permutation for
+        the algorithm to behave properly. If the identity permutation is not
+        provided, it expects a coherent list of directions according to the
+        provided input. This list is not checked.
+
+    .. TODO::
+
+        Implement the previous permutation for the Steinhaus-Johnson-Trotter
+        algorithm.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.SJT import SJT
+        sage: s = SJT([1, 2, 3, 4]); s
+        [1, 2, 3, 4]
+        sage: s, d = s.next(); s, d
+        ([1, 2, 4, 3], [0, -1, -1, -1])
+        sage: p = Permutation(s, algorithm='sjt', directions=d)
+        sage: p
+        [1, 2, 4, 3]
+        sage: p.next()
+        [1, 4, 2, 3]
+
+    TESTS::
+        sage: from sage.combinat.SJT import SJT
+        sage: s = SJT([1, 2, 3, 4]); s
+        [1, 2, 3, 4]
+        sage: s = SJT([1]); s
+        [1]
+        sage: s, _ = s.next(); s
+        False
+        sage: s = SJT([]); s
+        []
+        sage: s, _ = s.next(); s
+        False
+    """
     def __init__(self, l, directions=None) -> None:
         r"""
         Transpose two elements at positions ``a`` and ``b`` in ``perm`` and
         their corresponding directions as well following the
         Steinhaus-Johnson-Trotter algorithm.
 
+        Each permutation is obtained by transposing two adjacent elements from
+        the previous permutation.
+
         INPUT:
 
-        - ``l`` -- list: a list of ordered ``int``.
+        - ``l`` -- list; a list of ordered ``int``.
 
-        - ``directions`` -- list (default: ``None`` ): a list of directions for
+        - ``directions`` -- list (default: ``None`` ); a list of directions for
           each element in the permuted list. Used when constructing permutations
-          from a pre-defined internal state. There are three possible values:
+          from a pre-defined internal state.
 
-          - ``-1`` -> element tranposes to the left
+        EXAMPLES::
 
-          - ``1``  -> element transposes to the right
+            sage: from sage.combinat.SJT import SJT
+            sage: s = SJT([1, 2, 3, 4]); s
+            [1, 2, 3, 4]
+            sage: s, d = s.next(); s, d
+            ([1, 2, 4, 3], [0, -1, -1, -1])
+            sage: p = Permutation(s, algorithm='sjt', directions=d)
+            sage: p
+            [1, 2, 4, 3]
+            sage: p.next()
+            [1, 4, 2, 3]
 
-          - ``0``  -> element does not move
+        TESTS::
 
+            sage: from sage.combinat.SJT import SJT
+            sage: s = SJT([1, 3, 2, 4])
+            Traceback (most recent call last):
+            ...
+            ValueError: no internal state directions were given for non-identity
+            starting permutation for Steinhaus-Johnson-Trotter algorithm
+            sage: s = SJT([]); s
+            []
+            sage: s, _ = s.next(); s
+            False
         """
         # The permuted list.
-        self.__perm = l
+        self._list = l
 
-        # The length of the permuted list.
-        self.__n = len(l)
+        # The length of the permuted list. Return early on empty list.
+        self._n = len(l)
+        if self._n == 0:
+            return
 
         if directions is None:
-            if not all(l[i] <= l[i+1] for i in range(len(l) - 1)):
-                raise ValueError("No internal state directions were given for "
+            if not all(l[i] <= l[i+1] for i in range(self._n - 1)):
+                raise ValueError("no internal state directions were given for "
                 "non-identity starting permutation for "
-                "Steinhaus-Johnson-Trotter algorithm. Expected identity "
-                "permutation.")
-            self.__directions = [-1] * self.__n
+                "Steinhaus-Johnson-Trotter algorithm")
+            self._directions = [-1] * self._n
 
             # The first element has null direction.
-            self.__directions[0] = 0
+            self._directions[0] = 0
         else:
-            self.__directions = directions
+            self._directions = directions
 
     def __idx_largest_element_non_zero_direction(self, perm, directions):
         r"""
@@ -75,7 +153,7 @@ class SJT:
         """
         largest = 0
         index = None
-        for i in range(self.__n):
+        for i in range(self._n):
             if directions[i] != 0:
                 e = perm[i]
                 if e > largest:
@@ -86,18 +164,46 @@ class SJT:
 
     def next(self):
         r"""
-        Produce the next permutation following the Steinhaus-Johnson-Trotter
-        algorithm.
+        Produce the next permutation of ``self`` following the
+        Steinhaus-Johnson-Trotter algorithm.
 
-        OUTPUT: the list of the next permutation.
+        OUTPUT: a tuple of
+
+        - the list of the next permutation
+
+        - the list of associated directions
+
+        EXAMPLES::
+
+            sage: from sage.combinat.SJT import SJT
+            sage: s = SJT([1, 2, 3, 4])
+            sage: s, d = s.next()
+            sage: s = SJT(s, directions=d)
+            sage: s, _ = s.next(); s
+            [1, 4, 2, 3]
+
+        TESTS::
+
+            sage: from sage.combinat.SJT import SJT
+            sage: s = SJT([1, 2, 3])
+            sage: s.next()
+            ([1, 3, 2], [0, -1, -1])
+
+            sage: s = SJT([1])
+            sage: s.next()
+            (False, None)
         """
+        # Return on empty list.
+        if self._n == 0:
+            return False, None
+
         # Copying lists of permutation and directions to avoid changing internal
         # state of the algorithm if ``next()`` is called without reassigning.
-        perm = self.__perm[:]
-        directions = self.__directions[:]
+        perm = self._list[:]
+        directions = self._directions[:]
 
         # Assume that the element to move is n (which will be in most cases).
-        selected_elt = self.__n
+        selected_elt = self._n
         xi = perm.index(selected_elt)
         direction = directions[xi]
 
@@ -122,7 +228,7 @@ class SJT:
         # If the transposition results in the largest element being on one edge
         # or if the following element in its direction is greater than it, then
         # then set its direction to 0
-        if new_pos == 0 or new_pos == self.__n - 1 or \
+        if new_pos == 0 or new_pos == self._n - 1 or \
             perm[new_pos + direction] > selected_elt:
             directions[new_pos] = 0
 
@@ -130,8 +236,8 @@ class SJT:
         # element is greater than selected element, change its direction towards
         # the selected element. This loops has no reason to be if selected
         # element is n and this will be the case most of the time.
-        if selected_elt != self.__n:
-            for i in range(self.__n):
+        if selected_elt != self._n:
+            for i in range(self._n):
                 if perm[i] > selected_elt:
                     if i < new_pos:
                         directions[i] = 1
@@ -139,3 +245,5 @@ class SJT:
                         directions[i] = -1
 
         return perm, directions
+
+    __next__ = next
