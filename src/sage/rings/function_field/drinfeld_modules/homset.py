@@ -621,29 +621,43 @@ class DrinfeldModuleHomset(Homset):
                     basis_poly += basis_vector[n*i + j].subs(tau**n)*K_basis[j]*tau**i
             basis.append(self(basis_poly))
         return basis
+    
 
-	def motive_power_decomposition(self, lower, upper):
-		r"""
-		Computes coefficients a_0, .., a_{r-1} such that
-		\tau^t = a_{r-1}\tau^{r-1} + .... + a_{0}
-		with each a_i \in Fq[x].
-		"""
-		domain = self.domain()
-		Fq = domain._Fq
-		char, q = Fq.characteristic(), Fq.cardinality()
-		qord = logb(q, char)
-		coeff = domain.coefficients(sparse=False)
-		recurrence_relation = [-coeff[i]/coeff[r] for i in range(r)]
-#		base_expansions = matrix.identity(r)
-		expansion_list = [[1 if i == j else 0 for j in range(r)] for i in range(r)]
-		for i in range(0, upper - r + 1):
-			next_expansion = [ sum([recurrence_relation[j].frobenius(i*qord)*expansion_list[i+]
+    def motive_power_decomposition(self, upper):
+        r"""
+	Computes coefficients a_0, .., a_{r-1} such that
+	\tau^t = a_{r-1}\tau^{r-1} + .... + a_{0}
+	with each a_i \in Fq[x] for each t < upper..
+	"""
+        domain = self.domain()
+        r = domain.rank()
+        A = domain.function_ring()
+        x = A.gen()
+        Fq = domain._Fq
+        char, q = Fq.characteristic(), Fq.cardinality()
+        qord = char.log(q)
+        K = domain.base_over_constants_field()
+        coeff = domain.coefficients(sparse=False)
+        recurrence_relation = [K(coeff[i]/coeff[r]) for i in range(r)]
+#	base_expansions = matrix.identity(r)
+        expansion_list = [[K(1) if i == j else K(0) for j in range(r)] for i in range(r)]
+        for i in range(0, upper - r):
+            #print(f'x: {x}')
+            z = K.gen()
+            #print(f'genr: {z}')
+            #print(f'multi: {x*z}')
+            #print(f'{[expansion_list[i][k] for k in range(r)]}')
+            #print(f'expansions: {[K(expansion_list[i][k])*x for k in range(r)]}')
+            next_expansion = [-1*sum([recurrence_relation[j].frobenius(i*qord)*expansion_list[i+j][k] \
+                                for j in range(r)]) + expansion_list[i][k]*x for k in range(r)]
+            expansion_list.append(next_expansion)
+        return expansion_list
 				
 
-	def motive_basis(self):
-		r"""
-		
-		"""
+    def motive_basis(self):
+        r"""
+	
+        """
         domain, codomain = self.domain(), self.codomain()
         Fq = domain._Fq
         K = domain.base_over_constants_field()
