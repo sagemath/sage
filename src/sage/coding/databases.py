@@ -4,8 +4,6 @@ Access functions to online databases for coding theory
 """
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.libs.gap.libgap', 'libgap')
-
 # Import the following function so that it is available as
 # sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
 # somewhat like a catalog in this respect.
@@ -54,6 +52,7 @@ def best_linear_code_in_guava(n, k, F):
     from sage.features.gap import GapPackage
     from .linear_code import LinearCode
     GapPackage("guava", spkg="gap_packages").require()
+    from sage.libs.gap.libgap import libgap
     libgap.load_package("guava")
     C = libgap.BestKnownLinearCode(n, k, F)
     return LinearCode(C.GeneratorMat()._matrix_(F))
@@ -114,6 +113,7 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
     """
     from sage.features.gap import GapPackage
     GapPackage("guava", spkg="gap_packages").require()
+    from sage.libs.gap.libgap import libgap
     libgap.load_package("guava")
     return libgap.BoundsMinimumDistance(n, k, F)
 
