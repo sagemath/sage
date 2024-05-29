@@ -5,14 +5,15 @@ Access functions to online databases for coding theory
 from sage.misc.lazy_import import lazy_import
 
 # Import the following function so that it is available as
-# sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
-# somewhat like a catalog in this respect.
+# - sage.codes.databases.self_dual_binary_codes
+# - codes.databases.self_dual_binary_codes (which functions as a catalog).
 lazy_import('sage.coding.self_dual_codes', 'self_dual_binary_codes')
 
 del lazy_import
 
 # Do not put any global imports here since this module is accessible as
-# sage.codes.databases.<tab>
+# - sage.codes.databases.<tab>
+# - codes.databases.<tab>
 
 
 def best_linear_code_in_guava(n, k, F):
