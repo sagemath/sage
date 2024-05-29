@@ -2368,6 +2368,11 @@ cdef class Matroid(SageObject):
         """
         Return the circuits of the matroid.
 
+        INPUT:
+
+        - ``k`` -- integer (optional); if provided, return only circuits of
+          length `k`
+
         OUTPUT: :class:`SetSystem`
 
         .. SEEALSO::
