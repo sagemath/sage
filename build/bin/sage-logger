@@ -82,6 +82,8 @@ if [ -z "$logfile" ]; then
     fi
 fi
 
+# Remainder of the script is with logging to "$logfile" and timing.
+
 timefile="$logdir/$logname.time"
 rm -f "$timefile"
 time_cmd() {
