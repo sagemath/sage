@@ -480,7 +480,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         if coefficients is not None and (x is not None and (not isinstance(x, int) or x)):
             raise ValueError("coefficients must be None if x is provided")
 
-        BR = self.base_ring()
+        BR = self._internal_poly_ring.base_ring()  # this is the ring containing the elements of the stream
         if isinstance(constant, (tuple, list)):
             constant, degree = constant
         if isinstance(degree, (tuple, list)):
@@ -559,7 +559,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 if isinstance(stream, Stream_zero):
                     return self.zero()
                 elif isinstance(stream, Stream_exact):
-                    BR = self.base_ring()
                     if x.parent()._arity != 1:
                         # Special case for constant series
                         if stream._degree == 1:
@@ -793,7 +792,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         We need to specify the initial values for the degree 1 and 2
         components to get a unique solution in the previous example::
 
-            sage: L.<z> = LazyPowerSeriesRing(QQ["x,y,f1"].fraction_field())
+            sage: L.<z> = LazyPowerSeriesRing(QQ['x','y','f1'].fraction_field())
             sage: L.base_ring().inject_variables()
             Defining x, y, f1
             sage: F = L.undefined()
@@ -2775,7 +2774,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             valuation = 0
 
         R = self._laurent_poly_ring
-        BR = self.base_ring()
+        BR = self._internal_poly_ring.base_ring()  # this is the ring containing the elements of the stream
         if x is None:
             assert degree is None
             coeff_stream = Stream_uninitialized(valuation)
@@ -2825,11 +2824,8 @@ class LazyPowerSeriesRing(LazySeriesRing):
         if isinstance(x, LazyPowerSeries):
             stream = x._coeff_stream
             if isinstance(stream, Stream_exact):
-                if self._arity == 1:
-                    BR = self.base_ring()
-                else:
-                    BR = self._laurent_poly_ring
                 coeffs = [BR(val) for val in stream._initial_coefficients]
+                constant = BR(stream._constant)
                 valuation = stream._approximate_order
                 for i, c in enumerate(coeffs):
                     if c:
@@ -2841,7 +2837,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
                     coeffs = []
                 return self(coeffs,
                             degree=stream._degree,
-                            constant=self.base_ring()(stream._constant),
+                            constant=constant,
                             valuation=valuation)
             return self.element_class(self, stream)
 

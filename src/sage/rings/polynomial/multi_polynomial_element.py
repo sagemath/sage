@@ -177,9 +177,11 @@ class MPolynomial_element(MPolynomial):
             K = x[0].parent()
         except AttributeError:
             K = self.parent().base_ring()
-        y = K(0)
+        y = K.zero()
         for m, c in self.element().dict().items():
-            y += c * prod(v ** e for v, e in zip(x, m) if e)
+            p = prod(v ** e for v, e in zip(x, m) if e)
+            cp = c * p
+            y += cp
         return y
 
     def _richcmp_(self, right, op):

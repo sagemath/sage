@@ -95,6 +95,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
 from sage.arith.misc import divisors
 from sage.misc.misc_c import prod
@@ -105,6 +106,8 @@ from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
+from sage.rings.fraction_field import FractionField_generic
+from sage.rings.fraction_field_element import FractionFieldElement
 from sage.misc.cachefunc import cached_method
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
@@ -1340,6 +1343,84 @@ class VariablePool(UniqueRepresentation):
         """
         return self._pool
 
+from sage.categories.functor import Functor
+from sage.categories.pushout import ConstructionFunctor
+from sage.categories.fields import Fields
+from sage.categories.integral_domains import IntegralDomains
+from sage.categories.quotient_fields import QuotientFields
+
+class CoefficientRingFunctor(ConstructionFunctor):
+    rank = 0
+
+    def __init__(self):
+        Functor.__init__(self, IntegralDomains(), Fields())
+
+    def _apply_functor(self, R):
+        return CoefficientRing(R)
+
+class CoefficientRingElement(FractionFieldElement):
+    pass
+
+class CoefficientRing(UniqueRepresentation, FractionField_generic):
+    def __init__(self, base_ring):
+        """
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import CoefficientRing
+            sage: PF = CoefficientRing(ZZ)
+            sage: S.<q, t> = PF[]
+            sage: c = PF.gen(0)
+            sage: p = c * q
+            sage: p
+            FESDUMMY_0*q
+            sage: p.parent()
+            Multivariate Polynomial Ring in q, t over CoefficientRing over Integer Ring
+
+            sage: p = c + q
+            sage: p
+            q + FESDUMMY_0
+            sage: p.parent()
+            Multivariate Polynomial Ring in q, t over CoefficientRing over Integer Ring
+
+            sage: L.<a,b> = LazyPowerSeriesRing(ZZ)
+            sage: p = a + c
+            sage: p.parent()
+            Multivariate Lazy Taylor Series Ring in a, b over CoefficientRing over Integer Ring
+
+            sage: S.<q, t> = ZZ[]
+            sage: PF = CoefficientRing(S)
+            sage: L.<a, b> = LazyPowerSeriesRing(S)
+            sage: c = PF.gen(0)
+            sage: p = a + c
+            sage: p.parent()
+            Multivariate Lazy Taylor Series Ring in a, b over CoefficientRing over Multivariate Polynomial Ring in q, t over Integer Ring
+
+            sage: PF = CoefficientRing(ZZ)
+            sage: S.<q, t> = PF[]
+            sage: L.<a, b> = LazyPowerSeriesRing(ZZ)
+            sage: s = (q + PF.gen(0)*t)
+            sage: g = (a, b-a)
+            sage: s(g)
+            ((-FESDUMMY_0+1)*a+FESDUMMY_0*b)
+            sage: s(g).parent()
+            Multivariate Lazy Taylor Series Ring in a, b over CoefficientRing over Integer Ring
+        """
+        B = InfinitePolynomialRing(base_ring, names=["FESDUMMY"])
+        FractionField_generic.__init__(self, B,
+                                       element_class=CoefficientRingElement,
+                                       category=QuotientFields())
+
+    def _repr_(self):
+        return "CoefficientRing over %s" % self.base_ring()
+
+    def gen(self, i):
+        return self._element_class(self, self._R.gen()[i])
+
+    def construction(self):
+        return (CoefficientRingFunctor(),
+                self.base_ring())
+
 
 class Stream_uninitialized(Stream):
     r"""
@@ -1523,9 +1604,13 @@ class Stream_uninitialized(Stream):
 
         self._coefficient_ring = coefficient_ring
         self._base_ring = base_ring
-        self._P = InfinitePolynomialRing(self._base_ring, names=["FESDUMMY"])
-        self._PF = self._P.fraction_field()
-        if self._coefficient_ring != self._base_ring:
+        #        self._P = InfinitePolynomialRing(self._base_ring, names=["FESDUMMY"])
+        #        self._PF = CoefficientRing(self._P, CoefficientRing.Element)
+        self._PF = CoefficientRing(self._base_ring)
+        self._P = self._PF.base()
+        if self._coefficient_ring == self._base_ring:
+            self._U = self._PF
+        else:
             self._U = self._coefficient_ring.change_ring(self._PF)
         self._pool = VariablePool(self._P)
         self._uncomputed = True
@@ -1733,10 +1818,11 @@ class Stream_uninitialized(Stream):
             # down the multiplication enormously
             if self._coefficient_ring == self._base_ring:
                 x = (self._pool.new_variable(self._name + "[%s]" % n0)
-                     * self._terms_of_degree(n0, self._PF)[0])
+                     * self._terms_of_degree(n0, self._P)[0])
             else:
                 x = sum(self._pool.new_variable(self._name + "[%s]" % m) * m
-                        for m in self._terms_of_degree(n0, self._PF))
+                        for m in self._terms_of_degree(n0, self._P))
+            x = self._U(x)
             self._cache.append(x)
 
         return x
@@ -2537,7 +2623,10 @@ class Stream_add(Stream_binaryCommutative):
             sage: [h.get_coefficient(i) for i in range(10)]
             [0, 2, 6, 12, 20, 30, 42, 56, 72, 90]
         """
-        return self._left[n] + self._right[n]
+        l = self._left[n]
+        r = self._right[n]
+        m = l + r
+        return m # self._left[n] + self._right[n]
 
 
 class Stream_sub(Stream_binary):
@@ -4366,8 +4455,10 @@ class Stream_derivative(Stream_unary):
             sage: [f2[i] for i in range(-1, 4)]
             [0, 2, 6, 12, 20]
         """
-        return (ZZ.prod(range(n + 1, n + self._shift + 1))
-                * self._series[n + self._shift])
+        c1 = self._series[n + self._shift]
+        c2 = ZZ.prod(range(n + 1, n + self._shift + 1))
+        p = c1 * c2
+        return p
 
     def __hash__(self):
         """

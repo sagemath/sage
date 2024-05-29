@@ -3691,7 +3691,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             raise ValueError("can only compose with a positive valuation series")
         # WARNING: d_self need not be a proper element of P, e.g. for
         # multivariate power series
-        d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
+        d_self = Stream_function(lambda n: R(n + 1) * coeff_stream[n + 1],
                                  P.is_sparse(), 0)
         coeff_stream_inverse = Stream_cauchy_invert(coeff_stream)
         # d_self and coeff_stream_inverse always commute
@@ -5260,24 +5260,18 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         # The arity is at least 2
         gv = min(h._coeff_stream._approximate_order for h in g)
-        gR = None
 
         def coefficient(n):
-            nonlocal gR
             r = R.zero()
             for i in range(n // gv + 1):
                 c = coeff_stream[i]
-                if c.parent() == self.base_ring():
+                B = c.parent()
+                if B is ZZ or B is QQ or B == self.base_ring() or B == self.base_ring().fraction_field():
                     c = P(c)
                     r += c[n]
-                elif c.parent().base_ring() is self.base_ring():
-                    r += c(g)[n]
                 else:
-                    if gR is None:
-                        S = c.parent().base_ring()
-                        gR = [h.change_ring(S).map_coefficients(S) for h in g]
-                    s = c(gR)[n]
-                    r += s
+                    d = c(g)
+                    r += d[n]
             return r
 
         return P.element_class(P, Stream_function(coefficient,

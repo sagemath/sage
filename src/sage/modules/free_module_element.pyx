@@ -4516,7 +4516,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             (-2/3, 0, 2, 2/3*pi)
         """
         if right._parent is self._parent._base:
-            v = [(<RingElement>x)._mul_(right) for x in self._entries]
+            v = [x._mul_(right) for x in self._entries]
         else:
             v = [x * right for x in self._entries]
         return self._new_c(v)
@@ -4967,7 +4967,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = {}
         if right:
             for i, a in self._entries.iteritems():
-                prod = (<RingElement>a)._mul_(right)
+                prod = a._mul_(right)
                 if prod:
                     v[i] = prod
         return self._new_c(v)
