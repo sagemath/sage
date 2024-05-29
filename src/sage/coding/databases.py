@@ -2,7 +2,6 @@
 r"""
 Access functions to online databases for coding theory
 """
-from sage.features.gap import GapPackage
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.libs.gap.libgap', 'libgap')
@@ -52,6 +51,7 @@ def best_linear_code_in_guava(n, k, F):
     between 2 and 4. Use ``bounds_on_minimum_distance_in_guava(10,5,GF(2))``
     for further details.
     """
+    from sage.features.gap import GapPackage
     from .linear_code import LinearCode
     GapPackage("guava", spkg="gap_packages").require()
     libgap.load_package("guava")
@@ -112,6 +112,7 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
           upperBound := 4,
           upperBoundExplanation := ... )
     """
+    from sage.features.gap import GapPackage
     GapPackage("guava", spkg="gap_packages").require()
     libgap.load_package("guava")
     return libgap.BoundsMinimumDistance(n, k, F)
