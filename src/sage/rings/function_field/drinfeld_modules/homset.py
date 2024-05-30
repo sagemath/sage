@@ -618,6 +618,51 @@ class DrinfeldModuleHomset(Homset):
             basis.append(self(basis_poly))
         return basis
 
+    def motive_power_decomposition(self, upper):
+        r"""
+	Computes coefficients a_0, .., a_{r-1} such that
+	\tau^t = a_{r-1}\tau^{r-1} + .... + a_{0}
+	with each a_i \in Fq[x] for each t < upper..
+	"""
+        domain = self.domain()
+        r = domain.rank()
+        A = domain.function_ring()
+        x = A.gen()
+        Fq = domain._Fq
+        char, q = Fq.characteristic(), Fq.cardinality()
+        qord = char.log(q)
+        K = domain.base_over_constants_field()
+        coeff = domain.coefficients(sparse=False)
+        recurrence_relation = [K(coeff[i]/coeff[r]) for i in range(r)]
+        expansion_list = [[K(1) if i == j else K(0) for j in range(r)] for i in range(r)]
+        for i in range(0, upper - r + 1):
+            z = K.gen()
+            next_expansion = [-1*sum([recurrence_relation[j].frobenius(i*qord)*expansion_list[i+j][k] \
+                                for j in range(r)]) + (expansion_list[i][k]/K(coeff[r]).frobenius(i*qord))*x for k in range(r)]
+            expansion_list.append(next_expansion)
+        return expansion_list
+
+    def motive_basis(self):
+        r"""
+	
+        """
+        domain, codomain = self.domain(), self.codomain()
+        A = domain.function_ring()
+        Fq = domain._Fq
+        K = domain.base_over_constants_field()
+        q = Fq.cardinality()
+        char = Fq.characteristic()
+        r = domain.rank()
+        n = K.degree(Fq)
+        qorder = logb(q, char)
+        basis_expansions = self.motive_power_decomposition(2*r - 2)
+
+        sys = Matrix(A, r*n)
+        for alpha in range(r-1):
+            for k in range(r-1):
+                for i in range(r-1):
+                    pass
+
     def _frobenius_matrix(self, order=1, K_basis=None):
         r"""
         Internal method for computing the matrix of the Frobenius endomorphism
