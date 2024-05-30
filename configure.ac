@@ -98,6 +98,7 @@ AC_ARG_WITH([sage-venv],
 AC_SUBST([SAGE_VENV])
 
 AC_SUBST([SAGE_DOCS], ['${SAGE_LOCAL}'])dnl Quoted so that it is resolved at build time by shell/Makefile
+AC_SUBST([SAGE_VENV_DOCS], ['${SAGE_VENV}'])dnl Quoted so that it is resolved at build time by shell/Makefile
 
 #---------------------------------------------------------
 
@@ -477,7 +478,8 @@ AC_ARG_ENABLE([doc],
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
     AS_VAR_IF([enableval], [no], [dnl Disable the docbuild by disabling the install tree for documentation
-        AS_VAR_SET([SAGE_DOCS], [])dnl
+        AS_VAR_SET([SAGE_DOCS], [])
+        AS_VAR_SET([SAGE_VENV_DOCS], [])
     ])
   ])
 
