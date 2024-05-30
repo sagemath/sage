@@ -2,6 +2,8 @@
 Utilities for Sage-mpmath interaction
 """
 
+cimport gmpy2
+
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.rings.integer cimport Integer
@@ -14,6 +16,8 @@ from sage.libs.gmp.all cimport *
 
 from sage.rings.real_mpfr cimport RealField
 
+gmpy2.import_gmpy2()
+
 
 cdef mpfr_from_mpfval(mpfr_t res, tuple x):
     """
@@ -21,12 +25,12 @@ cdef mpfr_from_mpfval(mpfr_t res, tuple x):
     data tuple.
     """
     cdef int sign
-    cdef Integer man
+    cdef gmpy2.mpz man
     cdef long exp
     cdef long bc
     sign, man, exp, bc = x
     if man:
-        mpfr_set_z(res, man.value, MPFR_RNDZ)
+        mpfr_set_z(res, man.z, MPFR_RNDZ)
         if sign:
             mpfr_neg(res, res, MPFR_RNDZ)
         mpfr_mul_2si(res, res, exp, MPFR_RNDZ)
@@ -70,7 +74,7 @@ cdef mpfr_to_mpfval(mpfr_t value):
         mpz_tdiv_q_2exp(man.value, man.value, trailing)
         exp += trailing
     bc = mpz_sizeinbase(man.value, 2)
-    return (sign, man, int(exp), bc)
+    return (sign, man.__mpz__(), int(exp), bc)
 
 
 def mpmath_to_sage(x, prec):
