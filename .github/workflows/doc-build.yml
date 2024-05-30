@@ -250,7 +250,7 @@ jobs:
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           ./config.status && make SAGE_WHEELS=yes SAGE_EDITABLE=no sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
-          (cd local/var/lib/sage/ && zip /sage/sagemath_doc_wheels.zip wheels/sagemath_doc*.whl)
+          (cd venv/var/lib/sage/ && zip /sage/sagemath_doc_wheels.zip wheels/sagemath_doc*.whl)
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy live doc
