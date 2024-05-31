@@ -14,6 +14,7 @@ Features for testing the presence of package systems ``sage_spkg``, ``conda``, `
 
 import os
 import re
+import shlex
 import sys
 import sysconfig
 
@@ -69,20 +70,20 @@ class PackageSystem(Feature):
 
         - ``spkgs`` -- string, whitespace-separated list of SPKG names or PURLs
 
-        OUTPUT: string.
+        OUTPUT: list of strings.
 
         EXAMPLES::
 
             sage: from sage.features.pkg_systems import PackageSystem
             sage: debian = PackageSystem('debian')
-            sage: debian._system_packages('fflas_ffpack pypi/cvxopt pkg:generic/gmp')
-            'fflas-ffpack\nlibgmp-dev'
+            sage: debian._system_packages('fflas_ffpack pypi/cvxopt pkg:generic/gmp')  # optional - SAGE_ROOT
+            ['fflas-ffpack', 'libgmp-dev']
         """
         from subprocess import run, CalledProcessError
         system = self.name
         proc = run(f'sage-get-system-packages {system} {spkgs}',
                    shell=True, capture_output=True, text=True, check=True)
-        return proc.stdout.strip()
+        return proc.stdout.strip().split('\n')
 
     def _spkg_installation_hint(self, spkgs, prompt, feature):
         r"""
@@ -101,7 +102,8 @@ class PackageSystem(Feature):
         lines = []
         system = self.name
         try:
-            system_packages = self._system_packages(spkgs)
+            system_packages = ' '.join(shlex.quote(pkg)
+                                       for pkg in self._system_packages(spkgs))
             print_sys = f'sage-print-system-package-command {system} --verbose --sudo --prompt="{prompt}"'
             command = f'{print_sys} update && {print_sys} install {system_packages}'
             proc = run(command, shell=True, capture_output=True, text=True, check=True)
@@ -174,19 +176,36 @@ class SagePackageSystem(PackageSystem):
             To install foobarability using the Sage package manager, you can try to run:
             ### sage -i foo bar
         """
-        spkgs = self._system_packages(spkgs)
+        spkgs = ' '.join(shlex.quote(pkg) for pkg in self._system_packages(spkgs))
         lines = []
         lines.append(f'To install {feature} using the Sage package manager, you can try to run:')
         lines.append(f'{prompt}sage -i {spkgs}')
         return '\n'.join(lines)
 
     def _system_packages(self, spkgs):
-        if 'pkg:pypi/' not in spkgs:
-            return spkgs
+        r"""
+        Return system packages corresponding to SPKG names or PURLs.
+
+        INPUT:
+
+        - ``spkgs`` -- string, whitespace-separated list of SPKG names or PURLs
+
+        OUTPUT: list of strings.
+
+        EXAMPLES::
+
+            sage: from sage.features.pkg_systems import SagePackageSystem
+            sage: SagePackageSystem()._system_packages('gfortran')
+            ['gfortran']
+            sage: SagePackageSystem()._system_packages('pkg:pypi/cvxopt')               # needs sage_spkg
+            ['cvxopt']
+        """
+        if 'pkg:' not in spkgs and 'pypi/' not in spkgs and 'generic/' not in spkgs:
+            return spkgs.split()
         from subprocess import run, CalledProcessError
         proc = run(f'sage-package list {spkgs}',
                     shell=True, capture_output=True, text=True, check=True)
-        return proc.stdout.strip()
+        return proc.stdout.strip().split('\n')
 
 
 class PipPackageSystem(PackageSystem):
@@ -245,7 +264,7 @@ class PipPackageSystem(PackageSystem):
         # https://github.com/pypa/pip/blob/51de88ca6459fdd5213f86a54b021a80884572f9/src/pip/_internal/utils/misc.py#L648
         marker = os.path.join(sysconfig.get_path("stdlib"), "EXTERNALLY-MANAGED")
         is_externally_managed = os.path.isfile(marker)
-        pip_packages = self._system_packages(spkgs)
+        pip_packages = ' '.join(shlex.quote(pkg) for pkg in self._system_packages(spkgs))
         if not is_virtualenv and is_externally_managed:
             lines.append(f'To install {feature} using the pip package manager:')
             lines.append(f'Note that this Sage is installed in an externally managed Python environment.')
@@ -271,25 +290,24 @@ class PipPackageSystem(PackageSystem):
 
         - ``spkgs`` -- string, whitespace-separated list of SPKG names or PURLs
 
-        OUTPUT: string.
+        OUTPUT: list of strings.
 
         EXAMPLES::
 
             sage: from sage.features.pkg_systems import PipPackageSystem
             sage: PipPackageSystem()._system_packages('pypi/cvxopt pkg:pypi/pynormaliz')
-            'cvxopt pynormaliz'
+            ['cvxopt...', 'pynormaliz...']
             sage: PipPackageSystem()._system_packages('pypi/cvxopt pkg:pypi/pynormaliz dateutil')  # optional - sage_spkg
-            'cvxopt pynormaliz cvxopt>=1.2.5 python-dateutil... pynormaliz...'
+            ['cvxopt...', 'python-dateutil...', 'pynormaliz...']
         """
+        result = super()._system_packages(spkgs)
+        if result:
+            return result
         all_packages = spkgs.split()
         pypi_packages = [m.group(2) for package in all_packages
                          if (m := re.fullmatch('(pkg:)?pypi/(.*)', package))]
         other_packages = [package for package in all_packages
                           if not re.fullmatch('(pkg:)?pypi/(.*)', package)]
         if other_packages:
-            from subprocess import run, CalledProcessError
-            system = self.name
-            proc = run(f'sage-get-system-packages {system} {spkgs}',
-                       shell=True, capture_output=True, text=True, check=True)
-            pypi_packages.extend(proc.stdout.split())
-        return ' '.join(pypi_packages)
+            return []
+        return sorted(pypi_packages)
