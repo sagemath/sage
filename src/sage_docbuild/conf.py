@@ -399,7 +399,7 @@ def linkcode_resolve(domain, info):
             anchor = f'#L{lineno}'
         else:
             anchor = ''
-        return f"{source_repository}blob/{version}/src/{filename}{anchor}"
+        return f"{source_repository}blob/develop/src/{filename}{anchor}"
     return None
 
 
