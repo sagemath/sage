@@ -105,12 +105,12 @@ def canonical_parameters(group, level, weight, base_ring):
         group = group.minimize_base_ring()
         level = Integer(level)
 
-    elif arithgroup.is_CongruenceSubgroup(group):
+    elif isinstance(group, arithgroup.CongruenceSubgroupBase):
         if ( Integer(level) != group.level() ):
             raise ValueError("group.level() and level do not match.")
         # normalize the case of SL2Z
-        if arithgroup.is_SL2Z(group) or \
-           arithgroup.is_Gamma1(group) and group.level() == Integer(1):
+        if isinstance(group, arithgroup.SL2Z_class) or \
+           isinstance(group, arithgroup.Gamma1_class) and group.level() == Integer(1):
             group = arithgroup.Gamma0(Integer(1))
 
     elif group is None:
@@ -317,7 +317,7 @@ def ModularForms(group=1,
         base_ring = QQ
 
     if isinstance(group, dirichlet.DirichletCharacter) \
-           or arithgroup.is_CongruenceSubgroup(group):
+           or isinstance(group, arithgroup.CongruenceSubgroupBase):
         level = group.level()
     else:
         level = group
@@ -337,17 +337,17 @@ def ModularForms(group=1,
     (level, group, weight, base_ring, eis_only) = key
 
     M = None
-    if arithgroup.is_Gamma0(group):
+    if isinstance(group, arithgroup.Gamma0_class):
         M = ModularFormsAmbient_g0_Q(group.level(), weight)
         if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
-    elif arithgroup.is_Gamma1(group):
+    elif isinstance(group, arithgroup.Gamma1_class):
         M = ModularFormsAmbient_g1_Q(group.level(), weight, eis_only)
         if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
-    elif arithgroup.is_GammaH(group):
+    elif isinstance(group, arithgroup.GammaH_class):
         M = ModularFormsAmbient_gH_Q(group, weight, eis_only)
         if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)

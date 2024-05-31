@@ -1462,11 +1462,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
                 return self.has_coerce_map_from(MS)
 
             try:
-                from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
+                from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
             except ImportError:
                 pass
             else:
-                if is_ArithmeticSubgroup(S):
+                if isinstance(S, ArithmeticSubgroup):
                     return self.has_coerce_map_from(MS)
 
             return False
