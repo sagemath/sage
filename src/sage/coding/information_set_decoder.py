@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Information-set decoding for linear codes
 
@@ -40,11 +40,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.modules.free_module_element import free_module_element as vector
 from sage.structure.sage_object import SageObject
-from sage.functions.other import binomial
 from .decoder import Decoder
 
 
