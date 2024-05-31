@@ -63,9 +63,9 @@ class SJT(CombinatorialElement):
         sage: from sage.combinat.SJT import SJT
         sage: s = SJT([1, 2, 3, 4]); s
         [1, 2, 3, 4]
-        sage: s, d = s.next(); s, d
-        ([1, 2, 4, 3], [0, -1, -1, -1])
-        sage: p = Permutation(s, algorithm='sjt', directions=d)
+        sage: s = s.next(); s
+        [1, 2, 4, 3]
+        sage: p = Permutation(s._get_perm(), algorithm='sjt', sjt=s)
         sage: p
         [1, 2, 4, 3]
         sage: p.next()
@@ -77,11 +77,11 @@ class SJT(CombinatorialElement):
         [1, 2, 3, 4]
         sage: s = SJT([1]); s
         [1]
-        sage: s, _ = s.next(); s
+        sage: s = s.next(); s
         False
         sage: s = SJT([]); s
         []
-        sage: s, _ = s.next(); s
+        sage: s = s.next(); s
         False
     """
     def __init__(self, l, directions=None) -> None:
@@ -106,9 +106,9 @@ class SJT(CombinatorialElement):
             sage: from sage.combinat.SJT import SJT
             sage: s = SJT([1, 2, 3, 4]); s
             [1, 2, 3, 4]
-            sage: s, d = s.next(); s, d
-            ([1, 2, 4, 3], [0, -1, -1, -1])
-            sage: p = Permutation(s, algorithm='sjt', directions=d)
+            sage: s = s.next(); s
+            [1, 2, 4, 3]
+            sage: p = Permutation(s._get_perm(), algorithm='sjt', sjt=s)
             sage: p
             [1, 2, 4, 3]
             sage: p.next()
@@ -124,7 +124,7 @@ class SJT(CombinatorialElement):
             starting permutation for Steinhaus-Johnson-Trotter algorithm
             sage: s = SJT([]); s
             []
-            sage: s, _ = s.next(); s
+            sage: s = s.next(); s
             False
         """
         # The permuted list.
@@ -162,6 +162,12 @@ class SJT(CombinatorialElement):
 
         return index
 
+    def _get_perm(self):
+        r"""
+        Return the current permutation of ``self``.
+        """
+        return self._list
+
     def next(self):
         r"""
         Produce the next permutation of ``self`` following the
@@ -177,9 +183,9 @@ class SJT(CombinatorialElement):
 
             sage: from sage.combinat.SJT import SJT
             sage: s = SJT([1, 2, 3, 4])
-            sage: s, d = s.next()
-            sage: s = SJT(s, directions=d)
-            sage: s, _ = s.next(); s
+            sage: s = s.next(); s
+            [1, 2, 4, 3]
+            sage: s = s.next(); s
             [1, 4, 2, 3]
 
         TESTS::
@@ -187,15 +193,15 @@ class SJT(CombinatorialElement):
             sage: from sage.combinat.SJT import SJT
             sage: s = SJT([1, 2, 3])
             sage: s.next()
-            ([1, 3, 2], [0, -1, -1])
+            [1, 3, 2]
 
             sage: s = SJT([1])
             sage: s.next()
-            (False, None)
+            False
         """
         # Return on empty list.
         if self._n == 0:
-            return False, None
+            return False
 
         # Copying lists of permutation and directions to avoid changing internal
         # state of the algorithm if ``next()`` is called without reassigning.
@@ -214,7 +220,7 @@ class SJT(CombinatorialElement):
             if xi is None:
                 # We have created every permutation. Detected when all elements
                 # have null direction.
-                return False, None
+                return False
             direction = directions[xi]
             selected_elt = perm[xi]
 
@@ -244,6 +250,6 @@ class SJT(CombinatorialElement):
                     if i > new_pos:
                         directions[i] = -1
 
-        return perm, directions
+        return SJT(perm, directions)
 
     __next__ = next

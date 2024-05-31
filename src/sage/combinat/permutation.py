@@ -309,11 +309,11 @@ class Permutation(CombinatorialElement):
         the permutation obtained from the pair using the inverse of the
         Robinson-Schensted algorithm.
 
-    - ``check`` boolean (default: ``True``); -- whether to check that input is
+    - ``check`` -- boolean (default: ``True``); whether to check that input is
       correct. Slows the function down, but ensures that nothing bad happens.
       This is set to ``True`` by default.
 
-    - ``algorithm`` string (default: ``lex``); -- the algorithm used to generate
+    - ``algorithm`` -- string (default: ``lex``); the algorithm used to generate
       the permutations. Supported algorithms are:
 
       - ``lex``: lexicographic order generation, this is the default algorithm.
@@ -322,9 +322,9 @@ class Permutation(CombinatorialElement):
         using only transposition of two elements in the list. It is highly
         recommended to set ``check=True`` (default value).
 
-    - ``directions`` list (default: ``None``); -- the list of directions to be
-      used with ``sjt`` algorithm when initializing the ``Permutation`` object
-      with non-identity permutation.
+    - ``sjt`` -- SJT (default: ``None``); the ``SJT`` object holding the
+      permutation internal state. This should only be specified when
+      initializing with non-identity permutation.
 
     .. WARNING::
 
@@ -392,8 +392,8 @@ class Permutation(CombinatorialElement):
         sage: type(p)
         <class 'sage.combinat.permutation.StandardPermutations_n_with_category.element_class'>
 
-    Construction using the Steinhaus-Johnson Trotter algorithm to generate
-    the permutations (lexicographic algorithm by default)::
+    Generate permutations using the Steinhaus-Johnson Trotter algorithm. The
+    output is not in lexicographic order::
 
         sage: p = Permutation([1, 2, 3, 4], algorithm='sjt'); p
         [1, 2, 3, 4]
@@ -477,7 +477,7 @@ class Permutation(CombinatorialElement):
     """
     @staticmethod
     @rename_keyword(deprecation=35233, check_input='check')
-    def __classcall_private__(cls, l, algorithm='lex', directions=None,
+    def __classcall_private__(cls, l, algorithm='lex', sjt=None,
                               check=True):
         """
         Return a permutation in the general permutations parent.
@@ -529,10 +529,10 @@ class Permutation(CombinatorialElement):
                 raise ValueError("cannot convert l (= %s) to a Permutation" % l)
 
         # otherwise, it gets processed by CombinatorialElement's __init__.
-        return Permutations()(l, algorithm, directions, check)
+        return Permutations()(l, algorithm, sjt, check)
 
     @rename_keyword(deprecation=35233, check_input='check')
-    def __init__(self, parent, l, algorithm='lex', directions=None, check=True):
+    def __init__(self, parent, l, algorithm='lex', sjt=None, check=True):
         """
         Constructor. Checks that INPUT is not a mess, and calls
         :class:`CombinatorialElement`. It should not, because
@@ -556,9 +556,9 @@ class Permutation(CombinatorialElement):
           permutations using only transposition of two elements in the list.
           It is highly recommended to set ``check=True`` (default value).
 
-        - ``directions`` list (default: ``None``); -- the list of directions to
-          be used with ``sjt`` algorithm when initializing the ``Permutation``
-          object with non-identity permutation.
+        - ``sjt`` -- SJT (default: ``None``); the ``SJT`` object holding the
+          permutation internal state. This should only be specified when
+          initializing with non-identity permutation.
 
         TESTS::
 
@@ -592,12 +592,13 @@ class Permutation(CombinatorialElement):
             starting permutation for Steinhaus-Johnson-Trotter algorithm
         """
         l = list(l)
-        # Default initialisation to ``None`` to declare the variable.
-        self.__sjt = None
 
-        if algorithm != "lex" and algorithm != "sjt":
+        self._algorithm = algorithm.lower()
+
+        if self._algorithm != "lex" and self._algorithm != "sjt":
             raise ValueError("unsupported algorithm %s; expected 'lex' or 'sjt'"
-                             % algorithm)
+                             % self._algorithm)
+
 
         if check and len(l) > 0:
             # Make a copy to sort later
@@ -632,8 +633,8 @@ class Permutation(CombinatorialElement):
                     raise ValueError("an element appears twice in the input")
                 previous = i
 
-        if algorithm == "sjt":
-            self.__sjt = SJT(l, directions=directions)
+        if self._algorithm == "sjt":
+            self._sjt = SJT(l) if sjt is None else sjt
 
         CombinatorialElement.__init__(self, parent, l)
 
@@ -871,13 +872,13 @@ class Permutation(CombinatorialElement):
             False
             sage: assert(len(s)) == factorial(len(l))
         """
-        if self.__sjt is not None:
+        if self._algorithm == "sjt":
             # Ensure the same permutation is yielded when called multiple times
             # without reassigning
-            p, directions = self.__sjt.next()
-            if p is False:
+            sjt = self._sjt.next()
+            if sjt is False:
                 return False
-            return Permutations()(p, algorithm='sjt', directions=directions)
+            return Permutations()(sjt._get_perm(), algorithm='sjt', sjt=sjt)
 
         p = self[:]
         n = len(self)
@@ -951,7 +952,7 @@ class Permutation(CombinatorialElement):
             Implement the previous permutation for the Steinhaus-Johnson-Trotter
             algorithm.
         """
-        if self.__sjt is not None:
+        if self._algorithm == "sjt":
             raise NotImplementedError("previous permutation for SJT algorithm "
                                       "is not yet implemented")
 
