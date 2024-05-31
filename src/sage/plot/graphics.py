@@ -310,7 +310,7 @@ class Graphics(WithEqualityById, SageObject):
             False
             sage: P.legend(True)
             sage: P  #  show with the legend
-            Graphics object consisting of 1 graphics primitive
+            Graphics object consisting of 1 graphics primitive    
         """
         if show is None:
             return self._show_legend
@@ -429,6 +429,19 @@ class Graphics(WithEqualityById, SageObject):
         ::
 
             sage: p.set_legend_options(loc=(0.5,0.5)); p  # aligns the bottom of the box to the center                  # needs sage.symbolic
+            Graphics object consisting of 1 graphics primitive
+    
+        The dictionary ``_extra_kwds`` stores the keywords for graphics. This can be used to adjust vertical or
+        horizonal displacements from the x-axis or y-axis respectively::
+        
+            sage: p = line([(0, 0), (1, 1)], legend_label='test', axes_labels=('X LABEL', 'Y LABEL'))
+            sage: labels = p._extra_kwds.get('axes_labels')
+            sage: if labels and labels[0]:
+            ....:   displace = -.14 - .005 * p.fontsize()
+            ....: else:
+            ....:   displace = -.14
+            ....: p.set_legend_options(bbox_to_anchor=(0., displace, 1., .102), loc=3, mode="expand", borderaxespad=0.)
+            sage: print(p)
             Graphics object consisting of 1 graphics primitive
         """
         if len(kwds) == 0:
