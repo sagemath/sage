@@ -43,4 +43,7 @@ from sage.modular.btquotients.all import *
 from sage.modular.pollack_stevens.all import *
 
 from sage.modular.quasimodform.all import *
+
+from sage.modular.drinfeld_modform.all import *
+
 del lazy_import
