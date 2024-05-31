@@ -254,14 +254,14 @@ The top of each Sage code file should follow this format::
 
     AUTHORS:
 
-    - YOUR NAME (2005-01-03): initial version
+    - Your Name (2024-01-13): initial version
     - Alice Liddell (2024-05-31): added a method; cleaned docstrings
-    - Full name (year-month-day): short description
+    - Full name (YYYY-MM-DD): short description
 
     """
 
     # ****************************************************************************
-    #       Copyright (C) 2013 YOUR NAME <your email>
+    #       Copyright (C) 2024 Your Name <your email>
     #
     # This program is free software: you can redistribute it and/or modify
     # it under the terms of the GNU General Public License as published by
@@ -343,7 +343,7 @@ information. You can use the existing functions of Sage as templates.
 
    1. The type names should be descriptive, but do not have to represent the
       exact Sage/Python types. For example, use "integer" for anything that
-      behaves like an integer, rather than ``int`` or ``Integer``.
+      behaves like an integer, rather than "int" or "Integer".
 
    2. Mention the default values of the input arguments when applicable.
 
@@ -355,7 +355,9 @@ information. You can use the existing functions of Sage as templates.
 
        - ``p`` -- prime integer (default: `2`); coprime with `n`
 
-       - ``check`` -- (default: ``True``) specifies whether to check primality
+       - ``check`` -- boolean (default: ``True``); specifies whether to check for primality
+
+       - ``algorithm`` -- (default: ``None``) the name of the algorithm to use
 
    The OUTPUT block describes the expected output. This is required if the
    one-sentence description of the function needs more explanation.
