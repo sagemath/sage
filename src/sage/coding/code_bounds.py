@@ -630,7 +630,7 @@ def entropy_inverse(x, q=2):
 
     - ``x`` -- real number in the interval `[0, 1]`.
 
-    - ``q`` - (default: 2) integer greater than 1. This is the base of the
+    - ``q`` -- (default: 2) integer greater than 1. This is the base of the
       logarithm.
 
     OUTPUT:

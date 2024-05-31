@@ -185,10 +185,10 @@ class DocBuilder():
         """
         INPUT:
 
-        - ``name`` - the name of a subdirectory in SAGE_DOC_SRC, such as
+        - ``name`` -- the name of a subdirectory in SAGE_DOC_SRC, such as
           'tutorial' or 'bordeaux_2008'
 
-        - ``lang`` - (default "en") the language of the document.
+        - ``lang`` -- (default "en") the language of the document.
         """
         doc = name.split(os.path.sep)
 
@@ -1230,7 +1230,7 @@ class SingleFileBuilder(DocBuilder):
         """
         INPUT:
 
-        - ``path`` - the path to the file for which documentation
+        - ``path`` -- the path to the file for which documentation
           should be built
         """
         self.lang = 'en'

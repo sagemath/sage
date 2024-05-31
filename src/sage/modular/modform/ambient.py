@@ -160,7 +160,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         INPUT:
 
 
-        -  ``R`` - ring
+        -  ``R`` -- ring
 
 
         EXAMPLES::
@@ -366,7 +366,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         INPUT:
 
 
-        -  ``new_prec`` - positive integer (default: None)
+        -  ``new_prec`` -- positive integer (default: None)
 
 
         OUTPUT: if new_prec is None, returns the current precision.
@@ -469,7 +469,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         INPUT:
 
 
-        -  ``p`` - (default: None), if specified return only
+        -  ``p`` -- (default: None), if specified return only
            the `p`-new submodule.
 
 
@@ -527,9 +527,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         INPUT:
 
 
-        -  ``element`` - vector, list or tuple
+        -  ``element`` -- vector, list or tuple
 
-        -  ``prec`` - desired precision of q-expansion
+        -  ``prec`` -- desired precision of q-expansion
 
 
         EXAMPLES::

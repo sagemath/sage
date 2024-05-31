@@ -31,9 +31,9 @@ PARI est un programme C compact, mature, fortement optimisé et
 spécialisé en théorie des nombres. Il possède deux
 interfaces très différentes utilisables depuis Sage :
 
--  ``gp`` - l'interpréteur "**G** o **P** ARI", et
+-  ``gp`` -- l'interpréteur "**G** o **P** ARI", et
 
--  ``pari`` - la bibliothèque C PARI.
+-  ``pari`` -- la bibliothèque C PARI.
 
 
 Ainsi, les deux commandes suivantes font le même calcul de deux façons

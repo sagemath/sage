@@ -772,9 +772,9 @@ class HyperplaneArrangementElement(Element):
         - ``element_label`` -- (default: ``"int"``) specify how an
           intersection should be represented; must be one of the following:
 
-          * ``"subspace"`` - as a subspace
-          * ``"subset"`` - as a subset of the defining hyperplanes
-          * ``"int"`` - as an integer
+          * ``"subspace"`` -- as a subspace
+          * ``"subset"`` -- as a subset of the defining hyperplanes
+          * ``"int"`` -- as an integer
 
         OUTPUT:
 

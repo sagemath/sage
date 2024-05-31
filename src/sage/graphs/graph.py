@@ -5285,7 +5285,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``v`` - either a single vertex or a list of vertices. If it is not
+        - ``v`` -- either a single vertex or a list of vertices. If it is not
           specified, then it is taken to be all vertices.
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
@@ -5294,38 +5294,38 @@ class Graph(GenericGraph):
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
 
-          - ``'BFS'`` - the computation is done through a BFS centered on each
+          - ``'BFS'`` -- the computation is done through a BFS centered on each
             vertex successively. Works only if ``by_weight==False``.
 
-          - ``'DHV'`` - the computation is done using the algorithm proposed in
+          - ``'DHV'`` -- the computation is done using the algorithm proposed in
             [Dragan2018]_. Works only if ``self`` has non-negative edge weights
             and ``v is None`` or ``v`` should contain all vertices of ``self``.
             For more information see method
             :func:`sage.graphs.distances_all_pairs.eccentricity` and
             :func:`sage.graphs.base.boost_graph.eccentricity_DHV`.
 
-          - ``'Floyd-Warshall-Cython'`` - a Cython implementation of the
+          - ``'Floyd-Warshall-Cython'`` -- a Cython implementation of the
             Floyd-Warshall algorithm. Works only if ``by_weight==False`` and
             ``v is None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Floyd-Warshall-Python'`` - a Python implementation of the
+          - ``'Floyd-Warshall-Python'`` -- a Python implementation of the
             Floyd-Warshall algorithm. Works also with weighted graphs, even with
             negative weights (but no negative cycle is allowed). However, ``v``
             must be ``None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Dijkstra_NetworkX'`` - the Dijkstra algorithm, implemented in
+          - ``'Dijkstra_NetworkX'`` -- the Dijkstra algorithm, implemented in
             NetworkX. It works with weighted graphs, but no negative weight is
             allowed.
 
-          - ``'Dijkstra_Boost'`` - the Dijkstra algorithm, implemented in Boost
+          - ``'Dijkstra_Boost'`` -- the Dijkstra algorithm, implemented in Boost
             (works only with positive weights).
 
-          - ``'Johnson_Boost'`` - the Johnson algorithm, implemented in
+          - ``'Johnson_Boost'`` -- the Johnson algorithm, implemented in
             Boost (works also with negative weights, if there is no negative
             cycle). Works only if ``v is None`` or ``v`` should contain all
             vertices of ``self``.
 
-          - ``'From_Dictionary'`` - uses the (already computed) distances, that
+          - ``'From_Dictionary'`` -- uses the (already computed) distances, that
             are provided by input variable ``dist_dict``.
 
           - ``None`` (default): Sage chooses the best algorithm:
@@ -5539,7 +5539,7 @@ class Graph(GenericGraph):
 
         - ``algorithm`` -- string (default: ``'DHV'``).
 
-          - ``'DHV'`` - Radius computation is done using the algorithm proposed
+          - ``'DHV'`` -- Radius computation is done using the algorithm proposed
             in [Dragan2018]_. Works for graph with non-negative edge weights.
             For more information see method
             :func:`sage.graphs.distances_all_pairs.radius_DHV` and
@@ -5642,7 +5642,7 @@ class Graph(GenericGraph):
             NetworkX. It works with weighted graphs, but no negative weight is
             allowed.
 
-          - ``'DHV'`` - diameter computation is done using the algorithm
+          - ``'DHV'`` -- diameter computation is done using the algorithm
             proposed in [Dragan2018]_. Works only for non-negative edge weights.
             For more information see method
             :func:`sage.graphs.distances_all_pairs.diameter_DHV` and
@@ -9642,7 +9642,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``nonedgesonly``-- boolean (default: ``True``); if ``True``, assigns
+        - ``nonedgesonly`` -- boolean (default: ``True``); if ``True``, assigns
           `0` value to adjacent vertices.
 
         - ``vertices`` -- list (default: ``None``); the ordering of the
@@ -9778,7 +9778,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``nonedgesonly``-- boolean (default: ``True``); if ``True``, assigns
+        - ``nonedgesonly`` -- boolean (default: ``True``); if ``True``, assigns
           `0` value to adjacent vertices.
 
         OUTPUT: list of tuples of edge pairs

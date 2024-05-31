@@ -485,7 +485,7 @@ class QuiverRepFactory(UniqueFactory):
       specified; unspecified vertices are automatically set to `k^0`.  Keys
       of the dictionary  that don't correspond to vertices are ignored.
 
-    - ``maps`` - dict (default: empty); a dictionary associating to each edge
+    - ``maps`` -- dict (default: empty); a dictionary associating to each edge
       a map whose domain and codomain are the spaces associated to the initial
       and terminal vertex of the edge respectively.  Not all edges must be
       specified; unspecified edges are automatically set to the zero map.
@@ -499,7 +499,7 @@ class QuiverRepFactory(UniqueFactory):
     The keyword is only checked if there is no entry in the argument list
     after ``Q``.
 
-    - ``basis`` - list; a nonempty list of paths in the quiver ``Q``.
+    - ``basis`` -- list; a nonempty list of paths in the quiver ``Q``.
       Entries that do not represent valid paths are ignored and duplicate
       paths are deleted.  There must be at least one valid path in the list
       or a :class:`ValueError` is raised.  The closure of this list under right
@@ -522,7 +522,7 @@ class QuiverRepFactory(UniqueFactory):
     Using the second and third options requires that the following keyword be
     passed to the constructor.  This must be passed as a keyword.
 
-    - ``option`` - string (default: ``None``), either ``'values'`` or
+    - ``option`` -- string (default: ``None``), either ``'values'`` or
       ``'paths'`` or ``'dual paths'``. ``None`` is equivalent to ``'values'``.
 
     OUTPUT:
@@ -828,7 +828,7 @@ class QuiverRepElement(ModuleElement):
     - ``module`` -- :class:`QuiverRep` (default: ``None``), the module to
       which the element belongs
 
-    - ``elements`` - dict (default: empty), a dictionary associating to each
+    - ``elements`` -- dict (default: empty), a dictionary associating to each
       vertex a vector or an object from which sage can create a vector.
       Not all vertices must be specified, unspecified vertices will be
       assigned the zero vector of the space associated to that vertex in

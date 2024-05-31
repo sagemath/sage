@@ -406,7 +406,7 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``n`` (int, Integer) - A non-negative integer.
+        - ``n`` -- non-negative integer
 
         EXAMPLES::
 
@@ -853,16 +853,16 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``embedding`` - either an embedding of the coefficient field of self
+        - ``embedding`` -- either an embedding of the coefficient field of self
           into `\CC`, or an integer `i` between 0 and D-1 where D is the degree
           of the coefficient field (meaning to pick the `i`-th embedding).
           (Default: 0)
 
-        - ``prec`` - integer (bits precision). Default: 53.
+        - ``prec`` -- integer (bits precision). Default: 53.
 
-        - ``max_imaginary_part`` - real number. Default: 0.
+        - ``max_imaginary_part`` -- real number. Default: 0.
 
-        - ``max_asymp_coeffs`` - integer. Default: 40.
+        - ``max_asymp_coeffs`` -- integer. Default: 40.
 
         For more information on the significance of the last three arguments,
         see :mod:`~sage.lfunctions.dokchitser`.
@@ -1378,13 +1378,13 @@ class Newform(ModularForm_abstract):
 
         INPUT:
 
-        - ``parent`` - An ambient cuspidal space of modular forms for
+        - ``parent`` -- An ambient cuspidal space of modular forms for
           which self is a newform.
 
-        - ``component`` - A simple component of a cuspidal modular
+        - ``component`` -- A simple component of a cuspidal modular
           symbols space of any sign corresponding to this newform.
 
-        - ``check`` - If check is ``True``, check that parent and
+        - ``check`` -- If check is ``True``, check that parent and
           component have the same weight, level, and character, that
           component has sign 1 and is simple, and that the types are
           correct on all inputs.
@@ -1536,7 +1536,7 @@ class Newform(ModularForm_abstract):
 
         INPUT:
 
-        - ``n`` - a positive integer
+        - ``n`` -- a positive integer
 
         OUTPUT:
 
@@ -2424,16 +2424,16 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         INPUT:
 
-        - ``parent`` - ModularForms (an ambient space of modular forms)
+        - ``parent`` -- ModularForms (an ambient space of modular forms)
 
-        - ``x`` - a vector on the basis for parent
+        - ``x`` -- a vector on the basis for parent
 
-        - ``check`` - if check is ``True``, check the types of the
+        - ``check`` -- if check is ``True``, check the types of the
           inputs.
 
         OUTPUT:
 
-        - ``ModularFormElement`` - a modular form
+        - ``ModularFormElement`` -- a modular form
 
         EXAMPLES::
 

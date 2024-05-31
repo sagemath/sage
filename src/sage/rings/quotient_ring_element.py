@@ -32,12 +32,12 @@ class QuotientRingElement(RingElement):
 
     INPUT:
 
-    - ``parent`` - the ring `R/I`
+    - ``parent`` -- the ring `R/I`
 
-    - ``rep`` - a representative of the element in `R`; this is used
+    - ``rep`` -- a representative of the element in `R`; this is used
       as the internal representation of the element
 
-    - ``reduce`` - bool (optional, default: True) - if True, then the
+    - ``reduce`` -- bool (default: ``True``) -- if True, then the
       internal representation of the element is ``rep`` reduced modulo
       the ideal `I`
 
@@ -807,7 +807,7 @@ class QuotientRingElement(RingElement):
 
         INPUT:
 
-        -  ``singular`` - a non-standard interpreter may be
+        -  ``singular`` -- a non-standard interpreter may be
            provided
 
         EXAMPLES::
@@ -943,7 +943,7 @@ class QuotientRingElement(RingElement):
 
         INPUT:
 
-        -  ``G`` - a list of quotient ring elements
+        -  ``G`` -- a list of quotient ring elements
 
         .. WARNING::
 

@@ -3352,7 +3352,7 @@ cdef class RRtoCC(Map):
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         OUTPUT:
 
@@ -3378,7 +3378,7 @@ cdef class RRtoCC(Map):
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
 
         EXAMPLES::
 

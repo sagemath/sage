@@ -718,7 +718,7 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        ``e`` -- an expect interface instance
+        - ``e`` -- an expect interface instance
 
         OUTPUT:
 
@@ -821,7 +821,7 @@ If this all works, you can then make calls like:
         INPUT:
 
         - ``line`` -- (string) a command.
-        - ``restart_if_needed`` - (optional bool, default ``True``) --
+        - ``restart_if_needed`` -- (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
           :class:`EOFError` occurred.
@@ -1372,7 +1372,7 @@ If this all works, you can then make calls like:
         - ``locals``      -- None (ignored); this is used for compatibility
                              with the Sage notebook's generic system interface.
 
-        - ``allow_use_file`` -- bool (default: True); if True and ``code`` exceeds an
+        - ``allow_use_file`` -- bool (default: ``True``); if True and ``code`` exceeds an
                                 interface-specific threshold then ``code`` will be communicated
                                 via a temporary file rather that the character-based interface.
                                 If False then the code will be communicated via the character interface.

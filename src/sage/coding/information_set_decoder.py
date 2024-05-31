@@ -607,7 +607,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
 
         INPUT:
 
-        - `estimates` - list of time estimates, for the search size set to the
+        - `estimates` -- list of time estimates, for the search size set to the
                         index of the list entry.
 
         OUTPUT: None, but sets the private fields `self._parameters` and
@@ -879,7 +879,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         INPUT:
 
-        - ``dictionary`` - optional. If set to ``True``, return a ``dict``
+        - ``dictionary`` -- optional. If set to ``True``, return a ``dict``
           mapping decoding algorithm name to its class.
 
         OUTPUT: a list of strings or a ``dict`` from string to ISD algorithm class.

@@ -349,7 +349,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
       to run.
     - seed -- the random seed to use; if not specified, uses a truly
       random seed.
-    - print_seed -- If True (default False), prints the random seed chosen.
+    - print_seed -- If True (default: ``False``), prints the random seed chosen.
 
     EXAMPLES::
 

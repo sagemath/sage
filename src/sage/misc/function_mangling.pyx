@@ -82,7 +82,7 @@ cdef class ArgumentFixer:
     INPUT:
 
     - f           -- a function
-    - classmethod -- boolean (default False) -- True if the function
+    - classmethod -- boolean (default: ``False``) -- True if the function
       is a classmethod and therefore the first
       argument is expected to be the class instance.
       In that case, we ignore the first argument.

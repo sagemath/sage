@@ -256,11 +256,11 @@ def implicit_multiplication(level=None):
     - ``level`` -- a boolean or integer (default: 5); how aggressive to be in
       placing \*'s
 
-      -  0 - Do nothing
-      -  1 - Numeric followed by alphanumeric
-      -  2 - Closing parentheses followed by alphanumeric
-      -  3 - Spaces between alphanumeric
-      - 10 - Adjacent parentheses (may mangle call statements)
+      -  0 -- Do nothing
+      -  1 -- Numeric followed by alphanumeric
+      -  2 -- Closing parentheses followed by alphanumeric
+      -  3 -- Spaces between alphanumeric
+      - 10 -- Adjacent parentheses (may mangle call statements)
 
     OUTPUT:
 
@@ -487,18 +487,18 @@ class QuoteStackFrame(SimpleNamespace):
 
         INPUT:
 
-        - ``delim`` - string; the quote character(s) used: ``'``, ``"``, ``'''``, or ``\"\"\"``
-        - ``raw`` - boolean (default: ``False``); whether we are in a raw string
-        - ``f_string`` - boolean (default: ``False``); whether we are in an F-string
-        - ``braces`` - integer (default: ``0``); in an F-string,
+        - ``delim`` -- string; the quote character(s) used: ``'``, ``"``, ``'''``, or ``\"\"\"``
+        - ``raw`` -- boolean (default: ``False``); whether we are in a raw string
+        - ``f_string`` -- boolean (default: ``False``); whether we are in an F-string
+        - ``braces`` -- integer (default: ``0``); in an F-string,
           how many unclosed ``{``'s have we encountered?
-        - ``parens`` - integer (default: ``0``); in a replacement section of an F-string
+        - ``parens`` -- integer (default: ``0``); in a replacement section of an F-string
           (``braces > 0``), how many unclosed ``(``'s have we encountered?
-        - ``brackets`` - integer (default: ``0``); in a replacement section of an F-string
+        - ``brackets`` -- integer (default: ``0``); in a replacement section of an F-string
           (``braces > 0``), how many unclosed ``[``'s have we encountered?
-        - ``fmt_spec`` - boolean (default: ``False``); in the format specifier portion of a
+        - ``fmt_spec`` -- boolean (default: ``False``); in the format specifier portion of a
           replacement section?
-        - ``nested_fmt_spec`` - boolean (default: ``False``); in a nested format specifier?
+        - ``nested_fmt_spec`` -- boolean (default: ``False``); in a nested format specifier?
           For example, the ``X`` in ``f'{value:{width:X}}'``. Only one level of nesting
           is currently allowed (as of Python 3.8).
 
@@ -529,9 +529,9 @@ def strip_string_literals(code, state=None):
 
     INPUT:
 
-    - ``code`` - a string; the input
+    - ``code`` -- a string; the input
 
-    - ``state`` - a :class:`QuoteStack` (default: ``None``); state with which to
+    - ``state`` -- a :class:`QuoteStack` (default: ``None``); state with which to
       continue processing, e.g., across multiple calls to this function
 
     OUTPUT:
@@ -875,16 +875,16 @@ def containing_block(code, idx, delimiters=['()', '[]', '{}'], require_delim=Tru
 
     INPUT:
 
-    - ``code`` - a string
+    - ``code`` -- a string
 
-    - ``idx`` - an integer; a starting position
+    - ``idx`` -- an integer; a starting position
 
-    - ``delimiters`` - a list of strings (default: ['()', '[]',
+    - ``delimiters`` -- a list of strings (default: ['()', '[]',
       '{}']); the delimiters to balance. A delimiter must be a single
       character and no character can at the same time be opening and
       closing delimiter.
 
-    - ``require_delim`` - a boolean (default: ``True``); whether to raise
+    - ``require_delim`` -- a boolean (default: ``True``); whether to raise
       a ``SyntaxError`` if delimiters are present. If the delimiters are
       unbalanced, an error will be raised in any case.
 
@@ -1016,9 +1016,9 @@ def parse_ellipsis(code, preparse_step=True):
 
     INPUT:
 
-    - ``code`` - a string
+    - ``code`` -- a string
 
-    - ``preparse_step`` - a boolean (default: ``True``)
+    - ``preparse_step`` -- a boolean (default: ``True``)
 
     OUTPUT:
 
@@ -1085,7 +1085,7 @@ def extract_numeric_literals(code):
 
     INPUT:
 
-    - ``code`` - a string; a block of code
+    - ``code`` -- a string; a block of code
 
     OUTPUT:
 
@@ -1121,13 +1121,13 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
 
     INPUT:
 
-    - ``code`` - string; a code block to preparse
+    - ``code`` -- string; a code block to preparse
 
-    - ``extract`` - boolean (default: ``False``); whether to create
+    - ``extract`` -- boolean (default: ``False``); whether to create
       names for the literals and return a dictionary of
       name-construction pairs
 
-    - ``quotes`` - string (default: ``"'"``); used to surround string
+    - ``quotes`` -- string (default: ``"'"``); used to surround string
       arguments to RealNumber and ComplexNumber. If None, will rebuild
       the string using a list of its Unicode code-points.
 
@@ -1355,7 +1355,7 @@ def strip_prompts(line):
 
     INPUT:
 
-    - ``line`` - a string to process
+    - ``line`` -- a string to process
 
     OUTPUT:
 
@@ -1521,7 +1521,7 @@ def preparse_generators(code):
 
     INPUT:
 
-    - ``code`` - a string
+    - ``code`` -- a string
 
     OUTPUT:
 
@@ -1691,15 +1691,15 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
     INPUT:
 
-    - ``line`` - a string
+    - ``line`` -- a string
 
-    - ``reset`` - a boolean (default: ``True``)
+    - ``reset`` -- a boolean (default: ``True``)
 
-    - ``do_time`` - a boolean (default: ``False``)
+    - ``do_time`` -- a boolean (default: ``False``)
 
-    - ``ignore_prompts`` - a boolean (default: ``False``)
+    - ``ignore_prompts`` -- a boolean (default: ``False``)
 
-    - ``numeric_literals`` - a boolean (default: ``True``)
+    - ``numeric_literals`` -- a boolean (default: ``True``)
 
     OUTPUT:
 
@@ -1881,13 +1881,13 @@ def preparse_file(contents, globals=None, numeric_literals=True):
 
     INPUT:
 
-    - ``contents`` - a string
+    - ``contents`` -- a string
 
-    - ``globals`` - dict or None (default: ``None``); if given, then
+    - ``globals`` -- dict or None (default: ``None``); if given, then
       arguments to load/attach are evaluated in the namespace of this
       dict.
 
-    - ``numeric_literals`` - bool (default: ``True``), whether to factor
+    - ``numeric_literals`` -- bool (default: ``True``), whether to factor
       out wrapping of integers and floats, so they do not get created
       repeatedly inside loops
 
@@ -2058,7 +2058,7 @@ def _strip_quotes(s):
 
     INPUT:
 
-    - ``s`` - a string
+    - ``s`` -- a string
 
     OUTPUT:
 

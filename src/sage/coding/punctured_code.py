@@ -245,7 +245,7 @@ class PuncturedCode(AbstractLinearCode):
 
         INPUT:
 
-        - ``agrs``, ``kwds`` - extra positional arguments passed to
+        - ``agrs``, ``kwds`` -- extra positional arguments passed to
           :meth:`sage.modules.free_module.random_element`.
 
         EXAMPLES::

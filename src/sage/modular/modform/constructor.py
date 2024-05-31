@@ -58,26 +58,26 @@ def canonical_parameters(group, level, weight, base_ring):
     INPUT:
 
 
-    -  ``group`` - int, long, Sage integer, group,
+    -  ``group`` -- int, long, Sage integer, group,
        Dirichlet character, or
 
-    -  ``level`` - int, long, Sage integer, or group
+    -  ``level`` -- int, long, Sage integer, or group
 
-    -  ``weight`` - coercible to Sage integer
+    -  ``weight`` -- coercible to Sage integer
 
-    -  ``base_ring`` - commutative Sage ring
+    -  ``base_ring`` -- commutative Sage ring
 
 
     OUTPUT:
 
 
-    -  ``level`` - Sage integer
+    -  ``level`` -- Sage integer
 
-    -  ``group`` - congruence subgroup
+    -  ``group`` -- congruence subgroup
 
-    -  ``weight`` - Sage integer
+    -  ``weight`` -- Sage integer
 
-    -  ``ring`` - commutative Sage ring
+    -  ``ring`` -- commutative Sage ring
 
 
     EXAMPLES::
@@ -169,13 +169,13 @@ def ModularForms(group=1,
 
     INPUT:
 
-    - ``group`` - A congruence subgroup or a Dirichlet character eps.
+    - ``group`` -- A congruence subgroup or a Dirichlet character eps.
 
-    - ``weight`` - int, the weight, which must be an integer >= 1.
+    - ``weight`` -- int, the weight, which must be an integer >= 1.
 
-    - ``base_ring`` - the base ring (ignored if group is a Dirichlet character)
+    - ``base_ring`` -- the base ring (ignored if group is a Dirichlet character)
 
-    - ``eis_only`` - if True, compute only the Eisenstein part of the space.
+    - ``eis_only`` -- if True, compute only the Eisenstein part of the space.
       Only permitted (and only useful) in weight 1, where computing dimensions
       of cusp form spaces is expensive.
 
@@ -432,15 +432,15 @@ def Newforms(group, weight=2, base_ring=None, names=None):
     INPUT:
 
 
-    -  ``group`` - the congruence subgroup of the newform, or a Nebentypus
+    -  ``group`` -- the congruence subgroup of the newform, or a Nebentypus
        character
 
-    -  ``weight`` - the weight of the newform (default 2)
+    -  ``weight`` -- the weight of the newform (default 2)
 
-    -  ``base_ring`` - the base ring (defaults to `\QQ` for spaces without
+    -  ``base_ring`` -- the base ring (defaults to `\QQ` for spaces without
        character, or the base ring of the character otherwise)
 
-    -  ``names`` - if the newform has coefficients in a
+    -  ``names`` -- if the newform has coefficients in a
        number field, a generator name must be specified
 
 
@@ -489,16 +489,16 @@ def Newform(identifier, group=None, weight=2, base_ring=QQ, names=None):
     INPUT:
 
 
-    -  ``identifier`` - a canonical label, or the index of
+    -  ``identifier`` -- a canonical label, or the index of
        the specific newform desired
 
-    -  ``group`` - the congruence subgroup of the newform
+    -  ``group`` -- the congruence subgroup of the newform
 
-    -  ``weight`` - the weight of the newform (default 2)
+    -  ``weight`` -- the weight of the newform (default 2)
 
-    -  ``base_ring`` - the base ring
+    -  ``base_ring`` -- the base ring
 
-    -  ``names`` - if the newform has coefficients in a
+    -  ``names`` -- if the newform has coefficients in a
        number field, a generator name must be specified
 
 

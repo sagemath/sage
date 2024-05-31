@@ -8489,7 +8489,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``matroids`` - a matroid or a list of matroids
+        - ``matroids`` -- a matroid or a list of matroids
 
         OUTPUT: an instance of
         :class:`MatroidUnion <sage.matroids.union_matroid.MatroidUnion>`
@@ -8529,7 +8529,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``matroids`` - a matroid or list of matroids
+        - ``matroids`` -- a matroid or list of matroids
 
         OUTPUT: an instance of
         :class:`MatroidSum <sage.matroids.union_matroid.MatroidSum>`

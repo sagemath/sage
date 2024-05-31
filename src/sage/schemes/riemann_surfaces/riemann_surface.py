@@ -2939,11 +2939,11 @@ class RiemannSurface:
           along, where ``z_start`` may be infinite, in which case ``w_start``
           must be an integer specifying the branch.
 
-        - ``cutoff_individually`` -- boolean (default: False). Whether to truncate
+        - ``cutoff_individually`` -- boolean (default: ``False``). Whether to truncate
           the integrand uniformly or not. If ``None``, then no truncation is
           applied.
 
-        - ``raise_errors`` -- boolean (default: True). By default the code uses
+        - ``raise_errors`` -- boolean (default: ``True``). By default the code uses
           convergence errors to ensure any answers returned are accurate. This
           can be turned off to return answers faster that are not necessarily
           correct.
@@ -3510,7 +3510,7 @@ class RiemannSurface:
           where ``v`` is the valuation of the divisor at point ``P``, ``P`` as per
           the input to :meth:`_aj_based`.
 
-        - ``verbose`` -- logical (default: False). Whether to report the progress
+        - ``verbose`` -- logical (default: ``False``). Whether to report the progress
           of the computation, in terms of how many elements of the list ``divisor``
           have been completed.
 

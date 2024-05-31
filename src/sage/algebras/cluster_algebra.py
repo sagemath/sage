@@ -388,6 +388,7 @@ lazy_import('sage.geometry.fan', 'Fan')
 # Elements of a cluster algebra
 ##############################################################################
 
+
 class ClusterAlgebraElement(ElementWrapper):
     """
     An element of a cluster algebra.

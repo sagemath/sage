@@ -148,10 +148,10 @@ def attrcall(name, *args, **kwds):
 
     INPUT:
 
-    -  ``name`` - a string of the name of the method you
+    -  ``name`` -- a string of the name of the method you
        want to call
 
-    -  ``args, kwds`` - arguments and keywords to be passed
+    -  ``args, kwds`` -- arguments and keywords to be passed
        to the method
 
     EXAMPLES::

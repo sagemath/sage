@@ -595,8 +595,8 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         INPUT:
 
-        - ``expo`` - non-negative integer exponent
-        - ``n`` - truncation order
+        - ``expo`` -- non-negative integer exponent
+        - ``n`` -- truncation order
 
         EXAMPLES::
 

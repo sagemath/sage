@@ -1029,10 +1029,10 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
           balls, or elements of any parent that coerces into this ball field,
           e.g. rational or algebraic numbers.
 
-        - ``rel_tol`` (optional, default `2^{-p}` where `p` is the precision of
+        - ``rel_tol`` (default: `2^{-p}` where `p` is the precision of
           the ball field) -- relative accuracy goal
 
-        - ``abs_tol`` (optional, default `2^{-p}` where `p` is the precision of
+        - ``abs_tol`` (default: `2^{-p}` where `p` is the precision of
           the ball field) -- absolute accuracy goal
 
         Additionally, the following optional parameters can be used to control
@@ -1617,7 +1617,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.complex_mpfr.ComplexField_class`,
+        - ``parent`` -- :class:`~sage.rings.complex_mpfr.ComplexField_class`,
           target parent.
 
         EXAMPLES::
@@ -1645,7 +1645,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.real_mpfi.RealIntervalField_class`,
+        - ``parent`` -- :class:`~sage.rings.real_mpfi.RealIntervalField_class`,
           target parent.
 
         EXAMPLES::
@@ -1670,7 +1670,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.real_mpfr.RealField_class`,
+        - ``parent`` -- :class:`~sage.rings.real_mpfr.RealField_class`,
           target parent.
 
         EXAMPLES::
@@ -2204,7 +2204,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``ampl`` - A **real** ball (or an object that can be coerced to a
+        - ``ampl`` -- A **real** ball (or an object that can be coerced to a
           real ball).
 
         OUTPUT:
@@ -4710,7 +4710,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4748,7 +4748,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4785,9 +4785,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``phi`` - complex ball
+        - ``phi`` -- complex ball
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4825,9 +4825,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
         EXAMPLES::
 
@@ -4850,9 +4850,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
         EXAMPLES::
 
@@ -4875,11 +4875,11 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
-        - ``p`` - complex bamm
+        - ``p`` -- complex bamm
 
         EXAMPLES::
 
@@ -4902,7 +4902,7 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-        - ``tau`` - a complex ball with positive imaginary part
+        - ``tau`` -- a complex ball with positive imaginary part
 
         EXAMPLES::
 
@@ -4922,7 +4922,7 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-        - ``tau`` - a complex ball with positive imaginary part
+        - ``tau`` -- a complex ball with positive imaginary part
 
         EXAMPLES::
 

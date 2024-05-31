@@ -14,15 +14,17 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.arith.functions import lcm
 
 from sage.combinat.permutation import Permutations
-from sage.matrix.constructor import diagonal_matrix
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
+
+lazy_import('sage.matrix.constructor', 'diagonal_matrix')
+lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
 
 class ColoredPermutation(MultiplicativeGroupElement):

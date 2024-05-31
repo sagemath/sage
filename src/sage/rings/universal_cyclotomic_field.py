@@ -1250,7 +1250,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         INPUT:
 
-        - ``var`` -- (optional, default 'x') the name of the variable to use.
+        - ``var`` -- (default: 'x') the name of the variable to use.
 
         EXAMPLES::
 

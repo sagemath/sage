@@ -287,10 +287,10 @@ class ArithmeticSubgroup(Group):
 
         INPUT:
 
-        - ``G`` - intermediate subgroup (currently not implemented if different
+        - ``G`` -- intermediate subgroup (currently not implemented if different
           from SL(2,Z))
 
-        - ``on_right`` - boolean (default: True) - if True return right coset
+        - ``on_right`` -- boolean (default: ``True``); if True return right coset
           enumeration, if False return left one.
 
         This is *extremely* slow in general.
@@ -301,11 +301,11 @@ class ArithmeticSubgroup(Group):
 
         - a list of generators for the group
 
-        - ``l`` - list of integers that correspond to the action of the
+        - ``l`` -- list of integers that correspond to the action of the
           standard parabolic element [[1,1],[0,1]] of `SL(2,\ZZ)` on the cosets
           of self.
 
-        - ``s`` - list of integers that correspond to the action of the standard
+        - ``s`` -- list of integers that correspond to the action of the standard
           element of order `2` [[0,-1],[1,0]] on the cosets of self.
 
         EXAMPLES::
@@ -1228,7 +1228,7 @@ class ArithmeticSubgroup(Group):
 
         INPUT:
 
-        - ``k`` - an integer (default 2).
+        - ``k`` -- an integer (default 2).
 
         EXAMPLES::
 
@@ -1310,7 +1310,7 @@ class ArithmeticSubgroup(Group):
 
         INPUT:
 
-        -  ``weight`` - an integer `\geq 2` (default: 2)
+        -  ``weight`` -- an integer `\geq 2` (default: 2)
 
         EXAMPLES::
 

@@ -110,7 +110,7 @@ cdef class Farey:
 
     INPUT:
 
-    - `G` - an arithmetic subgroup of `\PSL_2(\ZZ)`
+    - `G` -- an arithmetic subgroup of `\PSL_2(\ZZ)`
 
     EXAMPLES:
 
@@ -848,7 +848,7 @@ cdef class Farey:
 
         INPUT:
 
-        ``c`` -- a cusp
+        - ``c`` -- a cusp
 
         EXAMPLES::
 
@@ -869,7 +869,7 @@ cdef class Farey:
 
         INPUT:
 
-        ``r`` -- a rational number
+        - ``r`` -- a rational number
 
         EXAMPLES::
 

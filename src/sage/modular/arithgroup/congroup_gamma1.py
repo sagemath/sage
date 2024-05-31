@@ -347,9 +347,9 @@ class Gamma1_class(GammaH_class):
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- an integer (default: 2), the weight.
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
+        - ``eps`` -- either None or a Dirichlet character modulo N, where N is
           the level of this group. If this is None, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           forms of character eps.
@@ -398,9 +398,9 @@ class Gamma1_class(GammaH_class):
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- an integer (default: 2), the weight.
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
+        - ``eps`` -- either None or a Dirichlet character modulo N, where N is
           the level of this group. If this is None, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           forms of character eps.
@@ -498,9 +498,9 @@ class Gamma1_class(GammaH_class):
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- an integer (default: 2), the weight.
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
+        - ``eps`` -- either None or a Dirichlet character modulo N, where N is
           the level of this group. If this is None, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           Eisenstein series of character eps.
@@ -583,13 +583,13 @@ class Gamma1_class(GammaH_class):
 
         INPUT:
 
-        - ``k`` - an integer (default: 2)
+        - ``k`` -- an integer (default: 2)
 
-        - ``eps`` - a Dirichlet character
+        - ``eps`` -- a Dirichlet character
 
-        -  ``p`` - a prime (default: 0); just the `p`-new subspace if given
+        -  ``p`` -- a prime (default: 0); just the `p`-new subspace if given
 
-        - ``algorithm`` - either "CohenOesterle" (the default) or "Quer". This
+        - ``algorithm`` -- either "CohenOesterle" (the default) or "Quer". This
           specifies the method to use in the case of nontrivial character:
           either the Cohen--Oesterle formula as described in Stein's book, or
           by Möbius inversion using the subgroups GammaH (a method due to

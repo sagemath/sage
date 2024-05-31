@@ -305,7 +305,7 @@ def ncube_isometry_group(n, orientation_preserving=True):
     INPUT:
 
     - ``n`` -- positive integer, dimension of the space
-    - ``orientation_preserving`` -- bool (optional, default: ``True``),
+    - ``orientation_preserving`` -- bool (default: ``True``),
       whether the orientation is preserved
 
     OUTPUT:
@@ -373,7 +373,7 @@ def ncube_isometry_group_cosets(n, orientation_preserving=True):
     INPUT:
 
     - ``n`` -- positive integer, dimension of the space
-    - ``orientation_preserving`` -- bool (optional, default: ``True``),
+    - ``orientation_preserving`` -- bool (default: ``True``),
       whether the orientation is preserved
 
     OUTPUT:
@@ -948,7 +948,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -1174,7 +1174,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           If ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -1242,7 +1242,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -1395,7 +1395,7 @@ class Polyomino(SageObject):
         INPUT:
 
         - ``self`` -- a polyomino of dimension 3
-        - ``size`` -- number (optional, default: ``1``), the size of each
+        - ``size`` -- number (default: ``1``), the size of each
           ``1 \times 1 \times 1`` cube. This does a homothety with respect
           to the center of the polyomino.
 
@@ -1425,11 +1425,11 @@ class Polyomino(SageObject):
         INPUT:
 
         - ``self`` -- a polyomino of dimension 2
-        - ``size`` -- number (optional, default: ``0.7``), the size of each
+        - ``size`` -- number (default: ``0.7``), the size of each
           square.
-        - ``color`` -- color (optional, default: ``'black'``), color of
+        - ``color`` -- color (default: ``'black'``), color of
           the boundary line.
-        - ``thickness`` -- number (optional, default: ``1``), how thick the
+        - ``thickness`` -- number (default: ``1``), how thick the
           boundary line is.
 
         EXAMPLES::
@@ -1555,13 +1555,13 @@ class TilingSolver(SageObject):
 
     - ``pieces`` -- iterable of Polyominoes
     - ``box`` -- Polyomino or tuple of integers (size of a box)
-    - ``rotation`` -- bool (optional, default: ``True``), whether to allow
+    - ``rotation`` -- bool (default: ``True``), whether to allow
       rotations
-    - ``reflection`` -- bool (optional, default: ``False``), whether to allow
+    - ``reflection`` -- bool (default: ``False``), whether to allow
       reflections
-    - ``reusable`` -- bool (optional, default: ``False``), whether to allow
+    - ``reusable`` -- bool (default: ``False``), whether to allow
       the pieces to be reused
-    - ``outside`` -- bool (optional, default: ``False``), whether to allow
+    - ``outside`` -- bool (default: ``False``), whether to allow
       pieces to partially go outside of the box (all non-empty intersection
       of the pieces with the box are considered)
 
@@ -2290,7 +2290,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``partial`` -- string (optional, default: ``None``), whether to
+        - ``partial`` -- string (default: ``None``), whether to
           include partial (incomplete) solutions. It can be one of the
           following:
 
@@ -2417,7 +2417,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``partial`` -- string (optional, default: ``None``), whether to
+        - ``partial`` -- string (default: ``None``), whether to
           include partial (incomplete) solutions. It can be one of the
           following:
 
@@ -2425,13 +2425,13 @@ class TilingSolver(SageObject):
           - ``'common_prefix'`` -- common prefix between two consecutive solutions
           - ``'incremental'`` -- one piece change at a time
 
-        - ``stop`` -- integer (optional, default:``None``), number of frames
+        - ``stop`` -- integer (default:``None``), number of frames
 
-        - ``size`` -- number (optional, default: ``0.75``), the size of each
+        - ``size`` -- number (default: ``0.75``), the size of each
           ``1 \times 1`` square. This does a homothety with respect
           to the center of each polyomino.
 
-        - ``axes`` -- bool (optional, default:``False``), whether the x and
+        - ``axes`` -- bool (default:``False``), whether the x and
           y axes are shown.
 
         EXAMPLES::

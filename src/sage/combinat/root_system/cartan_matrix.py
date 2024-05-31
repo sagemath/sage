@@ -349,11 +349,11 @@ class CartanMatrix(Base, CartanType_abstract,
 
         INPUT:
 
-        - ``nrows`` - number of rows
+        - ``nrows`` -- number of rows
 
-        - ``ncols`` - number of columns
+        - ``ncols`` -- number of columns
 
-        - ``sparse`` - (boolean) sparseness
+        - ``sparse`` -- (boolean) sparseness
 
         EXAMPLES::
 

@@ -31,7 +31,7 @@ def _get(key):
     INPUT:
 
 
-    -  ``key`` - hashable
+    -  ``key`` -- hashable
 
 
     EXAMPLES::
@@ -59,15 +59,15 @@ def _saved(key, J):
     INPUT:
 
 
-    -  ``key`` - hashable
+    -  ``key`` -- hashable
 
-    -  ``J`` - modular abelian variety
+    -  ``J`` -- modular abelian variety
 
 
     OUTPUT:
 
 
-    -  ``J`` - returns the modabvar, to make code that uses
+    -  ``J`` -- returns the modabvar, to make code that uses
        this simpler
 
 
@@ -145,7 +145,7 @@ def AbelianVariety(X):
     INPUT:
 
 
-    -  ``X`` - an integer, string, newform, modsym space,
+    -  ``X`` -- an integer, string, newform, modsym space,
        congruence subgroup or tuple of congruence subgroups
 
 

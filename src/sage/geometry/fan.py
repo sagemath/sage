@@ -2605,7 +2605,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         INPUT:
 
-        - ``other`` - fan.
+        - ``other`` -- fan.
 
         OUTPUT:
 
@@ -3004,17 +3004,17 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         INPUT:
 
-        - ``new_rays`` - list of new rays to be added during subdivision, each
+        - ``new_rays`` -- list of new rays to be added during subdivision, each
           ray must be a list or a vector. May be empty or ``None`` (default);
 
-        - ``make_simplicial`` - if ``True``, the returned fan is guaranteed to
+        - ``make_simplicial`` -- if ``True``, the returned fan is guaranteed to
           be simplicial, default is ``False``;
 
-        - ``algorithm`` - string with the name of the algorithm used for
+        - ``algorithm`` -- string with the name of the algorithm used for
           subdivision. Currently there is only one available algorithm called
           "default";
 
-        - ``verbose`` - if ``True``, some timing information may be printed
+        - ``verbose`` -- if ``True``, some timing information may be printed
           during the process of subdivision.
 
         OUTPUT:
@@ -3494,7 +3494,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         INPUT:
 
-        - ``extended`` -- Boolean (default:False). Whether to
+        - ``extended`` -- Boolean (default: ``False``). Whether to
           construct the extended complex, that is, including the
           `\ZZ`-term at degree -1 or not.
 

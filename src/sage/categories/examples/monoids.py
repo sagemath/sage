@@ -15,6 +15,7 @@ from sage.categories.monoids import Monoids
 from .semigroups import FreeSemigroup
 from sage.sets.family import Family
 
+
 class FreeMonoid(FreeSemigroup):
     r"""
     An example of a monoid: the free monoid

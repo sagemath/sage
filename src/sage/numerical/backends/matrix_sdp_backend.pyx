@@ -97,9 +97,9 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         INPUT:
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         OUTPUT: The index of the newly created variable
 
@@ -143,9 +143,9 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         INPUT:
 
-        - ``n`` - the number of new variables (must be > 0)
+        - ``n`` -- the number of new variables (must be > 0)
 
-        - ``names`` - optional list of names (default: ``None``)
+        - ``names`` -- optional list of names (default: ``None``)
 
         OUTPUT: The index of the variable created last.
 
@@ -256,7 +256,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
           The pairs come sorted by indices. If c is -1 it
           represents the constant coefficient.
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 
@@ -300,7 +300,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         - ``number`` (integer) -- the number of constraints to add.
 
-        - ``names`` - an optional list of names (default: ``None``)
+        - ``names`` -- an optional list of names (default: ``None``)
 
         EXAMPLES::
 
