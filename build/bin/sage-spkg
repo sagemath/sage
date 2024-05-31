@@ -707,7 +707,7 @@ if [ -d "$SAGE_DESTDIR" ]; then
     FILE_LIST="$(cd "$PREFIX" && find . -type f -o -type l | sed 's|^\./||' | sort)"
 
     # Copy files into $SAGE_INST_LOCAL
-    $SAGE_SUDO cp -Rp "$PREFIX/." "$SAGE_INST_LOCAL"
+    sage-flock -s $SAGE_ROOT/sagewheels.lock $SAGE_SUDO cp -Rp "$PREFIX/." "$SAGE_INST_LOCAL"
     if [ $? -ne 0 ]; then
         error_msg "Error moving files for $PKG_NAME."
         exit 1
@@ -766,6 +766,10 @@ if [ -f spkg-pipinst ]; then
         error_msg "Error running the pipinst script for $PKG_NAME."
         exit 1
     fi
+    sage-flock -x $SAGE_ROOT/sagewheels.lock sh -c " \
+        cat ${SAGE_SPKG_SCRIPTS}/*/spkg-constraints.txt  | sort > ${SAGE_ROOT}/constraints_sagewheels.txt; \
+        cat ${SAGE_SPKG_SCRIPTS}/*/spkg-requirements.txt | sort > ${SAGE_ROOT}/requirements_sagewheels.txt \
+    "
 fi
 if [ -f spkg-postinst ]; then
     sage-logger -p "$SAGE_SUDO ./spkg-postinst" spkg-postinst.log
