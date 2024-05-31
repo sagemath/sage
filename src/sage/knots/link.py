@@ -2609,11 +2609,11 @@ class Link(SageObject):
 
         EXAMPLES::
 
-           sage: K3 = Knot([[5, 2, 4, 1], [3, 6, 2, 5], [1, 4, 6, 3]])
-           sage: K3r = K3.reverse(); K3r.pd_code()
-           [[4, 1, 5, 2], [2, 5, 3, 6], [6, 3, 1, 4]]
-           sage: K3 == K3r                                                              # needs sage.groups
-           True
+            sage: K3 = Knot([[5, 2, 4, 1], [3, 6, 2, 5], [1, 4, 6, 3]])
+            sage: K3r = K3.reverse(); K3r.pd_code()
+            [[4, 1, 5, 2], [2, 5, 3, 6], [6, 3, 1, 4]]
+            sage: K3 == K3r                                                             # needs sage.groups
+            True
 
         a non reversable knot::
 
