@@ -34,6 +34,7 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.global_options import GlobalOptions
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 
 
 def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
@@ -231,7 +232,7 @@ def repr_factored(w, latex_output=False) -> str:
     return ret
 
 
-class DifferentialWeylAlgebraElement(Element):
+class DifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     """
     An element in a differential Weyl algebra.
     """
@@ -245,9 +246,11 @@ class DifferentialWeylAlgebraElement(Element):
             sage: dx,dy,dz = W.differentials()
             sage: elt = ((x^3-z)*dx + dy)^2
             sage: TestSuite(elt).run()
+
+            sage: hash(dx) == hash(dx) # hashing works
+            True
         """
-        Element.__init__(self, parent)
-        self.__monomials = monomials
+        IndexedFreeModuleElement.__init__(self, parent, monomials)
 
     def _repr_(self) -> str:
         r"""
@@ -355,7 +358,7 @@ class DifferentialWeylAlgebraElement(Element):
             sage: W.one() != 1
             False
         """
-        return richcmp(self.__monomials, other.__monomials, op)
+        return richcmp(self._monomial_coefficients, other._monomial_coefficients, op)
 
     def __neg__(self):
         """
@@ -369,7 +372,7 @@ class DifferentialWeylAlgebraElement(Element):
             dy + z*dx - 3*x*dx
         """
         return self.__class__(self.parent(),
-                              {m: -c for m, c in self.__monomials.items()})
+                              {m: -c for m, c in self._monomial_coefficients.items()})
 
     def _add_(self, other):
         """
@@ -383,7 +386,7 @@ class DifferentialWeylAlgebraElement(Element):
             dx*dy + dz + x^3 - 2
         """
         F = self.parent()
-        return self.__class__(F, blas.add(self.__monomials, other.__monomials))
+        return self.__class__(F, blas.add(self._monomial_coefficients, other._monomial_coefficients))
 
     def _mul_(self, other):
         """
@@ -406,10 +409,10 @@ class DifferentialWeylAlgebraElement(Element):
         n = self.parent()._n
         t = tuple([0] * n)
         zero = self.parent().base_ring().zero()
-        for ml in self.__monomials:
-            cl = self.__monomials[ml]
-            for mr in other.__monomials:
-                cr = other.__monomials[mr]
+        for ml in self._monomial_coefficients:
+            cl = self._monomial_coefficients[ml]
+            for mr in other._monomial_coefficients:
+                cr = other._monomial_coefficients[mr]
                 cur = [((mr[0], t), cl * cr)]
                 for i, p in enumerate(ml[1]):
                     for _ in range(p):
@@ -447,7 +450,7 @@ class DifferentialWeylAlgebraElement(Element):
         """
         if other == 0:
             return self.parent().zero()
-        M = self.__monomials
+        M = self._monomial_coefficients
         return self.__class__(self.parent(), {t: other * M[t] for t in M})
 
     def _lmul_(self, other):
@@ -464,7 +467,7 @@ class DifferentialWeylAlgebraElement(Element):
         """
         if other == 0:
             return self.parent().zero()
-        M = self.__monomials
+        M = self._monomial_coefficients
         return self.__class__(self.parent(), {t: M[t] * other for t in M})
 
     def monomial_coefficients(self, copy=True) -> dict:
@@ -491,8 +494,8 @@ class DifferentialWeylAlgebraElement(Element):
              (((1, 0, 0), (1, 0, 0)), -3)]
         """
         if copy:
-            return dict(self.__monomials)
-        return self.__monomials
+            return dict(self._monomial_coefficients)
+        return self._monomial_coefficients
 
     def __iter__(self):
         """
@@ -530,7 +533,7 @@ class DifferentialWeylAlgebraElement(Element):
              (((0, 0, 1), (1, 0, 0)), 1),
              (((1, 0, 0), (1, 0, 0)), -3)]
         """
-        return sorted(self.__monomials.items(),
+        return sorted(self._monomial_coefficients.items(),
                       key=lambda x: (-sum(x[0][1]), x[0][1], -sum(x[0][0]), x[0][0]))
 
     def support(self) -> list:
@@ -548,7 +551,7 @@ class DifferentialWeylAlgebraElement(Element):
             ((0, 0, 1), (1, 0, 0)),
             ((1, 0, 0), (1, 0, 0))]
         """
-        return list(self.__monomials)
+        return list(self._monomial_coefficients)
 
     # This is essentially copied from
     #   sage.combinat.free_module.CombinatorialFreeModuleElement
@@ -567,7 +570,7 @@ class DifferentialWeylAlgebraElement(Element):
             2*y*z + x
         """
         F = self.parent()
-        D = self.__monomials
+        D = self._monomial_coefficients
         if F.base_ring().is_field():
             x = F.base_ring()(x)
             x_inv = x**-1
