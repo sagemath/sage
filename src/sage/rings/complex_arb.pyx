@@ -179,6 +179,8 @@ from sage.libs.gsl.complex cimport gsl_complex_rect
 from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.complex_double cimport ComplexDoubleElement
 from sage.rings.integer cimport Integer
+from sage.rings.rational_field import QQ
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.polynomial_complex_arb cimport Polynomial_complex_arb
 from sage.rings.real_arb cimport mpfi_to_arb, arb_to_mpfi
 from sage.rings.real_arb import RealBallField
@@ -568,8 +570,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         elif isinstance(other, ComplexBallField):
             return other._prec >= self._prec
 
-        import sage.rings.number_field.number_field as number_field
-        if isinstance(other, number_field.NumberField_generic):
+        if other is not QQ and isinstance(other, NumberField):
             emb = other.coerce_embedding()
             return emb is not None and self.has_coerce_map_from(emb.codomain())
 
