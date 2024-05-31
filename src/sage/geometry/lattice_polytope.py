@@ -121,18 +121,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.combinat.posets.posets', 'FinitePoset')
 from sage.arith.misc import GCD as gcd
-from sage.combinat.posets.posets import FinitePoset
 from sage.features.databases import DatabaseReflexivePolytopes
 from sage.geometry.cone import _ambient_space_point, integral_length
-from sage.geometry.hasse_diagram import lattice_from_incidences
+lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import (PointCollection,
                                             is_PointCollection,
                                             read_palp_point_collection)
 from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
-from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 from sage.features.palp import PalpExecutable
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Linear_Expression'],
@@ -146,7 +146,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.temporary_file import tmp_filename
 from sage.modules.free_module_element import vector
-from sage.numerical.mip import MixedIntegerLinearProgram
+lazy_import('sage.numerical.mip', 'MixedIntegerLinearProgram')
 lazy_import("sage.plot.plot3d.index_face_set", "IndexFaceSet")
 lazy_import("sage.plot.plot3d.all", ["line3d", "point3d"])
 lazy_import("sage.plot.plot3d.shapes2", "text3d")
