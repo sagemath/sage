@@ -820,25 +820,14 @@ base_class_as_func = [
     'frozenset', 'int', 'list', 'long', 'object',
     'set', 'slice', 'str', 'tuple', 'type', 'unicode', 'xrange']
 
-# Nit picky option configuration: Put here broken links we want to ignore. For
+
+# nitpicky option configuration: Put here broken links we want to ignore. For
 # link to the Python documentation several links where broken because there
 # where class listed as functions. Expand the list 'base_class_as_func' above
 # instead of marking the link as broken.
 nitpick_ignore = [
     ('py:class', 'twisted.web2.resource.Resource'),
     ('py:class', 'twisted.web2.resource.PostableResource')]
-
-def nitpick_patch_config(app):
-    """
-    Patch the default config for nitpicky
-
-    Calling path_config ensure that nitpicky is not considered as a Sphinx
-    environment variable but rather as a Sage environment variable. As a
-    consequence, changing it doesn't force the recompilation of the entire
-    documentation.
-    """
-    app.config.values['nitpicky'] = (False, 'sage')
-    app.config.values['nitpick_ignore'] = ([], 'sage')
 
 
 skip_picklability_check_modules = [
@@ -1055,7 +1044,6 @@ def setup(app):
         # in find_sage_dangling_links.
         #   app.connect('missing-reference', missing_reference)
         app.connect('missing-reference', find_sage_dangling_links)
-        app.connect('builder-inited', nitpick_patch_config)
         app.connect('html-page-context', add_page_context)
 
 
