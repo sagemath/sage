@@ -353,7 +353,7 @@ information. You can use the existing functions of Sage as templates.
 
        - ``n`` -- integer
 
-       - ``p`` -- prime integer (default: `2`); coprime with ``n``
+       - ``p`` -- prime integer (default: `2`); coprime with `n`
 
        - ``check`` -- (default: ``True``) specifies whether to check primality
 
