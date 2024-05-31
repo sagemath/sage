@@ -272,13 +272,14 @@ $ADD src/Pipfile.m4 src/pyproject.toml src/requirements.txt.m4 src/setup.cfg.m4 
 $ADD m4 /new/m4
 $ADD pkgs /new/pkgs
 $ADD build /new/build
-$ADD .ci /new/.ci
 $ADD .upstream.d /new/.upstream.d
+ADD .ci /.ci
 RUN if [ -d /sage ]; then                                               \
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
         printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
         printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \
-        if ! (cd /new && ./.ci/retrofit-worktree.sh worktree-image /sage); then \
+        if ! (cd /new && /.ci/retrofit-worktree.sh worktree-image /sage); then \
+            echo "retrofit-worktree.sh failed, falling back to replacing /sage"; \
             for a in local logs; do                                     \
                 if [ -d /sage/\$a ]; then mv /sage/\$a /new/; fi;       \
             done;                                                       \
@@ -337,8 +338,12 @@ ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
+ADD .ci /.ci
 RUN cd /new && rm -rf .git && \
-    if ! /sage/.ci/retrofit-worktree.sh worktree-pre /sage; then \
+    if /.ci/retrofit-worktree.sh worktree-pre /sage; then \
+        cd /sage && touch configure build/make/Makefile; \
+    else \
+        echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"; \
         rm -rf /sage/src;                                    \
         mv src /sage/src;                                    \
         cd /sage && ./bootstrap && ./config.status;          \
