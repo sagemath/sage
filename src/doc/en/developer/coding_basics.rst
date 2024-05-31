@@ -657,12 +657,12 @@ indentation:
 
         INPUT:
 
-        - ``x`` -- integer (default: ``1``); the description of the
+        - ``x`` -- integer (default: `1`); the description of the
           argument ``x`` goes here. If it contains multiple lines, all
           the lines after the first need to begin at the same indentation
           as the backtick.
 
-        - ``y`` -- integer (default: ``2``); the description of the
+        - ``y`` -- integer (default: `2`); the description of the
           argument ``y``
 
         OUTPUT: tuple; further description of the output
@@ -673,7 +673,7 @@ indentation:
 
             sage: A = EuclideanSpace(2)
             sage: A.point(2, 3)
-            (32, 3)
+            (2, 3)
 
         We now ... ::
 
@@ -690,7 +690,7 @@ indentation:
         .. NOTE::
 
             This function uses :func:`pow` to determine the fifth
-            power of ``x``.
+            power of `x`.
 
         ...
 
@@ -700,7 +700,7 @@ indentation:
 
         TESTS::
 
-            sage: A.point(42, 0)  # Check for corner case y = 0
+            sage: A.point(42, 0)  # check for corner case y = 0
             ...
         """
         <body of the function>
