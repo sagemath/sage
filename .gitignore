@@ -249,6 +249,9 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/sagemath-repl/requirements*.txt
 /pkgs/sagemath-categories/MANIFEST.in
 
+/constraints_sagewheels.txt
+/requirements_sagewheels.txt
+
 # same for old locations - before Issue #31577
 /build/pkgs/*/src/build
 /build/pkgs/*/src/dist
