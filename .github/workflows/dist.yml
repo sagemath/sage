@@ -240,6 +240,20 @@ jobs:
           name: ${{ matrix.os }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl
 
+  upload_wheels:
+    # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
+    needs: build_wheels
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+    steps:
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*-*-wheels"
+          path: wheelhouse
+          merge-multiple: true
+
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
