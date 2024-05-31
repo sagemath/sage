@@ -542,11 +542,11 @@ class Permutation(CombinatorialElement):
 
         - ``l`` -- a list of ``int`` variables
 
-        - ``check`` boolean (default: ``True``); -- whether to check that input
+        - ``check`` -- boolean (default: ``True``); whether to check that input
           is correct. Slows the function down, but ensures that nothing bad
           happens.
 
-        - ``algorithm`` string (default: ``lex``); -- the algorithm used to
+        - ``algorithm`` -- string (default: ``lex``); the algorithm used to
           generate the permutations. Supported algorithms are:
 
           - ``lex``: lexicographic order generation, this is the default
