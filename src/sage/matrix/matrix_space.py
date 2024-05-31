@@ -55,9 +55,9 @@ from sage.categories.fields import Fields
 from sage.categories.enumerated_sets import EnumeratedSets
 
 from sage.misc.lazy_import import lazy_import
-from sage.features import PythonModule
+from sage.features.meataxe import Meataxe
 lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
-            feature=PythonModule('sage.matrix.matrix_gfpn_dense', spkg='meataxe'))
+            feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
 
 _Rings = Rings()

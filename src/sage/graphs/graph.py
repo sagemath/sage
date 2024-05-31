@@ -426,9 +426,9 @@ from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
 
 from sage.misc.lazy_import import lazy_import, LazyImport
-from sage.features import PythonModule
+from sage.features.mcqd import Mcqd
 lazy_import('sage.graphs.mcqd', ['mcqd'],
-            feature=PythonModule('sage.graphs.mcqd', spkg='mcqd'))
+            feature=Mcqd())
 
 
 class Graph(GenericGraph):
