@@ -166,6 +166,9 @@ You are attempting to build Sage on $host,
 which is not a supported platform for Sage]]);;
 esac
 
+dnl Issue #38039: Alert users on WSL early about a source tree
+dnl that has not been cloned correctly.
+dnl This will save users from running into build errors later.
 AC_MSG_CHECKING([the symbolic links in the source tree])
 AS_IF([test -L build/pkgs/liblzma/package-version.txt], [dnl OK
     AC_MSG_RESULT([intact])
