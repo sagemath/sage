@@ -36,7 +36,7 @@ AUTHORS:
 from sage.structure.element import Element
 from sage.structure.element import Expression
 import sage.rings.abc
-from sage.rings.real_mpfr import RR, is_RealNumber
+from sage.rings.real_mpfr import RR, RealNumber
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
 from sage.schemes.projective.projective_space import ProjectiveSpace
