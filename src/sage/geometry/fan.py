@@ -285,6 +285,10 @@ def is_Fan(x) -> bool:
         sage: is_Fan(fan)                                                               # needs palp
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_Fan is deprecated; "
+                "use 'isinstance(..., RationalPolyhedralFan)' instead.")
     return isinstance(x, RationalPolyhedralFan)
 
 
