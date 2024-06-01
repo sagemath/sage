@@ -1127,7 +1127,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
 
     - ``prec`` -- (default: 20) The number of disks to be used to approximate a type IV point.
 
-    - ``error_check`` -- (default: True) If error checking should be run on input. If
+    - ``error_check`` -- (default: ``True``) If error checking should be run on input. If
       input is correctly formatted, can be set to ``False`` for better performance.
       WARNING: with error check set to ``False``, any error in the input will lead to
       incorrect results.
@@ -1808,7 +1808,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
 
     - ``prec`` -- (default: 20) The number of disks to be used to approximate a type IV point
 
-    - ``error_check`` -- (default: True) If error checking should be run on input. If
+    - ``error_check`` -- (default: ``True``) If error checking should be run on input. If
       input is correctly formatted, can be set to ``False`` for better performance.
       WARNING: with error check set to ``False``, any error in the input will lead to
       incorrect results.

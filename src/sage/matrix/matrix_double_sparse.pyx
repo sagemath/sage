@@ -32,7 +32,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         INPUT:
 
-        - ``tolerance`` - a real number; the maximum difference we'll
+        - ``tolerance`` -- a real number; the maximum difference we'll
           tolerate between entries of the given matrix and its conjugate-
           transpose.
 
@@ -75,7 +75,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         INPUT:
 
-        - ``tolerance`` - a real number; the maximum difference we'll
+        - ``tolerance`` -- a real number; the maximum difference we'll
           tolerate between entries of the given matrix and the
           negation of its conjugate-transpose.
 

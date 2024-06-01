@@ -124,8 +124,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: Ax  = F.annihilator([x]);   Ax .rename("Ax")
                 sage: Ay  = F.annihilator([y]);   Ay .rename("Ay")
                 sage: Axy = F.annihilator([x,y]); Axy.rename("Axy")
-                sage: P = Poset(([A, Ax, Ay, Axy], attrcall("is_submodule")))           # needs sage.combinat sage.graphs
-                sage: sorted(P.cover_relations(), key=str)                              # needs sage.combinat sage.graphs
+                sage: P = Poset(([A, Ax, Ay, Axy], attrcall("is_submodule")))           # needs sage.graphs
+                sage: sorted(P.cover_relations(), key=str)                              # needs sage.graphs
                 [[Ax, A], [Axy, Ax], [Axy, Ay], [Ay, A]]
             """
             return self.submodule(self.annihilator_basis(S, action, side),
@@ -423,7 +423,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             We build the invariant module of the permutation representation
             of the symmetric group::
 
-                sage: # needs sage.groups sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: G = SymmetricGroup(3); G.rename('S3')
                 sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')
                 sage: action = lambda g, x: M.term(g(x))
@@ -498,7 +498,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.groups sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: M = CombinatorialFreeModule(QQ, [1,2,3])
                 sage: G = SymmetricGroup(3)
                 sage: def action(g,x): return(M.term(g(x)))  # permute coordinates
@@ -805,16 +805,16 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             We check that this function complains if the morphism is not invertible::
 
-                sage: phi = X.module_morphism(on_basis={1: y[3] + y[4], 2: y[3] + y[4]}.__getitem__,                    # needs sage.modules
+                sage: # needs sage.modules
+                sage: phi = X.module_morphism(on_basis={1: y[3] + y[4], 2: y[3] + y[4]}.__getitem__,
                 ....:                         codomain=Y, category=category)
-                sage: ~phi                                                              # needs sage.modules
+                sage: ~phi
                 Traceback (most recent call last):
                 ...
                 RuntimeError: morphism is not invertible
-
-                sage: phi = X.module_morphism(on_basis={1: y[3] + y[4], 2: y[3] + 5*y[4]}.__getitem__,                  # needs sage.modules
+                sage: phi = X.module_morphism(on_basis={1: y[3] + y[4], 2: y[3] + 5*y[4]}.__getitem__,
                 ....:                         codomain=Y, category=category)
-                sage: ~phi                                                              # needs sage.modules
+                sage: ~phi
                 Traceback (most recent call last):
                 ...
                 RuntimeError: morphism is not invertible

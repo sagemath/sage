@@ -500,8 +500,8 @@ cdef class GraphicMatroid(Matroid):
 
         INPUT:
 
-        - ``N`` - matroid
-        - ``certificate`` - (default: ``False``) if ``True``, returns the
+        - ``N`` -- matroid
+        - ``certificate`` -- (default: ``False``) if ``True``, returns the
           certificate isomorphism from the minor of ``self`` to ``N``
 
         OUTPUT:

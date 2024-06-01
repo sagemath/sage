@@ -1125,12 +1125,12 @@ see a list, execute ``sage.env.[TAB]`` while running Sage.
 
     Variables dealing with valgrind and friends:
 
-    - :envvar:`SAGE_TIMEOUT_VALGRIND` - used for Sage's doctesting: the
+    - :envvar:`SAGE_TIMEOUT_VALGRIND` -- used for Sage's doctesting: the
       number of seconds to allow a doctest before timing it out, if tests
       are run using ``??``.  If this isn't set, the default is 1024*1024
       seconds.
 
-    - :envvar:`SAGE_VALGRIND` - trigger black magic in Python.
+    - :envvar:`SAGE_VALGRIND` -- trigger black magic in Python.
 
     - :envvar:`SAGE_MEMCHECK_FLAGS`, :envvar:`SAGE_MASSIF_FLAGS`,
       :envvar:`SAGE_CACHEGRIND_FLAGS`, :envvar:`SAGE_OMEGA_FLAGS` - flags

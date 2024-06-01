@@ -680,7 +680,11 @@ class FractionField_generic(ring.Field):
         x = py_scalar_to_element(x)
         y = py_scalar_to_element(y)
 
-        from sage.libs.pari.all import pari_gen
+        try:
+            from sage.libs.pari.all import pari_gen
+        except ImportError:
+            pari_gen = ()
+
         if isinstance(x, pari_gen) and x.type() == 't_POL':
             # This recursive approach is needed because PARI
             # represents multivariate polynomials as iterated

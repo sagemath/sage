@@ -62,7 +62,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     - ``v`` -- a list or tuple of coordinates in `K`.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to check the input for consistency.
+    - ``check`` -- boolean (default:``True``). Whether to check the input for consistency.
 
     EXAMPLES::
 
@@ -854,9 +854,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``f`` - a endomorphism of this point's codomain.
+        - ``f`` -- a endomorphism of this point's codomain.
 
-        - ``n`` - a positive integer, the period of this point.
+        - ``n`` -- a positive integer, the period of this point.
 
         - ``check`` -- check if ``P`` is periodic of period ``n``, Default:True.
 
@@ -910,9 +910,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         kwds:
 
-        - ``err`` -- a positive real number (optional - default: 0.1).
+        - ``err`` -- a positive real number (default: 0.1).
 
-        - ``return_period`` -- boolean (optional - default: ``False``).
+        - ``return_period`` -- boolean (default: ``False``).
 
 
         OUTPUT:
@@ -1063,7 +1063,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
     - ``v`` -- a list or tuple of coordinates in `K`.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     EXAMPLES::

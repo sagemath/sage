@@ -860,7 +860,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         - ``out`` -- a function for writing the output (defaults to
           :func:`sys.stdout.write`).
 
-        - ``clear_globs`` -- boolean (default True): whether to clear
+        - ``clear_globs`` -- boolean (default: ``True``): whether to clear
           the namespace after running this doctest.
 
         OUTPUT:

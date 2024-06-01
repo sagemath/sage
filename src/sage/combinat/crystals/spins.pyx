@@ -73,7 +73,7 @@ def CrystalOfSpins(ct):
 
     INPUT:
 
-    -  ``['B', n]`` - A Cartan type `B_n`.
+    -  ``['B', n]`` -- A Cartan type `B_n`.
 
     EXAMPLES::
 
@@ -113,7 +113,7 @@ def CrystalOfSpinsPlus(ct):
 
     INPUT:
 
-    -  ``['D', n]`` - A Cartan type `D_n`.
+    -  ``['D', n]`` -- A Cartan type `D_n`.
 
     EXAMPLES::
 
@@ -146,7 +146,7 @@ def CrystalOfSpinsMinus(ct):
 
     INPUT:
 
-    -  ``['D', n]`` - A Cartan type `D_n`.
+    -  ``['D', n]`` -- A Cartan type `D_n`.
 
     EXAMPLES::
 

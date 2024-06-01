@@ -168,7 +168,7 @@ def pip_installed_packages(normalization=None):
 
     INPUT:
 
-    - ``normalization`` -- (optional, default: ``None``) according to which rule to
+    - ``normalization`` -- (default: ``None``) according to which rule to
       normalize the package name, either ``None`` (as is) or ``'spkg'`` (format
       as in the Sage distribution in ``build/pkgs/``), i.e., lowercased and
       dots and dashes replaced by underscores.
@@ -252,11 +252,11 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
       If provided, list only the packages with the given source(s), otherwise list all
       packages.
 
-    - ``local`` -- (optional, default: ``False``) if set to ``True``, then do not
+    - ``local`` -- (default: ``False``) if set to ``True``, then do not
       consult remote (PyPI) repositories for package versions (only applicable for
       ``'pip'`` type)
 
-    - ``exclude_pip`` -- (optional, default: ``False``) if set to ``True``, then
+    - ``exclude_pip`` -- (default: ``False``) if set to ``True``, then
       pip packages are not considered.  This is the same as removing ``'pip'``
       from ``pkg_sources``.
 
@@ -385,7 +385,7 @@ def installed_packages(exclude_pip=True):
 
     INPUT:
 
-    - ``exclude_pip`` -- (optional, default: ``True``) whether "pip" packages
+    - ``exclude_pip`` -- (default: ``True``) whether "pip" packages
       are excluded from the list
 
     EXAMPLES:
@@ -431,7 +431,7 @@ def is_package_installed(package, exclude_pip=True):
 
     - ``package`` -- the name of the package
 
-    - ``exclude_pip`` -- (optional, default: ``True``) whether to consider pip
+    - ``exclude_pip`` -- (default: ``True``) whether to consider pip
       type packages
 
 

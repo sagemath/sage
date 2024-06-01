@@ -17,12 +17,16 @@ from sage.categories.category_types import Elements
 
 from sage.categories.cartesian_product import cartesian_product
 
-from sage.categories.functor import ForgetfulFunctor, IdentityFunctor
+from sage.categories.functor import (ForgetfulFunctor,
+                                     IdentityFunctor)
 
-from sage.categories.homset import Hom, hom, End, end, Homset, HomsetWithBase
+from sage.categories.homset import (Hom, hom,
+                                    End, end,
+                                    Homset, HomsetWithBase)
 
 from sage.categories.morphism import Morphism
 
 from sage.categories.realizations import Realizations
 
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+del lazy_import

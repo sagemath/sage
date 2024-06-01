@@ -1312,9 +1312,9 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
         r"""
         INPUT:
 
-        - ``x1`` - a tuple of integers
+        - ``x1`` -- a tuple of integers
 
-        - ``x2`` - a tuple of integers
+        - ``x2`` -- a tuple of integers
 
         TESTS::
 
@@ -2059,13 +2059,13 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
+        - ``parent`` -- a parent
 
-        - ``w`` - an infinite list
+        - ``w`` -- an infinite list
 
-        - ``value`` - an optional known value
+        - ``value`` -- an optional known value
 
-        - ``check`` - whether the constructor checks the input (default is
+        - ``check`` -- whether the constructor checks the input (default is
           ``True``)
 
         TESTS::

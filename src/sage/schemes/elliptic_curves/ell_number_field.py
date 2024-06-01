@@ -1789,7 +1789,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           proof module is number_field, not elliptic_curves, since the
           functions that actually need the flag are in number fields.
 
-        - ``semi_global`` (boolean, default False) -- if there is no
+        - ``semi_global`` (boolean, default: ``False``) -- if there is no
           global minimal mode, return a semi-global minimal model
           (minimal at all but one prime) instead, if True; raise an
           error if False.  No effect if a global minimal model exists.
@@ -3066,7 +3066,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         - ``other`` -- another elliptic curve.
 
-        - ``proof`` (default True) -- If ``False``, the function will
+        - ``proof`` (default: ``True``) -- If ``False``, the function will
           return ``True`` whenever the two curves have the same
           conductor and are isogenous modulo `p` for all primes `p` of
           norm up to ``maxnorm``.  If ``True``, the function returns

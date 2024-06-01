@@ -750,7 +750,6 @@ cdef class ntl_zz_pX():
             sig_off()
         return y
 
-
     def is_zero(self):
         """
         Return True exactly if this polynomial is 0.

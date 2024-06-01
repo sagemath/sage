@@ -23,6 +23,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
 
+
 class RegularCrystals(Category_singleton):
     r"""
     The category of regular crystals.
@@ -185,16 +186,17 @@ class RegularCrystals(Category_singleton):
             EXAMPLES::
 
                 sage: T = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: C = CombinatorialFreeModule(QQ, T)
+                sage: C = CombinatorialFreeModule(QQ, T)                                # needs sage.modules
                 sage: t = T.highest_weight_vector()
-                sage: b = 2*C(t)
-                sage: T.demazure_operator(b,[1,2,1])
+                sage: b = 2*C(t)                                                        # needs sage.modules
+                sage: T.demazure_operator(b,[1,2,1])                                    # needs sage.modules
                 2*B[[[1, 1], [2]]] + 2*B[[[1, 2], [2]]] + 2*B[[[1, 3], [2]]]
                 + 2*B[[[1, 1], [3]]] + 2*B[[[1, 2], [3]]] + 2*B[[[1, 3], [3]]]
                 + 2*B[[[2, 2], [3]]] + 2*B[[[2, 3], [3]]]
 
             The Demazure operator is idempotent::
 
+                sage: # needs sage.modules
                 sage: T = crystals.Tableaux("A1", shape=[4])
                 sage: C = CombinatorialFreeModule(QQ, T)
                 sage: b = C(T.module_generators[0]); b
@@ -204,7 +206,6 @@ class RegularCrystals(Category_singleton):
                 + B[[[1, 2, 2, 2]]] + B[[[2, 2, 2, 2]]]
                 sage: e == T.demazure_operator(e,[1])
                 True
-
                 sage: all(T.demazure_operator(T.demazure_operator(C(t),[1]),[1])
                 ....:      == T.demazure_operator(C(t),[1]) for t in T)
                 True

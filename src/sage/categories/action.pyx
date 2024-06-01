@@ -435,7 +435,7 @@ cdef class PrecomposedAction(Action):
     We demonstrate that an example discussed on :issue:`14711` did not become a
     problem::
 
-        sage: # needs sage.modular
+        sage: # needs sage.libs.flint sage.modular
         sage: E = ModularSymbols(11).2
         sage: s = E.modular_symbol_rep()
         sage: del E,s
@@ -487,7 +487,7 @@ cdef class PrecomposedAction(Action):
 
         Check that this action can be pickled (:issue:`29031`)::
 
-            sage: # needs sage.modular
+            sage: # needs sage.libs.flint sage.modular
             sage: E = ModularSymbols(11).2
             sage: v = E.manin_symbol_rep()
             sage: c,x = v[0]
