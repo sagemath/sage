@@ -82,10 +82,18 @@ def is_ComplexIntervalFieldElement(x):
 
         sage: from sage.rings.complex_interval import is_ComplexIntervalFieldElement as is_CIFE
         sage: is_CIFE(CIF(2))
+        doctest:warning...
+        DeprecationWarning: The function is_ComplexIntervalFieldElement is deprecated;
+        use 'isinstance(..., ComplexIntervalFieldElement)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_CIFE(CC(2))
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_ComplexIntervalFieldElement is deprecated; "
+                       "use 'isinstance(..., ComplexIntervalFieldElement)' instead.")
     return isinstance(x, ComplexIntervalFieldElement)
 
 
