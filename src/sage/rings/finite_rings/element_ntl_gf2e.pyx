@@ -72,7 +72,7 @@ cdef int late_import() except -1:
            GF, \
            GF2, GF2_0, GF2_1
 
-    if is_IntegerMod is not None:
+    if IntegerMod_abstract is not None:
         return 0
 
     import sage.rings.finite_rings.integer_mod
