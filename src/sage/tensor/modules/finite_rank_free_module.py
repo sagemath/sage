@@ -1462,7 +1462,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         from .free_module_homset import FreeModuleHomset
         return FreeModuleHomset(self, other)
 
-    def tensor_module(self, k, l, *, sym=None, antisym=None):
+    def tensor_module(self, k=None, l=None, *, fmodules=None, sym=None, antisym=None):
         r"""
         Return the free module of all tensors of type `(k, l)` defined on
         ``self``.
@@ -1542,14 +1542,16 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             True
         """
         from .comp import CompWithSym
-
-        sym, antisym = CompWithSym._canonicalize_sym_antisym(k + l, sym, antisym)
-        if sym or antisym:
-            key = (k, l, sym, antisym)
+        if k and l is not None:
+            sym, antisym = CompWithSym._canonicalize_sym_antisym(k + l, sym, antisym)
+            if sym or antisym:
+                key = (k, l, sym, antisym)
+            else:
+                key = (k, l)
         else:
-            key = (k, l)
+            key = None
         try:
-            return self._tensor_modules[key]
+            return self._tensor_modules[key] or self._tensor_modules[fmodules]
         except KeyError:
             if key == (1, 0):
                 T = self
@@ -1560,8 +1562,14 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
                 T = TensorFreeSubmodule_sym(self, (k, l), sym=sym, antisym=antisym)
             else:
                 from sage.tensor.modules.tensor_free_module import TensorFreeModule
-                T = TensorFreeModule(self, (k, l))
-            self._tensor_modules[key] = T
+                if fmodules is None: # for tenosr product of unique dual pair modules
+                    T = TensorFreeModule(self, (k, l))
+                else:                # for tensor product of multiple dual pair modules
+                    T = TensorFreeModule(fmodules)
+            if key == None:
+                self._tensor_modules[T._shape] = T
+            else:
+                self._tensor_modules[key] = T
             return T
 
     def symmetric_power(self, p):
@@ -3627,4 +3635,6 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
             True
 
         """
+        if isinstance(self._fmodule, list):
+            return self._fmodule[0]
         return self._fmodule

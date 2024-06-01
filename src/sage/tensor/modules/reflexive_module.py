@@ -106,8 +106,13 @@ class ReflexiveModule_abstract(Parent):
             sage: M.tensor_module(1, 2).dual()
             Free module of type-(2,1) tensors on the Rank-3 free module over the Integer Ring
         """
-        k, l = self.tensor_type()
-        return self.base_module().tensor_module(l, k)
+        try:
+            k, l = self.tensor_type()
+            return self.base_module().tensor_module(l, k)
+        except:
+            fmodule = list()
+            for module in self._module_set: fmodule.append(module.dual())
+            return self.base_module()[0].tensor_module(fmodules=tuple(fmodule))
 
     def tensor(self, *args, **kwds):
         # Until https://github.com/sagemath/sage/issues/30373 is done,
@@ -185,52 +190,55 @@ class ReflexiveModule_abstract(Parent):
             sage: NxN._index_maps
             ((0, 1, 2, 6, 7, 8), (3, 4, 5, 9, 10, 11))
         """
-        from sage.modules.free_module_element import vector
-        from .comp import CompFullySym, CompFullyAntiSym, CompWithSym
+        if not all(module._ring == self._ring for module in others):
+            raise TypeError('all modules must be defined on the same base ring')
 
+        factors = (self,) + others
         base_module = self.base_module()
-        if not all(module.base_module() == base_module for module in others):
-            raise NotImplementedError('all factors must be tensor modules over the same base module')
-        factors = [self] + list(others)
-        result_tensor_type = sum(vector(factor.tensor_type()) for factor in factors)
-        result_sym = []
-        result_antisym = []
-        # Keep track of reordering of the contravariant and covariant indices
-        # (compatible with FreeModuleTensor.__mul__)
-        index_maps = []
-        running_indices = vector([0, result_tensor_type[0]])
-        for factor in factors:
-            tensor_type = factor.tensor_type()
-            index_map = tuple(i + running_indices[0] for i in range(tensor_type[0]))
-            index_map += tuple(i + running_indices[1] for i in range(tensor_type[1]))
-            index_maps.append(index_map)
+        dual_base_module = self.base_module().dual()
+        if all(module in (base_module, dual_base_module) for module in others):
+            from sage.modules.free_module_element import vector
+            from .comp import CompFullySym, CompFullyAntiSym, CompWithSym
+            result_tensor_type = sum(vector(factor.tensor_type()) for factor in factors)
+            result_sym = []
+            result_antisym = []
+            # Keep track of reordering of the contravariant and covariant indices
+            # (compatible with FreeModuleTensor.__mul__)
+            index_maps = []
+            running_indices = vector([0, result_tensor_type[0]])
+            for factor in factors:
+                tensor_type = factor.tensor_type()
+                index_map = tuple(i + running_indices[0] for i in range(tensor_type[0]))
+                index_map += tuple(i + running_indices[1] for i in range(tensor_type[1]))
+                index_maps.append(index_map)
 
-            if tensor_type[0] + tensor_type[1] > 1:
-                basis_sym = factor._basis_sym()
-                all_indices = tuple(range(tensor_type[0] + tensor_type[1]))
-                if isinstance(basis_sym, CompFullySym):
-                    sym = [all_indices]
-                    antisym = []
-                elif isinstance(basis_sym, CompFullyAntiSym):
-                    sym = []
-                    antisym = [all_indices]
-                elif isinstance(basis_sym, CompWithSym):
-                    sym = basis_sym._sym
-                    antisym = basis_sym._antisym
-                else:
-                    sym = antisym = []
+                if tensor_type[0] + tensor_type[1] > 1:
+                    basis_sym = factor._basis_sym()
+                    all_indices = tuple(range(tensor_type[0] + tensor_type[1]))
+                    if isinstance(basis_sym, CompFullySym):
+                        sym = [all_indices]
+                        antisym = []
+                    elif isinstance(basis_sym, CompFullyAntiSym):
+                        sym = []
+                        antisym = [all_indices]
+                    elif isinstance(basis_sym, CompWithSym):
+                        sym = basis_sym._sym
+                        antisym = basis_sym._antisym
+                    else:
+                        sym = antisym = []
 
-                def map_isym(isym):
-                    return tuple(index_map[i] for i in isym)
+                    def map_isym(isym):
+                        return tuple(index_map[i] for i in isym)
 
-                result_sym.extend(tuple(index_map[i] for i in isym) for isym in sym)
-                result_antisym.extend(tuple(index_map[i] for i in isym) for isym in antisym)
+                    result_sym.extend(tuple(index_map[i] for i in isym) for isym in sym)
+                    result_antisym.extend(tuple(index_map[i] for i in isym) for isym in antisym)
 
-            running_indices += vector(tensor_type)
-
-        result = base_module.tensor_module(*result_tensor_type,
-                                           sym=result_sym, antisym=result_antisym)
-        result._index_maps = tuple(index_maps)
+                running_indices += vector(tensor_type)
+            result = base_module.tensor_module(*result_tensor_type,
+                                            sym=result_sym, antisym=result_antisym)
+            result._index_maps = tuple(index_maps)
+        else:
+            result = base_module.tensor_module(k=None, l=None, fmodules=factors)
         return result
 
 

@@ -270,8 +270,9 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
     def __init__(
         self,
-        fmodule: FiniteRankFreeModule,
-        tensor_type,
+        fmodule: tuple[FiniteRankFreeModule],
+        tensor_type = None,
+        shape: tuple[int] = None,
         name: Optional[str] = None,
         latex_name: Optional[str] = None,
         sym=None,
@@ -303,9 +304,14 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if parent is None:
             parent = fmodule.tensor_module(*tensor_type)
         ModuleElementWithMutability.__init__(self, parent)
-        self._fmodule = fmodule
-        self._tensor_type = tuple(tensor_type)
-        self._tensor_rank = self._tensor_type[0] + self._tensor_type[1]
+        self._fmodule = fmodule if isinstance(fmodule, tuple) else (fmodule,)
+        self._tensor_type = tensor_type
+        if shape is None:
+            self._shape = (fmodule._rank,) * (tensor_type[0] + tensor_type[1])
+            self._tensor_rank = tensor_type[0] + tensor_type[1]
+        else:
+            self._shape = shape
+            self._tensor_rank = len(shape)
         self._is_zero = False # a priori, may be changed below or via
                               # method __bool__()
         self._name = name
@@ -367,7 +373,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
     ##### End of required methods for ModuleElement (beside arithmetic) #####
 
-    def _repr_(self):
+    def _repr_(self):   # modified
         r"""
         Return a string representation of ``self``.
 
@@ -384,11 +390,14 @@ class FreeModuleTensor(ModuleElementWithMutability):
             description = "Symmetric bilinear form "
         else:
             # Generic case
-            description = "Type-({},{}) tensor".format(
+            if len(set(self._shape)) == 1:
+                description = "Type-({},{}) tensor".format(
                             self._tensor_type[0], self._tensor_type[1])
+            else:
+                description = "Shape-{} tensor".format(self._shape)
         if self._name is not None:
             description += " " + self._name
-        description += " on the {}".format(self._fmodule)
+        description += " on the {}".format(self.base_module())
         return description
 
     def _latex_(self):
@@ -464,6 +473,8 @@ class FreeModuleTensor(ModuleElementWithMutability):
             (2, 1)
 
         """
+        if self._tensor_type is None:
+            raise AttributeError("Tensor object has no attribute tensor type")
         return self._tensor_type
 
     def tensor_rank(self):
@@ -508,7 +519,9 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
-        return self._fmodule
+        if self._tensor_type is None:
+            return self._fmodule
+        return self._fmodule[0]
 
     def symmetries(self):
         r"""
@@ -948,7 +961,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
-        return self.__class__(self._fmodule, self._tensor_type, sym=self._sym,
+        return self.__class__(self._fmodule, self._tensor_type, shape=self._shape, sym=self._sym,
                               antisym=self._antisym)
 
     def _new_comp(self, basis):
@@ -986,6 +999,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         """
         fmodule = self._fmodule  # the base free module
         if not self._sym and not self._antisym:
+            print(basis)
             return Components(fmodule._ring, basis, self._tensor_rank,
                               start_index=fmodule._sindex,
                               output_formatter=fmodule._output_formatter)
@@ -2584,6 +2598,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             True
 
         """
+        # if hasattr(self, )
         if using is not None:
             if self.tensor_type() != (0, 2):
                 raise ValueError(
