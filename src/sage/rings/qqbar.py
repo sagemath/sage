@@ -6749,12 +6749,20 @@ def is_AlgebraicReal(x):
 
         sage: from sage.rings.qqbar import is_AlgebraicReal
         sage: is_AlgebraicReal(AA(sqrt(2)))                                             # needs sage.symbolic
+        doctest:warning...
+        DeprecationWarning: The function is_AlgebraicReal is deprecated;
+        use 'isinstance(..., AlgebraicReal)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_AlgebraicReal(QQbar(sqrt(2)))                                          # needs sage.symbolic
         False
         sage: is_AlgebraicReal("spam")
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38128,
+                "The function is_AlgebraicReal is deprecated; "
+                "use 'isinstance(..., AlgebraicReal)' instead.")
     return isinstance(x, AlgebraicReal)
 
 
@@ -6766,12 +6774,20 @@ def is_AlgebraicNumber(x):
 
         sage: from sage.rings.qqbar import is_AlgebraicNumber
         sage: is_AlgebraicNumber(AA(sqrt(2)))                                           # needs sage.symbolic
+        doctest:warning...
+        DeprecationWarning: The function is_AlgebraicNumber is deprecated;
+        use 'isinstance(..., AlgebraicNumber)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         False
         sage: is_AlgebraicNumber(QQbar(sqrt(2)))                                        # needs sage.symbolic
         True
         sage: is_AlgebraicNumber("spam")
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38128,
+                "The function is_AlgebraicNumber is deprecated; "
+                "use 'isinstance(..., AlgebraicNumber)' instead.")
     return isinstance(x, AlgebraicNumber)
 
 
