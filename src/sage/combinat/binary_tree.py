@@ -1634,7 +1634,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        ``shift`` -- an integer (default 0)
+        - ``shift`` -- an integer (default 0)
 
         OUTPUT:
 

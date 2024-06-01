@@ -183,7 +183,7 @@ def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
 
     In addition, the following keyword arguments are supported:
 
-    - ``base_ring`` -- a field (optional, default `\QQ`). The base
+    - ``base_ring`` -- a field (default: `\QQ`). The base
       field of the vector space. Must be a field.
 
     EXAMPLES:

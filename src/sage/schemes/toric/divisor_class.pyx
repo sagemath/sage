@@ -143,7 +143,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
         INPUT:
 
-        - ``other`` - something that
+        - ``other`` -- something that
           :class:`~sage.modules.vector_rational_dense.Vector_rational_dense`
           can act on *except* for another toric rational divisor class.
 
@@ -210,7 +210,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
         INPUT:
 
-        - ``right`` - vector.
+        - ``right`` -- vector.
 
         OUTPUT:
 

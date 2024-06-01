@@ -31,15 +31,15 @@ class Arc(GraphicPrimitive):
 
     INPUT:
 
-    - ``x,y`` - coordinates of the center of the arc
+    - ``x,y`` -- coordinates of the center of the arc
 
-    - ``r1``, ``r2`` - lengths of the two radii
+    - ``r1``, ``r2`` -- lengths of the two radii
 
-    - ``angle`` - angle of the horizontal with width
+    - ``angle`` -- angle of the horizontal with width
 
-    - ``sector`` - sector of angle
+    - ``sector`` -- sector of angle
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -396,28 +396,28 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
 
     INPUT:
 
-    - ``center`` - 2-tuple of real numbers - position of the center.
+    - ``center`` -- 2-tuple of real numbers; position of the center.
 
-    - ``r1``, ``r2`` - positive real numbers - radii of the ellipse. If only ``r1``
+    - ``r1``, ``r2`` -- positive real numbers; radii of the ellipse. If only ``r1``
       is set, then the two radii are supposed to be equal and this function returns
       an arc of circle.
 
-    - ``angle`` - real number - angle between the horizontal and the axis that
+    - ``angle`` -- real number; angle between the horizontal and the axis that
       corresponds to ``r1``.
 
-    - ``sector`` - 2-tuple (default: (0,2*pi))- angles sector in which the arc will
+    - ``sector`` -- 2-tuple (default: (0,2*pi))- angles sector in which the arc will
       be drawn.
 
     OPTIONS:
 
-    - ``alpha`` - float (default: 1) - transparency
+    - ``alpha`` -- float (default: 1) -- transparency
 
-    - ``thickness`` - float (default: 1) - thickness of the arc
+    - ``thickness`` -- float (default: 1) -- thickness of the arc
 
-    - ``color``, ``rgbcolor`` - string or 2-tuple (default: 'blue') - the color
+    - ``color``, ``rgbcolor``; string or 2-tuple (default: 'blue') -- the color
       of the arc
 
-    - ``linestyle`` - string (default: ``'solid'``) - The style of the line,
+    - ``linestyle`` -- string (default: ``'solid'``) -- The style of the line,
       which is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
       or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
 

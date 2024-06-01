@@ -356,7 +356,7 @@ def random_new_basis_modp(N, p, k, LWBModp, TotalBasisModp, elldash, bound):
     - ``LWBModp`` -- list of list of `q`-expansions modulo
       `(p,q^\text{elldash})`.
     - ``TotalBasisModp`` -- matrix over `\mathrm{GF}(p)`.
-    - ``elldash`` - positive integer.
+    - ``elldash`` -- positive integer.
     - ``bound`` -- positive even integer (twice the length of the list
       ``LWBModp``).
 
@@ -619,7 +619,7 @@ def compute_elldash(p, N, k0, n):
 
     - ``p`` -- prime.
     - ``N`` -- positive integer (level).
-    - ``k0``, ``n`` - non-negative integers not both zero.
+    - ``k0``, ``n`` -- non-negative integers not both zero.
 
     OUTPUT:
 
@@ -1126,9 +1126,9 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     - ``N`` -- a positive integer not divisible by `p`.
     - ``klist`` -- either a list of integers congruent modulo `(p-1)`, or a single integer.
     - ``m`` -- a positive integer.
-    - ``modformsring`` -- ``True`` or ``False`` (optional, default ``False``).
+    - ``modformsring`` -- ``True`` or ``False`` (default: ``False``).
       Ignored if `N = 1`.
-    - ``weightbound`` -- a positive even integer (optional, default 6). Ignored
+    - ``weightbound`` -- a positive even integer (default: 6). Ignored
       if `N = 1` or ``modformsring`` is ``True``.
 
     OUTPUT:

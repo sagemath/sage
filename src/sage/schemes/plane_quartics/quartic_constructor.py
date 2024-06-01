@@ -23,7 +23,7 @@ def QuarticCurve(F, PP=None, check=False):
 
     - ``PP`` -- a projective plane (default: None)
 
-    - ``check`` -- whether to check for smoothness or not (default: False)
+    - ``check`` -- whether to check for smoothness or not (default: ``False``)
 
     EXAMPLES::
 

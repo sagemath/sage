@@ -15,6 +15,7 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.set import Set, Set_object_enumerated
 from sage.sets.positive_integers import PositiveIntegers
 
+
 class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
     r"""
     An example of a poset: finite sets ordered by inclusion
@@ -107,6 +108,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
     class Element(ElementWrapper):
 
         wrapped_class = Set_object_enumerated
+
 
 class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
     r"""

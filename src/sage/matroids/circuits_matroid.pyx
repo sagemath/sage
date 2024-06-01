@@ -289,8 +289,8 @@ cdef class CircuitsMatroid(Matroid):
         if certificate:
             return self._is_isomorphic(other), self._isomorphism(other)
         N = CircuitsMatroid(other)
-        S = SetSystem(list(self._groundset), self._C)
-        O = SetSystem(list(N._groundset), N._C)
+        S = SetSystem(self._groundset, self._C)
+        O = SetSystem(N._groundset, N._C)
         return S._isomorphism(O) is not None
 
     # representation
@@ -470,7 +470,7 @@ cdef class CircuitsMatroid(Matroid):
             SS = frozenset(S)
             if SS not in NB:
                 B.add(SS)
-        return SetSystem(list(self._groundset), B)
+        return SetSystem(self._groundset, B)
 
     def bases_iterator(self):
         r"""
@@ -551,7 +551,7 @@ cdef class CircuitsMatroid(Matroid):
             SS = frozenset(S)
             if SS not in D_r:
                 I_r.add(SS)
-        return SetSystem(list(self._groundset), I_r)
+        return SetSystem(self._groundset, I_r)
 
     cpdef dependent_r_sets(self, long r):
         r"""
@@ -586,7 +586,7 @@ cdef class CircuitsMatroid(Matroid):
                 NB.remove(S)
                 for e in S ^ self._groundset:
                     NB.add(S | set([e]))
-        return SetSystem(list(self._groundset), NB)
+        return SetSystem(self._groundset, NB)
 
     cpdef circuits(self, k=None):
         """
@@ -621,7 +621,7 @@ cdef class CircuitsMatroid(Matroid):
             for i in self._k_C:
                 for c in self._k_C[i]:
                     C.add(c)
-        return SetSystem(list(self._groundset), C)
+        return SetSystem(self._groundset, C)
 
     def circuits_iterator(self, k=None):
         """
@@ -675,7 +675,7 @@ cdef class CircuitsMatroid(Matroid):
         for i in self._k_C:
             if i <= self._matroid_rank:
                 NSC.update(self._k_C[i])
-        return SetSystem(list(self._groundset), NSC)
+        return SetSystem(self._groundset, NSC)
 
     def nonspanning_circuits_iterator(self):
         """
@@ -755,7 +755,7 @@ cdef class CircuitsMatroid(Matroid):
                 else:
                     B.add(S)
 
-        return SetSystem(list(self.groundset()), B)
+        return SetSystem(self.groundset(), B)
 
     cpdef no_broken_circuits_sets(self, ordering=None, reduced=False):
         r"""
@@ -803,7 +803,7 @@ cdef class CircuitsMatroid(Matroid):
         for f in SimplicialComplex(self.no_broken_circuits_facets(ordering, reduced),
                                    maximality_check=False).face_iterator():
             NBC.add(frozenset(f))
-        return SetSystem(list(self.groundset()), NBC)
+        return SetSystem(self.groundset(), NBC)
 
     cpdef broken_circuit_complex(self, ordering=None, reduced=False):
         r"""
