@@ -92,7 +92,7 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
 
     # (first recursive call)
     if classes is None:
-        classes = dict()
+        classes = {}
 
     # Build the list ``children`` of submodules (resp. base classes)
     # of ``top`` the function will recurse through

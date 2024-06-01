@@ -162,7 +162,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
 
     def is_noetherian(self):
         """
-        Return ``True`` since orders in function fields are noetherian.
+        Return ``True`` since orders in function fields are Noetherian.
 
         EXAMPLES::
 

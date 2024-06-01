@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Three-Dimensional Graphics Output Types
 

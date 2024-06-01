@@ -138,7 +138,7 @@ def abstract_method(f=None, optional=False):
         return AbstractMethod(f, optional)
 
 
-class AbstractMethod():
+class AbstractMethod:
     def __init__(self, f, optional=False):
         """
         Constructor for abstract methods

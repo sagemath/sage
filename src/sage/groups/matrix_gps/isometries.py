@@ -227,9 +227,9 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
                 return GroupActionOnSubmodule(self, S)
             if S is self._invariant_quotient_module:
                 return GroupActionOnQuotientModule(self, S)
-            from sage.modules.fg_pid.fgp_module import is_FGP_Module
+            from sage.modules.fg_pid.fgp_module import FGP_Module_class
             T = self._invariant_quotient_module
-            if is_FGP_Module(S):
+            if isinstance(S, FGP_Module_class):
                 if S.is_submodule(T):
                     V = S.V()
                     if all(V == V * f.matrix() for f in self.gens()):

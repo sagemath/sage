@@ -606,7 +606,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         base_ring = GF(p)
         self._profile = profile
         self._truncation_type = truncation_type
-        if ((not self._generic and ((profile and profile[0] < Infinity)))
+        if ((not self._generic and profile and profile[0] < Infinity)
             or (self._generic and profile != ((), ()) and profile[0]
                 and profile[0][0] < Infinity)
                 or (truncation_type < Infinity)):
@@ -3054,7 +3054,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def is_noetherian(self):
         """
-        This algebra is noetherian if and only if it is finite.
+        This algebra is Noetherian if and only if it is finite.
 
         EXAMPLES::
 

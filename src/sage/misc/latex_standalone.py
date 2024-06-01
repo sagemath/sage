@@ -290,8 +290,8 @@ class Standalone(SageObject):
 
     """
     def __init__(self, content, document_class_options=None,
-            standalone_config=None, usepackage=None, macros=None,
-            use_sage_preamble=False):
+                 standalone_config=None, usepackage=None, macros=None,
+                 use_sage_preamble=False):
         r"""
         See :class:`Standalone` for full information.
 
@@ -337,10 +337,10 @@ class Standalone(SageObject):
             lines.append(r"\documentclass[{}]{{standalone}}".format(options))
         else:
             lines.append(r"\documentclass{standalone}")
-        for config in self._standalone_config:
-            lines.append(r"\standaloneconfig{{{}}}".format(config))
-        for package in self._usepackage:
-            lines.append(r"\usepackage{{{}}}".format(package))
+        lines.extend(r"\standaloneconfig{{{}}}".format(config)
+                     for config in self._standalone_config)
+        lines.extend(r"\usepackage{{{}}}".format(package)
+                     for package in self._usepackage)
         lines.extend(self._macros)
         return lines
 
@@ -1029,7 +1029,7 @@ class Standalone(SageObject):
             cmd = ['pdf2svg', temp_filename_pdf, temp_filename_svg]
         else:
             raise ValueError("program(={}) should be 'pdftocairo' or"
-                    " 'pdf2svg'".format(program))
+                             " 'pdf2svg'".format(program))
 
         # convert to svg
         result = run(cmd, capture_output=True, text=True)
@@ -1146,7 +1146,7 @@ class Standalone(SageObject):
             cmd = ['dvips', '-E', '-o', temp_filename_eps, temp_filename_dvi]
         else:
             raise ValueError("program(={}) should be 'pdftocairo' or"
-                    " 'dvips'".format(program))
+                             " 'dvips'".format(program))
 
         # convert to eps
         result = run(cmd, capture_output=True, text=True)
@@ -1307,6 +1307,7 @@ class Standalone(SageObject):
         else:
             raise ValueError("allowed file extensions for images are "
                              ".pdf, .png, .svg, .eps, .dvi!")
+
 
 class TikzPicture(Standalone):
     r"""
@@ -1655,8 +1656,8 @@ class TikzPicture(Standalone):
                 from sage.graphs.graph import Graph
                 graph = Graph(edges, format='list_of_edges', loops=loops)
 
-        options = dict(format='dot2tex', edge_labels=True,
-                       color_by_label=False, prog='dot', rankdir='down')
+        options = {'format': 'dot2tex', 'edge_labels': True,
+                   'color_by_label': False, 'prog': 'dot', 'rankdir': 'down'}
         options.update(kwds)
 
         graph.latex_options().set_options(**options)
@@ -1666,7 +1667,7 @@ class TikzPicture(Standalone):
     @classmethod
     @experimental(issue_number=20343)
     def from_graph_with_pos(cls, graph, scale=1, merge_multiedges=True,
-            merge_label_function=tuple):
+                            merge_label_function=tuple):
         r"""
         Convert a graph with positions defined for vertices to a tikzpicture.
 

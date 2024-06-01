@@ -33,7 +33,6 @@ from sage.categories.morphism import Morphism
 from sage.categories.fields import Fields
 from sage.rings.infinity import infinity
 from .local_generic import LocalGeneric
-from sage.rings.ring import PrincipalIdealDomain
 from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
 from sage.rings.padics.precision_error import PrecisionError
@@ -41,7 +40,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_not_equal
 
 
-class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
+class pAdicGeneric(LocalGeneric):
     def __init__(self, base, p, prec, print_mode, names, element_class, category=None):
         r"""
         Initialize ``self``.
@@ -68,7 +67,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             category = category.Metric().Complete()
         LocalGeneric.__init__(self, base, prec, names, element_class, category)
         self._printer = pAdicPrinter(self, print_mode)
-        self._qth_roots_of_unity = [ (1, Infinity) ]
+        self._qth_roots_of_unity = [(1, Infinity)]
 
     def some_elements(self):
         r"""
