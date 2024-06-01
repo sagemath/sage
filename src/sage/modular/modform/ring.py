@@ -345,7 +345,7 @@ class ModularFormsRing(Parent):
           separated string; consists in the names of the polynomial
           ring variables
         - ``gens`` -- list of modular forms generating this ring
-          (default: None); if ``gens`` is ``None`` then the list of
+          (default: ``None``); if ``gens`` is ``None`` then the list of
           generators returned by the method
           :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead. Note that we do not check if the list is
@@ -426,7 +426,7 @@ class ModularFormsRing(Parent):
           number of variable of this polynomial should equal the number
           of given generators.
         - ``gens`` -- list of modular forms generating this ring
-          (default: None); if ``gens`` is ``None`` then the list of
+          (default: ``None``); if ``gens`` is ``None`` then the list of
           generators returned by the method
           :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead. Note that we do not check if the list is
@@ -1015,7 +1015,7 @@ class ModularFormsRing(Parent):
         - ``prec`` -- integer (default: ``None``); power series
           precision. If ``None``, the precision defaults to the Sturm
           bound for the requested level and weight.
-        - ``use_random`` -- boolean (default: True); whether or not to
+        - ``use_random`` -- boolean (default: ``True``); whether or not to
           use a randomized algorithm when building up the space of forms
           at the given weight from known generators of small weight.
 
