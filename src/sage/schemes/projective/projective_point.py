@@ -31,7 +31,7 @@ from sage.categories.number_fields import NumberFields
 _NumberFields = NumberFields()
 from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
+from sage.rings.number_field.order import Order as NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
@@ -749,7 +749,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         if prec is None:
             prec = 53
         K = self.codomain().base_ring()
-        if K in _NumberFields or is_NumberFieldOrder(K):
+        if K in _NumberFields or isinstance(K, NumberFieldOrder) or K == ZZ:
             P = self
         else:
             try:

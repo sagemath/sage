@@ -229,7 +229,6 @@ from sage.rings.integer_ring import is_IntegerRing, ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.number_field.number_field_base cimport NumberField
 
-from sage.rings.number_field.order import is_NumberFieldOrder
 from sage.categories.number_fields import NumberFields
 
 from sage.structure.element import coerce_binop
@@ -5613,7 +5612,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             return RealField(prec).zero()
 
         K = self.base_ring()
-        if K in NumberFields() or is_NumberFieldOrder(K):
+        if K in NumberFields() or isinstance(K, sage.rings.abc.Order) or K == ZZ:
             f = self
         else:
             raise TypeError("Must be over a Numberfield or a Numberfield Order.")
@@ -5665,7 +5664,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             prec = 53
 
         K = FractionField(self.base_ring())
-        if K not in NumberFields() or is_NumberFieldOrder(K):
+        if K not in NumberFields() and not isinstance(K, sage.rings.abc.Order) and K != ZZ:
             raise TypeError("must be over a Numberfield or a Numberfield order")
 
         return max([K(c).local_height(v, prec=prec) for c in self.coefficients()])
@@ -5709,7 +5708,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             1.0
         """
         K = FractionField(self.base_ring())
-        if K not in NumberFields() or is_NumberFieldOrder(K):
+        if K not in NumberFields() and not isinstance(K, sage.rings.abc.Order) and K != ZZ:
             return TypeError("must be over a Numberfield or a Numberfield Order")
 
         if K == QQ:
