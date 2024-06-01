@@ -28,10 +28,10 @@ lazy_import('sage.functions.other', 'factorial')
 
 lazy_import('sage.combinat.combinat', 'bernoulli_polynomial')
 lazy_import('sage.rings.cc', 'CC')
-lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'is_ComplexNumber'])
+lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'ComplexNumber'])
 lazy_import('sage.rings.polynomial.polynomial_real_mpfr_dense', 'PolynomialRealDense')
 lazy_import('sage.rings.real_double', 'RDF')
-lazy_import('sage.rings.real_mpfr', ['RR', 'RealField', 'is_RealNumber'])
+lazy_import('sage.rings.real_mpfr', ['RR', 'RealField', 'RealNumber'])
 
 lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
 lazy_import('mpmath', 'zeta', as_='_mpmath_zeta')

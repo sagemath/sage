@@ -613,7 +613,7 @@ from sage.rings.real_mpfi import (
     RIF,
     RealIntervalField,
     RealIntervalField_class,
-    is_RealIntervalFieldElement,
+    RealIntervalFieldElement,
 )
 from sage.rings.real_mpfr import RR
 from sage.structure.coerce import parent_is_numerical, parent_is_real_numerical
@@ -1572,7 +1572,7 @@ def is_AlgebraicRealField(F):
 
     EXAMPLES::
 
-        sage: from sage.rings.qqbar import AlgebraicRealField
+        sage: from sage.rings.qqbar import is_AlgebraicRealField
         sage: [is_AlgebraicRealField(x) for x in [AA, QQbar, None, 0, "spam"]]
         doctest:warning...
         DeprecationWarning: is_AlgebraicRealField is deprecated;
@@ -6747,12 +6747,12 @@ def is_AlgebraicReal(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.qqbar import AlgebraicReal
+        sage: from sage.rings.qqbar import is_AlgebraicReal
         sage: is_AlgebraicReal(AA(sqrt(2)))                                             # needs sage.symbolic
         True
         sage: is_AlgebraicReal(QQbar(sqrt(2)))                                          # needs sage.symbolic
         False
-        sage: isinstance("spam", AlgebraicReal)
+        sage: is_AlgebraicReal("spam")
         False
     """
     return isinstance(x, AlgebraicReal)
@@ -6764,12 +6764,12 @@ def is_AlgebraicNumber(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.qqbar import AlgebraicNumber
+        sage: from sage.rings.qqbar import is_AlgebraicNumber
         sage: is_AlgebraicNumber(AA(sqrt(2)))                                           # needs sage.symbolic
         False
         sage: is_AlgebraicNumber(QQbar(sqrt(2)))                                        # needs sage.symbolic
         True
-        sage: isinstance("spam", AlgebraicNumber)
+        sage: is_AlgebraicNumber("spam")
         False
     """
     return isinstance(x, AlgebraicNumber)

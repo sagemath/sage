@@ -88,7 +88,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import QQ, is_RationalField
+from sage.rings.rational_field import QQ, RationalField
 from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import Order
 
@@ -1173,7 +1173,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if isinstance(R, RationalField):
             field_type = False
         elif R in NumberFields():
-            # True for the rational field as well, so check is_RationalField first
+            # True for the rational field as well, so check RationalField first
             field_type = True
         elif (R is ZZ) or (isinstance(R, Order) and R.is_integrally_closed()): # Ensure ring of integers / maximal order
             is_ring_of_ints = True

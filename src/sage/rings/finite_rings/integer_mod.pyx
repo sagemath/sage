@@ -211,10 +211,10 @@ def is_IntegerMod(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.finite_rings.integer_mod import IntegerMod
-        sage: isinstance(5, IntegerMod_abstract)
+        sage: from sage.rings.finite_rings.integer_mod import is_IntegerMod
+        sage: is_IntegerMod(5)
         False
-        sage: isinstance(Mod(5,10), IntegerMod_abstract)
+        sage: is_IntegerMod(Mod(5,10))
         True
     """
     return isinstance(x, IntegerMod_abstract)

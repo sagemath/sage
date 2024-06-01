@@ -704,10 +704,10 @@ def is_ComplexDoubleElement(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.complex_double import ComplexDoubleElement
-        sage: isinstance(0, ComplexDoubleElement)
+        sage: from sage.rings.complex_double import is_ComplexDoubleElement
+        sage: is_ComplexDoubleElement(0)
         False
-        sage: isinstance(CDF(0), ComplexDoubleElement)
+        sage: is_ComplexDoubleElement(CDF(0))
         True
     """
     return isinstance(x, ComplexDoubleElement)

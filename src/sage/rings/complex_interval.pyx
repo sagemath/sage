@@ -80,7 +80,7 @@ def is_ComplexIntervalFieldElement(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.complex_interval import ComplexIntervalFieldElement as is_CIFE
+        sage: from sage.rings.complex_interval import is_ComplexIntervalFieldElement as is_CIFE
         sage: is_CIFE(CIF(2))
         True
         sage: is_CIFE(CC(2))

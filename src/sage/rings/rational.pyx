@@ -391,14 +391,14 @@ def is_Rational(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.rational import Rational
-        sage: isinstance(2, Rational)
+        sage: from sage.rings.rational import is_Rational
+        sage: is_Rational(2)
         False
-        sage: isinstance(2/1, Rational)
+        sage: is_Rational(2/1)
         True
-        sage: isinstance(int(2), Rational)
+        sage: is_Rational(int(2))
         False
-        sage: isinstance('5', Rational)
+        sage: is_Rational('5')
         False
     """
     return isinstance(x, Rational)

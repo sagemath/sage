@@ -44,7 +44,7 @@ EXAMPLES::
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer, Integer
+from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.schemes.generic.homset import SchemeHomset_points

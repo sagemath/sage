@@ -226,7 +226,7 @@ import sage.structure.element
 
 from sage.rings.rational cimport Rational
 from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import IntegerRing, ZZ
+from sage.rings.integer_ring import IntegerRing_class, ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.number_field.number_field_base cimport NumberField
 

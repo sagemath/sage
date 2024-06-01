@@ -491,8 +491,8 @@ cdef extern from "pynac_wrap.h":
         py_integer_from_python_obj(x)
         py_integer_from_mpz(mpz_t)
         py_rational_from_mpq(mpq_t)
-        bint py_isinstance(x, Integer)
-        bint py_isinstance(x, Rational)
+        bint py_is_Integer(x)
+        bint py_is_Rational(x)
         mpz_ptr py_mpz_from_integer(x)
         mpq_ptr py_mpq_from_rational(x)
 

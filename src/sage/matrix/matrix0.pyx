@@ -42,7 +42,7 @@ from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.rings import Rings
 
 import sage.rings.abc
-from sage.rings.integer_ring import IntegerRing
+from sage.rings.integer_ring import IntegerRing_class
 
 import sage.modules.free_module
 

@@ -93,8 +93,8 @@ from sage.structure.element import Vector
 from sage.structure.element cimport have_same_parent
 from sage.misc.verbose import verbose
 from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.integer_ring import ZZ, is_IntegerRing
-from sage.rings.rational_field import QQ, is_RationalField
+from sage.rings.integer_ring import ZZ, IntegerRing_class
+from sage.rings.rational_field import QQ, RationalField
 import sage.rings.abc
 from sage.arith.numerical_approx cimport digits_to_bits
 

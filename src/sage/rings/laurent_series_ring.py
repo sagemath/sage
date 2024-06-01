@@ -503,7 +503,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: P({-3: 1})
             x^-3
         """
-        from sage.rings.fraction_field_element import FractionField_genericElement
+        from sage.rings.fraction_field_element import FractionFieldElement
         from sage.rings.lazy_series import LazyPowerSeries, LazyLaurentSeries
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.rings.polynomial.polynomial_element import Polynomial

@@ -77,7 +77,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.rational_field import QQ, is_RationalField
+from sage.rings.rational_field import QQ, RationalField
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.gens_py import multiplicative_iterator

@@ -34,13 +34,13 @@ def is_FractionFieldElement(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.fraction_field_element import FractionField_genericElement
+        sage: from sage.rings.fraction_field_element import is_FractionFieldElement
         sage: R.<x> = ZZ[]
-        sage: isinstance(x/2, FractionFieldElement)
+        sage: is_FractionFieldElement(x/2)
         False
-        sage: isinstance(2/x, FractionFieldElement)
+        sage: is_FractionFieldElement(2/x)
         True
-        sage: isinstance(1/3, FractionFieldElement)
+        sage: is_FractionFieldElement(1/3)
         False
     """
     return isinstance(x, FractionFieldElement)

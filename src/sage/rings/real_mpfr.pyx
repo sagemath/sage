@@ -5884,14 +5884,14 @@ def is_RealNumber(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.real_mpfr import RealNumber
-        sage: isinstance(2.5, RealNumber)
+        sage: from sage.rings.real_mpfr import is_RealNumber
+        sage: is_RealNumber(2.5)
         True
-        sage: isinstance(float(2.3), RealNumber)
+        sage: is_RealNumber(float(2.3))
         False
-        sage: isinstance(RDF(2), RealNumber)
+        sage: is_RealNumber(RDF(2))
         False
-        sage: isinstance(pi, RealNumber)                                                         # needs sage.symbolic
+        sage: is_RealNumber(pi)                                                         # needs sage.symbolic
         False
     """
     return isinstance(x, RealNumber)

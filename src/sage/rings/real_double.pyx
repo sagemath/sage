@@ -2053,10 +2053,10 @@ def is_RealDoubleElement(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.real_double import RealDoubleElement
-        sage: isinstance(RDF(3), RealDoubleElement)
+        sage: from sage.rings.real_double import is_RealDoubleElement
+        sage: is_RealDoubleElement(RDF(3))
         True
-        sage: isinstance(RIF(3), RealDoubleElement)                                              # needs sage.rings.real_interval_field
+        sage: is_RealDoubleElement(RIF(3))                                              # needs sage.rings.real_interval_field
         False
     """
     return isinstance(x, RealDoubleElement)

@@ -120,7 +120,7 @@ import sage.libs.singular.ring
 
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import IntegerRing
+from sage.rings.integer_ring import IntegerRing_class
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular, new_MP
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal

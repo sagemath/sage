@@ -149,10 +149,10 @@ def is_FractionField(x) -> bool:
 
     EXAMPLES::
 
-        sage: from sage.rings.fraction_field import FractionField_generic
-        sage: isinstance(Frac(ZZ['x']), FractionField_generic)
+        sage: from sage.rings.fraction_field import is_FractionField
+        sage: is_FractionField(Frac(ZZ['x']))
         True
-        sage: isinstance(QQ, FractionField_generic)
+        sage: is_FractionField(QQ)
         False
     """
     return isinstance(x, FractionField_generic)

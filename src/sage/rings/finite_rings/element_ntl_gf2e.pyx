@@ -50,7 +50,7 @@ from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.interfaces.abc import GapElement
 
 
-cdef object is_IntegerMod
+cdef object IntegerMod_abstract
 cdef object Integer
 cdef object Rational
 cdef object MPolynomial
@@ -64,7 +64,7 @@ cdef int late_import() except -1:
     i.e. after the module was loaded. This is needed to avoid circular
     imports.
     """
-    global is_IntegerMod, \
+    global IntegerMod_abstract, \
            Integer, \
            Rational, \
            MPolynomial, \
@@ -76,7 +76,7 @@ cdef int late_import() except -1:
         return 0
 
     import sage.rings.finite_rings.integer_mod
-    is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
+    IntegerMod_abstract = sage.rings.finite_rings.integer_mod.IntegerMod_abstract
 
     import sage.rings.rational
     Rational = sage.rings.rational.Rational

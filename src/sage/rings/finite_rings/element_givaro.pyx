@@ -69,7 +69,7 @@ from sage.structure.element cimport Vector
 
 from sage.interfaces.abc import GapElement
 
-cdef object is_IntegerMod
+cdef object IntegerMod_abstract
 cdef object Integer
 cdef object Rational
 cdef object MPolynomial
@@ -80,17 +80,17 @@ cdef void late_import() noexcept:
     """
     Late import of modules
     """
-    global is_IntegerMod, \
+    global IntegerMod_abstract, \
            Integer, \
            Rational, \
            MPolynomial, \
            Polynomial
 
-    if is_IntegerMod is not None:
+    if IntegerMod_abstract is not None:
         return
 
     import sage.rings.finite_rings.integer_mod
-    is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
+    IntegerMod_abstract = sage.rings.finite_rings.integer_mod.IntegerMod_abstract
 
     import sage.rings.integer
     Integer = sage.rings.integer.Integer

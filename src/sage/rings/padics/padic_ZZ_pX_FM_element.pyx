@@ -145,7 +145,7 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
-from sage.rings.finite_rings.integer_mod import IntegerMod
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 

@@ -23,7 +23,7 @@ TESTS::
     ....: from sage.rings.integer_fake cimport Integer_AS_MPZ, is_Integer
     ....: from sage.rings.integer cimport Integer
     ....: cdef Integer x = Integer(123456789)
-    ....: assert isinstance(x, Integer)
+    ....: assert is_Integer(x)
     ....: assert Integer_AS_MPZ(x) is x.value
     ....: ''')
 """
