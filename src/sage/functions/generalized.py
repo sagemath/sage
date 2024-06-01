@@ -65,7 +65,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -102,7 +102,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -131,7 +131,7 @@ class FunctionDiracDelta(BuiltinFunction):
         """
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -182,7 +182,7 @@ class FunctionHeaviside(GinacFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -240,7 +240,7 @@ class FunctionHeaviside(GinacFunction):
 
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 

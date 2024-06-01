@@ -22,7 +22,7 @@ def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
      - ``depth`` -- maximal recursion depth within submodules (default: 5)
      - ``name_filter`` -- e.g. 'sage.rings' to only consider classes in :mod:`sage.rings`
      - ``classes`` -- optional dictionary to be filled in (it is also returned)
-     - ``as_graph`` -- a boolean (default: True)
+     - ``as_graph`` -- a boolean (default: ``True``)
 
     OUTPUT:
 

@@ -281,9 +281,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``x`` - a point or subscheme in domain of this map.
+        - ``x`` -- a point or subscheme in domain of this map.
 
-        - ``check`` - Boolean - if `False` assume that ``x`` is a point.
+        - ``check`` -- Boolean; if `False` assume that ``x`` is a point.
 
         EXAMPLES::
 

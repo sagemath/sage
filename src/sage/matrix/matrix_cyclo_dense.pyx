@@ -984,15 +984,15 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``col`` - Integer, indicating the column; must be coercable to
+        -  ``col`` -- Integer, indicating the column; must be coercable to
            ``int``, and this must lie between 0 (inclusive) and
            ``self._ncols`` (exclusive), since no bounds-checking is performed
-        -  ``nump1`` - Integer, numerator bound plus one
-        -  ``denp1`` - Integer, denominator bound plus one
-        -  ``distribution`` - ``None`` or '1/n' (default: ``None``); if '1/n'
+        -  ``nump1`` -- Integer, numerator bound plus one
+        -  ``denp1`` -- Integer, denominator bound plus one
+        -  ``distribution`` -- ``None`` or '1/n' (default: ``None``); if '1/n'
            then ``num_bound``, ``den_bound`` are ignored and numbers are chosen
            using the GMP function ``mpq_randomize_entry_recip_uniform``
-        -  ``nonzero`` - Bool (default: ``False``); whether the new entries
+        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
            are forced to be non-zero
 
         OUTPUT:

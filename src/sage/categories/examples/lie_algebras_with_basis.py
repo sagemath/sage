@@ -17,6 +17,7 @@ from sage.categories.algebras import Algebras
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
 
+
 class AbelianLieAlgebra(CombinatorialFreeModule):
     r"""
     An example of a Lie algebra: the abelian Lie algebra.
@@ -105,6 +106,7 @@ class AbelianLieAlgebra(CombinatorialFreeModule):
 Example = AbelianLieAlgebra
 
 ##############
+
 
 class IndexedPolynomialRing(CombinatorialFreeModule):
     """

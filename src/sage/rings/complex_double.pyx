@@ -1463,7 +1463,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- bool (default: ``False``); if ``True``, return a
            list of all square roots.
 
         If all is ``False``, the branch cut is the negative real axis. The
@@ -1734,7 +1734,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``base`` - default: `e`, the base of the natural logarithm
+        -  ``base`` -- default: `e`, the base of the natural logarithm
 
         EXAMPLES::
 
@@ -2154,10 +2154,10 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``self`` - element of the upper half plane (if not,
+        -  ``self`` -- element of the upper half plane (if not,
            raises a ValueError).
 
-        -  ``omit_frac`` - (bool, default: ``False``), if ``True``,
+        -  ``omit_frac`` -- (bool, default: ``False``), if ``True``,
            omit the `e^{\pi i z / 12}` factor.
 
         OUTPUT: a complex double number

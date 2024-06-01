@@ -185,10 +185,10 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
         - ``polytope_origin`` -- `\ZZ`-vector. a vertex of ``polytope``
 
-        - ``p_ray_left`` - vector. the vector from ``polytope_origin``
+        - ``p_ray_left`` -- vector. the vector from ``polytope_origin``
           to one of its neighboring vertices.
 
-        - ``p_ray_right`` - vector. the vector from
+        - ``p_ray_right`` -- vector. the vector from
           ``polytope_origin`` to the other neighboring vertices.
 
         OUTPUT:

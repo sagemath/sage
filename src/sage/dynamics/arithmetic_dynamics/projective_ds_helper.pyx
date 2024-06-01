@@ -35,7 +35,7 @@ cpdef _fast_possible_periods(self, return_points=False):
 
     INPUT:
 
-    - ``return_points`` - (default: ``False``) boolean; if ``True``, then
+    - ``return_points`` -- (default: ``False``) boolean; if ``True``, then
       return the points as well as the possible periods
 
     OUTPUT:

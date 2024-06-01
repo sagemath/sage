@@ -85,7 +85,6 @@ For display options, see :meth:`Tableaux.options`.
 # ****************************************************************************
 from itertools import repeat
 
-import sage.libs.symmetrica.all as symmetrica
 import sage.misc.prandom as random
 
 from sage.arith.misc import binomial, factorial, multinomial
@@ -96,11 +95,10 @@ from sage.combinat import permutation
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.integer_vector import IntegerVectors, integer_vectors_nk_fast_iter
-from sage.combinat.posets.posets import Poset
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.combinat.subset import powerset
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.misc.persist import register_unpickle_override
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.infinity import PlusInfinity
@@ -113,6 +111,10 @@ from sage.structure.list_clone import ClonableList
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.posets.posets', 'Poset')
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
+lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
 
 
 @richcmp_method
@@ -275,7 +277,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        ``other`` -- the element that ``self`` is compared to
+        - ``other`` -- the element that ``self`` is compared to
 
         OUTPUT:
 

@@ -2024,10 +2024,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         INPUT:
 
-        - ``v`` - A list (iterator) of parents with coercions into self. There
+        - ``v`` -- A list (iterator) of parents with coercions into self. There
           MUST be maps provided from each item in the list to self.
 
-        - ``S`` - the starting parent
+        - ``S`` -- the starting parent
 
         EXAMPLES:
 

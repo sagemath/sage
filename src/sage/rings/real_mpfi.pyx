@@ -688,7 +688,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         - ``y`` -- (default: ``None``); if given ``x`` is set to ``(x,y)``;
           this is so you can write ``R(2,3)`` to make the interval from 2 to 3
 
-        - ``base`` -- integer (default: 10) - only used if ``x`` is a string
+        - ``base`` -- integer (default: 10); only used if ``x`` is a string
 
         OUTPUT: an element of this real interval field.
 
@@ -1209,7 +1209,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         - ``x`` -- a number, string, or 2-tuple
 
-        - ``base`` -- integer (default: 10) - only used if ``x`` is a string
+        - ``base`` -- integer (default: 10); only used if ``x`` is a string
 
         EXAMPLES::
 
@@ -1708,14 +1708,14 @@ cdef class RealIntervalFieldElement(RingElement):
 
         INPUT:
 
-          - ``base`` - base for output
+          - ``base`` -- base for output
 
-          - ``error_digits`` - maximum number of decimal digits for error
+          - ``error_digits`` -- maximum number of decimal digits for error
 
-          - ``e`` - symbol for exponent (typically ``'e'`` for base
+          - ``e`` -- symbol for exponent (typically ``'e'`` for base
             less than or equal to 10, ``'@'`` for larger base)
 
-          - ``prefer_sci`` - ``True`` to always print in scientific notation;
+          - ``prefer_sci`` -- ``True`` to always print in scientific notation;
             ``False`` to prefer non-scientific notation when
             possible
 
@@ -5267,7 +5267,7 @@ def RealInterval(s, upper=None, int base=10, int pad=0, min_prec=53):
     -  ``s`` -- a string that defines a real number (or
        something whose string representation defines a number)
 
-    -  ``upper`` -- (default: ``None``) - upper endpoint of
+    -  ``upper`` -- (default: ``None``); upper endpoint of
        interval if given, in which case ``s`` is the lower endpoint
 
     -  ``base`` -- an integer between 2 and 36
