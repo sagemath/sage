@@ -212,7 +212,7 @@ import sage.rings.complex_interval_field
 from sage.structure.factory import UniqueFactory
 from . import number_field_element
 from . import number_field_element_quadratic
-from .number_field_ideal import is_NumberFieldIdeal, NumberFieldFractionalIdeal
+from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
 from sage.libs.pari.all import pari, pari_gen
 
 from sage.rings.rational_field import QQ
@@ -6953,8 +6953,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             ...
             ValueError: Fractional ideal (5) is not a prime ideal
         """
-        from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
-        if is_NumberFieldIdeal(prime) and prime.number_field() is not self:
+        if isinstance(prime, NumberFieldIdeal) and prime.number_field() is not self:
             raise ValueError("%s is not an ideal of %s" % (prime, self))
         # This allows principal ideals to be specified using a generator:
         try:
@@ -6962,7 +6961,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         except TypeError:
             pass
 
-        if not is_NumberFieldIdeal(prime) or prime.number_field() is not self:
+        if not isinstance(prime, NumberFieldIdeal) or prime.number_field() is not self:
             raise ValueError("%s is not an ideal of %s" % (prime, self))
         if check and not prime.is_prime():
             raise ValueError("%s is not a prime ideal" % prime)
@@ -7088,7 +7087,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: x in (t^2 + 3*t +1, t^2 - 4*t +1)
             True
         """
-        if not is_NumberFieldIdeal(P):
+        if not isinstance(P, NumberFieldIdeal):
             P = self.ideal(P)
         P = P.pari_prime()
         if others == "positive":
@@ -10347,7 +10346,7 @@ class NumberField_absolute(NumberField_generic):
                 if P(a) > 0 or P(b) > 0:
                     return 1
                 return -1
-        if not is_NumberFieldIdeal(P):
+        if not isinstance(P, NumberFieldIdeal):
             P = self.ideal(P)
         if P.number_field() is not self:
             raise ValueError("P (=%s) should be an ideal of self (=%s) in hilbert_symbol, not of %s" % (P, self, P.number_field()))

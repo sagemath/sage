@@ -94,7 +94,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from . import number_field_element
 import sage.rings.number_field.number_field_ideal_rel
-from .number_field_ideal import is_NumberFieldIdeal
+from .number_field_ideal import NumberFieldIdeal
 from .number_field import (NumberField, NumberField_generic,
     put_natural_embedding_first, proof_flag,
     is_NumberFieldHomsetCodomain)
@@ -2723,7 +2723,7 @@ class NumberField_relative(NumberField_generic):
             sage: (P, 1) in K.factor(u)
             True
         """
-        if not is_NumberFieldIdeal(P):
+        if not isinstance(P, NumberFieldIdeal):
             P = self.ideal(P)
         if not P.is_maximal():
             raise ValueError("P (=%s) must be a nonzero prime." % P)
