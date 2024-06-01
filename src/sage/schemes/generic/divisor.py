@@ -159,11 +159,11 @@ class Divisor_generic(FormalSum):
 
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
 
-        - ``check`` -- bool (default: True). Whether to coerce
+        - ``check`` -- bool (default: ``True``). Whether to coerce
           coefficients into base ring. Setting it to ``False`` can
           speed up construction.
 
-        - ``reduce`` -- reduce (default: True). Whether to combine
+        - ``reduce`` -- reduce (default: ``True``). Whether to combine
           common terms. Setting it to ``False`` can speed up
           construction.
 

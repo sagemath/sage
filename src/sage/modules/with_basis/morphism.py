@@ -136,7 +136,7 @@ class ModuleMorphism(Morphism):
     - ``codomain`` -- a parent in ``Modules(...)``;
     - ``category`` -- a category or ``None`` (default: `None``)
     - ``affine`` -- whether we define an affine module morphism
-      (default: False).
+      (default: ``False``).
 
     Construct a module morphism from ``domain`` to ``codomain`` in the
     category ``category``. By default, the category is the first of

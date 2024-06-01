@@ -26,6 +26,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ideal import Ideal
 from sage.matrix.constructor import matrix
 
+
 class FusionDouble(CombinatorialFreeModule):
     r"""
     The fusion ring corresponding to the Drinfeld double of a finite group.

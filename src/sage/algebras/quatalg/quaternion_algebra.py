@@ -630,7 +630,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     - ``base_ring`` -- a commutative ring `K` in which 2 is invertible
     - ``a, b`` -- units of `K`
-    - ``names`` -- string (optional, default 'i,j,k') names of the generators
+    - ``names`` -- string (default: 'i,j,k') names of the generators
 
     OUTPUT:
 
@@ -710,7 +710,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
           prime and the invariants of the algebra are of a nice form, use
           Proposition 5.2 of [Piz1980]_.
 
-        - ``order_basis`` -- (optional, default: ``None``) a basis of an
+        - ``order_basis`` -- (default: ``None``) a basis of an
           order of this quaternion algebra
 
         OUTPUT:
@@ -1120,7 +1120,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - ``i`` - integer (optional, default 0)
+        - ``i`` -- integer (default: 0)
 
         EXAMPLES::
 
@@ -1319,8 +1319,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - ``basis`` - list of 4 elements of ``self``
-        - ``check`` - bool (default: ``True``)
+        - ``basis`` -- list of 4 elements of ``self``
+        - ``check`` -- bool (default: ``True``)
 
         EXAMPLES::
 
@@ -1549,9 +1549,9 @@ class QuaternionOrder(Parent):
         """
         INPUT:
 
-        - ``A`` - a quaternion algebra
-        - ``basis`` - list of 4 integral quaternions in ``A``
-        - ``check`` - whether to do type and other consistency checks
+        - ``A`` -- a quaternion algebra
+        - ``basis`` -- list of 4 integral quaternions in ``A``
+        - ``check`` -- whether to do type and other consistency checks
 
         .. WARNING::
 
@@ -1729,7 +1729,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``n`` - an integer between 0 and 3, inclusive.
+        - ``n`` -- an integer between 0 and 3, inclusive.
 
         EXAMPLES::
 
@@ -1878,7 +1878,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``other`` - a quaternion order in the same ambient quaternion algebra
+        - ``other`` -- a quaternion order in the same ambient quaternion algebra
 
         OUTPUT: a quaternion order
 
@@ -2268,7 +2268,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``include_basis`` -- bool (default: False), if True also
+        - ``include_basis`` -- bool (default: ``False``), if True also
           return a basis for the dimension 3 subspace `G`
 
         OUTPUT:
@@ -2337,7 +2337,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``conjugator`` -- bool (default: False), if True this
+        - ``conjugator`` -- bool (default: ``False``), if True this
           method returns a single quaternion `\gamma \in O \cap O'`
           of minimal norm such that `O' = \gamma^{-1} O \gamma`,
           rather than the ring isomorphism it defines.
@@ -2622,7 +2622,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - `\alpha` -- element of quaternion algebra
 
-        - ``left`` -- bool (default: False); if true multiply
+        - ``left`` -- bool (default: ``False``); if true multiply
           `\alpha` on the left, otherwise multiply `\alpha` on the right
 
         OUTPUT:
@@ -3400,7 +3400,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``J`` -- a fractional quaternion ideal with norm coprime to ``self`` and either
           the same left order or right order as ``self``
 
-        - ``side`` -- string (optional, default ``None``) set to ``"left"`` or ``"right"`` to
+        - ``side`` -- string (default: ``None``) set to ``"left"`` or ``"right"`` to
           perform pushforward of left or right ideals respectively. If ``None`` the side
           is determined by the matching left or right orders
 
@@ -3494,7 +3494,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``J`` -- a fractional quaternion ideal with norm coprime to ``self`` and either
           left order equal to the right order of ``self``, or vice versa
 
-        - ``side`` -- string (optional, default ``None``) set to ``"left"`` or ``"right"`` to
+        - ``side`` -- string (default: ``None``) set to ``"left"`` or ``"right"`` to
           perform pullback of left or right ideals respectively. If ``None`` the side
           is determined by the matching left and right orders
 

@@ -19,6 +19,8 @@ from sage.categories.rings import Rings
 _Rings = Rings()
 
 #?class Bimodules(Category_over_base_rng, Category_over_base_rng):
+
+
 class Bimodules(CategoryWithParameters):
     """
     The category of `(R,S)`-bimodules

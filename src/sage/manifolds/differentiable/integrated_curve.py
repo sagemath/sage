@@ -947,7 +947,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``method`` -- (default: ``'odeint'``) numerical scheme to
           use for the integration of the curve; available algorithms are:
 
-          * ``'odeint'`` - makes use of
+          * ``'odeint'`` -- makes use of
             :func:`scipy:scipy.integrate.odeint`
             via Sage solver
             :func:`~sage.calculus.desolvers.desolve_odeint`; ``odeint`` invokes
@@ -956,27 +956,27 @@ class IntegratedCurve(DifferentiableCurve):
             automatically selects between implicit Adams method (for non-stiff
             problems) and a method based on backward differentiation formulas
             (BDF) (for stiff problems).
-          * ``'rk4_maxima'`` - 4th order classical Runge-Kutta, which
+          * ``'rk4_maxima'`` -- 4th order classical Runge-Kutta, which
             makes use of Maxima's dynamics package via Sage solver
             :func:`~sage.calculus.desolvers.desolve_system_rk4` (quite slow)
-          * ``'dopri5'`` - Dormand-Prince Runge-Kutta of order (4)5 provided by
+          * ``'dopri5'`` -- Dormand-Prince Runge-Kutta of order (4)5 provided by
             :obj:`scipy:scipy.integrate.ode`
-          * ``'dop853'`` - Dormand-Prince Runge-Kutta of order 8(5,3) provided by
+          * ``'dop853'`` -- Dormand-Prince Runge-Kutta of order 8(5,3) provided by
             :obj:`scipy:scipy.integrate.ode`
 
           and those provided by ``GSL`` via Sage class
           :class:`~sage.calculus.ode.ode_solver`:
 
-          * ``'rk2'`` - embedded Runge-Kutta (2,3)
-          * ``'rk4'`` - 4th order classical Runge-Kutta
-          * ``'rkf45'`` - Runge-Kutta-Felhberg (4,5)
-          * ``'rkck'`` - embedded Runge-Kutta-Cash-Karp (4,5)
-          * ``'rk8pd'`` - Runge-Kutta Prince-Dormand (8,9)
-          * ``'rk2imp'`` - implicit 2nd order Runge-Kutta at Gaussian points
-          * ``'rk4imp'`` - implicit 4th order Runge-Kutta at Gaussian points
-          * ``'gear1'`` - `M=1` implicit Gear
-          * ``'gear2'`` - `M=2` implicit Gear
-          * ``'bsimp'`` - implicit Bulirsch-Stoer (requires Jacobian)
+          * ``'rk2'`` -- embedded Runge-Kutta (2,3)
+          * ``'rk4'`` -- 4th order classical Runge-Kutta
+          * ``'rkf45'`` -- Runge-Kutta-Felhberg (4,5)
+          * ``'rkck'`` -- embedded Runge-Kutta-Cash-Karp (4,5)
+          * ``'rk8pd'`` -- Runge-Kutta Prince-Dormand (8,9)
+          * ``'rk2imp'`` -- implicit 2nd order Runge-Kutta at Gaussian points
+          * ``'rk4imp'`` -- implicit 4th order Runge-Kutta at Gaussian points
+          * ``'gear1'`` -- `M=1` implicit Gear
+          * ``'gear2'`` -- `M=2` implicit Gear
+          * ``'bsimp'`` -- implicit Bulirsch-Stoer (requires Jacobian)
 
         - ``solution_key`` -- (default: ``None``) key which the
           resulting numerical solution will be associated to; a default

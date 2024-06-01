@@ -1863,9 +1863,9 @@ class PolynomialRing_commutative(PolynomialRing_general):
 
         - ``p`` -- the polynomial whose roots are computed
         - ``ring`` -- the ring to find roots (default is the base ring of ``p``)
-        - ``multiplicities`` -- bool (default: True): if ``True``, return a list of pairs ``(root, multiplicity)``; if ``False`` return a list of roots
+        - ``multiplicities`` -- bool (default: ``True``): if ``True``, return a list of pairs ``(root, multiplicity)``; if ``False`` return a list of roots
         - ``algorithm`` -- ignored (TODO: remove)
-        - ``degree_bound``-- if not ``None``, return only roots of degree at most ``degree_bound``
+        - ``degree_bound`` -- if not ``None``, return only roots of degree at most ``degree_bound``
 
         EXAMPLES::
 
@@ -2945,11 +2945,11 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
         - ``p`` -- the polynomial whose roots are computed
         - ``ring`` -- the ring to find roots (default is the base ring of ``p``)
-        - ``multiplicities`` -- bool (default: True): currently, roots are only
+        - ``multiplicities`` -- bool (default: ``True``): currently, roots are only
           computed without their multiplicities.
         - ``algorithm`` -- the algorithm to use: either ``"Alekhnovich"`` (default)
           or ``"Roth-Ruckenstein"``
-        - ``degree_bound``-- if not ``None``, return only roots of degree at
+        - ``degree_bound`` -- if not ``None``, return only roots of degree at
           most ``degree_bound``
 
         EXAMPLES::

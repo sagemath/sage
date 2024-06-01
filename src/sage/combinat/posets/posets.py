@@ -1370,7 +1370,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             [1, 3, 5, 15]
             sage: H.edges(sort=True)
             [(1, 3, None), (1, 5, None), (3, 15, None), (5, 15, None)]
-            sage: H.set_latex_options(format="dot2tex")
+            sage: H.set_latex_options(format="dot2tex")                                 # needs sage.plot
             sage: view(H)  # optional - dot2tex, not tested (opens external window)
         """
         G = DiGraph(self._hasse_diagram).relabel(self._list, inplace=False)
@@ -1492,7 +1492,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         - ``allow_incomparable`` -- a Boolean. If ``True`` (the default),
           return incomparable elements in some order; if ``False``, raise
           an error if ``l`` is not a chain of the poset.
-        - ``remove_duplicates`` - a Boolean. If ``True``, remove duplicates
+        - ``remove_duplicates`` -- a Boolean. If ``True``, remove duplicates
           from the output list.
 
         EXAMPLES::
@@ -1908,11 +1908,11 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change element look:
 
-          * ``element_colors`` - a dictionary where keys are colors and values
+          * ``element_colors`` -- a dictionary where keys are colors and values
             are lists of elements
-          * ``element_color`` - a color for elements not set in
+          * ``element_color`` -- a color for elements not set in
             ``element_colors``
-          * ``element_shape`` - the shape of elements, like ``'s'`` for
+          * ``element_shape`` -- the shape of elements, like ``'s'`` for
             square; see https://matplotlib.org/api/markers_api.html for the list
           * ``element_size`` (default: 200) - the size of elements
           * ``label_elements`` (default: ``True``) - whether to display
@@ -1922,24 +1922,24 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change cover relation look:
 
-          * ``cover_colors`` - a dictionary where keys are colors and values
+          * ``cover_colors`` -- a dictionary where keys are colors and values
             are lists of cover relations given as pairs of elements
-          * ``cover_color`` - a color for elements not set in
+          * ``cover_color`` -- a color for elements not set in
             ``cover_colors``
-          * ``cover_style`` - style for cover relations: ``'solid'``,
+          * ``cover_style`` -- style for cover relations: ``'solid'``,
             ``'dashed'``, ``'dotted'`` or ``'dashdot'``
-          * ``cover_labels`` - a dictionary, list or function representing
+          * ``cover_labels`` -- a dictionary, list or function representing
             labels of the covers of the poset. When set to ``None`` (default)
             no label is displayed on the edges of the Hasse Diagram.
-          * ``cover_labels_background`` - a background color for cover
+          * ``cover_labels_background`` -- a background color for cover
             relations. The default is "white". To achieve a transparent
             background use "transparent".
 
         - Options to change overall look:
 
           * ``figsize`` (default: 8) - size of the whole plot
-          * ``title`` - a title for the plot
-          * ``fontsize`` - fontsize for the title
+          * ``title`` -- a title for the plot
+          * ``fontsize`` -- fontsize for the title
           * ``border`` (default: ``False``) - whether to draw a border over the
             plot
 
@@ -2111,13 +2111,13 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``label_elements`` (default: ``True``) - whether to display
+        - ``label_elements`` (default: ``True``) -- whether to display
           element labels
 
-        - ``element_labels`` (default: ``None``) - a dictionary of
+        - ``element_labels`` (default: ``None``) -- a dictionary of
           element labels
 
-        - ``cover_labels`` - a dictionary, list or function representing labels
+        - ``cover_labels`` -- a dictionary, list or function representing labels
           of the covers of ``self``. When set to ``None`` (default) no label is
           displayed on the edges of the Hasse Diagram.
 
@@ -2771,7 +2771,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``m``, ``n`` - positive integers
+        - ``m``, ``n`` -- positive integers
 
         It is also possible to give a list of integer pairs as argument.
         See below for an example.
@@ -3587,12 +3587,12 @@ class FinitePoset(UniqueRepresentation, Parent):
         that we get back the poset from them::
 
             sage: P = Poset([[1,4], [3], [4,5,3], [6], [], [6], []])
-            sage: P.dimension()
+            sage: P.dimension()                                                         # needs networkx
             3
-            sage: dim, L = P.dimension(certificate=True)
-            sage: L  # random -- architecture-dependent
+            sage: dim, L = P.dimension(certificate=True)                                # needs sage.numerical.mip
+            sage: L  # random -- architecture-dependent                                 # needs sage.numerical.mip
             [[0, 2, 4, 5, 1, 3, 6], [2, 5, 0, 1, 3, 4, 6], [0, 1, 2, 3, 5, 6, 4]]
-            sage: Poset( (L[0], lambda x, y: all(l.index(x) < l.index(y) for l in L)) ) == P
+            sage: Poset( (L[0], lambda x, y: all(l.index(x) < l.index(y) for l in L)) ) == P        # needs sage.numerical.mip
             True
 
         According to Schnyder's theorem, the incidence poset (of
@@ -3601,12 +3601,12 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: G = graphs.CompleteGraph(4)
             sage: P = Poset(DiGraph({(u,v):[u,v] for u,v,_ in G.edges(sort=True)}))
-            sage: P.dimension()
+            sage: P.dimension()                                                         # needs networkx
             3
 
             sage: G = graphs.CompleteBipartiteGraph(3,3)
             sage: P = Poset(DiGraph({(u,v):[u,v] for u,v,_ in G.edges(sort=True)}))
-            sage: P.dimension() # not tested - around 4s with CPLEX
+            sage: P.dimension()  # not tested (around 4s with CPLEX)
             4
 
         TESTS:
@@ -3732,12 +3732,10 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P = posets.PentagonPoset()
             sage: P.magnitude()
             1
-
             sage: W = SymmetricGroup(4)
             sage: P = W.noncrossing_partition_lattice().without_bounds()
             sage: P.magnitude()
             -4
-
             sage: P = posets.TamariLattice(4).without_bounds()
             sage: P.magnitude()
             0
@@ -3746,7 +3744,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: # needs sage.groups sage.libs.flint
+            sage: # needs sage.libs.flint
             sage: P1 = posets.RandomPoset(20, 0.05)
             sage: P2 = posets.RandomPoset(20, 0.05)
             sage: m1 = P1.magnitude()
@@ -4766,7 +4764,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Eventually the following syntax will be accepted::
 
-            sage: A.subset(size = 2) # todo: not implemented
+            sage: A.subset(size=2)              # not implemented
 
         .. NOTE::
 
@@ -4835,7 +4833,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.BooleanLattice(4)
-            sage: P.width()
+            sage: P.width()                                                             # needs networkx
             6
 
             sage: w, max_achain = P.width(certificate=True)
@@ -4844,7 +4842,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Poset().width()
+            sage: Poset().width()                                                       # needs networkx
             0
             sage: Poset().width(certificate=True)
             (0, [])
@@ -4889,9 +4887,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: p = posets.BooleanLattice(4)
-            sage: p.width()
+            sage: p.width()                                                             # needs networkx
             6
-            sage: p.dilworth_decomposition()  # random
+            sage: p.dilworth_decomposition()  # random                                  # needs networkx
             [[7, 6, 4], [11, 3], [12, 8, 0], [13, 9, 1], [14, 10, 2], [15, 5]]
 
 
@@ -4902,11 +4900,11 @@ class FinitePoset(UniqueRepresentation, Parent):
         TESTS::
 
             sage: p = posets.IntegerCompositions(5)
-            sage: d = p.dilworth_decomposition()
-            sage: for chain in d:
+            sage: d = p.dilworth_decomposition()                                        # needs networkx
+            sage: for chain in d:                                                       # needs networkx
             ....:    for i in range(len(chain)-1):
             ....:        assert p.is_greater_than(chain[i],chain[i+1])
-            sage: set(p) == set().union(*d)
+            sage: set(p) == set().union(*d)                                             # needs networkx
             True
         """
         from sage.graphs.graph import Graph
@@ -4942,10 +4940,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         INPUT:
 
         - ``element_constructor`` -- a function taking an iterable as
-          argument (optional, default: ``list``)
+          argument (default: ``list``)
 
         - ``exclude`` -- elements of the poset to be excluded
-          (optional, default: ``None``)
+          (default: ``None``)
 
         OUTPUT:
 
@@ -5384,7 +5382,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``other``, a poset.
 
-        - ``labels`` - (defaults to 'pairs') If set to 'pairs', each
+        - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
           element ``v`` in this poset will be named ``(0,v)`` and each
           element ``u`` in ``other`` will be named ``(1,u)`` in the
           result. If set to 'integers', the elements of the result
@@ -5548,7 +5546,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``other``, a poset.
 
-        - ``labels`` - (defaults to 'pairs') If set to 'pairs', each
+        - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
           element ``v`` in this poset will be named ``(0,v)`` and each
           element ``u`` in ``other`` will be named ``(1,u)`` in the
           result. If set to 'integers', the elements of the result
@@ -8067,8 +8065,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: posets.SetPartitions(3).is_sperner()                                  # needs sage.combinat
             True
 
-            sage: P = Poset({0:[3,4,5],1:[5],2:[5]})
-            sage: P.is_sperner()
+            sage: P = Poset({0: [3,4,5], 1: [5], 2: [5]})
+            sage: P.is_sperner()                                                        # needs networkx
             False
 
         TESTS::
@@ -8511,13 +8509,13 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: P = Poset([[1,2,3,4],[[1,4],[2,4],[4,3]]])
-            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ, check=True); FP          # needs sage.combinat
+            sage: FP = P.p_partition_enumerator((3,1,2,4), QQ, check=True); FP
             2*M[1, 1, 1, 1] + 2*M[1, 2, 1] + M[2, 1, 1] + M[3, 1]
-
-            sage: expansion = FP.expand(5)                                              # needs sage.combinat
-            sage: xs = expansion.parent().gens()                                        # needs sage.combinat
-            sage: expansion == sum(xs[a]*xs[b]*xs[c]*xs[d]                              # needs sage.combinat
+            sage: expansion = FP.expand(5)
+            sage: xs = expansion.parent().gens()
+            sage: expansion == sum(xs[a]*xs[b]*xs[c]*xs[d]
             ....:                  for a in range(5) for b in range(5)
             ....:                  for c in range(5) for d in range(5)
             ....:                  if a <= b and c <= b and b < d)

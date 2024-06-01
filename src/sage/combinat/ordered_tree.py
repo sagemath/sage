@@ -22,10 +22,10 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_attribute import lazy_class_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.abstract_tree import (AbstractClonableTree,
                                          AbstractLabelledClonableTree)
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.dyck_word import CompleteDyckWords_size
 from sage.misc.cachefunc import cached_method
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.rings.integer import Integer
@@ -33,6 +33,8 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.rings.infinity import Infinity
+
+lazy_import('sage.combinat.dyck_word', 'CompleteDyckWords_size')
 
 
 class OrderedTree(AbstractClonableTree, ClonableList,

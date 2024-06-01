@@ -787,7 +787,7 @@ def is_VectorSpaceMorphism(x) -> bool:
 
     INPUT:
 
-    ``x`` - anything
+    - ``x`` -- anything
 
     OUTPUT:
 
@@ -821,10 +821,10 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
 
         INPUT:
 
-        -  ``homspace`` - a homspace (of vector spaces) to serve
+        -  ``homspace`` -- a homspace (of vector spaces) to serve
            as a parent for the linear transformation and a home for
            the domain and codomain of the morphism
-        -  ``A`` - a matrix representing the linear transformation,
+        -  ``A`` -- a matrix representing the linear transformation,
            which will act on vectors placed to the left of the matrix
 
         EXAMPLES:

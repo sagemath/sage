@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Optimized low-level binary code representation
 
@@ -899,6 +899,7 @@ cdef class BinaryCode:
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: import sage.coding.binary_code
             sage: from sage.coding.binary_code import *
             sage: M = Matrix(GF(2), [[1,1,1,1]])
@@ -3977,6 +3978,7 @@ cdef class BinaryCodeClassifier:
 
         MORE EXAMPLES::
 
+            sage: # needs sage.groups
             sage: soc_iter = codes.databases.self_orthogonal_binary_codes(12, 6, 4)
             sage: L = list(soc_iter)
             sage: for n in range(13):

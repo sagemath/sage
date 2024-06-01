@@ -34,7 +34,7 @@ def _simplify_full_rad(f):
 
     INPUT:
 
-     - ``f`` - a symbolic expression.
+     - ``f`` -- a symbolic expression.
 
     EXAMPLES::
 
@@ -425,7 +425,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coords`` - 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
+         - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
 
         OUTPUT:
 
@@ -457,9 +457,9 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coords`` - 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
+         - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
 
-         - ``components`` - 2-tuple specifying the components of the tangent vector in the intrinsic coordinate frame.
+         - ``components`` -- 2-tuple specifying the components of the tangent vector in the intrinsic coordinate frame.
 
         OUTPUT:
 
@@ -507,8 +507,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``urange`` - 2-tuple specifying the parameter range for `u`.
-         - ``vrange`` - 2-tuple specifying the parameter range for `v`.
+         - ``urange`` -- 2-tuple specifying the parameter range for `u`.
+         - ``vrange`` -- 2-tuple specifying the parameter range for `v`.
 
         EXAMPLES::
 
@@ -575,7 +575,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-          - ``normalized`` - default ``False`` - specifies whether the normal vector should be normalized.
+          - ``normalized`` -- (default ``False``); specifies whether the normal vector should be normalized.
 
         OUTPUT:
 
@@ -631,7 +631,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - tuple ``(i, j)`` specifying the index of the component `g_{ij}`.
+         - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g_{ij}`.
 
         OUTPUT:
 
@@ -694,7 +694,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` - vectors on the surface.
+         - ``vector1``, ``vector2`` -- vectors on the surface.
 
         OUTPUT:
 
@@ -805,7 +805,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - tuple ``(i, j)`` specifying the index of the component `g^{ij}`.
+         - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g^{ij}`.
 
         OUTPUT:
 
@@ -836,7 +836,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``theta`` - rotation angle
+         - ``theta`` -- rotation angle
 
         OUTPUT:
 
@@ -888,7 +888,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coordinates`` - either ``ext`` (default) or ``int``.
+         - ``coordinates`` -- either ``ext`` (default) or ``int``.
 
         OUTPUT:
 
@@ -952,8 +952,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - index of the basis vector;
-         - ``coordinates`` - either ``ext`` (default) or ``int``.
+         - ``index`` -- index of the basis vector;
+         - ``coordinates`` -- either ``ext`` (default) or ``int``.
 
         OUTPUT:
 
@@ -988,7 +988,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``v`` and ``w`` - vector fields on the surface, expressed
+         - ``v`` and ``w`` -- vector fields on the surface, expressed
            as pairs of functions or as vectors of length 2.
 
         OUTPUT:
@@ -1027,7 +1027,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``e1``, ``e2`` - vector fields in intrinsic coordinates on
+         - ``e1``, ``e2`` -- vector fields in intrinsic coordinates on
            the surface, expressed as pairs of functions, or as vectors of
            length 2.
 
@@ -1145,7 +1145,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - a 2-tuple ``(i, j)`` specifying the element of the second-order frame.
+         - ``index`` -- a 2-tuple ``(i, j)`` specifying the element of the second-order frame.
 
         OUTPUT:
 
@@ -1196,7 +1196,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` - a 2-tuple ``(i, j)``
+         - ``index`` -- a 2-tuple ``(i, j)``
 
         OUTPUT:
 
@@ -1256,7 +1256,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` - 2-tuples representing the input vectors.
+         - ``vector1``, ``vector2`` -- 2-tuples representing the input vectors.
 
         OUTPUT:
 
@@ -1555,11 +1555,11 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``p0`` - 2-tuple with coordinates of the initial point.
+         - ``p0`` -- 2-tuple with coordinates of the initial point.
 
-         - ``v0`` - 2-tuple with components of the initial tangent vector to the geodesic.
+         - ``v0`` -- 2-tuple with components of the initial tangent vector to the geodesic.
 
-         - ``tinterval`` - List ``[a, b, M]``, where ``(a,b)`` is the domain of the geodesic and ``M`` is the number of subdivision points used when returning the solution.
+         - ``tinterval`` -- List ``[a, b, M]``, where ``(a,b)`` is the domain of the geodesic and ``M`` is the number of subdivision points used when returning the solution.
 
         OUTPUT:
 
@@ -1609,8 +1609,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``curve`` - curve in intrinsic coordinates along which to do parallel transport.
-         - ``t`` - curve parameter
+         - ``curve`` -- curve in intrinsic coordinates along which to do parallel transport.
+         - ``t`` -- curve parameter
 
         EXAMPLES::
 
@@ -1667,14 +1667,14 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``curve`` - 2-tuple of functions which determine the curve with respect to
+         - ``curve`` -- 2-tuple of functions which determine the curve with respect to
            the local coordinate system;
 
-         - ``t`` - symbolic variable denoting the curve parameter;
+         - ``t`` -- symbolic variable denoting the curve parameter;
 
-         - ``v0`` - 2-tuple representing the initial vector;
+         - ``v0`` -- 2-tuple representing the initial vector;
 
-         - ``tinterval`` - list ``[a, b, N]``, where ``(a, b)`` is the domain of the curve
+         - ``tinterval`` -- list ``[a, b, N]``, where ``(a, b)`` is the domain of the curve
            and ``N`` is the number of subdivision points.
 
         OUTPUT:

@@ -771,7 +771,7 @@ def _normalize(G, normal_odd=True):
 
     - ``G`` -- a symmetric matrix over `\ZZ_p` in jordan form --
       the output of :meth:`p_adic_normal_form` or :meth:`_jordan_2_adic`
-    - ``normal_odd`` -- bool (default: True) if true and `p` is odd,
+    - ``normal_odd`` -- bool (default: ``True``) if true and `p` is odd,
       compute a normal form.
 
     OUTPUT:
@@ -860,13 +860,13 @@ def _normalize_2x2(G):
 
     INPUT:
 
-    ``G`` - a `2` by `2` matrix over `\ZZ_p`
-    with ``type='fixed-mod'`` of the form::
+    - ``G`` -- a `2` by `2` matrix over `\ZZ_p`
+      with ``type='fixed-mod'`` of the form::
 
-        [2a  b]
-        [ b 2c] * 2^n
+          [2a  b]
+          [ b 2c] * 2^n
 
-    with `b` of valuation 1.
+      with `b` of valuation 1.
 
     OUTPUT:
 

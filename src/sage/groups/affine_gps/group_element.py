@@ -55,17 +55,17 @@ class AffineGroupElement(MultiplicativeGroupElement):
     - ``A`` -- an invertible matrix, or something defining a
       matrix if ``convert==True``
 
-    - ``b``-- a vector, or something defining a vector if
+    - ``b`` -- a vector, or something defining a vector if
       ``convert==True`` (default: ``0``, defining the zero
       vector)
 
     - ``parent`` -- the parent affine group
 
-    - ``convert`` - bool (default: ``True``); whether to convert
+    - ``convert`` -- bool (default: ``True``); whether to convert
       ``A`` into the correct matrix space and ``b`` into the
       correct vector space
 
-    - ``check`` - bool (default: ``True``); whether to do some
+    - ``check`` -- bool (default: ``True``); whether to do some
       checks or just accept the input as valid
 
     As a special case, ``A`` can be a matrix obtained from

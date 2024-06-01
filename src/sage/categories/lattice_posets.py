@@ -14,6 +14,7 @@ from sage.misc.lazy_import import LazyImport
 from sage.categories.category import Category
 from sage.categories.posets import Posets
 
+
 class LatticePosets(Category):
     r"""
     The category of lattices, i.e. partially ordered sets in which any

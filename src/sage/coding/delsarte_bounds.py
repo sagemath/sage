@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.numerical.mip
 r"""
 Delsarte (or linear programming) bounds
 
@@ -87,9 +88,9 @@ def krawtchouk(n, q, l, x, check=True):
 
     Other unusual inputs::
 
-        sage: codes.bounds.krawtchouk(sqrt(5),1-I*sqrt(3),3,55.3).n()
+        sage: codes.bounds.krawtchouk(sqrt(5),1-I*sqrt(3),3,55.3).n()                   # needs sage.symbolic
         211295.892797... + 1186.42763...*I
-        sage: codes.bounds.krawtchouk(-5/2,7*I,3,-1/10)
+        sage: codes.bounds.krawtchouk(-5/2,7*I,3,-1/10)                                 # needs sage.symbolic
         480053/250*I - 357231/400
         sage: codes.bounds.krawtchouk(1,1,-1,1)
         Traceback (most recent call last):

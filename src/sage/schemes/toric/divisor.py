@@ -244,11 +244,11 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
       divisor group. If ``ring`` is not specified, a coefficient ring
       suitable for ``arg`` is derived.
 
-    - ``check`` -- bool (default: True). Whether to coerce
+    - ``check`` -- bool (default: ``True``). Whether to coerce
       coefficients into base ring. Setting it to ``False`` can speed
       up construction.
 
-    - ``reduce`` -- reduce (default: True). Whether to combine common
+    - ``reduce`` -- reduce (default: ``True``). Whether to combine common
       terms. Setting it to ``False`` can speed up construction.
 
     .. WARNING::

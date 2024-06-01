@@ -965,7 +965,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        -  ``i`` - integer
+        -  ``i`` -- integer
 
         OUTPUT: a permutation group element
 
