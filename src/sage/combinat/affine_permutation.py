@@ -12,23 +12,24 @@ Affine Permutations
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from itertools import repeat
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
-from sage.misc.constant_function import ConstantFunction
-from sage.misc.prandom import randint
 
-from sage.categories.affine_weyl_groups import AffineWeylGroups
-from sage.structure.list_clone import ClonableArray
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.rings.integer_ring import ZZ
-
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.arith.misc import binomial
-from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
+from sage.categories.affine_weyl_groups import AffineWeylGroups
 from sage.combinat.composition import Composition
 from sage.combinat.partition import Partition
+from sage.combinat.root_system.cartan_type import CartanType
+from sage.misc.cachefunc import cached_method
+from sage.misc.constant_function import ConstantFunction
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.misc.prandom import randint
+from sage.rings.integer_ring import ZZ
+from sage.structure.list_clone import ClonableArray
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 
 class AffinePermutation(ClonableArray):
@@ -54,7 +55,7 @@ class AffinePermutation(ClonableArray):
 
         - ``lst`` -- list giving the base window of the affine permutation
 
-        - ``check``-- whether to test if the affine permutation is valid
+        - ``check`` -- whether to test if the affine permutation is valid
 
         EXAMPLES::
 

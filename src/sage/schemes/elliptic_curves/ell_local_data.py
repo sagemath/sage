@@ -178,7 +178,7 @@ class EllipticCurveLocalData(SageObject):
           `\QQ`. If "generic", use the general number field
           implementation.
 
-        - ``globally`` (bool, default: False) -- If True, the algorithm
+        - ``globally`` (bool, default: ``False``) -- If True, the algorithm
           uses the generators of principal ideals rather than an arbitrary
           uniformizer.
 

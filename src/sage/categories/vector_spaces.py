@@ -23,6 +23,7 @@ from sage.categories.modules import Modules
 from sage.categories.modules_with_basis import ModulesWithBasis
 _Fields = Fields()
 
+
 class VectorSpaces(Category_module):
     """
     The category of (abstract) vector spaces over a given field
@@ -42,7 +43,7 @@ class VectorSpaces(Category_module):
         INPUT:
 
         - `K` -- a field
-        - ``check`` -- a boolean (default: True) whether to check that `K` is a field.
+        - ``check`` -- a boolean (default: ``True``) whether to check that `K` is a field.
 
         EXAMPLES::
 

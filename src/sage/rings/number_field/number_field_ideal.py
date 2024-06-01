@@ -1100,7 +1100,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         - ``proof`` -- proof flag.  If ``proof=False``, assume GRH.
 
-        - ``gens`` -- (default: False) if True, also computes the reduced
+        - ``gens`` -- (default: ``False``) if True, also computes the reduced
           generators of the ideal.
 
         OUTPUT:
@@ -1542,7 +1542,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         INPUT:
 
-        - ``*args``, ``*kwds`` - Parameters passed to the random integer
+        - ``*args``, ``*kwds`` -- Parameters passed to the random integer
           function.  See the documentation of ``ZZ.random_element()`` for
           details.
 

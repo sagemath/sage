@@ -1157,7 +1157,7 @@ class NumberField_relative(NumberField_generic):
 
         INPUT:
 
-        - ``proof`` (bool, default True) -- if True, certify
+        - ``proof`` (bool, default: ``True``) -- if True, certify
           correctness of calculations (not assuming GRH).
 
         EXAMPLES::

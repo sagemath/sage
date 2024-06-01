@@ -185,7 +185,7 @@ def heegner_point(N, D=None, c=1):
 
     - `D` -- discriminant (optional: default first valid `D`)
 
-    - `c` -- conductor (positive integer, optional, default: 1)
+    - `c` -- conductor (positive integer, default: 1)
 
     EXAMPLES::
 

@@ -43,17 +43,17 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     INPUT:
 
-    - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
+    - ``i`` -- list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2,I4,I6,I10.
-    - ``reduced`` - Boolean (default = True) If True, tries to reduce the
+    - ``reduced`` -- Boolean (default = True) If True, tries to reduce the
       polynomial defining the hyperelliptic curve using the function
       :func:`reduce_polynomial` (see the :func:`reduce_polynomial`
       documentation for more details).
-    - ``precision`` - integer (default = None) Which precision for real and
+    - ``precision`` -- integer (default = None) Which precision for real and
       complex numbers should the reduction use. This only affects the
       reduction, not the correctness. If None, the algorithm uses the default
       53 bit precision.
-    - ``algorithm`` - ``'default'`` or ``'magma'``. If set to ``'magma'``, uses
+    - ``algorithm`` -- ``'default'`` or ``'magma'``. If set to ``'magma'``, uses
       Magma to parameterize Mestre's conic (needs Magma to be installed).
 
     OUTPUT:
@@ -227,11 +227,11 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     INPUT:
 
-    - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
+    - ``i`` -- list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2, I4, I6, I10
-    - ``xyz`` - Boolean (default: ``False``) if ``True``, the algorithm also
+    - ``xyz`` -- Boolean (default: ``False``) if ``True``, the algorithm also
       returns three invariants `x`,`y`,`z` used in Mestre's algorithm
-    - ``names`` (default: ``'u,v,w'``) - the variable names for the conic
+    - ``names`` (default: ``'u,v,w'``) -- the variable names for the conic
 
     OUTPUT:
 

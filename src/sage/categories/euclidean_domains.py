@@ -71,7 +71,7 @@ class EuclideanDomains(Category_singleton):
 
             INPUT:
 
-            - ``elts`` - A sequence of elements of ``self``.
+            - ``elts`` -- A sequence of elements of ``self``.
 
             OUTPUT:
 

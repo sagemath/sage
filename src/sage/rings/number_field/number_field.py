@@ -236,13 +236,13 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
     - ``polynomial`` -- a polynomial over `\QQ` or a number field, or a list
       of such polynomials.
-    - ``names`` (or ``name``) - a string or a list of strings, the names of
+    - ``names`` (or ``name``) -- a string or a list of strings, the names of
       the generators
     - ``check`` -- a boolean (default: ``True``); do type checking and
       irreducibility checking.
     - ``embedding`` -- ``None``, an element, or a list of elements, the
       images of the generators in an ambient field (default: ``None``)
-    - ``latex_names`` (or ``latex_name``) - ``None``, a string, or a
+    - ``latex_names`` (or ``latex_name``) -- ``None``, a string, or a
       list of strings (default: ``None``), how the generators are printed
       for latex output
     - ``assume_disc_small`` -- a boolean (default: ``False``); if ``True``,
@@ -1052,13 +1052,13 @@ class CyclotomicFieldFactory(UniqueFactory):
 
     -  ``n`` -- a nonnegative integer, default: ``0``
 
-    -  ``names`` -- name of generator (optional - defaults to zetan)
+    -  ``names`` -- name of generator (default: ``zetan``)
 
     - ``bracket`` -- Defines the brackets in the case of ``n==0``, and
       is ignored otherwise. Can be any even length string, with ``"()"`` being the default.
 
     -  ``embedding`` -- bool or `n`-th root of unity in an
-       ambient field (default True)
+       ambient field (default: ``True``)
 
     EXAMPLES:
 
@@ -6500,7 +6500,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        -  ``prec`` (default: ``None``) - the precision with which to
+        -  ``prec`` (default: ``None``) -- the precision with which to
            compute the Minkowski embedding.
 
         OUTPUT:
@@ -6574,7 +6574,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        -  ``prec`` (default: ``None``) - the precision with which
+        -  ``prec`` (default: ``None``) -- the precision with which
            to calculate the Minkowski embedding. (See NOTE below.)
 
         OUTPUT: The Gram matrix `[\langle x_i,x_j \rangle]` of an LLL reduced
@@ -8138,7 +8138,7 @@ class NumberField_absolute(NumberField_generic):
 
         INPUT:
 
-        ``x`` -- an element of some number field
+        - ``x`` -- an element of some number field
 
         OUTPUT:
 

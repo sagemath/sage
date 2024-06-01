@@ -38,14 +38,14 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     INPUT:
 
-    -  ``f`` - univariate polynomial
+    -  ``f`` -- univariate polynomial
 
-    -  ``h`` - optional univariate polynomial
+    -  ``h`` -- optional univariate polynomial
 
-    -  ``names``  (default: ``["x","y"]``) - names for the
+    -  ``names``  (default: ``["x","y"]``) -- names for the
        coordinate functions
 
-    -  ``check_squarefree`` (default: ``True``) - test if
+    -  ``check_squarefree`` (default: ``True``) -- test if
        the input defines a hyperelliptic curve when f is
        homogenized to degree `2g+2` and h to degree
        `g+1` for some g.
