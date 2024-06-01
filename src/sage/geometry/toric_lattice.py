@@ -145,8 +145,7 @@ Or you can create a homomorphism from one lattice to any other::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.geometry.toric_lattice_element import (ToricLatticeElement,
-                                                 is_ToricLatticeElement)
+from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.geometry.toric_plotter import ToricPlotter
 from sage.misc.latex import latex
 from sage.structure.all import parent
@@ -179,14 +178,22 @@ def is_ToricLattice(x):
 
         sage: from sage.geometry.toric_lattice import (
         ....:   is_ToricLattice)
-        sage: isinstance(1, ToricLattice_generic)
+        sage: is_ToricLattice(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricLattice is deprecated;
+        use 'isinstance(..., ToricLattice_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: N = ToricLattice(3)
         sage: N
         3-d lattice N
-        sage: isinstance(N, ToricLattice_generic)
+        sage: is_ToricLattice(N)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_ToricLattice is deprecated; "
+                "use 'isinstance(..., ToricLattice_generic)' instead.")
     return isinstance(x, ToricLattice_generic)
 
 
@@ -207,6 +214,10 @@ def is_ToricLatticeQuotient(x):
         sage: from sage.geometry.toric_lattice import (
         ....:   is_ToricLatticeQuotient)
         sage: is_ToricLatticeQuotient(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricLatticeQuotient is deprecated;
+        use 'isinstance(..., ToricLattice_quotient)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: N = ToricLattice(3)
         sage: N
@@ -220,6 +231,10 @@ def is_ToricLatticeQuotient(x):
         sage: is_ToricLatticeQuotient(Q)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_ToricLatticeQuotient is deprecated; "
+                "use 'isinstance(..., ToricLattice_quotient)' instead.")
     return isinstance(x, ToricLattice_quotient)
 
 

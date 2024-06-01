@@ -212,8 +212,8 @@ from sage.combinat.posets.posets import FinitePoset
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.hasse_diagram import lattice_from_incidences
-from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
-                                         is_ToricLatticeQuotient)
+from sage.geometry.toric_lattice import (ToricLattice, ToricLattice_generic,
+                                         ToricLattice_quotient)
 from sage.geometry.toric_plotter import ToricPlotter, label_list
 from sage.geometry.relative_interior import RelativeInterior
 from sage.graphs.digraph import DiGraph
@@ -471,7 +471,7 @@ def Cone(rays, lattice=None, check=True, normalize=True):
     if not check or not rays:
         return ConvexRationalPolyhedralCone(rays, lattice)
     # Any set of rays forms a cone, but we want to keep only generators
-    if is_ToricLatticeQuotient(lattice):
+    if isinstance(lattice, ToricLattice_quotient):
         gs = Generator_System(
                         PPL_point(Linear_Expression(lattice(0).vector(), 0)))
         for r in rays:

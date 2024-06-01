@@ -120,14 +120,22 @@ def is_ToricLatticeElement(x):
 
         sage: from sage.geometry.toric_lattice_element import (
         ....:   is_ToricLatticeElement)
-        sage: isinstance(1, ToricLatticeElement)
+        sage: is_ToricLatticeElement(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricLatticeElement is deprecated;
+        use 'isinstance(..., ToricLatticeElement)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: e = ToricLattice(3).an_element()
         sage: e
         N(1, 0, 0)
-        sage: isinstance(e, ToricLatticeElement)
+        sage: is_ToricLatticeElement(e)
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38126,
+                       "The function is_ToricLatticeElement is deprecated; "
+                       "use 'isinstance(..., ToricLatticeElement)' instead.")
     return isinstance(x, ToricLatticeElement)
 
 

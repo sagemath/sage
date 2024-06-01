@@ -250,7 +250,7 @@ from sage.geometry.cone import (_ambient_space_point,
                                 normalize_rays)
 from sage.geometry.hasse_diagram import lattice_from_incidences
 from sage.geometry.point_collection import PointCollection
-from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
+from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
 from sage.geometry.toric_plotter import ToricPlotter
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
@@ -279,6 +279,9 @@ def is_Fan(x) -> bool:
 
         sage: from sage.geometry.fan import is_Fan
         sage: is_Fan(1)
+        doctest:warning...
+        DeprecationWarning: The function is_Fan is deprecated; use 'isinstance(..., RationalPolyhedralFan)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: fan = toric_varieties.P2().fan(); fan                                     # needs palp
         Rational polyhedral fan in 2-d lattice N
@@ -1334,7 +1337,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: f2 is f3
             False
         """
-        if is_Fan(right):
+        if isinstance(right, RationalPolyhedralFan):
             return richcmp([self.rays(), self.virtual_rays(),
                             self.generating_cones()],
                            [right.rays(), right.virtual_rays(),
@@ -1401,7 +1404,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         not even need to check if it is complete::
 
             sage: fan = toric_varieties.P1xP1().fan()                                   # needs palp
-            sage: fan.cone_lattice() # indirect doctest                                 # needs palp
+            sage: fan.cone_lattice()  # indirect doctest                                # needs palp
             Finite lattice containing 10 elements with distinguished linear extension
 
         These 10 elements are: 1 origin, 4 rays, 4 generating cones, 1 fan.
@@ -1683,7 +1686,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: _.ngenerating_cones()
             6
         """
-        assert is_Fan(other)
+        assert isinstance(other, RationalPolyhedralFan)
         rc = super().cartesian_product(other, lattice)
         self_cones = [cone.ambient_ray_indices() for cone in self]
         n = self.nrays()

@@ -127,9 +127,8 @@ from sage.features.databases import DatabaseReflexivePolytopes
 from sage.geometry.cone import _ambient_space_point, integral_length
 from sage.geometry.hasse_diagram import lattice_from_incidences
 from sage.geometry.point_collection import (PointCollection,
-                                            is_PointCollection,
                                             read_palp_point_collection)
-from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
+from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 
 from sage.misc.lazy_import import lazy_import
@@ -4208,6 +4207,10 @@ def is_NefPartition(x):
         sage: isinstance(np, NefPartition)                                                       # needs palp
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_NefPartition is deprecated; "
+                "use 'isinstance(..., NefPartition)' instead.")
     return isinstance(x, NefPartition)
 
 

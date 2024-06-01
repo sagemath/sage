@@ -105,6 +105,10 @@ def is_PointCollection(x):
         sage: isinstance(c.rays(), PointCollection)
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38126,
+                       "The function is_PointCollection is deprecated; "
+                       "use 'isinstance(..., PointCollection)' instead.")
     return isinstance(x, PointCollection)
 
 
