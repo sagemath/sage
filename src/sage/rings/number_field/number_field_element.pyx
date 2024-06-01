@@ -1664,8 +1664,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if not isinstance(L, NumberField):
             raise ValueError("L (=%s) must be a NumberField in is_norm" % L)
 
-        from sage.rings.number_field.number_field import is_AbsoluteNumberField
-        if is_AbsoluteNumberField(L):
+        from sage.rings.number_field.number_field import NumberField_absolute
+        if isinstance(L, NumberField_absolute):
             Lrel = L.relativize(K.hom(L), L.variable_name() + '0')
             b, x = self.is_norm(Lrel, element=True, proof=proof)
             h = Lrel.structure()[0]

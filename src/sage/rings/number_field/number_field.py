@@ -1018,6 +1018,9 @@ def is_AbsoluteNumberField(x):
         sage: from sage.rings.number_field.number_field import is_AbsoluteNumberField
         sage: x = polygen(ZZ, 'x')
         sage: is_AbsoluteNumberField(NumberField(x^2 + 1, 'a'))
+        doctest:warning...
+        DeprecationWarning: The function is_AbsoluteNumberField is deprecated; use 'isinstance(..., NumberField_absolute)' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         True
         sage: is_AbsoluteNumberField(NumberField([x^3 + 17, x^2 + 1], 'a'))
         False
@@ -1030,6 +1033,10 @@ def is_AbsoluteNumberField(x):
         sage: is_AbsoluteNumberField(QQ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_AbsoluteNumberField is deprecated; "
+                "use 'isinstance(..., NumberField_absolute)' instead.")
     return isinstance(x, NumberField_absolute)
 
 
