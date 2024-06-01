@@ -1139,31 +1139,31 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``g`` - a rational map of `\mathbb{P}^1` given as a projective morphism.
+        - ``g`` -- a rational map of `\mathbb{P}^1` given as a projective morphism.
           ``g`` and ``self`` should have the same field of definition.
 
         kwds:
 
-        - ``n`` - (default: 5) a positive integer
+        - ``n`` -- (default: 5) a positive integer
           Order of periodic points to use or preimages to take if starting points are specified.
 
-        - ``f_starting_point`` - (optional, default: ``None``) value in the base number field or None.
+        - ``f_starting_point`` -- (default: ``None``) value in the base number field or None.
           If ``f_starting_point`` is None, we solve for points of period ``n`` for ``self``.
           Otherwise, we take ``n``-th preimages of the point given by ``f_starting_point``
           under ``f`` on the affine line.
 
-        - ``g_starting_point`` - (optional, default: ``None``) value in the base number field or None.
+        - ``g_starting_point`` -- (default: ``None``) value in the base number field or None.
           If ``g_starting_point`` is None, we solve for points of period ``n`` for ``g``.
           Otherwise, we take ``n``-th preimages of the point given by ``g_starting_point``
           under ``g`` on the affine line.
 
-        - ``check_primes_of_bad_reduction`` - (optional, default: ``False``) boolean.
+        - ``check_primes_of_bad_reduction`` -- (default: ``False``) boolean.
           Passed to the ``primes_of_bad_reduction`` function for ``self`` and ``g``.
 
-        - ``prec`` - (optional, default: ``RealField`` default)
+        - ``prec`` -- (default: ``RealField`` default)
           default precision for RealField values which are returned.
 
-        - ``noise_multiplier`` - (default: 2) a real number.
+        - ``noise_multiplier`` -- (default: 2) a real number.
           Discriminant terms involved in the computation at the archimedean places
           are often not needed, particularly if the capacity of the Julia sets is 1,
           and introduce a lot of error. By a well-known result of Mahler (see
@@ -2005,7 +2005,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``N`` -- (optional - default: 10) positive integer. number of
+        - ``N`` -- (default: 10) positive integer. number of
           terms of the series to use
 
         - ``prec`` -- (default: 100) positive integer, float point or
@@ -3088,8 +3088,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``check_primes`` -- (optional) boolean: this signals whether to
             check whether each element in ``prime_list`` is a prime
 
-          * ``'BM'`` - the Bruin-Molnar algorithm [BM2012]_
-          * ``'HS'`` - the Hutz-Stoll algorithm [HS2018]_
+          * ``'BM'`` -- the Bruin-Molnar algorithm [BM2012]_
+          * ``'HS'`` -- the Hutz-Stoll algorithm [HS2018]_
 
         OUTPUT:
 
@@ -3269,8 +3269,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``algorithm`` -- (optional) string; can be one of the following:
 
-          * ``'BM'`` - the Bruin-Molnar algorithm [BM2012]_
-          * ``'HS'`` - for the Hutz-Stoll algorithm [HS2018]_
+          * ``'BM'`` -- the Bruin-Molnar algorithm [BM2012]_
+          * ``'HS'`` -- for the Hutz-Stoll algorithm [HS2018]_
 
           if not specified, properties of the map are utilized to choose
 
@@ -3587,12 +3587,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``starting_prime`` -- (default: 5) the first prime to use for CRT
 
-        - ``algorithm``-- (optional) can be one of the following:
+        - ``algorithm`` -- (optional) can be one of the following:
 
-          * ``'CRT'`` - Chinese Remainder Theorem
-          * ``'fixed_points'`` - fixed points algorithm
+          * ``'CRT'`` -- Chinese Remainder Theorem
+          * ``'fixed_points'`` -- fixed points algorithm
 
-        - ``return_functions``-- (default: ``False``) boolean; ``True``
+        - ``return_functions`` -- (default: ``False``) boolean; ``True``
           returns elements as linear fractional transformations and
           ``False`` returns elements as `PGL2` matrices
 
@@ -4108,7 +4108,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``check`` -- boolean (default: True)
+        - ``check`` -- boolean (default: ``True``)
 
         - ``use_algebraic_closure`` -- boolean (default: ``True``) -- If ``True``, uses the
           algebraic closure. If ``False``, uses the smallest extension of the base field
@@ -4317,9 +4317,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` - a positive integer, the period
+        - ``n`` -- a positive integer, the period
 
-        - ``m`` - a non negative integer, the preperiod
+        - ``m`` -- a non negative integer, the preperiod
 
         kwds:
 
@@ -4660,7 +4660,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` - a positive integer
+        - ``n`` -- a positive integer
 
         - ``minimal`` -- (default: ``True``) boolean; ``True`` specifies to
           find only the periodic points of minimal period ``n`` and ``False``
@@ -4676,8 +4676,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``algorithm`` -- (default: ``'variety'``) must be one of
           the following:
 
-          * ``'variety'`` - find the rational points on the appropriate variety
-          * ``'cyclegraph'`` - find the cycles from the cycle graph
+          * ``'variety'`` -- find the rational points on the appropriate variety
+          * ``'cyclegraph'`` -- find the cycles from the cycle graph
 
         - ``return_scheme`` -- return a subscheme of the ambient space
           that defines the ``n`` th periodic points
@@ -6018,10 +6018,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``error_limit`` -- (default: 0.000001) a real number, sets
           the error tolerance
 
-        - ``smallest_coeffs`` -- (default: True), boolean, whether to find the
+        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
-        - ``dynatomic`` -- (default: True) boolean, to use formal periodic points
+        - ``dynatomic`` -- (default: ``True``) boolean, to use formal periodic points
 
         - ``start_n`` -- (default: 1), positive integer, firs period to rry to find
           appropriate binary form
@@ -6034,10 +6034,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           * ``'BM'`` -- Bruin-Molnar algorithm [BM2012]_
           * ``'HS'`` -- Hutz-Stoll algorithm [HS2018]_
 
-        - ``check_minimal`` -- (default: True), boolean, whether to check
+        - ``check_minimal`` -- (default: ``True``), boolean, whether to check
           if this map is a minimal model
 
-        - ``smallest_coeffs`` -- (default: True), boolean, whether to find the
+        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
         OUTPUT:
@@ -9203,7 +9203,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         The following keywords are used when the dimension of the domain is 1:
 
-        - ``absolute``-- (default: ``False``) boolean; if ``True``, then
+        - ``absolute`` -- (default: ``False``) boolean; if ``True``, then
           return the absolute automorphism group and a field of definition
 
         - ``iso_type`` -- (default: ``False``) boolean; if ``True``, then

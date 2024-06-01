@@ -26,6 +26,7 @@ from sage.arith.power import generic_power
 
 all_axioms += ("HTrivial", "Aperiodic", "LTrivial", "RTrivial", "JTrivial")
 
+
 class Semigroups(CategoryWithAxiom):
     """
     The category of (multiplicative) semigroups.
@@ -180,7 +181,7 @@ class Semigroups(CategoryWithAxiom):
 
             - ``side`` -- "left", "right", or "twosided":
               the side on which the generators act (default:"right")
-            - ``simple`` -- boolean (default:False):
+            - ``simple`` -- boolean (default: ``False``):
               if True, returns a simple graph (no loops, no labels,
               no multiple edges)
             - ``generators`` -- a list, tuple, or family of elements
@@ -423,7 +424,7 @@ class Semigroups(CategoryWithAxiom):
                 ValueError: For a monoid which is just a subsemigroup,
                 the unit should be specified
 
-                sage: # needs sage.groups
+                sage: # needs sage.combinat sage.groups
                 sage: M = R.subsemigroup([R(5)], one=R(10),
                 ....:     category=Semigroups().Finite().Subobjects() & Groups()); M
                 A subsemigroup of (Ring of integers modulo 15) with 1 generators
@@ -912,12 +913,12 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: a, b = SL2Z.algebra(ZZ).gens(); a, b                          # needs sage.groups sage.modules
+                    sage: a, b = SL2Z.algebra(ZZ).gens(); a, b                          # needs sage.groups sage.modular sage.modules
                     ([ 0 -1]
                      [ 1  0],
                      [1 1]
                      [0 1])
-                    sage: 2*a + b                                                       # needs sage.groups sage.modules
+                    sage: 2*a + b                                                       # needs sage.groups sage.modular sage.modules
                     2*[ 0 -1]
                       [ 1  0]
                     +
@@ -932,7 +933,7 @@ class Semigroups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: SL2Z.algebra(ZZ).ngens()                                      # needs sage.groups sage.modules
+                    sage: SL2Z.algebra(ZZ).ngens()                                      # needs sage.groups sage.modular sage.modules
                     2
                     sage: DihedralGroup(4).algebra(RR).ngens()                          # needs sage.groups sage.modules
                     2

@@ -399,7 +399,7 @@ cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcep
         ....:    y = abs(y)
         ....:    return max(x,y) + min(x,y)**2/(2*max(x,y))
 
-        sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))              # needs sage.plot
+        sage: polar_plot([1, lambda x: dist(cos(x), sin(x))], (0, 2*math.pi))           # needs sage.plot sage.symbolic
         Graphics object consisting of 2 graphics primitives
     """
     if xx < yy:

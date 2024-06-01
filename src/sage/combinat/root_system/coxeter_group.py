@@ -28,12 +28,12 @@ def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=No
     - ``implementation`` -- (default: ``'reflection'``) can be one of
       the following:
 
-      * ``'permutation'`` - as a permutation representation
-      * ``'matrix'`` - as a Weyl group (as a matrix group acting on the
+      * ``'permutation'`` -- as a permutation representation
+      * ``'matrix'`` -- as a Weyl group (as a matrix group acting on the
         root space); if this is not implemented, this uses the "reflection"
         implementation
-      * ``'coxeter3'`` - using the coxeter3 package
-      * ``'reflection'`` - as elements in the reflection representation; see
+      * ``'coxeter3'`` -- using the coxeter3 package
+      * ``'reflection'`` -- as elements in the reflection representation; see
         :class:`~sage.groups.matrix_gps.coxeter_groups.CoxeterMatrixGroup`
 
     - ``base_ring`` -- (optional) the base ring for the ``'reflection'``

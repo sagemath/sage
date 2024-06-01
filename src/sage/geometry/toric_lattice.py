@@ -146,7 +146,8 @@ Or you can create a homomorphism from one lattice to any other::
 # ****************************************************************************
 
 from sage.geometry.toric_lattice_element import ToricLatticeElement
-from sage.geometry.toric_plotter import ToricPlotter
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.misc.latex import latex
 from sage.structure.all import parent
 from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
@@ -614,7 +615,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         INPUT:
 
-        - ``other`` - a toric (sub)lattice.dual
+        - ``other`` -- a toric (sub)lattice.dual
 
         OUTPUT:
 
@@ -659,7 +660,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         - ``sub`` -- sublattice of self;
 
-        - ``check`` -- (default: True) whether or not to check that ``sub`` is
+        - ``check`` -- (default: ``True``) whether or not to check that ``sub`` is
           a valid sublattice.
 
         If the quotient is one-dimensional and torsion free, the

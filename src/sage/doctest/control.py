@@ -475,6 +475,9 @@ class DocTestController(SageObject):
                     for pkg in list_packages('optional', local=True).values():
                         if pkg.name in options.hide:
                             continue
+                        # Skip features for which we have a more specific runtime feature test.
+                        if pkg.name in ['bliss', 'coxeter3', 'mcqd', 'meataxe', 'sirocco', 'tdlib']:
+                            continue
                         if pkg.is_installed() and pkg.installed_version == pkg.remote_version:
                             options.optional.add(pkg.name)
 
@@ -1447,7 +1450,7 @@ class DocTestController(SageObject):
             sage: with open(filename, 'w') as f:
             ....:     f.write(test_hide)
             ....:     f.close()
-            729
+            714
             sage: DF = DocTestDefaults(hide='buckygen,all')
             sage: DC = DocTestController(DF, [filename])
             sage: DC.run()
@@ -1670,7 +1673,7 @@ Traceback (most recent call last):
  ...
 FeatureNotPresentError: buckygen is not available.
 ...
-{prompt}: next(graphs.fullerenes(20))   # optional buckygen
+{prompt}: next(graphs.fullerenes(20))   # optional - buckygen
 Graph on 20 vertices
 
 {prompt}: len(list(graphs.fusenes(2)))
@@ -1678,14 +1681,14 @@ Traceback (most recent call last):
  ...
 FeatureNotPresentError: benzene is not available.
 ...
-{prompt}: len(list(graphs.fusenes(2)))  # optional benzene
+{prompt}: len(list(graphs.fusenes(2)))  # optional - benzene
 1
 {prompt}: from sage.matrix.matrix_space import get_matrix_class
 {prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')
 Failed lazy import:
-sage.matrix.matrix_gfpn_dense is not available.
+meataxe is not available.
 ...
-{prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe') # optional meataxe
+{prompt}: get_matrix_class(GF(25,'x'), 4, 4, False, 'meataxe')  # optional - meataxe
 <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
 {quotmark}
 """.format(quotmark='"""', prompt='sage')  # using prompt to hide these lines from _test_enough_doctests

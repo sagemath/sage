@@ -13,6 +13,7 @@ from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory, tensor_signed
 from sage.misc.cachefunc import cached_method
 
+
 class GradedAlgebrasWithBasis(GradedModulesCategory):
     """
     The category of graded algebras with a distinguished basis

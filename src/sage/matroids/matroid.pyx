@@ -2389,7 +2389,7 @@ cdef class Matroid(SageObject):
                 B_ext.add(B | set([e]))
         for S in B_ext:
             C.add(self._circuit(S))
-        return SetSystem(list(self.groundset()), C)
+        return SetSystem(self.groundset(), C)
 
     def circuits_iterator(self, k=None):
         """
@@ -2447,7 +2447,7 @@ cdef class Matroid(SageObject):
             ['d', 'e', 'f']]
         """
         cdef SetSystem C
-        C = SetSystem(list(self.groundset()))
+        C = SetSystem(self.groundset())
         for N in self.nonbases_iterator():
             if self._rank(N) == self.full_rank() - 1:
                 C.append(self._circuit(N))
@@ -2617,7 +2617,7 @@ cdef class Matroid(SageObject):
         Test all subsets of the groundset of cardinality ``self.full_rank()``
         """
         cdef SetSystem res
-        res = SetSystem(list(self.groundset()))
+        res = SetSystem(self.groundset())
         for X in combinations(self.groundset(), self.full_rank()):
             if self._rank(X) < len(X):
                 res.append(X)
@@ -2678,7 +2678,7 @@ cdef class Matroid(SageObject):
             X = frozenset(XX)
             if not self._is_independent(X):
                 D.add(X)
-        return SetSystem(list(self.groundset()), D)
+        return SetSystem(self.groundset(), D)
 
     def dependent_r_sets_iterator(self, long r):
         r"""
@@ -2730,7 +2730,7 @@ cdef class Matroid(SageObject):
             :meth:`M.independent_r_sets() <sage.matroids.matroid.Matroid.independent_r_sets>`
         """
         cdef SetSystem res
-        res = SetSystem(list(self.groundset()))
+        res = SetSystem(self.groundset())
         for X in combinations(self.groundset(), self.full_rank()):
             if self._rank(frozenset(X)) == len(X):
                 res.append(X)
@@ -2870,7 +2870,7 @@ cdef class Matroid(SageObject):
             X = frozenset(XX)
             if self._is_independent(X):
                 I.add(X)
-        return SetSystem(list(self.groundset()), I)
+        return SetSystem(self.groundset(), I)
 
     def independent_r_sets_iterator(self, r):
         r"""
@@ -2994,7 +2994,7 @@ cdef class Matroid(SageObject):
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
             ['d', 'e', 'f']]
         """
-        return SetSystem(list(self.groundset()), subsets=[f[0] for f in self._flags(r)])
+        return SetSystem(self.groundset(), subsets=[f[0] for f in self._flags(r)])
 
     cpdef coflats(self, r):
         r"""
@@ -3269,7 +3269,7 @@ cdef class Matroid(SageObject):
                 if is_indep:
                     B.append(frozenset(H))
                     next_level.extend(Ht)
-        return SetSystem(list(self.groundset()), B)
+        return SetSystem(self.groundset(), B)
 
     def no_broken_circuits_sets_iterator(self, ordering=None):
         r"""
@@ -3578,7 +3578,7 @@ cdef class Matroid(SageObject):
             return self._is_isomorphic(other), self._isomorphism(other)
         if self is other:
             return True
-        return (self.full_rank() == other.full_rank() and SetSystem(list(self.groundset()), list(self.nonbases()))._isomorphism(SetSystem(list(other.groundset()), list(other.nonbases()))) is not None)
+        return (self.full_rank() == other.full_rank() and SetSystem(self.groundset(), list(self.nonbases()))._isomorphism(SetSystem(other.groundset(), list(other.nonbases()))) is not None)
 
     cpdef isomorphism(self, other):
         r"""
@@ -3644,7 +3644,7 @@ cdef class Matroid(SageObject):
         if self is other:
             return {e:e for e in self.groundset()}
         if self.full_rank() == other.full_rank():
-            return SetSystem(list(self.groundset()), list(self.nonbases()))._isomorphism(SetSystem(list(other.groundset()), list(other.nonbases())))
+            return SetSystem(self.groundset(), list(self.nonbases()))._isomorphism(SetSystem(other.groundset(), list(other.nonbases())))
         else:
             return None
 
@@ -8489,7 +8489,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``matroids`` - a matroid or a list of matroids
+        - ``matroids`` -- a matroid or a list of matroids
 
         OUTPUT: an instance of
         :class:`MatroidUnion <sage.matroids.union_matroid.MatroidUnion>`
@@ -8529,7 +8529,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``matroids`` - a matroid or list of matroids
+        - ``matroids`` -- a matroid or list of matroids
 
         OUTPUT: an instance of
         :class:`MatroidSum <sage.matroids.union_matroid.MatroidSum>`

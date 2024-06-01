@@ -44,7 +44,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
     - ``v`` -- a list/tuple/iterable of coordinates in `R`
 
-    - ``check`` -- boolean (optional, default:``True``); whether to
+    - ``check`` -- boolean (default:``True``); whether to
       check the input for consistency
 
     EXAMPLES::

@@ -265,9 +265,8 @@ from .partition import (Partition, Partitions, Partitions_n, _Partitions,
                         RegularPartitions_all, RegularPartitions_n)
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.libs.pari.all import pari
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -275,6 +274,9 @@ from sage.rings.integer import Integer
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
+lazy_import('sage.libs.pari.all', 'pari')
 
 # -------------------------------------------------
 # Partition tuple - element class

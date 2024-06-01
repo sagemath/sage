@@ -1317,22 +1317,22 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``vertices`` - The number of vertices in the graphs to be tested
+        - ``vertices`` -- The number of vertices in the graphs to be tested
 
-        - ``matrix_function`` - A function taking a graph and giving back
+        - ``matrix_function`` -- A function taking a graph and giving back
           a matrix.  This defaults to the adjacency matrix.  The spectra
           examined are the spectra of these matrices.
 
-        - ``graphs`` - One of three things:
+        - ``graphs`` -- One of three things:
 
-           - ``None`` (default) - test all graphs having ``vertices``
+           - ``None`` (default) -- test all graphs having ``vertices``
              vertices
 
            - a function taking a graph and returning ``True`` or ``False``
              - test only the graphs on ``vertices`` vertices for which
              the function returns ``True``
 
-           - a list of graphs (or other iterable object) - these graphs
+           - a list of graphs (or other iterable object) -- these graphs
              are tested for cospectral sets.  In this case,
              ``vertices`` is ignored.
 
@@ -1446,7 +1446,7 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``code_input`` - a file containing valid planar code data.
+        - ``code_input`` -- a file containing valid planar code data.
 
         OUTPUT:
 
@@ -1543,10 +1543,10 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``order`` - a positive even integer smaller than or equal to 254.
+        - ``order`` -- a positive even integer smaller than or equal to 254.
           This specifies the number of vertices in the generated fullerenes.
 
-        - ``ipr`` - default: ``False`` - if ``True`` only fullerenes that
+        - ``ipr`` -- (default: ``False``); if ``True`` only fullerenes that
           satisfy the Isolated Pentagon Rule are generated. This means that
           no pentagonal faces share an edge.
 
@@ -1652,10 +1652,10 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``hexagon_count`` - a positive integer smaller than or equal to 30.
+        - ``hexagon_count`` -- a positive integer smaller than or equal to 30.
           This specifies the number of hexagons in the generated benzenoids.
 
-        - ``benzenoids`` - default: ``False`` - if ``True`` only benzenoids are
+        - ``benzenoids`` -- (default: ``False``); if ``True`` only benzenoids are
           generated.
 
         OUTPUT:
@@ -1941,24 +1941,24 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``order`` - a positive integer smaller than or equal to 64.
+        - ``order`` -- a positive integer smaller than or equal to 64.
           This specifies the number of vertices in the generated graphs.
 
-        - ``minimum_degree`` - default: ``None`` - a value `\geq 1` and `\leq
+        - ``minimum_degree`` -- (default: ``None``); a value `\geq 1` and `\leq
           5`, or ``None``. This specifies the minimum degree of the generated
           graphs. If this is ``None`` and the order is 1, then this is set to
           0. If this is ``None`` and the minimum connectivity is specified, then
           this is set to the same value as the minimum connectivity.  If the
           minimum connectivity is also equal to ``None``, then this is set to 1.
 
-        - ``minimum_connectivity`` - default: ``None`` - a value `\geq 1`
+        - ``minimum_connectivity`` -- (default: ``None``); a value `\geq 1`
           and `\leq 3`, or ``None``. This specifies the minimum connectivity of the
           generated graphs. If this is ``None`` and the minimum degree is
           specified, then this is set to the minimum of the minimum degree
           and 3. If the minimum degree is also equal to ``None``, then this
           is set to 1.
 
-        - ``exact_connectivity`` - default: ``False`` - if ``True`` only
+        - ``exact_connectivity`` -- (default: ``False``); if ``True`` only
           graphs with exactly the specified connectivity will be generated.
           This option cannot be used with ``minimum_connectivity=3``, or if
           the minimum connectivity is not explicitly set.
@@ -1972,11 +1972,11 @@ class GraphGenerators:
         - ``maximum_face_size`` -- integer (default: ``None``); upper bound on
           the size of a face and so on the maximum degree of the dual graph
 
-        - ``only_bipartite`` - default: ``False`` - if ``True`` only bipartite
+        - ``only_bipartite`` -- (default: ``False``); if ``True`` only bipartite
           graphs will be generated. This option cannot be used for graphs with
           a minimum degree larger than 3.
 
-        - ``dual`` - default: ``False`` - if ``True`` return instead the
+        - ``dual`` -- (default: ``False``); if ``True`` return instead the
           planar duals of the generated graphs.
 
         OUTPUT:
@@ -2170,33 +2170,33 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``order`` - a positive integer smaller than or equal to 64.
+        - ``order`` -- a positive integer smaller than or equal to 64.
           This specifies the number of vertices in the generated triangulations.
 
-        - ``minimum_degree`` - default: ``None`` - a value `\geq 3` and `\leq 5`,
+        - ``minimum_degree`` -- (default: ``None``); a value `\geq 3` and `\leq 5`,
           or ``None``. This specifies the minimum degree of the generated
           triangulations. If this is ``None`` and the minimum connectivity
           is specified, then this is set to the same value as the minimum
           connectivity. If the minimum connectivity is also equal to ``None``,
           then this is set to 3.
 
-        - ``minimum_connectivity`` - default: ``None`` - a value `\geq 3` and
+        - ``minimum_connectivity`` -- (default: ``None``); a value `\geq 3` and
           `\leq 5`, or ``None``. This specifies the minimum connectivity of the
           generated triangulations. If this is ``None`` and the minimum degree
           is specified, then this is set to the minimum of the minimum degree
           and 3. If the minimum degree is also equal to ``None``, then this is
           set to 3.
 
-        - ``exact_connectivity`` - default: ``False`` - if ``True`` only
+        - ``exact_connectivity`` -- (default: ``False``); if ``True`` only
           triangulations with exactly the specified connectivity will be generated.
           This option cannot be used with ``minimum_connectivity=3``, or if
           the minimum connectivity is not explicitly set.
 
-        - ``only_eulerian`` - default: ``False`` - if ``True`` only Eulerian
+        - ``only_eulerian`` -- (default: ``False``); if ``True`` only Eulerian
           triangulations will be generated. This option cannot be used if the
           minimum degree is explicitly set to anything else than 4.
 
-        - ``dual`` - default: ``False`` - if ``True`` return instead the
+        - ``dual`` -- (default: ``False``); if ``True`` return instead the
           planar duals of the generated graphs.
 
         OUTPUT:
@@ -2356,17 +2356,17 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``order`` - a positive integer smaller than or equal to 64.
+        - ``order`` -- a positive integer smaller than or equal to 64.
           This specifies the number of vertices in the generated quadrangulations.
 
-        - ``minimum_degree`` - default: ``None`` - a value `\geq 2` and `\leq
+        - ``minimum_degree`` -- default: ``None``; a value `\geq 2` and `\leq
           3`, or ``None``. This specifies the minimum degree of the generated
           quadrangulations. If this is ``None`` and the minimum connectivity is
           specified, then this is set to the same value as the minimum
           connectivity. If the minimum connectivity is also equal to ``None``,
           then this is set to 2.
 
-        - ``minimum_connectivity`` - default: ``None`` - a value `\geq 2` and
+        - ``minimum_connectivity`` -- default: ``None``; a value `\geq 2` and
           `\leq 3`, or ``None``. This specifies the minimum connectivity of the
           generated quadrangulations. If this is ``None`` and the option
           ``no_nonfacial_quadrangles`` is set to ``True``, then this is set to
@@ -2374,11 +2374,11 @@ class GraphGenerators:
           then this is set to the minimum degree. If the minimum degree is also
           equal to ``None``, then this is set to 3.
 
-        - ``no_nonfacial_quadrangles`` - default: ``False`` - if ``True`` only
+        - ``no_nonfacial_quadrangles`` -- default: ``False``; if ``True`` only
           quadrangulations with no non-facial quadrangles are generated. This
           option cannot be used if ``minimum_connectivity`` is set to 2.
 
-        - ``dual`` - default: ``False`` - if ``True`` return instead the
+        - ``dual`` -- default: ``False``; if ``True`` return instead the
           planar duals of the generated graphs.
 
         OUTPUT:
@@ -2800,16 +2800,16 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
     INPUT:
 
 
-    -  ``g`` - current position on the tree.
+    -  ``g`` -- current position on the tree.
 
-    -  ``aut_gens`` - list of generators of Aut(g), in
+    -  ``aut_gens`` -- list of generators of Aut(g), in
        list notation.
 
-    -  ``max_verts`` - when to retreat.
+    -  ``max_verts`` -- when to retreat.
 
-    -  ``property`` - check before traversing below g.
+    -  ``property`` -- check before traversing below g.
 
-    -  ``degree_sequence`` - specify a degree sequence to try to
+    -  ``degree_sequence`` -- specify a degree sequence to try to
        obtain.
 
 
@@ -2992,12 +2992,12 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, sparse=T
     INPUT:
 
 
-    -  ``g`` - current position on the tree.
+    -  ``g`` -- current position on the tree.
 
-    -  ``aut_gens`` - list of generators of Aut(g), in
+    -  ``aut_gens`` -- list of generators of Aut(g), in
        list notation.
 
-    -  ``property`` - check before traversing below g.
+    -  ``property`` -- check before traversing below g.
 
 
     EXAMPLES::
