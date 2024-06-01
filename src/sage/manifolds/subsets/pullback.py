@@ -41,10 +41,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
     INPUT:
 
-    - ``map`` - an instance of :class:`~sage.manifolds.continuous_map.ContinuousMap`,
+    - ``map`` -- an instance of :class:`~sage.manifolds.continuous_map.ContinuousMap`,
       :class:`ScalarField`, or :class:`Chart`
 
-    - ``codomain_subset`` - an instance of :class:`~sage.manifolds.subset.ManifoldSubset`,
+    - ``codomain_subset`` -- an instance of :class:`~sage.manifolds.subset.ManifoldSubset`,
       :class:`RealSet`, or :class:`~sage.geometry.convex_set.ConvexSet_base`
 
     EXAMPLES::
@@ -503,7 +503,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         - ``map`` -- an instance of :class:`ScalarField` or :class:`Chart`.
 
-        - ``codomain_subset`` - if ``map`` is a :class:`ScalarField`, an instance of :class:`RealSet`;
+        - ``codomain_subset`` -- if ``map`` is a :class:`ScalarField`, an instance of :class:`RealSet`;
           if ``map`` is a :class:`Chart`, the relative interior of a polyhedron.
 
         For other inputs, a :class:`NotImplementedError` will be raised.

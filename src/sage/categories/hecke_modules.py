@@ -121,7 +121,7 @@ class HeckeModules(Category_module):
 
             EXAMPLES::
 
-                sage: # needs sage.modular
+                sage: # needs sage.libs.pari sage.modular
                 sage: M = ModularForms(Gamma0(7), 4)
                 sage: H = M._Hom_(M, category=HeckeModules(QQ)); H
                 Set of Morphisms

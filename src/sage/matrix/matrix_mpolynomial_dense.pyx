@@ -461,7 +461,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        ``i`` -- an integer
+        - ``i`` -- an integer
 
         OUTPUT:
 

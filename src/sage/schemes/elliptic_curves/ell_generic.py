@@ -725,11 +725,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - ``x`` -- an element of the base ring of the curve, or of an extension.
 
-        - ``all`` (bool, default False) -- if True, return a (possibly
+        - ``all`` (bool, default: ``False``) -- if True, return a (possibly
           empty) list of all points; if False, return just one point,
           or raise a :class:`ValueError` if there are none.
 
-        - ``extend`` (bool, default False) --
+        - ``extend`` (bool, default: ``False``) --
 
           - if ``False``, extend the base if necessary and possible to
             include `x`, and only return point(s) defined over this
@@ -2954,7 +2954,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``complete_cube`` -- boolean (default: True); for
+        - ``complete_cube`` -- boolean (default: ``True``); for
           meaning, see below.
 
         OUTPUT:

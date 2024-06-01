@@ -12,6 +12,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.subquotients import SubquotientsCategory
 
+
 class FiniteSets(CategoryWithAxiom):
     r"""
     The category of finite sets.

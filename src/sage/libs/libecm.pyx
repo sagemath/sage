@@ -73,7 +73,7 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     - ``B1`` -- bound for step 1 of ECM
 
-    - ``verbose`` (default: False) -- print some debugging information
+    - ``verbose`` (default: ``False``) -- print some debugging information
 
     OUTPUT:
 

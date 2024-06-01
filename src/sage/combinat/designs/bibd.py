@@ -681,14 +681,14 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
 
     INPUT:
 
-    - ``G`` - a finite additive Abelian group
+    - ``G`` -- a finite additive Abelian group
 
-    - ``D`` - a difference family on ``G`` (short blocks are allowed).
+    - ``D`` -- a difference family on ``G`` (short blocks are allowed).
 
-    - ``lambd`` - the `\lambda` parameter (optional, only used if ``check`` is
+    - ``lambd`` -- the `\lambda` parameter (optional, only used if ``check`` is
       ``True``)
 
-    - ``check`` - whether or not we check the output (default: ``True``)
+    - ``check`` -- whether or not we check the output (default: ``True``)
 
     EXAMPLES::
 
@@ -1553,7 +1553,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
         INPUT:
 
-        - ``s`` - (default to ``2``) the maximum number of points from the arc
+        - ``s`` -- (default to ``2``) the maximum number of points from the arc
           in each block
 
         - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear

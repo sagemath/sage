@@ -455,7 +455,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
       tree-decomposition itself.
 
     - ``algorithm`` -- whether to use ``"sage"`` or ``"tdlib"`` (requires the
-      installation of the 'tdlib' package). The default behaviour is to use
+      installation of the :ref:`spkg_sagemath_tdlib` package). The default behaviour is to use
       'tdlib' if it is available, and Sage's own algorithm when it is not.
 
     - ``nice`` -- boolean (default: ``False``); whether or not to return the
@@ -671,8 +671,8 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
     if algorithm == 'tdlib':
         if not tdlib_found:
             from sage.features import FeatureNotPresentError
-            raise FeatureNotPresentError(PythonModule('sage.graphs.graph_decompositions.tdlib',
-                                                      spkg='tdlib'))
+            from sage.features.tdlib import Tdlib
+            raise FeatureNotPresentError(Tdlib())
 
         tree_decomp = tdlib.treedecomposition_exact(g, -1 if k is None else k)
         width = tdlib.get_width(tree_decomp)

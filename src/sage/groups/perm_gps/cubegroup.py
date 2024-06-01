@@ -686,16 +686,16 @@ class CubeGroup(PermutationGroup_generic):
 
         - ``mv`` -- Can one of the following:
 
-          -  ``list`` - list of facets (as returned by
+          -  ``list`` -- list of facets (as returned by
              self.facets())
 
-          -  ``dict`` - list of faces (as returned by
+          -  ``dict`` -- list of faces (as returned by
              ``self.faces()``)
 
-          -  ``str`` - either cycle notation (passed to GAP) or
+          -  ``str`` -- either cycle notation (passed to GAP) or
              a product of generators or Singmaster notation
 
-          -  ``perm_group element`` - returned as an element of ``self``
+          -  ``perm_group element`` -- returned as an element of ``self``
 
         - ``check`` -- check if the input is valid
 
@@ -1428,14 +1428,14 @@ class RubiksCube(SageObject):
 
         - ``algorithm`` -- must be one of the following:
 
-          - ``hybrid`` - try ``kociemba`` for timeout seconds, then ``dietz``
-          - ``kociemba`` - Use Dik T. Winter's program
+          - ``hybrid`` -- try ``kociemba`` for timeout seconds, then ``dietz``
+          - ``kociemba`` -- Use Dik T. Winter's program
             (reasonable speed, few moves)
-          - ``dietz`` - Use Eric Dietz's cubex program
+          - ``dietz`` -- Use Eric Dietz's cubex program
             (fast but lots of moves)
-          - ``optimal`` - Use Michael Reid's optimal program
+          - ``optimal`` -- Use Michael Reid's optimal program
             (may take a long time)
-          - ``gap`` - Use GAP word solution (can be slow)
+          - ``gap`` -- Use GAP word solution (can be slow)
 
         Any choice other than ``gap`` requires the optional package
         ``rubiks``. Otherwise, the ``gap`` algorithm is used.

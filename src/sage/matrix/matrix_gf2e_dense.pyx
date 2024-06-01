@@ -136,7 +136,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         INPUT:
 
-        - ``alloc`` - if ``True`` the matrix is allocated first (default: ``True``)
+        - ``alloc`` -- if ``True`` the matrix is allocated first (default: ``True``)
 
         EXAMPLES::
 
@@ -236,9 +236,9 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         A[i,j] = value without bound checks
 
         INPUT:
-        - ``i`` - row index
-        - ``j`` - column index
-        - ``value`` - a finite field element (not checked but assumed)
+        - ``i`` -- row index
+        - ``j`` -- column index
+        - ``value`` -- a finite field element (not checked but assumed)
 
         EXAMPLES::
 
@@ -263,8 +263,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         Get A[i,j] without bound checks.
 
         INPUT:
-        - ``i`` - row index
-        - ``j`` - column index
+        - ``i`` -- row index
+        - ``j`` -- column index
 
         EXAMPLES::
 
@@ -303,7 +303,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -392,7 +392,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -447,7 +447,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -501,7 +501,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -544,8 +544,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
-        - ``cutoff`` - row or column dimension to switch over to
+        - ``right`` -- a matrix
+        - ``cutoff`` -- row or column dimension to switch over to
           Newton-John multiplication (default: 64)
 
         EXAMPLES::
@@ -597,7 +597,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - an element of the base field
+        - ``right`` -- an element of the base field
 
         EXAMPLES::
 
@@ -708,9 +708,9 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        -  ``density`` - float; proportion (roughly) to be considered for
+        -  ``density`` -- float; proportion (roughly) to be considered for
            changes
-        -  ``nonzero`` - Bool (default: ``False``); whether the new entries
+        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
            are forced to be non-zero
 
         OUTPUT:
@@ -856,13 +856,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``algorithm`` - one of the following
-          - ``heuristic`` - let M4RIE decide (default)
-          - ``newton_john`` - use newton_john table based algorithm
-          - ``ple`` - use PLE decomposition
-          - ``naive`` - use naive cubic Gaussian elimination (M4RIE implementation)
-          - ``builtin`` - use naive cubic Gaussian elimination (Sage implementation)
-        - ``reduced`` - if ``True`` return reduced echelon form. No
+        - ``algorithm`` -- one of the following
+          - ``heuristic`` -- let M4RIE decide (default)
+          - ``newton_john`` -- use newton_john table based algorithm
+          - ``ple`` -- use PLE decomposition
+          - ``naive`` -- use naive cubic Gaussian elimination (M4RIE implementation)
+          - ``builtin`` -- use naive cubic Gaussian elimination (Sage implementation)
+        - ``reduced`` -- if ``True`` return reduced echelon form. No
           guarantee is given that the matrix is *not* reduced if
           ``False`` (default: ``True``)
 
@@ -998,9 +998,9 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``row`` - row index for row to rescale
-        - ``multiple`` - finite field element to scale by
-        - ``start_col`` - only start at this column index.
+        - ``row`` -- row index for row to rescale
+        - ``multiple`` -- finite field element to scale by
+        - ``start_col`` -- only start at this column index.
 
         EXAMPLES::
 
@@ -1038,10 +1038,10 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``row_to`` - row index of source
-        - ``row_from`` - row index of destination
-        - ``multiple`` -  finite field element
-        - ``start_col`` - only start at this column index
+        - ``row_to`` -- row index of source
+        - ``row_from`` -- row index of destination
+        - ``multiple`` --  finite field element
+        - ``start_col`` -- only start at this column index
 
         EXAMPLES::
 
@@ -1072,8 +1072,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``row1`` - row index
-        - ``row2`` - row index
+        - ``row1`` -- row index
+        - ``row2`` -- row index
 
         EXAMPLES::
 
@@ -1096,8 +1096,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``col1`` - column index
-        - ``col2`` - column index
+        - ``col1`` -- column index
+        - ``col2`` -- column index
 
         EXAMPLES::
 
@@ -1134,7 +1134,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -1447,7 +1447,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``C`` - a list of matrices over GF(2)
+        - ``C`` -- a list of matrices over GF(2)
 
         EXAMPLES::
 

@@ -76,9 +76,9 @@ def enum_projective_rational_field(X, B):
 
     INPUT:
 
-    - ``X`` -  a scheme or set of abstract rational points of a scheme.
+    - ``X`` --  a scheme or set of abstract rational points of a scheme.
 
-    - ``B`` -  a positive integer bound.
+    - ``B`` --  a positive integer bound.
 
     OUTPUT:
 
@@ -171,11 +171,11 @@ def enum_projective_number_field(X, **kwds):
 
     kwds:
 
-    - ``bound`` - a real number
+    - ``bound`` -- a real number
 
-    - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+    - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-    - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+    - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
 
     OUTPUT:
 
@@ -234,7 +234,7 @@ def enum_projective_finite_field(X):
 
     INPUT:
 
-    - ``X`` -  a scheme defined over a finite field or a set of abstract
+    - ``X`` --  a scheme defined over a finite field or a set of abstract
       rational points of such a scheme.
 
     OUTPUT:
@@ -331,9 +331,9 @@ def sieve(X, bound):
 
     INPUT:
 
-    - ``X`` - a scheme with ambient space defined over projective space
+    - ``X`` -- a scheme with ambient space defined over projective space
 
-    - ``bound`` - a positive integer bound
+    - ``bound`` -- a positive integer bound
 
     OUTPUT:
 

@@ -275,7 +275,7 @@ cdef class MonoDict:
     - ``data`` -- optional iterable defining initial data, as dict or
       iterable of (key, value) pairs.
 
-    - ``weak_values`` -- optional bool (default False). If it is true,
+    - ``weak_values`` -- optional bool (default: ``False``). If it is true,
       weak references to the values in this dictionary will be used,
       when possible.
 
@@ -1008,7 +1008,7 @@ cdef class TripleDict:
     - ``data`` -- optional iterable defining initial data, as dict or
       iterable of (key, value) pairs.
 
-    - ``weak_values`` -- optional bool (default False). If it is true,
+    - ``weak_values`` -- optional bool (default: ``False``). If it is true,
       weak references to the values in this dictionary will be used,
       when possible.
 

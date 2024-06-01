@@ -2911,7 +2911,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-            - ``other`` - a subclass of :class:`CGraphBackend`
+            - ``other`` -- a subclass of :class:`CGraphBackend`
             - ``vertices`` -- a iterable over the vertex labels
             - ``ignore_labels`` -- boolean (default: ``False``); whether to ignore the labels
 
