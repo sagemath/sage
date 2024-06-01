@@ -11983,7 +11983,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 self._coeffs = x
             return
 
-        if sage.rings.fraction_field_element.isinstance(x, FractionFieldElement):
+        if isinstance(x, sage.rings.fraction_field_element.FractionFieldElement):
             if x.denominator() != 1:
                 raise TypeError("denominator must be 1")
             else:

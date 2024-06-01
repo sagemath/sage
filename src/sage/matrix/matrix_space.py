@@ -402,7 +402,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             if R.order() < matrix_modn_sparse.MAX_MODULUS:
                 return matrix_modn_sparse.Matrix_modn_sparse
 
-    if sage.rings.rational_field.isinstance(R, RationalField):
+    if isinstance(R, sage.rings.rational_field.RationalField):
         try:
             from . import matrix_rational_sparse
         except ImportError:
@@ -410,7 +410,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         else:
             return matrix_rational_sparse.Matrix_rational_sparse
 
-    if sage.rings.integer_ring.isinstance(R, IntegerRing_class):
+    if isinstance(R, sage.rings.integer_ring.IntegerRing_class):
         try:
             from . import matrix_integer_sparse
         except ImportError:
