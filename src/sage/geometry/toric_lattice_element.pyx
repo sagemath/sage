@@ -120,12 +120,12 @@ def is_ToricLatticeElement(x):
 
         sage: from sage.geometry.toric_lattice_element import (
         ....:   is_ToricLatticeElement)
-        sage: is_ToricLatticeElement(1)
+        sage: isinstance(1, ToricLatticeElement)
         False
         sage: e = ToricLattice(3).an_element()
         sage: e
         N(1, 0, 0)
-        sage: is_ToricLatticeElement(e)
+        sage: isinstance(e, ToricLatticeElement)
         True
     """
     return isinstance(x, ToricLatticeElement)
@@ -189,7 +189,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: n is n2
             False
         """
-        if not is_ToricLatticeElement(right):
+        if not isinstance(right, ToricLatticeElement):
             return NotImplemented
 
         PL_ambient = self.parent().ambient_module()
@@ -271,7 +271,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         """
         Ns = self.parent()
         # We try to deal only with the case of two lattice elements...
-        if is_ToricLatticeElement(other):
+        if isinstance(other, ToricLatticeElement):
             if other.parent().ambient_module() is Ns.ambient_module().dual():
                 # Our own _dot_product_ is disabled
                 return Vector_integer_dense._dot_product_(self, other)
@@ -285,7 +285,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         # We also allow action on elements of lattice quotients
         try:
             lift = other.lift()
-            if is_ToricLatticeElement(lift):
+            if isinstance(lift, ToricLatticeElement):
                 if other.parent().W().is_submodule(Ns.dual().W()):
                     return Vector_integer_dense._dot_product_(self, lift)
                 raise CoercionException("only elements of dual toric lattices "

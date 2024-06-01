@@ -1859,7 +1859,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             'Rational polyhedral fan in 2-d lattice'
         """
         result = "Rational polyhedral fan in"
-        if is_ToricLattice(self.lattice()):
+        if isinstance(self.lattice(), ToricLattice_generic):
             result += " %s" % self.lattice()
         else:
             result += " %d-d lattice" % self.lattice_dim()

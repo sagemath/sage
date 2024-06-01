@@ -98,11 +98,11 @@ def is_PointCollection(x):
 
     EXAMPLES::
 
-        sage: from sage.geometry.point_collection import is_PointCollection
-        sage: is_PointCollection(1)
+        sage: from sage.geometry.point_collection import PointCollection
+        sage: isinstance(1, PointCollection)
         False
         sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)])
-        sage: is_PointCollection(c.rays())
+        sage: isinstance(c.rays(), PointCollection)
         True
     """
     return isinstance(x, PointCollection)
@@ -665,7 +665,7 @@ cdef class PointCollection(SageObject):
             N+N(1, 1, 1, 1, 1, 1)
             in 6-d lattice N+N
         """
-        assert is_PointCollection(other)
+        assert isinstance(other, PointCollection)
         if module is None:
             module = self._module.direct_sum(other.module())
         P = [list(p) for p in self]
