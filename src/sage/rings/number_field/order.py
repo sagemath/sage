@@ -362,7 +362,11 @@ def is_NumberFieldOrder(R):
 
         sage: from sage.rings.number_field.order import is_NumberFieldOrder
         sage: x = polygen(ZZ, 'x')
-        sage: is_NumberFieldOrder(NumberField(x^2 + 1,'a').maximal_order())
+        sage: is_NumberFieldOrder(NumberField(x^2 + 1, 'a').maximal_order())
+        doctest:warning...
+        DeprecationWarning: The function is_NumberFieldOrder is deprecated;
+        use 'isinstance(..., sage.rings.abc.Order) or ... == ZZ' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         True
         sage: is_NumberFieldOrder(ZZ)
         True
@@ -371,6 +375,10 @@ def is_NumberFieldOrder(R):
         sage: is_NumberFieldOrder(45)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_NumberFieldOrder is deprecated; "
+                "use 'isinstance(..., sage.rings.abc.Order) or ... == ZZ' instead.")
     return isinstance(R, Order) or R == ZZ
 
 
@@ -2842,7 +2850,7 @@ def absolute_order_from_module_generators(gens,
         raise ValueError("each generator must be integral")
 
     K = gens.universe()
-    if is_NumberFieldOrder(K):
+    if isinstance(K, Order) or K == ZZ:
         K = K.number_field()
     V, from_V, to_V = K.vector_space()
     mod_gens = [to_V(x) for x in gens]

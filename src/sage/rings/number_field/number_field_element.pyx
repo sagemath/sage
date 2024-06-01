@@ -50,6 +50,7 @@ from sage.libs.gmp.pylong cimport mpz_pythonhash
 from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_GT, Py_LE, Py_GE
 from sage.structure.richcmp cimport rich_to_bool
 
+import sage.rings.abc
 import sage.rings.polynomial.polynomial_element
 from sage.rings.polynomial.evaluation_ntl cimport ZZX_evaluation_mpfi
 import sage.rings.rational_field
@@ -1988,8 +1989,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if is_NumberFieldOrder(K):
+        if isinstance(K, sage.rings.abc.Order):
             K = K.number_field()
         fac = K.ideal(self).factor()
         # Check whether all prime ideals in `fac` are principal
@@ -2088,8 +2088,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if R.is_field():
             return R.one()
 
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if not is_NumberFieldOrder(R):
+        if not isinstance(R, sage.rings.abc.Order):
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
         K = R.number_field()

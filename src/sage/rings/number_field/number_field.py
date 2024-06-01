@@ -81,7 +81,7 @@ from sage.misc.superseded import deprecation
 
 
 import sage.libs.ntl.all as ntl
-
+import sage.rings.abc
 import sage.rings.complex_mpfr
 from sage.rings.polynomial.polynomial_element import Polynomial
 import sage.rings.real_mpfr
@@ -8444,10 +8444,9 @@ class NumberField_absolute(NumberField_generic):
         """
         if R is int:
             return self._generic_coerce_map(R)
-        elif R in (ZZ, QQ, self.base()):
+        if R in (ZZ, QQ, self.base()):
             return self._generic_coerce_map(R)
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if is_NumberFieldOrder(R) and self.has_coerce_map_from(R.number_field()):
+        if isinstance(R, sage.rings.abc.Order) and self.has_coerce_map_from(R.number_field()):
             return self._generic_coerce_map(R)
         # R is not QQ by the above tests
         if isinstance(R, number_field_base.NumberField) and R.coerce_embedding() is not None:

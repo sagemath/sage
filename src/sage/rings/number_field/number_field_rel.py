@@ -80,6 +80,7 @@ import sage.libs.ntl.all as ntl
 from sage.categories.map import is_Map
 from sage.structure.sequence import Sequence
 
+import sage.rings.abc
 import sage.structure.parent_gens
 
 from . import maps
@@ -98,7 +99,7 @@ from .number_field import (NumberField, NumberField_generic,
     put_natural_embedding_first, proof_flag,
     is_NumberFieldHomsetCodomain)
 from sage.rings.number_field.number_field_base import NumberField as NumberField_base
-from sage.rings.number_field.order import (RelativeOrder, is_NumberFieldOrder,
+from sage.rings.number_field.order import (RelativeOrder,
                                            relative_order_from_ring_generators)
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
 from sage.libs.pari.all import pari_gen
@@ -1013,9 +1014,9 @@ class NumberField_relative(NumberField_generic):
         """
         if R is int:
             return self._generic_coerce_map(R)
-        elif R in (ZZ, QQ, self.base_field()):
+        if R in (ZZ, QQ, self.base_field()):
             return self._generic_coerce_map(R)
-        if is_NumberFieldOrder(R) and R.number_field() is self:
+        if isinstance(R, sage.rings.abc.Order) and R.number_field() is self:
             return self._generic_coerce_map(R)
         mor = self.base_field()._internal_coerce_map_from(R)
         if mor is not None:
