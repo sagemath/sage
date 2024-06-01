@@ -185,7 +185,7 @@ from sage.rings.rational_field import QQ
 from sage.schemes.generic.divisor import Divisor_generic
 from sage.schemes.generic.divisor_group import DivisorGroup_generic
 from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
-from sage.schemes.toric.variety import CohomologyRing, is_ToricVariety
+from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import is_Vector
 
@@ -302,7 +302,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         ...
         TypeError: cannot deduce coefficient ring for [(u, u)]
     """
-    assert is_ToricVariety(toric_variety)
+    assert isinstance(toric_variety, ToricVariety_field)
 
     # First convert special arguments into lists
     # of multiplicities or (multiplicity,coordinate)
@@ -1687,7 +1687,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: DivisorGroup(P2, ZZ) is ToricDivisorGroup(P2, ZZ)
             False
         """
-        assert is_ToricVariety(toric_variety), str(toric_variety) + ' is not a toric variety!'
+        assert isinstance(toric_variety, ToricVariety_field), str(toric_variety) + ' is not a toric variety!'
         super().__init__(toric_variety, base_ring)
 
     def _latex_(self):

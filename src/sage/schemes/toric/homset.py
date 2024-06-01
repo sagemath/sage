@@ -166,8 +166,8 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
                     to Rational polyhedral fan in 1-d lattice N.
         """
         SchemeHomset_generic.__init__(self, X, Y, category=category, check=check, base=base)
-        from sage.schemes.toric.variety import is_ToricVariety
-        if is_ToricVariety(X) and is_ToricVariety(Y):
+        from sage.schemes.toric.variety import ToricVariety_field
+        if isinstance(X, ToricVariety_field) and isinstance(Y, ToricVariety_field):
             self.register_conversion(MatrixSpace(ZZ, X.fan().dim(), Y.fan().dim()))
 
     def _element_constructor_(self, x, check=True):

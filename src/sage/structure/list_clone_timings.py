@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Performance Test for Clone Protocol
 

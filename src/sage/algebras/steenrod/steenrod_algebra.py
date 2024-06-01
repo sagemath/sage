@@ -606,7 +606,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         base_ring = GF(p)
         self._profile = profile
         self._truncation_type = truncation_type
-        if ((not self._generic and ((profile and profile[0] < Infinity)))
+        if ((not self._generic and profile and profile[0] < Infinity)
             or (self._generic and profile != ((), ()) and profile[0]
                 and profile[0][0] < Infinity)
                 or (truncation_type < Infinity)):

@@ -149,7 +149,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
 from sage.rings.infinity import infinity
 
-from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
 from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
                                                   AlgebraicScheme_subscheme_affine_field)
 
@@ -209,7 +209,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
             sage: C = Curve([x^2 - z, z - 8*x], A); C
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
         """
-        if not is_AffineSpace(A):
+        if not isinstance(A, AffineSpace_generic):
             raise TypeError("A (={}) must be an affine space".format(A))
 
         Curve_generic.__init__(self, A, X)
@@ -299,7 +299,7 @@ class AffinePlaneCurve(AffineCurve):
             Affine Plane Curve over Complex Field with 53 bits of precision defined
             by x^2 + y^2
         """
-        if not (is_AffineSpace(A) and A.dimension != 2):
+        if not (isinstance(A, AffineSpace_generic) and A.dimension != 2):
             raise TypeError("Argument A (= %s) must be an affine plane." % A)
 
         super().__init__(A, [f])
@@ -464,7 +464,7 @@ class AffinePlaneCurve(AffineCurve):
         A 5-nodal curve of degree 11.  This example also illustrates
         some of the optional arguments::
 
-            sage: # needs sage.plot()
+            sage: # needs sage.plot
             sage: R.<x, y> = ZZ[]
             sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9
             ....:            - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
@@ -998,7 +998,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         if len(set(indices)) < len(indices):
             raise ValueError("(=%s) must be a list or tuple of distinct indices or variables" % indices)
         if AS is not None:
-            if not is_AffineSpace(AS):
+            if not isinstance(AS, AffineSpace_generic):
                 raise TypeError("(=%s) must be an affine space" % AS)
             if AS.dimension_relative() != len(indices):
                 raise TypeError("(=%s) must have dimension (=%s)" % (AS, len(indices)))

@@ -1,4 +1,3 @@
-# -*- coding: utf-8
 r"""
 Univariate polynomials over `\CC` with Arb ball coefficients.
 

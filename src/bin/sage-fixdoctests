@@ -300,6 +300,9 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
         got = ['']
     else:
         expected, got = block.split('\nGot:\n')
+        got = re.sub(r'(doctest:warning).*^( *DeprecationWarning:)',
+                     r'\1...\n\2',
+                     got, 1, re.DOTALL | re.MULTILINE)
         got = got.splitlines()      # got can't be the empty string
 
     if args.only_tags:

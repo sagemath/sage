@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Testing for features of the environment at runtime
 

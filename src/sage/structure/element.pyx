@@ -774,13 +774,14 @@ cdef class Element(SageObject):
         else:
             return self._parent(x)
 
-
     def subs(self, in_dict=None, **kwds):
         """
         Substitutes given generators with given values while not touching
-        other generators. This is a generic wrapper around ``__call__``.
-        The syntax is meant to be compatible with the corresponding method
-        for symbolic expressions.
+        other generators.
+
+        This is a generic wrapper around ``__call__``.  The syntax is
+        meant to be compatible with the corresponding method for
+        symbolic expressions.
 
         INPUT:
 
@@ -847,7 +848,6 @@ cdef class Element(SageObject):
             5
         """
         return self.subs(*args, **kwds)
-
 
     def numerical_approx(self, prec=None, digits=None, algorithm=None):
         """
@@ -2147,6 +2147,7 @@ def is_ModuleElement(x):
     """
     return isinstance(x, ModuleElement)
 
+
 cdef class ElementWithCachedMethod(Element):
     r"""
     An element class that fully supports cached methods.
@@ -2511,6 +2512,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
         """
         return self._is_immutable
 
+
 ########################################################################
 # Monoid
 ########################################################################
@@ -2520,6 +2522,7 @@ def is_MonoidElement(x):
     Return ``True`` if x is of type MonoidElement.
     """
     return isinstance(x, MonoidElement)
+
 
 cdef class MonoidElement(Element):
     """
@@ -2580,6 +2583,7 @@ def is_AdditiveGroupElement(x):
     """
     return isinstance(x, AdditiveGroupElement)
 
+
 cdef class AdditiveGroupElement(ModuleElement):
     """
     Generic element of an additive group.
@@ -2599,6 +2603,7 @@ def is_MultiplicativeGroupElement(x):
     Return ``True`` if x is of type MultiplicativeGroupElement.
     """
     return isinstance(x, MultiplicativeGroupElement)
+
 
 cdef class MultiplicativeGroupElement(MonoidElement):
     """
@@ -2972,6 +2977,7 @@ def is_CommutativeRingElement(x):
         True
     """
     return isinstance(x, CommutativeRingElement)
+
 
 cdef class CommutativeRingElement(RingElement):
     """
@@ -3758,8 +3764,10 @@ cdef class Vector(ModuleElementWithMutability):
         v = [x._magma_init_(magma) for x in self.list()]
         return '%s![%s]'%(V.name(), ','.join(v))
 
+
 def is_Vector(x):
     return isinstance(x, Vector)
+
 
 cdef class Matrix(ModuleElement):
 
@@ -4152,15 +4160,16 @@ cdef class Matrix(ModuleElement):
         raise TypeError
 
 
-
 def is_Matrix(x):
     return isinstance(x, Matrix)
+
 
 def is_IntegralDomainElement(x):
     """
     Return ``True`` if x is of type IntegralDomainElement.
     """
     return isinstance(x, IntegralDomainElement)
+
 
 cdef class IntegralDomainElement(CommutativeRingElement):
     def is_nilpotent(self):
@@ -4173,14 +4182,17 @@ def is_DedekindDomainElement(x):
     """
     return isinstance(x, DedekindDomainElement)
 
+
 cdef class DedekindDomainElement(IntegralDomainElement):
     pass
+
 
 def is_PrincipalIdealDomainElement(x):
     """
     Return ``True`` if x is of type PrincipalIdealDomainElement.
     """
     return isinstance(x, PrincipalIdealDomainElement)
+
 
 cdef class PrincipalIdealDomainElement(DedekindDomainElement):
     def gcd(self, right):
@@ -4261,11 +4273,13 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
 # calls up the inheritance tree.
 PY_SET_TP_NEW(EuclideanDomainElement, Element)
 
+
 def is_EuclideanDomainElement(x):
     """
     Return ``True`` if x is of type EuclideanDomainElement.
     """
     return isinstance(x, EuclideanDomainElement)
+
 
 cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
@@ -4338,6 +4352,7 @@ def is_FieldElement(x):
     Return ``True`` if x is of type FieldElement.
     """
     return isinstance(x, FieldElement)
+
 
 cdef class FieldElement(CommutativeRingElement):
     cpdef _floordiv_(self, right):
@@ -4456,8 +4471,10 @@ def is_AlgebraElement(x):
     """
     return isinstance(x, AlgebraElement)
 
+
 cdef class AlgebraElement(RingElement):
     pass
+
 
 def is_CommutativeAlgebraElement(x):
     """
@@ -4465,10 +4482,12 @@ def is_CommutativeAlgebraElement(x):
     """
     return isinstance(x, CommutativeAlgebraElement)
 
+
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
 
-    ##############################################
+
+##############################################
 
 def is_InfinityElement(x):
     """
@@ -4485,17 +4504,18 @@ def is_InfinityElement(x):
     """
     return isinstance(x, InfinityElement)
 
+
 cdef class InfinityElement(RingElement):
     def __invert__(self):
         from sage.rings.integer_ring import ZZ
         return ZZ(0)
 
 
-#################################################################################
+###############################################################################
 #
 #  Coercion of elements
 #
-#################################################################################
+###############################################################################
 
 cpdef canonical_coercion(x, y):
     """

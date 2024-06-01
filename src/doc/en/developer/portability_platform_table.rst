@@ -376,60 +376,6 @@
 .. |codespace-ubuntu-noble-maximal| image:: https://github.com/codespaces/badge.svg
    :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-ubuntu-noble-maximal%2Fdevcontainer.json
 
-.. |image-debian-buster-gcc_spkg-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-system-packages
-
-.. |image-debian-buster-gcc_spkg-minimal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-configured
-
-.. |image-debian-buster-gcc_spkg-minimal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%23677895
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-targets-pre
-
-.. |image-debian-buster-gcc_spkg-minimal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%236686c1
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-targets
-
-.. |image-debian-buster-gcc_spkg-minimal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%236495ed
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-minimal-with-targets-optional
-
-.. |codespace-debian-buster-gcc_spkg-minimal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-buster-gcc_spkg-minimal%2Fdevcontainer.json
-
-.. |image-debian-buster-gcc_spkg-standard-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-system-packages
-
-.. |image-debian-buster-gcc_spkg-standard-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-standard-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-standard-configured
-
-.. |image-debian-buster-gcc_spkg-standard-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%235d8a4c
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-targets-pre
-
-.. |image-debian-buster-gcc_spkg-standard-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%2350ab2e
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-targets
-
-.. |image-debian-buster-gcc_spkg-standard-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%2344cc11
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-standard-with-targets-optional
-
-.. |codespace-debian-buster-gcc_spkg-standard| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-buster-gcc_spkg-standard%2Fdevcontainer.json
-
-.. |image-debian-buster-gcc_spkg-maximal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-with-system-packages
-
-.. |image-debian-buster-gcc_spkg-maximal-configured| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-configured/latest_tag?ignore=latest,dev,*-failed&label=configured&color=%23696969
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-configured
-
-.. |image-debian-buster-gcc_spkg-maximal-with-targets-pre| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-with-targets-pre/latest_tag?ignore=latest,dev,*-failed&label=with-targets-pre&color=%238f6b8d
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-with-targets-pre
-
-.. |image-debian-buster-gcc_spkg-maximal-with-targets| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-with-targets/latest_tag?ignore=latest,dev,*-failed&label=with-targets&color=%23b46eb2
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-with-targets
-
-.. |image-debian-buster-gcc_spkg-maximal-with-targets-optional| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-with-targets-optional/latest_tag?ignore=latest,dev,*-failed&label=with-targets-optional&color=%23da70d6
-   :target: https://ghcr.io/sagemath/sage/sage-debian-buster-gcc_spkg-maximal-with-targets-optional
-
-.. |codespace-debian-buster-gcc_spkg-maximal| image:: https://github.com/codespaces/badge.svg
-   :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Fportability-debian-buster-gcc_spkg-maximal%2Fdevcontainer.json
-
 .. |image-debian-bullseye-minimal-with-system-packages| image:: https://ghcr-badge.egpl.dev/sagemath/sage/sage-debian-bullseye-minimal-with-system-packages/size?tag=dev&label=with-system-packages&color=%23696969
    :target: https://ghcr.io/sagemath/sage/sage-debian-bullseye-minimal-with-system-packages
 
@@ -2512,17 +2458,6 @@
      - |codespace-ubuntu-noble-standard|
    * -    ‑*maximal*
      - |image-ubuntu-noble-maximal-with-system-packages| |image-ubuntu-noble-maximal-with-targets-pre|
-     -
-   * - **debian**-buster-gcc_spkg 
-       
-          ‑*minimal*
-     - |image-debian-buster-gcc_spkg-minimal-with-system-packages| |image-debian-buster-gcc_spkg-minimal-with-targets-pre| |image-debian-buster-gcc_spkg-minimal-with-targets| |image-debian-buster-gcc_spkg-minimal-with-targets-optional|
-     - |codespace-debian-buster-gcc_spkg-minimal|
-   * -    ‑*standard*
-     - |image-debian-buster-gcc_spkg-standard-with-system-packages| |image-debian-buster-gcc_spkg-standard-with-targets-pre| |image-debian-buster-gcc_spkg-standard-with-targets| |image-debian-buster-gcc_spkg-standard-with-targets-optional|
-     - |codespace-debian-buster-gcc_spkg-standard|
-   * -    ‑*maximal*
-     - |image-debian-buster-gcc_spkg-maximal-with-system-packages| |image-debian-buster-gcc_spkg-maximal-with-targets-pre|
      -
    * - **debian**-bullseye 
        

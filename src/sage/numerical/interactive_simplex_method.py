@@ -197,12 +197,13 @@ from sage.modules.free_module_element import free_module_element as vector
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.all", ["Graphics", "arrow", "line", "point", "rainbow", "text"])
 from sage.rings.infinity import Infinity
+from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.rings.integer_ring import ZZ
 from sage.structure.all import SageObject
-from sage.symbolic.ring import SR
 
 
 # We produce rather complicated LaTeX code which needs some tweaks to be
@@ -316,8 +317,10 @@ def _latex_product(coefficients, variables,
             t = latex(v)
         else:
             t = latex(c)
-            if SR(c).operator() in [operator.add, operator.sub]:
-                t = r"\left( " + t + r" \right)"
+            if '+' in t or '-' in t:
+                from sage.symbolic.ring import SR
+                if SR(c).operator() in [operator.add, operator.sub]:
+                    t = r"\left( " + t + r" \right)"
             t += " " + latex(v)
         entries.extend([sign, t])
     if drop_plus:   # Don't start with +
@@ -1840,7 +1843,7 @@ class InteractiveLPProblem(SageObject):
             x = newx
             f = newf
 
-        objective_name = SR(kwds.get("objective_name", default_variable_name(
+        objective_name = polygen(ZZ, kwds.get("objective_name", default_variable_name(
             "primal objective" if self.is_primal() else "dual objective")))
         is_negative = self._is_negative
         constant_term = self._constant_term
@@ -1849,7 +1852,7 @@ class InteractiveLPProblem(SageObject):
             c = - c
             constant_term = - constant_term
             objective_name = - objective_name
-        kwds["objective_name"] = objective_name
+        kwds["objective_name"] = objective_name  # polynomial, no longer a string
         kwds["problem_type"] = "-max" if is_negative else "max"
         kwds["is_primal"] = self.is_primal()
         kwds["objective_constant_term"] = constant_term
@@ -2016,7 +2019,10 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         if objective_name is None:
             objective_name = default_variable_name(
                 "primal objective" if is_primal else "dual objective")
-        self._objective_name = SR(objective_name)
+        if isinstance(objective_name, Polynomial):
+            self._objective_name = objective_name
+        else:
+            self._objective_name = polygen(ZZ, objective_name)
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2,
@@ -3904,7 +3910,7 @@ class LPDictionary(LPAbstractDictionary):
         c = copy(c)
         B = vector(basic_variables)
         N = vector(nonbasic_variables)
-        self._AbcvBNz = [A, b, c, objective_value, B, N, SR(objective_name)]
+        self._AbcvBNz = [A, b, c, objective_value, B, N, polygen(ZZ, objective_name)]
 
     @staticmethod
     def random_element(m, n, bound=5, special_probability=0.2):
