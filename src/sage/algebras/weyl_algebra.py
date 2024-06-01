@@ -21,7 +21,6 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex, LatexExpr
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
-from sage.structure.richcmp import richcmp
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
