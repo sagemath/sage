@@ -34,7 +34,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
-from sage.tensor.modules.comp import Components
+from sage.tensor.modules.comp import get_components_class
 
 if TYPE_CHECKING:
     from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
@@ -200,6 +200,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         fmodule: FiniteRankFreeModule,
         name: Optional[str] = None,
         latex_name: Optional[str] = None,
+        implementation=None
     ):
         r"""
         TESTS::
@@ -222,7 +223,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
 
         """
         AlternatingContrTensor.__init__(self, fmodule, 1, name=name,
-                                        latex_name=latex_name)
+                                latex_name=latex_name, implementation=implementation)
 
     def _repr_(self) -> str:
         r"""
@@ -270,7 +271,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
 
         """
         fmodule = self._fmodule  # the base free module
-        return Components(fmodule._ring, basis, 1, start_index=fmodule._sindex,
+        return get_components_class(implementation=self._implementation)(fmodule._ring, basis, 1, start_index=fmodule._sindex,
                           output_formatter=fmodule._output_formatter)
 
     def _new_instance(self):
