@@ -584,7 +584,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         INPUT:
 
 
-        -  ``rows`` - list or tuple of row indices
+        -  ``rows`` -- list or tuple of row indices
 
 
         EXAMPLES::
@@ -724,7 +724,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``algorithm`` - either ``"linbox"`` (only available for
+        - ``algorithm`` -- either ``"linbox"`` (only available for
           matrices over prime fields) or ``"generic"``
 
         EXAMPLES::
@@ -808,7 +808,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``algorithm`` - either ``"linbox"`` (default) or ``"generic"``.
+        - ``algorithm`` -- either ``"linbox"`` (default) or ``"generic"``.
 
         EXAMPLES::
 

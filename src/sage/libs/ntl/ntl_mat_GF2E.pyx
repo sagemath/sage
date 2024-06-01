@@ -518,7 +518,7 @@ cdef class ntl_mat_GF2E():
 
         INPUT:
 
-        - ``k`` - optional GF(2**deg)
+        - ``k`` -- optional GF(2**deg)
 
         OUTPUT:
             Matrix over k
@@ -669,9 +669,9 @@ cdef class ntl_mat_GF2E():
 
         INPUT:
 
-        -  ``density`` - float; proportion (roughly) to be considered for
+        -  ``density`` -- float; proportion (roughly) to be considered for
            changes
-        -  ``nonzero`` - Bool (default: ``False``); whether the new entries
+        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
            are forced to be non-zero
 
         EXAMPLES::

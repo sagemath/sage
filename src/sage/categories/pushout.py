@@ -3465,7 +3465,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        ``other`` -- Construction Functor.
+        - ``other`` -- Construction Functor.
 
         OUTPUT:
 

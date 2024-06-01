@@ -247,7 +247,7 @@ def newton_method_sizes(N):
     INPUT:
 
 
-    -  ``N`` - positive integer
+    -  ``N`` -- positive integer
 
 
     EXAMPLES::
@@ -517,9 +517,9 @@ def random_sublist(X, s):
     INPUT:
 
 
-    -  ``X`` - list
+    -  ``X`` -- list
 
-    -  ``s`` - floating point number between 0 and 1
+    -  ``s`` -- floating point number between 0 and 1
 
 
     OUTPUT: list
@@ -673,18 +673,18 @@ def exists(S, P):
     INPUT:
 
 
-    -  ``S`` - object (that supports enumeration)
+    -  ``S`` -- object (that supports enumeration)
 
-    -  ``P`` - function that returns True or False
+    -  ``P`` -- function that returns True or False
 
 
     OUTPUT:
 
 
-    -  ``bool`` - whether or not P is True for some element
+    -  ``bool`` -- whether or not P is True for some element
        x of S
 
-    -  ``object`` - x
+    -  ``object`` -- x
 
 
     EXAMPLES: lambda functions are very useful when using the exists
@@ -723,17 +723,17 @@ def forall(S, P):
 
     INPUT:
 
-    -  ``S`` - object (that supports enumeration)
+    -  ``S`` -- object (that supports enumeration)
 
-    -  ``P`` - function that returns True or False
+    -  ``P`` -- function that returns True or False
 
     OUTPUT:
 
 
-    -  ``bool`` - whether or not P is True for all elements
+    -  ``bool`` -- whether or not P is True for all elements
        of S
 
-    -  ``object`` - x
+    -  ``object`` -- x
 
 
     EXAMPLES: lambda functions are very useful when using the forall

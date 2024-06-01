@@ -391,7 +391,7 @@ class Constant():
 
         INPUT:
 
-        - ``SR`` - a symbolic ring parent
+        - ``SR`` -- a symbolic ring parent
 
         EXAMPLES::
 

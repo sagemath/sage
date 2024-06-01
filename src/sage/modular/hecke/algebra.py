@@ -119,7 +119,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
 
     INPUT:
 
-    -  ``M`` - a Hecke module
+    -  ``M`` -- a Hecke module
 
     EXAMPLES::
 

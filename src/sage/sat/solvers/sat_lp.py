@@ -82,7 +82,7 @@ class SatLP(SatSolver):
 
         INPUT:
 
-        - ``lits`` - a tuple of integers != 0
+        - ``lits`` -- a tuple of integers != 0
 
         .. note::
 

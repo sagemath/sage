@@ -691,7 +691,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         - ``pt`` -- a rational point on X which is not a point of ramification
            for the projection `(x,y) \to x`.
 
-        - ``n``-- the number of terms desired
+        - ``n`` -- the number of terms desired
 
         OUTPUT: `x = x0 + t`, `y = y0` + power series in `t`
 
@@ -758,16 +758,16 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        -  ``self`` - an affine plane curve
+        -  ``self`` -- an affine plane curve
 
-        -  ``patch`` - (optional) the affine patch to be plotted; if not
+        -  ``patch`` -- (optional) the affine patch to be plotted; if not
            specified, the patch corresponding to the last projective
            coordinate being nonzero
 
-        -  ``*args`` - optional tuples (variable, minimum, maximum) for
+        -  ``*args`` -- optional tuples (variable, minimum, maximum) for
            plotting dimensions
 
-        -  ``**kwds`` - optional keyword arguments passed on to
+        -  ``**kwds`` -- optional keyword arguments passed on to
            ``implicit_plot``
 
         EXAMPLES:
@@ -2016,7 +2016,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         INPUT:
 
 
-        -  ``sort`` - bool (default: ``True``), if ``True`` return the
+        -  ``sort`` -- bool (default: ``True``), if ``True`` return the
            point list sorted. If ``False``, returns the points in the order
            computed by Singular.
 
@@ -2086,7 +2086,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         INPUT:
 
-        -  ``D`` - a divisor
+        -  ``D`` -- a divisor
 
         OUTPUT: A list of function field elements that form a basis of the
         Riemann-Roch space.

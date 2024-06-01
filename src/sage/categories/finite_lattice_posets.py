@@ -10,6 +10,7 @@ Finite lattice posets
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 
+
 class FiniteLatticePosets(CategoryWithAxiom):
     r"""
     The category of finite lattices, i.e. finite partially ordered

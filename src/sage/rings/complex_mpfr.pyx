@@ -65,13 +65,9 @@ except ImportError:
 
 # Some objects that are not imported at startup in order to break
 # circular imports
-NumberFieldElement_quadratic = None
-AlgebraicNumber_base = None
-AlgebraicNumber = None
-AlgebraicReal = None
+NumberFieldElement_quadratic = ()
 AA = None
 QQbar = None
-SR = None
 CDF = CLF = RLF = None
 def late_import():
     """
@@ -82,25 +78,14 @@ def late_import():
         sage: sage.rings.complex_mpfr.late_import()
     """
     global NumberFieldElement_quadratic
-    global AlgebraicNumber_base
-    global AlgebraicNumber
-    global AlgebraicReal
-    global UniversalCyclotomicField
-    global AA, QQbar, SR
+    global AA, QQbar
     global CLF, RLF, CDF
-    if NumberFieldElement_quadratic is None:
-        import sage.rings.number_field.number_field
-        import sage.rings.number_field.number_field_element_quadratic as nfeq
-        NumberFieldElement_quadratic = nfeq.NumberFieldElement_quadratic
-        import sage.rings.qqbar
-        AlgebraicNumber_base = sage.rings.qqbar.AlgebraicNumber_base
-        AlgebraicNumber = sage.rings.qqbar.AlgebraicNumber
-        AlgebraicReal = sage.rings.qqbar.AlgebraicReal
-        from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-        AA = sage.rings.qqbar.AA
-        QQbar = sage.rings.qqbar.QQbar
-        import sage.symbolic.ring
-        SR = sage.symbolic.ring.SR
+    if CLF is None:
+        try:
+            from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+            from sage.rings.qqbar import AA, QQbar
+        except ImportError:
+            pass
         from sage.rings.real_lazy import CLF, RLF
         from sage.rings.complex_double import CDF
 
@@ -586,7 +571,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         # parts of real elements) that get picked for conversion from UCF both
         # to CC and to other types of complex fields depend in which order the
         # coercions are discovered.
-        if isinstance(S, UniversalCyclotomicField):
+        if isinstance(S, sage.rings.abc.UniversalCyclotomicField):
             return self._generic_coerce_map(S)
         return self._coerce_map_via([CLF], S)
 
@@ -3367,7 +3352,7 @@ cdef class RRtoCC(Map):
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         OUTPUT:
 
@@ -3393,7 +3378,7 @@ cdef class RRtoCC(Map):
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
 
         EXAMPLES::
 

@@ -142,19 +142,19 @@ cdef class CVXOPTBackend(GenericBackend):
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is integer (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integer (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         OUTPUT: The index of the newly created variable
 
@@ -367,11 +367,11 @@ cdef class CVXOPTBackend(GenericBackend):
           is a variable index (integer) and ``v`` is a value (real
           value).
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 

@@ -15,6 +15,7 @@ AUTHORS:
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "IsomorphicObjects"

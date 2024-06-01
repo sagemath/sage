@@ -1104,7 +1104,7 @@ cdef class ClonableList(ClonableArray):
         """
         Remove ``self[index]`` from ``self`` and returns it
 
-        INPUT: ``index`` - any int, default to -1
+        INPUT: ``index`` -- any int, default to -1
 
         EXAMPLES::
 
@@ -1132,7 +1132,7 @@ cdef class ClonableList(ClonableArray):
         """
         Remove the first occurrence of ``el`` from ``self``
 
-        INPUT: ``el`` - any object
+        INPUT: ``el`` -- any object
 
         EXAMPLES::
 
@@ -1291,7 +1291,7 @@ cdef class ClonableIntArray(ClonableElement):
 
         This can be used to initialize ``self`` without passing a list
 
-        INPUT: ``size`` - an int
+        INPUT: ``size`` -- an int
 
         EXAMPLES::
 

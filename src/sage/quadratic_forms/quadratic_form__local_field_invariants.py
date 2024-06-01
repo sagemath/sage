@@ -37,7 +37,7 @@ def rational_diagonal_form(self, return_matrix=False):
 
     INPUT:
 
-    - ``return_matrix`` -- (boolean, default: False) also return the
+    - ``return_matrix`` -- (boolean, default: ``False``) also return the
       transformation matrix
 
     OUTPUT: either the diagonal quadratic form `D` (if ``return_matrix`` is false)
