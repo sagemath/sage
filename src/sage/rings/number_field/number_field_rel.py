@@ -123,6 +123,10 @@ def is_RelativeNumberField(x):
         sage: from sage.rings.number_field.number_field_rel import is_RelativeNumberField
         sage: x = polygen(ZZ, 'x')
         sage: is_RelativeNumberField(NumberField(x^2+1,'a'))
+        doctest:warning...
+        DeprecationWarning: The function is_RelativeNumberField is deprecated;
+        use 'isinstance(..., NumberField_relative)' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         False
         sage: k.<a> = NumberField(x^3 - 2)
         sage: l.<b> = k.extension(x^3 - 3); l
@@ -132,6 +136,10 @@ def is_RelativeNumberField(x):
         sage: is_RelativeNumberField(QQ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_RelativeNumberField is deprecated; "
+                "use 'isinstance(..., NumberField_relative)' instead.")
     return isinstance(x, NumberField_relative)
 
 
@@ -1311,7 +1319,7 @@ class NumberField_relative(NumberField_generic):
             Ring endomorphism of Number Field in z9 with defining polynomial x^6 + x^3 + 1
               Defn: z9 |--> z9^4
         """
-        if is_RelativeNumberField(other):
+        if isinstance(other, NumberField_relative):
             s_base_field = self.base_field()
             o_base_field = other.base_field()
             if base_isom is None:

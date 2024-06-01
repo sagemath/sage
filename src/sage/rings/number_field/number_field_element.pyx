@@ -1804,8 +1804,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         - Francis Clarke (2010-12-26)
         """
         K = self.parent()
-        from sage.rings.number_field.number_field_rel import is_RelativeNumberField
-        if (not is_RelativeNumberField(L)) or L.base_field() != K:
+        from sage.rings.number_field.number_field_rel import NumberField_relative
+        if not isinstance(L, NumberField_relative) or L.base_field() != K:
             raise ValueError("L (=%s) must be a relative number field with base field K (=%s) in rnfisnorm" % (L, K))
 
         rnf_data = K.pari_rnfnorm_data(L, proof=proof)
