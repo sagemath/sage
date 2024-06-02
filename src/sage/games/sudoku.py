@@ -31,7 +31,7 @@ def sudoku(m):
 
     INPUT:
 
-    - ``m`` - a square Sage matrix over `\ZZ`, where zeros are blank entries
+    - ``m`` -- a square Sage matrix over `\ZZ`, where zeros are blank entries
 
     OUTPUT:
 

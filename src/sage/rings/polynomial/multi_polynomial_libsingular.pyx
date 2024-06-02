@@ -216,6 +216,7 @@ from sage.libs.singular.ring cimport singular_ring_new, singular_ring_reference,
 
 # polynomial imports
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict, MPolynomialRing_polydict_domain
+from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.polydict cimport ETuple
@@ -223,9 +224,10 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 
 # base ring imports
 import sage.rings.abc
+import sage.structure.element
+
 from sage.rings.rational cimport Rational
 from sage.rings.rational_field import QQ
-import sage.rings.abc
 from sage.rings.integer_ring import is_IntegerRing, ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.number_field.number_field_base cimport NumberField
@@ -287,14 +289,14 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``base_ring`` - base ring (must be either GF(q), ZZ, ZZ/nZZ,
+        - ``base_ring`` -- base ring (must be either GF(q), ZZ, ZZ/nZZ,
                           QQ or absolute number field)
 
-        - ``n`` - number of variables (must be at least 1)
+        - ``n`` -- number of variables (must be at least 1)
 
-        - ``names`` - names of ring variables, may be string of list/tuple
+        - ``names`` -- names of ring variables, may be string of list/tuple
 
-        - ``order`` - term order (default: ``degrevlex``)
+        - ``order`` -- term order (default: ``degrevlex``)
 
         EXAMPLES::
 
@@ -951,8 +953,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                     raise
             return new_MP(self, _p)
 
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomial
-        if isinstance(element, BooleanPolynomial):
+        if isinstance(element, sage.structure.element.Element) and isinstance(element.parent(), BooleanPolynomialRing_base):
             if element.constant():
                 if element:
                     return self._one_element
@@ -1084,9 +1085,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``*gens`` - list or tuple of generators (or several input arguments)
+        - ``*gens`` -- list or tuple of generators (or several input arguments)
 
-        - ``coerce`` - bool (default: ``True``); this must be a
+        - ``coerce`` -- bool (default: ``True``); this must be a
           keyword argument. Only set it to ``False`` if you are certain
           that each generator is already in the ring.
 
@@ -1125,7 +1126,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``macaulay2`` - M2 interpreter (default: ``macaulay2_default``)
+        - ``macaulay2`` -- M2 interpreter (default: ``macaulay2_default``)
 
         EXAMPLES::
 
@@ -1178,7 +1179,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``singular`` - SINGULAR interpreter (default: ``sage.interfaces.singular.singular``)
+        - ``singular`` -- SINGULAR interpreter (default: ``sage.interfaces.singular.singular``)
 
         EXAMPLES::
 
@@ -1253,7 +1254,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``singular`` - SINGULAR interpreter (default: ``sage.interfaces.singular.singular``)
+        - ``singular`` -- SINGULAR interpreter (default: ``sage.interfaces.singular.singular``)
 
         EXAMPLES::
 
@@ -1546,9 +1547,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``f`` - monomial
-        - ``g`` - monomial
-        - ``coeff`` - divide coefficients as well (default: ``False``)
+        - ``f`` -- monomial
+        - ``g`` -- monomial
+        - ``coeff`` -- divide coefficients as well (default: ``False``)
 
         EXAMPLES::
 
@@ -1686,9 +1687,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``f`` - monomial
+        - ``f`` -- monomial
 
-        - ``g`` - monomial
+        - ``g`` -- monomial
 
         EXAMPLES::
 
@@ -1744,8 +1745,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``f`` - monomial
-        - ``G`` - list/set of mpolynomials
+        - ``f`` -- monomial
+        - ``G`` -- list/set of mpolynomials
 
         EXAMPLES::
 
@@ -1794,8 +1795,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``h`` - monomial
-        - ``g`` - monomial
+        - ``h`` -- monomial
+        - ``g`` -- monomial
 
         EXAMPLES::
 
@@ -1854,7 +1855,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         INPUT:
 
-        - ``t`` - a monomial
+        - ``t`` -- a monomial
 
         OUTPUT:
             a list of monomials
@@ -2006,8 +2007,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``x`` - a list of elements in ``self.parent()``
-        - or ``**kwds`` - a dictionary of ``variable-name:value`` pairs.
+        - ``x`` -- a list of elements in ``self.parent()``
+        - or ``**kwds`` -- a dictionary of ``variable-name:value`` pairs.
 
         EXAMPLES::
 
@@ -2825,7 +2826,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``degrees`` - Can be any of:
+        - ``degrees`` -- Can be any of:
           - a dictionary of degree restrictions
           - a list of degree restrictions (with ``None`` in the unrestricted variables)
           - a monomial (very fast, but not as flexible)
@@ -2950,7 +2951,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``mon`` - a monomial
+        - ``mon`` -- a monomial
 
         OUTPUT:
 
@@ -3144,7 +3145,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``x`` - a tuple or, in case of a single-variable MPolynomial
+        - ``x`` -- a tuple or, in case of a single-variable MPolynomial
           ring x can also be an integer.
 
         EXAMPLES::
@@ -3334,7 +3335,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``var`` - an integer indicating which variable to use to
+        - ``var`` -- an integer indicating which variable to use to
           homogenize (``0 <= var < parent(self).ngens()``)
 
         OUTPUT:
@@ -3447,8 +3448,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``fixed`` - (optional) dict with variable:value pairs
-        - ``**kw`` - names parameters
+        - ``fixed`` -- (optional) dict with variable:value pairs
+        - ``**kw`` -- names parameters
 
         OUTPUT: a new multivariate polynomial
 
@@ -3774,7 +3775,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``R`` - (default: ``None``) PolynomialRing
+        - ``R`` -- (default: ``None``) PolynomialRing
 
         If this polynomial is not in at most one variable, then a
         ``ValueError`` exception is raised.  This is checked using the
@@ -4106,7 +4107,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``right`` - something coercible to an MPolynomial_libsingular
+        - ``right`` -- something coercible to an MPolynomial_libsingular
           in ``self.parent()``
 
         EXAMPLES::
@@ -4628,13 +4629,13 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``I`` - an ideal or a list/set/iterable of polynomials.
+        - ``I`` -- an ideal or a list/set/iterable of polynomials.
 
         OUTPUT:
 
         A polynomial ``r``  such that:
 
-        - ``self`` - ``r`` is in the ideal generated by ``I``.
+        - ``self`` -- ``r`` is in the ideal generated by ``I``.
 
         - No term in ``r`` is divisible by any of the leading monomials
           of ``I``.
@@ -5060,7 +5061,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``singular`` - interpreter (default: ``sage.interfaces.singular.singular``)
+        - ``singular`` -- interpreter (default: ``sage.interfaces.singular.singular``)
 
         EXAMPLES::
 
@@ -5087,8 +5088,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``m`` - a monomial
-        - ``q`` - a polynomial
+        - ``m`` -- a monomial
+        - ``q`` -- a polynomial
 
         EXAMPLES::
 
@@ -5295,7 +5296,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``variable`` - the derivative is taken with respect to variable
+        - ``variable`` -- the derivative is taken with respect to variable
 
         .. NOTE:: See also :meth:`derivative`
 
@@ -5434,9 +5435,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``other`` - polynomial
+        - ``other`` -- polynomial
 
-        - ``variable`` - optional variable (default: ``None``)
+        - ``variable`` -- optional variable (default: ``None``)
 
         EXAMPLES::
 
@@ -5899,8 +5900,8 @@ def unpickle_MPolynomial_libsingular(MPolynomialRing_libsingular R, d):
 
     INPUT:
 
-    - ``R`` - the base ring
-    - ``d`` - a Python dictionary as returned by :meth:`MPolynomial_libsingular.dict`
+    - ``R`` -- the base ring
+    - ``d`` -- a Python dictionary as returned by :meth:`MPolynomial_libsingular.dict`
 
     EXAMPLES::
 

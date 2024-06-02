@@ -174,10 +174,10 @@ class TestSuite:
 
         INPUT:
 
-         - ``category``         - a category; reserved for future use
-         - ``skip``             - a string or list (or iterable) of strings
-         - ``raise_on_failure`` - a boolean (default: False)
-         - ``catch``            - a boolean (default: True)
+         - ``category``         -- a category; reserved for future use
+         - ``skip``             -- a string or list (or iterable) of strings
+         - ``raise_on_failure`` -- a boolean (default: ``False``)
+         - ``catch``            -- a boolean (default: ``True``)
 
         All other options are passed down to the individual tests.
 

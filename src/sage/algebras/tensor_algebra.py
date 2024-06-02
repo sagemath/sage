@@ -31,6 +31,7 @@ from sage.monoids.indexed_free_monoid import IndexedFreeMonoid
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 
+
 class TensorAlgebra(CombinatorialFreeModule):
     r"""
     The tensor algebra `T(M)` of a module `M`.
@@ -585,6 +586,7 @@ class TensorAlgebra(CombinatorialFreeModule):
 #####################################################################
 ## TensorAlgebra functor
 
+
 class TensorAlgebraFunctor(ConstructionFunctor):
     r"""
     The tensor algebra functor.
@@ -684,6 +686,7 @@ class TensorAlgebraFunctor(ConstructionFunctor):
 
 #####################################################################
 ## Lift map from the base ring
+
 
 class BaseRingLift(Morphism):
     r"""

@@ -1720,7 +1720,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           an iterator over all left special factors.
 
         EXAMPLES::
@@ -1756,7 +1756,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it
+        - ``n`` -- integer (default: ``None``). If ``None``, it
           returns all left special factors.
 
         OUTPUT:
@@ -1787,7 +1787,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           an iterator over all right special factors.
 
         EXAMPLES::
@@ -1823,7 +1823,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           all right special factors.
 
         OUTPUT:
@@ -1852,7 +1852,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           an iterator over all bispecial factors.
 
         EXAMPLES::
@@ -1915,7 +1915,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (optional, default: ``None``). If ``None``, it returns
+        - ``n`` -- integer (default: ``None``). If ``None``, it returns
           all bispecial factors.
 
         OUTPUT:
@@ -3763,7 +3763,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        ``other`` -- a finite word
+        - ``other`` -- a finite word
 
         EXAMPLES::
 
@@ -4618,7 +4618,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        ``other`` -- a non empty word
+        - ``other`` -- a non empty word
 
         EXAMPLES::
 
@@ -4718,7 +4718,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``letter`` - a letter
+        - ``letter`` -- a letter
 
         OUTPUT:
 
@@ -5038,10 +5038,10 @@ class FiniteWord_class(Word_class):
 
         -  ``other`` -- word on the same alphabet as ``self``
         -  ``delay`` -- integer (default: ``0``)
-        -  ``p`` -- disjoint sets data structure (optional, default: ``None``),
+        -  ``p`` -- disjoint sets data structure (default: ``None``),
            a partition of the alphabet into disjoint sets to start with.
            If ``None``, each letter start in distinct equivalence classes.
-        -  ``involution`` -- callable (optional, default: ``None``), an
+        -  ``involution`` -- callable (default: ``None``), an
            involution on the alphabet. If ``involution`` is not ``None``, the relation
            `R_{u,v,d} \cup R_{involution(u),involution(v),d}` is considered.
 

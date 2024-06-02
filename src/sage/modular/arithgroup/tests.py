@@ -102,9 +102,9 @@ class Test:
 
         INPUT:
 
-        - ``index`` - the index of random subgroup to test
+        - ``index`` -- the index of random subgroup to test
 
-        - ``index_max`` - the maximum index for congruence subgroup to test
+        - ``index_max`` -- the maximum index for congruence subgroup to test
 
         EXAMPLES::
 

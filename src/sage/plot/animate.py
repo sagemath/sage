@@ -578,19 +578,19 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
+        -  ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
+        -  ``savefile`` -- file that the animated gif gets saved
            to
 
-        -  ``iterations`` - integer (default: 0); number of
+        -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
-        - ``use_ffmpeg`` - boolean (default: False); if True, use
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
           'ffmpeg' by default instead of 'convert'.
 
         If ``savefile`` is not specified: in notebook mode, display the
@@ -667,10 +667,10 @@ class Animation(WithEqualityById, SageObject):
         - ``show_path`` -- boolean (default: ``False``); if ``True``,
           print the path to the saved file
 
-        - ``delay`` - (default: 20) delay in hundredths of a
+        - ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        - ``iterations`` - integer (default: 0); number of iterations
+        - ``iterations`` -- integer (default: 0); number of iterations
           of animation. If 0, loop forever.
 
         If ``savefile`` is not specified: in notebook mode, display
@@ -813,7 +813,7 @@ class Animation(WithEqualityById, SageObject):
         -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        - ``format`` - (default: gif) format to use for output.
+        - ``format`` -- (default: gif) format to use for output.
           Currently supported formats are: gif,
           ogg, webm, mp4, flash, matroska, avi, wmv, quicktime.
 
@@ -914,7 +914,7 @@ class Animation(WithEqualityById, SageObject):
         - ``show_path`` -- boolean (default: ``False``); if ``True``,
           print the path to the saved file
 
-        - ``output_format`` - string (default: ``None``); format and
+        - ``output_format`` -- string (default: ``None``); format and
           suffix to use for the video.  This may be ``'mpg'``, ``'mpeg'``,
           ``'avi'``, ``'gif'``, or any other format that ``ffmpeg`` can handle.
           If this is ``None`` and the user specifies ``savefile`` with a
@@ -923,20 +923,20 @@ class Animation(WithEqualityById, SageObject):
           is specified or if the suffix cannot be determined, ``'mpg'`` is
           used.
 
-        - ``ffmpeg_options`` - string (default: ``''``); this string is
+        - ``ffmpeg_options`` -- string (default: ``''``); this string is
           passed directly to ffmpeg.
 
-        - ``delay`` - integer (default: ``None``); delay in hundredths of a
+        - ``delay`` -- integer (default: ``None``); delay in hundredths of a
           second between frames.  The framerate is 100/delay.
           This is not supported for mpeg files: for mpegs, the frame
           rate is always 25 fps.
 
-        - ``iterations`` - integer (default: 0); number of iterations
+        - ``iterations`` -- integer (default: 0); number of iterations
           of animation. If 0, loop forever.  This is only supported
           for animated gif output and requires ``ffmpeg`` version 0.9 or
           later.  For older versions, set ``iterations=None``.
 
-        - ``pix_fmt`` - string (default: 'rgb24'); used only for gif
+        - ``pix_fmt`` -- string (default: 'rgb24'); used only for gif
           output.  Different values such as 'rgb8' or 'pal8' may be
           necessary depending on how ffmpeg was installed.  Set
           ``pix_fmt=None`` to disable this option.
@@ -1055,16 +1055,16 @@ class Animation(WithEqualityById, SageObject):
 
         Input:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
+        -  ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
+        -  ``savefile`` -- file that the animated gif gets saved
            to
 
-        -  ``iterations`` - integer (default: 0); number of
+        -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
         EXAMPLES::
@@ -1116,12 +1116,12 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``filename`` - (default: None) name of save file
+        -  ``filename`` -- (default: None) name of save file
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
-        - ``use_ffmpeg`` - boolean (default: False); if True, use
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
           'ffmpeg' by default instead of 'convert' when creating GIF
           files.
 

@@ -78,9 +78,9 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         """
         INPUT:
 
-            -  ``parent`` - a homspace in a (sub) category of free modules
+            -  ``parent`` -- a homspace in a (sub) category of free modules
 
-            -  ``A`` - matrix
+            -  ``A`` -- matrix
 
             - side -- side of the vectors acted on by the matrix  (default: ``"left"``)
 
@@ -493,7 +493,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         INPUT:
 
-        - ``extend`` -- boolean (default: True) decides if base field
+        - ``extend`` -- boolean (default: ``True``) decides if base field
           extensions should be considered or not.
 
         EXAMPLES:
@@ -528,7 +528,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         INPUT:
 
-        - ``extend`` -- boolean (default: True) decides if base field
+        - ``extend`` -- boolean (default: ``True``) decides if base field
           extensions should be considered or not.
 
         OUTPUT:

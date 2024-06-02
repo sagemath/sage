@@ -2632,7 +2632,7 @@ def near_polygon_graph(family, params):
 
 
 # dictionary intersection_array (as tuple)  -> construction
-# of spordaic distance-regular graphs
+# of sporadic distance-regular graphs
 _sporadic_graph_database = {
     (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3): FosterGraph,
     (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7): IvanovIvanovFaradjevGraph,
@@ -2704,14 +2704,14 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
     - ``existence`` -- boolean (optional); instead of building the graph return:
 
-      - ``True`` - if a graph with the given intersection array exists;
+      - ``True`` -- if a graph with the given intersection array exists;
 
-      - ``False`` - if there is no graph with the given intersection array;
+      - ``False`` -- if there is no graph with the given intersection array;
 
-      - ``Unknown`` - if Sage doesn't know if such a graph exists.
+      - ``Unknown`` -- if Sage doesn't know if such a graph exists.
 
-    - ``check`` -- boolean (optional); if ``True``, then checks that the result
-      of this function has the given intersection array. Default: ``True``
+    - ``check`` -- boolean (default: ``True``); if ``True``, then checks that the result
+      of this function has the given intersection array
 
     EXAMPLES::
 

@@ -1555,7 +1555,7 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        ``key`` -- the key of an object.
+        - ``key`` -- the key of an object.
 
         OUTPUT:
 
@@ -1589,7 +1589,7 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        ``key`` -- the key of an object.
+        - ``key`` -- the key of an object.
 
         OUTPUT:
 

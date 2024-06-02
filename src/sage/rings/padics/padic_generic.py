@@ -1433,7 +1433,7 @@ class pAdicGeneric(LocalGeneric):
 
         INPUT:
 
-        - ``P`` - a polynomial defined over this ring
+        - ``P`` -- a polynomial defined over this ring
 
         - ``ring`` -- a ring into which this ring coerces
 

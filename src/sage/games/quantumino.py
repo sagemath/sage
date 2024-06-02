@@ -214,7 +214,7 @@ def show_pentaminos(box=(5,8,2)):
 
     INPUT:
 
-    - ``box`` -- tuple of size three (optional, default: ``(5,8,2)``),
+    - ``box`` -- tuple of size three (default: ``(5,8,2)``),
       size of the box
 
     OUTPUT:
@@ -258,10 +258,10 @@ class QuantuminoState(SageObject):
 
     INPUT:
 
-    - ``pentos`` - list of 16 3d pentamino representing the (partial)
+    - ``pentos`` -- list of 16 3d pentamino representing the (partial)
       solution
-    - ``aside`` - 3d polyomino, the unused 3D pentamino
-    - ``box`` - tuple of size three (optional, default: ``(5,8,2)``),
+    - ``aside`` -- 3d polyomino, the unused 3D pentamino
+    - ``box`` -- tuple of size three (default: ``(5,8,2)``),
       size of the box
 
     EXAMPLES::
@@ -399,8 +399,8 @@ class QuantuminoSolver(SageObject):
 
     INPUT:
 
-    - ``aside`` - integer, from 0 to 16, the aside pentamino
-    - ``box`` - tuple of size three (optional, default: ``(5,8,2)``),
+    - ``aside`` -- integer, from 0 to 16, the aside pentamino
+    - ``box`` -- tuple of size three (default: ``(5,8,2)``),
       size of the box
 
     EXAMPLES::
@@ -478,13 +478,13 @@ class QuantuminoSolver(SageObject):
 
         INPUT:
 
-        - ``partial`` - string (optional, default: ``None``), whether to
+        - ``partial`` -- string (default: ``None``), whether to
           include partial (incomplete) solutions. It can be one of the
           following:
 
-          - ``None`` - include only complete solution
-          - ``'common'`` - common part between two consecutive solutions
-          - ``'incremental'`` - one piece change at a time
+          - ``None`` -- include only complete solution
+          - ``'common'`` -- common part between two consecutive solutions
+          - ``'incremental'`` -- one piece change at a time
 
         OUTPUT:
 

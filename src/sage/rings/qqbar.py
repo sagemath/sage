@@ -1449,7 +1449,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
 
         INPUT:
 
-        - ``poly_degree`` - default: 2 - degree of the random
+        - ``poly_degree`` -- default: 2; degree of the random
           polynomial over the integers of which the returned algebraic
           real number is a (real part of a) root. This is not
           necessarily the degree of the minimal polynomial of the
@@ -1459,7 +1459,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
           coefficients but that will not vary the degree of the
           extension containing the element.
 
-        - ``args``, ``kwds`` - arguments and keywords passed to the random
+        - ``args``, ``kwds`` -- arguments and keywords passed to the random
           number generator for elements of ``ZZ``, the integers. See
           :meth:`~sage.rings.integer_ring.IntegerRing_class.random_element` for
           details, or see example below.
@@ -1935,7 +1935,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
 
         INPUT:
 
-        - ``poly_degree`` - default: 2 - degree of the random polynomial over
+        - ``poly_degree`` -- default: 2; degree of the random polynomial over
           the integers of which the returned algebraic number is a root. This
           is not necessarily the degree of the minimal polynomial of the
           number. Increase this parameter to achieve a greater diversity of
@@ -1943,7 +1943,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
           also vary the distribution of the coefficients but that will not vary
           the degree of the extension containing the element.
 
-        - ``args``, ``kwds`` - arguments and keywords passed to the random
+        - ``args``, ``kwds`` -- arguments and keywords passed to the random
           number generator for elements of ``ZZ``, the integers. See
           :meth:`~sage.rings.integer_ring.IntegerRing_class.random_element` for
           details, or see example below.
@@ -2337,8 +2337,8 @@ def do_polred(poly, threshold=32):
 
     INPUT:
 
-    - ``poly`` - a monic irreducible polynomial with integer coefficients
-    - ``threshold`` - an integer used to decide whether to run ``polredbest``
+    - ``poly`` -- a monic irreducible polynomial with integer coefficients
+    - ``threshold`` -- an integer used to decide whether to run ``polredbest``
 
     OUTPUT:
 
@@ -4227,11 +4227,11 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``extend`` - bool (default: True); ignored if self is in QQbar, or
+        - ``extend`` -- bool (default: ``True``); ignored if self is in QQbar, or
           positive in AA. If self is negative in AA, do the following: if True,
           return a square root of self in QQbar, otherwise raise a ValueError.
 
-        - ``all`` - bool (default: False); if True, return a list of all square
+        - ``all`` -- bool (default: ``False``); if True, return a list of all square
           roots. If False, return just one square root, or raise an ValueError
           if self is a negative element of AA and extend=False.
 
@@ -4308,7 +4308,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``). If ``True``, return a list of
+        -  ``all`` -- bool (default: ``False``). If ``True``, return a list of
            all `n`-th roots as complex algebraic numbers.
 
         .. WARNING::

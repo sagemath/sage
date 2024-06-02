@@ -3158,7 +3158,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``right`` - something coercible to a symmetric function in
+        - ``right`` -- something coercible to a symmetric function in
           ``self.parent()``
 
         EXAMPLES::

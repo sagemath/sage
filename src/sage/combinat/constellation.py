@@ -58,13 +58,15 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import (op_NE, op_EQ, richcmp_not_equal,
                                     rich_to_bool)
 
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.integer import Integer
 from sage.combinat.partition import Partition
-from sage.graphs.graph import Graph
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.categories.groups import Groups
 
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 # constructors
 
@@ -887,8 +889,6 @@ class Constellation_class(Element):
             sage: G.num_edges()
             12
         """
-        from sage.graphs.digraph import DiGraph
-
         G = DiGraph(multiedges=True, loops=True)
         waiting = [self.relabel()]
 
@@ -1538,7 +1538,6 @@ def perms_are_connected(g, n):
         sage: perms_are_connected([S([0,1,2]),S([1,2,0])],3)
         True
     """
-    from sage.graphs.graph import Graph
     G = Graph()
     if g:
         G.add_vertices(g[0].domain())
@@ -1558,7 +1557,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
 
     INPUT:
 
-    - ``x`` -- list - a permutation of `[0, ..., n]` as a list
+    - ``x`` -- list; a permutation of `[0, ..., n]` as a list
 
     - ``y`` -- list of permutations of `[0, ..., n]` as a list of lists
 

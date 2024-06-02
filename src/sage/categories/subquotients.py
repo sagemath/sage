@@ -15,6 +15,7 @@ AUTHORS:
 
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 class SubquotientsCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "Subquotients"

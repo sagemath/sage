@@ -33,9 +33,9 @@ cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg) noexcept:
 
     INPUT:
 
-    - ``nvars`` - number of variables
+    - ``nvars`` -- number of variables
 
-    - ``deg`` - degree
+    - ``deg`` -- degree
 
     TESTS::
 
@@ -770,7 +770,7 @@ cdef class SBox(SageObject):
 
         INPUT:
 
-        - ``scale`` - string to choose the scaling for the LAT, one of
+        - ``scale`` -- string to choose the scaling for the LAT, one of
 
           * "bias": elements are `e(\alpha, \beta)`
           * "correlation": elements are `c(\alpha, \beta)`

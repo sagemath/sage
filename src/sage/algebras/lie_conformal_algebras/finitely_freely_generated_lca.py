@@ -23,6 +23,7 @@ from sage.categories.lie_conformal_algebras import LieConformalAlgebras
 from .freely_generated_lie_conformal_algebra import \
                                             FreelyGeneratedLieConformalAlgebra
 
+
 class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
     """
     Abstract base class for finitely generated Lie conformal

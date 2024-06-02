@@ -62,19 +62,19 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``solver`` - a SAT-solver instance
+        - ``solver`` -- a SAT-solver instance
 
-        - ``ring`` - a :class:`sage.rings.polynomial.pbori.BooleanPolynomialRing`
+        - ``ring`` -- a :class:`sage.rings.polynomial.pbori.BooleanPolynomialRing`
 
-        - ``max_vars_sparse`` - maximum number of variables for direct conversion
+        - ``max_vars_sparse`` -- maximum number of variables for direct conversion
 
-        - ``use_xor_clauses`` - use XOR clauses; if ``None`` use if
+        - ``use_xor_clauses`` -- use XOR clauses; if ``None`` use if
           ``solver`` supports it. (default: ``None``)
 
-        - ``cutting_number`` - maximum length of XOR chains after
+        - ``cutting_number`` -- maximum length of XOR chains after
           splitting if XOR clauses are not supported (default: 6)
 
-        - ``random_seed`` - the direct conversion method uses
+        - ``random_seed`` -- the direct conversion method uses
           randomness, this sets the seed (default: 16)
 
         EXAMPLES:
@@ -150,8 +150,8 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``m`` - something the new variables maps to, usually a monomial
-        - ``decision`` - is this variable a decision variable?
+        - ``m`` -- something the new variables maps to, usually a monomial
+        - ``decision`` -- is this variable a decision variable?
 
         EXAMPLES::
 
@@ -256,7 +256,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``f`` - a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        - ``f`` -- a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
 
 
         EXAMPLES::
@@ -306,7 +306,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``f`` - a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        - ``f`` -- a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
 
         EXAMPLES::
 
@@ -352,7 +352,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``m`` - a monomial.
+        - ``m`` -- a monomial.
 
         OUTPUT: An index for a SAT variable corresponding to ``m``.
 
@@ -447,8 +447,8 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``monomial_list`` - a list of monomials
-        - ``equal_zero`` - is the constant coefficient zero?
+        - ``monomial_list`` -- a list of monomials
+        - ``equal_zero`` -- is the constant coefficient zero?
 
         EXAMPLES::
 
@@ -494,7 +494,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``f`` - a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        - ``f`` -- a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
 
         EXAMPLES::
 
@@ -545,7 +545,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``F`` - an iterable of :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        - ``F`` -- an iterable of :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
 
         OUTPUT: An inverse map int -> variable
 
@@ -590,7 +590,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``c`` - a clause
+        - ``c`` -- a clause
 
         EXAMPLES::
 

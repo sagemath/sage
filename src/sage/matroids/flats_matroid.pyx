@@ -249,8 +249,8 @@ cdef class FlatsMatroid(Matroid):
         N = FlatsMatroid(other)
         flats_self = [F for i in self._F for F in self._F[i]]
         flats_other = [F for i in N._F for F in N._F[i]]
-        SS = SetSystem(list(self._groundset), flats_self)
-        OS = SetSystem(list(N._groundset), flats_other)
+        SS = SetSystem(self._groundset, flats_self)
+        OS = SetSystem(N._groundset, flats_other)
         return SS._isomorphism(OS) is not None
 
     # representation
@@ -432,8 +432,8 @@ cdef class FlatsMatroid(Matroid):
              frozenset({2, 3})]
         """
         if k in self._F:
-            return SetSystem(list(self._groundset), self._F[k])
-        return SetSystem(list(self._groundset))
+            return SetSystem(self._groundset, self._F[k])
+        return SetSystem(self._groundset)
 
     def flats_iterator(self, k):
         r"""

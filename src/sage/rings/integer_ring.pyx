@@ -55,8 +55,6 @@ import sage.rings.infinity
 import sage.rings.rational
 import sage.rings.rational_field
 import sage.rings.ideal
-import sage.libs.pari.all
-import sage.rings.ideal
 from sage.categories.basic import EuclideanDomains, DedekindDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.noetherian_rings import NoetherianRings
@@ -609,7 +607,7 @@ cdef class IntegerRing_class(CommutativeRing):
 
         - ``x``, ``y`` integers -- bounds for the result.
 
-        - ``distribution``-- a string:
+        - ``distribution`` -- a string:
 
           - ``'uniform'``
           - ``'mpz_rrandomb'``
@@ -968,12 +966,12 @@ cdef class IntegerRing_class(CommutativeRing):
 
         INPUT:
 
-        - ``prime`` - a prime number
+        - ``prime`` -- a prime number
 
-        - ``check`` - (boolean, default ``True``) whether or not
+        - ``check`` -- (boolean, default ``True``) whether or not
           to check the primality of prime
 
-        - ``names`` - ignored (for compatibility with number fields)
+        - ``names`` -- ignored (for compatibility with number fields)
 
         OUTPUT: The residue field at this prime.
 
@@ -1638,7 +1636,7 @@ def crt_basis(X, xgcd=None):
 
     OUTPUT:
 
-    - ``E`` - a list of Integers such that ``E[i] = 1`` (mod ``X[i]``) and
+    - ``E`` -- a list of Integers such that ``E[i] = 1`` (mod ``X[i]``) and
       ``E[i] = 0`` (mod ``X[j]``) for all `j \neq i`.
 
     For this explanation, let ``E[i]`` be denoted by `E_i`.

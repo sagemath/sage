@@ -212,9 +212,9 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``domain, codomain`` - modular abelian varieties
+        -  ``domain, codomain`` -- modular abelian varieties
 
-        -  ``cat`` - category
+        -  ``cat`` -- category
 
 
         EXAMPLES::
@@ -229,10 +229,10 @@ class Homspace(HomsetWithBase):
             sage: H.homset_category()
             Category of modular abelian varieties over Rational Field
         """
-        from .abvar import is_ModularAbelianVariety
-        if not is_ModularAbelianVariety(domain):
+        from .abvar import ModularAbelianVariety_abstract
+        if not isinstance(domain, ModularAbelianVariety_abstract):
             raise TypeError("domain must be a modular abelian variety")
-        if not is_ModularAbelianVariety(codomain):
+        if not isinstance(codomain, ModularAbelianVariety_abstract):
             raise TypeError("codomain must be a modular abelian variety")
         self._gens = None
         HomsetWithBase.__init__(self, domain, codomain, category=cat)
@@ -411,7 +411,7 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``g`` - a matrix or morphism or object with a list
+        -  ``g`` -- a matrix or morphism or object with a list
            method
 
 

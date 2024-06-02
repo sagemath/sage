@@ -1178,7 +1178,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
           field of the other, in which case it will test over the
           larger base field.
 
-        - ``proof`` (default True) -- this parameter is here only to
+        - ``proof`` (default: ``True``) -- this parameter is here only to
           be consistent with versions for other types of elliptic
           curves.
 
@@ -1291,7 +1291,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``proof`` (boolean, default True) -- If True, returns a
+        - ``proof`` (boolean, default: ``True``) -- If True, returns a
           proved result.  If False, then a return value of False is
           certain but a return value of True may be based on a
           probabilistic test.  See the documentation of the function
@@ -1325,7 +1325,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``proof`` (boolean, default True) -- If True, returns a
+        - ``proof`` (boolean, default: ``True``) -- If True, returns a
           proved result.  If False, then a return value of True is
           certain but a return value of False may be based on a
           probabilistic test.  See the documentation of the function
@@ -2349,7 +2349,7 @@ def is_j_supersingular(j, proof=True):
 
     - ``j`` (finite field element) -- an element of a finite field
 
-    - ``proof`` (boolean, default True) -- If True, returns a proved
+    - ``proof`` (boolean, default: ``True``) -- If True, returns a proved
       result.  If False, then a return value of False is certain but a
       return value of True may be based on a probabilistic test.  See
       the ALGORITHM section below for more details.
@@ -2499,7 +2499,7 @@ def special_supersingular_curve(F, *, endomorphism=False):
 
     - ``F`` -- finite field `\mathbb F_{p^r}`;
 
-    - ``endomorphism`` -- boolean (optional, default ``False``):
+    - ``endomorphism`` -- boolean (default: ``False``):
       When set to ``True``, it is required that `2 \mid r`, and
       the function then additionally returns `\vartheta`.
 

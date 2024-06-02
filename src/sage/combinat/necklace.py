@@ -458,7 +458,7 @@ def _sfc(content, equality=False):
     INPUT:
 
     - ``content`` -- a list of non-negative integers with no leading 0s
-    - ``equality`` -- boolean (optional, default: ``True``)
+    - ``equality`` -- boolean (default: ``True``)
 
     .. WARNING::
 

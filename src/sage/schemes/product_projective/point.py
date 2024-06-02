@@ -111,7 +111,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``i`` - integer.
+        - ``i`` -- integer.
 
         OUTPUT:
 
@@ -327,7 +327,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``L`` - a list of non-negative integers
+        - ``L`` -- a list of non-negative integers
 
         OUTPUT:
 

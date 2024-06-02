@@ -541,7 +541,7 @@ cdef class PowerSeries(AlgebraElement):
         INPUT:
 
 
-        -  ``n`` - (optional) an integer that is at least 0. If ``n`` is
+        -  ``n`` -- (optional) an integer that is at least 0. If ``n`` is
            not given, it will be taken to be the precision of self,
            unless this is ``+Infinity``, in which case we just return
            ``self.list()``.
@@ -1751,7 +1751,7 @@ cdef class PowerSeries(AlgebraElement):
 
         - ``n`` -- integer
 
-        - ``prec`` -- integer (optional) - precision of the result. Though, if
+        - ``prec`` -- integer (optional); precision of the result. Though, if
           this series has finite precision, then the result cannot have larger
           precision.
 
@@ -2350,15 +2350,15 @@ cdef class PowerSeries(AlgebraElement):
         INPUT:
 
 
-        -  ``self`` - the power series `a(t)`
+        -  ``self`` -- the power series `a(t)`
 
-        -  ``b`` - the power series `b(t)` (default is
+        -  ``b`` -- the power series `b(t)` (default is
            zero)
 
-        -  ``f0`` - the constant term of `f` ("initial
+        -  ``f0`` -- the constant term of `f` ("initial
            condition") (default is 1)
 
-        -  ``prec`` - desired precision of result (this will be
+        -  ``prec`` -- desired precision of result (this will be
            reduced if either a or b have less precision available)
 
 
@@ -2455,7 +2455,7 @@ cdef class PowerSeries(AlgebraElement):
         INPUT:
 
 
-        -  ``prec`` - integer; default is
+        -  ``prec`` -- integer; default is
            ``self.parent().default_prec``
 
 
@@ -2765,9 +2765,13 @@ cdef class PowerSeries(AlgebraElement):
     def egf_to_ogf(self):
         r"""
         Return the ordinary generating function power series,
-        assuming self is an exponential generating function power series.
+        assuming ``self`` is an exponential generating function power series.
 
-        This function is known as ``serlaplace`` in PARI/GP.
+        This is a formal Laplace transform.
+
+        This function is known as :pari:`serlaplace` in PARI/GP.
+
+        .. SEEALSO:: :meth:`ogf_to_egf` for the inverse method.
 
         EXAMPLES::
 
@@ -2776,14 +2780,18 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.egf_to_ogf()
             t + t^2 + 2*t^3
         """
-        return self.parent()([self[i] * arith.factorial(i) for i in range(self.degree()+1)])
+        return self.parent()([self[i] * arith.factorial(i) for i in range(self.degree() + 1)])
 
     def ogf_to_egf(self):
         r"""
         Return the exponential generating function power series,
-        assuming self is an ordinary generating function power series.
+        assuming ``self`` is an ordinary generating function power series.
+
+        This is a formal Borel transform.
 
         This can also be computed as ``serconvol(f,exp(t))`` in PARI/GP.
+
+        .. SEEALSO:: :meth:`egf_to_ogf` for the inverse method.
 
         EXAMPLES::
 
@@ -2792,7 +2800,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.ogf_to_egf()
             t + 1/2*t^2 + 1/3*t^3
         """
-        return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree()+1)])
+        return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree() + 1)])
 
     def __pari__(self):
         """

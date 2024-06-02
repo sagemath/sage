@@ -603,11 +603,11 @@ def prepare(v, R, degree=None):
 
     INPUT:
 
-    - ``v`` - a dictionary with non-negative integers as keys,
+    - ``v`` -- a dictionary with non-negative integers as keys,
       or a list or other object that can be converted by the ``Sequence``
       constructor
-    - ``R`` - a ring containing all the entries, possibly given as ``None``
-    - ``degree`` -  a requested size for the list when the input is a dictionary,
+    - ``R`` -- a ring containing all the entries, possibly given as ``None``
+    - ``degree`` --  a requested size for the list when the input is a dictionary,
       otherwise ignored
 
     OUTPUT:
@@ -705,10 +705,10 @@ def zero_vector(arg0, arg1=None):
 
     INPUT:
 
-    - ``degree`` - the number of zero entries in the vector or
+    - ``degree`` -- the number of zero entries in the vector or
       free module element
 
-    - ``ring`` - default ``ZZ`` - the base ring of the vector
+    - ``ring`` -- (default: ``ZZ``); the base ring of the vector
       space or module containing the constructed zero vector
 
     OUTPUT:
@@ -777,10 +777,10 @@ def random_vector(ring, degree=None, *args, **kwds):
 
     INPUT:
 
-    - ring -- default: ``ZZ`` - the base ring for the entries
+    - ring -- (default: ``ZZ``); the base ring for the entries
     - degree -- a non-negative integer for the number of entries in the vector
-    - sparse -- default: ``False`` - whether to use a sparse implementation
-    - args, kwds - additional arguments and keywords are passed
+    - sparse -- (default: ``False``); whether to use a sparse implementation
+    - args, kwds -- additional arguments and keywords are passed
       to the ``random_element()`` method of the ring
 
     OUTPUT:
@@ -1673,7 +1673,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``p`` - default: 2 -- ``p`` can be a real number greater than 1,
+        - ``p`` -- default: 2 -- ``p`` can be a real number greater than 1,
           infinity (``oo`` or ``Infinity``), or a symbolic expression.
 
           - `p=1`: the taxicab (Manhattan) norm
@@ -2290,7 +2290,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         INPUT:
 
-        - ``plot_type`` - (default: 'arrow' if v has 3 or fewer components,
+        - ``plot_type`` -- (default: 'arrow' if v has 3 or fewer components,
             otherwise 'step') type of plot. Options are:
 
             - 'arrow' to draw an arrow
@@ -2304,7 +2304,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
           Both 'arrow' and 'point' raise exceptions if the vector has
           more than 3 dimensions.
 
-        - ``start`` - (default: origin in correct dimension) may be a tuple,
+        - ``start`` -- (default: origin in correct dimension) may be a tuple,
           list, or vector.
 
         EXAMPLES:
@@ -2443,20 +2443,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         r"""
         INPUT:
 
-        -  ``xmin`` - (default: 0) start x position to start
+        -  ``xmin`` -- (default: 0) start x position to start
            plotting
 
-        -  ``xmax`` - (default: 1) stop x position to stop
+        -  ``xmax`` -- (default: 1) stop x position to stop
            plotting
 
-        -  ``eps`` - (default: determined by xmax) we view this
+        -  ``eps`` -- (default: determined by xmax) we view this
            vector as defining a function at the points xmin, xmin + eps, xmin
            + 2\*eps, ...,
 
-        -  ``res`` - (default: all points) total number of
+        -  ``res`` -- (default: all points) total number of
            points to include in the graph
 
-        -  ``connect`` - (default: True) if True draws a line;
+        -  ``connect`` -- (default: ``True``) if True draws a line;
            otherwise draw a list of points.
 
 
@@ -2652,7 +2652,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - A vector of the same size as ``self``, either
+        - ``right`` -- A vector of the same size as ``self``, either
           degree three or degree seven.
 
         OUTPUT:
@@ -2848,7 +2848,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         INPUT:
 
 
-        -  ``right`` - vector of the same degree as self. It
+        -  ``right`` -- vector of the same degree as self. It
            need not be in the same vector space as self, as long as the
            coefficients can be multiplied.
 
@@ -3261,7 +3261,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector of the same degree as ``self``
+        - ``right`` -- a vector of the same degree as ``self``
 
         OUTPUT:
 
@@ -3365,7 +3365,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector (or free module element) of any size, whose
+        - ``right`` -- a vector (or free module element) of any size, whose
           elements are compatible (with regard to multiplication) with the
           elements of ``self``.
 
@@ -3484,7 +3484,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector of the same degree as ``self``
+        - ``right`` -- a vector of the same degree as ``self``
 
         OUTPUT:
 
@@ -3866,10 +3866,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
               is sparse.
 
 
-        -  ``phi`` - arbitrary Python function or callable
+        -  ``phi`` -- arbitrary Python function or callable
            object
 
-        -  ``R`` - (optional) ring
+        -  ``R`` -- (optional) ring
 
 
         OUTPUT: a free module element over R

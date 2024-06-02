@@ -47,9 +47,9 @@ class AmbientSpace(Scheme):
 
     INPUT:
 
-    -  ``n`` - dimension
+    -  ``n`` -- dimension
 
-    -  ``R`` - ring
+    -  ``R`` -- ring
     """
     def __init__(self, n, R=ZZ):
         """

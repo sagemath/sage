@@ -1268,7 +1268,7 @@ class FGP_Module_class(Module):
 
         - ``x`` -- element of ``self``
 
-        - ``reduce`` -- (default: False); if ``True``, reduce
+        - ``reduce`` -- (default: ``False``); if ``True``, reduce
           coefficients modulo invariants; this is
           ignored if the base ring is not ``ZZ``.
 
@@ -1630,7 +1630,7 @@ class FGP_Module_class(Module):
 
         INPUT:
 
-        - ``im_gens`` - a Sequence object giving the images of ``self.gens()``,
+        - ``im_gens`` -- a Sequence object giving the images of ``self.gens()``,
           whose universe is some fixed finitely generated `R`-module
 
         EXAMPLES::

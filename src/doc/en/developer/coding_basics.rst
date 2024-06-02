@@ -649,44 +649,44 @@ indentation:
 
     def point(self, x=1, y=2):
         r"""
-        Return the point `(x^5,y)`.
+        Return the point `(x^5, y)`.
 
         INPUT:
 
-        - ``x`` -- integer (default: `1`); the description of the
+        - ``x`` -- integer (default: ``1``); the description of the
           argument ``x`` goes here. If it contains multiple lines, all
           the lines after the first need to begin at the same indentation
           as the backtick.
 
-        - ``y`` -- integer (default: `2`); the description of the
+        - ``y`` -- integer (default: ``2``); the description of the
           argument ``y``
 
-        OUTPUT: the point as a tuple
+        OUTPUT: tuple; further description of the output
 
         EXAMPLES:
 
         This example illustrates ... ::
 
-            sage: A = ModuliSpace()
-            sage: A.point(2,3)
-            xxx
+            sage: A = EuclideanSpace(2)
+            sage: A.point(2, 3)
+            (32, 3)
 
         We now ... ::
 
-            sage: B = A.point(5,6)
-            sage: xxx
+            sage: B = A.point(5, 6)
+            sage: ...
 
         It is an error to ... ::
 
-            sage: C = A.point('x',7)
+            sage: C = A.point('x', 7)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert 'r' to an integer
+            TypeError: unable to convert 'x' to an integer
 
         .. NOTE::
 
-            This function uses the algorithm of [BCDT2001]_ to determine
-            whether an elliptic curve `E` over `Q` is modular.
+            This function uses :func:`pow` to determine the fifth
+            power of ``x``.
 
         ...
 
@@ -696,8 +696,8 @@ indentation:
 
         TESTS::
 
-            sage: A.point(42, 0)  # Check for corner case y=0
-            xxx
+            sage: A.point(42, 0)  # Check for corner case y = 0
+            ...
         """
         <body of the function>
 

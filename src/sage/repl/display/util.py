@@ -64,7 +64,7 @@ class TallListFormatter():
 
         INPUT:
 
-        - ``the_list`` - The list (or a tuple).
+        - ``the_list`` -- The list (or a tuple).
 
         OUTPUT:
 

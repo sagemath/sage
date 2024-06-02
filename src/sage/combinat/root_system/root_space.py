@@ -21,7 +21,7 @@ class RootSpace(CombinatorialFreeModule):
 
     INPUT:
 
-    - ``root_system`` - a root system
+    - ``root_system`` -- a root system
     - ``base_ring``: a ring `R`
 
     The *root space* (or lattice if ``base_ring`` is `\ZZ`) of a root

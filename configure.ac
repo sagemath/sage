@@ -166,6 +166,27 @@ You are attempting to build Sage on $host,
 which is not a supported platform for Sage]]);;
 esac
 
+dnl Issue #38039: Alert users on WSL early about a source tree
+dnl that has not been cloned correctly.
+dnl This will save users from running into build errors later.
+AC_MSG_CHECKING([the symbolic links in the source tree])
+AS_IF([test -L build/pkgs/liblzma/package-version.txt], [dnl OK
+    AC_MSG_RESULT([intact])
+], [dnl Either replaced by a copy (OK, as done in the sage-conf_pypi sdist)
+    dnl  or replaced by the name of the link target (BAD, misconfigured git clone in WSL)
+    AS_IF([test ! -e build/pkgs/sagelib/src], [dnl
+        AC_MSG_RESULT([intact (with links to embedded source trees pruned)])
+    ], [dnl
+        AS_IF([test -d build/pkgs/sagelib/src], [dnl
+            AC_MSG_RESULT([broken (links to directories have been replaced by copies)])
+        ], [dnl
+            AC_MSG_RESULT([broken])
+        ])
+        AC_MSG_NOTICE([Sorry, the symbolic links in this source tree are broken.])
+        AC_MSG_NOTICE([See README.md for installation instructions.])
+        AC_MSG_ERROR([Exiting, as Sage cannot be built from this source tree.])
+    ])
+])
 
 ###############################################################################
 # Check general programs

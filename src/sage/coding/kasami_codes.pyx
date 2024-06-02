@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Kasami code
 
@@ -99,7 +99,7 @@ class KasamiCode(AbstractLinearCode):
 
         sage: codes.KasamiCode(16,4)
         [16, 9] Extended (16, 4)-Kasami code
-        sage: _.minimum_distance()
+        sage: _.minimum_distance()                                                      # needs sage.libs.gap
         4
 
         sage: codes.KasamiCode(8, 2, extended=False)
@@ -135,7 +135,7 @@ class KasamiCode(AbstractLinearCode):
         True
         sage: C1 == C2
         False
-        sage: C1.minimum_distance() == C2.minimum_distance()+1
+        sage: C1.minimum_distance() == C2.minimum_distance() + 1                        # needs sage.libs.gap
         True
         sage: C = codes.KasamiCode(4,2)
         sage: C.dimension()

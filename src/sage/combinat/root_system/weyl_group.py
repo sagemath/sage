@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-gap
-# sage.doctest: needs sage.groups sage.modules
+# sage.doctest: needs sage.graphs sage.groups sage.modules
 """
 Weyl Groups
 
@@ -79,8 +79,8 @@ def WeylGroup(x, prefix=None, implementation='matrix'):
 
     - ``implementation`` -- one of the following:
 
-      * ``'matrix'`` - as matrices acting on a root system
-      * ``"permutation"`` - as a permutation group acting on the roots
+      * ``'matrix'`` -- as matrices acting on a root system
+      * ``"permutation"`` -- as a permutation group acting on the roots
 
     EXAMPLES:
 
@@ -1056,9 +1056,9 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
         - ``algorithm`` (default: ``'breadth'``) -- must be one of
           the following:
 
-          * ``'breadth'`` - iterate over in a linear extension of the
+          * ``'breadth'`` -- iterate over in a linear extension of the
             weak order
-          * ``'depth'`` - iterate by a depth-first-search
+          * ``'depth'`` -- iterate by a depth-first-search
 
         - ``tracking_words`` (default: ``True``) -- whether or not to keep
           track of the reduced words and store them in ``_reduced_word``

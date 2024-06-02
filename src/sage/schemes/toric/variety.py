@@ -1322,7 +1322,7 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``another`` - :class:`toric variety <ToricVariety_field>`.
+        - ``another`` -- :class:`toric variety <ToricVariety_field>`.
 
         OUTPUT:
 

@@ -403,11 +403,11 @@ cdef class CircuitClosuresMatroid(Matroid):
         N = CircuitClosuresMatroid(other)
         if sorted(self._circuit_closures.keys()) != sorted(N._circuit_closures.keys()):
             return False
-        SM = SetSystem(list(self.groundset()))
+        SM = SetSystem(self.groundset())
         for r in self._circuit_closures:
             for C in self._circuit_closures[r]:
                 SM.append(C)
-        SN = SetSystem(list(N.groundset()))
+        SN = SetSystem(N.groundset())
         for r in N._circuit_closures:
             for C in N._circuit_closures[r]:
                 SN.append(C)

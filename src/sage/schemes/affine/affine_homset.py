@@ -185,18 +185,18 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         kwds:
 
-        - ``bound`` - real number (optional, default: 0). The bound for the
+        - ``bound`` -- real number (default: 0). The bound for the
           height of the coordinates. Only used for subschemes with
           dimension at least 1.
 
-        - ``zero_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` -- positive real number (default: 10^(-10)).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
           for enumeration over number fields.
 
-        - ``precision`` - the precision to use for computing the elements of
+        - ``precision`` -- the precision to use for computing the elements of
           bounded height of number fields.
 
         OUTPUT:
@@ -377,11 +377,11 @@ class SchemeHomset_points_affine(SchemeHomset_points):
 
         INPUT:
 
-        ``F`` - numerical ring
+        - ``F`` -- numerical ring
 
         kwds:
 
-        - ``zero_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` -- positive real number (default: 10^(-10)).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 

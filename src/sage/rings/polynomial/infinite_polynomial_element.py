@@ -1145,7 +1145,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         INPUT:
 
-        ``k`` -- an integer.
+        - ``k`` -- an integer.
 
         OUTPUT:
 

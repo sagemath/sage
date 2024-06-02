@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-# sage.doctest: optional - sage.rings.finite_rings sage.schemes
+# sage.doctest: needs sage.rings.finite_rings sage.schemes
 r"""
 Decoders for AG codes
 

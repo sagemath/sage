@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Information-set decoding for linear codes
 
@@ -41,11 +41,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.arith.misc import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.modules.free_module_element import free_module_element as vector
 from sage.structure.sage_object import SageObject
-from sage.functions.other import binomial
 from .decoder import Decoder
 
 
@@ -608,7 +608,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
 
         INPUT:
 
-        - `estimates` - list of time estimates, for the search size set to the
+        - `estimates` -- list of time estimates, for the search size set to the
                         index of the list entry.
 
         OUTPUT: None, but sets the private fields `self._parameters` and
@@ -880,7 +880,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         INPUT:
 
-        - ``dictionary`` - optional. If set to ``True``, return a ``dict``
+        - ``dictionary`` -- optional. If set to ``True``, return a ``dict``
           mapping decoding algorithm name to its class.
 
         OUTPUT: a list of strings or a ``dict`` from string to ISD algorithm class.

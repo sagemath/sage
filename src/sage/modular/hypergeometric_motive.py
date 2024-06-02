@@ -1339,7 +1339,7 @@ class HypergeometricData:
 
         - ``prec`` -- precision (optional)
 
-        - ``cache_p`` - a boolean
+        - ``cache_p`` -- a boolean
 
         OUTPUT:
 

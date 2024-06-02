@@ -200,7 +200,7 @@ def mod_one(x):
 
     INPUT:
 
-    - ``x`` - an instance of Integer, int, RealNumber, etc.; the
+    - ``x`` -- an instance of Integer, int, RealNumber, etc.; the
       number to reduce
 
     OUTPUT:
@@ -233,7 +233,7 @@ def html_to_float(c):
 
     INPUT:
 
-    - ``c`` - a string; a valid HTML hex color
+    - ``c`` -- a string; a valid HTML hex color
 
     OUTPUT:
 
@@ -269,10 +269,10 @@ def rgbcolor(c, space='rgb'):
 
     INPUT:
 
-    - ``c`` - a :class:`Color` instance, string (name or HTML hex),
+    - ``c`` -- a :class:`Color` instance, string (name or HTML hex),
       3-tuple, or 3-list; the color to convert
 
-    - ``space`` - a string (default: 'rgb'); the color space
+    - ``space`` -- a string (default: 'rgb'); the color space
       coordinate system (other choices are 'hsl', 'hls', and 'hsv') in
       which to interpret a 3-tuple or 3-list
 
@@ -377,10 +377,10 @@ class Color:
 
         INPUT:
 
-        -  ``r,g,b`` - either a triple of floats between 0 and 1,
+        -  ``r,g,b`` -- either a triple of floats between 0 and 1,
            OR ``r`` - a color name string or HTML color hex string
 
-        - ``space`` - a string (default: 'rgb'); the coordinate system
+        - ``space`` -- a string (default: 'rgb'); the coordinate system
           (other choices are 'hsl', 'hls', and 'hsv') in which to
           interpret a triple of floats
 
@@ -432,7 +432,7 @@ class Color:
 
         INPUT:
 
-        - ``right`` - an object
+        - ``right`` -- an object
 
         OUTPUT:
 
@@ -458,7 +458,7 @@ class Color:
 
         INPUT:
 
-        - ``right`` - an object
+        - ``right`` -- an object
 
         OUTPUT:
 
@@ -482,7 +482,7 @@ class Color:
 
         INPUT:
 
-        - ``right`` - a :class:`Color` instance
+        - ``right`` -- a :class:`Color` instance
 
         OUTPUT:
 
@@ -510,7 +510,7 @@ class Color:
 
         INPUT:
 
-        - ``right`` - a :class:`Color` instance
+        - ``right`` -- a :class:`Color` instance
 
         OUTPUT:
 
@@ -538,7 +538,7 @@ class Color:
 
         INPUT:
 
-        - ``right`` - an object
+        - ``right`` -- an object
 
         OUTPUT:
 
@@ -564,7 +564,7 @@ class Color:
 
         INPUT:
 
-        - ``right`` - an object
+        - ``right`` -- an object
 
         OUTPUT:
 
@@ -607,10 +607,10 @@ class Color:
 
         INPUT:
 
-        - ``color`` - a :class:`Color` instance or float-convertible
+        - ``color`` -- a :class:`Color` instance or float-convertible
           3-tuple/list; the color with which to blend this color
 
-        - ``fraction`` - a float-convertible number; the fraction of
+        - ``fraction`` -- a float-convertible number; the fraction of
           ``color`` to blend with this color
 
         OUTPUT:
@@ -655,7 +655,7 @@ class Color:
 
         INPUT:
 
-        - ``right`` - a :class:`Color` instance or float-convertible
+        - ``right`` -- a :class:`Color` instance or float-convertible
           3-tuple/list
 
         OUTPUT:
@@ -691,7 +691,7 @@ class Color:
 
         INPUT:
 
-        - ``left`` - a :class:`Color` instance or float-convertible
+        - ``left`` -- a :class:`Color` instance or float-convertible
           3-tuple/list
 
         OUTPUT:
@@ -722,7 +722,7 @@ class Color:
 
         INPUT:
 
-        - ``right`` - a float-convertible number
+        - ``right`` -- a float-convertible number
 
         OUTPUT:
 
@@ -750,7 +750,7 @@ class Color:
 
         INPUT:
 
-        - ``left`` - a float-convertible number
+        - ``left`` -- a float-convertible number
 
         OUTPUT:
 
@@ -855,7 +855,7 @@ class Color:
 
         INPUT:
 
-        - ``i`` - an integer; the 0-based coordinate to retrieve
+        - ``i`` -- an integer; the 0-based coordinate to retrieve
 
         OUTPUT:
 
@@ -998,7 +998,7 @@ class Color:
 
         INPUT:
 
-        - ``fraction`` - a float (default: 1/3); blending fraction
+        - ``fraction`` -- a float (default: 1/3); blending fraction
           to apply
 
         OUTPUT:
@@ -1026,7 +1026,7 @@ class Color:
 
         INPUT:
 
-        - ``fraction`` - a float (default: 1/3); blending fraction
+        - ``fraction`` -- a float (default: 1/3); blending fraction
           to apply
 
         OUTPUT:
@@ -1081,7 +1081,7 @@ class ColorsDict(dict):
 
         INPUT:
 
-        - ``name`` - a string; the name of the color to return
+        - ``name`` -- a string; the name of the color to return
 
         OUTPUT:
 
@@ -1156,11 +1156,11 @@ def hue(h, s=1, v=1):
 
     INPUT:
 
-    - ``h`` - a number; the color's hue
+    - ``h`` -- a number; the color's hue
 
-    - ``s`` - a number (default: 1); the color's saturation
+    - ``s`` -- a number (default: 1); the color's saturation
 
-    - ``v`` - a number (default: 1); the color's value
+    - ``v`` -- a number (default: 1); the color's value
 
     OUTPUT:
 
@@ -1282,9 +1282,9 @@ def rainbow(n, format='hex'):
 
     INPUT:
 
-    - ``n`` - a number; the length of the list
+    - ``n`` -- a number; the length of the list
 
-    - ``format`` - a string (default: 'hex'); the output format for
+    - ``format`` -- a string (default: 'hex'); the output format for
       each color in the list; the other choice is 'rgbtuple'
 
     OUTPUT:
@@ -1336,7 +1336,7 @@ def get_cmap(cmap):
 
     INPUT:
 
-    - ``cmap`` - a string, list, tuple, or
+    - ``cmap`` -- a string, list, tuple, or
       :class:`matplotlib.colors.Colormap`; a string must be a valid
       color map name
 
@@ -1530,7 +1530,7 @@ class Colormaps(MutableMapping):
 
         INPUT:
 
-        - ``name`` - a string; the name of the map to query
+        - ``name`` -- a string; the name of the map to query
 
         OUTPUT:
 
@@ -1554,7 +1554,7 @@ class Colormaps(MutableMapping):
 
         INPUT:
 
-        - ``name`` - a string; the name of the map return
+        - ``name`` -- a string; the name of the map return
 
         OUTPUT:
 
@@ -1586,7 +1586,7 @@ class Colormaps(MutableMapping):
 
         INPUT:
 
-        - ``name`` - a string; the name of the map to return
+        - ``name`` -- a string; the name of the map to return
 
         OUTPUT:
 
@@ -1640,9 +1640,9 @@ class Colormaps(MutableMapping):
 
         INPUT:
 
-        - ``name`` - a string; the name of the map to add
+        - ``name`` -- a string; the name of the map to add
 
-        - ``colormap`` - an instance of
+        - ``colormap`` -- an instance of
           :class:`matplotlib.colors.Colormap`; the color map to add
 
         EXAMPLES::
@@ -1666,7 +1666,7 @@ class Colormaps(MutableMapping):
 
         INPUT:
 
-        - ``name`` - a string; the name of the map to remove
+        - ``name`` -- a string; the name of the map to remove
 
         EXAMPLES::
 

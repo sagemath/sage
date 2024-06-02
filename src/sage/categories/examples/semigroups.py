@@ -16,6 +16,7 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.semigroups import Semigroups
 from sage.sets.family import Family
 
+
 class LeftZeroSemigroup(UniqueRepresentation, Parent):
     r"""
     An example of a semigroup.

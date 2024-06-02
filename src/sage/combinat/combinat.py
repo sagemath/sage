@@ -694,10 +694,10 @@ def fibonacci(n, algorithm="pari") -> Integer:
 
     - ``algorithm`` -- a string:
 
-      * ``"pari"`` - (default) use the PARI C library's
+      * ``"pari"`` -- (default) use the PARI C library's
         :pari:`fibo` function
 
-      * ``"gap"`` - use GAP's Fibonacci function
+      * ``"gap"`` -- use GAP's Fibonacci function
 
     .. NOTE::
 
@@ -819,9 +819,9 @@ def lucas_number2(n, P, Q):
     INPUT:
 
 
-    -  ``n`` - integer
+    -  ``n`` -- integer
 
-    -  ``P, Q`` - integer or rational numbers
+    -  ``P, Q`` -- integer or rational numbers
 
 
     OUTPUT: integer or rational number
@@ -1603,8 +1603,8 @@ def tuples(S, k, algorithm='itertools'):
     - ``k`` -- the length of the tuples
     - ``algorithm`` -- can be one of the following:
 
-      * ``'itertools'`` - (default) use python's itertools
-      * ``'native'`` - use a native Sage implementation
+      * ``'itertools'`` -- (default) use python's itertools
+      * ``'native'`` -- use a native Sage implementation
 
     .. NOTE::
 
@@ -1697,8 +1697,8 @@ def number_of_tuples(S, k, algorithm='naive') -> Integer:
     - ``k`` -- the length of the tuples
     - ``algorithm`` -- can be one of the following:
 
-      * ``'naive'`` - (default) use the naive counting `|S|^k`
-      * ``'gap'`` - wraps GAP's ``NrTuples``
+      * ``'naive'`` -- (default) use the naive counting `|S|^k`
+      * ``'gap'`` -- wraps GAP's ``NrTuples``
 
     .. WARNING::
 
@@ -1755,8 +1755,8 @@ def unordered_tuples(S, k, algorithm='itertools'):
     - ``k`` -- the length of the tuples
     - ``algorithm`` -- can be one of the following:
 
-      * ``'itertools'`` - (default) use python's itertools
-      * ``'gap'`` - wraps GAP's ``UnorderedTuples``
+      * ``'itertools'`` -- (default) use python's itertools
+      * ``'gap'`` -- wraps GAP's ``UnorderedTuples``
 
     .. WARNING::
 
@@ -1813,8 +1813,8 @@ def number_of_unordered_tuples(S, k, algorithm='naive') -> Integer:
     - ``k`` -- the length of the tuples
     - ``algorithm`` -- can be one of the following:
 
-      * ``'naive'`` - (default) use the naive counting `\binom{|S|+k-1}{k}`
-      * ``'gap'`` - wraps GAP's ``NrUnorderedTuples``
+      * ``'naive'`` -- (default) use the naive counting `\binom{|S|+k-1}{k}`
+      * ``'gap'`` -- wraps GAP's ``NrUnorderedTuples``
 
     .. WARNING::
 

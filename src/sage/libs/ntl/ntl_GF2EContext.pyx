@@ -92,7 +92,6 @@ cdef class ntl_GF2EContext_class():
         """
         return self.m
 
-
     def restore(self):
         """
         EXAMPLES::

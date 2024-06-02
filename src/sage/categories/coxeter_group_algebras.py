@@ -7,6 +7,7 @@ import functools
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebra_functor import AlgebrasCategory
 
+
 class CoxeterGroupAlgebras(AlgebrasCategory):
 
     class ParentMethods:

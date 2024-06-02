@@ -40,8 +40,6 @@ from sage.libs.flint.fmpq_poly_sage cimport *
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 
-from sage.interfaces.singular import singular as singular_default
-
 from cypari2.gen import Gen as pari_gen
 
 from sage.rings.complex_arb cimport ComplexBall
@@ -199,15 +197,15 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        - ``parent`` - Polynomial ring, the parent of ``self``
-        - ``x`` - Data for the new polynomial self, e.g. a polynomial, an
+        - ``parent`` -- Polynomial ring, the parent of ``self``
+        - ``x`` -- Data for the new polynomial self, e.g. a polynomial, an
           integer, a rational, a list of rationals, a dictionary with keys
           the degrees and the rational coefficients, etc (default: ``None``)
-        - `check`` - Whether the integrity of the data needs to be verified,
+        - `check`` -- Whether the integrity of the data needs to be verified,
           largely ignored by this method (default: ``True``)
-        - ``is_gen`` - Whether self shall be initialised as the generator of
+        - ``is_gen`` -- Whether self shall be initialised as the generator of
           the parent polynomial ring
-        - ``construct`` - Whether the element shall always be constructed
+        - ``construct`` -- Whether the element shall always be constructed
           as an independent copy of any input data (default: ``False``)
 
         TESTS::
@@ -331,7 +329,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         fmpq_poly_set(res._poly, self._poly)
         return res
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Return a Singular representation of ``self``.
 
@@ -346,6 +344,8 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: singular(f)                                                           # needs sage.libs.singular
             3*x^2+2*x+5
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         self._parent._singular_(singular).set_ring()  # Expensive!
         return singular(self._singular_init_())
 
@@ -568,7 +568,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        - ``n`` - The power of `t` modulo which ``self`` is truncated
+        - ``n`` -- The power of `t` modulo which ``self`` is truncated
 
         EXAMPLES::
 
@@ -1177,7 +1177,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        - ``exp`` - Exponent
+        - ``exp`` -- Exponent
 
         OUTPUT:
 
@@ -1495,7 +1495,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        -  ``var`` - Must be either (equal to) the generator of the polynomial
+        -  ``var`` -- Must be either (equal to) the generator of the polynomial
            ring to which this polynomial belongs, or ``None``; either way the
            behaviour is the same.
 
@@ -2075,15 +2075,15 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        -  ``self`` - Irreducible polynomial
+        -  ``self`` -- Irreducible polynomial
 
-        -  ``pari_group`` - bool (default: ``False``); if ``True`` instead
+        -  ``pari_group`` -- bool (default: ``False``); if ``True`` instead
            return the Galois group as a PARI group.  This has a useful label
            in it, and may be slightly faster since it doesn't require looking
            up a group in GAP.  To get a permutation group from a PARI
            group ``P``, type ``PermutationGroup(P)``.
 
-        -  ``algorithm`` - ``'pari'``, ``'gap'``, ``'kash'``, ``'magma'`` (default:
+        -  ``algorithm`` -- ``'pari'``, ``'gap'``, ``'kash'``, ``'magma'`` (default:
            ``'pari'``, for degrees is at most 11;
            ``'gap'``, for degrees from 12 to 15;
            ``'kash'``, for degrees from 16 or more).
@@ -2257,7 +2257,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        -  ``p`` - Prime number
+        -  ``p`` -- Prime number
 
         OUTPUT: Factorization of this polynomial  modulo `p`
 
@@ -2298,9 +2298,9 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        -  ``p`` - Prime number
+        -  ``p`` -- Prime number
 
-        -  ``prec`` - Integer; the precision
+        -  ``prec`` -- Integer; the precision
 
         OUTPUT: factorization of ``self`` viewed as a `p`-adic polynomial
 
@@ -2386,8 +2386,8 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        -  ``p`` - Prime number; coerceable to :class:`Integer`
-        -  ``e`` - Exponent; coerceable to :class:`Integer`
+        -  ``p`` -- Prime number; coerceable to :class:`Integer`
+        -  ``e`` -- Exponent; coerceable to :class:`Integer`
 
         OUTPUT: Hensel lifts; list of polynomials over `\ZZ / p^e \ZZ`
 

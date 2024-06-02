@@ -1179,7 +1179,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         - ``alpha`` -- TimeSeries as output by the scaled forward algorithm
         - ``beta`` -- TimeSeries as output by the scaled backward algorithm
-        - ``obs ``-- IntList of observations
+        - ``obs `` -- IntList of observations
 
         OUTPUT:
 
