@@ -986,13 +986,12 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         base_ring = self.parent().base_ring()
         if self.parent().is_ambient() and base_ring == self.parent().coordinate_ring():
             return self.dict(copy=copy)
-        else:
-            coordinates = self.parent().coordinate_vector(self)
-            # coordinate_vector returns coefficients in the fraction field.
-            # convert back to the base ring.
-            return {index: base_ring(value)
-                    for index, value in enumerate(coordinates)
-                    if value}
+        coordinates = self.parent().coordinate_vector(self)
+        # coordinate_vector returns coefficients in the fraction field.
+        # convert back to the base ring.
+        return {index: base_ring(value)
+                for index, value in enumerate(coordinates)
+                if value}
 
     def _giac_init_(self):
         """
