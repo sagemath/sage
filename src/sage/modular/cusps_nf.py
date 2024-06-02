@@ -1202,7 +1202,7 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
     """
     k = N.number_field()
     G = k.class_group()
-    L = [[k.ideal(1)] for i in range(nlists)]
+    L = [[k.ideal(1)] for _ in range(nlists)]
     it = k.primes_of_degree_one_iter()
     for I in G.list():
         check = 0

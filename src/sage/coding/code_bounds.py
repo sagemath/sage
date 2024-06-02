@@ -485,7 +485,7 @@ def elias_upper_bound(n,q,d,algorithm=None):
         def ff(n, d, w, q):
             return r*n*d*q**n/((w**2-2*r*n*w+r*n*d)*volume_hamming(n,q,w))
 
-    I = (i for i in range(1, int(r*n) + 1) if i**2-2*r*n*i+r*n*d > 0)
+    I = (i for i in range(1, int(r*n) + 1) if i**2 - 2*r*n*i + r*n*d > 0)
     bnd = min([ff(n, d, w, q) for w in I])
     return int(bnd)
 
