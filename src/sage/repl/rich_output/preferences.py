@@ -141,10 +141,9 @@ class Property(property):
         doc = dedent(doc)
         doc += '\n\n'
         doc += 'Allowed values:\n\n'
-        values_doc = []
-        values_doc.append('* ``None`` (default): no preference')
-        for value in self.allowed_values:
-            values_doc.append('* {0}'.format(repr(value)))
+        values_doc = ['* ``None`` (default): no preference']
+        values_doc.extend('* {0}'.format(repr(value))
+                          for value in self.allowed_values)
         return doc + '\n\n'.join(values_doc)
 
     def __repr__(self):

@@ -2480,8 +2480,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 tmp.append(newtmp)
                 F.append(newtmp)
             A = data.parent()._Sigma0(Matrix(QQ, 2, 2, [0, ~self.prime(), 1, 0]), check=False)
-            for ii in range(len(data._F)):
-                F.append(-(A * tmp[ii]))
+            F.extend(-(A * tmp[ii]) for ii in range(len(data._F)))
             vals = self._make_invariant([self._U(o, normalize=False) for o in F])
             return self.element_class(self, vals)
         if data == 0:
