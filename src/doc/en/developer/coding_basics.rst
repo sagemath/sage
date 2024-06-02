@@ -355,6 +355,8 @@ information. You can use the existing functions of Sage as templates.
 
        - ``p`` -- prime integer (default: `2`); coprime with `n`
 
+       - ``var`` -- string (default: ``'lambda'``)
+
        - ``check`` -- boolean (default: ``True``); specifies whether to check for primality
 
        - ``algorithm`` -- (default: ``None``) the name of the algorithm to use
