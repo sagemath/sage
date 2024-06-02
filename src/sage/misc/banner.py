@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 SageMath version and banner info
 """
