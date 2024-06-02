@@ -13,6 +13,7 @@ from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rings import Rings
 
+
 class Domains(CategoryWithAxiom):
     """
     The category of domains

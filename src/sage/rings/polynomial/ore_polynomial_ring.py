@@ -710,7 +710,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``n`` - an integer (default: 1)
+        -  ``n`` -- an integer (default: 1)
 
         EXAMPLES::
 
@@ -1063,13 +1063,13 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``degree`` - Integer with degree (default: 2)
+        -  ``degree`` -- Integer with degree (default: 2)
            or a tuple of integers with minimum and maximum degrees
 
-        -  ``monic`` - if ``True``, returns a monic Ore polynomial
+        -  ``monic`` -- if ``True``, returns a monic Ore polynomial
            (default: ``True``)
 
-        -  ``*args, **kwds`` - passed in to the ``random_element`` method for
+        -  ``*args, **kwds`` -- passed in to the ``random_element`` method for
            the base ring
 
         EXAMPLES::

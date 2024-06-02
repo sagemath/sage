@@ -977,10 +977,10 @@ class Sets(Category_singleton):
                 <bound method FreeModule_ambient_field._element_constructor_
                  of Vector space of dimension 3 over Rational Field>
 
-                sage: B = SymmetricGroup(3).algebra(ZZ)                                 # needs sage.groups sage.modules
-                sage: B.element_class                                                   # needs sage.groups sage.modules
+                sage: B = SymmetricGroup(3).algebra(ZZ)                                 # needs sage.combinat sage.groups sage.modules
+                sage: B.element_class                                                   # needs sage.combinat sage.groups sage.modules
                 <...SymmetricGroupAlgebra_n_with_category.element_class'>
-                sage: B._element_constructor_                                           # needs sage.groups sage.modules
+                sage: B._element_constructor_                                           # needs sage.combinat sage.groups sage.modules
                 <bound method SymmetricGroupAlgebra_n._element_constructor_
                  of Symmetric group algebra of order 3 over Integer Ring>
             """
@@ -2676,7 +2676,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 This also works for structures such as monoid algebras (see
                 :issue:`27937`)::
 
-                    sage: A = FreeAbelianMonoid('x,y').algebra(QQ)                      # needs sage.groups sage.modules
+                    sage: A = FreeAbelianMonoid('x,y').algebra(QQ)                      # needs sage.combinat sage.modules
                     sage: F, arg = A.construction(); F, arg                             # needs sage.groups sage.modules
                     (The algebra functorial construction,
                      Free abelian monoid on 2 generators (x, y))
@@ -2872,7 +2872,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 request for all shorthands to be defined, including
                 less common ones::
 
-                    sage: S.inject_shorthands("all")                                    # needs sage.combinat sage.modules
+                    sage: S.inject_shorthands("all")                                    # needs lrcalc_python sage.combinat sage.modules
                     Defining e as shorthand for
                      Symmetric Functions over Integer Ring in the elementary basis
                     Defining f as shorthand for
@@ -3040,9 +3040,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 Check that we are consistent no matter which basis is
                 created first::
 
-                    sage: M = posets.BooleanLattice(4).moebius_algebra(QQ)              # needs sage.combinat sage.graphs sage.modules
-                    sage: I = M.I()                                                     # needs sage.combinat sage.graphs sage.modules
-                    sage: M._an_element_()                                              # needs sage.combinat sage.graphs sage.modules
+                    sage: M = posets.BooleanLattice(4).moebius_algebra(QQ)              # needs sage.graphs sage.modules
+                    sage: I = M.I()                                                     # needs sage.graphs sage.modules
+                    sage: M._an_element_()                                              # needs sage.graphs sage.modules
                     2*E[0] + 2*E[1] + 3*E[2]
                 """
                 return self.a_realization().an_element()

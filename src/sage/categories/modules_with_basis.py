@@ -167,7 +167,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         If ``x`` itself is not a module with basis, but there is a
         canonical one associated to it, the latter is returned::
 
-            sage: CQ(AbelianVariety(Gamma0(37)))  # indirect doctest                    # needs sage.modular sage.modules
+            sage: CQ(AbelianVariety(Gamma0(37)))  # indirect doctest                    # needs sage.libs.flint sage.modular sage.modules
             Vector space of dimension 4 over Rational Field
         """
         try:
@@ -270,11 +270,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``triangular`` --  (default: ``None``) ``"upper"`` or
               ``"lower"`` or ``None``:
 
-              * ``"upper"`` - if the
+              * ``"upper"`` -- if the
                 :meth:`~ModulesWithBasis.ElementMethods.leading_support`
                 of the image of the basis vector `x_i` is `i`, or
 
-              * ``"lower"`` - if the
+              * ``"lower"`` -- if the
                 :meth:`~ModulesWithBasis.ElementMethods.trailing_support`
                 of the image of the basis vector `x_i` is `i`.
 

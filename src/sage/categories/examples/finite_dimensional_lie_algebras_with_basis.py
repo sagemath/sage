@@ -449,7 +449,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: a, b, c = L.lie_algebra_generators()
                 sage: elt = 2*a + 2*b + 3*c
-                sage: elt.lift()                                                        # needs sage.combinat
+                sage: elt.lift()                                                        # needs sage.combinat sage.libs.singular
                 2*b0 + 2*b1 + 3*b2
             """
             UEA = self.parent().universal_enveloping_algebra()

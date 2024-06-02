@@ -4766,7 +4766,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`~sage.rings.asymptotic.growth_group.MonomialGrowthGroup` accepts.
+        - ``base`` -- anything :class:`~sage.rings.asymptotic.growth_group.MonomialGrowthGroup` accepts.
 
         OUTPUT:
 

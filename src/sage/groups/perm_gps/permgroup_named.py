@@ -3244,9 +3244,10 @@ class ComplexReflectionGroup(PermutationGroup_unique):
             gens.append([tuple(range(self._n, self._m*self._n + 1, self._n))])
         else:
             from sage.groups.perm_gps.constructor import PermutationGroupElement
-            snm = PermutationGroupElement(gens[-1])
             sn = PermutationGroupElement([tuple(range(self._n, self._m*self._n + 1, self._n))])
-            gens.append(sn**(self._m-1) * snm * sn)
+            if self._n > 1:
+                snm = PermutationGroupElement(gens[-1])
+                gens.append(sn**(self._m-1) * snm * sn)
             if self._p != self._m:
                 gens.append(sn**self._p)
 
@@ -3297,9 +3298,17 @@ class ComplexReflectionGroup(PermutationGroup_unique):
             sage: G = groups.permutation.ComplexReflection(4, 4, 3)
             sage: G.index_set()
             (1, 2, 3)
+
+            sage: G = groups.permutation.ComplexReflection(10, 2, 1)
+            sage: G.index_set()
+            (1,)
+
+            sage: G = groups.permutation.ComplexReflection(10, 10, 1)
+            sage: G.index_set()
+            ()
         """
         n = self._n
-        if self._m != 1:
+        if self._m != 1 and self._n > 1:
             n += 1
         if self._p != 1 and self._p != self._m:
             n += 1
@@ -3320,6 +3329,14 @@ class ComplexReflectionGroup(PermutationGroup_unique):
             sage: G = groups.permutation.ComplexReflection(1, 1, 4)
             sage: G.simple_reflections()
             Finite family {1: (1,2), 2: (2,3), 3: (3,4)}
+
+            sage: G = groups.permutation.ComplexReflection(10, 2, 1)
+            sage: G.simple_reflections()
+            Finite family {1: (1,3,5,7,9)(2,4,6,8,10)}
+
+            sage: G = groups.permutation.ComplexReflection(10, 10, 1)
+            sage: G.simple_reflections()
+            Finite family {}
         """
         if i not in self.index_set():
             raise ValueError("not an index of a simple reflection")
@@ -3331,7 +3348,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
 
         from sage.groups.perm_gps.constructor import PermutationGroupElement
         sn = PermutationGroupElement([tuple(range(self._n, self._m*self._n + 1, self._n))])
-        if i == self._n + 1:
+        if i == self._n + 1 or self._n == 1:
             return self(sn**self._p)
 
         snm = PermutationGroupElement([(self._n-1+k, self._n+k)

@@ -182,9 +182,9 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
     - ``naming`` -- (optional) a string; the naming scheme to use for
       the basis; valid values are:
 
-      * ``'index'`` - (default for `r < 10`) the basis elements are
+      * ``'index'`` -- (default for `r < 10`) the basis elements are
         ``names_w``, where ``w`` are Lyndon words indexing the basis
-      * ``'linear'`` - (default for `r \geq 10`) the basis is indexed
+      * ``'linear'`` -- (default for `r \geq 10`) the basis is indexed
         ``names_1``, ..., ``names_n`` in the ordering of the Lyndon basis
 
     .. NOTE::
