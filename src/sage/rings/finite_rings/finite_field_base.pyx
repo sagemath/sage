@@ -277,7 +277,6 @@ cdef class FiniteField(Field):
         return "GF(%s,Variable=>symbol %s)" % (self.order(),
                                                self.variable_name())
 
-
     def _sage_input_(self, sib, coerced):
         r"""
         Produce an expression which will reproduce this value when evaluated.
@@ -1114,7 +1113,6 @@ cdef class FiniteField(Field):
             1023
         """
         return self.order() - 1
-
 
     def random_element(self, *args, **kwds):
         r"""
@@ -2162,6 +2160,7 @@ cdef class FiniteField(Field):
         python_int = int.from_bytes(input_bytes, byteorder=byteorder)
         return self.from_integer(python_int)
 
+
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
     r"""
     Used to unpickle extensions of finite fields. Now superseded (hence no
@@ -2176,6 +2175,7 @@ def unpickle_FiniteField_prm(_type, order, variable_name, kwargs):
     but kept around for backward compatibility.
     """
     return _type(order, variable_name, **kwargs)
+
 
 register_unpickle_override(
     'sage.rings.ring', 'unpickle_FiniteField_prm', unpickle_FiniteField_prm)
