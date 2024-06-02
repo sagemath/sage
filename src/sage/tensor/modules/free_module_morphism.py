@@ -68,7 +68,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
       the images of the basis of `M` (see the convention in the example below)
     - ``bases`` -- (default: ``None``) pair (basis_M, basis_N) defining the
       matrix representation, basis_M being a basis of module `M` and
-      basis_N a basis of module `N` ; if None the pair formed by the
+      basis_N a basis of module `N` ; if ``None``, the pair formed by the
       default bases of each module is assumed.
     - ``name`` -- (default: ``None``) string; name given to the homomorphism
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote the
