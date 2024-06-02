@@ -168,11 +168,19 @@ jobs:
           zip -r docs.zip docs
 
       - name: Upload docs
+        id: upload
         if: (success() || failure()) && steps.copy.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: docs
           path: docs.zip
+
+      - name: Remove docs
+        if: (success() || failure()) && steps.upload.outcome == 'success'
+        run: |
+          set -ex
+          # We remove previous docs directory to save space on runner device
+          rm -rf docs/
 
       - name: Build live doc
         id: buildlivedoc
@@ -195,11 +203,11 @@ jobs:
         if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
         run: |
           mkdir -p ./livedoc
-          cp -r -L /sage/local/share/doc/sage/html ./livedoc
-          cp -r -L /sage/local/share/doc/sage/pdf ./livedoc
-          cp  /sage/local/share/doc/sage/index.html ./livedoc
+          # We copy everything to a local folder
+          docker cp BUILD:/sage/local/share/doc/sage/html livedoc
+          docker cp BUILD:/sage/local/share/doc/sage/pdf livedoc
+          docker cp BUILD:/sage/local/share/doc/sage/index.html livedoc
           zip -r livedoc.zip livedoc
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Upload live doc
         if: (success() || failure()) && steps.copylivedoc.outcome == 'success'
