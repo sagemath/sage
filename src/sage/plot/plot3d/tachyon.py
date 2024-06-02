@@ -124,7 +124,7 @@ used to tile the plane::
     sage: fname_ppm = tmp_filename(ext='.ppm')
     sage: T.save(fname_png)
     sage: r2 = os.system('convert '+fname_png+' '+fname_ppm)    # optional -- ImageMagick
-
+          ...
     sage: # optional - imagemagick
     sage: T = Tachyon(xres=800, yres=600,
     ....:             camera_position=(-2.0,-.1,.3),
