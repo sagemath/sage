@@ -1494,7 +1494,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 d = self.monomial_coefficients()
             except NotImplementedError:
                 return
-            tester.assertTrue(all(value.parent() is base_ring
+            tester.assertTrue(all(value.parent() == base_ring
                                   for value in d.values()))
             tester.assertEqual(self, self.parent().linear_combination(
                 (basis[index], coefficient)
