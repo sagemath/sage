@@ -78,7 +78,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``n``   - ``infinity`` or an integer greater or equal to ``3``.
+        - ``n`` -- ``infinity`` or an integer greater or equal to ``3``.
 
         OUTPUT:
 

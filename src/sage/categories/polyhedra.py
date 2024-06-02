@@ -11,6 +11,7 @@ Polyhedral subsets of free ZZ, QQ or RR-modules.
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_types import Category_over_base_ring
 
+
 class PolyhedralSets(Category_over_base_ring):
     r"""
     The category of polyhedra over a ring.

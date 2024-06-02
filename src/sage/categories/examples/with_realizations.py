@@ -21,6 +21,7 @@ from sage.sets.set import Set
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.subset import Subsets
 
+
 class SubsetAlgebra(UniqueRepresentation, Parent):
     r"""
     An example of parent endowed with several realizations

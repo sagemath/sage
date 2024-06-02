@@ -15,6 +15,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.sets_cat import Sets
 from sage.categories.fields import Fields
 
+
 class VectorBundles(Category_over_base_ring):
     r"""
     The category of vector bundles over any base space and base field.

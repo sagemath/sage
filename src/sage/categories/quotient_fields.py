@@ -14,6 +14,7 @@ from sage.categories.fields import Fields
 
 from sage.structure.element import coerce_binop
 
+
 class QuotientFields(Category_singleton):
     """
     The category of quotient fields over an integral domain
@@ -341,8 +342,8 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``*args`` - Arbitrary arguments suitable over the base ring
-            - ``**kwds`` - Arbitrary keyword arguments suitable over the base ring
+            - ``*args`` -- Arbitrary arguments suitable over the base ring
+            - ``**kwds`` -- Arbitrary keyword arguments suitable over the base ring
 
             OUTPUT:
 
@@ -640,7 +641,7 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``var`` - Variable with respect to which the derivative is computed
+            - ``var`` -- Variable with respect to which the derivative is computed
 
             OUTPUT:
 

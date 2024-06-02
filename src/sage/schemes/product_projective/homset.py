@@ -89,13 +89,13 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
 
         INPUT:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``tolerance`` - a rational number in (0,1] used in Doyle-Krumm algorithm 4
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm algorithm 4
 
-        - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+        - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
 
-        - ``algorithm`` - either ``'sieve'`` or ``'enumerate'`` algorithms can be used over `\QQ`. If
+        - ``algorithm`` -- either ``'sieve'`` or ``'enumerate'`` algorithms can be used over `\QQ`. If
           not specified, ``'enumerate'`` is used only for small height bounds.
 
         OUTPUT: A list of rational points of the projective scheme.

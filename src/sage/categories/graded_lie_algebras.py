@@ -19,6 +19,7 @@ AUTHORS:
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_modules import GradedModulesCategory
 
+
 class GradedLieAlgebras(GradedModulesCategory):
     r"""
     Category of graded Lie algebras.

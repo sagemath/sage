@@ -68,7 +68,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         OUTPUT:
 
@@ -99,7 +99,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
 
         EXAMPLES::
 
@@ -632,7 +632,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         OUTPUT:
 
@@ -663,7 +663,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
 
         EXAMPLES::
 

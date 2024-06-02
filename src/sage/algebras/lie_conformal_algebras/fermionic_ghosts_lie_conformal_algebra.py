@@ -30,6 +30,7 @@ AUTHORS:
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
+
 class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
     The Fermionic ghosts or `bc`-system super Lie conformal algebra.

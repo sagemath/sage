@@ -136,8 +136,8 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: D4 = DescentAlgebra(QQ, 4).B()                                # needs sage.combinat sage.modules
-                    sage: D4.algebra_generators()                                       # needs sage.combinat sage.modules
+                    sage: D4 = DescentAlgebra(QQ, 4).B()                                # needs sage.combinat sage.groups sage.modules
+                    sage: D4.algebra_generators()                                       # needs sage.combinat sage.groups sage.modules
                     Lazy family (...)_{i in Compositions of 4}
 
                     sage: R.<x> = ZZ[]

@@ -15,6 +15,7 @@ from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
 
+
 class FreeAlgebra(CombinatorialFreeModule):
     r"""
     An example of an algebra with basis: the free algebra
