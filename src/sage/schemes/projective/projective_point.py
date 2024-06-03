@@ -52,8 +52,6 @@ lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field'
 
 _NumberFields = NumberFields()
 
-
-
 # --------------------
 # Projective varieties
 # --------------------

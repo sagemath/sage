@@ -55,7 +55,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
 
 
-
 def is_Berkovich(space) -> bool:
     """
     Check if ``space`` is a Berkovich space.
