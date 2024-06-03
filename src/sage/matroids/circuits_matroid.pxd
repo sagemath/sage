@@ -17,8 +17,8 @@ cdef class CircuitsMatroid(Matroid):
     cpdef frozenset _closure(self, frozenset X)
 
     # enumeration
-    cpdef SetSystem independent_k_sets(self, long k)
-    cpdef SetSystem dependent_k_sets(self, long k)
+    cpdef SetSystem independent_sets(self, long k=*)
+    cpdef SetSystem dependent_sets(self, long k)
     cpdef SetSystem circuits(self, k=*)
     cpdef SetSystem nonspanning_circuits(self)
     cpdef SetSystem no_broken_circuits_facets(self, ordering=*, reduced=*)

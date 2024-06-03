@@ -317,7 +317,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
     cpdef dict circuit_closures(self):
         """
-        Return the list of closures of circuits of the matroid.
+        Return the closures of circuits of the matroid.
 
         A *circuit closure* is a closed set containing a circuit.
 

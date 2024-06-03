@@ -63,9 +63,9 @@ additional functionality (e.g. linear extensions).
     - :meth:`circuit_closures() <sage.matroids.matroid.Matroid.circuit_closures>`
     - :meth:`nonspanning_circuit_closures() <sage.matroids.matroid.Matroid.nonspanning_circuit_closures>`
     - :meth:`bases() <sage.matroids.matroid.Matroid.bases>`
-    - :meth:`independent_k_sets() <sage.matroids.matroid.Matroid.independent_k_sets>`
+    - :meth:`independent_sets() <sage.matroids.matroid.Matroid.independent_sets>`
     - :meth:`nonbases() <sage.matroids.matroid.Matroid.nonbases>`
-    - :meth:`dependent_k_sets() <sage.matroids.matroid.Matroid.dependent_k_sets>`
+    - :meth:`dependent_sets() <sage.matroids.matroid.Matroid.dependent_sets>`
     - :meth:`flats() <sage.matroids.matroid.Matroid.flats>`
     - :meth:`coflats() <sage.matroids.matroid.Matroid.coflats>`
     - :meth:`hyperplanes() <sage.matroids.matroid.Matroid.hyperplanes>`
@@ -1210,8 +1210,8 @@ cdef class Matroid(SageObject):
             if certificate:
                 return False, None
             return False
-        YY = self.dual().independent_k_sets(cd)
-        for X in self.independent_k_sets_iterator(rd):
+        YY = self.dual().independent_sets(cd)
+        for X in self.independent_sets_iterator(rd):
             for Y in YY:
                 if X.isdisjoint(Y):
                     if N._is_isomorphic(self._minor(contractions=X, deletions=Y)):
@@ -2657,7 +2657,7 @@ cdef class Matroid(SageObject):
 
         Test all subsets of the groundset of cardinality ``self.full_rank()``
         """
-        return self.dependent_k_sets(self.full_rank())
+        return self.dependent_sets(self.full_rank())
 
     def nonbases_iterator(self):
         r"""
@@ -2688,11 +2688,11 @@ cdef class Matroid(SageObject):
             if not self._is_independent(X):
                 yield X
 
-    dependent_r_sets = deprecated_function_alias(38057, dependent_k_sets)
+    dependent_r_sets = deprecated_function_alias(38057, dependent_sets)
 
-    cpdef SetSystem dependent_k_sets(self, long k):
+    cpdef SetSystem dependent_sets(self, long k):
         r"""
-        Return the list of dependent subsets of fixed size.
+        Return the dependent sets of fixed size.
 
         INPUT:
 
@@ -2701,10 +2701,10 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.catalog.Vamos()
-            sage: M.dependent_k_sets(3)
+            sage: M.dependent_sets(3)
             SetSystem of 0 sets over 8 elements
             sage: sorted([sorted(X) for X in
-            ....: matroids.catalog.Vamos().dependent_k_sets(4)])
+            ....: matroids.catalog.Vamos().dependent_sets(4)])
             [['a', 'b', 'c', 'd'], ['a', 'b', 'e', 'f'], ['a', 'b', 'g', 'h'],
             ['c', 'd', 'e', 'f'], ['e', 'f', 'g', 'h']]
 
@@ -2720,9 +2720,9 @@ cdef class Matroid(SageObject):
                 D_k.append(X)
         return D_k
 
-    def dependent_k_sets_iterator(self, long k):
+    def dependent_sets_iterator(self, long k):
         r"""
-        Return an iterator over the dependent subsets of fixed size.
+        Return an iterator over the dependent sets of fixed size.
 
         INPUT:
 
@@ -2735,10 +2735,10 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.catalog.Vamos()
-            sage: list(M.dependent_k_sets_iterator(3))
+            sage: list(M.dependent_sets_iterator(3))
             []
             sage: sorted([sorted(X) for X in
-            ....: matroids.catalog.Vamos().dependent_k_sets_iterator(4)])
+            ....: matroids.catalog.Vamos().dependent_sets_iterator(4)])
             [['a', 'b', 'c', 'd'], ['a', 'b', 'e', 'f'], ['a', 'b', 'g', 'h'],
             ['c', 'd', 'e', 'f'], ['e', 'f', 'g', 'h']]
         """
@@ -2768,9 +2768,9 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`M.independent_k_sets() <sage.matroids.matroid.Matroid.independent_k_sets>`
+            :meth:`M.independent_sets() <sage.matroids.matroid.Matroid.independent_sets>`
         """
-        return self.independent_k_sets(self.full_rank())
+        return self.independent_sets(self.full_rank())
 
     def bases_iterator(self):
         r"""
@@ -2790,7 +2790,7 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`M.independent_k_sets() <sage.matroids.matroid.Matroid.independent_k_sets>`
+            :meth:`M.independent_sets_iterator() <sage.matroids.matroid.Matroid.independent_sets_iterator>`
         """
         cdef frozenset X
         for Xt in combinations(self.groundset(), self.full_rank()):
@@ -2798,9 +2798,16 @@ cdef class Matroid(SageObject):
             if self._is_independent(X):
                 yield X
 
-    cpdef SetSystem independent_sets(self):
+    cpdef SetSystem independent_sets(self, long k=-1):
         r"""
-        Return the list of independent subsets of the matroid.
+        Return the independent sets of the matroid.
+
+        INPUT:
+
+        - ``k`` -- integer (optional); if specified, return the size-`k`
+          independent sets of the matroid
+
+        OUTPUT: :class:`SetSystem`
 
         EXAMPLES::
 
@@ -2808,17 +2815,38 @@ cdef class Matroid(SageObject):
             sage: I = M.independent_sets()
             sage: len(I)
             121
+            sage: M.independent_sets(4)
+            SetSystem of 0 sets over 9 elements
+            sage: S = M.independent_sets(3); S
+            SetSystem of 75 sets over 9 elements
+            sage: frozenset({'a', 'c', 'e'}) in S
+            True
 
         .. SEEALSO::
 
-            :meth:`M.independent_k_sets() <sage.matroids.matroid.Matroid.independent_k_sets>`
+            :meth:`M.bases() <sage.matroids.matroid.Matroid.bases>`
+        """
+        if k == -1:  # all independent sets
+            return self._independent_sets()
+
+        # independent k-sets
+        cdef SetSystem I_k = SetSystem(self.groundset())
+        cdef frozenset X
+        for Xt in combinations(self.groundset(), k):
+            X = frozenset(Xt)
+            if self._is_independent(X):
+                I_k.append(X)
+        return I_k
+
+    cdef SetSystem _independent_sets(self):
+        """
+        Return all independent sets of the matroid.
         """
         cdef int r
         cdef int full_rank = self.full_rank()
         cdef list T = [set() for r in range(full_rank)]
         cdef list I = [frozenset()] * (full_rank+1)
         r = 0
-
         res = [frozenset()]
         T[0] = set(self.groundset()) - self.closure([])
         while r >= 0:
@@ -2837,9 +2865,14 @@ cdef class Matroid(SageObject):
                 r -= 1
         return SetSystem(self.groundset(), res)
 
-    def independent_sets_iterator(self):
+    def independent_sets_iterator(self, k=None):
         r"""
-        Return an iterator over the independent subsets of the matroid.
+        Return an iterator over the independent sets of the matroid.
+
+        INPUT:
+
+        - ``k`` -- integer (optional); if specified, return an iterator over
+          the size-`k` independent sets of the matroid
 
         EXAMPLES::
 
@@ -2847,107 +2880,49 @@ cdef class Matroid(SageObject):
             sage: I = list(M.independent_sets_iterator())
             sage: len(I)
             121
-
-        .. SEEALSO::
-
-            :meth:`M.independent_k_sets() <sage.matroids.matroid.Matroid.independent_k_sets>`
-        """
-        cdef int r
-        cdef int full_rank = self.full_rank()
-        cdef list T = [set() for r in range(full_rank)]
-        cdef list I = [frozenset()] * (full_rank+1)
-        r = 0
-
-        yield frozenset()
-        T[0] = set(self.groundset()) - self.closure([])
-        while r >= 0:
-            if r + 1 == full_rank:
-                for x in T[r]:
-                    I[r+1] = I[r].union([x])
-                    yield I[r+1]
-                T[r] = set()
-                r -= 1
-            elif T[r]:
-                I[r+1] = I[r].union([T[r].pop()])
-                yield I[r+1]
-                T[r+1] = T[r] - self._closure(I[r+1])
-                r += 1
-            else:
-                r -= 1
-
-    independent_r_sets = deprecated_function_alias(38057, independent_k_sets)
-
-    cpdef SetSystem independent_k_sets(self, long k):
-        r"""
-        Return the size-`k` independent subsets of the matroid.
-
-        INPUT:
-
-        - ``k`` -- integer
-
-        OUTPUT: :class:`SetSystem`
-
-        ALGORITHM:
-
-        Test all subsets of the groundset of cardinality `k`.
-
-        EXAMPLES::
-
             sage: M = matroids.catalog.Pappus()
-            sage: M.independent_k_sets(4)
-            SetSystem of 0 sets over 9 elements
-            sage: S = M.independent_k_sets(3); S
-            SetSystem of 75 sets over 9 elements
-            sage: frozenset({'a', 'c', 'e'}) in S
-            True
-
-        .. SEEALSO::
-
-            :meth:`M.independent_sets() <sage.matroids.matroid.Matroid.independent_sets>`
-            :meth:`M.bases() <sage.matroids.matroid.Matroid.bases>`
-        """
-        cdef SetSystem I_k = SetSystem(self.groundset())
-        cdef frozenset X
-        for Xt in combinations(self.groundset(), k):
-            X = frozenset(Xt)
-            if self._is_independent(X):
-                I_k.append(X)
-        return I_k
-
-    def independent_k_sets_iterator(self, r):
-        r"""
-        Return an iterator over the size-`k` independent subsets of the
-        matroid.
-
-        INPUT:
-
-        - ``k`` -- integer
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.Pappus()
-            sage: list(M.independent_k_sets_iterator(4))
+            sage: list(M.independent_sets_iterator(4))
             []
-            sage: S = list(M.independent_k_sets_iterator(3))
+            sage: S = list(M.independent_sets_iterator(3))
             sage: len(S)
             75
             sage: frozenset({'a', 'c', 'e'}) in S
             True
 
-        ALGORITHM:
-
-        Test all subsets of the groundset of cardinality `k`.
-
         .. SEEALSO::
 
-            :meth:`M.independent_sets() <sage.matroids.matroid.Matroid.independent_sets>`
-            :meth:`M.bases() <sage.matroids.matroid.Matroid.bases>`
+            :meth:`M.bases_iterator() <sage.matroids.matroid.Matroid.bases_iterator>`
         """
+        cdef int r
+        cdef int full_rank = self.full_rank()
+        cdef list T = [set() for r in range(full_rank)]
+        cdef list I = [frozenset()] * (full_rank+1)
         cdef frozenset X
-        for Xt in combinations(self.groundset(), r):
-            X = frozenset(Xt)
-            if self._rank(X) == len(X):
-                yield X
+        if k is None:
+            r = 0
+            yield frozenset()
+            T[0] = set(self.groundset()) - self.closure([])
+            while r >= 0:
+                if r + 1 == full_rank:
+                    for x in T[r]:
+                        I[r+1] = I[r].union([x])
+                        yield I[r+1]
+                    T[r] = set()
+                    r -= 1
+                elif T[r]:
+                    I[r+1] = I[r].union([T[r].pop()])
+                    yield I[r+1]
+                    T[r+1] = T[r] - self._closure(I[r+1])
+                    r += 1
+                else:
+                    r -= 1
+        else:
+            for Xt in combinations(self.groundset(), k):
+                X = frozenset(Xt)
+                if self._rank(X) == len(X):
+                    yield X
+
+    independent_r_sets = deprecated_function_alias(38057, independent_sets)
 
     cpdef list _extend_flags(self, list flags):
         r"""
@@ -3126,7 +3101,7 @@ cdef class Matroid(SageObject):
         cdef int i, s
         for i in range(self.full_rank() + 1):
             s = 0
-            for _ in self.independent_k_sets_iterator(i):
+            for _ in self.independent_sets_iterator(i):
                 s += 1
             f.append(ZZ(s))
         return f
@@ -3186,7 +3161,7 @@ cdef class Matroid(SageObject):
 
     cpdef SetSystem broken_circuits(self, ordering=None):
         r"""
-        Return the list of broken circuits of ``self``.
+        Return the broken circuits of ``self``.
 
         Let `M` be a matroid with groundset `E`, and let `<` be a total
         ordering on `E`. A *broken circuit* for `M` means a subset `B` of
@@ -8511,7 +8486,7 @@ cdef class Matroid(SageObject):
                 r = self._rank(self.groundset()) - len(c)
 
                 # get candidate independent_sets
-                for I in self.independent_k_sets_iterator(r):
+                for I in self.independent_sets_iterator(r):
                     if I.issubset(c[0]):
 
                         # add the facet

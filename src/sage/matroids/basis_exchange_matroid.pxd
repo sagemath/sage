@@ -68,8 +68,8 @@ cdef class BasisExchangeMatroid(Matroid):
     cdef  _flat_element_inv_rec(self, object f_inc, long R, bitset_t* flats, bitset_t* todo, long elt, long i)
 
     cpdef bases_count(self)
-    cpdef SetSystem independent_k_sets(self, long k)
-    cpdef SetSystem dependent_k_sets(self, long k)
+    cpdef SetSystem independent_sets(self, long k=*)
+    cpdef SetSystem dependent_sets(self, long k)
 
     cpdef SetSystem nonspanning_circuits(self)
     cpdef SetSystem cocircuits(self)

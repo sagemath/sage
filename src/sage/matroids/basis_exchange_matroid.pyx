@@ -1494,11 +1494,14 @@ cdef class BasisExchangeMatroid(Matroid):
         self._bcount = res
         return self._bcount
 
-    cpdef SetSystem independent_sets(self):
+    cpdef SetSystem independent_sets(self, long k=-1):
         r"""
-        Return the list of independent subsets of the matroid.
+        Return the independent sets of the matroid.
 
-        OUTPUT: iterable containing all independent subsets of the matroid
+        INPUT:
+
+        - ``k`` -- integer (optional); if specified, return the size-`k`
+          independent sets of the matroid
 
         EXAMPLES::
 
@@ -1506,65 +1509,10 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: I = M.independent_sets()
             sage: len(I)
             57
-        """
-        cdef bitset_t *I
-        cdef bitset_t *T
-        cdef long i, e, r
-
-        res = SetSystem(self._E)
-        bitset_clear(self._input)
-        res._append(self._input)
-        if not self._E:
-            return res
-
-        r = self.full_rank()
-        I = <bitset_t*>sig_malloc((r + 1) * sizeof(bitset_t))
-        T = <bitset_t*>sig_malloc((r + 1) * sizeof(bitset_t))
-        for i in range(r + 1):
-            bitset_init(I[i], self._bitset_size)
-            bitset_init(T[i], self._bitset_size)
-
-        i = 0
-        bitset_clear(I[0])
-        bitset_copy(self._input, I[0])
-        self.__closure(T[0], self._input)
-        while i >= 0:
-            e = bitset_first_in_complement(T[i])
-            if e >= 0:
-                bitset_add(T[i], e)
-                bitset_copy(I[i+1], I[i])
-                bitset_add(I[i+1], e)
-                res._append(I[i+1])
-                bitset_copy(self._input, I[i+1])
-                self.__closure(T[i+1], self._input)
-                bitset_union(T[i+1],T[i+1],T[i])
-                i = i + 1
-            else:
-                i = i - 1
-        for i in range(r + 1):
-            bitset_free(I[i])
-            bitset_free(T[i])
-        sig_free(I)
-        sig_free(T)
-        return res
-
-    cpdef SetSystem independent_k_sets(self, long k):
-        """
-        Return the list of size-`k` independent subsets of the matroid.
-
-        INPUT:
-
-        - ``k`` -- integer
-
-        OUTPUT: iterable containing all independent subsets of the matroid of
-        cardinality ``k``
-
-        EXAMPLES::
-
             sage: M = matroids.catalog.N1()
             sage: M.bases_count()
             184
-            sage: [len(M.independent_k_sets(k)) for k in range(M.full_rank() + 1)]
+            sage: [len(M.independent_sets(k)) for k in range(M.full_rank() + 1)]
             [1, 10, 45, 120, 201, 184]
 
         TESTS::
@@ -1572,8 +1520,49 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: len([B for B in M.bases()])
             184
         """
-        cdef SetSystem BB
-        BB = SetSystem(self._E)
+        cdef bitset_t *I
+        cdef bitset_t *T
+        cdef long i, e, r
+        if k == -1:  # all independent sets
+            res = SetSystem(self._E)
+            bitset_clear(self._input)
+            res._append(self._input)
+            if not self._E:
+                return res
+
+            r = self.full_rank()
+            I = <bitset_t*>sig_malloc((r + 1) * sizeof(bitset_t))
+            T = <bitset_t*>sig_malloc((r + 1) * sizeof(bitset_t))
+            for i in range(r + 1):
+                bitset_init(I[i], self._bitset_size)
+                bitset_init(T[i], self._bitset_size)
+
+            i = 0
+            bitset_clear(I[0])
+            bitset_copy(self._input, I[0])
+            self.__closure(T[0], self._input)
+            while i >= 0:
+                e = bitset_first_in_complement(T[i])
+                if e >= 0:
+                    bitset_add(T[i], e)
+                    bitset_copy(I[i+1], I[i])
+                    bitset_add(I[i+1], e)
+                    res._append(I[i+1])
+                    bitset_copy(self._input, I[i+1])
+                    self.__closure(T[i+1], self._input)
+                    bitset_union(T[i+1],T[i+1],T[i])
+                    i = i + 1
+                else:
+                    i = i - 1
+            for i in range(r + 1):
+                bitset_free(I[i])
+                bitset_free(T[i])
+            sig_free(I)
+            sig_free(T)
+            return res
+
+        # independent k-sets
+        cdef SetSystem BB = SetSystem(self._E)
         if k < 0 or k > self.full_rank():
             return BB
         bitset_clear(self._input)
@@ -1585,22 +1574,22 @@ cdef class BasisExchangeMatroid(Matroid):
             repeat = nxksrd(self._input, self._groundset_size, k, True)
         return BB
 
-    cpdef SetSystem dependent_k_sets(self, long k):
+    cpdef SetSystem dependent_sets(self, long k):
         """
-        Return the list of dependent subsets of fixed size.
+        Return the dependent sets of fixed size.
 
         INPUT:
 
         - ``k`` -- integer
 
-        OUTPUT: iterable containing all dependent subsets of size ``k``
+        OUTPUT: iterable containing all dependent sets of size ``k``
 
         EXAMPLES::
 
             sage: M = matroids.catalog.N1()
             sage: len(M.nonbases())
             68
-            sage: [len(M.dependent_k_sets(k)) for k in range(M.full_rank() + 1)]
+            sage: [len(M.dependent_sets(k)) for k in range(M.full_rank() + 1)]
             [0, 0, 0, 0, 9, 68]
 
         TESTS::
@@ -1631,7 +1620,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cpdef SetSystem nonspanning_circuits(self):
         """
-        Return the list of nonspanning circuits of the matroid.
+        Return the nonspanning circuits of the matroid.
 
         A *nonspanning circuit* is a circuit whose rank is strictly smaller
         than the rank of the matroid.
@@ -1678,7 +1667,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cpdef SetSystem noncospanning_cocircuits(self):
         """
-        Return the list of noncospanning cocircuits of the matroid.
+        Return the noncospanning cocircuits of the matroid.
 
         A *noncospanning cocircuit* is a cocircuit whose corank is strictly
         smaller than the corank of the matroid.
@@ -1726,7 +1715,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cpdef SetSystem cocircuits(self):
         """
-        Return the list of cocircuits of the matroid.
+        Return the cocircuits of the matroid.
 
         OUTPUT: iterable containing all cocircuits
 
@@ -1772,7 +1761,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cpdef SetSystem circuits(self, k=None):
         """
-        Return the list of circuits of the matroid.
+        Return the circuits of the matroid.
 
         OUTPUT: iterable containing all circuits
 

@@ -474,9 +474,9 @@ cdef class CircuitsMatroid(Matroid):
             if S not in NB:
                 yield S
 
-    cpdef SetSystem independent_k_sets(self, long k):
+    cpdef SetSystem independent_sets(self, long k=-1):
         r"""
-        Return the size-`k` independent subsets of the matroid.
+        Return the size-`k` independent sets of the matroid.
 
         INPUT:
 
@@ -488,9 +488,9 @@ cdef class CircuitsMatroid(Matroid):
 
             sage: from sage.matroids.circuits_matroid import CircuitsMatroid
             sage: M = CircuitsMatroid(matroids.catalog.Pappus())
-            sage: M.independent_k_sets(4)
+            sage: M.independent_sets(4)
             SetSystem of 0 sets over 9 elements
-            sage: M.independent_k_sets(3)
+            sage: M.independent_sets(3)
             SetSystem of 75 sets over 9 elements
             sage: frozenset({'a', 'c', 'e'}) in _
             True
@@ -506,9 +506,13 @@ cdef class CircuitsMatroid(Matroid):
 
             :meth:`M.bases() <sage.matroids.circuits_matroid.bases>`
         """
+        if k == -1:  # all independent sets
+            return self._independent_sets()
+
+        # independent k-sets
         from itertools import combinations
         cdef SetSystem I_k = SetSystem(self._groundset)
-        cdef set D_k = set(self.dependent_k_sets(k))
+        cdef set D_k = set(self.dependent_sets(k))
         cdef frozenset S
         for St in combinations(self._groundset, k):
             S = frozenset(St)
@@ -516,9 +520,9 @@ cdef class CircuitsMatroid(Matroid):
                 I_k.append(S)
         return I_k
 
-    cpdef SetSystem dependent_k_sets(self, long k):
+    cpdef SetSystem dependent_sets(self, long k):
         r"""
-        Return the dependent subsets of fixed size.
+        Return the dependent sets of fixed size.
 
         INPUT:
 
@@ -530,9 +534,9 @@ cdef class CircuitsMatroid(Matroid):
 
             sage: from sage.matroids.circuits_matroid import CircuitsMatroid
             sage: M = CircuitsMatroid(matroids.catalog.Vamos())
-            sage: M.dependent_k_sets(3)
+            sage: M.dependent_sets(3)
             SetSystem of 0 sets over 8 elements
-            sage: sorted([sorted(X) for X in M.dependent_k_sets(4)])
+            sage: sorted([sorted(X) for X in M.dependent_sets(4)])
             [['a', 'b', 'c', 'd'], ['a', 'b', 'e', 'f'], ['a', 'b', 'g', 'h'],
              ['c', 'd', 'e', 'f'], ['e', 'f', 'g', 'h']]
 

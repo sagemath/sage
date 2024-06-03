@@ -427,7 +427,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         """
         if self.full_rank() == 0:
             return None
-        return BasisMatroid(groundset=self._E, nonbases=self.dependent_k_sets(self.full_rank() - 1), rank=self.full_rank() - 1)
+        return BasisMatroid(groundset=self._E, nonbases=self.dependent_sets(self.full_rank() - 1), rank=self.full_rank() - 1)
 
     cpdef _extension(self, e, H):
         r"""
@@ -464,7 +464,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             return BasisMatroid(groundset=self._E + (e,), bases=[set()])
 
         BB = self.bases()
-        BT = self.independent_k_sets(self.full_rank() - 1)
+        BT = self.independent_sets(self.full_rank() - 1)
         se = set([e])
         BE = []
         for B in BT:
@@ -568,7 +568,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     cpdef SetSystem bases(self):
         r"""
-        Return the list of bases of the matroid.
+        Return the bases of the matroid.
 
         A *basis* is a maximal independent set.
 
@@ -597,7 +597,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     cpdef SetSystem nonbases(self):
         r"""
-        Return the list of nonbases of the matroid.
+        Return the nonbases of the matroid.
 
         A *nonbasis* is a set with cardinality ``self.full_rank()`` that is
         not a basis.
