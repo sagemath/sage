@@ -404,7 +404,6 @@ class Permutation(CombinatorialElement):
         sage: p = Permutation([1, 2, 3], algorithm='sjt')
         sage: for _ in range(6):
         ....:     p = p.next()
-        ....:
         sage: p
         False
 
@@ -477,8 +476,7 @@ class Permutation(CombinatorialElement):
     """
     @staticmethod
     @rename_keyword(deprecation=35233, check_input='check')
-    def __classcall_private__(cls, l, algorithm='lex', sjt=None,
-                              check=True):
+    def __classcall_private__(cls, l, algorithm='lex', sjt=None, check=True):
         """
         Return a permutation in the general permutations parent.
 
@@ -867,7 +865,6 @@ class Permutation(CombinatorialElement):
             sage: for _ in range(factorial(len(l))):
             ....:     s.add(p)
             ....:     p = p.next()
-            ....:
             sage: p
             False
             sage: assert(len(s)) == factorial(len(l))
@@ -878,7 +875,7 @@ class Permutation(CombinatorialElement):
             sjt = self._sjt.next()
             if sjt is False:
                 return False
-            return Permutations()(sjt._get_perm(), algorithm='sjt', sjt=sjt)
+            return Permutations()(sjt._list, algorithm='sjt', sjt=sjt)
 
         p = self[:]
         n = len(self)

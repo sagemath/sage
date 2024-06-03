@@ -65,13 +65,14 @@ class SJT(CombinatorialElement):
         [1, 2, 3, 4]
         sage: s = s.next(); s
         [1, 2, 4, 3]
-        sage: p = Permutation(s._get_perm(), algorithm='sjt', sjt=s)
+        sage: p = Permutation(s._list, algorithm='sjt', sjt=s)
         sage: p
         [1, 2, 4, 3]
         sage: p.next()
         [1, 4, 2, 3]
 
     TESTS::
+
         sage: from sage.combinat.SJT import SJT
         sage: s = SJT([1, 2, 3, 4]); s
         [1, 2, 3, 4]
@@ -97,7 +98,7 @@ class SJT(CombinatorialElement):
 
         - ``l`` -- list; a list of ordered ``int``.
 
-        - ``directions`` -- list (default: ``None`` ); a list of directions for
+        - ``directions`` -- list (default: ``None``); a list of directions for
           each element in the permuted list. Used when constructing permutations
           from a pre-defined internal state.
 
@@ -108,7 +109,7 @@ class SJT(CombinatorialElement):
             [1, 2, 3, 4]
             sage: s = s.next(); s
             [1, 2, 4, 3]
-            sage: p = Permutation(s._get_perm(), algorithm='sjt', sjt=s)
+            sage: p = Permutation(s._list, algorithm='sjt', sjt=s)
             sage: p
             [1, 2, 4, 3]
             sage: p.next()
@@ -162,22 +163,12 @@ class SJT(CombinatorialElement):
 
         return index
 
-    def _get_perm(self):
-        r"""
-        Return the current permutation of ``self``.
-        """
-        return self._list
-
     def next(self):
         r"""
         Produce the next permutation of ``self`` following the
         Steinhaus-Johnson-Trotter algorithm.
 
-        OUTPUT: a tuple of
-
-        - the list of the next permutation
-
-        - the list of associated directions
+        OUTPUT: the list of the next permutation
 
         EXAMPLES::
 
