@@ -91,7 +91,6 @@ jobs:
       targets: "${{needs.changed_files.outputs.uninstall_targets}} reconfigure ${{needs.changed_files.outputs.build_targets}} build doc-html ptest"
       tox_system_factors: >-
         ["ubuntu-focal",
-         "ubuntu-jammy",
          "ubuntu-mantic",
          "debian-bullseye",
          "debian-bookworm",
