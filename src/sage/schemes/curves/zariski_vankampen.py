@@ -44,8 +44,8 @@ EXAMPLES::
 import itertools
 
 from copy import copy
-
 from itertools import combinations
+
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
 from sage.geometry.voronoi_diagram import VoronoiDiagram
