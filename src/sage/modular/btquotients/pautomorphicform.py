@@ -320,17 +320,19 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         """
         return 'Harmonic cocycle with values in %s' % self.parent()._U
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=True):
         r"""
-        Void method to comply with pickling.
+        Return a dictionary whose keys are indices of basis elements
+        in the support of ``self`` and whose values are the
+        corresponding coefficients.
 
         EXAMPLES::
 
-            sage: M = BruhatTitsQuotient(3,5).harmonic_cocycles(2,prec=10)
+            sage: M = BruhatTitsQuotient(3,5).harmonic_cocycles(2, prec=10)
             sage: M.monomial_coefficients()
             {}
         """
-        return {}
+        return self.element().monomial_coefficients(copy=copy)
 
     def print_values(self):
         r"""
