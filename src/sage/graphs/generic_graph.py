@@ -22998,11 +22998,11 @@ class GenericGraph(GenericGraph_pyx):
             AttributeError: 'CombinatorialFreeModule_with_category' object has no attribute 'basis_matrix'
         """
         from sage.matrix.constructor import matrix
-        vertices, keys = self._vertices_keys(vertices, sort=False)
+        vertex_indices, keys = self._vertex_indices_and_keys(vertices, sort=False)
         if laplacian:
-            M = self.kirchhoff_matrix(vertices=vertices)
+            M = self.kirchhoff_matrix(vertices=list(vertex_indices))
         else:
-            M = self.adjacency_matrix(vertices=vertices)
+            M = self.adjacency_matrix(vertices=list(vertex_indices))
         if keys is None:
             return M.right_eigenvectors()
         M = matrix(M, row_keys=keys, column_keys=keys)
@@ -23114,11 +23114,11 @@ class GenericGraph(GenericGraph_pyx):
             ]
         """
         from sage.matrix.constructor import matrix
-        vertices, keys = self._vertices_keys(vertices, sort=False)
+        vertex_indices, keys = self._vertex_indices_and_keys(vertices, sort=False)
         if laplacian:
-            M = self.kirchhoff_matrix(vertices=vertices)
+            M = self.kirchhoff_matrix(vertices=list(vertex_indices))
         else:
-            M = self.adjacency_matrix(vertices=vertices)
+            M = self.adjacency_matrix(vertices=list(vertex_indices))
         # could pass format='all' to get QQbar eigenvalues and eigenspaces
         # which would be a change in default behavior
         if keys is None:
