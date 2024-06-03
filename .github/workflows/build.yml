@@ -78,6 +78,8 @@ env:
 jobs:
   test-new:
     runs-on: ubuntu-latest
+    outputs:
+      build_targets:     ${{ steps.build-targets.outputs.build_targets }}
     services:
       # https://docs.docker.com/build/ci/github-actions/local-registry/
       registry:
@@ -98,6 +100,42 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+      - name: Get all packages that have changed
+        id: changed-packages
+        uses: tj-actions/changed-files@v44
+        with:
+          files_yaml: |
+            configures:
+              - 'build/pkgs/*/spkg-configure.m4'
+            pkgs:
+              - 'build/pkgs/**'
+              - 'pkgs/**'
+      - name: Determine targets to build
+        id: build-targets
+        run: |
+          uninstall_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))
+          build_targets=$(echo $(for a in '' ${{ steps.changed-packages.outputs.pkgs_all_changed_files }}; do SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;'); if [ -f "build/pkgs/$SPKG/checksums.ini" -o -f "build/pkgs/$SPKG/requirements.txt" -o -f "build/pkgs/$SPKG/spkg-install" ]; then echo "$SPKG-ensure"; fi; done | sort -u))
+          if [ -n "$uninstall_targets" ]; then
+              echo "build_targets=$uninstall_targets reconfigure $build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+          else
+              echo "build_targets=$build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+          fi
+          cat $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: worktree-base
+        if: github.base_ref && steps.changed-packages.outputs.pkgs_all_changed_files
+      - name: Compute metrics
+        run: |
+          export PATH=build/bin:$PATH
+          if [ -d worktree-base ]; then
+            (echo "# $GITHUB_BASE_REF"; SAGE_ROOT=worktree-base sage-package metrics :all:) > base-metrics.txt
+            (echo "# $GITHUB_REF"; sage-package metrics :all:) > metrics.txt
+            diff --color=always --width=100 --side-by-side --left-column base-metrics.txt metrics.txt || true
+          else
+            sage-package metrics :all:
+          fi
       - name: Install test prerequisites
         # From docker.yml
         run: |
@@ -153,7 +191,7 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+            TARGETS=${{ steps.build-targets.outputs.build_targets }}
 
       - name: Start container
         run: |
@@ -266,7 +304,7 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
 
       - name: Start container
         run: |
@@ -361,7 +399,7 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
 
       - name: Start container
         id: container
@@ -473,7 +511,7 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
 
       - name: Start container
         id: container
