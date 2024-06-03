@@ -50,6 +50,7 @@ from sage.libs.gmp.pylong cimport mpz_pythonhash
 from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_GT, Py_LE, Py_GE
 from sage.structure.richcmp cimport rich_to_bool
 
+import sage.rings.abc
 import sage.rings.polynomial.polynomial_element
 from sage.rings.polynomial.evaluation_ntl cimport ZZX_evaluation_mpfi
 import sage.rings.rational_field
@@ -1663,8 +1664,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if not isinstance(L, NumberField):
             raise ValueError("L (=%s) must be a NumberField in is_norm" % L)
 
-        from sage.rings.number_field.number_field import is_AbsoluteNumberField
-        if is_AbsoluteNumberField(L):
+        from sage.rings.number_field.number_field import NumberField_absolute
+        if isinstance(L, NumberField_absolute):
             Lrel = L.relativize(K.hom(L), L.variable_name() + '0')
             b, x = self.is_norm(Lrel, element=True, proof=proof)
             h = Lrel.structure()[0]
@@ -1803,8 +1804,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         - Francis Clarke (2010-12-26)
         """
         K = self.parent()
-        from sage.rings.number_field.number_field_rel import is_RelativeNumberField
-        if (not is_RelativeNumberField(L)) or L.base_field() != K:
+        from sage.rings.number_field.number_field_rel import NumberField_relative
+        if not isinstance(L, NumberField_relative) or L.base_field() != K:
             raise ValueError("L (=%s) must be a relative number field with base field K (=%s) in rnfisnorm" % (L, K))
 
         rnf_data = K.pari_rnfnorm_data(L, proof=proof)
@@ -1988,8 +1989,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if is_NumberFieldOrder(K):
+        if isinstance(K, sage.rings.abc.Order):
             K = K.number_field()
         fac = K.ideal(self).factor()
         # Check whether all prime ideals in `fac` are principal
@@ -2088,8 +2088,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if R.is_field():
             return R.one()
 
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if not is_NumberFieldOrder(R):
+        if not isinstance(R, sage.rings.abc.Order):
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
         K = R.number_field()
@@ -3914,8 +3913,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ...
             ValueError: P must be prime
         """
-        from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
-        if not is_NumberFieldIdeal(P):
+        from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+        if not isinstance(P, NumberFieldIdeal):
             if isinstance(P, NumberFieldElement):
                 P = self.number_field().fractional_ideal(P)
             else:
