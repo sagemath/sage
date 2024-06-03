@@ -70,6 +70,7 @@ class PyPiVersion(object):
         Return the source url
         """
         for download in self.json['urls']:
+            log.info('{0}'.format(download))
             if self.python_version in download['python_version']:
                 self.python_version = download['python_version']
                 return download['url']
@@ -81,6 +82,7 @@ class PyPiVersion(object):
         Return the source tarball name
         """
         for download in self.json['urls']:
+            log.info('{0}'.format(download))
             if self.python_version in download['python_version']:
                 self.python_version = download['python_version']
                 return download['filename']
