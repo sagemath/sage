@@ -107,14 +107,6 @@ jobs:
 
   site:
     needs: [changed_files]
-    if: |
-      github.event_name != 'pull_request' ||
-      ((github.event.action != 'labeled' &&
-         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
-          contains(github.event.pull_request.labels.*.name, 'c: packages: optional'))) ||
-       (github.event.action == 'labeled' &&
-         (github.event.label.name == 'c: packages: optional' ||
-          github.event.label.name == 'c: packages: standard')))
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from published Docker image
