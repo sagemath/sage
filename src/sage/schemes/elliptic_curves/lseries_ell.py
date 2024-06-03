@@ -20,12 +20,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.rings.real_mpfr import RealField
-from sage.rings.rational_field import RationalField
-from math import sqrt, log, ceil
-from sage.misc.verbose import verbose
+from math import ceil, log, sqrt
+
 from sage.misc.cachefunc import cached_method
+from sage.misc.verbose import verbose
+from sage.rings.rational_field import RationalField
+from sage.rings.real_mpfr import RealField
+from sage.structure.sage_object import SageObject
 
 
 class Lseries_ell(SageObject):
