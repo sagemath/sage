@@ -143,7 +143,7 @@ class HeckeModules(Category_module):
 
             TESTS::
 
-                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # needs sage.modular sage.rings.finite_rings
+                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # needs sage.libs.pari sage.modular
                 Traceback (most recent call last):
                 ...
                 TypeError: Category of Hecke modules over Finite Field of size 5
