@@ -398,6 +398,7 @@ class AvailableSoftware():
          'magma',
          'maple',
          'mathematica',
+         'mathics',
          'matlab',
          'octave',
          'pdflatex',
