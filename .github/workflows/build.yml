@@ -184,7 +184,7 @@ jobs:
           # more reliable than "load", for which we observed random failure
           # conditions in which the built image could not be found.
           #
-          push:       true
+          push:       ${{ steps.changed-files.outputs.doctests_all_changed_files && true || false }}
           load:       false
           context:    .
           tags:       ${{ env.BUILD_IMAGE }}
@@ -198,6 +198,7 @@ jobs:
             TARGETS=${{ steps.build-targets.outputs.build_targets }}
 
       - name: Start container
+        if: steps.changed-files.outputs.doctests_all_changed_files
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -207,6 +208,7 @@ jobs:
       # Testing
 
       - name: Check that all modules can be imported
+        if: steps.changed-files.outputs.doctests_all_changed_files
         run: |
           # Increase the length of the lines in the "short summary"
           export COLUMNS=120
