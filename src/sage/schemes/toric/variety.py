@@ -304,26 +304,29 @@ implementing them on your own as a patch for inclusion!
 
 import sys
 
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.all", "factorial")
 import sage.geometry.abc
+
+from sage.categories.fields import Fields
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan
-from sage.misc.latex import latex
-from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.quotient_ring_element import QuotientRingElement
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.quotient_ring import QuotientRing_generic
+from sage.rings.quotient_ring_element import QuotientRingElement
+from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.toric.homset import SchemeHomset_points_toric_field
 from sage.structure.category_object import certify_names
-from sage.categories.fields import Fields
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import("sage.functions.all", "factorial")
+
 _Fields = Fields()
 
 
