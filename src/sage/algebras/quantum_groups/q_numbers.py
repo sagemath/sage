@@ -146,7 +146,7 @@ def q_binomial(n, k, q=None):
 
     INPUT:
 
-    - ``n, k`` -- the nonnegative integers `n` and `k` defined above
+    - ``n``, ``k`` -- the nonnegative integers `n` and `k` defined above
     - ``q`` -- (default: `q \in \ZZ[q, q^{-1}]`) the parameter `q`
       (should be invertible)
 

@@ -453,7 +453,7 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
     INPUT:
 
-    - ``p,q`` -- number of vertices in each side
+    - ``p``, ``q`` -- number of vertices in each side
 
     - ``set_position`` -- boolean (default ``True``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `p` is
@@ -828,7 +828,7 @@ def Toroidal6RegularGrid2dGraph(p, q):
 
     INPUT:
 
-    - ``p, q`` -- integers (see above)
+    - ``p``, ``q`` -- integers
 
     EXAMPLES:
 

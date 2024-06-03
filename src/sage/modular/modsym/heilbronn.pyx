@@ -175,7 +175,7 @@ cdef class Heilbronn:
         INPUT:
 
 
-        -  ``u, v, N`` -- integers
+        -  ``u``, ``v``, ``N`` -- integers
 
         -  ``a, b`` -- preallocated int arrays of the length
            self.
@@ -247,7 +247,7 @@ cdef class Heilbronn:
 
         INPUT:
 
-        - ``u, v, N`` -- integers
+        - ``u``, ``v``, ``N`` -- integers
 
         OUTPUT: list
 
@@ -525,7 +525,7 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
     """
     INPUT:
 
-    - ``u, v, N`` -- integers so that gcd(u,v,N) = 1
+    - ``u``, ``v``, ``N`` -- integers so that gcd(u,v,N) = 1
     - ``indices`` -- a list of positive integers
     - ``R`` -- matrix over QQ that writes each elements of
       P1 = P1List(N) in terms of a subset of P1.
@@ -650,7 +650,7 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
 
     INPUT:
 
-    - ``u, v, N`` -- integers so that gcd(u,v,N) = 1
+    - ``u``, ``v``, ``N`` -- integers so that gcd(u,v,N) = 1
     - ``indices`` -- a list of positive integers
     - ``chi`` -- a Dirichlet character that takes values
       in a nontrivial extension of QQ.
@@ -755,7 +755,7 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     """
     INPUT:
 
-    - ``u, v, N`` -- integers so that gcd(u,v,N) = 1
+    - ``u``, ``v``, ``N`` -- integers so that gcd(u,v,N) = 1
     - ``indices`` -- a list of positive integers
     - ``chi`` -- a Dirichlet character that takes values in QQ
     - ``R`` -- matrix over QQ(chi) that writes each elements of P1 =
@@ -853,7 +853,7 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
     """
     INPUT:
 
-    -  ``u, v, N`` -- integers so that gcd(u,v,N) = 1
+    -  ``u``, ``v``, ``N`` -- integers so that gcd(u,v,N) = 1
     -  ``i`` -- integer with 0 <= i <= k-2
     -  ``k`` -- weight
     -  ``indices`` -- a list of positive integers

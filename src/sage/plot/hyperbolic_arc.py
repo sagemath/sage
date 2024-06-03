@@ -180,7 +180,7 @@ class HyperbolicArc(HyperbolicArcCore):
 
     INPUT:
 
-    - ``A, B`` -- end points of the hyperbolic arc
+    - ``A``, ``B`` -- end points of the hyperbolic arc
     - ``model`` -- the hyperbolic model used, which is one of the following:
 
       * ``'UHP'`` -- upper half plane
@@ -238,7 +238,7 @@ def hyperbolic_arc(a, b, model="UHP", **options):
 
     INPUT:
 
-    - ``a, b`` -- complex numbers connected by a hyperbolic arc
+    - ``a``, ``b`` -- complex numbers connected by a hyperbolic arc
 
     - ``model`` -- (default: ``'UHP'``) hyperbolic model used,
       which is one of the following:

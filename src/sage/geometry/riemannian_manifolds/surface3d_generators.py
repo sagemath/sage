@@ -110,7 +110,7 @@ class SurfaceGenerators:
 
         INPUT:
 
-        - ``a, b`` -- surface parameters.
+        - ``a``, ``b`` -- surface parameters.
 
         - ``name`` -- string. Name of the surface.
 

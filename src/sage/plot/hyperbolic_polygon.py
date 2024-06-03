@@ -338,7 +338,7 @@ def hyperbolic_triangle(a, b, c, model="UHP", **options):
 
     INPUT:
 
-    - ``a, b, c`` -- complex numbers in the upper half complex plane
+    - ``a``, ``b``, ``c`` -- complex numbers in the upper half complex plane
 
     OPTIONS:
 

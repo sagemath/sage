@@ -1332,7 +1332,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``xP, yP`` (real or complex) -- Coordinates of a point on
+        - ``xP``, ``yP`` (real or complex) -- Coordinates of a point on
           the embedded elliptic curve associated with this period
           lattice.
 
@@ -1990,7 +1990,7 @@ def normalise_periods(w1, w2):
 
     INPUT:
 
-    - ``w1,w2`` (complex) -- two complex numbers with non-real ratio
+    - ``w1``, ``w2`` -- two complex numbers with non-real ratio
 
     OUTPUT:
 

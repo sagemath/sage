@@ -2317,7 +2317,7 @@ class FiniteWordPath_hexagonal_grid(FiniteWordPath_triangle_grid):
         - ``parent`` -- a parent object inheriting from Words_all
           that has the alphabet attribute defined
 
-        - ``*args, **kwds`` -- arguments accepted by AbstractWord
+        - ``*args``, ``**kwds`` -- arguments accepted by AbstractWord
 
         EXAMPLES::
 

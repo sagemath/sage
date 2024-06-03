@@ -793,8 +793,8 @@ class LatinSquare:
 
         OUTPUT:
 
-        - ``[r, c]`` -- cell such that self[r, c] is empty, or returns
-          None if self is a (full) latin square.
+        - ``[r, c]`` -- cell such that ``self[r, c]`` is empty, or returns
+          ``None`` if ``self`` is a (full) latin square
 
         EXAMPLES::
 

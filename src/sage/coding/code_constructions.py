@@ -72,12 +72,12 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
 
     INPUT:
 
-    - ``S1, S2`` -- disjoint sublists partitioning ``[1, 2, ..., n-1]``
+    - ``S1``, ``S2`` -- disjoint sublists partitioning ``[1, 2, ..., n-1]``
 
-    - ``n`` (integer)
+    - ``n`` -- integer
 
-    - ``return_automorphism`` (boolean) -- whether to return the automorphism
-      exchanging `S_1` and `S_2`.
+    - ``return_automorphism`` -- boolean (default: ``False``); whether to
+      return the automorphism exchanging `S_1` and `S_2`
 
     OUTPUT:
 
