@@ -3719,7 +3719,6 @@ def compute_intermediate_curves(E1, E2):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_intermediate_curves
-
         sage: E = EllipticCurve(GF(83), [1,0,1,1,0])
         sage: R.<x> = GF(83)[]; f = x + 24
         sage: phi = EllipticCurveIsogeny(E, f)
