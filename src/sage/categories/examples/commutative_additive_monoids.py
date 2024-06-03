@@ -13,6 +13,7 @@ from sage.structure.parent import Parent
 from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
 from .commutative_additive_semigroups import FreeCommutativeAdditiveSemigroup
 
+
 class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
     r"""
     An example of a commutative additive monoid: the free commutative monoid

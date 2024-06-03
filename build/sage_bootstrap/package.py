@@ -108,19 +108,6 @@ class Package(object):
         return self.__name
 
     @property
-    def md5(self):
-        """
-        Return the MD5 checksum
-
-        Do not use, this is ancient! Use :meth:`sha1` instead.
-
-        OUTPUT:
-
-        String.
-        """
-        return self.__md5
-
-    @property
     def sha1(self):
         """
         Return the SHA1 checksum
@@ -132,17 +119,15 @@ class Package(object):
         return self.__sha1
 
     @property
-    def cksum(self):
+    def sha256(self):
         """
-        Return the Ck sum checksum
-
-        Do not use, this is ancient! Use :meth:`sha1` instead.
+        Return the SHA256 checksum
 
         OUTPUT:
 
         String.
         """
-        return self.__cksum
+        return self.__sha256
 
     @property
     def tarball(self):
@@ -539,9 +524,8 @@ class Package(object):
                     result[var] = value
         except IOError:
             pass
-        self.__md5 = result.get('md5', None)
         self.__sha1 = result.get('sha1', None)
-        self.__cksum = result.get('cksum', None)
+        self.__sha256 = result.get('sha256', None)
         self.__tarball_pattern = result.get('tarball', None)
         self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
         # Name of the directory containing the checksums.ini file

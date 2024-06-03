@@ -76,14 +76,10 @@ else:
 
     log.info("Discovering Python/Cython source code...")
 
-    # Exclude a few files if the corresponding distribution is not loaded
     optional_packages = ['mcqd', 'bliss', 'tdlib',
                          'coxeter3', 'sirocco', 'meataxe']
-    not_installed_packages = [package for package in optional_packages
-                              if not is_package_installed_and_updated(package)]
-
     distributions_to_exclude = [f"sagemath-{pkg}"
-                                for pkg in not_installed_packages]
+                                for pkg in optional_packages]
     files_to_exclude = filter_cython_sources(SAGE_SRC, distributions_to_exclude)
 
     log.debug(f"files_to_exclude = {files_to_exclude}")

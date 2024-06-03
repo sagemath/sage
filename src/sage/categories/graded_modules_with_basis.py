@@ -12,6 +12,7 @@ Graded modules with basis
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.quotients import QuotientsCategory
 
+
 class GradedModulesWithBasis(GradedModulesCategory):
     """
     The category of graded modules with a distinguished basis.

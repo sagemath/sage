@@ -174,6 +174,7 @@ def initprimes(filename, verb=False):
     filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
     mwrank_initprimes(filename, verb)
 
+
 ############# bigint ###########################################
 #
 # In mwrank (and eclib) bigint is synonymous with NTL's ZZ class.
@@ -529,6 +530,7 @@ def parse_point_list(s):
         return []
     pts = s[2:-2].split('],[')
     return [[Integer(x) for x in pt.split(",")] for pt in pts]
+
 
 cdef class _mw:
     """

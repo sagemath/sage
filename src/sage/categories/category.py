@@ -1944,7 +1944,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``categories`` - a non empty list (or iterable) of categories
+        - ``categories`` -- a non empty list (or iterable) of categories
 
         .. SEEALSO:: :meth:`__or__` for a shortcut
 
@@ -2571,10 +2571,16 @@ def is_Category(x):
     EXAMPLES::
 
         sage: sage.categories.category.is_Category(CommutativeAdditiveSemigroups())
+        doctest:warning...
+        DeprecationWarning: the function is_Category is deprecated;
+        use 'isinstance(..., Category)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         True
         sage: sage.categories.category.is_Category(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_Category is deprecated; use 'isinstance(..., Category)' instead")
     return isinstance(x, Category)
 
 
@@ -2642,7 +2648,7 @@ def category_graph(categories=None):
         sage: G.plot()                                                                  # needs sage.graphs sage.plot
         Graphics object consisting of 20 graphics primitives
 
-        sage: sage.categories.category.category_graph().plot()                          # needs sage.graphs sage.plot
+        sage: sage.categories.category.category_graph().plot()                          # needs sage.graphs sage.groups sage.plot
         Graphics object consisting of ... graphics primitives
     """
     from sage import graphs
@@ -3222,7 +3228,7 @@ class JoinCategory(CategoryWithParameters):
 
         INPUT:
 
-        - ``as_join`` -- a boolean (default: False)
+        - ``as_join`` -- a boolean (default: ``False``)
 
         EXAMPLES::
 

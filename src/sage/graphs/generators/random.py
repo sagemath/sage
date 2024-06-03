@@ -1289,15 +1289,15 @@ def RandomLobster(n, p, q, seed=None):
 
     INPUT:
 
-    - ``n`` - expected number of vertices in the backbone
+    - ``n`` -- expected number of vertices in the backbone
 
-    - ``p`` - probability of adding an edge to the
+    - ``p`` -- probability of adding an edge to the
       backbone
 
-    - ``q`` - probability of adding an edge (claw) to the
+    - ``q`` -- probability of adding an edge (claw) to the
       arms
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``).
 
 

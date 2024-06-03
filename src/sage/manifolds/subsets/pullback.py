@@ -16,7 +16,7 @@ Manifold Subsets Defined as Pullbacks of Subsets under Continuous Maps
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.categories.metric_spaces import MetricSpaces
 from sage.misc.lazy_import import lazy_import
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -41,10 +41,10 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
     INPUT:
 
-    - ``map`` - an instance of :class:`~sage.manifolds.continuous_map.ContinuousMap`,
+    - ``map`` -- an instance of :class:`~sage.manifolds.continuous_map.ContinuousMap`,
       :class:`ScalarField`, or :class:`Chart`
 
-    - ``codomain_subset`` - an instance of :class:`~sage.manifolds.subset.ManifoldSubset`,
+    - ``codomain_subset`` -- an instance of :class:`~sage.manifolds.subset.ManifoldSubset`,
       :class:`RealSet`, or :class:`~sage.geometry.convex_set.ConvexSet_base`
 
     EXAMPLES::
@@ -503,7 +503,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         - ``map`` -- an instance of :class:`ScalarField` or :class:`Chart`.
 
-        - ``codomain_subset`` - if ``map`` is a :class:`ScalarField`, an instance of :class:`RealSet`;
+        - ``codomain_subset`` -- if ``map`` is a :class:`ScalarField`, an instance of :class:`RealSet`;
           if ``map`` is a :class:`Chart`, the relative interior of a polyhedron.
 
         For other inputs, a :class:`NotImplementedError` will be raised.
@@ -829,7 +829,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
             # Regardless of their base_ring, we treat polyhedra as closed
             # convex subsets of R^n
             return True
-        elif is_FreeModule(self._codomain_subset) and self._codomain_subset.rank() != infinity:
+        elif isinstance(self._codomain_subset, FreeModule_generic) and self._codomain_subset.rank() != infinity:
             if self._codomain_subset.base_ring() in MetricSpaces().Complete():
                 # Closed topological vector subspace
                 return True

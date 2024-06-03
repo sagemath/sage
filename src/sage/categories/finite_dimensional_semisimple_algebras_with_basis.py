@@ -50,13 +50,13 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
 
             EXAMPLES::
 
-                sage: A = SymmetricGroup(4).algebra(QQ)                                 # needs sage.groups sage.modules
-                sage: A.radical_basis()                                                 # needs sage.groups sage.modules
+                sage: A = SymmetricGroup(4).algebra(QQ)                                 # needs sage.combinat sage.groups sage.modules
+                sage: A.radical_basis()                                                 # needs sage.combinat sage.groups sage.modules
                 ()
 
             TESTS::
 
-                sage: A.radical_basis.__module__                                        # needs sage.groups sage.modules
+                sage: A.radical_basis.__module__                                        # needs sage.combinat sage.groups sage.modules
                 'sage.categories.finite_dimensional_semisimple_algebras_with_basis'
             """
             return ()
@@ -96,7 +96,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             For the semisimple quotient of a quiver algebra,
             we recover the vertices of the quiver::
 
-                sage: # needs sage.graphs sage.modules
+                sage: # needs sage.graphs sage.modules sage.rings.number_field
                 sage: A = FiniteDimensionalAlgebrasWithBasis(QQ).example(); A
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver (containing
@@ -160,8 +160,8 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 center of the algebra of the symmetric group
                 `S_4`::
 
-                    sage: Z4 = SymmetricGroup(4).algebra(QQ).center()                   # needs sage.groups sage.modules
-                    sage: Z4._orthogonal_decomposition()                                # needs sage.groups sage.modules
+                    sage: Z4 = SymmetricGroup(4).algebra(QQ).center()                   # needs sage.combinat sage.groups sage.modules
+                    sage: Z4._orthogonal_decomposition()                                # needs sage.combinat sage.groups sage.modules
                     (B[0] + B[1] + B[2] + B[3] + B[4],
                      B[0] + 1/3*B[1] - 1/3*B[2] - 1/3*B[4],
                      B[0] + B[2] - 1/2*B[3],
@@ -222,7 +222,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
 
                 EXAMPLES::
 
-                    sage: # needs sage.groups sage.modules
+                    sage: # needs sage.combinat sage.groups sage.modules
                     sage: A4 = SymmetricGroup(4).algebra(QQ)
                     sage: Z4 = A4.center()
                     sage: idempotents = Z4.central_orthogonal_idempotents()
@@ -237,7 +237,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 recognize among them the sum and alternating
                 sum of all permutations::
 
-                    sage: [e.lift() for e in idempotents]                               # needs sage.groups sage.modules
+                    sage: [e.lift() for e in idempotents]                               # needs sage.combinat sage.groups sage.modules
                     [1/24*() + 1/24*(3,4) + 1/24*(2,3) + 1/24*(2,3,4) + 1/24*(2,4,3)
                      + 1/24*(2,4) + 1/24*(1,2) + 1/24*(1,2)(3,4) + 1/24*(1,2,3)
                      + 1/24*(1,2,3,4) + 1/24*(1,2,4,3) + 1/24*(1,2,4) + 1/24*(1,3,2)
@@ -255,7 +255,8 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 We check that they indeed form a decomposition
                 of the identity of `Z_4` into orthogonal idempotents::
 
-                    sage: Z4.is_identity_decomposition_into_orthogonal_idempotents(idempotents)     # needs sage.groups sage.modules
+                    sage: # needs sage.combinat sage.groups sage.modules
+                    sage: Z4.is_identity_decomposition_into_orthogonal_idempotents(idempotents)
                     True
                 """
                 return tuple([(e.leading_coefficient()/(e*e).leading_coefficient())*e

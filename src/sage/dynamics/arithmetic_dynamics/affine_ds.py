@@ -50,7 +50,7 @@ from sage.rings.quotient_ring import is_QuotientRing
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space_field
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space_finite_field
-from sage.schemes.affine.affine_space import is_AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace_generic
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
@@ -246,7 +246,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             R = morphism.base_ring()
             polys = list(morphism)
             domain = morphism.domain()
-            if not is_AffineSpace(domain) and not isinstance(domain, AlgebraicScheme_subscheme_affine):
+            if not isinstance(domain, AffineSpace_generic) and not isinstance(domain, AlgebraicScheme_subscheme_affine):
                 raise ValueError('"domain" must be an affine scheme')
             if domain != morphism_or_polys.codomain():
                 raise ValueError('domain and codomain do not agree')
@@ -295,7 +295,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         R = domain.base_ring()
         if isinstance(R, sage.rings.abc.SymbolicRing):
             raise TypeError("symbolic ring cannot be the base ring")
-        if not is_AffineSpace(domain) and not isinstance(domain, AlgebraicScheme_subscheme_affine):
+        if not isinstance(domain, AffineSpace_generic) and not isinstance(domain, AlgebraicScheme_subscheme_affine):
             raise ValueError('"domain" must be an affine scheme')
 
         if R not in Fields():
@@ -523,8 +523,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             sage: G.dehomogenize(1).dynatomic_polynomial(2)
             (1/4*c + 1/4)*x^2 + (-c - 1/2)*x + c + 1
         """
-        from sage.schemes.affine.affine_space import is_AffineSpace
-        if not is_AffineSpace(self.domain()):
+        from sage.schemes.affine.affine_space import AffineSpace_generic
+        if not isinstance(self.domain(), AffineSpace_generic):
             raise NotImplementedError("not implemented for subschemes")
         if self.domain().dimension_relative() > 1:
             raise TypeError("does not make sense in dimension >1")
@@ -1065,8 +1065,8 @@ class DynamicalSystem_affine_finite_field(DynamicalSystem_affine_field,
         """
         V = []
         E = []
-        from sage.schemes.affine.affine_space import is_AffineSpace
-        if is_AffineSpace(self.domain()):
+        from sage.schemes.affine.affine_space import AffineSpace_generic
+        if isinstance(self.domain(), AffineSpace_generic):
             for P in self.domain():
                 V.append(str(P))
                 Q = self(P)

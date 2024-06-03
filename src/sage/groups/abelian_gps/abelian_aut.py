@@ -94,7 +94,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
 
     - ``x`` -- a libgap element
     - ``parent`` -- the parent :class:`~AbelianGroupAutomorphismGroup_gap`
-    - ``check`` -- bool (default:True) checks if ``x`` is an element
+    - ``check`` -- bool (default: ``True``) checks if ``x`` is an element
       of the group
 
     EXAMPLES::

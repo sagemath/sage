@@ -170,6 +170,7 @@ class CompleteDiscreteValuationRings(Category_singleton):
 
             """
 
+
 class CompleteDiscreteValuationFields(Category_singleton):
     """
     The category of complete discrete valuation fields

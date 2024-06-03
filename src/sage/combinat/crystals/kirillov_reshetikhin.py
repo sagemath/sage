@@ -168,13 +168,13 @@ def KirillovReshetikhinCrystal(cartan_type, r, s, model='KN'):
 
     - ``model`` -- (default: ``'KN'``) can be one of the following:
 
-      * ``'KN'`` or ``'KashiwaraNakashimaTableaux'`` - use the
+      * ``'KN'`` or ``'KashiwaraNakashimaTableaux'`` -- use the
         Kashiwara-Nakashima tableaux model
-      * ``'KR'`` or ``'KirillovReshetkihinTableaux'`` - use the
+      * ``'KR'`` or ``'KirillovReshetkihinTableaux'`` -- use the
         Kirillov-Reshetkihin tableaux model
-      * ``'RC'`` or ``'RiggedConfiguration'`` - use the rigged
+      * ``'RC'`` or ``'RiggedConfiguration'`` -- use the rigged
         configuration model
-      * ``'LSPaths'`` - use the LS path model
+      * ``'LSPaths'`` -- use the LS path model
 
     EXAMPLES::
 
@@ -4091,7 +4091,7 @@ class CrystalDiagramAutomorphism(CrystalMorphism):
       weight elements
     - ``index_set`` -- (default: the empty set) the index set
     - ``automorphism`` -- (default: the identity) the twisting automorphism
-    - ``cache`` -- (default: True) cache the result
+    - ``cache`` -- (default: ``True``) cache the result
     """
 
     def __init__(self, C, on_hw, index_set=None, automorphism=None, cache=True):

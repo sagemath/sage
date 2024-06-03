@@ -277,8 +277,8 @@ class FGP_Morphism(Morphism):
             sage: phi(8*Q.1) == phi(x)
             True
         """
-        from .fgp_module import is_FGP_Module
-        if is_FGP_Module(x):
+        from .fgp_module import FGP_Module_class
+        if isinstance(x, FGP_Module_class):
             if not x.is_submodule(self.domain()):
                 raise ValueError("x must be a submodule or element of the domain")
             # perhaps can be optimized with a matrix multiply; but note
@@ -355,8 +355,8 @@ class FGP_Morphism(Morphism):
             ...
             ValueError: A must be a submodule of the codomain
         """
-        from .fgp_module import is_FGP_Module
-        if not is_FGP_Module(A):
+        from .fgp_module import FGP_Module_class
+        if not isinstance(A, FGP_Module_class):
             raise TypeError("A must be a finitely generated quotient module")
         if not A.is_submodule(self.codomain()):
             raise ValueError("A must be a submodule of the codomain")
@@ -506,8 +506,8 @@ class FGP_Homset_class(Homset):
             <class 'sage.modules.fg_pid.fgp_morphism.FGP_Homset_class_with_category'>
         """
         if category is None:
-            from sage.modules.free_module import is_FreeModule
-            if is_FreeModule(X) and is_FreeModule(Y):
+            from sage.modules.free_module import FreeModule_generic
+            if isinstance(X, FreeModule_generic) and isinstance(Y, FreeModule_generic):
                 from sage.categories.modules_with_basis import ModulesWithBasis
                 category = ModulesWithBasis(X.base_ring())
             else:
