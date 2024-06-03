@@ -31,13 +31,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.berkovich.berkovich_cp_element import (Berkovich_Element_Cp_Affine,
-                                                         Berkovich_Element_Cp_Projective)
-from sage.structure.parent import Parent
-from sage.schemes.affine.affine_space import AffineSpace_generic
-from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.number_fields import NumberFields
 import sage.rings.abc
 
 from sage.categories.number_fields import NumberFields
@@ -45,10 +38,10 @@ from sage.categories.topological_spaces import TopologicalSpaces
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.schemes.affine.affine_space import is_AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace_generic
 from sage.schemes.berkovich.berkovich_cp_element import (Berkovich_Element_Cp_Affine,
                                                          Berkovich_Element_Cp_Projective)
-from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring, ProjectiveSpace
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
