@@ -152,6 +152,7 @@ cdef extern from *:
 cdef int etuple_index_cmp(const void * a, const void * b) noexcept nogil:
     return ((<int *> a)[0] > (<int *> b)[0]) - ((<int *> a)[0] < (<int *> b)[0])
 
+
 def make_permgroup_element(G, x):
     r"""
     Return a :class:`PermutationGroupElement` given the permutation group
@@ -171,6 +172,7 @@ def make_permgroup_element(G, x):
     """
     domain = FiniteEnumeratedSet(range(1, len(x)+1))
     return make_permgroup_element_v2(G, x, domain)
+
 
 def make_permgroup_element_v2(G, x, domain):
     r"""
@@ -199,6 +201,7 @@ def make_permgroup_element_v2(G, x, domain):
     G._domain_from_gap = {i+1: key for i, key in enumerate(domain)}
     return G.element_class(x, G, check=False)
 
+
 def is_PermutationGroupElement(x):
     r"""
     Return ``True`` if ``x`` is a :class:`PermutationGroupElement`.
@@ -211,6 +214,7 @@ def is_PermutationGroupElement(x):
         True
     """
     return isinstance(x, PermutationGroupElement)
+
 
 cdef class PermutationGroupElement(MultiplicativeGroupElement):
     r"""
@@ -791,7 +795,6 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
             i = j + 1
 
-
     def __reduce__(self):
         r"""
         Return a function and its arguments needed to create this
@@ -1252,7 +1255,6 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             if isinstance(x, Matrix):
                 return x.with_permuted_rows(self)
 
-
     def __mul__(left, right):
         r"""
         TESTS::
@@ -1695,7 +1697,6 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 cycle_len_sum += 1
         sig_free(seen)
         return 1 - 2*(cycle_len_sum % 2) # == (-1)^cycle_len
-
 
     def orbit(self, n, bint sorted=True):
         r"""

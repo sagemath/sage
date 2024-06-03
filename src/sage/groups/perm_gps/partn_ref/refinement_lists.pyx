@@ -62,6 +62,7 @@ def is_isomorphic(self, other):
     sig_free(output)
     return output_py
 
+
 cdef bint all_list_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
 
