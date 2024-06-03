@@ -175,16 +175,18 @@ jobs:
           name: docs
           path: docs.zip
 
-      - name: Remove docs
-        if: (success() || failure()) && steps.upload.outcome == 'success'
+      - name: Save space
+        id: savespace
+        if: (success() || failure()) && steps.upload.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
         run: |
           set -ex
-          # We remove previous docs directory to save space on runner device
+          # Save space on runner device before we start to build livedoc
           rm -rf docs/
+          rm -f docs.zip
 
       - name: Build live doc
         id: buildlivedoc
-        if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
+        if: (success() || failure()) && steps.savespace.outcome == 'success'
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           export PATH="build/bin:$PATH"
