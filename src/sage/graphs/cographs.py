@@ -20,7 +20,8 @@ Methods
 -------
 """
 # ****************************************************************************
-#       Copyright (C)      2024 David Coudert <david.coudert@inria.fr>
+#       Copyright (C) 2017-2024 Marianna Spyrakou
+#                          2024 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
+from sage.combinat.partitions import AccelAsc_next
 
 
 class CoTree:
@@ -168,54 +171,6 @@ class CoTree:
         self.info = None
 
 
-def next_partition(P):
-    r"""
-    Return the next partition after `P`, if any.
-
-    This is a helper method to method :meth:`cographs`.
-
-    INPUT:
-
-    - ``P`` -- a list encoding a partition of a number `n`
-
-    EXAMPLES::
-
-        sage: from sage.graphs.cographs import next_partition
-        sage: P = [1, 1, 1, 1, 1, 1]
-        sage: while P:
-        ....:     print(P)
-        ....:     P = next_partition(P)
-        [1, 1, 1, 1, 1, 1]
-        [1, 1, 1, 1, 2]
-        [1, 1, 1, 3]
-        [1, 1, 2, 2]
-        [1, 1, 4]
-        [1, 2, 3]
-        [1, 5]
-        [2, 2, 2]
-        [2, 4]
-        [3, 3]
-    """
-    if len(P) < 2:
-        raise ValueError("the length of the input partition must be at least 2")
-    n = sum(P)
-    if P[0] != n//2:
-        if P[-1] - P[-2] <= 1:
-            return P[:-2] + [P[-2] + P[-1]]
-
-        x = P[-2] + 1
-        y = P[-1] - 1
-        q = y // x
-        if q > 1:
-            r = y % x
-            return P[:-2] + [x]*q + [x + r]
-        return P[:-2] + [x, y]
-
-    if n == 3 and P[1] != n//2 + n % 2:
-        return [1, 2]
-    return None
-
-
 def rebuild_node(u, P):
     r"""
     Replace the subtree rooted at `u` by a subtree induced by partition `P`.
@@ -233,6 +188,8 @@ def rebuild_node(u, P):
         sage: next(graphs.cographs(3, as_graph=True)).vertices()  # indirect doctest
         [0, 1, 2]
     """
+    if P is None:
+        print('P is None')
     u.children = []  # delete the subtree rooted at u
     for value in P:
         this_child = CoTree(value)
@@ -244,7 +201,7 @@ def rebuild_node(u, P):
 
 def find_pivot(T):
     r"""
-    Seach for a pivot node in `T`.
+    Search for a pivot node in `T`.
 
     This is a helper method to method :meth:`cographs`.
 
@@ -297,9 +254,11 @@ def next_tree(T):
     if pivot is None:
         return False
 
-    # Find the next partition induced by the subtree pivot
+    # Find the next partition induced by the subtree pivot.
+    # Partitions are represented in ascending order (i.e., `P_i \leq P_{i+1}`)
+    # and we search for the next partition in lexicographic order.
     partition = [c.name for c in pivot.children]
-    P = next_partition(partition)
+    P = AccelAsc_next(partition)
     # and rebuild the subtree of pivot accordingly
     rebuild_node(pivot, P)
 
