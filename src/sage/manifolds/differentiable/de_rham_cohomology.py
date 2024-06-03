@@ -209,7 +209,7 @@ class DeRhamCohomologyClass(AlgebraElement):
 
         INPUT:
 
-        - ``other``-- another cohomology class in the de Rham cohomology
+        - ``other`` -- another cohomology class in the de Rham cohomology
 
         EXAMPLES::
 

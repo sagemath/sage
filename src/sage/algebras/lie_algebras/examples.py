@@ -263,6 +263,7 @@ def abelian(R, names=None, index_set=None):
     from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
     return AbelianLieAlgebra(R, names=names, index_set=index_set)
 
+
 def Heisenberg(R, n, representation="structure"):
     """
     Return the rank ``n`` Heisenberg algebra in the given representation.
@@ -291,6 +292,7 @@ def Heisenberg(R, n, representation="structure"):
     from sage.algebras.lie_algebras.heisenberg import HeisenbergAlgebra
     return HeisenbergAlgebra(R, n)
 
+
 def regular_vector_fields(R):
     r"""
     Return the Lie algebra of regular vector fields on `\CC^{\times}`.
@@ -312,6 +314,7 @@ def regular_vector_fields(R):
 
 witt = regular_vector_fields
 
+
 def pwitt(R, p):
     r"""
     Return the `p`-Witt Lie algebra over `R`.
@@ -328,6 +331,7 @@ def pwitt(R, p):
     """
     from sage.algebras.lie_algebras.virasoro import WittLieAlgebra_charp
     return WittLieAlgebra_charp(R, p)
+
 
 def upper_triangular_matrices(R, n):
     r"""
@@ -430,8 +434,8 @@ def sl(R, n, representation='bracket'):
     - ``representation`` -- (default: ``'bracket'``) can be one of
       the following:
 
-      * ``'bracket'`` - use brackets and the Chevalley basis
-      * ``'matrix'`` - use matrices
+      * ``'bracket'`` -- use brackets and the Chevalley basis
+      * ``'matrix'`` -- use matrices
 
     EXAMPLES:
 
@@ -483,8 +487,8 @@ def su(R, n, representation='matrix'):
     - ``representation`` -- (default: ``'matrix'``) can be one of
       the following:
 
-      * ``'bracket'`` - use brackets and the Chevalley basis
-      * ``'matrix'`` - use matrices
+      * ``'bracket'`` -- use brackets and the Chevalley basis
+      * ``'matrix'`` -- use matrices
 
     EXAMPLES:
 
@@ -539,8 +543,8 @@ def so(R, n, representation='bracket'):
     - ``representation`` -- (default: ``'bracket'``) can be one of
       the following:
 
-      * ``'bracket'`` - use brackets and the Chevalley basis
-      * ``'matrix'`` - use matrices
+      * ``'bracket'`` -- use brackets and the Chevalley basis
+      * ``'matrix'`` -- use matrices
 
     EXAMPLES:
 
@@ -626,8 +630,8 @@ def sp(R, n, representation='bracket'):
     - ``representation`` -- (default: ``'bracket'``) can be one of
       the following:
 
-      * ``'bracket'`` - use brackets and the Chevalley basis
-      * ``'matrix'`` - use matrices
+      * ``'bracket'`` -- use brackets and the Chevalley basis
+      * ``'matrix'`` -- use matrices
 
     EXAMPLES:
 

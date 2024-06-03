@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 KnotInfo database
 
@@ -764,7 +763,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        ``column`` -- instance of enum :class:`KnotInfoColumns`
+        - ``column`` -- instance of enum :class:`KnotInfoColumns`
           to select the data to be read in
 
         OUTPUT:

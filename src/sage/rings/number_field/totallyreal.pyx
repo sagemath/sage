@@ -185,7 +185,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     - ``keep_fields`` -- (boolean or integer, default: ``False``) If
       ``keep_fields`` is ``True``, then keep fields up to ``B*log(B)``; if
       ``keep_fields`` is an integer, then keep fields up to that integer.
-    - ``t_2`` -- (boolean or integer, default: False) If ``t_2 = T``, then
+    - ``t_2`` -- (boolean or integer, default: ``False``) If ``t_2 = T``, then
       keep only polynomials with t_2 norm >= T.
     - ``just_print`` -- (boolean, default: ``False``): if ``just_print`` is not
       ``False``, instead of creating a sorted list of totally real number

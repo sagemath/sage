@@ -387,7 +387,7 @@ class Application(object):
         if not os.path.exists(pkg.tarball.upstream_fqn):
             log.info('Ignoring {0} because tarball is not cached'.format(package_name))
             return
-        if pkg.tarball.checksum_verifies():
+        if pkg.tarball.checksum_verifies(force_sha256=True):
             log.info('Checksum of {0} (tarball {1}) unchanged'.format(package_name, pkg.tarball_filename))
         else:
             log.info('Updating checksum of {0} (tarball {1})'.format(package_name, pkg.tarball_filename))

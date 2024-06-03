@@ -1,4 +1,3 @@
-# -*- coding: utf-8
 r"""
 Arbitrary precision real balls
 

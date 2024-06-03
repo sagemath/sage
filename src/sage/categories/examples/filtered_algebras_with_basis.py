@@ -13,6 +13,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.sets.family import Family
 
+
 class PBWBasisCrossProduct(CombinatorialFreeModule):
     r"""
     This class illustrates an implementation of a filtered algebra

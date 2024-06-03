@@ -25,6 +25,8 @@ from sage.matrix.constructor import matrix
 from itertools import combinations
 
 # TODO: Refactor out common functionality with RingHomomorphism_im_gens
+
+
 class LieAlgebraHomomorphism_im_gens(Morphism):
     r"""
     A homomorphism of Lie algebras.
@@ -360,6 +362,7 @@ class LieAlgebraHomset(Homset):
         return SetMorphism(self, lambda x: self.codomain().zero())
 
     _an_element_ = zero
+
 
 class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
     r"""

@@ -55,9 +55,9 @@ from sage.categories.fields import Fields
 from sage.categories.enumerated_sets import EnumeratedSets
 
 from sage.misc.lazy_import import lazy_import
-from sage.features import PythonModule
+from sage.features.meataxe import Meataxe
 lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
-            feature=PythonModule('sage.matrix.matrix_gfpn_dense', spkg='meataxe'))
+            feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
 
 _Rings = Rings()
@@ -74,12 +74,18 @@ def is_MatrixSpace(x):
         sage: MS = MatrixSpace(QQ,2)
         sage: A = MS.random_element()
         sage: is_MatrixSpace(MS)
+        doctest:warning...
+        DeprecationWarning: the function is_MatrixSpace is deprecated;
+        use 'isinstance(..., MatrixSpace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_MatrixSpace(A)
         False
         sage: is_MatrixSpace(5)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_MatrixSpace is deprecated; use 'isinstance(..., MatrixSpace)' instead")
     return isinstance(x, MatrixSpace)
 
 
@@ -1156,7 +1162,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         INPUT:
 
 
-        -  ``R`` - ring
+        -  ``R`` -- ring
 
 
         OUTPUT: a matrix space
@@ -1183,7 +1189,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``R`` - ring
+        -  ``R`` -- ring
 
         OUTPUT: a matrix space
 
@@ -1265,10 +1271,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
             if op is operator.mul:
                 from . import action as matrix_action
                 if self_on_left:
-                    if is_MatrixSpace(S):
+                    if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
-                    elif sage.modules.free_module.is_FreeModule(S):
+                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.MatrixVectorAction(self, S)
                     elif isinstance(S, SchemeHomset_points):
                         return matrix_action.MatrixSchemePointAction(self, S)
@@ -1278,10 +1284,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         # action of base ring
                         return sage.structure.coerce_actions.RightModuleAction(S, self)
                 else:
-                    if is_MatrixSpace(S):
+                    if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(S, self)
-                    elif sage.modules.free_module.is_FreeModule(S):
+                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.VectorMatrixAction(self, S)
                     elif isinstance(S, SchemeHomset_generic):
                         return matrix_action.PolymapMatrixAction(self, S)
@@ -1456,11 +1462,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
                 return self.has_coerce_map_from(MS)
 
             try:
-                from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
+                from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
             except ImportError:
                 pass
             else:
-                if is_ArithmeticSubgroup(S):
+                if isinstance(S, ArithmeticSubgroup):
                     return self.has_coerce_map_from(MS)
 
             return False
@@ -2394,14 +2400,14 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``density`` - ``float`` or ``None`` (default: ``None``);  rough
+        -  ``density`` -- ``float`` or ``None`` (default: ``None``);  rough
            measure of the proportion of nonzero entries in the random matrix;
            if set to ``None``, all entries of the matrix are randomized,
            allowing for any element of the underlying ring, but if set to
            a ``float``, a proportion of entries is selected and randomized to
            non-zero elements of the ring
 
-        -  ``*args, **kwds`` - remaining parameters, which may be passed to
+        -  ``*args, **kwds`` -- remaining parameters, which may be passed to
            the random_element function of the base ring. ("may be", since this
            function calls the ``randomize`` function on the zero matrix, which
            need not call the ``random_element`` function of the base ring at
@@ -2588,7 +2594,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``*args``, ``**kwds`` - Parameters that can be forwarded to the
+        - ``*args``, ``**kwds`` -- Parameters that can be forwarded to the
           ``random_element`` method
 
         OUTPUT:
@@ -2651,9 +2657,9 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
 
     INPUT:
 
-    - ``ring`` - a ring
-    - ``sparse`` - a boolean
-    - ``checkrank`` - a boolean
+    - ``ring`` -- a ring
+    - ``sparse`` -- a boolean
+    - ``checkrank`` -- a boolean
 
     OUTPUT:
 

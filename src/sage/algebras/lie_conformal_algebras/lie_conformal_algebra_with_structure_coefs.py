@@ -27,6 +27,7 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.structure.indexed_generators import (IndexedGenerators,
                                                standardize_names_index_set)
 
+
 class LieConformalAlgebraWithStructureCoefficients(
                                         FinitelyFreelyGeneratedLCA):
     r"""

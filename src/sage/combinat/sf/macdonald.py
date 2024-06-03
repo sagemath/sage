@@ -1494,7 +1494,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         INPUT:
 
-        - ``x`` - an element of ``self``
+        - ``x`` -- an element of ``self``
 
         OUTPUT:
 
@@ -1518,7 +1518,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         INPUT:
 
-        - ``x`` - an element of ``s`` basis
+        - ``x`` -- an element of ``s`` basis
 
         OUTPUT:
 

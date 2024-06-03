@@ -225,7 +225,7 @@ class LinearExpression(ModuleElement):
         - ``include_constant`` -- whether to include the constant
           term
 
-        - ``multiplication`` -- string (optional, default: ``*``); the
+        - ``multiplication`` -- string (default: ``*``); the
           multiplication symbol to use
 
         OUTPUT:

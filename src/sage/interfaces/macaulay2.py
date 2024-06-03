@@ -399,7 +399,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``var`` - string; the name of the variable in Macaulay2
+        - ``var`` -- string; the name of the variable in Macaulay2
 
         OUTPUT: a string of the textual representation of the variable in
         Macaulay2
@@ -426,8 +426,8 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``var`` - string; the name of the variable in Macaulay2
-        - ``value`` - a string to evaluate
+        - ``var`` -- string; the name of the variable in Macaulay2
+        - ``value`` -- a string to evaluate
 
         EXAMPLES::
 

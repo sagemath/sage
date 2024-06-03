@@ -2228,7 +2228,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        ``data`` -- an element.
+        - ``data`` -- an element.
 
         OUTPUT:
 

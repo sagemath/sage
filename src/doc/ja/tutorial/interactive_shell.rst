@@ -154,7 +154,7 @@ IPythonについてもっと知りたければ、Sageプロンプトで ``?`` �
 
 Sageセッションのロギングと，セッションの保存(:ref:`section-save` 節を参照)は同じことではない．
 入力のログをとるには， ``logstart`` コマンドを使う(オプションで出力のログも可能だ)．
-詳細については ``logstart?`` と入力してみてほしい． 
+詳細については ``logstart?`` と入力してみてほしい．
 ``logstart`` を使えば，全ての入力と出力のログを残し，将来のセッション時に(そのログファイルをリロードしてやるだけで)入力を再生することも可能になる．
 
 .. skip
@@ -379,11 +379,11 @@ IPythonトリック
 
 
 IPythonのクイック レファレンスガイドを見たければ， ``%quickref`` と入力する．
-執筆時点(2011年4月)ではSageはIPythonのバージョン0.9.1を採用しており， `documentation for its magic commands 
+執筆時点(2011年4月)ではSageはIPythonのバージョン0.9.1を採用しており， `documentation for its magic commands
 <http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magic-functions>`_
 はオンラインで読むことができる．
 マジックコマンドの，ちょっと進んだ機能群についてはIPythonの `ここ
-<http://ipython.org/ipython-doc/stable/interactive/reference.html#magic-command-system>`_ 
+<http://ipython.org/ipython-doc/stable/interactive/reference.html#magic-command-system>`_
 で文書化されているのが見つかるはずだ．
 
 
@@ -452,7 +452,7 @@ Sageに戻るには，Ctrl-Dか ``quit`` を入力する．
 =================================
 
 *遡行検索*: コマンドの冒頭部を打ち込んでから ``Ctrl-p``  (または上向き矢印キー)を押すと，冒頭部が一致する過去の入力行を全て呼び出すことができる．
-この機能は，Sageをいったん終了し再起動してからでも有効である． 
+この機能は，Sageをいったん終了し再起動してからでも有効である．
 ``Ctrl-r`` を入力すれば，入力ヒストリを逆方向に検索することも可能だ．
 この入力行の検索と再利用機能は全て ``readline``  パッケージを経由しており，ほとんどのLinux系システム上で利用できるはずだ．
 
@@ -610,15 +610,25 @@ Sageの特長の一つは，総合的なヘルプ機能の装備である．
 ::
 
     sage: help(VectorSpace)
-    Help on class VectorSpace ...
+    Help on function VectorSpace in module sage.modules.free_module:
 
-    class VectorSpace(__builtin__.object)
-     |  Create a Vector Space.
-     |
-     |  To create an ambient space over a field with given dimension
-     |  using the calling syntax ...
-     :
-     :
+    VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_matrix=None, *,
+                with_basis='standard', dimension=None, basis_keys=None, **args)
+    EXAMPLES:
+
+    The base can be complicated, as long as it is a field.
+
+    ::
+
+        sage: V = VectorSpace(FractionField(PolynomialRing(ZZ,'x')),3)
+        sage: V
+        Vector space of dimension 3 over Fraction Field of Univariate Polynomial Ring in x
+         over Integer Ring
+        sage: V.basis()
+        [
+        (1, 0, 0),
+        (0, 1, 0),
+    --More--
 
 
 ``q`` と入力してヘルプを終えると，中断前のセッション画面がそのまま復帰する．
@@ -647,10 +657,10 @@ Sageの特長の一つは，総合的なヘルプ機能の装備である．
 ..
    #. **Save your Game:** Only support saving and loading of complete
       sessions (e.g., GAP, Magma).
-   
+
    #. **Unified Input/Output:** Make every object print in a way that
       can be read back in (GP/PARI).
-   
+
    #. **Eval**: Make it easy to evaluate arbitrary code in the
       interpreter (e.g., Singular, PARI).
 

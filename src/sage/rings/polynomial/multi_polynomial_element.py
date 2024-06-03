@@ -574,7 +574,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``x`` - multivariate polynomial (a generator of the parent
+        - ``x`` -- multivariate polynomial (a generator of the parent
           of ``self``). If ``x`` is not specified (or is None), return
           the total degree, which is the maximum degree of any
           monomial. Note that a weighted term ordering alters the
@@ -750,7 +750,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``mon`` - a monomial
+        -  ``mon`` -- a monomial
 
 
         OUTPUT: coefficient in base ring
@@ -937,7 +937,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``degrees`` - Can be any of:
+        -  ``degrees`` -- Can be any of:
 
            -  a dictionary of degree restrictions
 
@@ -1306,7 +1306,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``var`` - an integer indicating which variable to
+        -  ``var`` -- an integer indicating which variable to
            use to homogenize (0 <= var < parent(self).ngens())
 
 
@@ -1423,9 +1423,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``fixed`` - (optional) dictionary of inputs
+        -  ``fixed`` -- (optional) dictionary of inputs
 
-        -  ``**kwds`` - named parameters
+        -  ``**kwds`` -- named parameters
 
 
         OUTPUT: new :class:`MPolynomial`
@@ -1545,7 +1545,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``R`` - (default: None) :class:`PolynomialRing`
+        -  ``R`` -- (default: None) :class:`PolynomialRing`
 
 
         If this polynomial is not in at most one variable, then a
@@ -2026,7 +2026,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``proof`` - insist on provably correct results (default: ``True``
+        - ``proof`` -- insist on provably correct results (default: ``True``
           unless explicitly disabled for the ``"polynomial"`` subsystem with
           :class:`sage.structure.proof.proof.WithProof`.)
 
@@ -2394,7 +2394,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``I`` - a list of polynomials or an ideal
+        -  ``I`` -- a list of polynomials or an ideal
 
         EXAMPLES::
 

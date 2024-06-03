@@ -133,7 +133,7 @@ class Jacobian_generic(Scheme):
             TypeError: C (=Projective Plane Curve over Ring of integers modulo 6
             defined by x + y + z) must be defined over a field.
         """
-        if not is_Scheme(C):
+        if not isinstance(C, Scheme):
             raise TypeError("Argument (=%s) must be a scheme." % C)
         if C.base_ring() not in _Fields:
             raise TypeError("C (=%s) must be defined over a field." % C)

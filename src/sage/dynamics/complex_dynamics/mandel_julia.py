@@ -72,37 +72,37 @@ def mandelbrot_plot(f=None, **kwds):
 
     INPUT:
 
-    - ``f`` -- map (optional - default: ``z^2 + c``), polynomial family used to
+    - ``f`` -- map (default: ``z^2 + c``), polynomial family used to
       plot the Mandelbrot set.
 
-    - ``parameter`` -- variable (optional - default: ``c``), parameter variable
+    - ``parameter`` -- variable (default: ``c``), parameter variable
       used to plot the Mandelbrot set.
 
-    - ``x_center`` -- double (optional - default: ``-1.0``), Real part of center
+    - ``x_center`` -- double (default: ``-1.0``), Real part of center
       point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
+    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
       center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image
+    - ``image_width`` -- double (default: ``4.0``), width of image
       in the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
+    - ``max_iteration`` -- long (default: ``500``), maximum number of
       iterations the map ``f_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
+    - ``pixel_count`` -- long (default: ``500``), side length of
       image in number of pixels.
 
-    - ``base_color`` -- RGB color (optional - default: ``[40, 40, 40]``) color
+    - ``base_color`` -- RGB color (default: ``[40, 40, 40]``) color
       used to determine the coloring of set.
 
-    - ``level_sep`` -- long (optional - default: 1) number of iterations
+    - ``level_sep`` -- long (default: 1) number of iterations
       between each color level.
 
-    - ``number_of_colors`` -- long (optional - default: 30) number of colors
+    - ``number_of_colors`` -- long (default: 30) number of colors
       used to plot image.
 
-    - ``interact`` -- boolean (optional - default: ``False``), controls whether
+    - ``interact`` -- boolean (default: ``False``), controls whether
       plot will have interactive functionality.
 
     OUTPUT:
@@ -306,27 +306,27 @@ def external_ray(theta, **kwds):
 
     kwds:
 
-    - ``image`` -- 24-bit RGB image (optional - default: None) user specified
+    - ``image`` -- 24-bit RGB image (default: None) user specified
       image of Mandelbrot set.
 
-    - ``D`` -- long (optional - default: ``25``) depth of the approximation.
+    - ``D`` -- long (default: ``25``) depth of the approximation.
       As ``D`` increases, the external ray gets closer to the boundary of the
       Mandelbrot set. If the ray doesn't reach the boundary of the Mandelbrot
       set, increase ``D``.
 
-    - ``S`` -- long (optional - default: ``10``) sharpness of the approximation.
+    - ``S`` -- long (default: ``10``) sharpness of the approximation.
       Adjusts the number of points used to approximate the external ray (number
       of points is equal to ``S*D``). If ray looks jagged, increase ``S``.
 
-    - ``R`` -- long (optional - default: ``100``) radial parameter. If ``R`` is
+    - ``R`` -- long (default: ``100``) radial parameter. If ``R`` is
       large, the external ray reaches sufficiently close to infinity. If ``R`` is
       too small, Newton's method may not converge to the correct ray.
 
-    - ``prec`` -- long (optional - default: ``300``) specifies the bits of
+    - ``prec`` -- long (default: ``300``) specifies the bits of
       precision used by the Complex Field when using Newton's method to compute
       points on the external ray.
 
-    - ``ray_color`` -- RGB color (optional - default: ``[255, 255, 255]``) color
+    - ``ray_color`` -- RGB color (default: ``[255, 255, 255]``) color
       of the external ray(s).
 
     OUTPUT:
@@ -530,43 +530,43 @@ def julia_plot(f=None, **kwds):
 
     INPUT:
 
-    - ``f`` -- input polynomial (optional - default: ``z^2 - 1``).
+    - ``f`` -- input polynomial (default: ``z^2 - 1``).
 
-    - ``period`` -- list (optional - default: ``None``), returns the Julia set
+    - ``period`` -- list (default: ``None``), returns the Julia set
       for a random `c` value with the given (formal) cycle structure.
 
-    - ``mandelbrot`` -- boolean (optional - default: ``True``), when set to
+    - ``mandelbrot`` -- boolean (default: ``True``), when set to
       ``True``, an image of the Mandelbrot set is appended to the right of the
       Julia set.
 
-    - ``point_color`` -- RGB color (optional - default: ``'tomato'``),
+    - ``point_color`` -- RGB color (default: ``'tomato'``),
       color of the point `c` in the Mandelbrot set (any valid input for Color).
 
-    - ``x_center`` -- double (optional - default: ``-1.0``), Real part
+    - ``x_center`` -- double (default: ``-1.0``), Real part
       of center point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part
+    - ``y_center`` -- double (default: ``0.0``), Imaginary part
       of center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image
+    - ``image_width`` -- double (default: ``4.0``), width of image
       in the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number
+    - ``max_iteration`` -- long (default: ``500``), maximum number
       of iterations the map `f(z)`.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
+    - ``pixel_count`` -- long (default: ``500``), side length of
       image in number of pixels.
 
-    - ``base_color`` -- hex color (optional - default: ``'steelblue'``), color
+    - ``base_color`` -- hex color (default: ``'steelblue'``), color
       used to determine the coloring of set (any valid input for Color).
 
-    - ``level_sep`` -- long (optional - default: 1), number of iterations
+    - ``level_sep`` -- long (default: 1), number of iterations
       between each color level.
 
-    - ``number_of_colors`` -- long (optional - default: 30), number of colors
+    - ``number_of_colors`` -- long (default: 30), number of colors
       used to plot image.
 
-    - ``interact`` -- boolean (optional - default: ``False``), controls whether
+    - ``interact`` -- boolean (default: ``False``), controls whether
       plot will have interactive functionality.
 
     OUTPUT:

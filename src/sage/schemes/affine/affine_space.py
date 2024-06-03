@@ -46,12 +46,17 @@ def is_AffineSpace(x) -> bool:
 
         sage: from sage.schemes.affine.affine_space import is_AffineSpace
         sage: is_AffineSpace(AffineSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
         True
         sage: is_AffineSpace(Spec(ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.")
     return isinstance(x, AffineSpace_generic)
 
 
@@ -554,7 +559,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``right`` - an affine space or subscheme.
+        - ``right`` -- an affine space or subscheme.
 
         OUTPUT: an affine space.= or subscheme.
 
@@ -795,7 +800,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        -  ``X`` - a list or tuple of equations.
+        -  ``X`` -- a list or tuple of equations.
 
         EXAMPLES::
 
@@ -1029,11 +1034,11 @@ class AffineSpace_field(AffineSpace_generic):
 
         kwds:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-        - ``precision`` - the precision to use for computing the elements of bounded height of number fields
+        - ``precision`` -- the precision to use for computing the elements of bounded height of number fields
 
         OUTPUT:
 
