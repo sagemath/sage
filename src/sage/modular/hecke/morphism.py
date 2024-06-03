@@ -108,11 +108,11 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         """
         INPUT:
 
-        -  ``parent`` - ModularSymbolsHomspace
+        -  ``parent`` -- ModularSymbolsHomspace
 
-        -  ``A`` - Matrix
+        -  ``A`` -- Matrix
 
-        -  ``name`` - str (defaults to '') name of the morphism
+        -  ``name`` -- str (defaults to '') name of the morphism
            (used for printing)
 
         EXAMPLES::

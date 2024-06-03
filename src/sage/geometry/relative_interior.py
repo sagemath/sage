@@ -43,7 +43,7 @@ class RelativeInterior(ConvexSet_relatively_open):
 
         INPUT:
 
-        - ``polyhedron`` - an instance of :class:`Polyhedron_base` or
+        - ``polyhedron`` -- an instance of :class:`Polyhedron_base` or
           :class:`ConvexRationalPolyhedralCone`.
 
         TESTS::

@@ -393,7 +393,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         OUTPUT:
 
-        -  ``Sequence`` - an immutable sequence whose universe is ambient space of ``self``.
+        -  ``Sequence`` -- an immutable sequence whose universe is ambient space of ``self``.
 
         EXAMPLES::
 

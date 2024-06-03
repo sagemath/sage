@@ -653,7 +653,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             - ``word`` -- a list (or iterable) of elements of the
               index set of ``self`` (resp. of the distinguished
               or of all reflections)
-            - ``word_type`` -- (optional, default: ``'simple'``):
+            - ``word_type`` -- (default: ``'simple'``):
               either ``'simple'``, ``'distinguished'``, or ``'all'``
 
             If ``word`` is `[i_1,i_2,\ldots,i_k]`, then this returns
@@ -1049,7 +1049,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             - ``word`` -- a sequence of indices of reflections
             - ``side`` -- (default: ``'right'``) indicates multiplying
               from left or right
-            - ``word_type`` -- (optional, default: ``'all'``):
+            - ``word_type`` -- (default: ``'all'``):
               either ``'simple'``, ``'distinguished'``, or ``'all'``
 
             EXAMPLES::

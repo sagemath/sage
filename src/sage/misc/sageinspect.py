@@ -494,7 +494,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
         INPUT:
 
-        - ``node`` - the node instance to visit
+        - ``node`` -- the node instance to visit
 
         OUTPUT: ``None``, ``True``, ``False``
 
@@ -1692,7 +1692,7 @@ def formatannotation(annotation, base_module=None):
     INPUT:
 
     - ``annotation`` -- annotation for a function
-    - ``base_module``-- (optional, default ``None``)
+    - ``base_module`` -- (default: ``None``)
 
     This is only relevant with Python 3, so the doctests are marked
     accordingly.
@@ -1815,7 +1815,7 @@ def sage_getdef(obj, obj_name=''):
     INPUT:
 
     - ``obj`` -- function
-    - ``obj_name`` -- string (optional, default '')
+    - ``obj_name`` -- string (default: '')
 
     ``obj_name`` is prepended to the output.
 

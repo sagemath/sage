@@ -38,7 +38,7 @@ def ModAbVar_ambient_jacobian(group):
     INPUT:
 
 
-    -  ``group`` - a congruence subgroup.
+    -  ``group`` -- a congruence subgroup.
 
 
     OUTPUT: a modular abelian variety attached
@@ -257,13 +257,13 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         INPUT:
 
 
-        -  ``level`` - integer (multiple or divisor of level of
+        -  ``level`` -- integer (multiple or divisor of level of
            self)
 
-        -  ``t`` - divisor of quotient of level of self and
+        -  ``t`` -- divisor of quotient of level of self and
            level
 
-        -  ``check`` - bool (default: True); if True do some
+        -  ``check`` -- bool (default: ``True``); if True do some
            checks on the input
 
 

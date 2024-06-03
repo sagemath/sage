@@ -332,7 +332,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
       - ``'ncg'`` -- (newton-conjugate gradient) requires gradient and hessian
 
-    - ``verbose`` -- (optional, default: False) print convergence message
+    - ``verbose`` -- (default: ``False``) print convergence message
 
     .. NOTE::
 

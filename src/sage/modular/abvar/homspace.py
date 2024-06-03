@@ -212,9 +212,9 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``domain, codomain`` - modular abelian varieties
+        -  ``domain, codomain`` -- modular abelian varieties
 
-        -  ``cat`` - category
+        -  ``cat`` -- category
 
 
         EXAMPLES::
@@ -411,7 +411,7 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``g`` - a matrix or morphism or object with a list
+        -  ``g`` -- a matrix or morphism or object with a list
            method
 
 

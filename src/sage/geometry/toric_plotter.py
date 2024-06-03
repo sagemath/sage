@@ -693,7 +693,7 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``generators`` - a list of primitive non-zero ray generators.
+        - ``generators`` -- a list of primitive non-zero ray generators.
 
         OUTPUT:
 
@@ -771,7 +771,7 @@ def color_list(color, n):
     - ``color`` -- anything specifying a :class:`Color`, a list of such
       specifications, or the string "rainbow";
 
-    - ``n`` - an integer.
+    - ``n`` -- an integer.
 
     OUTPUT:
 
@@ -825,7 +825,7 @@ def label_list(label, n, math_mode, index_set=None):
 
     - ``label`` -- ``None``, a string, or a list of string;
 
-    - ``n`` - an integer;
+    - ``n`` -- an integer;
 
     - ``math_mode`` -- boolean, if ``True``, will produce LaTeX expressions
       for labels;

@@ -528,7 +528,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``right`` - a projective space, product of projective spaces, or subscheme.
+        - ``right`` -- a projective space, product of projective spaces, or subscheme.
 
         OUTPUT: a product of projective spaces or subscheme.
 
@@ -787,7 +787,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT: A point of this projective space.
@@ -957,7 +957,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        -  ``X`` - a list or tuple of equations.
+        -  ``X`` -- a list or tuple of equations.
 
         EXAMPLES::
 
@@ -1013,9 +1013,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         kwds:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``precision`` - (default: 53) a positive integer
+        - ``precision`` -- (default: 53) a positive integer
 
         OUTPUT:
 
@@ -1375,7 +1375,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``other`` - A projective space with the same base ring as this space.
+        - ``other`` -- A projective space with the same base ring as this space.
 
         OUTPUT:
 
@@ -2124,9 +2124,9 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         INPUT:
 
-        - ``Ch`` - a homogeneous polynomial.
+        - ``Ch`` -- a homogeneous polynomial.
 
-        - ``dim`` - the dimension of the associated scheme.
+        - ``dim`` -- the dimension of the associated scheme.
 
         OUTPUT: a projective subscheme.
 
@@ -2449,7 +2449,7 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
 
         INPUT:
 
-        -  ``bound`` - integer.
+        -  ``bound`` -- integer.
 
         EXAMPLES::
 

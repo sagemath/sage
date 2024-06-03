@@ -194,7 +194,7 @@ cdef class Matrix:
 
         INPUT:
 
-        - ``sparse`` -- (default: True) whether the return matrix has
+        - ``sparse`` -- (default: ``True``) whether the return matrix has
           a sparse representation
 
         EXAMPLES::

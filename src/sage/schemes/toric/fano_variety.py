@@ -1566,9 +1566,9 @@ def add_variables(field, variables):
 
     INPUT:
 
-    - ``field`` - a field;
+    - ``field`` -- a field;
 
-    - ``variables`` - a list of strings.
+    - ``variables`` -- a list of strings.
 
     OUTPUT:
 

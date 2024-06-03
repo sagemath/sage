@@ -79,7 +79,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
     INPUT:
 
-    - ``name`` - string
+    - ``name`` -- string
 
     OUTPUT: the interface
 
@@ -123,7 +123,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``dir`` - string
+        - ``dir`` -- string
 
         OUTPUT: none
 
@@ -143,11 +143,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``command`` - string; function to call
+        - ``command`` -- string; function to call
 
-        - ``s`` - string; argument to the function
+        - ``s`` -- string; argument to the function
 
-        - ``redirect`` - boolean (default: True); if redirect is set to False,
+        - ``redirect`` -- boolean (default: ``True``); if redirect is set to False,
           then the output of the command is not returned as a string.
           Instead, it behaves like os.system. This is used for interactive
           things like Maxima's demos. See maxima.demo?
@@ -188,7 +188,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``s`` - string
+        - ``s`` -- string
 
         OUTPUT:
 
@@ -210,7 +210,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``s`` - string
+        - ``s`` -- string
 
         OUTPUT:
 
@@ -244,7 +244,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``s`` - string
+        - ``s`` -- string
 
         OUTPUT: none
 
@@ -268,9 +268,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``s`` - string
+        - ``s`` -- string
 
-        - ``verbose`` - boolean (default: True)
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: array of strings
 
@@ -302,7 +302,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``verbose`` - boolean (default: True)
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: array of strings
 
@@ -333,9 +333,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``verbose`` - boolean (default: True)
+        - ``verbose`` -- boolean (default: ``True``)
 
-        - ``use_disk_cache`` - boolean (default: True); if set to True,
+        - ``use_disk_cache`` -- boolean (default: ``True``); if set to True,
           try to read cached result from disk
 
         OUTPUT: array of strings
@@ -407,7 +407,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``t`` - float (default: None); If \var{t} is not None, then
+        - ``t`` -- float (default: None); If \var{t} is not None, then
           it returns the difference between the current CPU time and \var{t}.
 
         OUTPUT: float
@@ -602,13 +602,13 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``args`` - a string with variable names separated by
+        - ``args`` -- a string with variable names separated by
            commas
 
-        - ``defn`` - a string (or Maxima expression) that
+        - ``defn`` -- a string (or Maxima expression) that
            defines a function of the arguments in Maxima.
 
-        - ``rep`` - an optional string; if given, this is how
+        - ``rep`` -- an optional string; if given, this is how
            the function will print.
 
         OUTPUT: Maxima function
@@ -670,7 +670,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
 #         INPUT:
 
-#         flag -- bool (default: True)
+#         flag -- bool (default: ``True``)
 
 #         EXAMPLES::
 
@@ -693,10 +693,10 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``f`` - a string representing a function (such as
+        - ``f`` -- a string representing a function (such as
            f="sin(x)") [var, xmin, xmax]
 
-        - ``options`` - an optional string representing plot2d
+        - ``options`` -- an optional string representing plot2d
            options in gnuplot format
 
         EXAMPLES::
@@ -716,17 +716,17 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``r`` - a string representing a function (such as
+        - ``r`` -- a string representing a function (such as
            r="[x(t),y(t)]")
 
-        - ``var`` - a string representing the variable (such
+        - ``var`` -- a string representing the variable (such
            as var = "t")
 
-        - ``trange`` - [tmin, tmax] are numbers with tmintmax
+        - ``trange`` -- [tmin, tmax] are numbers with tmintmax
 
-        - ``nticks`` - int (default: 50)
+        - ``nticks`` -- int (default: 50)
 
-        - ``options`` - an optional string representing plot2d
+        - ``options`` -- an optional string representing plot2d
            options in gnuplot format
 
         EXAMPLES::
@@ -763,7 +763,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``f`` - a string representing a function (such as
+        - ``f`` -- a string representing a function (such as
            f="sin(x)") [var, min, max]
 
         - ``args`` should be of the form '[x, xmin, xmax]', '[y, ymin, ymax]',
@@ -788,16 +788,16 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``x, y, z`` - a string representing a function (such
+        - ``x, y, z`` -- a string representing a function (such
            as ``x="u2+v2"``, ...) vars is a list or two strings
            representing variables (such as vars = ["u","v"])
 
-        - ``urange`` - [umin, umax]
+        - ``urange`` -- [umin, umax]
 
-        - ``vrange`` - [vmin, vmax] are lists of numbers with
+        - ``vrange`` -- [vmin, vmax] are lists of numbers with
            umin umax, vmin vmax
 
-        - ``options`` - optional string representing plot2d
+        - ``options`` -- optional string representing plot2d
            options in gnuplot format
 
         OUTPUT: displays a plot on screen or saves to a file
@@ -841,12 +841,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        -  ``de`` - a string representing the ODE
+        -  ``de`` -- a string representing the ODE
 
-        - ``vars`` - a list of strings representing the two
+        - ``vars`` -- a list of strings representing the two
            variables.
 
-        - ``ics`` - a triple of numbers [a,b1,b2] representing
+        - ``ics`` -- a triple of numbers [a,b1,b2] representing
            y(a)=b1, y'(a)=b2
 
         EXAMPLES::
@@ -883,13 +883,13 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``de`` - a string representing the ODE (e.g., de =
+        - ``de`` -- a string representing the ODE (e.g., de =
            "diff(f(x),x,2)=diff(f(x),x)+sin(x)")
 
-        - ``vars`` - a list of strings representing the
+        - ``vars`` -- a list of strings representing the
            variables (e.g., vars = ["x","f"])
 
-        - ``ics`` - a list of numbers representing initial
+        - ``ics`` -- a list of numbers representing initial
            conditions, with symbols allowed which are represented by strings
            (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
 
@@ -933,10 +933,10 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``eqns`` - a list of m strings; each representing a linear
+        - ``eqns`` -- a list of m strings; each representing a linear
           question in m = n variables
 
-        - ``vars`` - a list of n strings; each
+        - ``vars`` -- a list of n strings; each
           representing a variable
 
         EXAMPLES::
@@ -967,7 +967,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``n`` - an integer
+        - ``n`` -- an integer
 
         EXAMPLES::
 
@@ -1002,12 +1002,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``ptsx`` - [x1,...,xn], where the xi and yi are
+        - ``ptsx`` -- [x1,...,xn], where the xi and yi are
            real,
 
-        - ``ptsy`` - [y1,...,yn]
+        - ``ptsy`` -- [y1,...,yn]
 
-        - ``options`` - a string representing maxima plot2d
+        - ``options`` -- a string representing maxima plot2d
            options.
 
         The points are (x1,y1), (x2,y2), etc.
@@ -1045,10 +1045,10 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``pts_lst`` - list of points; each point must be of the form [x,y]
+        - ``pts_lst`` -- list of points; each point must be of the form [x,y]
           where ``x`` is an integer and ``y`` is a real
 
-        - ``var`` - string; representing Maxima's plot2d options
+        - ``var`` -- string; representing Maxima's plot2d options
 
         Requires maxima 5.9.2 at least.
 
@@ -1161,7 +1161,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``other`` - an object to compare to
+        - ``other`` -- an object to compare to
 
         OUTPUT: boolean
 
@@ -1268,7 +1268,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``R`` - symbolic ring to convert into
+        - ``R`` -- symbolic ring to convert into
 
         OUTPUT: symbolic expression
 
@@ -1308,7 +1308,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``C`` - complex numbers field to convert into
+        - ``C`` -- complex numbers field to convert into
 
         OUTPUT: complex
 
@@ -1335,7 +1335,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``R`` - real numbers field to convert into
+        - ``R`` -- real numbers field to convert into
 
         OUTPUT: real
 
@@ -1352,7 +1352,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``C`` - double precision complex numbers field to convert into
+        - ``C`` -- double precision complex numbers field to convert into
 
         OUTPUT: complex
 
@@ -1369,7 +1369,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``R`` - double precision real numbers field to convert into
+        - ``R`` -- double precision real numbers field to convert into
 
         OUTPUT: real
 
@@ -1449,9 +1449,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``var`` - variable (default: 'x')
+        - ``var`` -- variable (default: 'x')
 
-        - ``n`` - integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         OUTPUT: n-th derivative of self with respect to the variable var
 
@@ -1488,16 +1488,16 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``var`` - variable to integrate with respect to
+        - ``var`` -- variable to integrate with respect to
 
-        - ``a`` - lower endpoint of integration
+        - ``a`` -- lower endpoint of integration
 
-        - ``b`` - upper endpoint of integration
+        - ``b`` -- upper endpoint of integration
 
-        - ``desired_relative_error`` - (default: '1e-8') the
+        - ``desired_relative_error`` -- (default: '1e-8') the
            desired relative error
 
-        - ``maximum_num_subintervals`` - (default: 200)
+        - ``maximum_num_subintervals`` -- (default: 200)
            maxima number of subintervals
 
         OUTPUT:
@@ -1511,19 +1511,19 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - an error code:
 
-            - ``0`` - no problems were encountered
+            - ``0`` -- no problems were encountered
 
-            - ``1`` - too many subintervals were done
+            - ``1`` -- too many subintervals were done
 
-            - ``2`` - excessive roundoff error
+            - ``2`` -- excessive roundoff error
 
-            - ``3`` - extremely bad integrand behavior
+            - ``3`` -- extremely bad integrand behavior
 
-            - ``4`` - failed to converge
+            - ``4`` -- failed to converge
 
-            - ``5`` - integral is probably divergent or slowly convergent
+            - ``5`` -- integral is probably divergent or slowly convergent
 
-            - ``6`` - the input is invalid
+            - ``6`` -- the input is invalid
 
         EXAMPLES::
 
@@ -1551,11 +1551,11 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``var`` - variable
+        - ``var`` -- variable
 
-        - ``min`` - default: None
+        - ``min`` -- default: None
 
-        - ``max`` - default: None
+        - ``max`` -- default: None
 
         OUTPUT:
 
@@ -1641,7 +1641,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``other`` - matrix; argument to dot.
+        - ``other`` -- matrix; argument to dot.
 
         OUTPUT: Maxima matrix
 
@@ -1662,7 +1662,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``n`` - integer
+        - ``n`` -- integer
 
         OUTPUT: Maxima object
 
@@ -1714,7 +1714,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``val`` - string representing substitution(s) to perform
+        - ``val`` -- string representing substitution(s) to perform
 
         OUTPUT: Maxima object
 
@@ -1735,7 +1735,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``args`` - string
+        - ``args`` -- string
 
         OUTPUT: Maxima object
 
@@ -1805,7 +1805,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``verbose`` - boolean
+        - ``verbose`` -- boolean
 
         OUTPUT: list of strings
 
@@ -1824,7 +1824,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``R`` - ring to coerce into
+        - ``R`` -- ring to coerce into
 
         OUTPUT: matrix
 
@@ -1872,7 +1872,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
         OUTPUT: Maxima object
 
@@ -1950,15 +1950,15 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     INPUT:
 
-    - ``parent`` - an instance of a concrete Maxima interface
+    - ``parent`` -- an instance of a concrete Maxima interface
 
-    - ``name`` - string
+    - ``name`` -- string
 
-    - ``defn`` - string
+    - ``defn`` -- string
 
-    - ``args`` - string; comma separated names of arguments
+    - ``args`` -- string; comma separated names of arguments
 
-    - ``latex`` - string
+    - ``latex`` -- string
 
     OUTPUT: Maxima function
 
@@ -2018,7 +2018,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         INPUT:
 
-        - ``args`` - a variable number of arguments
+        - ``args`` -- a variable number of arguments
 
         OUTPUT: Maxima object
 
@@ -2074,7 +2074,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         INPUT:
 
-        - ``split`` - boolean; if True return a tuple of strings,
+        - ``split`` -- boolean; if True return a tuple of strings,
           otherwise return a string of comma-separated arguments
 
         OUTPUT:
@@ -2121,7 +2121,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         INPUT:
 
-        - ``var`` - a variable
+        - ``var`` -- a variable
 
         OUTPUT: Maxima function
 
@@ -2156,10 +2156,10 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         INPUT:
 
-        - ``operation`` - A string representing the operation
+        - ``operation`` -- A string representing the operation
            being performed. For example, '\*', or '1/'.
 
-        - ``f`` - The other operand. If f is
+        - ``f`` -- The other operand. If f is
            ``None``, then the operation is assumed to be unary
            rather than binary.
 

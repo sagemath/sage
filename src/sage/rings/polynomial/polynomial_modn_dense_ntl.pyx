@@ -1088,7 +1088,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
+        - ``degree`` (``None`` or an integer) -- if specified, truncate or zero
           pad the list of coefficients to this degree before reversing it.
 
         EXAMPLES::
@@ -1647,7 +1647,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
+        - ``degree`` (``None`` or an integer) -- if specified, truncate or zero
           pad the list of coefficients to this degree before reversing it.
 
         EXAMPLES::

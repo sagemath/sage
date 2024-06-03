@@ -75,7 +75,7 @@ class ShardPosetElement(tuple):
         r"""
         INPUT:
 
-        - ``p`` - a permutation
+        - ``p`` -- a permutation
 
         EXAMPLES::
 

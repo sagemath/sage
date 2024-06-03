@@ -2128,7 +2128,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- bool (default: ``False``); if ``True``, return a
            list of all `n`-th roots.
 
         EXAMPLES::
@@ -2224,10 +2224,10 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``self`` - element of the upper half plane (if not,
+        -  ``self`` -- element of the upper half plane (if not,
            raises a ``ValueError``).
 
-        -  ``omit_frac`` - (bool, default: ``False``), if ``True``,
+        -  ``omit_frac`` -- (bool, default: ``False``), if ``True``,
            omit the `e^{\pi i z / 12}` factor.
 
         OUTPUT: a complex number

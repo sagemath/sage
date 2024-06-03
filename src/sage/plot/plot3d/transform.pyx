@@ -138,7 +138,7 @@ def rotate_arbitrary(v, double theta):
 
     INPUT:
 
-    - ``theta`` - real number, the angle
+    - ``theta`` -- real number, the angle
 
     EXAMPLES::
 

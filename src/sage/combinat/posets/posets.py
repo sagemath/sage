@@ -1493,7 +1493,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         - ``allow_incomparable`` -- a Boolean. If ``True`` (the default),
           return incomparable elements in some order; if ``False``, raise
           an error if ``l`` is not a chain of the poset.
-        - ``remove_duplicates`` - a Boolean. If ``True``, remove duplicates
+        - ``remove_duplicates`` -- a Boolean. If ``True``, remove duplicates
           from the output list.
 
         EXAMPLES::
@@ -1909,11 +1909,11 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change element look:
 
-          * ``element_colors`` - a dictionary where keys are colors and values
+          * ``element_colors`` -- a dictionary where keys are colors and values
             are lists of elements
-          * ``element_color`` - a color for elements not set in
+          * ``element_color`` -- a color for elements not set in
             ``element_colors``
-          * ``element_shape`` - the shape of elements, like ``'s'`` for
+          * ``element_shape`` -- the shape of elements, like ``'s'`` for
             square; see https://matplotlib.org/api/markers_api.html for the list
           * ``element_size`` (default: 200) - the size of elements
           * ``label_elements`` (default: ``True``) - whether to display
@@ -1923,24 +1923,24 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change cover relation look:
 
-          * ``cover_colors`` - a dictionary where keys are colors and values
+          * ``cover_colors`` -- a dictionary where keys are colors and values
             are lists of cover relations given as pairs of elements
-          * ``cover_color`` - a color for elements not set in
+          * ``cover_color`` -- a color for elements not set in
             ``cover_colors``
-          * ``cover_style`` - style for cover relations: ``'solid'``,
+          * ``cover_style`` -- style for cover relations: ``'solid'``,
             ``'dashed'``, ``'dotted'`` or ``'dashdot'``
-          * ``cover_labels`` - a dictionary, list or function representing
+          * ``cover_labels`` -- a dictionary, list or function representing
             labels of the covers of the poset. When set to ``None`` (default)
             no label is displayed on the edges of the Hasse Diagram.
-          * ``cover_labels_background`` - a background color for cover
+          * ``cover_labels_background`` -- a background color for cover
             relations. The default is "white". To achieve a transparent
             background use "transparent".
 
         - Options to change overall look:
 
           * ``figsize`` (default: 8) - size of the whole plot
-          * ``title`` - a title for the plot
-          * ``fontsize`` - fontsize for the title
+          * ``title`` -- a title for the plot
+          * ``fontsize`` -- fontsize for the title
           * ``border`` (default: ``False``) - whether to draw a border over the
             plot
 
@@ -2112,13 +2112,13 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``label_elements`` (default: ``True``) - whether to display
+        - ``label_elements`` (default: ``True``) -- whether to display
           element labels
 
-        - ``element_labels`` (default: ``None``) - a dictionary of
+        - ``element_labels`` (default: ``None``) -- a dictionary of
           element labels
 
-        - ``cover_labels`` - a dictionary, list or function representing labels
+        - ``cover_labels`` -- a dictionary, list or function representing labels
           of the covers of ``self``. When set to ``None`` (default) no label is
           displayed on the edges of the Hasse Diagram.
 
@@ -2772,7 +2772,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``m``, ``n`` - positive integers
+        - ``m``, ``n`` -- positive integers
 
         It is also possible to give a list of integer pairs as argument.
         See below for an example.
@@ -4941,10 +4941,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         INPUT:
 
         - ``element_constructor`` -- a function taking an iterable as
-          argument (optional, default: ``list``)
+          argument (default: ``list``)
 
         - ``exclude`` -- elements of the poset to be excluded
-          (optional, default: ``None``)
+          (default: ``None``)
 
         OUTPUT:
 
@@ -5383,7 +5383,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``other``, a poset.
 
-        - ``labels`` - (defaults to 'pairs') If set to 'pairs', each
+        - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
           element ``v`` in this poset will be named ``(0,v)`` and each
           element ``u`` in ``other`` will be named ``(1,u)`` in the
           result. If set to 'integers', the elements of the result
@@ -5547,7 +5547,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``other``, a poset.
 
-        - ``labels`` - (defaults to 'pairs') If set to 'pairs', each
+        - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
           element ``v`` in this poset will be named ``(0,v)`` and each
           element ``u`` in ``other`` will be named ``(1,u)`` in the
           result. If set to 'integers', the elements of the result

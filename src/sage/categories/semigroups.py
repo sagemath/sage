@@ -27,6 +27,7 @@ from sage.arith.power import generic_power
 
 all_axioms += ("HTrivial", "Aperiodic", "LTrivial", "RTrivial", "JTrivial")
 
+
 class Semigroups(CategoryWithAxiom):
     """
     The category of (multiplicative) semigroups.
@@ -181,7 +182,7 @@ class Semigroups(CategoryWithAxiom):
 
             - ``side`` -- "left", "right", or "twosided":
               the side on which the generators act (default:"right")
-            - ``simple`` -- boolean (default:False):
+            - ``simple`` -- boolean (default: ``False``):
               if True, returns a simple graph (no loops, no labels,
               no multiple edges)
             - ``generators`` -- a list, tuple, or family of elements

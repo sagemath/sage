@@ -54,12 +54,12 @@ def Ideal(*args, **kwds):
 
     INPUT:
 
-    -  ``R`` - A ring (optional; if not given, will try to infer it from
+    -  ``R`` -- A ring (optional; if not given, will try to infer it from
        ``gens``)
 
-    -  ``gens`` - list of elements generating the ideal
+    -  ``gens`` -- list of elements generating the ideal
 
-    -  ``coerce`` - bool (optional, default: ``True``);
+    -  ``coerce`` -- bool (default: ``True``);
        whether ``gens`` need to be coerced into the ring.
 
 
@@ -742,7 +742,7 @@ class Ideal_generic(MonoidElement):
 
         INPUT:
 
-        - ``P`` - (default: ``None``) a prime ideal in the same ring
+        - ``P`` -- (default: ``None``) a prime ideal in the same ring
 
         EXAMPLES::
 

@@ -60,21 +60,21 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``command`` - a named format string with the command to
+        - ``command`` -- a named format string with the command to
           run. The string must contain {input} and may contain
           {output} if the solvers writes the solution to an output
           file. For example "sat-solver {input}" is a valid
           command. If ``None`` then the class variable ``command`` is
           used. (default: ``None``)
 
-        - ``filename`` - a filename to write clauses to in DIMACS
+        - ``filename`` -- a filename to write clauses to in DIMACS
           format, must be writable. If ``None`` a temporary filename
           is chosen automatically. (default: ``None``)
 
-        - ``verbosity`` - a verbosity level, where zero means silent
+        - ``verbosity`` -- a verbosity level, where zero means silent
           and anything else means verbose output. (default: ``0``)
 
-        - ``**kwds`` - accepted for compatibility with other solves,
+        - ``**kwds`` -- accepted for compatibility with other solves,
           ignored.
 
         TESTS::
@@ -127,7 +127,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``decision`` - accepted for compatibility with other solvers, ignored.
+        - ``decision`` -- accepted for compatibility with other solvers, ignored.
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``lits`` - a tuple of integers != 0
+        - ``lits`` -- a tuple of integers != 0
 
         .. note::
 
@@ -198,7 +198,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``filename`` - if ``None`` default filename specified at initialization is used for
+        - ``filename`` -- if ``None`` default filename specified at initialization is used for
           writing to (default: ``None``)
 
         EXAMPLES::
@@ -247,7 +247,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``filename`` - if not ``None`` clauses are written to ``filename`` in
+        - ``filename`` -- if not ``None`` clauses are written to ``filename`` in
           DIMACS format (default: ``None``)
 
         OUTPUT:
@@ -305,11 +305,11 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``clauses`` - a list of clauses, either in simple format as a list of
+        - ``clauses`` -- a list of clauses, either in simple format as a list of
           literals or in extended format for CryptoMiniSat: a tuple of literals,
           ``is_xor`` and ``rhs``.
 
-        - ``filename`` - the file to write to
+        - ``filename`` -- the file to write to
 
         - ``nlits -- the number of literals appearing in ``clauses``
 
@@ -429,7 +429,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``assumptions`` - ignored, accepted for compatibility with
+        - ``assumptions`` -- ignored, accepted for compatibility with
           other solvers (default: ``None``)
 
         OUTPUT:

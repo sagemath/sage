@@ -511,7 +511,7 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
+        - ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
 
         OUTPUT:
 
@@ -1248,8 +1248,8 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        -  ``k`` - an integer (default: 2), the weight. Not fully implemented for k = 1.
-        -  ``p`` - integer (default: 0); if nonzero, compute the `p`-new subspace.
+        -  ``k`` -- an integer (default: 2), the weight. Not fully implemented for k = 1.
+        -  ``p`` -- integer (default: 0); if nonzero, compute the `p`-new subspace.
 
         OUTPUT: Integer
 
@@ -1353,7 +1353,7 @@ class GammaH_class(CongruenceSubgroup):
         - ``sign`` (default: None): if not None, return only characters of the
           given sign
 
-        - ``galois_orbits`` (default: False): if True, return only one
+        - ``galois_orbits`` (default: ``False``): if True, return only one
           character from each Galois orbit.
 
         EXAMPLES::

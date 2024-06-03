@@ -127,13 +127,13 @@ def _rmcmd(s, cmd, left='', right=''):
 
     INPUT:
 
-    - ``s`` - (string) string from which to remove the command
+    - ``s`` -- (string) string from which to remove the command
 
-    - ``cmd`` - (string) command to be removed.  This should be a
+    - ``cmd`` -- (string) command to be removed.  This should be a
       command which takes a single argument, like 'emph' or 'url'; the
       command is removed, but its argument is not.
 
-    - ``left``, ``right`` - (string, optional, default '') add these
+    - ``left``, ``right`` -- (string, default: '') add these
       strings at the left and right ends of the command. See the
       examples.
 
@@ -197,8 +197,8 @@ def detex(s, embedded=False):
 
     INPUT:
 
-    - ``s`` - string
-    - ``embedded`` - boolean (optional, default False)
+    - ``s`` -- string
+    - ``embedded`` -- boolean (default: ``False``)
 
     If ``embedded`` is False, then do the replacements in both
     ``math_substitutes`` and ``nonmath_substitutes``.  If True, then
@@ -551,7 +551,7 @@ def process_extlinks(s, embedded=False):
     INPUT:
 
     - ``s`` -- string, in practice a docstring
-    - ``embedded`` -- boolean (optional, default False)
+    - ``embedded`` -- boolean (default: ``False``)
 
     This function is called by :func:`format`, and if in the notebook,
     it sets ``embedded`` to be ``True``, otherwise ``False``.
@@ -589,7 +589,7 @@ def process_mathtt(s):
 
     INPUT:
 
-    - ``s`` - string, in practice a docstring
+    - ``s`` -- string, in practice a docstring
 
     This function is called by :func:`format`.
 
@@ -656,7 +656,7 @@ def format(s, embedded=False):
     INPUT:
 
     - ``s`` -- string
-    - ``embedded`` -- boolean (optional, default ``False``)
+    - ``embedded`` -- boolean (default: ``False``)
 
     OUTPUT: string
 
@@ -837,7 +837,9 @@ def format_src(s):
     If ``s`` contains a string of the form "<<<obj>>>", then it
     replaces it with the source code for "obj".
 
-    INPUT: ``s`` - string
+    INPUT:
+
+    - ``s`` -- string
 
     OUTPUT: string
 
@@ -1058,34 +1060,34 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     INPUT:
 
-    - ``string`` - a string to find in the Sage source code.
+    - ``string`` -- a string to find in the Sage source code.
 
-    - ``extra1``, ..., ``extra5`` - additional strings to require when
+    - ``extra1``, ..., ``extra5`` -- additional strings to require when
       searching.  Lines must match all of these, as well as ``string``.
 
-    - ``whole_word`` (optional, default False) - if True, search for
+    - ``whole_word`` (default: ``False``) -- if True, search for
       ``string`` and ``extra1`` (etc.) as whole words only.  This
       assumes that each of these arguments is a single word, not a
       regular expression, and it might have unexpected results if used
       with regular expressions.
 
-    - ``ignore_case`` (optional, default True) - if False, perform a
+    - ``ignore_case`` (default: ``True``) -- if False, perform a
       case-sensitive search
 
-    - ``multiline`` (optional, default False) - if True, search more
+    - ``multiline`` (default: ``False``) -- if True, search more
       than one line at a time.  In this case, print any matching file
       names, but don't print line numbers.
 
-    - ``interact`` (optional, default ``True``) - if ``False``, return
+    - ``interact`` (default: ``True``) -- if ``False``, return
       a string with all the matches. Otherwise, this function returns
       ``None``, and the results are displayed appropriately, according
       to whether you are using the notebook or the command-line
       interface. You should not ordinarily need to use this.
 
-    - ``path_re`` (optional, default '') - regular expression which
+    - ``path_re`` (default: '') -- regular expression which
       the filename (including the path) must match.
 
-    - ``module`` (optional, default 'sage') - the module in which to
+    - ``module`` (default: 'sage') -- the module in which to
       search.  The default is 'sage', the entire Sage library.  If
       ``module`` doesn't start with "sage", then the links in the
       notebook output may not function.
@@ -1330,11 +1332,11 @@ def format_search_as_html(what, results, search):
 
     INPUT:
 
-    - ``what`` - (string) what was searched (source code or
+    - ``what`` -- (string) what was searched (source code or
       documentation)
-    - ``results`` - (string or list) the results of the search as a string or list of
+    - ``results`` -- (string or list) the results of the search as a string or list of
       search results
-    - ``search`` - (string or list) what was being searched for, either as a
+    - ``search`` -- (string or list) what was being searched for, either as a
       string which is taken verbatim, or a list of multiple search terms if
       there were more than one
 
@@ -1483,9 +1485,9 @@ class _sage_doc:
 
         INPUT:
 
-        - ``obj`` - a Sage object
-        - ``output`` - 'html', 'rst', or 'text': return documentation in this form
-        - ``view`` - only has an effect if output is 'html': in this
+        - ``obj`` -- a Sage object
+        - ``output`` -- 'html', 'rst', or 'text': return documentation in this form
+        - ``view`` -- only has an effect if output is 'html': in this
           case, if ``view`` is ``True``, display the documentation in
           a web browser.  Otherwise, return the documentation as a
           string.
@@ -1626,9 +1628,9 @@ class _sage_doc:
 
         INPUT:
 
-        - ``name`` - string, name of the documentation
+        - ``name`` -- string, name of the documentation
 
-        - ``testing`` - boolean (optional, default False): if True,
+        - ``testing`` -- boolean (default: ``False``): if True,
           then just return the URL and path-name for this document;
           don't open the web browser.
 

@@ -872,9 +872,9 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         INPUT:
 
-        - `i`: Index of the first row to be extracted
-        - `j` (optional, default -1): -1, or index of the last
-          row to be extracted.
+        - ``i`` -- index of the first row to be extracted
+        - ``j`` -- (default: -1); -1, or index of the last
+          row to be extracted
 
         OUTPUT:
 
@@ -1650,7 +1650,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         INPUT:
 
-        - ``reduced`` (optional, default ``True``) -- will result
+        - ``reduced`` (default: ``True``) -- will result
           in the row-reduced echelon form (otherwise, only a
           semi-echelon form results).
 

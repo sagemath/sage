@@ -3,10 +3,12 @@
 r"""
 Access functions to online databases for coding theory
 """
-from sage.features.gap import GapPackage
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.libs.gap.libgap', 'libgap')
+# Import the following function so that it is available as
+# - sage.coding.databases.self_dual_binary_codes
+# - codes.databases.self_dual_binary_codes (which functions as a catalog).
+lazy_import('sage.coding.self_dual_codes', 'self_dual_binary_codes')
 
 # Import the following function so that it is available as
 # sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
@@ -16,7 +18,8 @@ lazy_import('sage.coding.self_dual_codes', 'self_dual_binary_codes')
 del lazy_import
 
 # Do not put any global imports here since this module is accessible as
-# sage.codes.databases.<tab>
+# - sage.coding.databases.<tab>
+# - codes.databases.<tab>
 
 
 def best_linear_code_in_guava(n, k, F):
@@ -53,8 +56,10 @@ def best_linear_code_in_guava(n, k, F):
     between 2 and 4. Use ``bounds_on_minimum_distance_in_guava(10,5,GF(2))``
     for further details.
     """
+    from sage.features.gap import GapPackage
     from .linear_code import LinearCode
     GapPackage("guava", spkg="gap_packages").require()
+    from sage.libs.gap.libgap import libgap
     libgap.load_package("guava")
     C = libgap.BestKnownLinearCode(n, k, F)
     return LinearCode(C.GeneratorMat()._matrix_(F))
@@ -113,7 +118,9 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
           upperBound := 4,
           upperBoundExplanation := ... )
     """
+    from sage.features.gap import GapPackage
     GapPackage("guava", spkg="gap_packages").require()
+    from sage.libs.gap.libgap import libgap
     libgap.load_package("guava")
     return libgap.BoundsMinimumDistance(n, k, F)
 
@@ -125,13 +132,13 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
 
     INPUT:
 
-    -  ``n`` - Integer, the length of the code
+    -  ``n`` -- Integer, the length of the code
 
-    -  ``k`` - Integer, the dimension of the code
+    -  ``k`` -- Integer, the dimension of the code
 
-    -  ``F`` - Finite field, of order 2, 3, 4, 5, 7, 8, or 9
+    -  ``F`` -- Finite field, of order 2, 3, 4, 5, 7, 8, or 9
 
-    -  ``verbose`` - Bool (default: ``False``)
+    -  ``verbose`` -- Bool (default: ``False``)
 
     OUTPUT:
 
@@ -203,7 +210,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
        ``b=4``, all doubly even codes are generated). Must be an even positive
        integer.
 
-    -  ``parent``- - Used in recursion (default: ``None``)
+    -  ``parent`` -- Used in recursion (default: ``None``)
 
     -  ``BC`` -- Used in recursion (default: ``None``)
 

@@ -157,7 +157,7 @@ def hadamard_matrix_paleyI(n, normalize=True):
     INPUT:
 
     - ``n`` -- the matrix size
-    - ``normalize``-- boolean (default: ``True``); whether to normalize the result
+    - ``normalize`` -- boolean (default: ``True``); whether to normalize the result
 
     EXAMPLES:
 

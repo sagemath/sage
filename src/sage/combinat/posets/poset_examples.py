@@ -1184,13 +1184,13 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` - Defines the number (n-1) of layers in the poset.
+        - ``n`` -- Defines the number (n-1) of layers in the poset.
 
-        - ``colors`` - The colors that define the covering relations of the
+        - ``colors`` -- The colors that define the covering relations of the
           poset. Colors used are 'green', 'red', 'yellow', 'orange', 'silver',
           and 'blue'.
 
-        - ``labels`` - Keyword variable used to determine whether the poset
+        - ``labels`` -- Keyword variable used to determine whether the poset
           is labeled with integers or tuples.  To label with integers, the
           method should be called with ``labels='integers'``.  Otherwise, the
           labeling will default to tuples.
@@ -1324,11 +1324,11 @@ class Posets(metaclass=ClasscallMetaclass):
         - ``label`` -- (default: ``'permutations'``) a label for the elements
           of the poset returned by the function; the options are
 
-          * ``'permutations'`` - labels the elements by their
+          * ``'permutations'`` -- labels the elements by their
             one-line notation
-          * ``'reduced_words'`` - labels the elements by the
+          * ``'reduced_words'`` -- labels the elements by the
             lexicographically minimal reduced word
-          * ``'cycles'`` - labels the elements by their expression
+          * ``'cycles'`` -- labels the elements by their expression
             as a product of cycles
 
         EXAMPLES::

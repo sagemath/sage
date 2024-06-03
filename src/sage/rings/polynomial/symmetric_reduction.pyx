@@ -284,7 +284,7 @@ cdef class SymmetricReductionStrategy:
 
         INPUT:
 
-        ``L`` -- a list of elements of the underlying infinite polynomial ring.
+        - ``L`` -- a list of elements of the underlying infinite polynomial ring.
 
         .. NOTE::
 

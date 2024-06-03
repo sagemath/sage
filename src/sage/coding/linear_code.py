@@ -252,7 +252,7 @@ def _dump_code_in_leon_format(C):
 
     INPUT:
 
-    - ``C`` - a linear code (over GF(p), p < 11)
+    - ``C`` -- a linear code (over GF(p), p < 11)
 
     OUTPUT:
 
@@ -1145,18 +1145,20 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [15, 7] BCH Code over GF(2) with designed distance 5
             sage: C.is_subcode(D)
             True
-            sage: C.minimum_distance()                                                  # needs sage.libs.gap
+
+            sage: # needs sage.libs.gap
+            sage: C.minimum_distance()
             7
-            sage: D.minimum_distance()                                                  # needs sage.libs.gap
+            sage: D.minimum_distance()
             5
             sage: aux = codes.HammingCode(GF(2),2)
             sage: aux = aux.dual_code()
-            sage: aux.minimum_distance()                                                # needs sage.libs.gap
+            sage: aux.minimum_distance()
             2
             sage: Cx = D.construction_x(C,aux)
             sage: Cx
             [18, 7] linear code over GF(2)
-            sage: Cx.minimum_distance()                                                 # needs sage.libs.gap
+            sage: Cx.minimum_distance()
             7
         """
         if not other.is_subcode(self):
@@ -1551,7 +1553,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``algorithm`` - If ``"gap"`` then GAP's MatrixAutomorphism function
+        - ``algorithm`` -- If ``"gap"`` then GAP's MatrixAutomorphism function
           (written by Thomas Breuer) is used. The implementation combines an
           idea of mine with an improvement suggested by Cary Huffman. If
           ``"gap+verbose"`` then code-theoretic data is printed out at
@@ -1815,7 +1817,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``algorithm`` -- (optional, default: ``None``) If set to ``"gap"``,
+        - ``algorithm`` -- (default: ``None``) If set to ``"gap"``,
           call GAP. If set to ``"leon"``, call the option GAP package GUAVA and
           call a function therein by Jeffrey Leon (see warning below). If set to
           ``"binary"``, use an algorithm optimized for binary codes. The default
@@ -2224,7 +2226,7 @@ class LinearCode(AbstractLinearCode):
       defined over a finite ring but the matrices over that ring must have
       certain attributes, such as ``rank``); or a code over a finite field
 
-    - ``d`` -- (optional, default: ``None``) the minimum distance of the code
+    - ``d`` -- (default: ``None``) the minimum distance of the code
 
     .. NOTE::
 

@@ -271,11 +271,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``triangular`` --  (default: ``None``) ``"upper"`` or
               ``"lower"`` or ``None``:
 
-              * ``"upper"`` - if the
+              * ``"upper"`` -- if the
                 :meth:`~ModulesWithBasis.ElementMethods.leading_support`
                 of the image of the basis vector `x_i` is `i`, or
 
-              * ``"lower"`` - if the
+              * ``"lower"`` -- if the
                 :meth:`~ModulesWithBasis.ElementMethods.trailing_support`
                 of the image of the basis vector `x_i` is `i`.
 

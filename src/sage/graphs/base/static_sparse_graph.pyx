@@ -917,7 +917,7 @@ def triangles_count(G):
 
     INPUT:
 
-    - `G`-- a graph
+    - `G` -- a graph
 
     EXAMPLES::
 

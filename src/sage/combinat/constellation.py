@@ -1557,7 +1557,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
 
     INPUT:
 
-    - ``x`` -- list - a permutation of `[0, ..., n]` as a list
+    - ``x`` -- list; a permutation of `[0, ..., n]` as a list
 
     - ``y`` -- list of permutations of `[0, ..., n]` as a list of lists
 

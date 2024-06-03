@@ -1473,7 +1473,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` - a positive integer
+        - ``k`` -- a positive integer
         - ``t`` a formal parameter; `t=1` yields a subring
 
         The subspace of the ring of symmetric functions spanned by
@@ -1563,7 +1563,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` - a positive integer
+        - ``k`` -- a positive integer
 
         The quotient of the ring of symmetric functions ...
 

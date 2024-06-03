@@ -455,7 +455,7 @@ def default_variable_name(variable):
 
     INPUT:
 
-    - ``variable`` - a string describing requested name
+    - ``variable`` -- a string describing requested name
 
     OUTPUT:
 
@@ -2920,13 +2920,13 @@ class LPAbstractDictionary(SageObject):
 
         INPUT:
 
-        - ``nonbasic_coefficients``-- a list of the coefficients for the
+        - ``nonbasic_coefficients`` -- a list of the coefficients for the
           new row (with which nonbasic variables are subtracted in the relation
           for the new basic variable)
 
-        - ``constant``--  the constant term for the new row
+        - ``constant`` --  the constant term for the new row
 
-        - ``basic_variable``-- (default: depends on :func:`style`)
+        - ``basic_variable`` -- (default: depends on :func:`style`)
           a string giving the name of the basic variable of the new row
 
         OUTPUT:
@@ -4183,13 +4183,13 @@ class LPDictionary(LPAbstractDictionary):
 
         INPUT:
 
-        - ``nonbasic_coefficients``-- a list of the coefficients for the
+        - ``nonbasic_coefficients`` -- a list of the coefficients for the
           new row (with which nonbasic variables are subtracted in the relation
           for the new basic variable)
 
-        - ``constant``--  the constant term for the new row
+        - ``constant`` --  the constant term for the new row
 
-        - ``basic_variable``-- (default: depends on :func:`style`)
+        - ``basic_variable`` -- (default: depends on :func:`style`)
           a string giving the name of the basic variable of the new row
 
         OUTPUT:
@@ -5030,13 +5030,13 @@ class LPRevisedDictionary(LPAbstractDictionary):
 
         INPUT:
 
-        - ``nonbasic_coefficients``-- a list of the coefficients for the
+        - ``nonbasic_coefficients`` -- a list of the coefficients for the
           new row (with which nonbasic variables are subtracted in the relation
           for the new basic variable)
 
-        - ``constant``--  the constant term for the new row
+        - ``constant`` --  the constant term for the new row
 
-        - ``basic_variable``-- (default: depends on :func:`style`)
+        - ``basic_variable`` -- (default: depends on :func:`style`)
           a string giving the name of the basic variable of the new row
 
         OUTPUT:

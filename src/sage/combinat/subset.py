@@ -1480,7 +1480,7 @@ def powerset(X):
 
     INPUT:
 
-    -  ``X`` - an iterable
+    -  ``X`` -- an iterable
 
     OUTPUT: iterator of lists
 

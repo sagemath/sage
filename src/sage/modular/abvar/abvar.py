@@ -86,7 +86,7 @@ def is_ModularAbelianVariety(x) -> bool:
 
     INPUT:
 
-    -  ``x`` - object
+    -  ``x`` -- object
 
     EXAMPLES::
 
@@ -120,24 +120,24 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``groups`` - a tuple of congruence subgroups
+        -  ``groups`` -- a tuple of congruence subgroups
 
-        -  ``base_field`` - a field
+        -  ``base_field`` -- a field
 
-        -  ``is_simple`` - bool; whether or not self is
+        -  ``is_simple`` -- bool; whether or not self is
            simple
 
-        -  ``newform_level`` - if self is isogenous to a
+        -  ``newform_level`` -- if self is isogenous to a
            newform abelian variety, returns the level of that abelian variety
 
-        -  ``isogeny_number`` - which isogeny class the
+        -  ``isogeny_number`` -- which isogeny class the
            corresponding newform is in; this corresponds to the Cremona letter
            code
 
-        -  ``number`` - the t number of the degeneracy map that
+        -  ``number`` -- the t number of the degeneracy map that
            this abelian variety is the image under
 
-        -  ``check`` - whether to do some type checking on the
+        -  ``check`` -- whether to do some type checking on the
            defining data
 
 
@@ -797,9 +797,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``B`` - modular abelian varieties
+        -  ``B`` -- modular abelian varieties
 
-        -  ``cat`` - category
+        -  ``cat`` -- category
 
 
         EXAMPLES::
@@ -895,21 +895,21 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``other`` - a modular abelian variety or a finite
+        -  ``other`` -- a modular abelian variety or a finite
            group
 
 
         OUTPUT: If other is a modular abelian variety:
 
 
-        -  ``G`` - finite subgroup of self
+        -  ``G`` -- finite subgroup of self
 
-        -  ``A`` - abelian variety (identity component of
+        -  ``A`` -- abelian variety (identity component of
            intersection)
 
         If other is a finite group:
 
-        -  ``G`` - a finite group
+        -  ``G`` -- a finite group
 
 
         EXAMPLES: We intersect some abelian varieties with finite
@@ -1106,7 +1106,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``self, other`` - modular abelian varieties
+        -  ``self, other`` -- modular abelian varieties
 
 
         OUTPUT: abelian variety
@@ -1134,7 +1134,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``n`` - a nonnegative integer
+        -  ``n`` -- a nonnegative integer
 
 
         OUTPUT: an abelian variety
@@ -1195,7 +1195,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``other`` - a finite subgroup or subvariety
+        -  ``other`` -- a finite subgroup or subvariety
         -  further named arguments, that are currently ignored.
 
 
@@ -1235,7 +1235,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``other`` - a finite subgroup or subvariety
+        -  ``other`` -- a finite subgroup or subvariety
 
 
         EXAMPLES: Quotient out by a finite group::
@@ -1298,9 +1298,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``M, t`` - integers level and `t`, or
+        -  ``M, t`` -- integers level and `t`, or
 
-        -  ``Mlist, tlist`` - if self is in a nontrivial
+        -  ``Mlist, tlist`` -- if self is in a nontrivial
            product ambient Jacobian, input consists of a list of levels and
            corresponding list of `t`'s.
 
@@ -1382,13 +1382,13 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``G`` - a finite subgroup of self
+        -  ``G`` -- a finite subgroup of self
 
 
         OUTPUT: abelian variety - the quotient `Q` of self by `G`
 
 
-        -  ``morphism`` - from self to the quotient
+        -  ``morphism`` -- from self to the quotient
            `Q`
 
 
@@ -1443,16 +1443,16 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``B`` - an abelian subvariety of self
+        -  ``B`` -- an abelian subvariety of self
 
 
         OUTPUT:
 
 
-        -  ``abelian variety`` - quotient `Q` of self
+        -  ``abelian variety`` -- quotient `Q` of self
            by B
 
-        -  ``morphism`` - from self to the quotient
+        -  ``morphism`` -- from self to the quotient
            `Q`
 
 
@@ -1530,7 +1530,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``A`` - an abelian variety
+        -  ``A`` -- an abelian variety
 
 
         OUTPUT: a morphism
@@ -2040,7 +2040,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` - (default: False) if True,
+        -  ``none_if_not_known`` -- (default: ``False``) if True,
            return None instead of attempting to compute the newform level, if
            it isn't already known. This None result is not cached.
 
@@ -2251,7 +2251,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``n`` - an integer `\geq 1`.
+        -  ``n`` -- an integer `\geq 1`.
 
 
         OUTPUT: a matrix
@@ -2295,7 +2295,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        - ``proof`` -- a boolean (default: True)
+        - ``proof`` -- a boolean (default: ``True``)
 
         OUTPUT:
 
@@ -2668,9 +2668,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``n`` - integer `\geq 1`
+        -  ``n`` -- integer `\geq 1`
 
-        -  ``var`` - string (default: 'x'); valid variable
+        -  ``var`` -- string (default: 'x'); valid variable
            name
 
 
@@ -2715,9 +2715,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``n`` - positive integer
+        -  ``n`` -- positive integer
 
-        -  ``var`` - string (default: 'x')
+        -  ``var`` -- string (default: 'x')
 
 
         EXAMPLES::
@@ -3083,13 +3083,13 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``X`` - list of elements of other finite subgroups
+        -  ``X`` -- list of elements of other finite subgroups
            of this modular abelian variety or elements that coerce into the
            rational homology (viewed as a rational vector space); also X could
            be a finite subgroup itself that is contained in this abelian
            variety.
 
-        -  ``field_of_definition`` - (default: None) field
+        -  ``field_of_definition`` -- (default: None) field
            over which this group is defined. If None try to figure out the
            best base field.
 
@@ -3206,7 +3206,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` - (default: False) - if
+        -  ``none_if_not_known`` -- (default: ``False``); if
            True, return None instead of attempting to compute the degen map's
            `t`, if it isn't known. This None result is not cached.
 
@@ -3305,7 +3305,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` - bool (default: False); if
+        -  ``none_if_not_known`` -- bool (default: ``False``); if
            True then this function may return None instead of True of False if
            we don't already know whether or not self is simple.
 
@@ -3336,12 +3336,12 @@ class ModularAbelianVariety_abstract(Parent):
         Return a sequence of abelian subvarieties of self that are all
         simple, have finite intersection and sum to self.
 
-        INPUT: simple- bool (default: True) if True, all factors are
+        INPUT: simple- bool (default: ``True``) if True, all factors are
         simple. If False, each factor returned is isogenous to a power of a
         simple and the simples in each factor are distinct.
 
 
-        -  ``bound`` - int (default: None) if given, only use
+        -  ``bound`` -- int (default: None) if given, only use
            Hecke operators up to this bound when decomposing. This can give
            wrong answers, so use with caution!
 
@@ -3549,9 +3549,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``simple`` - bool (default: True)
+        -  ``simple`` -- bool (default: ``True``)
 
-        -  ``bound`` - integer (default: None); if given,
+        -  ``bound`` -- integer (default: None); if given,
            passed onto decomposition function
 
 
@@ -3700,7 +3700,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        -  ``A`` - (default: None); if given, A must be an
+        -  ``A`` -- (default: None); if given, A must be an
            abelian variety that contains self, in which case the complement of
            self is taken inside A. Otherwise the complement is taken in the
            ambient product Jacobian.
@@ -3831,7 +3831,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``other`` - abelian variety
+        -  ``other`` -- abelian variety
 
 
         OUTPUT: list of simple abelian varieties
@@ -3993,14 +3993,14 @@ class ModularAbelianVariety(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``groups`` - a tuple of congruence subgroups
+        -  ``groups`` -- a tuple of congruence subgroups
 
-        -  ``lattice`` - (default: `\ZZ^n`) a
+        -  ``lattice`` -- (default: `\ZZ^n`) a
            full lattice in `\ZZ^n`, where `n` is the
            sum of the dimensions of the spaces of cuspidal modular symbols
            corresponding to each `\Gamma \in` groups
 
-        -  ``base_field`` - a field (default:
+        -  ``base_field`` -- a field (default:
            `\QQ`)
 
 
@@ -4032,7 +4032,7 @@ class ModularAbelianVariety(ModularAbelianVariety_abstract):
         OUTPUT:
 
 
-        -  ``lattice`` - a lattice embedded in the rational
+        -  ``lattice`` -- a lattice embedded in the rational
            homology of the ambient product Jacobian
 
 
@@ -4181,7 +4181,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``lattice`` - a lattice
+        -  ``lattice`` -- a lattice
 
 
         EXAMPLES: We do something evil - there's no type checking since
@@ -4286,9 +4286,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``n`` - a positive integer
+        -  ``n`` -- a positive integer
 
-        -  ``sign`` - 0, +1, or -1; if 1 or -1 act on the +1 or
+        -  ``sign`` -- 0, +1, or -1; if 1 or -1 act on the +1 or
            -1 quotient of the integral homology.
 
 
@@ -4316,9 +4316,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``n`` - a positive integer
+        -  ``n`` -- a positive integer
 
-        -  ``sign`` - 0, +1, or -1; if 1 or -1 act on the +1 or
+        -  ``sign`` -- 0, +1, or -1; if 1 or -1 act on the +1 or
            -1 quotient of the rational homology.
 
 
@@ -4463,9 +4463,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``self`` - a modular abelian variety
+        -  ``self`` -- a modular abelian variety
 
-        -  ``p`` - prime number or None (default); if p is a
+        -  ``p`` -- prime number or None (default); if p is a
            prime, return the p-new subvariety. Otherwise return the full new
            subvariety.
 
@@ -4498,9 +4498,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``self`` - a modular abelian variety
+        -  ``self`` -- a modular abelian variety
 
-        -  ``p`` - prime number or None (default); if p is a
+        -  ``p`` -- prime number or None (default); if p is a
            prime, return the p-old subvariety. Otherwise return the full old
            subvariety.
 
@@ -4531,12 +4531,12 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         Decompose this modular abelian variety as a product of abelian
         subvarieties, up to isogeny.
 
-        INPUT: simple- bool (default: True) if True, all factors are
+        INPUT: simple- bool (default: ``True``) if True, all factors are
         simple. If False, each factor returned is isogenous to a power of a
         simple and the simples in each factor are distinct.
 
 
-        -  ``bound`` - int (default: None) if given, only use
+        -  ``bound`` -- int (default: None) if given, only use
            Hecke operators up to this bound when decomposing. This can give
            wrong answers, so use with caution!
 
@@ -5029,11 +5029,11 @@ def random_hecke_operator(M, t=None, p=2):
     INPUT:
 
 
-    -  ``M`` - modular symbols space
+    -  ``M`` -- modular symbols space
 
-    -  ``t`` - None or a Hecke operator
+    -  ``t`` -- None or a Hecke operator
 
-    -  ``p`` - a prime
+    -  ``p`` -- a prime
 
 
     OUTPUT: Hecke operator prime
@@ -5064,7 +5064,7 @@ def factor_new_space(M):
     INPUT:
 
 
-    -  ``M`` - modular symbols space
+    -  ``M`` -- modular symbols space
 
 
     OUTPUT: list of factors
@@ -5204,9 +5204,9 @@ def modsym_lattices(M, factors):
     INPUT:
 
 
-    -  ``M`` - modular symbols spaces
+    -  ``M`` -- modular symbols spaces
 
-    -  ``factors`` - Sequence
+    -  ``factors`` -- Sequence
        (simple_factorization_of_modsym_space)
 
 

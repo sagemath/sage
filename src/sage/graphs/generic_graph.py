@@ -18530,10 +18530,10 @@ class GenericGraph(GenericGraph_pyx):
 
           - For ``by_weight==False`` only:
 
-            - ``'BFS'`` - the computation is done through a BFS centered on
+            - ``'BFS'`` -- the computation is done through a BFS centered on
               each vertex successively.
 
-            - ``'Floyd-Warshall-Cython'`` - the Cython implementation of
+            - ``'Floyd-Warshall-Cython'`` -- the Cython implementation of
               the Floyd-Warshall algorithm. Usually slower than ``'BFS'``.
 
           - For graphs without negative weights:
@@ -18552,7 +18552,7 @@ class GenericGraph(GenericGraph_pyx):
             - ``'Johnson_Boost'``: the Johnson algorithm, implemented in
               Boost.
 
-            - ``'Floyd-Warshall-Python'`` - the Python implementation of
+            - ``'Floyd-Warshall-Python'`` -- the Python implementation of
               the Floyd-Warshall algorithm. Usually slower than
               ``'Johnson_Boost'``.
 
@@ -23513,9 +23513,9 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
 
-        -  ``partition`` - a list of lists
+        -  ``partition`` -- a list of lists
 
-        -  ``quotient_matrix`` - (default False) if True, and
+        -  ``quotient_matrix`` -- (default: ``False``) if True, and
            the partition is equitable, returns a matrix over the integers
            whose rows and columns represent cells of the partition, and whose
            i,j entry is the number of vertices in cell j adjacent to each

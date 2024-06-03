@@ -117,7 +117,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
 
         EXAMPLES::
@@ -415,7 +415,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         INPUT:
 
-        - ``proof`` -- a boolean (default: True)
+        - ``proof`` -- a boolean (default: ``True``)
 
         The computation of the rational torsion order of J1(p) is conjectural
         and will only be used if proof=False. See Section 6.2.3 of [CES2003]_.
@@ -498,7 +498,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         INPUT:
 
 
-        -  ``maxp`` - (default: None) If maxp is None (the
+        -  ``maxp`` -- (default: None) If maxp is None (the
            default), return gcd of best bound computed so far with bound
            obtained by computing GCD's of orders modulo p until this gcd
            stabilizes for 3 successive primes. If maxp is given, just use all
@@ -678,7 +678,7 @@ class QQbarTorsionSubgroup(Module):
         INPUT:
 
 
-        -  ``abvar`` - an abelian variety
+        -  ``abvar`` -- an abelian variety
 
 
         EXAMPLES::

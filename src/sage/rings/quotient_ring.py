@@ -1257,7 +1257,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         INPUT:
 
-        -  ``singular`` - Singular instance (default: the
+        -  ``singular`` -- Singular instance (default: the
            default Singular instance)
 
         .. NOTE::
@@ -1321,7 +1321,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         INPUT:
 
-        -  ``magma`` - a Magma instance
+        -  ``magma`` -- a Magma instance
 
         EXAMPLES::
 

@@ -465,6 +465,7 @@ from sage.categories.category_types import Category_over_base_ring
 
 # TODO: merge the two univariate functors below into a bivariate one
 
+
 class AlgebraFunctor(CovariantFunctorialConstruction):
     r"""
     For a fixed ring, a functor sending a group/...  to the
@@ -530,6 +531,7 @@ class AlgebraFunctor(CovariantFunctorialConstruction):
             Category of finite dimensional monoid algebras over Rational Field
         """
         return G.algebra(self._base_ring, category=category)
+
 
 class GroupAlgebraFunctor(ConstructionFunctor):
     r"""

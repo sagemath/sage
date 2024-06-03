@@ -383,7 +383,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``datum`` - list, GradedModularFormElement, ModularFormElement,
+        - ``datum`` -- list, GradedModularFormElement, ModularFormElement,
           Polynomial, base ring element
 
         OUTPUT: QuasiModularFormElement

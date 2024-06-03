@@ -99,8 +99,8 @@ class QuasiModularFormsElement(ModuleElement):
         r"""
         INPUT:
 
-        - ``parent`` - a quasimodular forms ring
-        - ``polynomial`` - a polynomial `f_0 + f_1 E_2 + ... + f_n E_2^n` where
+        - ``parent`` -- a quasimodular forms ring
+        - ``polynomial`` -- a polynomial `f_0 + f_1 E_2 + ... + f_n E_2^n` where
           each `f_i` are modular forms ring elements and `E_2` correspond to the
           weight 2 Eisenstein series
 
@@ -209,7 +209,7 @@ class QuasiModularFormsElement(ModuleElement):
 
         INPUT:
 
-        - ``other`` - ``QuasiModularFormElement``
+        - ``other`` -- ``QuasiModularFormElement``
 
         OUTPUT: a ``QuasiModularFormElement``
 
@@ -247,7 +247,7 @@ class QuasiModularFormsElement(ModuleElement):
 
         INPUT:
 
-        - ``other`` - ``QuasiModularFormElement``
+        - ``other`` -- ``QuasiModularFormElement``
 
         OUTPUT: a ``QuasiModularFormElement``
 
@@ -270,7 +270,7 @@ class QuasiModularFormsElement(ModuleElement):
 
         INPUT:
 
-        - ``other`` - ``QuasiModularFormElement``
+        - ``other`` -- ``QuasiModularFormElement``
 
         OUTPUT: a ``QuasiModularFormElement``
 

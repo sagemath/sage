@@ -520,7 +520,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` - (int) a symbol index
+        - ``j`` -- (int) a symbol index
 
         OUTPUT:
 
@@ -559,7 +559,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` - (int) a symbol index
+        - ``j`` -- (int) a symbol index
 
         OUTPUT: see documentation for apply()
 
@@ -602,7 +602,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` - (int) a symbol index
+        - ``j`` -- (int) a symbol index
 
         OUTPUT: see documentation for apply()
 
@@ -645,7 +645,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` - (int) a symbol index
+        - ``j`` -- (int) a symbol index
 
         - ``m = [a, b, c, d]`` a list of 4 integers, which defines a 2x2 matrix
 
@@ -716,9 +716,9 @@ class ManinSymbolList_gamma0(ManinSymbolList_group):
 
     INPUT:
 
-    - ``level`` - (integer): the level.
+    - ``level`` -- (integer): the level.
 
-    - ``weight`` - (integer): the weight.
+    - ``weight`` -- (integer): the weight.
 
     EXAMPLES::
 
@@ -768,9 +768,9 @@ class ManinSymbolList_gamma1(ManinSymbolList_group):
 
     INPUT:
 
-    - ``level`` - (integer): the level.
+    - ``level`` -- (integer): the level.
 
-    - ``weight`` - (integer): the weight.
+    - ``weight`` -- (integer): the weight.
 
     EXAMPLES::
 
@@ -825,9 +825,9 @@ class ManinSymbolList_gamma_h(ManinSymbolList_group):
 
     INPUT:
 
-    - ``group`` - (integer): the congruence subgroup.
+    - ``group`` -- (integer): the congruence subgroup.
 
-    - ``weight`` - (integer): the weight.
+    - ``weight`` -- (integer): the weight.
 
     EXAMPLES::
 
@@ -917,9 +917,9 @@ class ManinSymbolList_character(ManinSymbolList):
 
         INPUT:
 
-        -  ``character`` - (DirichletCharacter) the Dirichlet character
+        -  ``character`` -- (DirichletCharacter) the Dirichlet character
 
-        -  ``weight`` - (integer) the weight
+        -  ``weight`` -- (integer) the weight
 
         EXAMPLES::
 
@@ -974,7 +974,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         OUTPUT:
 
-        ``integer`` - the level of the symbols in this list.
+        ``integer`` -- the level of the symbols in this list.
 
         EXAMPLES::
 
@@ -1036,7 +1036,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` - (integer) a symbol index.
+        - ``j`` -- (integer) a symbol index.
 
         OUTPUT:
 
@@ -1087,7 +1087,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` - (integer) a symbol index
+        - ``j`` -- (integer) a symbol index
 
         OUTPUT:
 
@@ -1120,7 +1120,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` - (integer) a symbol index.
+        - ``j`` -- (integer) a symbol index.
 
         OUTPUT:
 
@@ -1163,7 +1163,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         INPUT:
 
-        - ``j`` - (integer) a symbol index
+        - ``j`` -- (integer) a symbol index
 
         OUTPUT:
 
@@ -1269,7 +1269,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         INPUT:
 
-        - ``x`` - 3-tuple of integers ``(i,u,v)``, defining an element of this
+        - ``x`` -- 3-tuple of integers ``(i,u,v)``, defining an element of this
           list of Manin symbols, which need not be normalized.
 
         OUTPUT:

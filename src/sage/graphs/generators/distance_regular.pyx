@@ -2710,8 +2710,8 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
       - ``Unknown`` -- if Sage doesn't know if such a graph exists.
 
-    - ``check`` -- boolean (optional); if ``True``, then checks that the result
-      of this function has the given intersection array. Default: ``True``
+    - ``check`` -- boolean (default: ``True``); if ``True``, then checks that the result
+      of this function has the given intersection array
 
     EXAMPLES::
 

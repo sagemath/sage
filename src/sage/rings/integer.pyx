@@ -223,16 +223,16 @@ cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits):
 
     INPUT:
 
-    - ``v`` - the value whose digits we want to put into the list
+    - ``v`` -- the value whose digits we want to put into the list
 
-    - ``l`` - the list to file
+    - ``l`` -- the list to file
 
-    - ``offset`` - offset from the beginning of the list that we want
+    - ``offset`` -- offset from the beginning of the list that we want
       to fill at
 
     - ``base`` -- the base to which we finding digits
 
-    - ``digits`` - a python sequence type with objects to use for digits
+    - ``digits`` -- a python sequence type with objects to use for digits
       note that python negative index semantics are relied upon
 
     AUTHORS:
@@ -267,17 +267,17 @@ cdef _digits_internal(mpz_t v,l,int offset,int power_index,power_list,digits):
     """
     INPUT:
 
-    - ``v`` - the value whose digits we want to put into the list
+    - ``v`` -- the value whose digits we want to put into the list
 
-    - ``l`` - the list to file
+    - ``l`` -- the list to file
 
-    - ``offset`` - offset from the beginning of the list that we want
+    - ``offset`` -- offset from the beginning of the list that we want
       to fill at
 
-    - ``power_index`` - a measure of size to fill and index to
+    - ``power_index`` -- a measure of size to fill and index to
       power_list we're filling ``1 << (power_index+1)`` digits
 
-    - ``power_list`` - a list of powers of the base, precomputed in
+    - ``power_list`` -- a list of powers of the base, precomputed in
       method digits digits - a python sequence type with objects to
       use for digits note that python negative index semantics are
       relied upon
@@ -1367,12 +1367,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``base`` - integer (default: 10)
+        -  ``base`` -- integer (default: 10)
 
-        -  ``digits`` - optional indexable object as source for
+        -  ``digits`` -- optional indexable object as source for
            the digits
 
-        -  ``padto`` - the minimal length of the returned list,
+        -  ``padto`` -- the minimal length of the returned list,
            sufficient number of zeros are added to make the list minimum that
            length (default: 0)
 
@@ -1699,7 +1699,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``base`` - integer (default: 10)
+        -  ``base`` -- integer (default: 10)
 
         EXAMPLES::
 
@@ -2321,9 +2321,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``n`` - integer `\geq 1` (must fit in the C ``int`` type).
+        -  ``n`` -- integer `\geq 1` (must fit in the C ``int`` type).
 
-        -  ``truncate_mode`` - boolean, whether to allow truncation if
+        -  ``truncate_mode`` -- boolean, whether to allow truncation if
            ``self`` is not an ``n``-th power.
 
         OUTPUT:
@@ -2612,7 +2612,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - integer `\geq 2`
+        -  ``m`` -- integer `\geq 2`
 
         AUTHORS:
 
@@ -2764,9 +2764,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - default: natural log base e
+        -  ``m`` -- default: natural log base e
 
-        -  ``prec`` - integer (default: ``None``): if ``None``, returns
+        -  ``prec`` -- integer (default: ``None``): if ``None``, returns
            symbolic, else to given bits of precision as in :class:`RealField`
 
         EXAMPLES::
@@ -2883,7 +2883,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
 
-        -  ``prec`` - integer (default: None): if None, returns
+        -  ``prec`` -- integer (default: None): if None, returns
            symbolic, else to given bits of precision as in :class:`RealField`
 
 
@@ -2919,7 +2919,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - Integer
+        -  ``m`` -- Integer
 
         OUTPUT: Integer
 
@@ -3402,13 +3402,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``other`` - the divisor
+        -  ``other`` -- the divisor
 
         OUTPUT:
 
-        -  ``q`` - the quotient of self/other
+        -  ``q`` -- the quotient of self/other
 
-        -  ``r`` - the remainder of self/other
+        -  ``r`` -- the remainder of self/other
 
         EXAMPLES::
 
@@ -3859,30 +3859,30 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``algorithm`` - string
+        -  ``algorithm`` -- string
 
-           - ``'pari'`` - (default) use the PARI library
+           - ``'pari'`` -- (default) use the PARI library
 
-           - ``'flint'`` - use the FLINT library
+           - ``'flint'`` -- use the FLINT library
 
-           - ``'kash'`` - use the KASH computer algebra system (requires
+           - ``'kash'`` -- use the KASH computer algebra system (requires
              kash)
 
-           - ``'magma'`` - use the MAGMA computer algebra system (requires
+           - ``'magma'`` -- use the MAGMA computer algebra system (requires
              an installation of MAGMA)
 
-           - ``'qsieve'`` - use Bill Hart's quadratic sieve code;
+           - ``'qsieve'`` -- use Bill Hart's quadratic sieve code;
              WARNING: this may not work as expected, see qsieve? for
              more information
 
-           - ``'ecm'`` - use ECM-GMP, an implementation of Hendrik
+           - ``'ecm'`` -- use ECM-GMP, an implementation of Hendrik
              Lenstra's elliptic curve method.
 
-        - ``proof`` - bool (default: ``True``) whether or not to prove
+        - ``proof`` -- bool (default: ``True``) whether or not to prove
           primality of each factor (only applicable for ``'pari'``
           and ``'ecm'``).
 
-        - ``limit`` - int or None (default: None) if limit is
+        - ``limit`` -- int or None (default: None) if limit is
           given it must fit in a ``signed int``, and the factorization is done
           using trial division and primes up to limit.
 
@@ -4256,7 +4256,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``p`` - an integer at least 2.
+        -  ``p`` -- an integer at least 2.
 
         EXAMPLES::
 
@@ -4318,13 +4318,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``p`` - an integer at least 2.
+        -  ``p`` -- an integer at least 2.
 
         OUTPUT:
 
-        -  ``v_p(self)`` - the p-adic valuation of ``self``
+        -  ``v_p(self)`` -- the p-adic valuation of ``self``
 
-        -  ``u_p(self)`` - ``self`` / `p^{v_p(\mathrm{self})}`
+        -  ``u_p(self)`` -- ``self`` / `p^{v_p(\mathrm{self})}`
 
         EXAMPLES::
 
@@ -5863,7 +5863,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``proof`` - bool or None (default: None, see
+        -  ``proof`` -- bool or None (default: None, see
            ``proof.arithmetic`` or :mod:`sage.structure.proof`) Note that the global Sage
            default is ``proof=True``
 
@@ -5902,7 +5902,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``proof`` - if ``True`` ensure that the returned value is the next
+        - ``proof`` -- if ``True`` ensure that the returned value is the next
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
@@ -5948,7 +5948,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``proof`` - if ``True`` ensure that the returned value is the next
+        - ``proof`` -- if ``True`` ensure that the returned value is the next
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
@@ -6014,7 +6014,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``proof`` - if ``True`` ensure that the returned value is the next
+        - ``proof`` -- if ``True`` ensure that the returned value is the next
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
@@ -6910,13 +6910,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``self`` - Integer
+        -  ``self`` -- Integer
 
-        -  ``n`` - Integer, or ideal of integer ring
+        -  ``n`` -- Integer, or ideal of integer ring
 
         OUTPUT:
 
-        -  ``x`` - Integer such that x\*self = 1 (mod m), or
+        -  ``x`` -- Integer such that x\*self = 1 (mod m), or
            raises ZeroDivisionError.
 
         IMPLEMENTATION:

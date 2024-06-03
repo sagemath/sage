@@ -29,8 +29,6 @@ from sage.arith.misc import (algdep, bernoulli, is_prime, is_prime_power,
 from .misc import (integer_ceil as ceil,
                    integer_floor as floor)
 
-lazy_import("sage.arith.misc", ("Sigma", "Moebius", "Euler_Phi"), deprecation=30322)
-
 from sage.arith.functions import lcm
 LCM = lcm
 

@@ -321,7 +321,7 @@ class Scheme(Parent):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:
@@ -599,7 +599,7 @@ class Scheme(Parent):
         - ``Y`` -- the codomain scheme (optional); if ``Y`` is not
           given, try to determine ``Y`` from context
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:
@@ -633,7 +633,7 @@ class Scheme(Parent):
         - ``category`` -- a category (optional); the category of the
           Hom-set
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency.
 
         OUTPUT:
@@ -1189,7 +1189,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         - ``Y`` -- the codomain scheme (optional); if ``Y`` is not
           given, try to determine ``Y`` from context
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT:

@@ -64,7 +64,7 @@ class FGP_Element(ModuleElement):
 
         - ``x`` -- element of M.V()
 
-        - ``check`` -- (default: True) if True, verify that x in M.V()
+        - ``check`` -- (default: ``True``) if True, verify that x in M.V()
 
         EXAMPLES::
 

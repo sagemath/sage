@@ -177,7 +177,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         INPUT:
 
-        - ``x`` - a list of coefficients - the coefficients are assumed to be
+        - ``x`` -- a list of coefficients; the coefficients are assumed to be
           reduced already and the list contains no trailing zeroes.
 
 
@@ -218,7 +218,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         INPUT:
 
-        - ``x`` - an ``fmpz_poly_t`` element
+        - ``x`` -- an ``fmpz_poly_t`` element
 
         EXAMPLES::
 

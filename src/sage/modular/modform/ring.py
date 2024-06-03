@@ -986,7 +986,7 @@ class ModularFormsRing(Parent):
         - ``prec`` (integer or ``None``, default: ``None``) -- power series
           precision. If ``None``, the precision defaults to the Sturm bound for
           the requested level and weight.
-        - ``use_random`` (boolean, default: True) -- whether or not to use a
+        - ``use_random`` (boolean, default: ``True``) -- whether or not to use a
           randomized algorithm when building up the space of forms at the given
           weight from known generators of small weight.
 

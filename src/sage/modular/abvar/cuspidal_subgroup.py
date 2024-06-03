@@ -89,14 +89,14 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
         INPUT:
 
 
-        -  ``rational_only`` - bool (default: False); if
+        -  ``rational_only`` -- bool (default: ``False``); if
            ``True``, only use rational cusps.
 
 
         OUTPUT:
 
 
-        -  ``list`` - list of vectors
+        -  ``list`` -- list of vectors
 
 
         EXAMPLES::
@@ -219,7 +219,7 @@ class CuspidalSubgroup(CuspidalSubgroup_generic):
 
         OUTPUT:
 
-        -  ``tuple`` - cached
+        -  ``tuple`` -- cached
 
         EXAMPLES::
 
@@ -355,11 +355,11 @@ def is_rational_cusp_gamma0(c, N, data):
     INPUT:
 
 
-    -  ``c`` - a cusp
+    -  ``c`` -- a cusp
 
-    -  ``N`` - a positive integer
+    -  ``N`` -- a positive integer
 
-    -  ``data`` - the list [n for n in range(2,N) if
+    -  ``data`` -- the list [n for n in range(2,N) if
        gcd(n,N) == 1], which is passed in as a parameter purely for
        efficiency reasons.
 

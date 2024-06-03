@@ -1590,7 +1590,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
         INPUT:
 
-        - ``D1_D2_pi``-- a list or tuple where the first entry is a list of
+        - ``D1_D2_pi`` -- a list or tuple where the first entry is a list of
           arcs on the top of the diagram, the second entry is a list of arcs
           on the bottom of the diagram, and the third entry is a permutation
           on the free nodes.
@@ -5799,8 +5799,8 @@ def to_set_partition(l, k=None):
 
     INPUT:
 
-    - ``l`` - a list of lists of integers
-    - ``k`` - integer (optional, default ``None``)
+    - ``l`` -- a list of lists of integers
+    - ``k`` -- integer (default: ``None``)
 
     OUTPUT:
 

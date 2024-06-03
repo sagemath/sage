@@ -34,14 +34,14 @@ class Disk(GraphicPrimitive):
 
     INPUT:
 
-    - ``point`` - coordinates of center of disk
+    - ``point`` -- coordinates of center of disk
 
-    - ``r`` - radius of disk
+    - ``r`` -- radius of disk
 
-    - ``angle`` - beginning and ending angles of disk (i.e.
+    - ``angle`` -- beginning and ending angles of disk (i.e.
       angle extent of sector/wedge)
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -192,7 +192,7 @@ class Disk(GraphicPrimitive):
         INPUT:
 
 
-        -  ``z`` - optional 3D height above `xy`-plane.
+        -  ``z`` -- optional 3D height above `xy`-plane.
 
         AUTHORS:
 

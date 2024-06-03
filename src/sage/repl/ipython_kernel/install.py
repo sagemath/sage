@@ -35,7 +35,7 @@ class SageKernelSpec():
 
         INPUT:
 
-        - ``prefix`` -- (optional, default: ``sys.prefix``)
+        - ``prefix`` -- (default: ``sys.prefix``)
           directory for the installation prefix
 
         EXAMPLES::
@@ -288,8 +288,8 @@ def have_prerequisites(debug=True):
 
     INPUT:
 
-    ``debug`` -- boolean (default: ``True``). Whether to print debug
-    information in case that prerequisites are missing.
+    - ``debug`` -- boolean (default: ``True``). Whether to print debug
+      information in case that prerequisites are missing.
 
     OUTPUT:
 

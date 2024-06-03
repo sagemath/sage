@@ -141,9 +141,9 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         OUTPUT:
 
 
-        -  ``A`` - an abelian variety (the cokernel)
+        -  ``A`` -- an abelian variety (the cokernel)
 
-        -  ``phi`` - a quotient map from self.codomain() to the
+        -  ``phi`` -- a quotient map from self.codomain() to the
            cokernel of self
 
 
@@ -194,9 +194,9 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         OUTPUT:
 
 
-        -  ``G`` - a finite group
+        -  ``G`` -- a finite group
 
-        -  ``A`` - an abelian variety (identity component of
+        -  ``A`` -- an abelian variety (identity component of
            the kernel)
 
 
@@ -370,7 +370,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         INPUT:
 
 
-        -  ``X`` - abelian variety, finite group, or torsion
+        -  ``X`` -- abelian variety, finite group, or torsion
            element
 
 
@@ -469,7 +469,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         INPUT:
 
 
-        -  ``x`` - a torsion point on an abelian variety
+        -  ``x`` -- a torsion point on an abelian variety
 
 
         OUTPUT: a torsion point
@@ -557,7 +557,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         INPUT:
 
 
-        -  ``A`` - an abelian variety
+        -  ``A`` -- an abelian variety
 
 
         OUTPUT an abelian variety
@@ -670,12 +670,12 @@ class DegeneracyMap(Morphism):
         INPUT:
 
 
-        -  ``parent`` - a space of homomorphisms of abelian
+        -  ``parent`` -- a space of homomorphisms of abelian
            varieties
 
-        -  ``A`` - a matrix defining self
+        -  ``A`` -- a matrix defining self
 
-        -  ``t`` - a list of indices defining the degeneracy
+        -  ``t`` -- a list of indices defining the degeneracy
            map
 
 
@@ -731,9 +731,9 @@ class HeckeOperator(Morphism):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
-        -  ``n`` - a positive integer
+        -  ``n`` -- a positive integer
 
 
         EXAMPLES::
@@ -775,7 +775,7 @@ class HeckeOperator(Morphism):
         OUTPUT:
 
 
-        -  ``n`` - a (Sage) Integer
+        -  ``n`` -- a (Sage) Integer
 
 
         EXAMPLES::
@@ -824,7 +824,7 @@ class HeckeOperator(Morphism):
         INPUT:
 
 
-        -  ``var`` - a string (default: 'x')
+        -  ``var`` -- a string (default: 'x')
 
 
         OUTPUT: a polynomial in var over the rational numbers.
@@ -853,7 +853,7 @@ class HeckeOperator(Morphism):
         INPUT:
 
 
-        -  ``var`` - string (default: 'x')
+        -  ``var`` -- string (default: 'x')
 
 
         EXAMPLES::

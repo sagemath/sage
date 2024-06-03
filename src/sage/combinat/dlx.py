@@ -127,7 +127,7 @@ class DLXMatrix:
         INPUT:
 
 
-        -  ``other`` - a DLX matrix
+        -  ``other`` -- a DLX matrix
 
 
         EXAMPLES::

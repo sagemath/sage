@@ -197,15 +197,15 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        - ``v`` - a list of positive integers
-        - ``nz`` - (default: ``None``); if given specifies a column index
+        - ``v`` -- a list of positive integers
+        - ``nz`` -- (default: ``None``); if given specifies a column index
           such that the dual module has that column nonzero.
 
         OUTPUT:
 
-        - ``E`` - matrix such that E\*v is a vector with components
+        - ``E`` -- matrix such that E\*v is a vector with components
           the eigenvalues `a_n` for `n \in v`.
-        - ``v`` - a vector over a number field
+        - ``v`` -- a vector over a number field
 
         EXAMPLES::
 
@@ -389,12 +389,12 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - an arbitrary space of
+        -  ``ModularSymbols self`` -- an arbitrary space of
            modular symbols
 
         OUTPUT:
 
-        -  ``CongruenceSubgroup`` - the congruence subgroup
+        -  ``CongruenceSubgroup`` -- the congruence subgroup
            that this is a space of modular symbols for.
 
         ALGORITHM: The group is recorded when this space is created.
@@ -508,11 +508,11 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        - ``ModularSymbols self`` - arbitrary space of modular symbols.
+        - ``ModularSymbols self`` -- arbitrary space of modular symbols.
 
         OUTPUT:
 
-        - ``int`` - the number of generators, which is the same as the
+        - ``int`` -- the number of generators, which is the same as the
           dimension of self.
 
         ALGORITHM: Call the dimension function.
@@ -621,22 +621,22 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - a space of CUSPIDAL modular symbols
+        -  ``self`` -- a space of CUSPIDAL modular symbols
 
-        -  ``prec`` - an integer
+        -  ``prec`` -- an integer
 
-        -  ``algorithm`` - string:
+        -  ``algorithm`` -- string:
 
-        -  ``'default' (default)`` - decide which algorithm to
+        -  ``'default' (default)`` -- decide which algorithm to
            use based on heuristics
 
-        -  ``'hecke'`` - compute basis by computing
+        -  ``'hecke'`` -- compute basis by computing
            homomorphisms T - K, where T is the Hecke algebra
 
-        -  ``'eigen'`` - compute basis using eigenvectors for
+        -  ``'eigen'`` -- compute basis using eigenvectors for
            the Hecke action and Atkin-Lehner-Li theory to patch them together
 
-        -  ``'all'`` - compute using hecke_dual and eigen
+        -  ``'all'`` -- compute using hecke_dual and eigen
            algorithms and verify that the results are the same.
 
 
@@ -759,12 +759,12 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - must be cuspidal
+        -  ``self`` -- must be cuspidal
 
-        -  ``prec`` - an integer (default:
+        -  ``prec`` -- an integer (default:
            self.default_prec())
 
-        -  ``R`` - either ZZ, QQ, or the base_ring of self
+        -  ``R`` -- either ZZ, QQ, or the base_ring of self
            (which is the default)
 
         OUTPUT: A free module over R.
@@ -941,12 +941,12 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - space of modular symbols
+        -  ``self`` -- space of modular symbols
 
-        -  ``A`` - cuspidal simple space of level dividing the
+        -  ``A`` -- cuspidal simple space of level dividing the
            level of self and the same weight
 
-        -  ``prec`` - a positive integer
+        -  ``prec`` -- a positive integer
 
         EXAMPLES::
 
@@ -1040,7 +1040,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        - ``prec`` (integer) - number of q-expansion terms to calculate.
+        - ``prec`` (integer) -- number of q-expansion terms to calculate.
 
         EXAMPLES::
 
@@ -1453,20 +1453,20 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - arbitrary space of modular
+        -  ``ModularSymbols self`` -- arbitrary space of modular
            symbols.
 
         OUTPUT:
 
-        -  ``int`` - the sign of ``self``, either -1, 0, or 1.
+        -  ``int`` -- the sign of ``self``, either -1, 0, or 1.
 
-        -  ``-1`` - if this is factor of quotient where \* acts
+        -  ``-1`` -- if this is factor of quotient where \* acts
            as -1,
 
-        -  ``+1`` - if this is factor of quotient where \* acts
+        -  ``+1`` -- if this is factor of quotient where \* acts
            as +1,
 
-        -  ``0`` - if this is full space of modular symbols (no
+        -  ``0`` -- if this is full space of modular symbols (no
            quotient).
 
         EXAMPLES::
@@ -1772,7 +1772,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``compute_dual`` - bool (default: ``True``) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -1792,7 +1792,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``compute_dual`` - bool (default: True) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -1871,9 +1871,9 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``sign`` - int (either -1, 0 or +1)
+        -  ``sign`` -- int (either -1, 0 or +1)
 
-        -  ``compute_dual`` - bool (default: ``True``) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -1932,7 +1932,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - modular symbols space of weight 2 for a
+        -  ``self`` -- modular symbols space of weight 2 for a
            congruence subgroup such as Gamma0, Gamma1 or GammaH.
 
         EXAMPLES::
@@ -2093,11 +2093,11 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - a cuspidal space of modular symbols
+        -  ``self`` -- a cuspidal space of modular symbols
 
-        -  ``sign`` - an integer, one of -1, 0, or 1
+        -  ``sign`` -- an integer, one of -1, 0, or 1
 
-        -  ``bound`` - integer (default: None); if specified
+        -  ``bound`` -- integer (default: None); if specified
            only use Hecke operators up to the given bound.
 
         EXAMPLES::
@@ -2413,9 +2413,9 @@ class PeriodMapping(SageObject):
 
         INPUT:
 
-        - ``modsym`` - a space of modular symbols
+        - ``modsym`` -- a space of modular symbols
 
-        - ``A`` - matrix of the associated period map
+        - ``A`` -- matrix of the associated period map
 
         EXAMPLES::
 

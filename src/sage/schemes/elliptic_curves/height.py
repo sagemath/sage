@@ -1531,7 +1531,7 @@ class EllipticCurveCanonicalHeight:
         - ``N`` (int, default 20) -- The number of terms to use in the
           `q`-expansion of `\wp`.
 
-        - ``abs_only`` (boolean, default False) -- flag to determine
+        - ``abs_only`` (boolean, default: ``False``) -- flag to determine
           whether (if True) the error adjustment should use the
           absolute value or (if False) the real and imaginary parts.
 
@@ -1615,7 +1615,7 @@ class EllipticCurveCanonicalHeight:
         - ``N`` (int) -- The number of terms to use in the
           `q`-expansion of `\wp`.
 
-        - ``half`` (boolean, default False) -- if True, use an array of
+        - ``half`` (boolean, default: ``False``) -- if True, use an array of
           size `N\times N/2` instead of `N\times N`.
 
         OUTPUT:
@@ -1669,9 +1669,9 @@ class EllipticCurveCanonicalHeight:
 
         - ``v`` (embedding) -- a complex embedding of the number field.
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose`` (boolean, default: ``False``) -- verbosity flag.
 
-        - ``use_half`` (boolean, default False) -- if True, use only half
+        - ``use_half`` (boolean, default: ``False``) -- if True, use only half
           the fundamental region.
 
         OUTPUT:
@@ -1790,7 +1790,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``N`` (integer) -- upper bound on the multiples to be used.
 
-        - ``verbose`` (boolean, default True) -- verbosity flag.
+        - ``verbose`` (boolean, default: ``True``) -- verbosity flag.
 
         OUTPUT:
 
@@ -1891,7 +1891,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``n_max`` -- how many multiples to use in iteration.
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose`` (boolean, default: ``False``) -- verbosity flag.
 
         OUTPUT:
 
@@ -2017,7 +2017,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``n_max`` -- how many multiples to use in iteration.
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose`` (boolean, default: ``False``) -- verbosity flag.
 
         OUTPUT:
 

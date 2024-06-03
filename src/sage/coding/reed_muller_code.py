@@ -51,7 +51,7 @@ def _binomial_sum(n, k):
 
     INPUT:
 
-    - ``n, k`` - integers
+    - ``n, k`` -- integers
 
     EXAMPLES::
 

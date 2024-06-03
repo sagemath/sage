@@ -3033,16 +3033,16 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
         INPUT:
 
-        -  ``v`` - (optional) list of elements of ``self``
+        -  ``v`` -- (optional) list of elements of ``self``
 
-        -  ``reps_only`` - (optional: default ``False``) if ``True``
+        -  ``reps_only`` -- (optional: default ``False``) if ``True``
            only returns representatives for the orbits.
 
-        -  ``sort`` - (optional: default ``True``) whether to sort
+        -  ``sort`` -- (optional: default ``True``) whether to sort
            the list of orbits and the orbits themselves (slightly faster if
            ``False``).
 
-        -  ``check`` - (optional, default: ``True``) whether or not
+        -  ``check`` -- (default: ``True``) whether or not
            to explicitly coerce each element of ``v`` into ``self``.
 
         The Galois group is the absolute Galois group of the prime subfield

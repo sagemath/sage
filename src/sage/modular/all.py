@@ -21,13 +21,6 @@ from sage.modular.arithgroup.all import (Gamma0, Gamma1, GammaH, Gamma, SL2Z,
 
 from sage.modular.cusps import Cusp, Cusps
 
-lazy_import('sage.modular.dims', ('dimension_cusp_forms',
-                                  'dimension_new_cusp_forms',
-                                  'dimension_eis',
-                                  'dimension_modular_forms',
-                                  'sturm_bound'),
-            deprecation=(32647, 'removed from main namespace'))
-
 from sage.modular.etaproducts import (EtaGroup, EtaProduct, EtaGroupElement,
                                       AllCusps, CuspFamily)
 
@@ -44,4 +37,7 @@ from sage.modular.btquotients.all import *
 from sage.modular.pollack_stevens.all import *
 
 from sage.modular.quasimodform.all import *
+
+from sage.modular.drinfeld_modform.all import *
+
 del lazy_import

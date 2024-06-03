@@ -1967,9 +1967,9 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
     - ``Q`` -- a word
     - ``w`` -- an element in the Coxeter group
     - ``side`` -- optional, either ``'negative'`` (default) or ``'positive'``
-    - ``n`` -- an integer (optional, defaults to the length of `Q`)
-    - ``pos`` -- an integer (optional, default 0)
-    - ``l`` -- an integer (optional, defaults to the length of `w`)
+    - ``n`` -- an integer (default: the length of `Q`)
+    - ``pos`` -- an integer (default: 0)
+    - ``l`` -- an integer (default: the length of `w`)
     - ``elems`` -- a list (optional)
 
     OUTPUT:

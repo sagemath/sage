@@ -207,7 +207,7 @@ covered here.
 
 - a list of edges::
 
-       sage: g = Graph([(1,3),(3,8),(5,2)]); g
+       sage: g = Graph([(1, 3), (3, 8), (5, 2)]); g
        Graph on 5 vertices
 
 - an igraph Graph::
@@ -427,9 +427,9 @@ from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
 
 from sage.misc.lazy_import import lazy_import, LazyImport
-from sage.features import PythonModule
+from sage.features.mcqd import Mcqd
 lazy_import('sage.graphs.mcqd', ['mcqd'],
-            feature=PythonModule('sage.graphs.mcqd', spkg='mcqd'))
+            feature=Mcqd())
 
 
 class Graph(GenericGraph):
@@ -794,10 +794,10 @@ class Graph(GenericGraph):
 
     #. List of edges, or labelled edges::
 
-          sage: g = Graph([(1,3),(3,8),(5,2)]); g
+          sage: g = Graph([(1, 3), (3, 8), (5, 2)]); g
           Graph on 5 vertices
 
-          sage: g = Graph([(1,2,"Peace"), (7,-9,"and"), (77,2, "Love")]); g
+          sage: g = Graph([(1, 2, "Peace"), (7, -9, "and"), (77, 2, "Love")]); g
           Graph on 5 vertices
           sage: g = Graph([(0, 2, '0'), (0, 2, '1'), (3, 3, '2')],
           ....:           loops=True, multiedges=True)
@@ -839,8 +839,8 @@ class Graph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)],                                # optional - python_igraph
-           ....:                  edge_attrs={'name':['a','b'], 'weight':[1,3]})
+           sage: g = igraph.Graph([(0, 1), (0, 2)],                             # optional - python_igraph
+           ....:                  edge_attrs={'name': ['a', 'b'], 'weight': [1, 3]})
            sage: Graph(g).edges(sort=True)                                      # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
@@ -870,7 +870,7 @@ class Graph(GenericGraph):
           Create an immutable copy by `g.copy(immutable=True)`
 
     When providing the optional arguments ``data_structure="static_sparse"`` or
-    ``immutable=True`` (both mean the same), then an immutable graph results. ::
+    ``immutable=True`` (both mean the same), then an immutable graph results::
 
           sage: G_imm = Graph(G, immutable=True)
           sage: H_imm = Graph(G, data_structure='static_sparse')
@@ -3749,7 +3749,7 @@ class Graph(GenericGraph):
         A complete multipartite graph with `k` parts has chromatic number `k`::
 
             sage: all(graphs.CompleteMultipartiteGraph([5]*i).chromatic_number() == i
-            ....:     for i in range(2,5))
+            ....:     for i in range(2, 5))
             True
 
         The complete graph has the largest chromatic number from all the graphs
@@ -5025,7 +5025,7 @@ class Graph(GenericGraph):
         As there is no cycle in a tree, looking for a `K_3` minor is useless.
         This function will raise an exception in this case::
 
-            sage: g = graphs.RandomGNP(20,.5)
+            sage: g = graphs.RandomGNP(20, .5)
             sage: g = g.subgraph(edges=g.min_spanning_tree())
             sage: g.is_tree()
             True
@@ -5273,7 +5273,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``v`` - either a single vertex or a list of vertices. If it is not
+        - ``v`` -- either a single vertex or a list of vertices. If it is not
           specified, then it is taken to be all vertices.
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
@@ -5282,38 +5282,38 @@ class Graph(GenericGraph):
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
 
-          - ``'BFS'`` - the computation is done through a BFS centered on each
+          - ``'BFS'`` -- the computation is done through a BFS centered on each
             vertex successively. Works only if ``by_weight==False``.
 
-          - ``'DHV'`` - the computation is done using the algorithm proposed in
+          - ``'DHV'`` -- the computation is done using the algorithm proposed in
             [Dragan2018]_. Works only if ``self`` has non-negative edge weights
             and ``v is None`` or ``v`` should contain all vertices of ``self``.
             For more information see method
             :func:`sage.graphs.distances_all_pairs.eccentricity` and
             :func:`sage.graphs.base.boost_graph.eccentricity_DHV`.
 
-          - ``'Floyd-Warshall-Cython'`` - a Cython implementation of the
+          - ``'Floyd-Warshall-Cython'`` -- a Cython implementation of the
             Floyd-Warshall algorithm. Works only if ``by_weight==False`` and
             ``v is None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Floyd-Warshall-Python'`` - a Python implementation of the
+          - ``'Floyd-Warshall-Python'`` -- a Python implementation of the
             Floyd-Warshall algorithm. Works also with weighted graphs, even with
             negative weights (but no negative cycle is allowed). However, ``v``
             must be ``None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Dijkstra_NetworkX'`` - the Dijkstra algorithm, implemented in
+          - ``'Dijkstra_NetworkX'`` -- the Dijkstra algorithm, implemented in
             NetworkX. It works with weighted graphs, but no negative weight is
             allowed.
 
-          - ``'Dijkstra_Boost'`` - the Dijkstra algorithm, implemented in Boost
+          - ``'Dijkstra_Boost'`` -- the Dijkstra algorithm, implemented in Boost
             (works only with positive weights).
 
-          - ``'Johnson_Boost'`` - the Johnson algorithm, implemented in
+          - ``'Johnson_Boost'`` -- the Johnson algorithm, implemented in
             Boost (works also with negative weights, if there is no negative
             cycle). Works only if ``v is None`` or ``v`` should contain all
             vertices of ``self``.
 
-          - ``'From_Dictionary'`` - uses the (already computed) distances, that
+          - ``'From_Dictionary'`` -- uses the (already computed) distances, that
             are provided by input variable ``dist_dict``.
 
           - ``None`` (default): Sage chooses the best algorithm:
@@ -5347,7 +5347,7 @@ class Graph(GenericGraph):
             2
             sage: G.eccentricity([7,8,9])
             [2, 3, 4]
-            sage: G.eccentricity([7,8,9], with_labels=True) == {8: 3, 9: 4, 7: 2}
+            sage: G.eccentricity([7, 8, 9], with_labels=True) == {8: 3, 9: 4, 7: 2}
             True
             sage: G = Graph({0: [], 1: [], 2: [1]})
             sage: G.eccentricity()
@@ -5358,8 +5358,8 @@ class Graph(GenericGraph):
             sage: G = Graph({0:[], 1:[]})
             sage: G.eccentricity(with_labels=True)
             {0: +Infinity, 1: +Infinity}
-            sage: G = Graph([(0,1,1), (1,2,1), (0,2,3)])
-            sage: G.eccentricity(algorithm = 'BFS')
+            sage: G = Graph([(0, 1, 1), (1, 2, 1), (0, 2, 3)])
+            sage: G.eccentricity(algorithm='BFS')
             [1, 1, 1]
             sage: G.eccentricity(algorithm='Floyd-Warshall-Cython')
             [1, 1, 1]
@@ -5527,7 +5527,7 @@ class Graph(GenericGraph):
 
         - ``algorithm`` -- string (default: ``'DHV'``).
 
-          - ``'DHV'`` - Radius computation is done using the algorithm proposed
+          - ``'DHV'`` -- Radius computation is done using the algorithm proposed
             in [Dragan2018]_. Works for graph with non-negative edge weights.
             For more information see method
             :func:`sage.graphs.distances_all_pairs.radius_DHV` and
@@ -5630,7 +5630,7 @@ class Graph(GenericGraph):
             NetworkX. It works with weighted graphs, but no negative weight is
             allowed.
 
-          - ``'DHV'`` - diameter computation is done using the algorithm
+          - ``'DHV'`` -- diameter computation is done using the algorithm
             proposed in [Dragan2018]_. Works only for non-negative edge weights.
             For more information see method
             :func:`sage.graphs.distances_all_pairs.diameter_DHV` and
@@ -9629,7 +9629,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``nonedgesonly``-- boolean (default: ``True``); if ``True``, assigns
+        - ``nonedgesonly`` -- boolean (default: ``True``); if ``True``, assigns
           `0` value to adjacent vertices.
 
         - ``vertices`` -- list (default: ``None``); the ordering of the
@@ -9765,7 +9765,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``nonedgesonly``-- boolean (default: ``True``); if ``True``, assigns
+        - ``nonedgesonly`` -- boolean (default: ``True``); if ``True``, assigns
           `0` value to adjacent vertices.
 
         OUTPUT: list of tuples of edge pairs

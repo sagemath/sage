@@ -1375,7 +1375,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (optional, default ``True``) if ``True``, return
+        - ``increasing`` -- (default: ``True``) if ``True``, return
           faces in increasing order of dimension, thus starting with
           the empty face. Otherwise it returns faces in decreasing order of
           dimension.
@@ -2009,7 +2009,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
            this will cause problems if the two factors have any
            vertices with names in common.
 
-        :type rename_vertices: boolean; optional, default True
+        :type rename_vertices: boolean; optional, default: ``True``
 
         EXAMPLES::
 
@@ -2474,7 +2474,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this simplicial
@@ -4098,7 +4098,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_point`` (optional, default None) -- if this complex is
+        - ``base_point`` (default: None) -- if this complex is
           not path-connected, then specify a vertex; the fundamental
           group is computed with that vertex as a base point. If the
           complex is path-connected, then you may specify a vertex or

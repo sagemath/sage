@@ -22,6 +22,7 @@ from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.lie_algebras import LieAlgebras
 
+
 class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
     Category of Lie algebras with a basis.

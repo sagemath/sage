@@ -1093,7 +1093,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` - a partition
+        - ``la`` -- a partition
 
         OUTPUT:
 
@@ -1142,7 +1142,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` - a partition
+        - ``la`` -- a partition
 
         OUTPUT:
 

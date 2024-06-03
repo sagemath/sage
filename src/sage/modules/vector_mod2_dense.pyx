@@ -465,7 +465,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy`` - always ``True``
+        - ``copy`` -- always ``True``
 
         EXAMPLES::
 

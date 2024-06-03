@@ -436,12 +436,12 @@ class _ArbitraryCoordinates(_Coordinates):
 
         INPUT:
 
-         - ``custom_trans`` - A 3-tuple of transformation
+         - ``custom_trans`` -- A 3-tuple of transformation
            functions.
 
-         - ``dep_var`` - The dependent (function) variable.
+         - ``dep_var`` -- The dependent (function) variable.
 
-         - ``indep_vars`` - a list of the two other independent
+         - ``indep_vars`` -- a list of the two other independent
            variables.
 
         EXAMPLES::
@@ -816,15 +816,15 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     -  ``vrange`` -- a 2-tuple (v_min, v_max) or a 3-tuple
        (v, v_min, v_max)
 
-    -  ``adaptive`` -- (default: False) whether to use
+    -  ``adaptive`` -- (default: ``False``) whether to use
        adaptive refinement to draw the plot (slower, but may look better).
        This option does NOT work in conjunction with a transformation
        (see below).
 
-    -  ``mesh`` -- bool (default: False) whether to display
+    -  ``mesh`` -- bool (default: ``False``) whether to display
        mesh grid lines
 
-    -  ``dots`` -- bool (default: False) whether to display
+    -  ``dots`` -- bool (default: ``False``) whether to display
        dots at mesh grid points
 
     -  ``plot_points`` -- (default: "automatic") initial number of sample
@@ -1148,7 +1148,7 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
 
     - ``grad_f`` -- gradient of f as a Python function
 
-    - ``color`` -- "automatic" - a rainbow of num_colors colors
+    - ``color`` -- "automatic"; a rainbow of num_colors colors
 
     - ``num_colors`` -- (default: 128) number of colors to use with default
        color

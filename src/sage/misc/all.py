@@ -10,8 +10,6 @@ from sage.misc.misc import (BackslashOperator,
                             SAGE_DB,
                             newton_method_sizes, compose,
                             nest)
-lazy_import('sage.misc.misc', 'union',
-            deprecation=32096)
 
 from sage.misc.remote_file import get_remote_file
 

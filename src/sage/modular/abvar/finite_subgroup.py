@@ -354,7 +354,7 @@ class FiniteSubgroup(Module):
         INPUT:
 
 
-        -  ``other`` - a finite group
+        -  ``other`` -- a finite group
 
 
         OUTPUT: a finite group
@@ -450,7 +450,7 @@ class FiniteSubgroup(Module):
         INPUT:
 
 
-        -  ``right`` - a rational number
+        -  ``right`` -- a rational number
 
 
         OUTPUT: a subgroup
@@ -849,15 +849,15 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
-        -  ``lattice`` - a lattice that contains the lattice of
+        -  ``lattice`` -- a lattice that contains the lattice of
            abvar
 
-        -  ``field_of_definition`` - the field of definition
+        -  ``field_of_definition`` -- the field of definition
            of this finite group scheme
 
-        -  ``check`` - bool (default: True) whether or not to
+        -  ``check`` -- bool (default: ``True``) whether or not to
            check that lattice contains the abvar lattice.
 
 

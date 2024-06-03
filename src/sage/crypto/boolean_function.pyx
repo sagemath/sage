@@ -233,12 +233,12 @@ cdef class BooleanFunction(SageObject):
         Construct a Boolean Function.
         The input ``x`` can be either:
 
-        - an integer - the result is the zero function with ``x`` variables;
-        - a list - it is expected to be the truth table of the
+        - an integer -- the result is the zero function with ``x`` variables;
+        - a list -- it is expected to be the truth table of the
           result. Therefore it must be of length a power of 2, and its
           elements are interpreted as Booleans;
-        - a Boolean polynomial - the result is the corresponding Boolean function;
-        - a polynomial P over an extension of GF(2) - the result is
+        - a Boolean polynomial -- the result is the corresponding Boolean function;
+        - a polynomial P over an extension of GF(2) -- the result is
           the Boolean function with truth table ``( Tr(P(x)) for x in
           GF(2^k) )``
 

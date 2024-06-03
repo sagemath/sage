@@ -115,7 +115,7 @@ def sorting_keys(element):
 
     INPUT:
 
-    - ``element`` - A CohomologyClass
+    - ``element`` -- A CohomologyClass
 
     OUTPUT:
 
@@ -890,11 +890,11 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
       1, and if both ``names`` and ``degrees`` are omitted, an error is
       raised.
 
-    - ``R`` (optional, default None) -- the ring over which the
+    - ``R`` (default: None) -- the ring over which the
       algebra is defined: if this is specified, the algebra is defined
       to be ``R/I``.
 
-    - ``I`` (optional, default None) -- an ideal in ``R``. It is
+    - ``I`` (default: None) -- an ideal in ``R``. It is
       should include, among other relations, the squares of the
       generators of odd degree
 
@@ -1874,7 +1874,7 @@ class GCAlgebra_multigraded(GCAlgebra):
         Basis in degree ``n``.
 
         - ``n`` -- degree or integer
-        - ``total`` (optional, default False) -- if True, return the
+        - ``total`` (default: ``False``) -- if True, return the
           basis in total degree ``n``.
 
         If ``n`` is an integer rather than a multi-index, then the
@@ -3893,7 +3893,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
 
         INPUT:
 
-        - ``total`` (optional, default ``False``) -- if ``True``, use
+        - ``total`` (default: ``False``) -- if ``True``, use
           the total degree to determine whether the morphism is graded
           (relevant only in the multigraded case)
 
@@ -4186,8 +4186,8 @@ def exterior_algebra_basis(n, degrees):
 
     INPUT:
 
-    - ``n`` - integer
-    - ``degrees`` - iterable of integers
+    - ``n`` -- integer
+    - ``degrees`` -- iterable of integers
 
     Return list of lists, each list representing exponents for the
     corresponding generators. (So each list consists of 0's and 1's.)

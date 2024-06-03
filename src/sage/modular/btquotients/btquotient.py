@@ -114,11 +114,11 @@ class DoubleCosetReduction(SageObject):
 
     INPUT:
 
-    - ``Y`` -  BruhatTitsQuotient object in which to work
-    - ``x`` -  Something coercible into a matrix in `GL_2(\ZZ)`. In
+    - ``Y`` --  BruhatTitsQuotient object in which to work
+    - ``x`` --  Something coercible into a matrix in `GL_2(\ZZ)`. In
        principle we should allow elements in `GL_2(\QQ_p)`, but it is
        enough to work with integral entries
-    - ``extrapow`` - gets added to the power attribute, and it is
+    - ``extrapow`` -- gets added to the power attribute, and it is
        used for the Hecke action.
 
     EXAMPLES::
@@ -291,7 +291,7 @@ class DoubleCosetReduction(SageObject):
 
         INPUT:
 
-        - ``embedding`` - an integer, or a function (default:
+        - ``embedding`` -- an integer, or a function (default:
           none). If ``embedding`` is None, then the image of
           ``self.gamma`` under the local splitting associated to
           ``self.Y`` is used. If ``embedding`` is an integer, then
@@ -340,7 +340,7 @@ class DoubleCosetReduction(SageObject):
 
         INPUT:
 
-        - ``prec`` - a `p`-adic precision that t will be computed
+        - ``prec`` -- a `p`-adic precision that t will be computed
           to. Defaults to the default working precision of self.
 
         OUTPUT:
@@ -385,7 +385,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
     INPUT:
 
-    - ``p`` - a prime number. The corresponding tree is then `p+1` regular
+    - ``p`` -- a prime number. The corresponding tree is then `p+1` regular
 
     EXAMPLES:
 
@@ -443,14 +443,14 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``e`` - a 2x2 matrix with integer entries
+        - ``e`` -- a 2x2 matrix with integer entries
 
-        - ``normalized`` - boolean (default: false). If True
+        - ``normalized`` -- boolean (default: false). If True
             then the input matrix is assumed to be normalized.
 
         OUTPUT:
 
-        - ``e`` - 2x2 integer matrix representing the target of
+        - ``e`` -- 2x2 integer matrix representing the target of
           the input edge
 
         EXAMPLES::
@@ -476,14 +476,14 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``e`` - a 2x2 matrix with integer entries
+        - ``e`` -- a 2x2 matrix with integer entries
 
-        - ``normalized`` - boolean (default: false). If True
+        - ``normalized`` -- boolean (default: false). If True
           then the input matrix M is assumed to be normalized
 
         OUTPUT:
 
-        - ``e`` - A 2x2 integer matrix
+        - ``e`` -- A 2x2 integer matrix
 
         EXAMPLES::
 
@@ -509,11 +509,11 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``M`` - a 2x2 integer matrix
+        - ``M`` -- a 2x2 integer matrix
 
         OUTPUT:
 
-        - ``newM`` - a 2x2 integer matrix
+        - ``newM`` -- a 2x2 integer matrix
 
         EXAMPLES::
 
@@ -532,7 +532,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
             INPUT:
 
-            - ``a`` - a p-adic integer.
+            - ``a`` -- a p-adic integer.
 
             OUTPUT:
 
@@ -593,7 +593,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``M`` - 2x2 integer matrix
+        - ``M`` -- 2x2 integer matrix
 
         OUTPUT:
 
@@ -685,11 +685,11 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1`` - 2x2 integer matrix
+        - ``v1`` -- 2x2 integer matrix
 
-        - ``v2`` - 2x2 integer matrix
+        - ``v2`` -- 2x2 integer matrix
 
-        - ``normalized`` - boolean (default: False), whether the
+        - ``normalized`` -- boolean (default: ``False``), whether the
           vertices are normalized.
 
         OUTPUT:
@@ -736,7 +736,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``M`` - 2x2 integer matrix
+        - ``M`` -- 2x2 integer matrix
 
         OUTPUT:
 
@@ -762,7 +762,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``e`` - 2x2 integer matrix
+        - ``e`` -- 2x2 integer matrix
 
         OUTPUT:
 
@@ -791,7 +791,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v`` - 2x2 integer matrix
+        - ``v`` -- 2x2 integer matrix
 
         OUTPUT:
 
@@ -820,9 +820,9 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``edgelist`` - a list of edges
+        - ``edgelist`` -- a list of edges
 
-        - ``level`` - an integer
+        - ``level`` -- an integer
 
         OUTPUT:
 
@@ -888,7 +888,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v`` - a 2x2 matrix representing a vertex ``boundary``
+        - ``v`` -- a 2x2 matrix representing a vertex ``boundary``
 
         - a list of matrices (default: None). If omitted, finds the
           geodesic from ``v`` to the central vertex.
@@ -954,7 +954,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``z`` - an element of an unramified extension of `\QQ_p`
+        - ``z`` -- an element of an unramified extension of `\QQ_p`
           that is not contained in `\QQ_p`.
 
         OUTPUT:
@@ -1010,11 +1010,11 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1`` - 2x2 integer matrix representing a vertex
+        - ``v1`` -- 2x2 integer matrix representing a vertex
 
-        - ``v2`` - 2x2 integer matrix representing a vertex
+        - ``v2`` -- 2x2 integer matrix representing a vertex
 
-        - ``normalized`` - boolean (default: True)
+        - ``normalized`` -- boolean (default: ``True``)
 
         OUTPUT:
 
@@ -1057,7 +1057,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``z1``, ``z2`` - unramified algebraic points of h_p
+        - ``z1``, ``z2`` -- unramified algebraic points of h_p
 
         OUTPUT:
 
@@ -1112,23 +1112,23 @@ class Vertex(SageObject):
 
     INPUT:
 
-    - ``p`` - a prime integer.
+    - ``p`` -- a prime integer.
 
-    - ``label`` - An integer which uniquely identifies this vertex.
+    - ``label`` -- An integer which uniquely identifies this vertex.
 
-    - ``rep`` - A 2x2 matrix in reduced form representing this
+    - ``rep`` -- A 2x2 matrix in reduced form representing this
       vertex.
 
-    - ``leaving_edges`` - (default: empty list) A list of edges
+    - ``leaving_edges`` -- (default: empty list) A list of edges
       leaving this vertex.
 
-    - ``entering_edges`` - (default: empty list) A list of edges
+    - ``entering_edges`` -- (default: empty list) A list of edges
       entering this vertex.
 
-    - ``determinant`` - (default: None) The determinant of ``rep``,
+    - ``determinant`` -- (default: None) The determinant of ``rep``,
       if known.
 
-    - ``valuation`` - (default: None) The valuation of the
+    - ``valuation`` -- (default: None) The valuation of the
       determinant of ``rep``, if known.
 
     EXAMPLES::
@@ -1236,26 +1236,26 @@ class Edge(SageObject):
 
     INPUT:
 
-    - ``p`` - a prime integer.
+    - ``p`` -- a prime integer.
 
-    - ``label`` - An integer which uniquely identifies this edge.
+    - ``label`` -- An integer which uniquely identifies this edge.
 
-    - ``rep`` - A 2x2 matrix in reduced form representing this edge.
+    - ``rep`` -- A 2x2 matrix in reduced form representing this edge.
 
-    - ``origin`` - The origin vertex of ``self``.
+    - ``origin`` -- The origin vertex of ``self``.
 
-    - ``target`` - The target vertex of ``self``.
+    - ``target`` -- The target vertex of ``self``.
 
-    - ``links`` - (Default: empty list) A list of elements of
+    - ``links`` -- (Default: empty list) A list of elements of
       `\Gamma` which identify different edges in the Bruhat-Tits tree
       which are equivalent to ``self``.
 
-    - ``opposite`` - (Default: None) The edge opposite to ``self``
+    - ``opposite`` -- (Default: None) The edge opposite to ``self``
 
-    - ``determinant`` - (Default: None) The determinant of ``rep``,
+    - ``determinant`` -- (Default: None) The determinant of ``rep``,
       if known.
 
-    - ``valuation`` - (Default: None) The valuation of the
+    - ``valuation`` -- (Default: None) The valuation of the
       determinant of ``rep``, if known.
 
     EXAMPLES::
@@ -1380,23 +1380,23 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
     INPUT:
 
-    - ``p`` - a prime number
+    - ``p`` -- a prime number
 
-    - ``Nminus`` - squarefree integer divisible by an odd number of
+    - ``Nminus`` -- squarefree integer divisible by an odd number of
       distinct primes and relatively prime to p. This is the
       discriminant of the definite quaternion algebra that one is
       quotienting by.
 
-    - ``Nplus`` - an integer coprime to pNminus (Default: 1). This is
+    - ``Nplus`` -- an integer coprime to pNminus (Default: 1). This is
       the tame level. It need not be squarefree! If Nplus is not 1
       then the user currently needs magma installed due to sage's
       inability to compute well with nonmaximal Eichler orders in
       rational (definite) quaternion algebras.
 
-    - ``character`` - a Dirichlet character (Default: None) of modulus
+    - ``character`` -- a Dirichlet character (Default: None) of modulus
       `pN^-N^+`.
 
-    - ``use_magma`` - boolean (default: False). If True, uses Magma
+    - ``use_magma`` -- boolean (default: ``False``). If True, uses Magma
       for quaternion arithmetic.
 
     - ``magma_session`` -- (default: None). If specified, the Magma session
@@ -2194,7 +2194,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``D`` - an integer whose squarefree part will define the
+        - ``D`` -- an integer whose squarefree part will define the
           quadratic field
 
         OUTPUT:
@@ -2252,7 +2252,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``prec`` - Integer. The precision of the splitting.
+        - ``prec`` -- Integer. The precision of the splitting.
 
         OUTPUT:
 
@@ -2307,7 +2307,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``prec`` - Integer. The precision of the embedding matrix.
+        - ``prec`` -- Integer. The precision of the embedding matrix.
 
         EXAMPLES:
 
@@ -2532,7 +2532,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``g`` a row vector of size `4` whose entries represent a
           quaternion in our basis.
 
-        - ``exact`` boolean (default: False) - If True, tries to embed
+        - ``exact`` boolean (default: ``False``) If True, tries to embed
           ``g`` into a matrix algebra over a number field. If False,
           the target is the matrix algebra over `\QQ_p`.
 
@@ -2933,7 +2933,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``q`` - integer dividing p*Nminus*Nplus
+        - ``q`` -- integer dividing p*Nminus*Nplus
 
         EXAMPLES::
 
@@ -2979,7 +2979,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``l`` - a prime l.
+        - ``l`` -- a prime l.
 
         EXAMPLES::
 
@@ -3171,7 +3171,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1`` - a 2x2 matrix representing a normalized vertex.
+        - ``v1`` -- a 2x2 matrix representing a normalized vertex.
 
         OUTPUT:
 
@@ -3210,13 +3210,13 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1``, ``v2`` - 2x2 matrices. They represent either a pair
+        - ``v1``, ``v2`` -- 2x2 matrices. They represent either a pair
           of normalized vertices or a pair of normalized edges.
 
-        - ``as_edges`` - boolean. If True, the inputs will be
+        - ``as_edges`` -- boolean. If True, the inputs will be
           considered as edges instead of vertices.
 
-        - ``m`` - integer - The valuation of the determinant of
+        - ``m`` -- integer -- The valuation of the determinant of
           ``v1``*``v2``.
 
         OUTPUT:
@@ -3256,9 +3256,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``e`` - A 2x2 matrix representing an edge or vertex
+        - ``e`` -- A 2x2 matrix representing an edge or vertex
 
-        - ``as_edge`` - Boolean (Default = True). Determines whether
+        - ``as_edge`` -- Boolean (Default = True). Determines whether
           ``e`` is treated as an edge or vertex
 
         OUTPUT:
@@ -3305,17 +3305,17 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``vec`` - 4x1 integer matrix. It encodes the quaternion to
+        - ``vec`` -- 4x1 integer matrix. It encodes the quaternion to
           test in the basis defined by the columns of E.
 
-        - ``twom`` - An integer.
+        - ``twom`` -- An integer.
 
-        - ``E`` - 4x4 integer matrix. Its columns should form a
+        - ``E`` -- 4x4 integer matrix. Its columns should form a
           basis for an order in the quaternion algebra.
 
-        - ``A`` - 4x4 integer matrix. It encodes the quadratic form on the order defined by the columns of E.
+        - ``A`` -- 4x4 integer matrix. It encodes the quadratic form on the order defined by the columns of E.
 
-        - ``flag`` - integer (Default = 0). Passed to Pari for finding
+        - ``flag`` -- integer (Default = 0). Passed to Pari for finding
           minimal elements in a positive definite lattice.
 
         OUTPUT:
@@ -3371,14 +3371,14 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``v1``, ``v2`` - two 2x2 integral matrices representing
+        - ``v1``, ``v2`` -- two 2x2 integral matrices representing
           either vertices or edges
 
-        - ``as_edges`` - boolean (Default: False). Tells whether the
+        - ``as_edges`` -- boolean (Default: False). Tells whether the
           matrices should be interpreted as edges (if true), or as
           vertices (if false)
 
-        - ``twom`` - integer (Default: None) If specified,
+        - ``twom`` -- integer (Default: None) If specified,
           indicates the valuation of the determinant of ``v1``
           `\times` ``v2``.
 
@@ -3545,9 +3545,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``norm`` - integer. The required reduced norm.
+        - ``norm`` -- integer. The required reduced norm.
 
-        - ``trace`` - integer (Default: None). If specified, returns
+        - ``trace`` -- integer (Default: None). If specified, returns
           elements only reduced trace ``trace``.
 
         - ``primitive`` boolean (Default: False). If True, return only
@@ -3576,7 +3576,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``check`` - Boolean (Default = True).
+        - ``check`` -- Boolean (Default = True).
 
         EXAMPLES::
 
@@ -3787,14 +3787,14 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` - integer - The weight. It must be even.
+        - ``k`` -- integer -- The weight. It must be even.
 
-        - ``prec`` - integer (default: None). If specified, the
+        - ``prec`` -- integer (default: None). If specified, the
           precision for the coefficient module
 
-        - ``basis_matrix`` - a matrix (default: None).
+        - ``basis_matrix`` -- a matrix (default: None).
 
-        - ``base_field`` - a ring (default: None)
+        - ``base_field`` -- a ring (default: None)
 
         OUTPUT: A space of harmonic cocycles
 

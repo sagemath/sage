@@ -3026,7 +3026,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` - :class:`cone <ConvexRationalPolyhedralCone>`.
+        - ``other`` -- :class:`cone <ConvexRationalPolyhedralCone>`.
 
         OUTPUT:
 
@@ -3111,7 +3111,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` - cone.
+        - ``other`` -- cone.
 
         OUTPUT:
 
@@ -3241,7 +3241,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` - cone.
+        - ``other`` -- cone.
 
         OUTPUT:
 

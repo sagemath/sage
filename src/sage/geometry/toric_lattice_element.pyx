@@ -229,7 +229,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         INPUT:
 
-        - ``other`` - :class:`ToricLatticeElement`.
+        - ``other`` -- :class:`ToricLatticeElement`.
 
         OUTPUT:
 
@@ -307,7 +307,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         INPUT:
 
-        - ``right`` - vector.
+        - ``right`` -- vector.
 
         OUTPUT:
 

@@ -253,7 +253,7 @@ cdef class NCPolynomialRing_plural(Ring):
         INPUT:
 
         - ``base_ring`` -- base ring (must be either `\GF{q}`, `\ZZ`, `\ZZ/n\ZZ`, `\QQ` or absolute number field)
-        - ``names`` - a tuple of names of ring variables
+        - ``names`` -- a tuple of names of ring variables
         - ``c``, ``d`` -- upper triangular matrices of coefficients,
           resp. commutative polynomials, satisfying the nondegeneracy
           conditions, which are to be tested if ``check`` is ``True``. These
@@ -878,11 +878,11 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``*gens`` - list or tuple of generators (or several input arguments)
-        - ``coerce`` - bool (default: ``True``); this must be a
+        - ``*gens`` -- list or tuple of generators (or several input arguments)
+        - ``coerce`` -- bool (default: ``True``); this must be a
           keyword argument. Only set it to ``False`` if you are certain
           that each generator is already in the ring.
-        - ``side`` - string (either "left", which is the default, or "twosided")
+        - ``side`` -- string (either "left", which is the default, or "twosided")
           Must be a keyword argument. Defines whether the ideal is a left ideal
           or a two-sided ideal. Right ideals are not implemented.
 
@@ -1142,9 +1142,9 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``f`` - monomial
+        - ``f`` -- monomial
 
-        - ``g`` - monomial
+        - ``g`` -- monomial
 
         EXAMPLES::
 
@@ -1212,8 +1212,8 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``f`` - monomial
-        - ``G`` - list/set of mpolynomials
+        - ``f`` -- monomial
+        - ``G`` -- list/set of mpolynomials
 
         EXAMPLES::
 
@@ -1273,8 +1273,8 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``h`` - monomial
-        - ``g`` - monomial
+        - ``h`` -- monomial
+        - ``g`` -- monomial
 
         EXAMPLES::
 
@@ -1347,7 +1347,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         INPUT:
 
-        - ``t`` - a monomial
+        - ``t`` -- a monomial
 
         OUTPUT:
 
@@ -2023,7 +2023,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``degrees`` - Can be any of:
+        - ``degrees`` -- Can be any of:
                 - a dictionary of degree restrictions
                 - a list of degree restrictions (with None in the unrestricted variables)
                 - a monomial (very fast, but not as flexible)
@@ -2146,7 +2146,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``mon`` - a monomial
+        - ``mon`` -- a monomial
 
         OUTPUT:
 
@@ -2348,7 +2348,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``x`` - a tuple or, in case of a single-variable MPolynomial
+        - ``x`` -- a tuple or, in case of a single-variable MPolynomial
           ring ``x`` can also be an integer.
 
         EXAMPLES::
@@ -2412,7 +2412,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``as_ETuples`` - (default: ``True``) if ``True`` returns the result as an list of ETuples
+        - ``as_ETuples`` -- (default: ``True``) if ``True`` returns the result as an list of ETuples
           otherwise returns a list of tuples
 
 

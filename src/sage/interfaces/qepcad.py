@@ -628,7 +628,7 @@ def _qepcad_atoms(formula):
 
     INPUT:
 
-    - `formula` (string) - a quantifier-free formula.
+    - `formula` (string) -- a quantifier-free formula.
 
     .. NOTE::
 

@@ -1022,7 +1022,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         - ``m`` -- a positive integer
 
-        - ``poly_only`` -- bool (default: False); if True return
+        - ``poly_only`` -- bool (default: ``False``); if True return
           polynomial whose roots give all possible `x`-coordinates of
           `m`-th roots of ``self``.
 
@@ -3722,8 +3722,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         INPUT:
 
-        ``p`` - integer: a prime ``absprec`` - integer (default: 20):
-        the initial `p`-adic absolute precision of the computation
+        - ``p`` -- integer: a prime ``absprec`` -- integer (default: 20):
+          the initial `p`-adic absolute precision of the computation
 
         OUTPUT:
 
