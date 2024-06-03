@@ -113,7 +113,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.structure.element cimport Element, Vector
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_template
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_float
@@ -4295,7 +4295,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if not self.is_square():
             raise NotImplementedError("the input matrix must be square.")
 
-        if is_Vector(B):
+        if isinstance(B, Vector):
             if self.nrows() != B.degree():
                 raise ValueError("number of rows of self must equal degree of B.")
         elif self.nrows() != B.nrows():
@@ -4307,7 +4307,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         matrix = True
         C = B
         if not isinstance(B, Matrix_integer_dense):
-            if is_Vector(B):
+            if isinstance(B, Vector):
                 matrix = False
                 C = self.matrix_space(self.nrows(), 1)(B.list())
             else:
