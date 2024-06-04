@@ -8,6 +8,7 @@
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 """Implements generic interpreter instructions and related utilities."""
 
 from __future__ import print_function, absolute_import
