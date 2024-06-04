@@ -2739,7 +2739,7 @@ class NaturalMatrixRepresentation(Representation):
         return self.from_vector(g.matrix() * vec.to_vector())
 
 
-class SchurFunctorRepresentation(Representation_abstract, SubmoduleWithBasis):
+class SchurFunctorRepresentation(Subrepresentation):
     r"""
     The representation constructed by the Schur functor.
 
@@ -2821,6 +2821,21 @@ class SchurFunctorRepresentation(Representation_abstract, SubmoduleWithBasis):
         sage: S21N = N.schur_functor([2, 1])
         sage: S21N.dimension()
         8
+
+    An example with the Weyl/Coxeter group of type `C_3`::
+
+        sage: G = WeylGroup(['C', 3], prefix='s')
+        sage: R = G.reflection_representation()
+        sage: S = R.schur_functor([3, 2, 1])
+        sage: g = G.an_element(); g
+        s1*s2*s3
+        sage: v = S.an_element(); v
+        2*S[0] + 2*S[1] + 3*S[2]
+        sage: v * g
+        -(2*a+1)*S[0] - (a+2)*S[1] - (2*a-2)*S[2] + (2*a-2)*S[3]
+         - (-2*a+4)*S[4] + (-2*a+4)*S[5] + 2*S[6] + 2*a*S[7]
+        sage: g * v
+        3*S[0] + (-2*a+5)*S[2] + 3*a*S[4] - (5*a-2)*S[6] - 6*S[7]
     """
     @staticmethod
     def __classcall_private__(cls, V, shape):
@@ -2893,15 +2908,7 @@ class SchurFunctorRepresentation(Representation_abstract, SubmoduleWithBasis):
         from sage.sets.family import Family
         gens = Family(ambient.echelon_form(gens, order=support_order))
         cat = Modules(ambient.category().base_ring()).WithBasis().Subobjects()
-        SubmoduleWithBasis.__init__(self, gens, support_order, ambient, unitriangular=False, category=cat, prefix='S')
-        # Copied from Representation_abstract.__init__
-        self._semigroup = V.semigroup()
-        self._semigroup_algebra = V.semigroup_algebra()
-        self._side = V.side()
-        if self._side not in ["left", "right", "twosided"]:
-            raise ValueError("the side must be either 'left', 'right', or 'twosided'")
-        self._left_repr = bool(self._side == "left" or self._side == "twosided")
-        self._right_repr = bool(self._side == "right" or self._side == "twosided")
+        Subrepresentation.__init__(self, gens, support_order, ambient, unitriangular=False, category=cat, prefix='S')
 
     def _repr_(self):
         r"""
@@ -2936,26 +2943,4 @@ class SchurFunctorRepresentation(Representation_abstract, SubmoduleWithBasis):
         from sage.misc.latex import latex
         return "\\mathbb{{S}}_{{{}}}({})".format(latex(self._shape), latex(self._module))
 
-    def _semigroup_action(self, g, vec, vec_on_left):
-        r"""
-        Return the action of the Coxeter group element ``g`` on the
-        vector ``vec`` of ``self``.
-
-        EXAMPLES::
-
-            sage: G = WeylGroup(['C', 3], prefix='s')
-            sage: R = G.reflection_representation()
-            sage: S = R.schur_functor([3, 2, 1])
-            sage: g = G.an_element(); g
-            s1*s2*s3
-            sage: v = S.an_element(); v
-            2*S[0] + 2*S[1] + 3*S[2]
-            sage: S._semigroup_action(g, v, True)
-            -(2*a+1)*S[0] - (a+2)*S[1] - (2*a-2)*S[2] + (2*a-2)*S[3]
-             - (-2*a+4)*S[4] + (-2*a+4)*S[5] + 2*S[6] + 2*a*S[7]
-            sage: S._semigroup_action(g, v, False)
-            3*S[0] + (-2*a+5)*S[2] + 3*a*S[4] - (5*a-2)*S[6] - 6*S[7]
-        """
-        if vec_on_left:
-            return self.retract(vec.lift() * g)
-        return self.retract(g * vec.lift())
+    Element = Subrepresentation.Element
