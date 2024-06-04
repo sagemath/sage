@@ -2645,6 +2645,7 @@ class ReflectionRepresentation(Representation_abstract, CombinatorialFreeModule)
             g = ~g
         return self.from_vector(g.canonical_matrix() * vec.to_vector())
 
+
 class NaturalMatrixRepresentation(Representation):
     r"""
     The natural representation of a matrix semigroup.
@@ -2842,6 +2843,11 @@ class SchurFunctorRepresentation(Representation_abstract, SubmoduleWithBasis):
     def __init__(self, V, shape):
         r"""
         Initialize ``self``.
+
+        INPUT:
+
+        - ``V`` -- a representation
+        - ``shape`` -- a partition
 
         EXAMPLES::
 
