@@ -46,7 +46,6 @@ TESTS::
     sage: TestSuite(a).run()
     sage: Matrix(ZZ,0,0).inverse()
     []
-
 """
 
 #*****************************************************************************
@@ -712,7 +711,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
             False
         """
         return self.is_square() and fmpz_mat_is_one(self._matrix)
-
 
 
     def _multiply_linbox(self, Matrix_integer_dense right):

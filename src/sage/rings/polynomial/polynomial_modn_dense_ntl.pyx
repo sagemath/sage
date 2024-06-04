@@ -1233,7 +1233,6 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             return self._parent(int(fx))
 
 
-
 cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
 
     def __init__(self, parent, v=None, check=True, is_gen=False, construct=False):

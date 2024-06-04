@@ -14,7 +14,6 @@ AUTHORS:
 - William Stein: original implementation
 
 - Joel B. Mohler: latex_variable_name() drastic rewrite and many doc-tests
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>

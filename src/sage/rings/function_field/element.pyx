@@ -45,7 +45,6 @@ AUTHORS:
 - Maarten Derickx (2011-09-11): added doctests, fixed pickling
 
 - Kwankyu Lee (2017-04-30): added elements for global function fields
-
 """
 # *****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>

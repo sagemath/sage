@@ -6,7 +6,6 @@ and can store either floating-point SDPs or exact SDPs with rational or algebrai
 
 The class does not provide a solver method.  It can be used as a base class for
 other classes implementing solvers.
-
 """
 
 #*****************************************************************************

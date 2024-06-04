@@ -141,7 +141,6 @@ old pickles to work).
   - ``unpickle_appends(lst, vals)``:
     Appends the values in ``vals`` to ``lst``.  If not ``isinstance(lst, list)``,
     can be customized by defining a :meth:`append` method.
-
 """
 
 #*****************************************************************************

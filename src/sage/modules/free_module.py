@@ -157,7 +157,6 @@ AUTHORS:
 - Simon King (2010-12): (:issue:`8800`) fixed a bug in ``denominator()``.
 
 - Simon King (2010-12), Peter Bruin (June 2014): (:issue:`10513`) new coercion model and category framework.
-
 """
 
 ###########################################################################

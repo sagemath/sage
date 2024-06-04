@@ -2301,7 +2301,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         return z
 
 
-
     def eta(self, omit_frac=False):
         r"""
         Return the value of the Dedekind `\eta` function on ``self``,

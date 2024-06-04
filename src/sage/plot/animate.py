@@ -116,7 +116,6 @@ REFERENCES:
 - `FFmpeg <https://www.ffmpeg.org>`_
 - `APNG <https://wiki.mozilla.org/APNG_Specification>`_
 - `browsers which support it <https://caniuse.com/#feat=apng>`_
-
 """
 
 ############################################################################

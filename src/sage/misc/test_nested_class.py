@@ -36,7 +36,6 @@ alternative is to use ClasscallMetaclass as metaclass::
 
     sage: P = TestParent4()
     sage: TestSuite(P).run()
-
 """
 #*****************************************************************************
 #  Copyright (C) 2009 Nicolas M. Thiery <nthiery at users.sf.net>

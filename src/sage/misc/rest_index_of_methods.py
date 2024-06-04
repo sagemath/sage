@@ -5,7 +5,6 @@ This module contains a function that generates a ReST index table of functions
 for use in doc-strings.
 
 {INDEX_OF_FUNCTIONS}
-
 """
 
 import inspect

@@ -19,7 +19,6 @@ AUTHORS:
   heights
 - Robert Harron (2012-08): conjugate() now works for all fields contained in
   CM fields
-
 """
 # ****************************************************************************
 #       Copyright (C) 2004, 2007 William Stein <wstein@gmail.com>

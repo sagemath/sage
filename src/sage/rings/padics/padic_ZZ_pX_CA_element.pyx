@@ -157,7 +157,6 @@ AUTHORS:
 - Robert Harron (2011-09): fixes/enhancements
 
 - Julian Rueth (2012-10-15): fixed an initialization bug
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>

@@ -14,7 +14,6 @@ class.
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-07): initial implementation
-
 """
 
 #*****************************************************************************
@@ -616,7 +615,6 @@ cdef class GenericSDPBackend:
             sage: p.solver_parameter("timelimit")
         """
         raise NotImplementedError()
-
 
 
 default_solver = None

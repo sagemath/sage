@@ -42,7 +42,6 @@ AUTHORS:
                              'plot_lineorders':<list of lists>}
 
 
-
 REFERENCES
 ==========
 

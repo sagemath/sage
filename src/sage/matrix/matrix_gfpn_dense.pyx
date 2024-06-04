@@ -22,7 +22,6 @@ characteristic two.
 AUTHORS:
 
 - Simon King (2015-09): initial version
-
 """
 
 # ***************************************************************************

@@ -523,7 +523,6 @@ def ComplexLazyField():
     return CLF
 
 
-
 cdef int get_new_prec(R, int depth) except -1:
     """
     There are depth operations, so we want at least that many more digits of

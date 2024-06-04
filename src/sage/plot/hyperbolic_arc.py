@@ -60,7 +60,6 @@ REFERENCES:
 For additional models of the hyperbolic plane and its relationship
 see [CFKP1997]_. For a more detailed explanation on hyperbolic arcs
 see [Sta1993]_.
-
 """
 # *****************************************************************************
 #       Copyright (C) 2011 Hartmut Monien <monien@th.physik.uni-bonn.de>,

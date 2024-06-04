@@ -1341,7 +1341,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         mzd_col_swap(self._entries, col1, col2)
 
 
-
     def _magma_init_(self, magma):
         """
         Returns a string of self in ``Magma`` form. Does not return

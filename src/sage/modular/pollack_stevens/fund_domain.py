@@ -10,7 +10,6 @@ relevant Manin relations off of that picture. The algorithm follows [PS2011]_.
 AUTHORS:
 
 - Robert Pollack, Jonathan Hanke (2012): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>

@@ -4,7 +4,6 @@ Individual matroids in the catalog
 This module imports the individual matroids accessible through
 :mod:`matroids.catalog <sage.matroids.catalog>` (type this and hit :kbd:`Tab`
 for a list).
-
 """
 from sage.matroids.database_matroids import (
     U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,

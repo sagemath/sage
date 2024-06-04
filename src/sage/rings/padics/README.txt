@@ -7,7 +7,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-This document aims at explaining the (somehow complicated) file structure and 
+This document aims at explaining the (somehow complicated) file structure and
 class hierarchy for p-adics in Sage.
 
 
@@ -63,7 +63,6 @@ pAdicGeneric ......................................................... [padic_ge
             RelativeRamifiedExtensionRingFloatingPoint ............... [relative_extension_leaves.py]
             RelativeRamifiedExtensionFieldCappedRelative ............. [relative_extension_leaves.py]
             RelativeRamifiedExtensionFieldFloatingPoint .............. [relative_extension_leaves.py]
-
 
 
 Below is the hierarchy for element classes.

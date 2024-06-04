@@ -220,7 +220,6 @@ AUTHORS:
 - Ingolfur Edvardsson (2014/08): added extension for exact computation
 
 - Dima Pasechnik      (2014-)    : supervision, minor fixes, duality
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>

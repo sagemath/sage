@@ -7,7 +7,6 @@ AUTHORS:
 - Travis Scrimshaw (2015-11-21): initial version
 - Siddharth Singh  (2020-03-21): signed representation
 - Travis Scrimshaw (2024-02-17): tensor products
-
 """
 
 ##############################################################################

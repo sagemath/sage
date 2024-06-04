@@ -16,7 +16,6 @@ AUTHORS:
 - Nathann Cohen (2010-10)      : initial implementation
 - Risan (2012-02)              : extension for PPL backend
 - Ingolfur Edvardsson (2014-06): extension for CVXOPT backend
-
 """
 
 #*****************************************************************************

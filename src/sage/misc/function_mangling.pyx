@@ -22,7 +22,6 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 
 Function Mangling
@@ -34,7 +33,6 @@ AUTHORS:
 
 - Tom Boothby (2009): Original version in Python
 - Simon King (2011): Use Cython. Speedup of ``fix_to_pos``, cleaning documentation.
-
 """
 
 from sage.misc.sageinspect import sage_getargspec

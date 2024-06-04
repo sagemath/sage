@@ -146,7 +146,6 @@ AUTHORS:
   ring.
 
 - Volker Braun (2011-06): major cleanup, refcount singular rings, bugfixes.
-
 """
 
 # ********************************************************************
@@ -785,9 +784,6 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: R.<x,y,z> = F[]
             sage: R('d*z+x^2*y')
             x^2*y + d*z
-
-
-
         """
         cdef poly *_p
         cdef poly *mon

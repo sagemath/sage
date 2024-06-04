@@ -322,7 +322,6 @@ AUTHORS:
 - Simon King (2011-06-06): Make conversion from Singular to Sage more flexible.
 
 - Simon King (2015): Extend pickling capabilities.
-
 """
 
 # ****************************************************************************

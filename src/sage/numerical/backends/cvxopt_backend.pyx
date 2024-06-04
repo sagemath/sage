@@ -6,7 +6,6 @@ CVXOPT Backend
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-05): initial implementation
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
@@ -508,7 +507,6 @@ cdef class CVXOPTBackend(GenericBackend):
                         self.G_matrix[cindex].append(-1) # after multiplying the eq by -1
                     else:
                         self.G_matrix[cindex].append(0)
-
 
 
         #for the upper bounds (if there are any)

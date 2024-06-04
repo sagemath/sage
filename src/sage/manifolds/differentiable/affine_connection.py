@@ -16,7 +16,6 @@ REFERENCES:
 - [Lee1997]_
 - [KN1963]_
 - [ONe1983]_
-
 """
 # *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

@@ -1,5 +1,4 @@
 # distutils: extra_compile_args = -D_XPG6
-
 """
 Heilbronn matrix computation
 """

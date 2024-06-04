@@ -71,7 +71,6 @@ We test corner cases for multiplication::
     ....:         print('Uncaught dimension mismatch!')
     ....:     except (IndexError, TypeError, ArithmeticError):
     ....:         pass
-
 """
 
 #*****************************************************************************

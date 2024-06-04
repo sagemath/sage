@@ -33,7 +33,6 @@ polynomial rings::
     Gauss valuation induced by [ Gauss valuation induced by 2-adic valuation, v(x) = 1/4, v(x^4 + 2*x^3 + 2*x^2 + 2*x + 2) = 4/3 ]
     sage: w(2*T + 1)
     0
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>

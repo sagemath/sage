@@ -62,7 +62,6 @@ AUTHORS:
 - Nick Alexander (2009-01): modernized coercion implementation
 - Robert Harron (2012-08): added is_CM_extension
 - Julian Rüth (2014-04): absolute number fields are unique parents
-
 """
 # ****************************************************************************
 #       Copyright (C) 2004-2009 William Stein <wstein@gmail.com>

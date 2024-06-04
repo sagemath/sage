@@ -1560,8 +1560,6 @@ cdef class Matrix(sage.structure.element.Matrix):
         return
 
 
-
-
     cdef _coerce_element(self, x):
         """
         Return coercion of x into the base ring of self.

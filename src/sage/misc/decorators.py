@@ -11,7 +11,6 @@ AUTHORS:
 - Simon King (2011-05-26) -- improve introspection of sage_wraps. Put this
   file into the reference manual.
 - Julian Rueth (2014-03-19): added ``decorator_keywords`` decorator
-
 """
 #*****************************************************************************
 #       Copyright (C) 2009 Tim Dumol

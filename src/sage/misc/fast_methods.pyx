@@ -15,7 +15,6 @@ AUTHOR:
 
 - Simon King (2013-02): Original version
 - Simon King (2013-10): Add :class:`Singleton`
-
 """
 
 #*****************************************************************************

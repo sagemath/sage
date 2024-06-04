@@ -4,7 +4,6 @@ Integer factorization functions
 AUTHORS:
 
 - Andre Apitzsch (2011-01-13): initial version
-
 """
 
 # ****************************************************************************

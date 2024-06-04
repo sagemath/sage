@@ -10,7 +10,6 @@ commutative base with equipped with an endomorphism and/or a derivation.
 AUTHOR:
 
 - Xavier Caruso (2020-04)
-
 """
 # ***************************************************************************
 #    Copyright (C) 2020 Xavier Caruso <xavier.caruso@normalesup.org>
