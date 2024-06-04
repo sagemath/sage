@@ -419,7 +419,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
     def specht_module(self, la):
         r"""
-        Return the Specht module of ``self`` corresponded to shape ``la``.
+        Return the Specht module of ``self`` corresponding to the shape ``la``.
 
         EXAMPLES::
 
@@ -1230,7 +1230,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             for i, k in enumerate(t[0]):
                 if not k:
                     continue
-                redword.extend(list(reversed(range(1, i+1))) + [0] * k)
+                redword.extend(list(range(i, 0, -1)) + [0]*k)
             redword.extend(t[1].reduced_word())
             return redword
 
@@ -1567,7 +1567,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
             # Compute t1 * T * sprod
             def compute(T, sprod):
-                if not T: # T=1, so just do t1 * sprod, each of which is in order
+                if not T:  # T=1, so just do t1 * sprod, each of which is in order
                     return self._from_dict({(t1, s): sprod[s] for s in sprod},
                                            remove_zeros=False, coerce=False)
 

@@ -47,7 +47,7 @@ class SpechtModule(CombinatorialFreeModule):
 
     The action of `L_i` is given by `t \cdot L_i = r_T(i) t`. For `T_i`,
     we need to consider the following cases. If `i, i+1` are in the same
-    row (resp. column), then `t \cdot T_i = q t` (resp. `t \cdot T_i = - t`).
+    row (resp. column), then `t \cdot T_i = q t` (resp. `t \cdot T_i = -t`).
     Otherwise if we swap `i, i+1`, the resulting tableau tuple `s` is again
     standard and the action is given by
 
@@ -61,7 +61,7 @@ class SpechtModule(CombinatorialFreeModule):
     Over a field of characteristic `0`, the set of Specht modules for all
     partition tuples of level `r` and size `n` form the complete set
     of irreducible modules for `H_{r,n}(q, u)` [AK1994]_. (The condition
-    on the base ring can be  weakened; see Theorem 3.2 of [Mathas2002]_.)
+    on the base ring can be weakened; see Theorem 3.2 of [Mathas2002]_.)
 
     EXAMPLES:
 
@@ -184,12 +184,12 @@ class SpechtModule(CombinatorialFreeModule):
 
     def _test_representation(self, **options):
         r"""
-        Test that the relations of the Ariki-Koike algebra are statisfied.
+        Test that the relations of the Ariki-Koike algebra are satisfied.
 
         EXAMPLES::
 
             sage: q = ZZ['q'].fraction_field().gen()
-            sage: AK = algebras.ArikiKoike(2, 4, q, [q^2+1,q-3], q.parent())
+            sage: AK = algebras.ArikiKoike(2, 4, q, [q^2+1, q-3], q.parent())
             sage: S = AK.specht_module([[2,1], [1]])
             sage: S._test_representation(elements=S.basis())
         """
@@ -250,9 +250,9 @@ class SpechtModule(CombinatorialFreeModule):
             (u2*q^-2)*S[([[2, 4], [8]], [], [[1, 3, 7], [5, 6], [9, 10]])]
         """
         c = t.cells_containing(i)[0]
-        if len(c) == 2: # it is of level 1 and a regular tableau
+        if len(c) == 2:  # it is of level 1 and a regular tableau
             c = (0,) + c
-        res = self._q**(c[2] - c[1]) * self._u[c[0]]
+        res = self._q**(c[2]-c[1]) * self._u[c[0]]
         R = self.base_ring()
         return self.element_class(self, {t: R(res)})
 
@@ -289,14 +289,14 @@ class SpechtModule(CombinatorialFreeModule):
 
         ct = t.cells_containing(i)[0]
         cs = t.cells_containing(i+1)[0]
-        if len(ct) == 2: # it is of level 1 and a regular tableau
+        if len(ct) == 2:  # it is of level 1 and a regular tableau
             ct = (0,) + ct
             cs = (0,) + cs
 
-        if ct[0] == cs[0] and ct[2] == cs[2]: # same column
+        if ct[0] == cs[0] and ct[2] == cs[2]:  # same column
             return self.element_class(self, {t: -R.one()})
 
-        if ct[0] == cs[0] and ct[1] == cs[1]: # same row
+        if ct[0] == cs[0] and ct[1] == cs[1]:  # same row
             return self.element_class(self, {t: self._q})
 
         # result is standard
@@ -304,7 +304,7 @@ class SpechtModule(CombinatorialFreeModule):
         assert s.parent() is t.parent()
 
         def res(cell):
-            return self._q**(cell[2] - cell[1]) * self._u[cell[0]]
+            return self._q**(cell[2]-cell[1]) * self._u[cell[0]]
 
         # Note that the residue of i in t is given by the cell c
         #   and of i in s corresponds to cell cp because the
@@ -317,7 +317,7 @@ class SpechtModule(CombinatorialFreeModule):
 
     def ariki_koike_algebra(self):
         r"""
-        Return the Ariki-Koike algebra that ``self`` is a reprensetation of.
+        Return the Ariki-Koike algebra that ``self`` is a representation of.
 
         EXAMPLES::
 
@@ -361,7 +361,7 @@ class SpechtModule(CombinatorialFreeModule):
                 sage: AK = algebras.ArikiKoike(2, 4, use_fraction_field=True)
                 sage: LT = AK.LT()
                 sage: T = AK.T()
-                sage: S = AK.specht_module([[1],[2,1]])
+                sage: S = AK.specht_module([[1], [2,1]])
                 sage: B = list(LT.basis())[::55]
                 sage: all(b * x == b * T(x) for b in S.basis() for x in B)  # long time
                 True
@@ -369,7 +369,7 @@ class SpechtModule(CombinatorialFreeModule):
             ret = super()._acted_upon_(scalar, self_on_left)
             if ret is not None:
                 return ret
-            if not self_on_left: # only a right action
+            if not self_on_left:  # only a right action
                 return None
             P = self.parent()
             if scalar not in P._AK:
@@ -417,7 +417,7 @@ class SpechtModule(CombinatorialFreeModule):
                 True
                 sage: TableauTuples.options._reset()  # reset
             """
-            if not self: # action on 0 is 0
+            if not self:  # action on 0 is 0
                 return self
             if i not in ZZ:
                 ret = self
@@ -454,7 +454,7 @@ class SpechtModule(CombinatorialFreeModule):
                 True
                 sage: b.T(9)
                 q*S[2,4/8|-|1,5,7/3,6/9,10]
-                sage: all(b.T([i,i]) == (q-1) * b.T(i) + q*b for i in range(1,10))
+                sage: all(b.T([i,i]) == (q-1)*b.T(i) + q*b for i in range(1,10))
                 True
                 sage: b.T(0)
                 u2*S[2,4/8|-|1,5,7/3,6/9,10]
@@ -462,7 +462,7 @@ class SpechtModule(CombinatorialFreeModule):
                 True
                 sage: TableauTuples.options._reset()  # reset
             """
-            if not self: # action on 0 is 0
+            if not self:  # action on 0 is 0
                 return self
             if i not in ZZ:
                 ret = self
