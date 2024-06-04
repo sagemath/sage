@@ -435,7 +435,7 @@ class Graphics(WithEqualityById, SageObject):
         The following example sets ``loc=3`` and ``borderaxespad = ``-7.5-0.01*p.fontsize()`` so as to obtain the legend below the x-axis label.
         
             sage: p = line([(0, 0), (1, 1)], legend_label='test', axes_labels=('X LABEL', 'Y LABEL'))
-            sage: p.axes_labels(['X-Label', 'Y-Label'])
+            sage: p.axes_labels(['X-Label', 'Y-Label'])                                  # adding labels for axes
             sage: p.set_legend_options(loc=8, borderaxespad=-7.5-0.01*p.fontsize())
             sage: print(p)
             Graphics object consisting of 1 graphics primitive
