@@ -82,7 +82,7 @@ def sphinxify(docstring, format='html'):
     with open(rst_name, 'w') as filed:
         filed.write(docstring)
 
-    confdir = os.path.join(srcdir, 'en' , 'introspect')
+    confdir = os.path.join(srcdir, 'en', 'introspect')
     os.makedirs(confdir)
     with open(os.path.join(confdir, 'conf.py'), 'w') as filed:
         filed.write(r"""
