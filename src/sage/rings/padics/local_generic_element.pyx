@@ -844,7 +844,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         INPUT:
 
-        ``self`` -- a local ring element.
+        - ``self`` -- a local ring element.
 
         OUTPUT:
 

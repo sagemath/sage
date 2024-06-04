@@ -898,7 +898,7 @@ def orbit_partition(gamma, list_perm=False):
 
     INPUT:
 
-    - ``list_perm`` - if ``True``, assumes
+    - ``list_perm`` -- if ``True``, assumes
       ``gamma`` is a list representing the map
       `i \mapsto ``gamma``[i]`
 

@@ -399,8 +399,8 @@ class Link(SageObject):
 
         - ``presentation`` -- one of the following:
 
-          * ``'pd'`` - the arcs are returned as lists of parts in the PD code
-          * ``'gauss_code'`` - the arcs are returned as pieces of the Gauss
+          * ``'pd'`` -- the arcs are returned as lists of parts in the PD code
+          * ``'gauss_code'`` -- the arcs are returned as pieces of the Gauss
             code that start with a negative number, and end with the
             following negative one; of there exist a closed arc,
             it is returned as a list of positive numbers only
@@ -472,9 +472,9 @@ class Link(SageObject):
 
         - ``presentation`` -- string; one of the following:
 
-          * ``'wirtinger'`` - (default) the Wirtinger presentation
+          * ``'wirtinger'`` -- (default) the Wirtinger presentation
             (see :wikipedia:`Link_group`)
-          * ``'braid'`` - the presentation is given by the braid action
+          * ``'braid'`` -- the presentation is given by the braid action
             on the free group (see chapter 2 of [Bir1975]_)
 
         OUTPUT:
@@ -2654,10 +2654,10 @@ class Link(SageObject):
         - ``algorithm`` -- string (default: ``'jonesrep'``); algorithm to use
           and can be one of the following:
 
-          * ``'jonesrep'`` - use the Jones representation of the braid
+          * ``'jonesrep'`` -- use the Jones representation of the braid
             representation
 
-          * ``'statesum'`` - recursively computes the Kauffman bracket
+          * ``'statesum'`` -- recursively computes the Kauffman bracket
 
         OUTPUT:
 

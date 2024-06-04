@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Cubic Hecke database
 
@@ -238,7 +237,7 @@ class CubicHeckeDataBase(SageObject):
 
         INPUT:
 
-        ``section`` -- instance of enum :class:`CubicHeckeDataSection`
+        - ``section`` -- instance of enum :class:`CubicHeckeDataSection`
           to select the data to be read in
 
         OUTPUT:

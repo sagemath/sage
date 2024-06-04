@@ -395,11 +395,11 @@ cdef iterator *setup_canonical_generator(int degree,
 
     INPUT:
 
-    - ``S`` - pointer to the seed object
+    - ``S`` -- pointer to the seed object
 
-    - ``degree`` - the degree of S
+    - ``degree`` -- the degree of S
 
-    - ``all_children_are_equivalent`` - pointer to a function
+    - ``all_children_are_equivalent`` -- pointer to a function
         INPUT:
         PS -- pointer to a partition stack
         S -- pointer to the structure
@@ -407,7 +407,7 @@ cdef iterator *setup_canonical_generator(int degree,
         bint -- returns True if it can be determined that all refinements below
             the current one will result in an equivalent discrete partition
 
-    - ``refine_and_return_invariant`` - pointer to a function
+    - ``refine_and_return_invariant`` -- pointer to a function
         INPUT:
         PS -- pointer to a partition stack
         S -- pointer to the structure
@@ -416,7 +416,7 @@ cdef iterator *setup_canonical_generator(int degree,
         OUTPUT:
         int -- returns an invariant under application of arbitrary permutations
 
-    - ``compare_structures`` - pointer to a function
+    - ``compare_structures`` -- pointer to a function
         INPUT:
         gamma_1, gamma_2 -- (list) permutations of the points of S1 and S2
         S1, S2 -- pointers to the structures
@@ -425,7 +425,7 @@ cdef iterator *setup_canonical_generator(int degree,
         int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
             such that the set of all structures is well-ordered
 
-    - ``generate_children`` - pointer to a function
+    - ``generate_children`` -- pointer to a function
         INPUT:
         S -- pointer to the structure
         group -- pointer to an automorphism group (canonical relabeling is not guaranteed)
@@ -433,7 +433,7 @@ cdef iterator *setup_canonical_generator(int degree,
         OUTPUT:
         iterator * -- pointer to an iterator over inequivalent augmentations of S
 
-    - ``apply_augmentation`` - pointer to a function
+    - ``apply_augmentation`` -- pointer to a function
         INPUT:
         parent -- object to augment
         aug -- the augmentation
@@ -443,19 +443,19 @@ cdef iterator *setup_canonical_generator(int degree,
         OUTPUT:
         pointer to child
 
-    - ``free_object`` - pointer to a function
+    - ``free_object`` -- pointer to a function
         INPUT:
         child -- object to be freed
 
-    - ``free_iter_data`` - pointer to a function
+    - ``free_iter_data`` -- pointer to a function
         INPUT:
         data -- data part of an iterator struct
 
-    - ``free_aug`` - pointer to a function
+    - ``free_aug`` -- pointer to a function
         INPUT:
         aug -- augmentation to be freed
 
-    - ``canonical_parent`` - pointer to a function
+    - ``canonical_parent`` -- pointer to a function
         INPUT:
         child -- pointer to the structure
         parent -- space to store the canonical parent
@@ -465,7 +465,7 @@ cdef iterator *setup_canonical_generator(int degree,
         OUTPUT:
         pointer to the parent
 
-    - ``max_depth`` - maximum depth of augmentations to be made from the seed object S
+    - ``max_depth`` -- maximum depth of augmentations to be made from the seed object S
 
     OUTPUT: a pointer to an iterator of objects
 

@@ -1026,7 +1026,7 @@ class BrandtModule_class(AmbientHeckeModule):
           use theta series to this precision as an initial check for
           equality of ideal classes.
 
-        - ``sparse`` -- bool (default: False); whether matrix should be sparse
+        - ``sparse`` -- bool (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1053,7 +1053,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
         - `n` -- integer, coprime to level
 
-        - ``sparse`` -- bool (default: False); whether matrix should be sparse
+        - ``sparse`` -- bool (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 

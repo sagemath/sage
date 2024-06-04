@@ -374,7 +374,7 @@ from sage.modules.free_module_element import vector
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan
 
-from sage.schemes.generic.scheme import is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.schemes.generic.morphism import (
     is_SchemeMorphism,
     SchemeMorphism, SchemeMorphism_point, SchemeMorphism_polynomial
@@ -425,7 +425,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
             [1 : 2 : 3 : 4]
         """
         # Convert scheme to its set of points over the base ring
-        if is_Scheme(X):
+        if isinstance(X, Scheme):
             X = X(X.base_ring())
         super().__init__(X)
         if check:
@@ -790,7 +790,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
       fans equal the fans of the domain and codomain in the ``parent``
       Hom-set.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     .. WARNING::
@@ -1537,12 +1537,11 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         dim = []
         fm = self.fan_morphism()
         base_dim = codomain_cone.dim()
-        for c in fm.primitive_preimage_cones(codomain_cone):
-            dim.append(base_dim - c.dim())
+        dim.extend(base_dim - c.dim()
+                   for c in fm.primitive_preimage_cones(codomain_cone))
         if dim:
             return max(dim) + self.domain().dimension() - self.codomain().dimension()
-        else:
-            return ZZ(-1)
+        return ZZ(-1)
 
     def fiber_graph(self, codomain_cone):
         r"""

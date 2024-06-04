@@ -23,6 +23,7 @@ axiom_whitelist = frozenset(["Facade", "Finite", "Infinite",
                              "AdditiveInverse", "AdditiveUnital",
                              "NoZeroDivisors", "Distributive"])
 
+
 class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_ring):
     @classmethod
     def default_super_categories(cls, category, *args):
@@ -82,6 +83,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
             Category of super algebras with basis over Rational Field
         """
         return "super {}".format(self.base_category()._repr_object_names())
+
 
 class SuperModules(SuperModulesCategory):
     r"""

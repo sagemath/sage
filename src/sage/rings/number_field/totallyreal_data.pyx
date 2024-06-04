@@ -458,7 +458,7 @@ cdef class tr_data:
 
         n -- integer, the degree
         B -- integer, the discriminant bound
-        a -- list (default: []), the coefficient list to begin with, where
+        a -- list (default: ``[]``), the coefficient list to begin with, where
              a[len(a)]*x^n + ... + a[0]x^(n-len(a))
 
         OUTPUT:

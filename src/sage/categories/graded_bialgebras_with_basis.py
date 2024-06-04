@@ -9,6 +9,7 @@ Graded bialgebras with basis
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+
 def GradedBialgebrasWithBasis(base_ring):
     """
     The category of graded bialgebras with a distinguished basis

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Interfaces to R
 
@@ -1221,8 +1220,8 @@ class R(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - verbose -- bool (default: True); if True, display debugging information
-        - use_disk_cache -- bool (default: True); if True, use the disk cache of
+        - verbose -- bool (default: ``True``); if True, display debugging information
+        - use_disk_cache -- bool (default: ``True``); if True, use the disk cache of
           tab completions to save time.
 
         OUTPUT: list -- list of string

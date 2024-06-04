@@ -110,11 +110,11 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
         INPUT:
 
-        - ``weight`` - int
+        - ``weight`` -- int
 
-        - ``character`` - dirichlet.DirichletCharacter
+        - ``character`` -- dirichlet.DirichletCharacter
 
-        - ``base_ring`` - base field
+        - ``base_ring`` -- base field
 
         EXAMPLES::
 

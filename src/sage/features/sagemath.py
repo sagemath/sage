@@ -1080,7 +1080,6 @@ class sage__symbolic(JoinFeature):
                               PythonModule('sage.geometry.riemannian_manifolds'),
                               PythonModule('sage.geometry.hyperbolic_space'),
                               PythonModule('sage.dynamics.complex_dynamics'),
-                              PythonModule('sage.libs.pynac'),
                               PythonModule('sage.libs.ecl'),
                               PythonModule('sage.interfaces.fricas'),
                               PythonModule('sage.interfaces.giac'),

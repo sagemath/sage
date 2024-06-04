@@ -402,11 +402,11 @@ cdef class CircuitClosuresMatroid(Matroid):
         N = CircuitClosuresMatroid(other)
         if sorted(self._circuit_closures.keys()) != sorted(N._circuit_closures.keys()):
             return False
-        SM = SetSystem(list(self.groundset()))
+        SM = SetSystem(self.groundset())
         for r in self._circuit_closures:
             for C in self._circuit_closures[r]:
                 SM.append(C)
-        SN = SetSystem(list(N.groundset()))
+        SN = SetSystem(N.groundset())
         for r in N._circuit_closures:
             for C in N._circuit_closures[r]:
                 SN.append(C)
@@ -527,16 +527,16 @@ cdef class CircuitClosuresMatroid(Matroid):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by
+        The output is obtained by relabeling each element `e` by
         ``mapping[e]``, where ``mapping`` is a given injective map. If
         ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
-          label of ``e``
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         EXAMPLES::
 

@@ -246,9 +246,15 @@ def is_MPowerSeriesRing(x):
         True
         sage: is_MPowerSeriesRing(T)
         False
-
+        sage: L = LazyPowerSeriesRing(QQ, 'x')
+        sage: is_MPowerSeriesRing(L)
+        True
+        sage: L = LazyPowerSeriesRing(QQ, 'x, y')
+        sage: is_MPowerSeriesRing(L)
+        True
     """
-    return isinstance(x, MPowerSeriesRing_generic)
+    from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+    return isinstance(x, (MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
 
 class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
@@ -754,13 +760,13 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         The rings that canonically coerce to this multivariate power series
         ring are:
 
-            - this ring itself
+        - this ring itself
 
-            - a polynomial or power series ring in the same variables or a
-              subset of these variables (possibly empty), over any base
-              ring that canonically coerces into this ring
+        - a polynomial or power series ring in the same variables or a
+          subset of these variables (possibly empty), over any base
+          ring that canonically coerces into this ring
 
-            - any ring that coerces into the foreground polynomial ring of this ring
+        - any ring that coerces into the foreground polynomial ring of this ring
 
         EXAMPLES::
 
@@ -817,6 +823,10 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: H._coerce_map_from_(PolynomialRing(ZZ,'z2,f0'))
             True
 
+            sage: L.<x,y> = LazyPowerSeriesRing(QQ)
+            sage: R = PowerSeriesRing(QQ, names=('x','y','z'))
+            sage: R.has_coerce_map_from(L)
+            True
         """
         if is_MPolynomialRing(P) or is_MPowerSeriesRing(P) \
                    or is_PolynomialRing(P) or is_PowerSeriesRing(P):
@@ -846,12 +856,28 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: M._element_constructor_(p).parent()
             Multivariate Power Series Ring in t0, t1, t2, t3, t4 over
             Integer Ring
+
+            sage: L.<x,y> = LazyPowerSeriesRing(QQ)
+            sage: R = PowerSeriesRing(QQ, names=('x','y','z'))
+            sage: R(1/(1-x-y), prec=3)
+            1 + x + y + x^2 + 2*x*y + y^2 + O(x, y, z)^3
+            sage: R(x + y^2)
+            x + y^2
         """
         if prec is None:
             try:
                 prec = f.prec()
             except AttributeError:
                 prec = infinity
+        from sage.rings.lazy_series import LazyPowerSeries
+        if isinstance(f, LazyPowerSeries):
+            if prec is infinity:
+                try:
+                    f = f.polynomial()
+                except ValueError:
+                    f = f.add_bigoh(self.default_prec())
+            else:
+                f = f.add_bigoh(prec)
         return self.element_class(parent=self, x=f, prec=prec)
 
     def laurent_series_ring(self):
