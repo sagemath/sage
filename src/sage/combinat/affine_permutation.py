@@ -656,14 +656,12 @@ class AffinePermutationTypeA(AffinePermutation):
         EXAMPLES::
 
             sage: A = AffinePermutationGroup(['A',7,1])
-            sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.promotion()
             Type A affine permutation with window [2, 4, 0, 1, 7, 6, 5, 11]
         """
-        l = []
-        l.append(self[-1]-self.k)
-        for i in range(1,self.k+1):
-            l.append(self[i-1]+1)
+        l = [self[-1] - self.k]
+        l.extend(self[i] + 1 for i in range(self.k))
         return type(self)(self.parent(), l)
 
     def maximal_cyclic_factor(self, typ='decreasing', side='right', verbose=False):
