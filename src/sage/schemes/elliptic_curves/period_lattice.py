@@ -104,7 +104,6 @@ AUTHORS:
   - Added support for complex embeddings, May 2009.
 
   - Added complex elliptic logs, March 2010; enhanced, October 2010.
-
 """
 
 import sage.rings.abc

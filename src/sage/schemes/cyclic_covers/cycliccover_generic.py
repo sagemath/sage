@@ -27,9 +27,6 @@ EXAMPLES::
     Traceback (most recent call last):
     ...
     NotImplementedError: Weighted Projective Space is not implemented
-
-
-
 """
 
 # *****************************************************************************
@@ -88,9 +85,6 @@ class CyclicCover_generic(AffinePlaneCurve):
             Traceback (most recent call last):
             ...
             NotImplementedError: Weighted Projective Space is not implemented
-
-
-
         """
         x, y = AA.gens()
         self._r = r

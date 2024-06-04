@@ -536,7 +536,6 @@ provide unique representation behaviour, in spite of its name! Hence, for
 unique representation behaviour, one has to implement hash and equality test
 accordingly, for example by inheriting from
 :class:`~sage.misc.fast_methods.WithEqualityById`.
-
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>

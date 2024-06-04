@@ -40,7 +40,6 @@ AUTHORS:
 - Robert Bradshaw (2008): initial version.
 - Simon King (2013): extended documentation.
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
-
 """
 
 #*****************************************************************************

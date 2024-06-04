@@ -33,7 +33,6 @@ AUTHORS:
 - Robert Bradshaw (2007-04): generalization to hyperelliptic curves
 
 - Julian Rueth (2014-05-09): improved caching
-
 """
 
 # ****************************************************************************

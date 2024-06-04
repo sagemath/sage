@@ -24,7 +24,6 @@ points since they cannot create any sort of crossing. ::
     sage: from sage.tests.arxiv_0812_2725 import *
     sage: dcrossing([(1,5), (2,4), (4,9), (6,12), (7,10), (10,11)])
     3
-
 """
 #*****************************************************************************
 # Copyright (C) 2008 Dan Drake <ddrake@member.ams.org>
