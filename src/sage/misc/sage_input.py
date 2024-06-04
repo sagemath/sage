@@ -2324,8 +2324,8 @@ class SIE_dict(SageInputExpression):
             sage: sie._sie_format(sif)
             ("{'carnivores':1, 'thinking':2, 'triumph':3}", 42)
         """
-        return "{%s}" %\
-            ', '.join(sif.format(k, 0)+':'+sif.format(v, 0) for k, v in self._sie_entries), _prec_atomic
+        return "{%s}" % ', '.join(sif.format(k, 0) + ':' + sif.format(v, 0)
+                                  for k, v in self._sie_entries), _prec_atomic
 
 
 class SIE_binary(SageInputExpression):

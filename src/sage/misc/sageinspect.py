@@ -2216,7 +2216,7 @@ def _sage_getsourcelines_name_with_dot(obj):
         pmatch = pat.match
         # fperez - fix: sometimes, co_firstlineno can give a number larger than
         # the length of lines, which causes an error.  Safeguard against that.
-        lnum = min(obj.co_firstlineno, len(lines))-1
+        lnum = min(obj.co_firstlineno, len(lines)) - 1
         while lnum > 0:
             if pmatch(lines[lnum]):
                 break
