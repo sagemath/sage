@@ -1084,7 +1084,7 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     INPUT:
 
     - ``q`` -- a prime power
-    - ``n``, ``e`` -- integers with ``n > e+1``
+    - ``n``, ``e`` -- integers with `n > e+1`
 
     EXAMPLES::
 

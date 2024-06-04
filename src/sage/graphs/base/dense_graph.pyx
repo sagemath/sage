@@ -360,9 +360,10 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u``, ``v`` -- integers from 0, ..., n-1, where n is the number of vertices
-            arc_labels -- must be a pointer to an (allocated) integer array
-            size -- the length of the array
+        - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
+          number of vertices
+        - ``labels`` -- must be a pointer to an (allocated) integer array
+        - ``size`` -- the length of the array
 
         OUTPUT:
 

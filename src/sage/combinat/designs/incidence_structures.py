@@ -1488,7 +1488,7 @@ class IncidenceStructure:
 
         - ``t``, ``v``, ``k``, ``l`` (integers) -- their value is set to
           ``None`` by default. The function tests whether the design is a
-          ``t-(v,k,l)`` design using the provided values and guesses the
+          `t-(v,k,l)` design using the provided values and guesses the
           others. Note that ``l`` cannot be specified if ``t`` is not.
 
         - ``return_parameters`` (boolean)-- whether to return the parameters of

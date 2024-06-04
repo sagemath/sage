@@ -521,13 +521,13 @@ cdef class HeilbronnMerel(Heilbronn):
 
 
 def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
-    """
+    r"""
     INPUT:
 
-    - ``u``, ``v``, ``N`` -- integers so that gcd(u,v,N) = 1
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
     - ``indices`` -- a list of positive integers
-    - ``R`` -- matrix over QQ that writes each elements of
-      P1 = P1List(N) in terms of a subset of P1.
+    - ``R`` -- matrix over `\QQ` that writes each elements of
+      ``P1 = P1List(N)`` in terms of a subset of `P1`.
 
 
     OUTPUT: a dense matrix whose columns are the images T_n(x)
