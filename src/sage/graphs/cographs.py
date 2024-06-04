@@ -62,21 +62,7 @@ class CoTree:
         self.info = None
         self.parent = None
 
-    def __repr__(self):
-        r"""
-        Return a string representation of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.cographs import CoTree
-            sage: CoTree(1)
-            ( 1 )
-            sage: CoTree('J')
-            [ J ]
-            sage: next(graphs.cographs(4, as_graph=False))  # indirect doctest
-            [ J ( 0 ) ( 1 ) ( 2 ) ( 3 ) ]
-        """
-        return self.__str__()
+    __repr__ = __str__
 
     def __str__(self):
         r"""
