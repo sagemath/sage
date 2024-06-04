@@ -864,7 +864,6 @@ cdef class PowerSeries_poly(PowerSeries):
             except AttributeError:
                 raise ValueError('cannot differentiate with respect to {}'.format(var))
 
-
         # compute formal derivative with respect to generator
         return PowerSeries_poly(self._parent, self.__f._derivative(),
                                 self.prec()-1, check=False)
@@ -1245,6 +1244,7 @@ def make_powerseries_poly_v0(parent, f, prec, is_gen):
         t
     """
     return PowerSeries_poly(parent, f, prec, 0, is_gen)
+
 
 cdef class BaseRingFloorDivAction(Action):
     """
