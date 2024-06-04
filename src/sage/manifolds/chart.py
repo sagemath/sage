@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Coordinate Charts
 
@@ -1146,7 +1145,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``codomain_subset`` - an instance of
+        - ``codomain_subset`` -- an instance of
           :class:`~sage.geometry.convex_set.ConvexSet_base` or another
           object with a ``__contains__`` method that accepts coordinate
           vectors

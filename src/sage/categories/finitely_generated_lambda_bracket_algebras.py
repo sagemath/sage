@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Finitely Generated Lambda bracket Algebras
 
@@ -20,6 +19,7 @@ AUTHORS:
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.lambda_bracket_algebras import LambdaBracketAlgebras
+
 
 class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
     """

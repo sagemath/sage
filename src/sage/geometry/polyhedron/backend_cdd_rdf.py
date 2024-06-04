@@ -1,5 +1,4 @@
-# sage_setup: distribution = sagemath-polyhedra
-# sage.doctest: optional - sage.rings.real_double
+# sage.doctest: needs sage.rings.real_double
 
 r"""
 The cdd backend for polyhedral computations, floating point version

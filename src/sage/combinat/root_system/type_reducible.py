@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Root system data for reducible Cartan types
 """
@@ -515,9 +514,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         INPUT:
 
-        - ``i`` - an integer in range(self.components)
+        - ``i`` -- an integer in range(self.components)
 
-        - ``v`` - a vector in the i-th component weight lattice
+        - ``v`` -- a vector in the i-th component weight lattice
 
         EXAMPLES::
 

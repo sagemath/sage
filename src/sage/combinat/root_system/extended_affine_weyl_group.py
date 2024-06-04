@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.libs.gap
 r"""
 Extended Affine Weyl Groups
@@ -2648,7 +2647,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` - an affine Dynkin index
+            - ``i`` -- an affine Dynkin index
 
             OPTIONAL:
 
@@ -2843,12 +2842,12 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `i` - an affine Dynkin index
+            - `i` -- an affine Dynkin index
 
             OPTIONAL:
 
-            - ``side`` - 'left' or 'right' (default: 'right')
-            - ``positive`` - True or False (default: False)
+            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``positive`` -- True or False (default: ``False``)
 
             EXAMPLES::
 

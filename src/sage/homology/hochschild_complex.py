@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.combinat        (because all doctests use FreeAlgebra, SymmetricGroupAlgebra, etc.)
 """
 Hochschild Complexes

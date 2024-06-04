@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Monoids
 """
@@ -636,7 +635,7 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: # needs sage.groups
+                    sage: # needs sage.combinat sage.groups
                     sage: M = Monoids.free([1, 2, 3])
                     sage: N = Monoids.free(['a', 'b'])
                     sage: C = cartesian_product([M, N])

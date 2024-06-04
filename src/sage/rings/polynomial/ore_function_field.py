@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Fraction fields of Ore polynomial rings
 
@@ -376,7 +375,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         INPUT:
 
-        -  ``n`` - an integer (default: 1)
+        -  ``n`` -- an integer (default: 1)
 
         EXAMPLES::
 

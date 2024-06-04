@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Tables of elliptic curves of given rank
 
@@ -88,7 +87,7 @@ class EllipticCurves:
 
         - ``n`` (int, default 10) -- the maximum number of curves returned.
 
-        - ``labels`` (bool, default False) -- if True, return Cremona
+        - ``labels`` (bool, default: ``False``) -- if True, return Cremona
           labels instead of curves.
 
         OUTPUT:

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Hyperelliptic curves over a finite field
@@ -1443,7 +1442,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - 'E' - Hyperelliptic Curve of the form `y^2 = f(x)` over a
+        - 'E' -- Hyperelliptic Curve of the form `y^2 = f(x)` over a
           finite field, `\GF{q}`
 
         OUTPUT:

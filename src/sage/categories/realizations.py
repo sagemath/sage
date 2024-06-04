@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Realizations Covariant Functorial Construction
 
@@ -21,6 +20,7 @@ from sage.misc.bindable_class import BindableClass
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+
 
 class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
@@ -47,6 +47,7 @@ class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
 
     _functor_category = "Realizations"
+
 
 def Realizations(self):
     """
@@ -105,6 +106,7 @@ def Realizations(self):
 
 
 Category.Realizations = Realizations
+
 
 class Category_realization_of_parent(Category_over_base, BindableClass):
     """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 """
 Enumerate points of a toric variety
@@ -45,7 +44,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.parallel.decorate import Parallel
 
 
-class InfinitePointEnumerator():
+class InfinitePointEnumerator:
 
     def __init__(self, fan, ring):
         """
@@ -106,7 +105,7 @@ class InfinitePointEnumerator():
                 yield tuple(p)
 
 
-class NaiveFinitePointEnumerator():
+class NaiveFinitePointEnumerator:
 
     def __init__(self, fan, ring):
         """
@@ -757,7 +756,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         return n
 
 
-class NaiveSubschemePointEnumerator():
+class NaiveSubschemePointEnumerator:
 
     def __init__(self, polynomials, ambient):
         """

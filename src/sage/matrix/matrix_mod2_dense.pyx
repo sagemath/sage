@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 # distutils: libraries = M4RI_LIBRARIES GDLIB_LIBRARIES LIBPNG_LIBRARIES ZLIB_LIBRARIES
 # distutils: library_dirs = M4RI_LIBDIR GDLIB_LIBDIR LIBPNG_LIBDIR ZLIB_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR GDLIB_INCDIR LIBPNG_INCDIR ZLIB_INCDIR
@@ -486,9 +485,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``i`` - integer
+        - ``i`` -- integer
 
-        - ``from_list`` - bool (default: ``False``); if ``True``,
+        - ``from_list`` -- bool (default: ``False``); if ``True``,
           returns the ``i``'th element of ``self.rows()`` (see
           :func:`rows`), which may be faster, but requires building a
           list of all rows the first time it is called after an entry
@@ -810,8 +809,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``right`` - a matrix of matching dimensions.
-        - ``cutoff`` - matrix dimension where M4RM should be used
+        - ``right`` -- a matrix of matching dimensions.
+        - ``cutoff`` -- matrix dimension where M4RM should be used
           instead of Strassen (default: let M4RI decide)
 
         EXAMPLES::
@@ -1022,7 +1021,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         - k --  the parameter 'k' of the M4RI algorithm. It MUST be between 1
           and 16 (inclusive). If it is not specified it will be calculated as
           3/4 * log_2( min(nrows, ncols) ) as suggested in the M4RI paper.
-        - reduced -- return reduced row echelon form (default:True)
+        - reduced -- return reduced row echelon form (default: ``True``)
 
         EXAMPLES::
 
@@ -1171,9 +1170,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        -  ``density`` - float; proportion (roughly) to be considered for
+        -  ``density`` -- float; proportion (roughly) to be considered for
            changes
-        -  ``nonzero`` - Bool (default: ``False``); whether the new entries
+        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
            are forced to be non-zero
 
         OUTPUT:
@@ -1819,7 +1818,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - approx -- return floating point approximation (default: False)
+        - approx -- return floating point approximation (default: ``False``)
 
         EXAMPLES::
 
@@ -1854,7 +1853,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``algorithm`` - either "ple" or "m4ri"
+        - ``algorithm`` -- either "ple" or "m4ri"
 
         EXAMPLES::
 
@@ -1895,7 +1894,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 
@@ -2146,8 +2145,8 @@ def to_png(Matrix_mod2_dense A, filename):
 
     INPUT:
 
-    - ``A`` - a matrix over GF(2)
-    - ``filename`` - a string for a file in a writable position
+    - ``A`` -- a matrix over GF(2)
+    - ``filename`` -- a string for a file in a writable position
 
     EXAMPLES::
 

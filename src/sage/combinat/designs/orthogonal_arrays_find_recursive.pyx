@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.rings.finite_rings sage.schemes
 # cython: cdivision=True
 r"""

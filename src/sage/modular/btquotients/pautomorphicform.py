@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari
 #########################################################################
 #       Copyright (C) 2011 Cameron Franc and Marc Masdeu
@@ -93,7 +92,7 @@ class _btquot_adjuster(Sigma0ActionAdjuster):
 
         INPUT:
 
-        - ``g`` - a 2x2 matrix
+        - ``g`` -- a 2x2 matrix
 
         OUTPUT:
 
@@ -121,9 +120,9 @@ def eval_dist_at_powseries(phi, f):
 
     INPUT:
 
-    - ``phi`` - a distribution
+    - ``phi`` -- a distribution
 
-    - ``f`` - a power series over a ring coercible into a `p`-adic field
+    - ``f`` -- a power series over a ring coercible into a `p`-adic field
 
     OUTPUT:
 
@@ -217,7 +216,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``g`` - a harmonic cocycle
+        - ``g`` -- a harmonic cocycle
 
         OUTPUT:
 
@@ -240,7 +239,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``g`` - a harmonic cocycle
+        - ``g`` -- a harmonic cocycle
 
         OUTPUT:
 
@@ -265,7 +264,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``a`` - a ring element
+        - ``a`` -- a ring element
 
         OUTPUT:
 
@@ -289,7 +288,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``other`` - Another harmonic cocycle
+        - ``other`` -- Another harmonic cocycle
 
         EXAMPLES::
 
@@ -439,7 +438,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``e1`` - a matrix corresponding to an edge of the
+        - ``e1`` -- a matrix corresponding to an edge of the
           Bruhat-Tits tree
 
         OUTPUT:
@@ -477,15 +476,15 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``f`` - a function on `\mathbf{P}^1(\QQ_p)`.
+        - ``f`` -- a function on `\mathbf{P}^1(\QQ_p)`.
 
-        - ``center`` - An integer (default = 1). Center of integration.
+        - ``center`` -- An integer (default = 1). Center of integration.
 
-        - ``level`` - An integer (default = 0). Determines the size of
+        - ``level`` -- An integer (default = 0). Determines the size of
           the covering when computing the Riemann sum. Runtime is
           exponential in the level.
 
-        - ``E`` - A list of edges (default = None). They should describe
+        - ``E`` -- A list of edges (default = None). They should describe
           a covering of `\mathbf{P}^1(\QQ_p)`.
 
         OUTPUT:
@@ -534,10 +533,10 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``z`` - an element in the quadratic unramified extension of
+        - ``z`` -- an element in the quadratic unramified extension of
           `\QQ_p` that is not contained in `\QQ_p` (default = None).
 
-        - ``level`` - an integer. How fine of a mesh should the Riemann
+        - ``level`` -- an integer. How fine of a mesh should the Riemann
           sum use.
 
         OUTPUT:
@@ -600,14 +599,14 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         INPUT:
 
-        - ``z`` - an element in the quadratic unramified extension of
+        - ``z`` -- an element in the quadratic unramified extension of
           `\QQ_p` that is not contained in `\QQ_p` (default = None). If ``z
           = None`` then a function encoding the derivative is returned.
 
-        - ``level`` - an integer. How fine of a mesh should the Riemann
+        - ``level`` -- an integer. How fine of a mesh should the Riemann
           sum use.
 
-        - ``order`` - an integer. How many derivatives to take.
+        - ``order`` -- an integer. How many derivatives to take.
 
         OUTPUT:
 
@@ -672,16 +671,16 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``X`` - A BruhatTitsQuotient object
+        - ``X`` -- A BruhatTitsQuotient object
 
-        - ``k`` - integer - The weight. It must be even.
+        - ``k`` -- integer -- The weight. It must be even.
 
-        - ``prec`` - integer (default: None). If specified, the
+        - ``prec`` -- integer (default: None). If specified, the
           precision for the coefficient module
 
-        - ``basis_matrix`` - a matrix (default: None).
+        - ``basis_matrix`` -- a matrix (default: None).
 
-        - ``base_field`` - a ring (default: None)
+        - ``base_field`` -- a ring (default: None)
 
         EXAMPLES::
 
@@ -781,7 +780,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``base_ring`` - a ring that has a coerce map from the
+        - ``base_ring`` -- a ring that has a coerce map from the
           current base ring
 
         OUTPUT:
@@ -809,7 +808,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``new_base_ring`` - a ring that has a coerce map from the
+        - ``new_base_ring`` -- a ring that has a coerce map from the
           current base ring
 
         OUTPUT:
@@ -862,9 +861,9 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``v`` - Submodule of self.free_module().
+        - ``v`` -- Submodule of self.free_module().
 
-        - ``check`` - Boolean (default = False).
+        - ``check`` -- Boolean (default = False).
 
         OUTPUT:
 
@@ -1053,7 +1052,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``x`` - an object coercible into a harmonic cocycle.
+        - ``x`` -- an object coercible into a harmonic cocycle.
 
         OUTPUT:
 
@@ -1141,7 +1140,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``g`` - A quaternion, expressed as a 4x1 matrix.
+        - ``g`` -- A quaternion, expressed as a 4x1 matrix.
 
         OUTPUT:
 
@@ -1258,9 +1257,9 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``q`` - an integer dividing the full level p*Nminus*Nplus
+        - ``q`` -- an integer dividing the full level p*Nminus*Nplus
 
-        - ``f`` - a harmonic cocycle
+        - ``f`` -- a harmonic cocycle
 
         OUTPUT:
 
@@ -1296,9 +1295,9 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``l`` - an integer
+        - ``l`` -- an integer
 
-        - ``f`` - a harmonic cocycle
+        - ``f`` -- a harmonic cocycle
 
         OUTPUT:
 
@@ -1340,7 +1339,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``d`` - an integer dividing p*Nminus*Nplus, where these
+        - ``d`` -- an integer dividing p*Nminus*Nplus, where these
           quantities are associated to the BruhatTitsQuotient self._X
 
         OUTPUT:
@@ -1366,7 +1365,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``l`` - a prime integer
+        - ``l`` -- a prime integer
 
         OUTPUT:
 
@@ -1392,7 +1391,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         INPUT:
 
-        - ``T`` - A linear function on the space of harmonic cocycles.
+        - ``T`` -- A linear function on the space of harmonic cocycles.
 
         OUTPUT:
 
@@ -1439,11 +1438,11 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 #
 #     INPUT:
 #
-#     - ``x`` - integer (default: 1) the description of the
+#     - ``x`` -- integer (default: 1) the description of the
 #       argument x goes here.  If it contains multiple lines, all
 #       the lines after the first need to be indented.
 #
-#     - ``y`` - integer (default: 2) the ...
+#     - ``y`` -- integer (default: 2) the ...
 #
 #     EXAMPLES::
 #
@@ -1464,11 +1463,11 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 #
 #         INPUT:
 #
-#         - ``ambient_module`` - BruhatTitsHarmonicCocycles
+#         - ``ambient_module`` -- BruhatTitsHarmonicCocycles
 #
-#         - ``submodule`` - submodule of the ambient space.
+#         - ``submodule`` -- submodule of the ambient space.
 #
-#         - ``check`` - (default: False) whether to check that the
+#         - ``check`` -- (default: ``False``) whether to check that the
 #           submodule is Hecke equivariant
 #
 #         EXAMPLES::
@@ -1535,7 +1534,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
     INPUT:
 
-    - ``vec`` - A preformatted list of data
+    - ``vec`` -- A preformatted list of data
 
     EXAMPLES::
 
@@ -1574,7 +1573,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``g`` - a `p`-adic automorphic form
+        - ``g`` -- a `p`-adic automorphic form
 
         OUTPUT:
 
@@ -1599,7 +1598,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``g`` - a `p`-adic automorphic form
+        - ``g`` -- a `p`-adic automorphic form
 
         OUTPUT:
 
@@ -1626,7 +1625,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``other`` - Another `p`-automorphic form
+        - ``other`` -- Another `p`-automorphic form
 
         EXAMPLES::
 
@@ -1675,7 +1674,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``e1`` - a matrix in `GL_2(\QQ_p)`
+        - ``e1`` -- a matrix in `GL_2(\QQ_p)`
 
         OUTPUT:
 
@@ -1698,7 +1697,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``e1`` - a matrix in `GL_2(\QQ_p)`
+        - ``e1`` -- a matrix in `GL_2(\QQ_p)`
 
         OUTPUT:
 
@@ -1856,13 +1855,13 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``f`` - An analytic function.
+        - ``f`` -- An analytic function.
 
-        - ``center`` - 2x2 matrix over `\QQ_p` (default: 1)
+        - ``center`` -- 2x2 matrix over `\QQ_p` (default: 1)
 
-        - ``level`` - integer (default: 0)
+        - ``level`` -- integer (default: 0)
 
-        - ``method`` - string (default: 'moments'). Which method of
+        - ``method`` -- string (default: 'moments'). Which method of
           integration to use. Either 'moments' or 'riemann_sum'.
 
         EXAMPLES:
@@ -1939,15 +1938,15 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``z`` - (default: None). If specified, returns the value of
+        - ``z`` -- (default: None). If specified, returns the value of
           the form at the point ``z`` in the `p`-adic upper half
           plane.
 
-        - ``level`` - integer (default: 0). If ``method`` is
+        - ``level`` -- integer (default: 0). If ``method`` is
           'riemann_sum', will use a covering of `P^1(\QQ_p)` with
           balls of size `p^-\mbox{level}`.
 
-        - ``method`` - string (default: ``moments``). It must be
+        - ``method`` -- string (default: ``moments``). It must be
           either ``moments`` or ``riemann_sum``.
 
         OUTPUT:
@@ -1998,17 +1997,17 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``z`` - (default: None). If specified, evaluates the derivative
+        - ``z`` -- (default: None). If specified, evaluates the derivative
           at the point ``z`` in the `p`-adic upper half plane.
 
-        - ``level`` - integer (default: 0). If ``method`` is
+        - ``level`` -- integer (default: 0). If ``method`` is
           'riemann_sum', will use a covering of `P^1(\QQ_p)` with
           balls of size `p^-\mbox{level}`.
 
-        - ``method`` - string (default: ``moments``). It must be
+        - ``method`` -- string (default: ``moments``). It must be
           either ``moments`` or ``riemann_sum``.
 
-        - ``order`` - integer (default: 1). The order of the
+        - ``order`` -- integer (default: 1). The order of the
           derivative to be computed.
 
         OUTPUT:
@@ -2093,20 +2092,20 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``t1``, ``t2`` - elements of `P^1(\QQ_p)` (the endpoints
+        - ``t1``, ``t2`` -- elements of `P^1(\QQ_p)` (the endpoints
           of integration)
 
-        - ``E`` - (default: None). If specified, will not compute the
+        - ``E`` -- (default: None). If specified, will not compute the
           covering adapted to ``t1`` and ``t2`` and instead use the
           given one. In that case, ``E`` should be a list of matrices
           corresponding to edges describing the open balls to be
           considered.
 
-        - ``method`` - string (default: 'moments'). Tells which
+        - ``method`` -- string (default: 'moments'). Tells which
           algorithm to use (alternative is 'riemann_sum', which is
           unsuitable for computations requiring high precision)
 
-        - ``mult`` - boolean (default: False). Whether to compute the
+        - ``mult`` -- boolean (default: ``False``). Whether to compute the
           multiplicative version.
 
         OUTPUT:
@@ -2200,7 +2199,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         INPUT:
 
-        - ``domain`` - A BruhatTitsQuotient.
+        - ``domain`` -- A BruhatTitsQuotient.
 
         - ``U`` -- A distributions module or an integer. If ``U`` is a
           distributions module then this creates the relevant space of
@@ -2301,7 +2300,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         OUTPUT:
 
-        - ``p`` - a prime integer
+        - ``p`` -- a prime integer
 
         EXAMPLES::
 
@@ -2411,7 +2410,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         INPUT:
 
-        - ``S`` - a BruhatTitsHarmonicCocycle or pAdicAutomorphicForm
+        - ``S`` -- a BruhatTitsHarmonicCocycle or pAdicAutomorphicForm
 
         OUTPUT:
 
@@ -2445,7 +2444,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         INPUT:
 
-        - ``data`` - defining data. Can be either a harmonic cocycle, or a `p`-adic automorphic form,
+        - ``data`` -- defining data. Can be either a harmonic cocycle, or a `p`-adic automorphic form,
           or a list of elements coercible into the module of coefficients of ``self``.
 
         OUTPUT:
@@ -2531,7 +2530,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         INPUT:
 
-        - ``f`` - a harmonic cocycle
+        - ``f`` -- a harmonic cocycle
 
         OUTPUT:
 
@@ -2568,7 +2567,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         INPUT:
 
-        - ``F`` - a classical (nonoverconvergent) pAdicAutomorphicForm or
+        - ``F`` -- a classical (nonoverconvergent) pAdicAutomorphicForm or
           BruhatTitsHarmonicCocycle.
 
         OUTPUT:
@@ -2612,7 +2611,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         INPUT:
 
         - f -- a `p`-adic automorphic form.
-        - scale -- (default: True) whether to scale by the appropriate power of `p`
+        - scale -- (default: ``True``) whether to scale by the appropriate power of `p`
           at each iteration.
 
         EXAMPLES::

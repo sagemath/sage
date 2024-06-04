@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
 
 """
@@ -610,7 +609,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
 
             INPUT:
 
-            - ``a`` - an element of the mod 2 Steenrod algebra
+            - ``a`` -- an element of the mod 2 Steenrod algebra
             - ``self_on_left`` -- ``True`` if we are computing ``self * a``,
               otherwise ``a * self``
 

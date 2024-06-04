@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.libs.gap sage.groups
 r"""
 Hecke algebra representations
@@ -638,8 +637,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         # works for our two main examples (action of affine W on W,
         # and Macdonald polynomials)
         if self._side == "left":
-            word = tuple([x for x in reversed(word)])
-            signs = tuple([x for x in reversed(signs)])
+            word = tuple(reversed(word))
+            signs = tuple(reversed(signs))
         # The power of q implements the fact that Y^\deltacheck = 1/q.
         # The classical simple coroots have no \deltacheck term.
         # alpha[0] has a \deltacheck with coefficient one
@@ -829,7 +828,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
           of the generators of an affine Hecke algebra on ``self``. By
           default, this is ``T``.
 
-        - ``normalized`` -- boolean (default: True) whether the
+        - ``normalized`` -- boolean (default: ``True``) whether the
           eigenvector `E_\mu` is normalized so that `\mu` has
           coefficient `1`.
 

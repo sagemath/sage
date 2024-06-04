@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Gcd domains
 """
@@ -11,6 +10,7 @@ Gcd domains
 
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.integral_domains import IntegralDomains
+
 
 class GcdDomains(Category_singleton):
     """

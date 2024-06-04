@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Examples of a Lie algebra with basis
@@ -16,6 +15,7 @@ from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.algebras import Algebras
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
+
 
 class AbelianLieAlgebra(CombinatorialFreeModule):
     r"""
@@ -105,6 +105,7 @@ class AbelianLieAlgebra(CombinatorialFreeModule):
 Example = AbelianLieAlgebra
 
 ##############
+
 
 class IndexedPolynomialRing(CombinatorialFreeModule):
     """

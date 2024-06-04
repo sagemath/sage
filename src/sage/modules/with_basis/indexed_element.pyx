@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 An element in an indexed free module
 

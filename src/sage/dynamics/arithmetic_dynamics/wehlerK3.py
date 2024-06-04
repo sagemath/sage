@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Wehler K3 Surfaces
 
@@ -244,9 +243,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``component`` - Integer: 0 or 1
+        - ``component`` -- Integer: 0 or 1
 
-        - ``i`` - Integer: 0, 1 or 2
+        - ``i`` -- Integer: 0, 1 or 2
 
         OUTPUT: polynomial in terms of either y (Component = 0) or x (Component = 1)
 
@@ -292,11 +291,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``component`` - Integer: 0 or 1
+        - ``component`` -- Integer: 0 or 1
 
-        - ``i`` - Integer: 0, 1 or 2
+        - ``i`` -- Integer: 0, 1 or 2
 
-        - ``j`` - Integer: 0, 1 or 2
+        - ``j`` -- Integer: 0, 1 or 2
 
         OUTPUT: polynomial in terms of either y (Component = 0) or x (Component = 1)
 
@@ -432,7 +431,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``a`` - Point in `\mathbb{P}^2`
+        INPUT:
+
+        - ``a`` -- Point in `\mathbb{P}^2`
 
         OUTPUT: A polynomial representing the fiber
 
@@ -507,7 +508,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``a`` - Point in `\mathbb{P}^2`
+        INPUT:
+
+        - ``a`` -- Point in `\mathbb{P}^2`
 
         OUTPUT: A subscheme representing the fiber
 
@@ -582,7 +585,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``b`` - Point in projective space
+        INPUT:
+
+        - ``b`` -- Point in projective space
 
         OUTPUT: A polynomial representing the fiber
 
@@ -618,7 +623,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``b`` - Point in `\mathbb{P}^2`
+        INPUT:
+
+        - ``b`` -- Point in `\mathbb{P}^2`
 
         OUTPUT: A subscheme representing the fiber
 
@@ -1530,7 +1537,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``a`` - Point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        - ``a`` -- Point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         kwds:
 
@@ -1570,7 +1577,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``a`` - Point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        - ``a`` -- Point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         kwds:
 
@@ -1982,7 +1989,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        -``p`` - a point in `\mathbb{P}^2`
+        - ``p`` -- a point in `\mathbb{P}^2`
 
         OUTPUT: The corresponding fiber (as a list)
 
@@ -2156,13 +2163,13 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``P`` -- - a point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        - ``P`` -- a point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         - ``n`` -- an integer
 
         kwds:
 
-        - ``check`` - (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
 
         - ``normalize`` -- (default: ``False``) boolean normalizes the point
 
@@ -2221,7 +2228,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``P`` -- - a point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        - ``P`` -- a point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         - ``n`` -- an integer
 

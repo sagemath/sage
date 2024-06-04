@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Database of strongly regular graphs
 
@@ -2247,7 +2246,7 @@ def SRG_220_84_38_28():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_220_84_38_28
-        sage: g=SRG_220_84_38_28()
+        sage: g = SRG_220_84_38_28()
         sage: g.is_strongly_regular(parameters=True)
         (220, 84, 38, 28)
     """
@@ -2409,8 +2408,8 @@ def SRG_416_100_36_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_416_100_36_20
-        sage: g = SRG_416_100_36_20()                   # long time, optional - internet
-        sage: g.is_strongly_regular(parameters=True)    # long time, optional - internet
+        sage: g = SRG_416_100_36_20()                   # long time, optional - internet, needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)    # long time, optional - internet, needs sage.libs.gap
         (416, 100, 36, 20)
     """
     from sage.libs.gap.libgap import libgap

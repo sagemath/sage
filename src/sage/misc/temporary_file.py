@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 """
 Temporary file handling
 
@@ -135,7 +134,7 @@ def tmp_filename(name="tmp_", ext=""):
 #################################################################
 # write to a temporary file and move it in place
 #################################################################
-class atomic_write():
+class atomic_write:
     """
     Write to a given file using a temporary file and then rename it
     to the target file. This renaming should be atomic on modern
@@ -153,7 +152,7 @@ class atomic_write():
     - ``target_filename`` -- the name of the file to be written.
       Normally, the contents of this file will be overwritten.
 
-    - ``append`` -- (boolean, default: False) if True and
+    - ``append`` -- (boolean, default: ``False``) if True and
       ``target_filename`` is an existing file, then copy the current
       contents of ``target_filename`` to the temporary file when
       entering the ``with`` statement. Otherwise, the temporary file is
@@ -165,7 +164,7 @@ class atomic_write():
       mode bits of the file were changed manually). (Not to be confused with
       the file opening mode.)
 
-    - ``binary`` -- (boolean, default: True on Python 2, False on Python 3) the
+    - ``binary`` -- (boolean, default: ``True`` on Python 2, False on Python 3) the
       underlying file is opened in binary mode.  If False then it is opened in
       text mode and an encoding with which to write the file may be supplied.
 
@@ -414,7 +413,7 @@ class atomic_write():
 #################################################################
 # write to a temporary directory and move it in place
 #################################################################
-class atomic_dir():
+class atomic_dir:
     """
     Write to a given directory using a temporary directory and then rename it
     to the target directory. This is for creating a directory whose contents

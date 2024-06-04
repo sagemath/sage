@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Extra functions for quadratic forms
 """
@@ -23,9 +22,9 @@ def is_triangular_number(n, return_value=False):
 
     INPUT:
 
-    - ``n`` - an integer
+    - ``n`` -- an integer
 
-    - ``return_value`` - a boolean set to ``False`` by default. If set to
+    - ``return_value`` -- a boolean set to ``False`` by default. If set to
       ``True`` the function returns a pair made of a boolean and the value `v`
       such that `v(v+1)/2 = n`.
 

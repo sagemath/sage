@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Examples of commutative additive semigroups
 """
@@ -15,6 +14,7 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
 from sage.sets.family import Family
+
 
 class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
     r"""

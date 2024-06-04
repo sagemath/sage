@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Graded modules with basis
 """
@@ -12,6 +11,7 @@ Graded modules with basis
 
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.quotients import QuotientsCategory
+
 
 class GradedModulesWithBasis(GradedModulesCategory):
     """

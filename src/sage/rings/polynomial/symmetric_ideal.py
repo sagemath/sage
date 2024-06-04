@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.singular
 """
 Symmetric Ideals of Infinite Polynomial Rings
@@ -185,9 +184,9 @@ class SymmetricIdeal(Ideal_generic):
         """
         INPUT:
 
-        ``ring`` -- an infinite polynomial ring
-        ``gens`` -- generators of this ideal
-        ``coerce`` -- (bool, default ``True``) coerce the given generators into ``ring``
+        - ``ring`` -- an infinite polynomial ring
+        - ``gens`` -- generators of this ideal
+        - ``coerce`` -- (bool, default ``True``) coerce the given generators into ``ring``
 
         EXAMPLES::
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Graded bialgebras
 """
@@ -9,6 +8,7 @@ Graded bialgebras
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+
 
 def GradedBialgebras(base_ring):
     """

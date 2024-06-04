@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Fraction Field Elements
 
@@ -273,9 +272,9 @@ cdef class FractionFieldElement(FieldElement):
 
         OUTPUT:
 
-        -  ``bool`` - whether or not a square
+        -  ``bool`` -- whether or not a square
 
-        -  ``object`` - (optional) an actual square root if
+        -  ``object`` -- (optional) an actual square root if
            found, and None otherwise.
 
         EXAMPLES::
@@ -676,7 +675,7 @@ cdef class FractionFieldElement(FieldElement):
 
         INPUT:
 
-        - ``right`` - ``RingElement`` to multiply with ``self``
+        - ``right`` -- ``RingElement`` to multiply with ``self``
 
         OUTPUT:
 

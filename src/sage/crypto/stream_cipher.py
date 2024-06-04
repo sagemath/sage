@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.combinat sage.rings.finite_rings
 """
 Stream Ciphers
@@ -23,11 +22,11 @@ class LFSRCipher(SymmetricKeyCipher):
         INPUT:
 
 
-        -  ``parent`` - parent
+        -  ``parent`` -- parent
 
-        -  ``poly`` - connection polynomial
+        -  ``poly`` -- connection polynomial
 
-        -  ``IS`` - initial state
+        -  ``IS`` -- initial state
 
 
         EXAMPLES::
@@ -72,9 +71,9 @@ class LFSRCipher(SymmetricKeyCipher):
         INPUT:
 
 
-        -  ``M`` - a StringMonoidElement
+        -  ``M`` -- a StringMonoidElement
 
-        -  ``mode`` - ignored (default: 'ECB')
+        -  ``mode`` -- ignored (default: 'ECB')
 
 
         EXAMPLES::
@@ -156,11 +155,11 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         INPUT:
 
 
-        -  ``parent`` - parent
+        -  ``parent`` -- parent
 
-        -  ``poly`` - connection polynomial
+        -  ``poly`` -- connection polynomial
 
-        -  ``IS`` - initial state
+        -  ``IS`` -- initial state
 
 
         EXAMPLES::
@@ -228,9 +227,9 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         INPUT:
 
 
-        -  ``M`` - a StringMonoidElement
+        -  ``M`` -- a StringMonoidElement
 
-        -  ``mode`` - ignored (default: 'ECB')
+        -  ``mode`` -- ignored (default: 'ECB')
 
 
         EXAMPLES::

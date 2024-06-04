@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Rngs
 """
@@ -13,6 +12,7 @@ Rngs
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.misc.lazy_import import LazyImport
 from sage.categories.magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+
 
 class Rngs(CategoryWithAxiom):
     """

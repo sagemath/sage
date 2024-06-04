@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Tests For Combinatorial Hopf Algebras

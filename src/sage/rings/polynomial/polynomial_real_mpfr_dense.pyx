@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Dense univariate polynomials over `\RR`, implemented using MPFR
 
@@ -568,7 +567,7 @@ cdef class PolynomialRealDense(Polynomial):
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
+        - ``degree`` (``None`` or an integer) -- if specified, truncate or zero
           pad the list of coefficients to this degree before reversing it.
 
         EXAMPLES::

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Computation of Frobenius matrix on Monsky-Washnitzer cohomology
 
@@ -75,9 +74,9 @@ from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
+from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import is_HyperellipticCurve
+from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import HyperellipticCurve_generic
 from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
@@ -100,7 +99,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         - ``p0, p1, p2`` -- coefficients; must be coercible
           into parent.poly_ring()
 
-        - ``check`` -- bool (default True): whether to carry
+        - ``check`` -- bool (default: ``True``): whether to carry
           out coercion
 
         EXAMPLES::
@@ -608,7 +607,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         - ``p0, p1, p2`` -- coefficients; must be coercible
           into poly_ring()
 
-        - ``check`` -- bool (default True): whether to carry
+        - ``check`` -- bool (default: ``True``): whether to carry
           out coercion
 
         EXAMPLES::
@@ -1025,7 +1024,7 @@ def reduce_all(Q, p, coeffs, offset, compute_exact_form=False):
 
     OUTPUT:
 
-    - ``A, B`` - pair such that the input differential is
+    - ``A, B`` -- pair such that the input differential is
       cohomologous to (A + Bx) dx/y.
 
     .. NOTE::
@@ -2392,14 +2391,14 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             R = Q.base_ring()
 
         x = PolynomialRing(R, 'xx').gen()
-        if is_EllipticCurve(Q):
+        if isinstance(Q, EllipticCurve_generic):
             E = Q
             if E.a1() != 0 or E.a2() != 0:
                 raise NotImplementedError("curve must be in Weierstrass normal form")
             Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
             self._curve = E
 
-        elif is_HyperellipticCurve(Q):
+        elif isinstance(Q, HyperellipticCurve_generic):
             C = Q
             if C.hyperelliptic_polynomials()[1] != 0:
                 raise NotImplementedError("curve must be of form y^2 = Q(x)")

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Complex reflection groups
 """
@@ -16,6 +15,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.complex_reflection_or_generalized_coxeter_groups import ComplexReflectionOrGeneralizedCoxeterGroups
+
 
 class ComplexReflectionGroups(Category_singleton):
     r"""

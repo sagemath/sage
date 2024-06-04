@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Example of facade set
 """
@@ -16,6 +15,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+
 
 class PositiveIntegerMonoid(UniqueRepresentation, Parent):
     r"""
@@ -119,6 +119,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
             return object
         else:
             raise ValueError("%s should be positive")
+
 
 class IntegersCompletion(UniqueRepresentation, Parent):
     r"""

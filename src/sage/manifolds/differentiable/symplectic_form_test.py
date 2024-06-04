@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 # pylint: disable=missing-function-docstring
 from _pytest.fixtures import FixtureRequest
 import pytest

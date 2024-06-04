@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``tdlib``
 """
@@ -29,10 +28,9 @@ class Tdlib(JoinFeature):
             sage: isinstance(Tdlib(), Tdlib)
             True
         """
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_tdlib' later
         JoinFeature.__init__(self, 'tdlib',
-                             [PythonModule('sage.graphs.graph_decompositions.tdlib', spkg='tdlib')])
+                             [PythonModule('sage.graphs.graph_decompositions.tdlib',
+                                           spkg='sagemath_tdlib')])
 
 
 def all_features():

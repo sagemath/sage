@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.padics
 """
 Local Generic Element
@@ -845,7 +844,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         INPUT:
 
-        ``self`` -- a local ring element.
+        - ``self`` -- a local ring element.
 
         OUTPUT:
 

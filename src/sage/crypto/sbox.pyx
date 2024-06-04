@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 S-Boxes and Their Algebraic Representations
@@ -33,9 +32,9 @@ cdef Py_ssize_t _nterms(Py_ssize_t nvars, Py_ssize_t deg) noexcept:
 
     INPUT:
 
-    - ``nvars`` - number of variables
+    - ``nvars`` -- number of variables
 
-    - ``deg`` - degree
+    - ``deg`` -- degree
 
     TESTS::
 
@@ -770,7 +769,7 @@ cdef class SBox(SageObject):
 
         INPUT:
 
-        - ``scale`` - string to choose the scaling for the LAT, one of
+        - ``scale`` -- string to choose the scaling for the LAT, one of
 
           * "bias": elements are `e(\alpha, \beta)`
           * "correlation": elements are `c(\alpha, \beta)`

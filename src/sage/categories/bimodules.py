@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Bimodules
 """
@@ -20,6 +19,8 @@ from sage.categories.rings import Rings
 _Rings = Rings()
 
 #?class Bimodules(Category_over_base_rng, Category_over_base_rng):
+
+
 class Bimodules(CategoryWithParameters):
     """
     The category of `(R,S)`-bimodules
@@ -78,6 +79,7 @@ class Bimodules(CategoryWithParameters):
                  and Category of metric spaces,
              Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
@@ -86,6 +88,7 @@ class Bimodules(CategoryWithParameters):
             (Category of fields,
              Join of Category of Dedekind domains
              and Category of euclidean domains
+             and Category of noetherian rings
              and Category of infinite enumerated sets
              and Category of metric spaces)
 
@@ -149,7 +152,7 @@ class Bimodules(CategoryWithParameters):
         """
         return self._right_base_ring
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -159,9 +162,9 @@ class Bimodules(CategoryWithParameters):
             {\mathbf{Bimodules}}_{\Bold{Q}, \Bold{Z}}
         """
         from sage.misc.latex import latex
-        return "{{{0}}}_{{{1}, {2}}}".format(Category._latex_(self),
-                                             latex(self._left_base_ring),
-                                             latex(self._right_base_ring))
+        return "{{{}}}_{{{}, {}}}".format(Category._latex_(self),
+                                          latex(self._left_base_ring),
+                                          latex(self._right_base_ring))
 
     def super_categories(self):
         """

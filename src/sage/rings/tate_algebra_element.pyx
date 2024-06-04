@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 Tate algebra element
 
@@ -1291,7 +1290,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``other`` - a Tate series
+        - ``other`` -- a Tate series
 
         EXAMPLES::
 

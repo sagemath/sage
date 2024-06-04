@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 """
 Implicit plots
@@ -643,7 +642,7 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
     """
     # These options, related to rendering with smooth shading, are irrelevant
     # since IndexFaceSet does not support surface normals:
-    # smooth: (default: False) Whether to use vertex normals to produce a
+    # smooth: (default: ``False``) Whether to use vertex normals to produce a
     #   smooth-looking surface. False is slightly faster.
     # gradient: (default: None) If smooth is True (the default), then
     #   Tachyon rendering needs vertex normals. In that case, if gradient is None

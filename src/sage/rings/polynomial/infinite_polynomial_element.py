@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Elements of Infinite Polynomial Rings
 
@@ -1145,7 +1144,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         INPUT:
 
-        ``k`` -- an integer.
+        - ``k`` -- an integer.
 
         OUTPUT:
 

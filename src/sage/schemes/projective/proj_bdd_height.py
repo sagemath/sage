@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Points of bounded height in projective spaces
 
@@ -104,7 +103,7 @@ def QQ_points_of_bounded_height(PS, dim, bound, normalize=False):
 
     - ``bound`` -- a real number
 
-    - ``normalize`` -- boolean (optional, default: ``False``); whether to
+    - ``normalize`` -- boolean (default: ``False``); whether to
       normalize the coordinates of returned points
 
     OUTPUT:

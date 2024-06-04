@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Base class for sparse matrices
 """
@@ -664,7 +663,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         -  ``R`` -- (optional) ring
 
-        - ``sparse`` -- (optional, default ``True``) whether to return
+        - ``sparse`` -- (default: ``True``) whether to return
           a sparse or a dense matrix
 
         OUTPUT: a matrix over ``R``

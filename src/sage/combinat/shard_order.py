@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Shard intersection order
 
@@ -75,7 +74,7 @@ class ShardPosetElement(tuple):
         r"""
         INPUT:
 
-        - ``p`` - a permutation
+        - ``p`` -- a permutation
 
         EXAMPLES::
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 r"""
 `p`-Selmer groups of number fields
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 """
 Density plots
@@ -34,14 +33,14 @@ class DensityPlot(GraphicPrimitive):
 
     INPUT:
 
-    - ``xy_data_array`` - list of lists giving evaluated values of the
+    - ``xy_data_array`` -- list of lists giving evaluated values of the
       function on the grid
 
-    - ``xrange`` - tuple of 2 floats indicating range for horizontal direction
+    - ``xrange`` -- tuple of 2 floats indicating range for horizontal direction
 
-    - ``yrange`` - tuple of 2 floats indicating range for vertical direction
+    - ``yrange`` -- tuple of 2 floats indicating range for vertical direction
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -128,7 +127,7 @@ class DensityPlot(GraphicPrimitive):
             sage: d = D[0]; d
             DensityPlot defined by a 25 x 25 data grid
         """
-        return "DensityPlot defined by a %s x %s data grid" % (self.xy_array_row, self.xy_array_col)
+        return "DensityPlot defined by a {} x {} data grid".format(self.xy_array_row, self.xy_array_col)
 
     def _render_on_subplot(self, subplot):
         """

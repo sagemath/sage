@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Rational point sets on a Jacobian
 
@@ -162,9 +161,9 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
         """
         Return S for a homset X(T) where T = Spec(S).
         """
-        from sage.schemes.generic.scheme import is_AffineScheme
+        from sage.schemes.generic.scheme import AffineScheme
         T = self.domain()
-        if is_AffineScheme(T):
+        if isinstance(T, AffineScheme):
             return T.coordinate_ring()
         else:
             raise TypeError("domain of argument must be of the form Spec(S)")

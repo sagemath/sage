@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Arbitrary precision floating point complex numbers using GNU MPC
 
@@ -73,7 +72,11 @@ from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
-from sage.libs.pari.all import pari
+
+try:
+    from sage.libs.pari.all import pari, pari_gen, PariError
+except ImportError:
+    pari_gen = PariError = ()
 
 from sage.rings.integer cimport Integer
 from sage.rings.complex_mpfr cimport ComplexNumber
@@ -843,7 +846,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             elif isinstance(z, ComplexNumber):
                 mpc_set_fr_fr(self.value, (<ComplexNumber>z).__re, (<ComplexNumber>z).__im, rnd)
                 return
-            elif isinstance(z, sage.libs.pari.all.pari_gen):
+            elif isinstance(z, pari_gen):
                 real, imag = z.real(), z.imag()
             elif isinstance(z, (list, tuple)):
                 real, imag = z
@@ -2124,7 +2127,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- bool (default: ``False``); if ``True``, return a
            list of all `n`-th roots.
 
         EXAMPLES::
@@ -2220,10 +2223,10 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``self`` - element of the upper half plane (if not,
+        -  ``self`` -- element of the upper half plane (if not,
            raises a ``ValueError``).
 
-        -  ``omit_frac`` - (bool, default: ``False``), if ``True``,
+        -  ``omit_frac`` -- (bool, default: ``False``), if ``True``,
            omit the `e^{\pi i z / 12}` factor.
 
         OUTPUT: a complex number
@@ -2239,7 +2242,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().eta(not omit_frac))
-        except sage.libs.pari.all.PariError:
+        except PariError:
             raise ValueError("value must be in the upper half plane")
 
     def gamma(self):
@@ -2265,7 +2268,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         try:
             return self._parent(self.__pari__().gamma())
-        except sage.libs.pari.all.PariError:
+        except PariError:
             from sage.rings.infinity import UnsignedInfinityRing
             return UnsignedInfinityRing.gen()
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 """
 Quiver Morphisms
 """
@@ -38,7 +37,7 @@ class QuiverRepHom(CallMorphism):
 
     - ``codomain`` -- :class:`QuiverRep`, the codomain of the homomorphism
 
-    - ``data`` - dict, list, or :class:`QuiverRepElement`
+    - ``data`` -- dict, list, or :class:`QuiverRepElement`
       (default: empty dict),
       with the following meaning:
 

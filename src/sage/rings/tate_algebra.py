@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 Tate algebras
 
@@ -260,7 +259,7 @@ class TateAlgebraFactory(UniqueFactory):
 
         - ``names`` -- names of the indeterminates
 
-        - ``order`` - a monomial ordering (default: ``degrevlex``)
+        - ``order`` -- a monomial ordering (default: ``degrevlex``)
 
         EXAMPLES::
 
@@ -648,7 +647,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` - an integer (default: ``0``), the index of
+        - ``n`` -- an integer (default: ``0``), the index of
           the requested generator
 
         EXAMPLES::
@@ -759,7 +758,7 @@ class TateAlgebra_generic(Parent):
 
         INPUT:
 
-        - ``R`` - a ring
+        - ``R`` -- a ring
 
         EXAMPLES::
 
@@ -897,7 +896,7 @@ class TateAlgebra_generic(Parent):
 
         INPUT:
 
-        - ``n`` - number of generators
+        - ``n`` -- number of generators
 
         EXAMPLES::
 
@@ -932,7 +931,7 @@ class TateAlgebra_generic(Parent):
 
         INPUT:
 
-        - ``n`` - an integer (default: ``0``), the index of
+        - ``n`` -- an integer (default: ``0``), the index of
           the requested generator
 
         EXAMPLES::

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Abstract base class for Sage objects
 """

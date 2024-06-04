@@ -1,9 +1,9 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 This module contains Cython code for a backtracking algorithm to solve Sudoku puzzles.
 
 Once Cython implements closures and the ``yield`` keyword is possible, this can be moved into the ``sage.games.sudoku`` module, as part of the ``Sudoku.backtrack`` method, and this module can be banned.
 """
+
 
 def backtrack_all(n, puzzle):
     r"""
@@ -11,9 +11,9 @@ def backtrack_all(n, puzzle):
 
     INPUT:
 
-        - ``n`` - the size of the puzzle, where the array is an `n^2\times n^2` grid
+        - ``n`` -- the size of the puzzle, where the array is an `n^2\times n^2` grid
 
-        - ``puzzle`` - a list of the entries of the puzzle (1-based), in row-major order
+        - ``puzzle`` -- a list of the entries of the puzzle (1-based), in row-major order
 
     OUTPUT:
 

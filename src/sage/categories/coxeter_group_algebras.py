@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Coxeter Group Algebras
@@ -6,6 +5,7 @@ Coxeter Group Algebras
 import functools
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebra_functor import AlgebrasCategory
+
 
 class CoxeterGroupAlgebras(AlgebrasCategory):
 

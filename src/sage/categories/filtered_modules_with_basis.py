@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Modules With Basis
 
@@ -34,6 +33,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.categories.subobjects import SubobjectsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+
 
 class FilteredModulesWithBasis(FilteredModulesCategory):
     r"""
@@ -125,7 +125,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             INPUT:
 
-            - ``d`` -- (optional, default ``None``) nonnegative integer
+            - ``d`` -- (default: ``None``) nonnegative integer
               or ``None``
 
             OUTPUT:

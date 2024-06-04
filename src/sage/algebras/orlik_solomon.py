@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules
 r"""
 Orlik-Solomon Algebras
@@ -133,7 +132,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             self._broken_circuits[frozenset(L[1:])] = L[0]
 
         cat = Algebras(R).FiniteDimensional().WithBasis().Graded()
-        CombinatorialFreeModule.__init__(self, R, M.no_broken_circuits_sets(ordering),
+        CombinatorialFreeModule.__init__(self, R, list(M.no_broken_circuits_sets(ordering)),
                                          prefix='OS', bracket='{',
                                          sorting_key=self._sort_key,
                                          category=cat)

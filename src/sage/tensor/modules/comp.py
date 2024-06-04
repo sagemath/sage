@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Components as indexed sets of ring elements
 

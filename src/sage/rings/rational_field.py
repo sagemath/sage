@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Field `\QQ` of Rational Numbers
 

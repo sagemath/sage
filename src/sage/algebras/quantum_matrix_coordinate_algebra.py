@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Quantum Matrix Coordinate Algebras
@@ -975,6 +974,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
                                          for k in range(1, self._n + 1)) ** e
                       if t != 'c' else T.monomial((I['c'], I['c'])) ** e
                       for t, e in x._sorted_items())
+
 
 def _generator_key(t):
     """

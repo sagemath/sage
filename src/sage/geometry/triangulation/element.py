@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 A triangulation
 
@@ -47,7 +46,6 @@ from sage.rings.rational_field import QQ
 from sage.modules.free_module_element import vector
 from sage.misc.cachefunc import cached_method
 from sage.sets.set import Set
-from sage.graphs.graph import Graph
 
 
 ########################################################################
@@ -923,5 +921,6 @@ class Triangulation(Element):
 
         """
         vertices = [Set(_) for _ in list(self)]
+        from sage.graphs.graph import Graph
         return Graph([vertices,
                   lambda x,y: len(x-y) == 1])

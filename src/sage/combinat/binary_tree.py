@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 """
 Binary Trees
 
@@ -1635,7 +1634,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        ``shift`` -- an integer (default 0)
+        - ``shift`` -- an integer (default 0)
 
         OUTPUT:
 

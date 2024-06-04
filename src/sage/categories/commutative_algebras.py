@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Commutative algebras
 """
@@ -16,6 +15,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.algebras import Algebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.tensor import TensorProductsCategory
+
 
 class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
     """

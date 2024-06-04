@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Morphisms Between Finite Algebras
 """
@@ -191,6 +190,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         """
         coker_I = I.basis_matrix().transpose().kernel().basis_matrix().transpose()
         return self.domain().ideal((self._matrix * coker_I).kernel().basis_matrix(), given_by_matrix=True)
+
 
 class FiniteDimensionalAlgebraHomset(RingHomset_generic):
     """

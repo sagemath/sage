@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Random testing
 
@@ -22,7 +21,7 @@ def random_testing(fn):
 
     INPUT:
 
-        - ``fn`` - The function that we are wrapping for random testing.
+        - ``fn`` -- The function that we are wrapping for random testing.
 
     The resulting function will take two additional arguments, *seed*
     (default ``None``) and *print_seed* (default ``False``).  The

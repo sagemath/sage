@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules
 r"""
 Examples of a Lie algebra
@@ -16,6 +15,7 @@ from sage.categories.lie_algebras import LieAlgebras
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
+
 
 class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
     r"""
@@ -198,6 +198,20 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
                 False
             """
             return not self.__eq__(rhs)
+
+        def __hash__(self):
+            r"""
+            Return the hash of ``self``.
+
+            EXAMPLES::
+
+                sage: # needs sage.combinat sage.groups
+                sage: L = LieAlgebras(QQ).example()
+                sage: x, y = L.lie_algebra_generators()
+                sage: hash(x) == hash(x.value)
+                True
+            """
+            return hash(self.value)
 
         def __bool__(self) -> bool:
             """

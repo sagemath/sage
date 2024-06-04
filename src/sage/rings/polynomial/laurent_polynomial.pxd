@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 from sage.structure.element cimport CommutativeAlgebraElement, ModuleElement, RingElement, Element
 
 

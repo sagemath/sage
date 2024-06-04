@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.singular
 r"""
 Symmetric Reduction of Infinite Polynomials
@@ -284,7 +283,7 @@ cdef class SymmetricReductionStrategy:
 
         INPUT:
 
-        ``L`` -- a list of elements of the underlying infinite polynomial ring.
+        - ``L`` -- a list of elements of the underlying infinite polynomial ring.
 
         .. NOTE::
 

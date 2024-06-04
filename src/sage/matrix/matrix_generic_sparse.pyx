@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Sparse Matrices over a general ring
 
@@ -427,7 +426,7 @@ def Matrix_sparse_from_rows(X):
     """
     INPUT:
 
-    -  ``X`` - nonempty list of SparseVector rows
+    -  ``X`` -- nonempty list of SparseVector rows
 
 
     OUTPUT: Sparse_matrix with those rows.

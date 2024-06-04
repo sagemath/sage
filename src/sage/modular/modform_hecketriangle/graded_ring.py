@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Graded rings of modular forms for Hecke triangle groups
@@ -90,7 +89,7 @@ class QuasiMeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation)
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
         - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: False).
+                            homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
@@ -153,7 +152,7 @@ class QuasiWeakModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
         - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: False).
+                            homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
@@ -213,7 +212,7 @@ class QuasiModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
         - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: False).
+                            homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
@@ -273,7 +272,7 @@ class QuasiCuspFormsRing(FormsRing_abstract, UniqueRepresentation):
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
         - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: False).
+                            homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
@@ -333,7 +332,7 @@ class MeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
         - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: False).
+                            homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
@@ -393,7 +392,7 @@ class WeakModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
         - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: False).
+                            homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
@@ -452,7 +451,7 @@ class ModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
         - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: False).
+                            homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
@@ -512,7 +511,7 @@ class CuspFormsRing(FormsRing_abstract, UniqueRepresentation):
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
         - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: False).
+                            homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:

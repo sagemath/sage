@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.combinat sage.modules sage.rings.finite_rings
 r"""
 Mini-AES

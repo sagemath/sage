@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 `q`-Numbers
 
@@ -21,6 +20,7 @@ r"""
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+
 
 def q_int(n, q=None):
     r"""

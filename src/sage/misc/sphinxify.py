@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sphinx
 r"""
 Process docstrings with Sphinx
@@ -38,9 +37,9 @@ def sphinxify(docstring, format='html'):
 
     INPUT:
 
-    - ``docstring`` -- string -- a ReST-formatted docstring
+    - ``docstring`` -- string; a ReST-formatted docstring
 
-    - ``format`` -- string (optional, default 'html') -- either 'html' or
+    - ``format`` -- string (default: 'html'); either 'html' or
       'text'
 
     OUTPUT:
@@ -128,7 +127,7 @@ smart_quotes = no""")
     builtins.__dict__.pop('_', None)
 
     if os.path.exists(output_name):
-        with open(output_name, 'r') as f:
+        with open(output_name) as f:
             output = f.read()
         output = output.replace('<pre>', '<pre class="literal-block">')
 

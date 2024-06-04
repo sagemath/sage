@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.pari
 r"""
 Elements of Quotients of Univariate Polynomial Rings
@@ -114,11 +113,11 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         INPUT:
 
 
-        -  ``parent`` - a quotient of a polynomial ring
+        -  ``parent`` -- a quotient of a polynomial ring
 
-        -  ``polynomial`` - a polynomial
+        -  ``polynomial`` -- a polynomial
 
-        -  ``check`` - bool (optional): whether or not to
+        -  ``check`` -- bool (optional): whether or not to
            verify that x is a valid element of the polynomial ring and reduced
            (mod the modulus).
         """
@@ -456,7 +455,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         INPUT:
 
-        - ``names`` - name of generator of output field
+        - ``names`` -- name of generator of output field
 
 
         OUTPUT:
@@ -586,7 +585,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         INPUT:
 
 
-        -  ``var`` - string - the variable name
+        -  ``var`` -- string; the variable name
 
 
         EXAMPLES::

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional coalgebras with basis
 """
@@ -9,6 +8,7 @@ Finite dimensional coalgebras with basis
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+
 
 def FiniteDimensionalCoalgebrasWithBasis(base_ring):
     """

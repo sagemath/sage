@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups
 r"""
 Automorphism groups and canonical labels
@@ -413,7 +412,7 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     partition -- PartitionStack representing a partition of the points
     len_partition -- length of the partition
     n -- the number of points (points are assumed to be 0,1,...,n-1)
-    canonical_label -- whether to search for canonical label - if True, return
+    canonical_label -- whether to search for canonical label; if True, return
         the permutation taking S to its canonical label
     all_children_are_equivalent -- pointer to a function
         INPUT:
@@ -439,12 +438,12 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
         int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
             such that the set of all structures is well-ordered
 
-    NOTE:
-    The partition ``partition1`` *must* satisfy the property that in each cell,
-    the smallest element occurs first!
+    .. NOTE::
 
-    OUTPUT:
-    pointer to a aut_gp_and_can_lab struct
+        The partition ``partition1`` *must* satisfy the property that in each
+        cell, the smallest element occurs first!
+
+    OUTPUT: a pointer to a ``aut_gp_and_can_lab`` struct
 
     """
     cdef PartitionStack *current_ps

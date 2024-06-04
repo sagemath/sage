@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 from cypari2.gen cimport Gen as pari_gen
 from sage.rings.power_series_ring_element cimport PowerSeries
 

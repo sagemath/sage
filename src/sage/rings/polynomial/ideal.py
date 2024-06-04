@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Ideals in Univariate Polynomial Rings
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Constructor for spaces of modular forms for Hecke triangle groups based on a type

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Super modules with basis
 """
@@ -10,6 +9,7 @@ Super modules with basis
 #******************************************************************************
 
 from sage.categories.super_modules import SuperModulesCategory
+
 
 class SuperModulesWithBasis(SuperModulesCategory):
     """

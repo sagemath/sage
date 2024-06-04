@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Commutative additive semigroups
 """
@@ -11,6 +10,7 @@ Commutative additive semigroups
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.additive_semigroups import AdditiveSemigroups
+
 
 class CommutativeAdditiveSemigroups(CategoryWithAxiom):
     """

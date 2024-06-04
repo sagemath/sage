@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -917,7 +916,7 @@ def triangles_count(G):
 
     INPUT:
 
-    - `G`-- a graph
+    - `G` -- a graph
 
     EXAMPLES::
 

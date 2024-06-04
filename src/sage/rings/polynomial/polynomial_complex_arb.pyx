@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 r"""
 Univariate polynomials over `\CC` with Arb ball coefficients.
 
@@ -596,8 +595,8 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         INPUT:
 
-        - ``expo`` - non-negative integer exponent
-        - ``n`` - truncation order
+        - ``expo`` -- non-negative integer exponent
+        - ``n`` -- truncation order
 
         EXAMPLES::
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Quotient fields
 """
@@ -14,6 +13,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.categories.fields import Fields
 
 from sage.structure.element import coerce_binop
+
 
 class QuotientFields(Category_singleton):
     """
@@ -342,8 +342,8 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``*args`` - Arbitrary arguments suitable over the base ring
-            - ``**kwds`` - Arbitrary keyword arguments suitable over the base ring
+            - ``*args`` -- Arbitrary arguments suitable over the base ring
+            - ``**kwds`` -- Arbitrary keyword arguments suitable over the base ring
 
             OUTPUT:
 
@@ -641,7 +641,7 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``var`` - Variable with respect to which the derivative is computed
+            - ``var`` -- Variable with respect to which the derivative is computed
 
             OUTPUT:
 

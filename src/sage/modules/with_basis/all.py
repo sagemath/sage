@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Concrete classes related to modules with a distinguished basis
 

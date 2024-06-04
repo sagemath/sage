@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finitely generated magmas
 """
@@ -12,6 +11,7 @@ Finitely generated magmas
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.magmas import Magmas
+
 
 class FinitelyGeneratedMagmas(CategoryWithAxiom):
     r"""

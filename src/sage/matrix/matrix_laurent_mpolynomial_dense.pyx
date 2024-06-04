@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Dense matrices over multivariate polynomials over fields.
 
@@ -75,7 +74,7 @@ cdef class Matrix_laurent_mpolynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        ``i`` -- an integer
+        - ``i`` -- an integer
 
         OUTPUT:
 

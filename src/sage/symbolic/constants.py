@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Mathematical constants
 
@@ -392,7 +391,7 @@ class Constant():
 
         INPUT:
 
-        - ``SR`` - a symbolic ring parent
+        - ``SR`` -- a symbolic ring parent
 
         EXAMPLES::
 

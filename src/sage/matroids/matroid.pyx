@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 The abstract Matroid class
 
@@ -116,10 +115,13 @@ additional functionality (e.g. linear extensions).
     - :meth:`girth() <sage.matroids.matroid.Matroid.girth>`
 
 - Representation
+    - :meth:`is_graphic() <sage.matroids.matroid.Matroid.is_graphic>`
+    - :meth:`is_regular() <sage.matroids.matroid.Matroid.is_regular>`
     - :meth:`binary_matroid() <sage.matroids.matroid.Matroid.binary_matroid>`
     - :meth:`is_binary() <sage.matroids.matroid.Matroid.is_binary>`
     - :meth:`ternary_matroid() <sage.matroids.matroid.Matroid.ternary_matroid>`
     - :meth:`is_ternary() <sage.matroids.matroid.Matroid.is_ternary>`
+    - :meth:`relabel() <sage.matroids.matroid.Matroid.relabel>`
 
 - Optimization
     - :meth:`max_weight_independent() <sage.matroids.matroid.Matroid.max_weight_independent>`
@@ -1146,7 +1148,7 @@ cdef class Matroid(SageObject):
             - ``deletions`` is coindependent
             - ``contractions`` and ``deletions`` are disjoint.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -1257,7 +1259,7 @@ cdef class Matroid(SageObject):
         - ``hyperplanes`` -- the set of hyperplanes of a linear subclass of
           ``self``.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -1288,9 +1290,7 @@ cdef class Matroid(SageObject):
             sage: sage.matroids.matroid.Matroid._repr_(M)
             'Matroid of rank 4 on 8 elements'
         """
-        S = "Matroid of rank "
-        S = S + str(self.rank()) + " on " + str(self.size()) + " elements"
-        return S
+        return f'Matroid of rank {self.rank()} on {self.size()} elements'
 
     # cpdef show(self):
     # Show either the graph, or the matrix with labels, or the lattice,
@@ -2389,7 +2389,7 @@ cdef class Matroid(SageObject):
                 B_ext.add(B | set([e]))
         for S in B_ext:
             C.add(self._circuit(S))
-        return SetSystem(list(self.groundset()), C)
+        return SetSystem(self.groundset(), C)
 
     def circuits_iterator(self, k=None):
         """
@@ -2447,7 +2447,7 @@ cdef class Matroid(SageObject):
             ['d', 'e', 'f']]
         """
         cdef SetSystem C
-        C = SetSystem(list(self.groundset()))
+        C = SetSystem(self.groundset())
         for N in self.nonbases_iterator():
             if self._rank(N) == self.full_rank() - 1:
                 C.append(self._circuit(N))
@@ -2617,7 +2617,7 @@ cdef class Matroid(SageObject):
         Test all subsets of the groundset of cardinality ``self.full_rank()``
         """
         cdef SetSystem res
-        res = SetSystem(list(self.groundset()))
+        res = SetSystem(self.groundset())
         for X in combinations(self.groundset(), self.full_rank()):
             if self._rank(X) < len(X):
                 res.append(X)
@@ -2662,7 +2662,7 @@ cdef class Matroid(SageObject):
 
             sage: M = matroids.catalog.Vamos()
             sage: M.dependent_r_sets(3)
-            []
+            SetSystem of 0 sets over 8 elements
             sage: sorted([sorted(X) for X in
             ....: matroids.catalog.Vamos().dependent_r_sets(4)])
             [['a', 'b', 'c', 'd'], ['a', 'b', 'e', 'f'], ['a', 'b', 'g', 'h'],
@@ -2672,12 +2672,13 @@ cdef class Matroid(SageObject):
 
         Test all subsets of the groundset of cardinality ``r``
         """
-        res = []
-        for X in combinations(self.groundset(), r):
-            X = frozenset(X)
-            if self._rank(X) < len(X):
-                res.append(X)
-        return res
+        cdef set D = set()
+        cdef frozenset X
+        for XX in combinations(self.groundset(), r):
+            X = frozenset(XX)
+            if not self._is_independent(X):
+                D.add(X)
+        return SetSystem(self.groundset(), D)
 
     def dependent_r_sets_iterator(self, long r):
         r"""
@@ -2729,7 +2730,7 @@ cdef class Matroid(SageObject):
             :meth:`M.independent_r_sets() <sage.matroids.matroid.Matroid.independent_r_sets>`
         """
         cdef SetSystem res
-        res = SetSystem(list(self.groundset()))
+        res = SetSystem(self.groundset())
         for X in combinations(self.groundset(), self.full_rank()):
             if self._rank(frozenset(X)) == len(X):
                 res.append(X)
@@ -2852,10 +2853,9 @@ cdef class Matroid(SageObject):
 
             sage: M = matroids.catalog.Pappus()
             sage: M.independent_r_sets(4)
-            []
-            sage: S = M.independent_r_sets(3)
-            sage: len(S)
-            75
+            SetSystem of 0 sets over 9 elements
+            sage: S = M.independent_r_sets(3); S
+            SetSystem of 75 sets over 9 elements
             sage: frozenset({'a', 'c', 'e'}) in S
             True
 
@@ -2864,12 +2864,13 @@ cdef class Matroid(SageObject):
             :meth:`M.independent_sets() <sage.matroids.matroid.Matroid.independent_sets>`
             :meth:`M.bases() <sage.matroids.matroid.Matroid.bases>`
         """
-        cdef list res = []
-        for X in combinations(self.groundset(), r):
-            X = frozenset(X)
-            if self._rank(X) == len(X):
-                res.append(X)
-        return res
+        cdef set I = set()
+        cdef frozenset X
+        for XX in combinations(self.groundset(), r):
+            X = frozenset(XX)
+            if self._is_independent(X):
+                I.add(X)
+        return SetSystem(self.groundset(), I)
 
     def independent_r_sets_iterator(self, r):
         r"""
@@ -2993,7 +2994,7 @@ cdef class Matroid(SageObject):
             ['b', 'c', 'd'], ['b', 'e', 'g'], ['c', 'f', 'g'],
             ['d', 'e', 'f']]
         """
-        return SetSystem(list(self.groundset()), subsets=[f[0] for f in self._flags(r)])
+        return SetSystem(self.groundset(), subsets=[f[0] for f in self._flags(r)])
 
     cpdef coflats(self, r):
         r"""
@@ -3268,7 +3269,7 @@ cdef class Matroid(SageObject):
                 if is_indep:
                     B.append(frozenset(H))
                     next_level.extend(Ht)
-        return B
+        return SetSystem(self.groundset(), B)
 
     def no_broken_circuits_sets_iterator(self, ordering=None):
         r"""
@@ -3577,7 +3578,7 @@ cdef class Matroid(SageObject):
             return self._is_isomorphic(other), self._isomorphism(other)
         if self is other:
             return True
-        return (self.full_rank() == other.full_rank() and SetSystem(list(self.groundset()), list(self.nonbases()))._isomorphism(SetSystem(list(other.groundset()), list(other.nonbases()))) is not None)
+        return (self.full_rank() == other.full_rank() and SetSystem(self.groundset(), list(self.nonbases()))._isomorphism(SetSystem(other.groundset(), list(other.nonbases()))) is not None)
 
     cpdef isomorphism(self, other):
         r"""
@@ -3643,7 +3644,7 @@ cdef class Matroid(SageObject):
         if self is other:
             return {e:e for e in self.groundset()}
         if self.full_rank() == other.full_rank():
-            return SetSystem(list(self.groundset()), list(self.nonbases()))._isomorphism(SetSystem(list(other.groundset()), list(other.nonbases())))
+            return SetSystem(self.groundset(), list(self.nonbases()))._isomorphism(SetSystem(other.groundset(), list(other.nonbases())))
         else:
             return None
 
@@ -4005,7 +4006,7 @@ cdef class Matroid(SageObject):
         - ``deletions`` -- (default: ``None``) an element or set of elements
           to be deleted
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. NOTE::
 
@@ -4293,7 +4294,7 @@ cdef class Matroid(SageObject):
         can be obtained by adding an element freely to the span of the matroid
         and then contracting that element.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -4492,7 +4493,7 @@ cdef class Matroid(SageObject):
           each of these. If not specified, the element is assumed to be in the
           span of the full groundset.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. NOTE::
 
@@ -4569,7 +4570,7 @@ cdef class Matroid(SageObject):
           of each of these. If not specified, the element is assumed to be in
           the cospan of the full groundset.
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -4898,7 +4899,7 @@ cdef class Matroid(SageObject):
         parallel class (a closed set of rank 1, that is, each pair in it forms
         a circuit of length 2).
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -4934,7 +4935,7 @@ cdef class Matroid(SageObject):
         element from each series class (a coclosed set of rank 1, that is,
         each pair in it forms a cocircuit of length 2).
 
-        OUTPUT: a matroid
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -6556,6 +6557,71 @@ cdef class Matroid(SageObject):
             True
         """
         return self.ternary_matroid(randomized_tests=randomized_tests, verify=True) is not None
+
+    cpdef is_graphic(self):
+        r"""
+        Return if ``self`` is graphic.
+
+        A matroid is graphic if and only if it has no minor isomorphic to any
+        of the matroids `U_{2, 4}`, `F_7`, `F_7^*`, `M^*(K_5)`, and
+        `M^*(K_{3, 3})`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Wheel4()
+            sage: M.is_graphic()
+            True
+            sage: M = matroids.catalog.U24()
+            sage: M.is_graphic()
+            False
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 385.
+        """
+        from sage.matroids.database_matroids import (
+            U24,
+            Fano,
+            FanoDual,
+            K5dual,
+            K33dual
+        )
+        excluded_minors = [U24(), Fano(), FanoDual(), K5dual(), K33dual()]
+        for M in excluded_minors:
+            if self.has_minor(M):
+                return False
+        return True
+
+    cpdef is_regular(self):
+        r"""
+        Return if ``self`` is regular.
+
+        A regular matroid is one that can be represented by a totally
+        unimodular matrix, the latter being a matrix over `\mathbb{R}` for
+        which every square submatrix has determinant in `\{0, 1, -1\}`. A
+        matroid is regular if and only if it is representable over every field.
+        Alternatively, a matroid is regular if and only if it has no minor
+        isomorphic to `U_{2, 4}`, `F_7`, or `F_7^*`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Wheel4()
+            sage: M.is_regular()
+            True
+            sage: M = matroids.catalog.R9()
+            sage: M.is_regular()
+            False
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 373.
+        """
+        if not self.is_binary():  # equivalent to checking for a U24 minor
+            return False
+        from sage.matroids.database_matroids import Fano, FanoDual
+        if self.has_minor(Fano()) or self.has_minor(FanoDual()):
+            return False
+        return True
 
     # matroid k-closed
 
@@ -8226,6 +8292,15 @@ cdef class Matroid(SageObject):
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
 
+        For a matroid with loops, the broken circuit complex is not defined,
+        and the method yields an error::
+
+            sage: M = Matroid(flats={0: ['a'], 1: ['ab', 'ac'], 2: ['abc']})
+            sage: M.broken_circuit_complex()
+            Traceback (most recent call last):
+            ...
+            ValueError: broken circuit complex of matroid with loops is not defined
+
         TESTS::
 
             sage: for M in matroids.AllMatroids(5):  # optional - matroid_database
@@ -8239,6 +8314,10 @@ cdef class Matroid(SageObject):
         from sage.topology.simplicial_complex import SimplicialComplex
         cdef int r = self.rank()
         cdef list facets = []
+        if self.loops():
+            raise ValueError("broken circuit complex of matroid with loops is not defined")
+        if ordering is None:
+            ordering = sorted(self.groundset(), key=cmp_elements_key)
         for S in self.no_broken_circuits_sets_iterator(ordering):
             if len(S) == r:
                 facets.append(S)
@@ -8410,7 +8489,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``matroids`` - a matroid or a list of matroids
+        - ``matroids`` -- a matroid or a list of matroids
 
         OUTPUT: an instance of
         :class:`MatroidUnion <sage.matroids.union_matroid.MatroidUnion>`
@@ -8450,7 +8529,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``matroids`` - a matroid or list of matroids
+        - ``matroids`` -- a matroid or list of matroids
 
         OUTPUT: an instance of
         :class:`MatroidSum <sage.matroids.union_matroid.MatroidSum>`
@@ -8481,3 +8560,87 @@ cdef class Matroid(SageObject):
         # place this matroid at the beginning of the list
         matroids.insert(0, self)
         return union_matroid.MatroidSum(iter(matroids))
+
+    cpdef _relabel_map(self, mapping):
+        """
+        Return a dictionary from the groundset to the relabeled groundset
+        and check that the mapping defined by ``mapping`` is valid.
+
+        INPUT:
+
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`; if ``mapping[e]`` is not defined then the identity map
+          is assumed
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Vamos([1, 2, 3, 4, 5, 6, 7, 8])
+            sage: M._relabel_map({1: 'a', 8: 'h', 9: 'i'})
+            {1: 'a', 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 'h'}
+            sage: M._relabel_map({1: 2})
+            Traceback (most recent call last):
+            ...
+            ValueError: given map doesn't relabel the groundset properly
+        """
+        E = set()
+        d = {}
+        for x in self.groundset():
+            try:
+                E.add(mapping[x])
+                d[x] = mapping[x]
+            except LookupError:
+                E.add(x)
+                d[x] = x
+        if len(E) != len(self.groundset()):
+            raise ValueError("given map doesn't relabel the groundset properly")
+        return d
+
+    def relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element `e` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
+
+        OUTPUT: matroid
+
+        EXAMPLES::
+
+            sage: from sage.matroids.rank_matroid import RankMatroid
+            sage: N = matroids.catalog.Sp8pp()
+            sage: M = RankMatroid(groundset=N.groundset(), rank_function=N.rank)
+            sage: sorted(M.groundset())
+            [1, 2, 3, 4, 5, 6, 7, 8]
+            sage: N = M.relabel({8: 0})
+            sage: sorted(N.groundset())
+            [0, 1, 2, 3, 4, 5, 6, 7]
+            sage: M.is_isomorphic(N)
+            True
+
+        TESTS::
+
+            sage: from sage.matroids.rank_matroid import RankMatroid
+            sage: N = matroids.catalog.Sp8pp()
+            sage: M = RankMatroid(groundset=N.groundset(), rank_function=N.rank)
+            sage: f = {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h'}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        from sage.matroids.rank_matroid import RankMatroid
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset()]
+
+        def f_relabel(X):
+            d_inv = {d[x]: x for x in self.groundset()}
+            X_inv = [d_inv[x] for x in X]
+            return self.rank(X_inv)
+
+        M = RankMatroid(groundset=E, rank_function=f_relabel)
+        return M

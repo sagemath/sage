@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 Quiver
@@ -545,7 +544,7 @@ class ClusterQuiver(SageObject):
           highlighted.
         - ``save_pos`` -- (default: ``False``) if ``True``, the positions
           of the vertices are saved.
-        - ``greens`` -- (default: []) if set to a list, will display the green
+        - ``greens`` -- (default: ``[]``) if set to a list, will display the green
           vertices as green
 
         EXAMPLES::
@@ -663,12 +662,12 @@ class ClusterQuiver(SageObject):
 
         - ``fig_size`` -- (default: 1) factor by which the size of the plot
           is multiplied.
-        - ``circular`` -- (default: False) if True, the circular plot is
+        - ``circular`` -- (default: ``False``) if True, the circular plot is
           chosen, otherwise >>spring<< is used.
-        - ``directed`` -- (default: True) if True, the directed version is
+        - ``directed`` -- (default: ``True``) if True, the directed version is
           shown, otherwise the undirected.
         - ``mark`` -- (default: None) if set to i, the vertex i is highlighted.
-        - ``save_pos`` -- (default:False) if True, the positions of the
+        - ``save_pos`` -- (default: ``False``) if True, the positions of the
           vertices are saved.
         - ``greens`` -- (default:[]) if set to a list, will display the green
           vertices as green
@@ -714,7 +713,7 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``filename`` -- the filename the image is saved to.
-        - ``circular`` -- (default: False) if True, the circular plot is chosen, otherwise >>spring<< is used.
+        - ``circular`` -- (default: ``False``) if True, the circular plot is chosen, otherwise >>spring<< is used.
 
         EXAMPLES::
 
@@ -788,9 +787,8 @@ class ClusterQuiver(SageObject):
         string.append('1')
         string.append('//Matrix')
         string.append(str(m) + ' ' + str(m))
-        for i in range(m):
-            string.append(' '.join(str(M[i, j])
-                                   for j in range(m)))
+        string.extend(' '.join(str(M[i, j]) for j in range(m))
+                      for i in range(m))
         string.append('//Points')
 
         for i in range(m):
@@ -1121,7 +1119,7 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``certificate`` -- boolean (default: False) if True, the dictionary
+        - ``certificate`` -- boolean (default: ``False``) if True, the dictionary
           from ``self.vertices()`` to the vertices of the returned quiver
           is returned as well.
 
@@ -1340,7 +1338,7 @@ class ClusterQuiver(SageObject):
           a function which takes in the ClusterQuiver and returns a vertex or an iterator of vertices,
           or a string of the parameter wanting to be called on ClusterQuiver that will return a vertex or
           an iterator of vertices.
-        - ``inplace`` -- (default: True) if False, the result is returned, otherwise ``self`` is modified.
+        - ``inplace`` -- (default: ``True``) if False, the result is returned, otherwise ``self`` is modified.
 
         EXAMPLES::
 
@@ -1626,8 +1624,8 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``depth`` -- (default: infinity) integer, only quivers with distance at most depth from self are returned.
-        - ``show_depth`` -- (default: False) if True, the actual depth of the mutation is shown.
-        - ``return_paths`` -- (default: False) if True, a shortest path of mutation sequences from self to the given quiver is returned as well.
+        - ``show_depth`` -- (default: ``False``) if True, the actual depth of the mutation is shown.
+        - ``return_paths`` -- (default: ``False``) if True, a shortest path of mutation sequences from self to the given quiver is returned as well.
         - ``data_type`` -- (default: "quiver") can be one of the following::
 
             * "quiver"
@@ -1636,8 +1634,8 @@ class ClusterQuiver(SageObject):
             * "dig6"
             * "path"
 
-        - ``up_to_equivalence`` -- (default: True) if True, only one quiver for each graph-isomorphism class is recorded.
-        - ``sink_source`` -- (default: False) if True, only mutations at sinks and sources are applied.
+        - ``up_to_equivalence`` -- (default: ``True``) if True, only one quiver for each graph-isomorphism class is recorded.
+        - ``sink_source`` -- (default: ``False``) if True, only mutations at sinks and sources are applied.
 
         EXAMPLES::
 
@@ -1911,7 +1909,7 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``nr_of_checks`` -- (default: None) number of mutations applied. Standard is 500*(number of vertices of self).
-        - ``return_path`` -- (default: False) if True, in case of self not being mutation finite, a path from self to a quiver with an edge label (a,-b) and a*b > 4 is returned.
+        - ``return_path`` -- (default: ``False``) if True, in case of self not being mutation finite, a path from self to a quiver with an edge label (a,-b) and a*b > 4 is returned.
 
         ALGORITHM:
 
@@ -1987,7 +1985,7 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``relabelling`` -- Dictionary of labels to move around
-        - ``inplace`` -- (default:True) if True, will return a duplicate of the quiver
+        - ``inplace`` -- (default: ``True``) if True, will return a duplicate of the quiver
 
         EXAMPLES::
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 Cluster algebras
@@ -388,6 +387,7 @@ lazy_import('sage.geometry.fan', 'Fan')
 ##############################################################################
 # Elements of a cluster algebra
 ##############################################################################
+
 
 class ClusterAlgebraElement(ElementWrapper):
     """
@@ -1770,7 +1770,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.d_vector_to_g_vector((1,0,-1))
             (-1, 1, 2)
         """
-        dm = vector((x if x < 0 else 0 for x in d))
+        dm = vector(x if x < 0 else 0 for x in d)
         dp = vector(d) - dm
         return tuple(- dm - self.euler_matrix() * dp)
 

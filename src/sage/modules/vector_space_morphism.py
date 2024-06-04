@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Morphisms of vector spaces (linear transformations)
 
@@ -697,7 +696,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     from sage.categories.homset import Hom
     from sage.matrix.constructor import matrix
     from sage.modules.free_module import VectorSpace
-    from sage.modules.module import is_VectorSpace
+    from sage.modules.module import Module
     try:
         from sage.modules.vector_callable_symbolic_dense import (
             Vector_callable_symbolic_dense,
@@ -707,8 +706,6 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
 
     if side not in ['left', 'right']:
         raise ValueError("side must be 'left' or 'right', not {}".format(side))
-    if not (is_Matrix(arg0) or is_VectorSpace(arg0)):
-        raise TypeError('first argument must be a matrix or a vector space, not {}'.format(arg0))
     if is_Matrix(arg0):
         R = arg0.base_ring()
         if not R.is_field():
@@ -723,14 +720,15 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         arg2 = arg0
         arg0 = VectorSpace(R, arg2.nrows())
         arg1 = VectorSpace(R, arg2.ncols())
-    elif is_VectorSpace(arg0):
-        if not is_VectorSpace(arg1):
+    elif isinstance(arg0, Module) and arg0.base_ring().is_field():
+        if not (isinstance(arg1, Module) and arg1.base_ring().is_field()):
             msg = 'if first argument is a vector space, then second argument must be a vector space, not {0}'
             raise TypeError(msg.format(arg1))
         if arg0.base_ring() != arg1.base_ring():
             msg = 'vector spaces must have the same field of scalars, not {0} and {1}'
             raise TypeError(msg.format(arg0.base_ring(), arg1.base_ring()))
-
+    else:
+        raise TypeError('first argument must be a matrix or a vector space, not {}'.format(arg0))
     # Now arg0 = domain D, arg1 = codomain C, and
     #   both are vector spaces with common field of scalars
     #   use these to make a VectorSpaceHomSpace
@@ -785,9 +783,11 @@ def is_VectorSpaceMorphism(x) -> bool:
     r"""
     Returns ``True`` if ``x`` is a vector space morphism (a linear transformation).
 
+    This function is deprecated.
+
     INPUT:
 
-    ``x`` - anything
+    - ``x`` -- anything
 
     OUTPUT:
 
@@ -798,10 +798,18 @@ def is_VectorSpaceMorphism(x) -> bool:
 
         sage: V = QQ^2; f = V.hom([V.1,-2*V.0])
         sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism(f)
+        doctest:warning...
+        DeprecationWarning: is_VectorSpaceMorphism is deprecated;
+        use isinstance(..., VectorSpaceMorphism) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_VectorSpaceMorphism is deprecated; "
+                "use isinstance(..., VectorSpaceMorphism) or categories instead")
     return isinstance(x, VectorSpaceMorphism)
 
 
@@ -813,10 +821,10 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
 
         INPUT:
 
-        -  ``homspace`` - a homspace (of vector spaces) to serve
+        -  ``homspace`` -- a homspace (of vector spaces) to serve
            as a parent for the linear transformation and a home for
            the domain and codomain of the morphism
-        -  ``A`` - a matrix representing the linear transformation,
+        -  ``A`` -- a matrix representing the linear transformation,
            which will act on vectors placed to the left of the matrix
 
         EXAMPLES:
@@ -860,7 +868,7 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             sage: type(rho)
             <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
         """
-        if not vector_space_homspace.is_VectorSpaceHomspace(homspace):
+        if not isinstance(homspace, vector_space_homspace.VectorSpaceHomspace):
             raise TypeError('homspace must be a vector space hom space, not {}'.format(homspace))
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()

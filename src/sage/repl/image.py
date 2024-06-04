@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Sage Wrapper for Bitmap Images
 

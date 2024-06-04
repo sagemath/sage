@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Algebraic schemes
 
@@ -160,6 +159,9 @@ def is_AlgebraicScheme(x):
           x^2 + y^2
         sage: from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
         sage: is_AlgebraicScheme(V)
+        doctest:warning...
+        DeprecationWarning: The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
 
     Affine space is itself not an algebraic scheme, though the closed
@@ -191,6 +193,8 @@ def is_AlgebraicScheme(x):
         sage: is_AlgebraicScheme(S)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_AlgebraicScheme is deprecated; use 'isinstance(..., AlgebraicScheme)' instead.")
     return isinstance(x, AlgebraicScheme)
 
 
@@ -228,7 +232,7 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S.category()
             Category of schemes over Integer Ring
         """
-        if not ambient_space.is_AmbientSpace(A):
+        if not isinstance(A, ambient_space.AmbientSpace):
             raise TypeError("A (=%s) must be an ambient space")
         self.__A = A
         self.__divisor_group = {}
@@ -676,7 +680,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
-        if sage.schemes.affine.affine_space.is_AffineSpace(self.ambient_space()):
+        if isinstance(self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic):
             t = "affine"
         else:
             t = "projective"
@@ -710,7 +714,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             sage: U._repr_()
             'Quasi-projective subscheme X - Y of Projective Space of dimension 2 over Integer Ring, where X is defined by:\n  (no polynomials)\nand Y is defined by:\n  x - y'
         """
-        if sage.schemes.affine.affine_space.is_AffineSpace(self.ambient_space()):
+        if isinstance(self.ambient_space(), sage.schemes.affine.affine_space.AffineSpace_generic):
             t = "affine"
         else:
             t = "projective"
@@ -835,10 +839,10 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
         kwds:
 
-        - ``bound`` - integer (optional, default=0). The bound for the coordinates for
+        - ``bound`` -- integer (default: 0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``F`` - field (optional, default=base ring). The field to compute
+        - ``F`` -- field (default: base ring). The field to compute
           the rational points over.
 
 
@@ -895,9 +899,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     INPUT:
 
-    -  ``A`` - ambient space (e.g. affine or projective `n`-space)
+    -  ``A`` -- ambient space (e.g. affine or projective `n`-space)
 
-    -  ``polynomials`` - single polynomial, ideal or iterable of defining
+    -  ``polynomials`` -- single polynomial, ideal or iterable of defining
        polynomials; in any case polynomials must belong to the coordinate
        ring of the ambient space and define valid polynomial functions (e.g.
        they should be homogeneous in the case of a projective space)
@@ -1540,7 +1544,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         r"""
         Create the product of subschemes.
 
-        INPUT: ``right`` - a subscheme of similar type.
+        INPUT:
+
+        - ``right`` -- a subscheme of similar type
 
         OUTPUT: a subscheme of a the product of the ambient spaces.
 
@@ -1740,24 +1746,24 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         kwds:
 
-        - ``bound`` - integer (optional, default=0). The bound for the coordinates for
+        - ``bound`` -- integer (default: 0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``prec`` - integer (optional, default=53). The precision to use to
+        - ``prec`` -- integer (default: 53). The precision to use to
           compute the elements of bounded height for number fields.
 
-        - ``F`` - field (optional, default=base ring). The field to compute
+        - ``F`` -- field (default: base ring). The field to compute
           the rational points over.
 
-        - ``point_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``point_tolerance`` -- positive real number (default: 10^(-10)).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default=10^(-10)).
+        - ``zero_tolerance`` -- positive real number (default: 10^(-10)).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
         OUTPUT: list of points in subscheme or ambient space
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Repr formatting support
 """
@@ -64,7 +63,7 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
 
     OUTPUT:
 
-    -  ``str`` - a string
+    -  ``str`` -- a string
 
     EXAMPLES::
 

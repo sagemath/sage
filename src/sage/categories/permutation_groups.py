@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Permutation groups
 """
@@ -13,6 +12,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.category import Category
 from sage.categories.groups import Groups
 from sage.misc.lazy_import import LazyImport
+
 
 class PermutationGroups(Category):
     r"""

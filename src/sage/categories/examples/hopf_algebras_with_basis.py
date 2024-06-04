@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Examples of Hopf algebras with basis
@@ -15,6 +14,7 @@ from sage.sets.family import Family
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.tensor import tensor
+
 
 class MyGroupAlgebra(CombinatorialFreeModule):
     r"""

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 CW Complexes
 """
@@ -14,6 +13,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.sets_cat import Sets
+
 
 class CWComplexes(Category_singleton):
     r"""

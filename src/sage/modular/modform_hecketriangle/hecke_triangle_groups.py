@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.gap
 r"""
 Hecke triangle groups
@@ -79,7 +78,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         INPUT:
 
-        - ``n``   - ``infinity`` or an integer greater or equal to ``3``.
+        - ``n`` -- ``infinity`` or an integer greater or equal to ``3``.
 
         OUTPUT:
 

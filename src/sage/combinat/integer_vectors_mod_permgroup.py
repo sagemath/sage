@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Integer vectors modulo the action of a permutation group
@@ -68,11 +67,11 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
 
     INPUT:
 
-    - ``G`` - a permutation group
-    - ``sum`` - (default: None) - a nonnegative integer
-    - ``max_part`` - (default: None) - a nonnegative integer setting the
+    - ``G`` -- a permutation group
+    - ``sum`` -- (default: None) - a nonnegative integer
+    - ``max_part`` -- (default: None) - a nonnegative integer setting the
       maximum value for every element
-    - ``sgs`` - (default: None) - a strong generating system of the
+    - ``sgs`` -- (default: None) - a strong generating system of the
       group `G`. If you do not provide it, it will be calculated at the
       creation of the parent
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -106,7 +105,6 @@ cdef class ntl_mat_ZZ():
                 for j from 0 <= j < ncols:
                     tmp = ntl_ZZ(v[i*ncols+j])
                     mat_ZZ_setitem(&self.x, i, j, &tmp.x)
-
 
     def __reduce__(self):
         """
@@ -497,7 +495,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -567,7 +565,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -637,7 +635,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -707,7 +705,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -777,7 +775,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -847,7 +845,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -917,7 +915,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -987,7 +985,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1057,7 +1055,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1127,7 +1125,7 @@ cdef class ntl_mat_ZZ():
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1211,7 +1209,7 @@ cdef class ntl_mat_ZZ():
            b        -- parameter b as described above (default: 4)
            return_U -- return U as described above
            verbose  -- if True NTL will produce some verbatim messages on
-                       what's going on internally (default: False)
+                       what's going on internally (default: ``False``)
 
         OUTPUT:
             (rank,det2,[U]) where rank,det2, and U are as described
@@ -1299,7 +1297,7 @@ cdef class ntl_mat_ZZ():
            delta    -- as described above (0.5 <= delta < 1.0) (default: 0.75)
            return_U -- return U as described above
            verbose  -- if True NTL will produce some verbatim messages on
-                       what's going on internally (default: False)
+                       what's going on internally (default: ``False``)
 
         OUTPUT:
             (rank,[U]) where rank and U are as described above and U

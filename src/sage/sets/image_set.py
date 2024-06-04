@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Image Sets
 """
@@ -8,7 +7,7 @@ Image Sets
 #                     2012      Christian Stump
 #                     2020-2021 Frédéric Chapoton
 #                     2021      Travis Scrimshaw
-#                     2021      Matthias Koeppe
+#                     2021-2024 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +27,7 @@ from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.modules.free_module import FreeModule
 from sage.structure.element import Expression
-from sage.structure.parent import Parent, is_Parent
+from sage.structure.parent import Parent
 
 from .set import Set_base, Set_add_sub_operators, Set_boolean_operators
 
@@ -83,7 +82,7 @@ class ImageSubobject(Parent):
             sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
             ....:                         '_test_some_elements', '_test_elements'])
         """
-        if not is_Parent(domain_subset):
+        if not isinstance(domain_subset, Parent):
             from sage.sets.set import Set
             domain_subset = Set(domain_subset)
 
@@ -131,6 +130,64 @@ class ImageSubobject(Parent):
         self._inverse = inverse
         self._domain_subset = domain_subset
         self._is_injective = is_injective
+
+    def __eq__(self, other):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.sets.image_set import ImageSubobject
+            sage: D = ZZ
+            sage: def f(x):
+            ....:     return 2 * x
+            sage: I = ImageSubobject(f, ZZ)
+            sage: I == ImageSubobject(f, ZZ)
+            True
+
+        This method does not take into account whether an inverse is provided,
+        injectivity is declared, or the category::
+
+            sage: def f_inv(y):
+            ....:     return y // 2
+            sage: I == ImageSubobject(f, ZZ, inverse=f_inv)
+            True
+            sage: I == ImageSubobject(f, ZZ, is_injective=True)
+            True
+            sage: I.category()
+            Category of enumerated subobjects of sets
+            sage: I == ImageSubobject(f, ZZ, category=EnumeratedSets().Infinite())
+            True
+        """
+        if not isinstance(other, ImageSubobject):
+            return False
+        return (self._map == other._map
+                and self._domain_subset == other._domain_subset)
+
+    def __ne__(self, other):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.sets.image_set import ImageSubobject
+            sage: D = ZZ
+            sage: def f(x):
+            ....:     return 2 * x
+            sage: I = ImageSubobject(f, ZZ)
+            sage: I != ImageSubobject(f, QQ)
+            True
+        """
+        return not (self == other)
+
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.sets.image_set import ImageSubobject
+            sage: def f(x):
+            ....:     return 2 * x
+            sage: I = ImageSubobject(f, ZZ)
+            sage: hash(I) == hash(ImageSubobject(f, ZZ))
+            True
+        """
+        return hash((self._map, self._domain_subset))
 
     def _element_constructor_(self, x):
         """

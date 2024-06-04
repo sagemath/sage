@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Interface to GAP3
 
@@ -53,7 +52,7 @@ Functionality and Examples
 
 The interface to GAP3 offers the following functionality.
 
-#.  ``gap3(expr)`` - Evaluation of arbitrary GAP3 expressions, with the
+#.  ``gap3(expr)`` -- Evaluation of arbitrary GAP3 expressions, with the
     result returned as a Sage object wrapping the corresponding GAP3 element::
 
         sage: # optional - gap3
@@ -297,7 +296,7 @@ class Gap3(Gap_generic):
 
         INPUT:
 
-        -  command - string (default "gap3"); points to the gap3
+        -  command -- string (default "gap3"); points to the gap3
            executable on your system; by default, it is assumed the
            executable is in your path.
 
@@ -659,7 +658,7 @@ class GAP3Element(GapElement_generic):
 
     - ``value`` -- the GAP3 command as a string
 
-    - ``is_name`` -- bool (default: False); if True, then ``value`` is
+    - ``is_name`` -- bool (default: ``False``); if True, then ``value`` is
       the variable name for the object
 
     - ``name`` -- str (default: ``None``); the variable name to use for the
@@ -791,7 +790,7 @@ class GAP3Record(GAP3Element):
 
         OUTPUT:
 
-        - list of strings - the field records
+        - list of strings -- the field records
 
         EXAMPLES::
 
@@ -816,7 +815,7 @@ class GAP3Record(GAP3Element):
 
         OUTPUT:
 
-        - list of strings - operations of the record
+        - list of strings -- operations of the record
 
         EXAMPLES::
 

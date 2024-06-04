@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Pexpect Interface to Giac
 
@@ -1152,11 +1151,11 @@ class GiacElement(ExpectElement):
         INPUT:
 
 
-        -  ``var`` - variable
+        -  ``var`` -- variable
 
-        -  ``min`` - default: None
+        -  ``min`` -- default: None
 
-        -  ``max`` - default: None
+        -  ``max`` -- default: None
 
 
         This returns the definite integral if xmin is not None, otherwise
@@ -1191,11 +1190,11 @@ class GiacElement(ExpectElement):
 
         INPUT:
 
-        -  ``var`` - variable
+        -  ``var`` -- variable
 
-        -  ``min`` - default: None
+        -  ``min`` -- default: None
 
-        -  ``max`` - default: None
+        -  ``max`` -- default: None
 
         This returns the definite integral if xmin is not None, otherwise
         an indefinite integral.
