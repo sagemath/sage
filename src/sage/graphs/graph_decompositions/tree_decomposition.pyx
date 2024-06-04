@@ -105,7 +105,6 @@ Methods
 
 from sage.sets.set import Set
 from sage.misc.cachefunc import cached_function
-from sage.features import PythonModule
 from sage.sets.disjoint_set import DisjointSet
 from sage.rings.infinity import Infinity
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
