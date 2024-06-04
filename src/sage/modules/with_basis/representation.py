@@ -687,7 +687,7 @@ class Representation_abstract:
             gens = [self.from_vector(v) for v in SM.rows()]
             # it might not be echelonized w.r.t. the module's basis ordering
             already_echelonized = False
-        return self.submodule(gens, *args, parent_class=Subrepresentation, check=check,
+        return self.submodule(gens, *args, submodule_class=Subrepresentation, check=check,
                               already_echelonized=already_echelonized, **opts)
 
     def quotient_representation(self, subrepr, already_echelonized=False, **kwds):
