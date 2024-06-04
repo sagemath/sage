@@ -551,7 +551,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         cdef Py_ssize_t i
 
         # Note: due to the way M4ri represents values, extracting rows
-        #       if fast, but columns are slow. Therefore we transpose
+        #       is fast, but columns are slow. Therefore we transpose
         #       then take rows. For more information, see the issue
         #       https://github.com/sagemath/sage/issues/38150
         C = self.transpose().rows()
