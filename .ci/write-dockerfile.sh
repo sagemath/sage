@@ -339,7 +339,6 @@ ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
-ADD .ci /.ci
 RUN cd /new && rm -rf .git && \
     if /.ci/retrofit-worktree.sh worktree-pre /sage; then \
         cd /sage && touch configure build/make/Makefile; \
