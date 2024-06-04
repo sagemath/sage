@@ -1364,16 +1364,18 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: L = KnotInfo.L2a1_1
+            sage: K = KnotInfo.K4_1
+
+            sage: # needs sage.modules
             sage: L.kauffman_polynomial()
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
-            sage: K = KnotInfo.K4_1
             sage: K.kauffman_polynomial()
             a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
 
         Comparison with Jones polynomial::
 
+            sage: # needs sage.symbolic
             sage: k    = _
             sage: a, z = k.variables()
             sage: j    = K.jones_polynomial(skein_normalization=True)
@@ -1383,6 +1385,7 @@ class KnotInfoBase(Enum):
 
         Check the skein relation::
 
+            sage: # needs sage.modules
             sage: K3_1    = KnotInfo.K3_1
             sage: FK3_1   = K3_1.kauffman_polynomial()
             sage: FL2a1_1 = L.kauffman_polynomial()
@@ -1521,16 +1524,15 @@ class KnotInfoBase(Enum):
         Check the skein-relation from the KnotInfo description page (applied to one
         of the positive crossings of the right-handed trefoil)::
 
-            sage: # needs sage.symbolic
             sage: K3_1  = KnotInfo.K3_1
-            sage: K3_1j = K3_1.jones_polynomial()
+            sage: K3_1j = K3_1.jones_polynomial()                                       # needs sage.symbolic
             sage: L2a1_1j = Ljt     # see note above
             sage: R = L2a1_1j.parent()
             sage: Oj = R(1)
             sage: t = R('t')
-            sage: lhs = expand(~t*K3_1j - t*Oj)
+            sage: lhs = expand(~t*K3_1j - t*Oj)                                         # needs sage.symbolic
             sage: rhs = expand((sqrt(t) - ~sqrt(t))*L2a1_1j)
-            sage: bool(lhs == rhs)
+            sage: bool(lhs == rhs)                                                      # needs sage.symbolic
             True
 
         The same with the Puiseux series version::
