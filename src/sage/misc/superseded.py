@@ -97,6 +97,7 @@ def deprecation(issue_number, message, stacklevel=4):
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
 
+
 def deprecation_cython(issue_number, message, stacklevel=3):
     r"""
     Issue a deprecation warning -- for use in cython functions
@@ -134,6 +135,7 @@ def deprecation_cython(issue_number, message, stacklevel=3):
         False
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
+
 
 def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     r"""
