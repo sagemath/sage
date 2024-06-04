@@ -3065,9 +3065,10 @@ class Link(SageObject):
 
         Comparison with KnotInfo::
 
+            sage: # needs sage.groups sage.libs.homfly
             sage: KI, m = K.get_knotinfo(); KI, m
              (<KnotInfo.K5_1: '5_1'>, <SymmetryMutant.itself: 's'>)
-            sage: K.homfly_polynomial(normalization='vz') == KI.homfly_polynomial()     # needs sage.libs.homfly
+            sage: K.homfly_polynomial(normalization='vz') == KI.homfly_polynomial()
             True
 
         The knot `9_6`::
@@ -3628,14 +3629,15 @@ class Link(SageObject):
 
         Check that :issue:`20315` is fixed::
 
+            sage: # needs sage.plot
             sage: L = Link([[2,1,4,5], [5,6,7,3], [6,4,1,9], [9,2,3,7]])
-            sage: L.plot(solver='GLPK')                                                 # needs sage.plot
+            sage: L.plot(solver='GLPK')
             Graphics object consisting of ... graphics primitives
-            sage: L.plot(solver='Coin')         # optional - sage_numerical_backends_coin, needs sage.plot
+            sage: L.plot(solver='Coin')    # optional - sage_numerical_backends_coin
             Graphics object consisting of ... graphics primitives
-            sage: L.plot(solver='CPLEX')        # optional - cplex                      # needs sage.plot
+            sage: L.plot(solver='CPLEX')   # optional - CPLEX
             Graphics object consisting of ... graphics primitives
-            sage: L.plot(solver='Gurobi')       # optional - gurobi                     # needs sage.plot
+            sage: L.plot(solver='Gurobi')  # optional - Gurobi
             Graphics object consisting of ... graphics primitives
         """
         pd_code = self.pd_code()
@@ -4035,7 +4037,7 @@ class Link(SageObject):
             Defining L5a1_0
             sage: ML = L5a1_0.link()._knotinfo_matching_list(); ML                      # needs sage.libs.homfly
             ([<KnotInfo.L5a1_0: 'L5a1{0}'>, <KnotInfo.L5a1_1: 'L5a1{1}'>], True)
-            sage: ML == Link(L5a1_0.braid())._knotinfo_matching_list()
+            sage: ML == Link(L5a1_0.braid())._knotinfo_matching_list()                  # needs sage.libs.homfly
             True
 
         Care is needed for links having non irreducible HOMFLY-PT polynomials::
