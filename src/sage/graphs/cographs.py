@@ -62,8 +62,6 @@ class CoTree:
         self.info = None
         self.parent = None
 
-    __repr__ = __str__
-
     def __str__(self):
         r"""
         Return a string representation of ``self``.
@@ -89,6 +87,8 @@ class CoTree:
             s += f' {child}'
         s += last
         return s
+
+    __repr__ = __str__
 
     def add_child(self, node):
         r"""
