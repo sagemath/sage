@@ -20,7 +20,7 @@ other classes implementing solvers.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import matrix
 from sage.numerical.backends.generic_sdp_backend cimport GenericSDPBackend
 
 cdef class MatrixSDPBackend(GenericSDPBackend):
@@ -125,7 +125,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         i = 0
         for row in self.coeffs_matrix:
             if self.matrices_dim.get(i) is not None:
-                row.append( Matrix.zero(self.matrices_dim[i], self.matrices_dim[i]) )
+                row.append( matrix.zero(self.matrices_dim[i], self.matrices_dim[i]) )
             else:
                 row.append(0)
             i+=1
@@ -279,10 +279,10 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             'fun'
         """
         coefficients = list(coefficients)
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
         for t in coefficients:
             m = t[1]
-            if not is_Matrix(m):
+            if not isinstance(m, Matrix):
                 raise ValueError("The coefficients must be matrices")
             if not m.is_square():
                 raise ValueError("The matrix has to be a square")
@@ -313,7 +313,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             ([], [])
         """
         for i in range(number):
-            self.add_linear_constraint(zip(range(self.ncols()+1),[Matrix.zero(1,1) for i in range(self.ncols()+1)]),
+            self.add_linear_constraint(zip(range(self.ncols()+1),[matrix.zero(1,1) for i in range(self.ncols()+1)]),
                                        name=None if names is None else names[i])
 
 
@@ -431,7 +431,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         indices = []
         matrices = []
         for index,m in self.coeffs_matrix[i]:
-            if m != Matrix.zero(self.matrices_dim[i],self.matrices_dim[i]):
+            if m != matrix.zero(self.matrices_dim[i],self.matrices_dim[i]):
                 indices.append(index)
                 matrices.append(m)
         return (indices, matrices)

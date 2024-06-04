@@ -128,7 +128,7 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.coerce cimport coercion_model
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 import sage.interfaces.abc
@@ -1246,10 +1246,10 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                     raise TypeError("%s does not act on %s" % (self,
                                                                left.parent()))
                 return left(tuple(sigma_x))
-            elif is_Matrix(left):
+            elif isinstance(left, Matrix):
                 return left.with_permuted_columns(~self)
         else:
-            if is_Matrix(x):
+            if isinstance(x, Matrix):
                 return x.with_permuted_rows(self)
 
 
