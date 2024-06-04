@@ -79,7 +79,6 @@ from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport rich_to_bool_sgn
 
-
 RealNumber_classes = ()
 
 def _register_real_number_class(cls):
@@ -2088,6 +2087,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             ...
             ValueError: cannot take even root of negative number
         """
+        from sage.rings.integer_ring import ZZ
         # TODO -- this could be quicker, by using GMP directly.
         cdef integer.Integer num
         cdef integer.Integer den
@@ -3196,6 +3196,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (-1/2).log(3)                                                         # needs sage.symbolic
             (I*pi + log(1/2))/log(3)
         """
+        from sage.rings.integer_ring import ZZ
         cdef int self_sgn
         if self.denom().is_one():
             return ZZ(self.numer()).log(m, prec)

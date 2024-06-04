@@ -26,7 +26,6 @@ import weakref
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.arith.power cimport generic_power
 from sage.sets.pythonclass cimport Set_PythonType
-from sage.misc.constant_function import ConstantFunction
 from sage.structure.element cimport parent
 from cpython.object cimport PyObject_RichCompare
 
@@ -120,6 +119,8 @@ cdef class Map(Element):
               From: Univariate Polynomial Ring in x over Rational Field
               To:   Symmetric group of order 6! as a permutation group
         """
+        from sage.misc.constant_function import ConstantFunction
+
         if codomain is not None:
             if isinstance(parent, type):
                 parent = Set_PythonType(parent)
@@ -304,6 +305,8 @@ cdef class Map(Element):
             sage: phi
             Defunct map
         """
+        from sage.misc.constant_function import ConstantFunction
+
         if not isinstance(self.domain, ConstantFunction):
             return
         self.domain = weakref.ref(self.domain())
@@ -380,6 +383,8 @@ cdef class Map(Element):
             ...
             ValueError: This map is in an invalid state, the domain has been garbage collected
         """
+        from sage.misc.constant_function import ConstantFunction
+
         if isinstance(self.domain, ConstantFunction):
             return
         D = self.domain()
@@ -418,6 +423,8 @@ cdef class Map(Element):
             sage: f._repr_type_str
             'bla'
         """
+        from sage.misc.constant_function import ConstantFunction
+
         # todo: the following can break during unpickling of complex
         # objects with circular references! In that case, _slots might
         # contain incomplete objects.
@@ -584,6 +591,8 @@ cdef class Map(Element):
             sage: phi
             Defunct map
         """
+        from sage.misc.constant_function import ConstantFunction
+
         D = self.domain()
         if D is None:
             return "Defunct map"

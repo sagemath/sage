@@ -14,7 +14,6 @@ Set of all objects of a given Python class
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool
-from sage.categories.sets_cat import Sets
 
 
 cdef dict _type_set_cache = {}
@@ -83,6 +82,8 @@ cdef class Set_PythonType_class(Set_generic):
             sage: Set_PythonType(float).category()
             Category of sets
         """
+        from sage.categories.sets_cat import Sets
+
         if not isinstance(typ, type):
             raise TypeError(f"must be initialized with a class, not {typ!r}")
         super().__init__(category=Sets())
