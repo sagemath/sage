@@ -8440,10 +8440,10 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
               To:   Finite Field in z2 of size 3^2
               Defn: 1 |--> 1
 
-        ::
+        Fixes issue 38012 by not forcing univariate polynomial to be univariate::
 
             sage: R.<z> = PolynomialRing(QQ)
-            sage: f = DynamicalSystem_affine(z^2+z+1).homogenize(1)
+            sage: f = DynamicalSystem_affine(z^2 + z + 1).homogenize(1)
             sage: f.normal_form()
             Dynamical System of Projective Space of dimension 1 over Rational Field
              Defn: Defined on coordinates by sending (x0 : x1) to
