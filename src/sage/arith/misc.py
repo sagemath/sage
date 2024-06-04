@@ -4275,7 +4275,6 @@ def jacobi_symbol(a, b):
     where `(a|p_j)` are Legendre Symbols.
 
 
-
     INPUT:
 
     -  ``a`` -- an integer

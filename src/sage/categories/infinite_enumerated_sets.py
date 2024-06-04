@@ -4,7 +4,6 @@ Infinite Enumerated Sets
 AUTHORS:
 
  - Florent Hivert (2009-11): initial revision.
-
 """
 # ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>

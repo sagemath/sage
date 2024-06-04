@@ -39,7 +39,6 @@ Kronecker delta function::
     sage: m, n = var('m,n')                                                             # needs sage.symbolic
     sage: kronecker_delta(m, n)                                                         # needs sage.symbolic
     kronecker_delta(m, n)
-
 """
 
 ##############################################################################

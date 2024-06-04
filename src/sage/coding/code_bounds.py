@@ -518,7 +518,6 @@ def hamming_upper_bound(n,q,d):
          M \leq \frac{q^n}{V(n,e)},
 
 
-
     where `M` is the maximum number of codewords and `V(n,e)` is
     equal to the contents of a ball of radius `e`. This bound is useful
     for small values of `d`. Codes for which equality holds are called

@@ -28,7 +28,6 @@ AUTHOR:
 * optimized partition stack class
 * NICE-based partition refinement algorithm
 * canonical generation function
-
 """
 
 #*****************************************************************************

@@ -165,7 +165,6 @@ REFERENCES:
   16-43.
 - [4] :wikipedia:`Regular_tiling`
 - [5] :wikipedia:`Dyck_word`
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Arnaud bergeron <abergeron@gmail.coms>,

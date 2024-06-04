@@ -1054,8 +1054,6 @@ def get_orbits(list gens, int n):
     return list(orbit_dict.itervalues())
 
 
-
-
 # Canonical augmentation
 from cpython.ref cimport *
 
@@ -1384,7 +1382,6 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         return out_list
     else:
         return number
-
 
 
 # Dense graphs: adding vertices

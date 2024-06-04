@@ -113,7 +113,6 @@ TESTS::
 
     We also do not support coercion from a subalgebra, or between free
     algebras with different term orderings, yet.
-
 """
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.singular.function import lib, singular_function

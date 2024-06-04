@@ -24,7 +24,6 @@ AUTHORS:
 - David Joyner (2005-12-17): added examples
 
 - Robert Bradshaw (2007-06-25): Pyrexification
-
 """
 
 # ****************************************************************************

@@ -15,7 +15,6 @@ AUTHORS:
     Number Fields
 
 REFERENCES: [FH2015]_, [CS1996]_, [Weh1998]_, [Hutz2007]
-
 """
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify

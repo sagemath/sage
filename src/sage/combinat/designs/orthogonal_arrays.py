@@ -44,14 +44,12 @@ This module defines the following functions:
     :meth:`QDM_from_Vmt` | Return a QDM a `V(m,t)`
 
 
-
 REFERENCES:
 
 -- [CD1996]_
 
 Functions
 ---------
-
 """
 
 from sage.categories.sets_cat import EmptySetError

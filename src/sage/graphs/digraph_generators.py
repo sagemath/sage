@@ -51,7 +51,6 @@ AUTHORS:
 
 Functions and methods
 ---------------------
-
 """
 # ****************************************************************************
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
@@ -108,7 +107,6 @@ class DiGraphGenerators:
                     - RandomTournament
                     - TransitiveTournament
                     - tournaments_nauty
-
 
 
     ORDERLY GENERATION: digraphs(vertices, property=lambda x: True,

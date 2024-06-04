@@ -29,7 +29,6 @@ AUTHORS:
 - David Joyner (2008-09) fix for bug in BCHCode reported by F. Voloch
 
 - David Joyner (2008-10) small docstring changes to WalshCode and walsh_matrix
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 David Joyner <wdjoyner@gmail.com>
