@@ -625,10 +625,10 @@ class OrthogonalBasis(_CellularBasis):
         tres, ct = self._res(t, i)
         sres, cs = self._res(t, i+1)
 
-        if ct[0] == cs[0] and ct[2] == cs[2]: # same column
+        if ct[0] == cs[0] and ct[2] == cs[2]:  # same column
             return self.element_class(self, {(la, v, t): -R.one()})
 
-        if ct[0] == cs[0] and ct[1] == cs[1]: # same row
+        if ct[0] == cs[0] and ct[1] == cs[1]:  # same row
             return self.element_class(self, {(la, v, t): self._q})
 
         # result is standard
