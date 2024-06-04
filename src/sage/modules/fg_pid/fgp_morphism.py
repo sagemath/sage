@@ -20,7 +20,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # *************************************************************************
 
-from sage.categories.morphism import Morphism, is_Morphism
+from sage.categories.morphism import Morphism
 from .fgp_module import DEBUG
 from sage.structure.richcmp import richcmp, op_NE
 from sage.misc.cachefunc import cached_method
