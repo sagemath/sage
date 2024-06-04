@@ -805,17 +805,18 @@ class FaithfulRepresentationPBWPosChar(CombinatorialFreeModule, Representation_a
     We implement the algorithm given in [deG2000] Section 6.6. Let `L`
     be a finite dimensional Lie algebra over a ring of characteristic `p`
     with basis `(b_1, \ldots, b_n)`. We compute (monic) `p`-polynomials
-    `f_i` such that `A = \mathrm{ad}(b_i)` solves `f_i(A) = 0` by using
-    minimal polynomial of `A`. The `(f_1, \ldots, f_n)` is a Gröbner basis
-    for an ideal `I` of the universal enveloping algebra `U(L)` such that
-    the quotient `U(L) / I` is a faithful representation of `L`.
+    `f_i` such that `A = \mathrm{ad}(b_i)` (the adjoint action of `b_i`)
+    solves `f_i(A) = 0` by using minimal polynomial of `A`. The
+    `(f_1, \ldots, f_n)` is a Gröbner basis for an ideal `I` of the
+    universal enveloping algebra `U(L)` such that the quotient `U(L) / I`
+    is a faithful representation of `L`.
 
     EXAMPLES::
 
         sage: sl2 = LieAlgebra(GF(3), cartan_type=['A',1])
         sage: F = sl2.faithful_representation()
         sage: F
-        Faithful representation with p-multiplicies (1, 3, 1) of Lie algebra
+        Faithful representation with p-multiplicities (1, 3, 1) of Lie algebra
          of ['A', 1] in the Chevalley basis
         sage: F.dimension()
         243
@@ -878,10 +879,10 @@ class FaithfulRepresentationPBWPosChar(CombinatorialFreeModule, Representation_a
 
             sage: sl3 = LieAlgebra(GF(3), cartan_type=['A',2])
             sage: sl3.faithful_representation()
-            Faithful representation with p-multiplicies (1, 1, 1, 3, 3, 1, 1, 1)
+            Faithful representation with p-multiplicities (1, 1, 1, 3, 3, 1, 1, 1)
              of Lie algebra of ['A', 2] in the Chevalley basis
         """
-        return "Faithful representation with p-multiplicies {} of {}".format(self.p_exponents(), self._lie_algebra)
+        return "Faithful representation with p-multiplicities {} of {}".format(self.p_exponents(), self._lie_algebra)
 
     def _latex_(self):
         r"""
