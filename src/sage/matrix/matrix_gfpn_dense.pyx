@@ -1807,7 +1807,9 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         self.cache('in_echelon_form',True)
         return self._cache['pivots']
 
+
 from sage.misc.superseded import deprecation_cython as deprecation
+
 
 def mtx_unpickle(f, int nr, int nc, data, bint m):
     r"""
