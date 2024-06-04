@@ -476,11 +476,12 @@ cdef class CircuitsMatroid(Matroid):
 
     cpdef SetSystem independent_sets(self, long k=-1):
         r"""
-        Return the size-`k` independent sets of the matroid.
+        Return the independent sets of the matroid.
 
         INPUT:
 
-        - ``k`` -- integer
+        - ``k`` -- integer (optional); if specified, return the size-`k`
+          independent sets of the matroid
 
         OUTPUT: :class:`SetSystem`
 
