@@ -231,7 +231,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
       complexity of some methods. More precisely:
 
       - When set to ``True``, the time complexity for initializing ``g`` is in
-        `O(m + n\log{m})` and deciding if ``g`` has edge `(u, v)` can be done in
+        `O(m + m\log{m})` and deciding if ``g`` has edge `(u, v)` can be done in
         time `O(\log{m})` using binary search.
 
       - When set to ``False``, the time complexity for initializing ``g`` is
