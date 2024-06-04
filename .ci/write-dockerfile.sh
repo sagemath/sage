@@ -264,6 +264,7 @@ cat <<EOF
 
 FROM with-system-packages as bootstrapped
 #:bootstrapping:
+RUN rm -rf /new
 $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 .gitignore /new/
 $ADD config/config.rpath /new/config/config.rpath
 $ADD src/doc/bootstrap /new/src/doc/bootstrap
@@ -347,7 +348,8 @@ RUN cd /new && rm -rf .git && \
         rm -rf /sage/src;                                    \
         mv src /sage/src;                                    \
         cd /sage && ./bootstrap && ./config.status;          \
-    fi
+    fi; \
+    cd /sage && rm -rf /new
 
 ARG TARGETS="build"
 $RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN $THEN_SAVE_STATUS
