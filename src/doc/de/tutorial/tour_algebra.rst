@@ -193,7 +193,6 @@ modelliert,
     m_2 x_2''+ k_2 (x_2-x_1) = 0,
 
 
-
 wobei :math:`m_{i}` die Masse des Objekts *i*, :math:`x_{i}` die
 Verschiebung des Gleichgewichts der Masse *i* und :math:`k_{i}` die
 Federkonstante der Feder *i* ist.

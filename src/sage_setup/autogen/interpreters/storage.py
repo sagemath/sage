@@ -8,7 +8,6 @@
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 """Implements different data storage types."""
 
 from __future__ import print_function, absolute_import

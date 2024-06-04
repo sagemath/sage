@@ -8,7 +8,6 @@
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 """Miscellaneous utility routines used for the interpreter generator."""
 
 from __future__ import print_function, absolute_import
