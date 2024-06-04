@@ -729,7 +729,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         def submodule(self, gens, check=True, already_echelonized=False,
                       unitriangular=False, support_order=None, category=None,
-                      *args, **opts):
+                      submodule_class=None, *args, **opts):
             r"""
             The submodule spanned by a finite set of elements.
 
@@ -746,6 +746,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``support_order`` -- (optional) either something that can
               be converted into a tuple or a key function
             - ``category`` -- (optional) the category of the submodule
+            - ``submodule_class`` -- (optional) the class of the submodule
+              to return
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
@@ -908,11 +910,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if not already_echelonized:
                 gens = self.echelon_form(gens, unitriangular, order=support_order)
 
-            from sage.modules.with_basis.subquotient import SubmoduleWithBasis
-            return SubmoduleWithBasis(gens, ambient=self,
-                                      support_order=support_order,
-                                      unitriangular=unitriangular,
-                                      category=category, *args, **opts)
+            if submodule_class is None:
+                from sage.modules.with_basis.subquotient import SubmoduleWithBasis as submodule_class
+            return submodule_class(gens, ambient=self,
+                                   support_order=support_order,
+                                   unitriangular=unitriangular,
+                                   category=category, *args, **opts)
 
         def quotient_module(self, submodule, check=True, already_echelonized=False, category=None):
             r"""
@@ -1077,7 +1080,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: GroupAlgebra(AbelianGroup(1), IntegerModRing(10)).is_finite()     # needs sage.groups sage.modules
                 False
             """
-            return (self.base_ring().is_finite() and self.group().is_finite())
+            return (self.base_ring().is_finite() and self.basis().keys().is_finite())
 
         def monomial(self, i):
             """
