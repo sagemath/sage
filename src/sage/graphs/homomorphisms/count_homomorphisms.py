@@ -103,7 +103,7 @@ class GraphHomomorphismCounter:
         """
         # Whether it's BFS or DFS, every node below join node(s) would be
         # computed already, so we can go bottom-up safely.
-        for node in reversed(self.dir_labelled_TD.vertices()):
+        for node in reversed(list(self.dir_labelled_TD.breadth_first_search(min(self.dir_labelled_TD)))):
             node_type = self.dir_labelled_TD.get_vertex(node)
 
             match node_type:
@@ -136,7 +136,7 @@ class GraphHomomorphismCounter:
         node_index, node_vertices = node
         node_vtx_tuple = tuple(node_vertices)
 
-        child_node_index, child_node_vtx = self.dir_labelled_TD.neighbors_out(node)[0]
+        child_node_index, child_node_vtx = next(self.dir_labelled_TD.neighbor_out_iterator(node))
         child_node_vtx_tuple = tuple(child_node_vtx)
 
         mappings_length = self.actual_target_size ** len(node_vtx_tuple)
@@ -195,7 +195,7 @@ class GraphHomomorphismCounter:
         node_index, node_vertices = node
         node_vtx_tuple = tuple(node_vertices)
 
-        child_node_index, child_node_vtx = self.dir_labelled_TD.neighbors_out(node)[0]
+        child_node_index, child_node_vtx = next(self.dir_labelled_TD.neighbor_out_iterator(node))
         child_node_vtx_tuple = tuple(child_node_vtx)
 
         target_graph_size = len(self.target_graph)
