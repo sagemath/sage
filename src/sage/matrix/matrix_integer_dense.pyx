@@ -3315,7 +3315,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         else:
             return R
 
-    def is_LLL_reduced(self, delta=None, eta=None):
+    def is_LLL_reduced(self, delta=None, eta=None, algorithm='fpLLL'):
         r"""
         Return ``True`` if this lattice is `(\delta, \eta)`-LLL reduced.
         See ``self.LLL`` for a definition of LLL reduction.
@@ -3324,7 +3324,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``delta`` -- (default: `0.99`) parameter `\delta` as described above
 
-        - ``eta`` -- (default: `0.501`) parameter `\eta` as described above
+        - ``eta`` -- (default: `0.501`) parameter `\eta` as described above¨
+
+        - ``algorithm`` -- either ``'fpLLL'`` (default) or ``'sage'``
 
         EXAMPLES::
 
@@ -3348,20 +3350,27 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if eta < 0.5:
             raise TypeError("eta must be >= 0.5")
 
-        # this is pretty slow
-        import sage.modules.misc
-        G, mu = sage.modules.misc.gram_schmidt(self.rows())
-        #For any $i>j$, we have $|mu_{i, j}| <= \eta$
-        for e in mu.list():
-            if e.abs() > eta:
-                return False
+        if algorithm == 'fpLLL':
+            from fpylll import LLL, IntegerMatrix
+            A = IntegerMatrix.from_matrix(self)
+            return LLL.is_reduced(A, delta=delta, eta=eta)
+        elif algorithm == 'sage':
+            # this is pretty slow
+            import sage.modules.misc
+            G, mu = sage.modules.misc.gram_schmidt(self.rows())
+            #For any $i>j$, we have $|mu_{i, j}| <= \eta$
+            for e in mu.list():
+                if e.abs() > eta:
+                    return False
 
-        #For any $i<d$, we have $\delta |b_i^*|^2 <= |b_{i+1}^* + mu_{i+1, i} b_i^* |^2$
-        norms = [G[i].norm()**2 for i in range(len(G))]
-        for i in range(1,self.nrows()):
-            if norms[i] < (delta - mu[i,i-1]**2) * norms[i-1]:
-                return False
-        return True
+            #For any $i<d$, we have $\delta |b_i^*|^2 <= |b_{i+1}^* + mu_{i+1, i} b_i^* |^2$
+            norms = [G[i].norm()**2 for i in range(len(G))]
+            for i in range(1,self.nrows()):
+                if norms[i] < (delta - mu[i,i-1]**2) * norms[i-1]:
+                    return False
+            return True
+        else:
+            raise ValueError("algorithm must be one of 'fpLLL' or 'sage'")
 
     def prod_of_row_sums(self, cols):
         """
