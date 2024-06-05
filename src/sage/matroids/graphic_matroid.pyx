@@ -87,7 +87,7 @@ AUTHORS:
 # ****************************************************************************
 
 from .matroid cimport Matroid
-from copy import copy, deepcopy
+from copy import copy
 from .utilities import newlabel, split_vertex, sanitize_contractions_deletions
 from itertools import combinations
 from sage.rings.integer import Integer

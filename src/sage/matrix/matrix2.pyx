@@ -82,7 +82,6 @@ from cysignals.signals cimport sig_check
 
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
-from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
 from sage.misc.lazy_string import lazy_string
 from sage.misc.randstate cimport current_randstate

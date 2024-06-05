@@ -61,7 +61,7 @@ from sage.libs.gmp.mpz cimport mpz_sgn, mpz_cmpabs_ui
 from sage.libs.mpfr cimport *
 from sage.libs.mpfi cimport *
 from sage.libs.flint.fmpz cimport *
-from sage.libs.mpfr cimport MPFR_RNDU, MPFR_RNDD
+from sage.libs.mpfr cimport MPFR_RNDU
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 from sage.structure.element cimport FieldElement
