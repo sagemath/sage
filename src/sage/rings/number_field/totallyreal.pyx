@@ -465,6 +465,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         return [[ZZ(s[0]), Px([QQ(x) for x in s[1].list()])]
                 for s in S]
 
+
 def weed_fields(S, Py_ssize_t lenS=0):
     r"""
     Function used internally by the :func:`~enumerate_totallyreal_fields_prim`

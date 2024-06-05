@@ -1388,9 +1388,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: example._is_complete()
             False
         """
-        results = []
-        for profile in self.utilities.values():
-            results.append(all(type(i) is not bool for i in profile))
+        results = (all(not isinstance(i, bool) for i in profile)
+                   for profile in self.utilities.values())
         return all(results)
 
     def obtain_nash(self, algorithm=False, maximization=True, solver=None):

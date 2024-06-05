@@ -343,7 +343,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         else:
             return self._zero
 
-
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
             *, unicode=False, shape=None, character_art=False,
             left_border=None, right_border=None,
@@ -1103,7 +1102,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             self.cache('rank', r)
             self.cache('pivots', tuple(self._pivots()))
 
-
         elif algorithm == 'pluq':
 
             self.check_mutability()
@@ -1339,7 +1337,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             True
         """
         mzd_col_swap(self._entries, col1, col2)
-
 
     def _magma_init_(self, magma):
         """
@@ -2072,7 +2069,6 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
     if gdImageSX(im) != c or gdImageSY(im) != r:
         raise TypeError("Pickled data dimension doesn't match.")
 
-
     for i from 0 <= i < r:
         for j from 0 <= j < c:
             mzd_write_bit(A._entries, i, j, 1-gdImageGetPixel(im, j, i))
@@ -2138,6 +2134,7 @@ def from_png(filename):
     gdImageDestroy(im)
     return A
 
+
 def to_png(Matrix_mod2_dense A, filename):
     """
     Saves the matrix ``A`` to filename as a 1-bit PNG image.
@@ -2181,6 +2178,7 @@ def to_png(Matrix_mod2_dense A, filename):
     gdImagePng(im, out)
     gdImageDestroy(im)
     fclose(out)
+
 
 def pluq(Matrix_mod2_dense A, algorithm="standard", int param=0):
     """
@@ -2237,13 +2235,14 @@ def pluq(Matrix_mod2_dense A, algorithm="standard", int param=0):
         _mzd_pluq_naive(B._entries, p, q)
         sig_off()
     else:
-        raise ValueError("Algorithm '%s' unknown."%algorithm)
+        raise ValueError("Algorithm '%s' unknown." % algorithm)
 
     P = [p.values[i] for i in range(A.nrows())]
     Q = [q.values[i] for i in range(A.ncols())]
     mzp_free(p)
     mzp_free(q)
-    return B,P,Q
+    return B, P, Q
+
 
 def ple(Matrix_mod2_dense A, algorithm="standard", int param=0):
     """

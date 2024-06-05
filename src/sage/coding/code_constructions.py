@@ -284,12 +284,11 @@ def permutation_action(g, v):
     else:
         V = v.parent()
     n = len(list(v))
-    gv = []
-    for i in range(n):
-        gv.append(v[g(i+1)-1])
+    gv = [v[g(i + 1) - 1] for i in range(n)]
     if v_type_list:
         return gv
     return V(gv)
+
 
 def walsh_matrix(m0):
     """

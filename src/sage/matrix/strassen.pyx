@@ -474,7 +474,8 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
 
 ################################
 # lots of room for optimization....
-# eventually, should I just pass these around rather than lists of ints for pivots?
+# eventually, should I just pass these around
+# rather than lists of ints for pivots?
 # would need new from_cols
 class int_range:
     r"""

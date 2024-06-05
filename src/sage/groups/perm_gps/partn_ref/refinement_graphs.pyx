@@ -506,6 +506,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     else:
         return tuple(return_tuple)
 
+
 cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     r"""
     Refine the input partition by checking degrees of vertices to the given
@@ -746,6 +747,7 @@ cdef inline int degree(PartitionStack *PS, CGraph G, int entry, int cell_index, 
                 break
     return num_arcs
 
+
 def all_labeled_graphs(n):
     """
     Return all labeled graphs on n vertices {0,1,...,n-1}.
@@ -948,6 +950,7 @@ def orbit_partition(gamma, list_perm=False):
                     i[j] = 0
         return l
 
+
 def coarsest_equitable_refinement(CGraph G, list partition, bint directed):
     """
     Return the coarsest equitable refinement of ``partition`` for ``G``.
@@ -1011,6 +1014,7 @@ def coarsest_equitable_refinement(CGraph G, list partition, bint directed):
     sig_free(alpha)
 
     return eq_part
+
 
 def get_orbits(list gens, int n):
     """

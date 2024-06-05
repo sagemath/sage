@@ -556,7 +556,6 @@ cdef class InteractiveLPBackend:
                                        constraint_types, variable_types,
                                        problem_type, ring, objective_constant_term=d)
 
-
     cpdef add_col(self, indices, coeffs):
         """
         Add a column.

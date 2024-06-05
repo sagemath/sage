@@ -55,7 +55,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
                       "refinement":1 }
         self.answer = {}
 
-
     cpdef int solve(self) except -1:
         """
         Solve the problem.
@@ -159,7 +158,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         elif self.answer['status'] == 'unknown':
             raise SDPSolverException("CVXOPT: Terminated early due to numerical difficulties or because the maximum number of iterations was reached.")
         return 0
-
 
     cpdef get_objective_value(self):
         """
@@ -356,7 +354,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         n = self.answer['ss'][i].size[0]
         assert(n == self.answer['ss'][i].size[1]) # must be square matrix
         return Matrix(n, n, list(self.answer['ss'][i]), sparse=sparse)
-
 
     cpdef solver_parameter(self, name, value=None):
         """

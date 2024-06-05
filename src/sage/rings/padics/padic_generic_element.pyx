@@ -4514,6 +4514,7 @@ def _compute_g(p, n, prec, terms):
         g[i+1] = -(g[i]/(v-v**2)).integral()
     return [x.truncate(terms) for x in g]
 
+
 cpdef dwork_mahler_coeffs(R, int bd=20):
     r"""
     Compute Dwork's formula for Mahler coefficients of `p`-adic Gamma.

@@ -738,6 +738,7 @@ def _find_val_aprec_test(R, L):
     """
     return find_val_aprec(R.prime_pow, L)
 
+
 cdef find_val_aprec(PowComputer_ext pp, L):
     r"""
     Given a list ``L``, finds the minimum valuation, minimum absolute
@@ -842,6 +843,7 @@ def _test_get_val_prec(R, a):
         (0, 4, 0)
     """
     return get_val_prec(R.prime_pow, a)
+
 
 cdef get_val_prec(PowComputer_ext pp, a):
     r"""

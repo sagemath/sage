@@ -251,7 +251,7 @@ from sage.geometry.cone import (_ambient_space_point,
                                 normalize_rays)
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import PointCollection
-from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
+from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
 lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
@@ -279,12 +279,19 @@ def is_Fan(x) -> bool:
 
         sage: from sage.geometry.fan import is_Fan
         sage: is_Fan(1)
+        doctest:warning...
+        DeprecationWarning: The function is_Fan is deprecated; use 'isinstance(..., RationalPolyhedralFan)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: fan = toric_varieties.P2().fan(); fan                                     # needs palp
         Rational polyhedral fan in 2-d lattice N
         sage: is_Fan(fan)                                                               # needs palp
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_Fan is deprecated; "
+                "use 'isinstance(..., RationalPolyhedralFan)' instead.")
     return isinstance(x, RationalPolyhedralFan)
 
 
@@ -1330,7 +1337,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: f2 is f3
             False
         """
-        if is_Fan(right):
+        if isinstance(right, RationalPolyhedralFan):
             return richcmp([self.rays(), self.virtual_rays(),
                             self.generating_cones()],
                            [right.rays(), right.virtual_rays(),
@@ -1680,7 +1687,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: _.ngenerating_cones()
             6
         """
-        assert is_Fan(other)
+        assert isinstance(other, RationalPolyhedralFan)
         rc = super().cartesian_product(other, lattice)
         self_cones = [cone.ambient_ray_indices() for cone in self]
         n = self.nrays()
@@ -1860,7 +1867,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             'Rational polyhedral fan in 2-d lattice'
         """
         result = "Rational polyhedral fan in"
-        if is_ToricLattice(self.lattice()):
+        if isinstance(self.lattice(), ToricLattice_generic):
             result += " %s" % self.lattice()
         else:
             result += " %d-d lattice" % self.lattice_dim()

@@ -354,6 +354,7 @@ class RealLazyField_class(LazyField):
 
 RLF = RealLazyField_class()
 
+
 def RealLazyField():
     """
     Return the lazy real field.
@@ -508,6 +509,7 @@ class ComplexLazyField_class(LazyField):
 
 
 CLF = ComplexLazyField_class()
+
 
 def ComplexLazyField():
     """
@@ -915,6 +917,7 @@ def make_element(parent, *args):
         True
     """
     return parent(*args)
+
 
 cdef class LazyWrapper(LazyFieldElement):
 

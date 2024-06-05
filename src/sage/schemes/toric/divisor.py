@@ -170,7 +170,7 @@ AUTHORS:
 from sage.combinat.combination import Combinations
 import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.toric_lattice_element import is_ToricLatticeElement
+from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.topology.simplicial_complex import SimplicialComplex
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
@@ -187,7 +187,7 @@ from sage.schemes.generic.divisor_group import DivisorGroup_generic
 from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
 from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 
 
 def is_ToricDivisor(x):
@@ -312,7 +312,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         check = False
         reduce = False
     # Divisor by lattice point (corresponding to a ray)
-    if is_ToricLatticeElement(arg):
+    if isinstance(arg, ToricLatticeElement):
         if arg not in toric_variety.fan().lattice():
             raise ValueError("%s is not in the ambient lattice of %s"
                              % (arg, toric_variety.fan()))
@@ -2014,7 +2014,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
         """
         if is_ToricDivisor(x):
             x = self._projection_matrix * vector(x)
-        if is_Vector(x):
+        if isinstance(x, Vector):
             x = list(x)
         return self.element_class(self, x)
 

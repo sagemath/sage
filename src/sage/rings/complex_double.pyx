@@ -504,7 +504,6 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             from sage.rings.complex_mpfr import ComplexField
             return ComplexField(prec)
 
-
     def gen(self, n=0):
         """
         Return the generator of the complex double field.
@@ -697,6 +696,7 @@ cdef ComplexDoubleElement new_ComplexDoubleElement():
     cdef ComplexDoubleElement z
     z = ComplexDoubleElement.__new__(ComplexDoubleElement)
     return z
+
 
 def is_ComplexDoubleElement(x):
     """
@@ -1529,7 +1529,6 @@ cdef class ComplexDoubleElement(FieldElement):
         else:
             return z
 
-
     def is_square(self):
         r"""
         This function always returns ``True`` as `\CC` is algebraically closed.
@@ -2016,7 +2015,6 @@ cdef class ComplexDoubleElement(FieldElement):
             1.0839233273386946 + 0.27175258531951174*I
         """
         return self._new_c(gsl_complex_tanh(self._complex))
-
 
     def sech(self):
         r"""
@@ -2601,6 +2599,7 @@ _CDF = ComplexDoubleField_class()
 CDF = _CDF  # external interface
 cdef ComplexDoubleElement I = ComplexDoubleElement(0,1)
 
+
 def ComplexDoubleField():
     """
     Returns the field of double precision complex numbers.
@@ -2613,6 +2612,7 @@ def ComplexDoubleField():
         True
     """
     return _CDF
+
 
 from sage.misc.parser import Parser
 cdef cdf_parser = Parser(float, float,  {"I" : _CDF.gen(), "i" : _CDF.gen()})

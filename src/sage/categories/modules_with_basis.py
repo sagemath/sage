@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Modules With Basis
 
@@ -1466,6 +1467,39 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f
                 B['a'] + 3*B['c']
             """
+
+        def _test_monomial_coefficients(self, **options):
+            r"""
+            Test that :meth:`monomial_coefficients` works correctly if it is implemented.
+
+            INPUT:
+
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+            EXAMPLES:
+
+            By default, this method tests only the elements returned by
+            ``self.some_elements()``::
+
+                sage: A = AlgebrasWithBasis(QQ).example(); A
+                An example of an algebra with basis:
+                 the free algebra on the generators ('a', 'b', 'c') over Rational Field
+                sage: A.an_element()._test_monomial_coefficients()
+
+            See the documentation for :class:`TestSuite` for more information.
+            """
+            tester = self._tester(**options)
+            base_ring = self.parent().base_ring()
+            basis = self.parent().basis()
+            try:
+                d = self.monomial_coefficients()
+            except NotImplementedError:
+                return
+            tester.assertTrue(all(value.parent() == base_ring
+                                  for value in d.values()))
+            tester.assertEqual(self, self.parent().linear_combination(
+                (basis[index], coefficient)
+                for index, coefficient in d.items()))
 
         def __getitem__(self, m):
             """

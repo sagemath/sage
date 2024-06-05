@@ -122,7 +122,7 @@ from sage.categories.morphism import SetMorphism, Morphism
 from sage.categories.sets_cat import Sets
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.structure.richcmp import op_EQ, op_NE
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.structure.sage_object import SageObject
 
 
@@ -1345,7 +1345,7 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             raise ValueError("The codomain %s should be specified")
         if codomain not in C:
             raise ValueError("The codomain %s should be finite dimensional" % codomain)
-        if not is_Matrix(matrix):
+        if not isinstance(matrix, Matrix):
             raise ValueError("matrix (=%s) should be a matrix" % matrix)
         import sage.combinat.ranker
         indices = tuple(domain.basis().keys())

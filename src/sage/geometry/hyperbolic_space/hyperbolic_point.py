@@ -64,7 +64,7 @@ from sage.structure.element import Element
 from sage.structure.richcmp import richcmp, op_NE
 from sage.symbolic.constants import I
 from sage.misc.latex import latex
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
@@ -324,7 +324,7 @@ class HyperbolicPoint(Element):
         """
         if isinstance(other, HyperbolicIsometry):
             return other(self)
-        elif is_Matrix(other):
+        elif isinstance(other, Matrix):
             # TODO: Currently the __mul__ from the matrices gets called first
             #    and returns an error instead of calling this method
             A = self.parent().get_isometry(other)

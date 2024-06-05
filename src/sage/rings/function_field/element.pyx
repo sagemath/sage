@@ -85,6 +85,7 @@ def is_FunctionFieldElement(x):
     from sage.rings.function_field.function_field import is_FunctionField
     return is_FunctionField(x.parent())
 
+
 def make_FunctionFieldElement(parent, element_class, representing_element):
     """
     Used for unpickling FunctionFieldElement objects (and subclasses).

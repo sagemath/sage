@@ -234,8 +234,8 @@ AUTHORS:
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix
 
 
 cdef class SemidefiniteProgram(SageObject):
@@ -516,8 +516,6 @@ cdef class SemidefiniteProgram(SageObject):
             Variables:
                x_0,  x_1
         """
-
-
         if not name and self._first_variable_names:
             name = self._first_variable_names.pop(0)
 
@@ -674,7 +672,7 @@ cdef class SemidefiniteProgram(SageObject):
             if l[-1][0] == -1:
                 last_i,last_value = l.pop()
             else:
-                last_value = Matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
+                last_value = matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
             l.reverse()
             for j, c in l:
                 if c == 0:
@@ -959,7 +957,6 @@ cdef class SemidefiniteProgram(SageObject):
         self._backend.solve()
         return self._backend.get_objective_value()
 
-
     cpdef dual_variable(self, int i, sparse=False):
         """
         The `i`-th dual variable.
@@ -1205,6 +1202,7 @@ class SDPSolverException(RuntimeError):
     """
     pass
 
+
 cdef class SDPVariable(Element):
     r"""
     ``SDPVariable`` is a variable used by the class
@@ -1248,7 +1246,6 @@ cdef class SDPVariable(Element):
         self._p = sdp
         self._name = name
 
-
     def __getitem__(self, i):
         r"""
         Return the symbolic variable corresponding to the key.
@@ -1275,10 +1272,9 @@ cdef class SDPVariable(Element):
         self._dict[i] = v
         return v
 
-
     def _repr_(self):
         r"""
-        Returns a representation of self.
+        Return a representation of ``self``.
 
         EXAMPLES::
 
@@ -1373,8 +1369,8 @@ cdef class SDPVariable(Element):
             sage: m * v
             (1.0, 3.0)*x_0 + (2.0, 4.0)*x_1
         """
-        from sage.structure.element import is_Matrix
-        if is_Matrix(mat):
+        from sage.structure.element import Matrix
+        if isinstance(mat, Matrix):
             return self._matrix_rmul_impl(mat) if self_on_left else self._matrix_lmul_impl(mat)
 
 

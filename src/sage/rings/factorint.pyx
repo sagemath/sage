@@ -207,6 +207,7 @@ cpdef factor_aurifeuillian(n, check=True):
             return F
     return [n]
 
+
 def factor_cunningham(m, proof=None):
     r"""
     Return factorization of ``self`` obtained using trial division
@@ -249,6 +250,7 @@ def factor_cunningham(m, proof=None):
         return IntegerFactorization(L)
     else:
         return IntegerFactorization(L)*n.factor(proof=proof)
+
 
 cpdef factor_trial_division(m, long limit=LONG_MAX):
     r"""

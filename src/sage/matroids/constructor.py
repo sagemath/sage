@@ -103,8 +103,8 @@ Functions
 
 from itertools import combinations
 from sage.combinat.posets.lattices import FiniteLatticePoset
-from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.categories.fields import Fields
@@ -805,8 +805,8 @@ def Matroid(groundset=None, data=None, **kwds):
             Graph = ()
         if isinstance(data, Graph):
             key = 'graph'
-        elif is_Matrix(data) or (
-             isinstance(data, tuple) and is_Matrix(data[0])):
+        elif isinstance(data, Matrix) or (
+             isinstance(data, tuple) and isinstance(data[0], Matrix)):
             key = 'matrix'
         elif isinstance(data, sage.modules.with_basis.morphism.ModuleMorphism) or (
              isinstance(data, tuple) and
@@ -928,7 +928,7 @@ def Matroid(groundset=None, data=None, **kwds):
             # 2) Sage will sort the columns, making it impossible to keep labels!
             V = G.vertices(sort=True)
             n = G.num_verts()
-            A = Matrix(ZZ, n, m, 0)
+            A = matrix(ZZ, n, m, 0)
             mm = 0
             for i, j, k in G.edge_iterator():
                 A[V.index(i), mm] = -1
@@ -958,11 +958,11 @@ def Matroid(groundset=None, data=None, **kwds):
             A = A.matrix()
 
         # Fix the representation
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             if base_ring is not None:
-                A = Matrix(base_ring, A)
+                A = matrix(base_ring, A)
             else:
-                A = Matrix(A)
+                A = matrix(A)
 
         # Fix the ring
         if base_ring is not None:
