@@ -690,7 +690,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
         - ``base`` -- integer (default: 10); only used if ``x`` is a string
 
-        OUTPUT: an element of this real interval field.
+        OUTPUT: an element of this real interval field
 
         EXAMPLES::
 
@@ -3376,7 +3376,7 @@ cdef class RealIntervalFieldElement(RingElement):
         Return the unique floor of this interval, if it is well defined,
         otherwise raise a :class:`ValueError`.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         .. SEEALSO::
 
@@ -3405,7 +3405,7 @@ cdef class RealIntervalFieldElement(RingElement):
         Return the unique ceiling of this interval, if it is well defined,
         otherwise raise a :class:`ValueError`.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         .. SEEALSO::
 
@@ -3434,7 +3434,7 @@ cdef class RealIntervalFieldElement(RingElement):
         Return the unique round (nearest integer) of this interval,
         if it is well defined, otherwise raise a :class:`ValueError`.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         .. SEEALSO::
 
@@ -5139,9 +5139,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         None.
 
-        OUTPUT:
-
-        A :class:`RealIntervalFieldElement`.
+        OUTPUT: a :class:`RealIntervalFieldElement`
 
         EXAMPLES::
 

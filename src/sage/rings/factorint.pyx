@@ -41,9 +41,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     - ``F`` -- integer (default: ``None``)
     - ``check`` -- boolean (default: ``True``)
 
-    OUTPUT:
-
-    A list of factors.
+    OUTPUT: a list of factors
 
     EXAMPLES::
 
@@ -127,9 +125,7 @@ cpdef factor_aurifeuillian(n, check=True):
 
     - ``n`` -- integer
 
-    OUTPUT:
-
-    List of factors of `n` found by Aurifeuillian factorization.
+    OUTPUT: list of factors of `n` found by Aurifeuillian factorization
 
     EXAMPLES::
 

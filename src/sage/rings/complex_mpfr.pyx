@@ -3354,9 +3354,7 @@ cdef class RRtoCC(Map):
 
         - ``_slots`` -- a dictionary
 
-        OUTPUT:
-
-        The given dictionary, with zero added.
+        OUTPUT: the given dictionary, with zero added
 
         EXAMPLES::
 

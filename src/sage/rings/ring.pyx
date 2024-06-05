@@ -824,9 +824,7 @@ cdef class Ring(ParentWithGens):
           a list of all primitive `n`-th roots of unity. If True, raise a ``ValueError``
           if ``self`` is not an integral domain.
 
-        OUTPUT:
-
-        Element of ``self`` of finite order
+        OUTPUT: element of ``self`` of finite order
 
         EXAMPLES::
 

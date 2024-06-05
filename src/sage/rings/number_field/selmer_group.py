@@ -60,9 +60,7 @@ def _ideal_generator(I):
     - ``I`` (fractional ideal or integer) -- either a fractional ideal of a
       number field, which must be principal, or a rational integer.
 
-    OUTPUT:
-
-    A generator of `I` when `I` is a principal ideal, else `I` itself.
+    OUTPUT: a generator of `I` when `I` is a principal ideal, else `I` itself
 
     EXAMPLES::
 
@@ -199,9 +197,7 @@ def _root_ideal(I, C, p):
 
     - ``p`` (prime) -- a prime number.
 
-    OUTPUT:
-
-    An ideal `J` such that `J^p` is in the same ideal class as `I`.
+    OUTPUT: an ideal `J` such that `J^p` is in the same ideal class as `I`
 
     EXAMPLES::
 

@@ -57,9 +57,7 @@ class SandpileExamples:
 
         None
 
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         EXAMPLES::
 

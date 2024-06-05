@@ -1396,9 +1396,7 @@ cdef class PowerSeries(AlgebraElement):
 
             1 / (1 - A_1 t / (1 - A_2 t / (1 - A_3 t / (1 - \cdots))))
 
-        OUTPUT:
-
-        `A_n` for `n \geq 1`
+        OUTPUT: `A_n` for `n \geq 1`
 
         The expansion is done as long as possible given the precision.
         Whenever the expansion is not well-defined, because it would
@@ -1841,9 +1839,7 @@ cdef class PowerSeries(AlgebraElement):
         - ``prec`` -- Integer or ``infinity``. The degree to truncate
           the result to.
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -1926,9 +1922,7 @@ cdef class PowerSeries(AlgebraElement):
         - ``prec`` -- Integer or ``infinity``. The degree to truncate
           the result to.
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2012,9 +2006,7 @@ cdef class PowerSeries(AlgebraElement):
         - ``prec`` -- Integer or ``infinity``. The degree to truncate
           the result to.
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2076,9 +2068,7 @@ cdef class PowerSeries(AlgebraElement):
         - ``prec`` -- Integer or ``infinity``. The degree to truncate
           the result to.
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2165,9 +2155,7 @@ cdef class PowerSeries(AlgebraElement):
         - ``prec`` -- Integer or ``infinity``. The degree to truncate
           the result to.
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2253,9 +2241,7 @@ cdef class PowerSeries(AlgebraElement):
         - ``prec`` -- Integer or ``infinity``. The degree to truncate
           the result to.
 
-        OUTPUT:
-
-        A new power series.
+        OUTPUT: a new power series
 
         EXAMPLES:
 
@@ -2857,7 +2843,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
       `N == 0`), should belong to base ring of R.
 
 
-    OUTPUT: List of coefficients of `f` (length exactly
+    OUTPUT: list of coefficients of `f` (length exactly
     `L`), where `f` is a solution to the linear
     inhomogeneous differential equation:
 

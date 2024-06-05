@@ -4246,7 +4246,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         Return the support of this number field element.
 
-        OUTPUT: A sorted list of the prime ideals at which this number
+        OUTPUT: a sorted list of the prime ideals at which this number
         field element has nonzero valuation. An error is raised if the
         element is zero.
 

@@ -783,9 +783,7 @@ class QuotientRingElement(RingElement):
         """
         Return the monomials in ``self``.
 
-        OUTPUT:
-
-        A list of monomials.
+        OUTPUT: a list of monomials
 
         EXAMPLES::
 

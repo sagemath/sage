@@ -353,7 +353,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         - ``m`` -- a monomial.
 
-        OUTPUT: An index for a SAT variable corresponding to ``m``.
+        OUTPUT: an index for a SAT variable corresponding to ``m``
 
         EXAMPLES::
 
@@ -543,7 +543,7 @@ class CNFEncoder(ANF2CNFConverter):
 
         - ``F`` -- an iterable of :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
 
-        OUTPUT: An inverse map int -> variable
+        OUTPUT: an inverse map int -> variable
 
 
         EXAMPLES::

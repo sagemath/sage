@@ -510,9 +510,7 @@ class ClassGroup(AbelianGroupWithValues_class):
 
         This is an alias for :meth:`gens_values`.
 
-        OUTPUT:
-
-        A tuple of ideals, one for each abstract Abelian group generator.
+        OUTPUT: a tuple of ideals, one for each abstract Abelian group generator
 
         EXAMPLES::
 

@@ -1454,9 +1454,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         - ``dlist`` -- a list of degrees with respect to which we check
           reducedness
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES:
 

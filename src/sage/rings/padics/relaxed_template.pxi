@@ -182,9 +182,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         r"""
         Compute the next digit of this number.
 
-        OUTPUT:
-
-        An error code which is a superposition of the following:
+        OUTPUT: an error code which is a superposition of the following:
 
         - ``0`` -- no error
         - ``ERROR_ABANDON    = 1`` -- computation has been abandoned

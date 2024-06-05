@@ -31,9 +31,7 @@ def coefficients_to_power_sums(n, m, a):
     - ``n`` -- integer, the degree
     - ``a`` -- list of integers, the coefficients
 
-    OUTPUT:
-
-    list of integers.
+    OUTPUT: list of integers
 
     .. NOTE::
 
@@ -67,9 +65,7 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
     - k -- integer, the index of the next coefficient
     - a -- list of integers, the coefficients
 
-    OUTPUT:
-
-    the lower and upper bounds as real numbers.
+    OUTPUT: the lower and upper bounds as real numbers
 
     .. NOTE::
 

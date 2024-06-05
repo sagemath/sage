@@ -743,9 +743,7 @@ cdef class FractionFieldElement(FieldElement):
 
         - ``right`` -- ``RingElement`` that is the divisor
 
-        OUTPUT:
-
-        Quotient of ``self`` and ``right``
+        OUTPUT: quotient of ``self`` and ``right``
 
         EXAMPLES::
 

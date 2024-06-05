@@ -561,7 +561,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         - ``right`` -- an affine space or subscheme.
 
-        OUTPUT: an affine space.= or subscheme.
+        OUTPUT: an affine space.= or subscheme
 
         EXAMPLES::
 
@@ -623,7 +623,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         - ``R`` -- commutative ring or morphism.
 
-        OUTPUT: An affine space over ``R``.
+        OUTPUT: an affine space over ``R``
 
         .. NOTE::
 
@@ -1108,7 +1108,7 @@ class AffineSpace_field(AffineSpace_generic):
         If the field is a finite field, then this computes
         the Weil restriction to the prime subfield.
 
-        OUTPUT: Affine space of dimension ``d * self.dimension_relative()``
+        OUTPUT: affine space of dimension ``d * self.dimension_relative()``
         over the base field of ``self.base_ring()``.
 
         EXAMPLES::

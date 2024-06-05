@@ -335,9 +335,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
        ``s_`` respectively. For example, to increase CryptoMiniSat's verbosity level, pass
        ``s_verbosity=1``.
 
-    OUTPUT:
-
-        A sequence of Boolean polynomials.
+    OUTPUT: a sequence of Boolean polynomials
 
     EXAMPLES::
 

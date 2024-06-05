@@ -598,9 +598,7 @@ cdef class tr_data:
         - ``phc`` -- boolean, if PHCPACK is available, use it when `k = n-5` to
           compute an improved Lagrange multiplier bound
 
-        OUTPUT:
-
-        The next polynomial, as a sequence of integers
+        OUTPUT: the next polynomial, as a sequence of integers
 
         EXAMPLES::
 

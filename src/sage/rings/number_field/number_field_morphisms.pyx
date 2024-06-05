@@ -70,9 +70,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
         - ``_slots`` -- a dictionary
 
-        OUTPUT:
-
-        The given dictionary, with the generator image added.
+        OUTPUT: the given dictionary, with the generator image added
 
         EXAMPLES::
 
@@ -636,9 +634,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         - ``_slots`` -- a dictionary
 
-        OUTPUT:
-
-        The given dictionary, with _gen_image and ratio added.
+        OUTPUT: the given dictionary, with _gen_image and ratio added
 
         EXAMPLES::
 

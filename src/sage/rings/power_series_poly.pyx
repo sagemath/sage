@@ -188,7 +188,7 @@ cdef class PowerSeries_poly(PowerSeries):
              self is a keyword it is substituted for.  Other keywords
              are used for substitution in the coefficients of self.
 
-        OUTPUT: the value of ``self`` after substitution.
+        OUTPUT: the value of ``self`` after substitution
 
         EXAMPLES::
 
@@ -1122,9 +1122,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         - ``m``, ``n`` -- integers, describing the degrees of the polynomials
 
-        OUTPUT:
-
-        a ratio of two polynomials
+        OUTPUT: a ratio of two polynomials
 
         ALGORITHM:
 

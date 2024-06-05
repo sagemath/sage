@@ -974,7 +974,7 @@ cdef class IntegerRing_class(CommutativeRing):
 
         - ``names`` -- ignored (for compatibility with number fields)
 
-        OUTPUT: The residue field at this prime.
+        OUTPUT: the residue field at this prime
 
         EXAMPLES::
 

@@ -265,7 +265,7 @@ def rat_interval_cf_list(r1, r2):
     Return the common prefix of the rationals ``r1`` and ``r2`` seen as
     continued fractions.
 
-    OUTPUT: a list of Sage integers.
+    OUTPUT: a list of Sage integers
 
     EXAMPLES::
 

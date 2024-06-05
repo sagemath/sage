@@ -113,9 +113,7 @@ def from_fast_pickable(l, r):
 
     See OUTPUT of :func:`to_fast_pickable`
 
-    OUTPUT:
-
-    a list of Boolean polynomials
+    OUTPUT: a list of Boolean polynomials
 
     EXAMPLES::
 

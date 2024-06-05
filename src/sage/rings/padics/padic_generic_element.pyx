@@ -577,9 +577,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         - ``prec`` -- an integer or ``None`` (default: ``None``)
 
-        OUTPUT:
-
-        The additive order of this element
+        OUTPUT: the additive order of this element
 
         EXAMPLES::
 

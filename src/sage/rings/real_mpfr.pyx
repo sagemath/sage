@@ -5712,9 +5712,7 @@ cdef class RealLiteral(RealNumber):
         If neither ``prec`` nor ``digits`` is given, the default
         precision is 53 bits (roughly 16 digits).
 
-        OUTPUT:
-
-        A ``RealNumber`` with the given precision.
+        OUTPUT: a ``RealNumber`` with the given precision
 
         EXAMPLES::
 

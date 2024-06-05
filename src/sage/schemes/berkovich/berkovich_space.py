@@ -680,7 +680,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         r"""
         The base ring of this Berkovich Space.
 
-        OUTPUT: A field.
+        OUTPUT: a field
 
         EXAMPLES::
 

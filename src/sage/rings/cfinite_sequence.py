@@ -172,9 +172,7 @@ class CFiniteSequence(FieldElement,
       (can be an element from the symbolic ring, fraction field or polynomial
       ring)
 
-    OUTPUT:
-
-    A CFiniteSequence object
+    OUTPUT: a CFiniteSequence object
 
     EXAMPLES::
 
@@ -728,9 +726,7 @@ class CFiniteSequence(FieldElement,
         Return a string with the recurrence representation of
         the C-finite sequence.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1042,9 +1038,7 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
         r"""
         Return an element of C-Finite Sequences.
 
-        OUTPUT:
-
-        The Lucas sequence.
+        OUTPUT: the Lucas sequence
 
         EXAMPLES::
 

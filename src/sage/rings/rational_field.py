@@ -518,9 +518,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         - ``B`` -- a positive integer; upper bound on the primes generated.
 
-        OUTPUT:
-
-        An iterator over all integer primes less than or equal to `B`.
+        OUTPUT: an iterator over all integer primes less than or equal to `B`
 
         .. note::
 
@@ -735,7 +733,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         -  ``check`` (default ``True``) -- if ``True``, check the primality of
            `p`, else do not.
 
-        OUTPUT: The residue field at this prime.
+        OUTPUT: the residue field at this prime
 
         EXAMPLES::
 
@@ -1141,7 +1139,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         See :func:`TestSuite` for a typical use case.
 
-        OUTPUT: An iterator over 100 elements of `\QQ`.
+        OUTPUT: an iterator over 100 elements of `\QQ`
 
         EXAMPLES::
 

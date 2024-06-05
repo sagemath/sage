@@ -370,9 +370,7 @@ class SymmetricIdeal(Ideal_generic):
         - ``tailreduce`` -- (bool, default ``False``) If ``True``, the
           non-leading terms will be reduced as well.
 
-        OUTPUT:
-
-        Symmetric reduction of ``self`` with respect to ``I``.
+        OUTPUT: symmetric reduction of ``self`` with respect to ``I``
 
         THEORY:
 

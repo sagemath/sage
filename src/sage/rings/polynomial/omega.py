@@ -650,9 +650,7 @@ def _Omega_numerator_(a, x, y, t):
 
     - ``t`` -- a temporary Laurent polynomial variable used for substituting
 
-    OUTPUT:
-
-    A Laurent polynomial
+    OUTPUT: a Laurent polynomial
 
     The output is normalized such that the corresponding denominator
     (:func:`_Omega_factors_denominator_`) has constant term `1`.
@@ -767,9 +765,7 @@ def _Omega_numerator_P_(a, x, y, t):
       In the (final) result, ``t`` has to be substituted by the last
       entry of the flattened ``x`` of :func:`_Omega_numerator_`.
 
-    OUTPUT:
-
-    A Laurent polynomial
+    OUTPUT: a Laurent polynomial
 
     TESTS::
 
@@ -958,9 +954,7 @@ def homogeneous_symmetric_function(j, x):
 
     - ``x`` -- an iterable of variables
 
-    OUTPUT:
-
-    A polynomial of the common parent of all entries of ``x``
+    OUTPUT: a polynomial of the common parent of all entries of ``x``
 
     EXAMPLES::
 

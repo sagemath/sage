@@ -876,7 +876,7 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
     - ``latex_name`` -- latex variable name (default: `\sqrt{D}`)
 
 
-    OUTPUT: A number field defined by a quadratic polynomial. Unless
+    OUTPUT: a number field defined by a quadratic polynomial. Unless
     otherwise specified, it has an embedding into `\RR` or
     `\CC` by sending the generator to the positive
     or upper-half-plane root.
@@ -2116,7 +2116,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``distribution`` -- Distribution to use for the coefficients
           of the resulting element
 
-        OUTPUT: Element of this number field
+        OUTPUT: element of this number field
 
         EXAMPLES::
 
@@ -3315,9 +3315,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``check_abelian`` -- a boolean (default: ``True``); check to see
           that this is an abelian extension of `\QQ`
 
-        OUTPUT:
-
-        Integer which is the conductor of the field.
+        OUTPUT: integer which is the conductor of the field
 
         EXAMPLES::
 
@@ -3669,7 +3667,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``bound`` -- a positive integer
 
-        OUTPUT: A dict of all integral ideals `I` such that Norm(`I`) `\leq` ``bound``,
+        OUTPUT: a dict of all integral ideals `I` such that Norm(`I`) `\leq` ``bound``,
         keyed by norm.
 
         EXAMPLES::
@@ -3731,7 +3729,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
            integer, find all primes above `x` such that the resulting
            residue field has exactly this degree.
 
-        OUTPUT: A list of prime ideals of ``self`` lying over `x`. If ``degree``
+        OUTPUT: a list of prime ideals of ``self`` lying over `x`. If ``degree``
         is specified and no such ideal exists, returns the empty list.
         The output is sorted by residue degree first, then by
         underlying prime (or equivalently, by norm).
@@ -3834,7 +3832,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
            prime above `x` such that the resulting residue field has exactly
            this degree.
 
-        OUTPUT: A prime ideal of ``self`` lying over `x`. If ``degree`` is specified
+        OUTPUT: a prime ideal of ``self`` lying over `x`. If ``degree`` is specified
         and no such ideal exists, raises a :class:`ValueError`.
 
         EXAMPLES::
@@ -4122,9 +4120,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``B`` -- a positive integer bound (default: 200)
 
-        OUTPUT:
-
-        A list of all primes `p < B` which split completely in ``K``.
+        OUTPUT: a list of all primes `p < B` which split completely in ``K``
 
         EXAMPLES::
 
@@ -4432,9 +4428,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
           fundamental units.  If ``False``, the units may or may not be
           computed.
 
-        OUTPUT:
-
-        The PARI ``bnf`` structure of this number field.
+        OUTPUT: the PARI ``bnf`` structure of this number field
 
         .. warning::
 
@@ -4570,7 +4564,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``names`` -- names of the generators of this class
           group.
 
-        OUTPUT: The class group of this number field.
+        OUTPUT: the class group of this number field
 
         EXAMPLES::
 
@@ -4682,7 +4676,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``names`` -- names of the generators of this class group.
 
-        OUTPUT: The S-class group of this number field.
+        OUTPUT: the S-class group of this number field.
 
         EXAMPLES:
 
@@ -4735,7 +4729,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``proof`` -- if ``False``, assume the GRH in computing the class group
 
-        OUTPUT: A list of generators of the unit group.
+        OUTPUT: a list of generators of the unit group
 
         .. note::
 
@@ -5245,9 +5239,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``preserve_embedding`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        A list of the composite fields, possibly with maps.
+        OUTPUT: a list of the composite fields, possibly with maps
 
         If ``both_maps`` is ``True``, the list consists of quadruples
         ``(F, self_into_F, other_into_F, k)`` such that
@@ -5703,9 +5695,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``v`` -- (optional) list of elements of this number field
 
-        OUTPUT:
-
-        Integer if ``v`` is omitted, and Rational otherwise.
+        OUTPUT: integer if ``v`` is omitted, and Rational otherwise
 
         EXAMPLES::
 
@@ -6576,7 +6566,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         -  ``prec`` (default: ``None``) -- the precision with which
            to calculate the Minkowski embedding. (See NOTE below.)
 
-        OUTPUT: The Gram matrix `[\langle x_i,x_j \rangle]` of an LLL reduced
+        OUTPUT: the Gram matrix `[\langle x_i,x_j \rangle]` of an LLL reduced
         basis for the maximal order of ``self``, where the integral basis for
         ``self`` is given by `\{x_0, \dots, x_{n-1}\}`. Here `\langle , \rangle` is
         the usual inner product on `\RR^n`, and ``self`` is embedded in `\RR^n` by
@@ -6742,7 +6732,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         Return the number of generators of this number field (always 1).
 
-        OUTPUT: the python integer 1.
+        OUTPUT: the python integer 1
 
         EXAMPLES::
 
@@ -6924,7 +6914,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         - ``check`` -- whether or not to check the primality of ``prime``.
 
-        OUTPUT: The residue field at this prime.
+        OUTPUT: the residue field at this prime
 
         EXAMPLES::
 
@@ -8139,9 +8129,7 @@ class NumberField_absolute(NumberField_generic):
 
         - ``x`` -- an element of some number field
 
-        OUTPUT:
-
-        An element of ``self`` corresponding to ``x``.
+        OUTPUT: an element of ``self`` corresponding to ``x``
 
         EXAMPLES::
 
@@ -9514,9 +9502,7 @@ class NumberField_absolute(NumberField_generic):
 
         - ``prec`` -- desired floating point precision.
 
-        OUTPUT:
-
-        the morphism of ``self`` under the logarithmic embedding in the category Set.
+        OUTPUT: the morphism of ``self`` under the logarithmic embedding in the category Set
 
         EXAMPLES::
 
@@ -9714,9 +9700,7 @@ class NumberField_absolute(NumberField_generic):
         - ``iota`` -- an element of ``K``
         - ``prec`` -- (default: ``None``) the precision of the real field
 
-        OUTPUT:
-
-        The absolute value as a real number
+        OUTPUT: the absolute value as a real number
 
         EXAMPLES::
 
@@ -10146,9 +10130,7 @@ class NumberField_absolute(NumberField_generic):
           (which may also be given as a generator or set of generators)
           or a real or complex embedding.
 
-        OUTPUT:
-
-        If `a` or `b` is zero, returns 0.
+        OUTPUT: if `a` or `b` is zero, returns 0
 
         If `a` and `b` are non-zero and `P` is specified, returns
         the Hilbert symbol `(a,b)_P`, which is `1` if the equation
@@ -10543,9 +10525,7 @@ class NumberField_absolute(NumberField_generic):
 
         - ``a``, ``b`` -- elements of the number field ``self``
 
-        OUTPUT:
-
-        squarefree ideal of the ring of integers of ``self``
+        OUTPUT: squarefree ideal of the ring of integers of ``self``
 
         EXAMPLES::
 
@@ -10599,9 +10579,7 @@ class NumberField_absolute(NumberField_generic):
 
         - ``precision`` -- (default: 53) a positive integer
 
-        OUTPUT:
-
-        an iterator of number field elements
+        OUTPUT: an iterator of number field elements
 
         EXAMPLES:
 
@@ -11782,7 +11760,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         -  ``v`` -- (optional) list of elements of this number field
 
-        OUTPUT: Integer if ``v`` is omitted, and Rational otherwise.
+        OUTPUT: integer if ``v`` is omitted, and Rational otherwise
 
         EXAMPLES::
 
@@ -12203,7 +12181,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         -  ``v`` -- (optional) list of element of this number field
 
 
-        OUTPUT: Integer if ``v`` is omitted, and Rational otherwise.
+        OUTPUT: integer if ``v`` is omitted, and Rational otherwise
 
         EXAMPLES::
 

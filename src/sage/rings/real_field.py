@@ -26,9 +26,7 @@ def create_RealField(prec=53, type="MPFR", rnd="RNDN", sci_not=0):
 
     - ``sci_not`` -- boolean, whether to use scientific notation for printing
 
-    OUTPUT:
-
-    the appropriate real field
+    OUTPUT: the appropriate real field
 
     EXAMPLES::
 

@@ -2920,7 +2920,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         -  ``m`` -- Integer
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3294,7 +3294,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         depending on whether this number is negative, zero, or positive
         respectively.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3699,7 +3699,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         - ``bound`` -- a positive integer that fits in a C ``signed long``
         - ``start`` -- a positive integer that fits in a C ``signed long``
 
-        OUTPUT: A positive integer
+        OUTPUT: a positive integer
 
         EXAMPLES::
 
@@ -4057,8 +4057,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         Return a sorted list of the primes dividing this integer.
 
-        OUTPUT: The sorted list of primes appearing in the factorization of
-        this rational with positive exponent.
+        OUTPUT: the sorted list of primes appearing in the factorization of
+        this rational with positive exponent
 
         EXAMPLES::
 
@@ -4289,7 +4289,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - ``p`` -- a prime integer.
 
-        OUTPUT: Largest power of ``p`` dividing ``self``.
+        OUTPUT: largest power of ``p`` dividing ``self``
 
         EXAMPLES::
 

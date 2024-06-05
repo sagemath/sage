@@ -784,9 +784,7 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         Return the homogeneous components of this polynomial.
 
-        OUTPUT:
-
-        A dictionary mapping degrees to homogeneous polynomials.
+        OUTPUT: a dictionary mapping degrees to homogeneous polynomials
 
         EXAMPLES::
 
@@ -850,7 +848,7 @@ cdef class MPolynomial(CommutativePolynomial):
         - ``R`` -- a ring or morphism; if a morphism, the coefficients
           are mapped to the codomain of ``R``
 
-        OUTPUT: a new polynomial with the base ring changed to ``R``.
+        OUTPUT: a new polynomial with the base ring changed to ``R``
 
         EXAMPLES::
 
@@ -1564,7 +1562,7 @@ cdef class MPolynomial(CommutativePolynomial):
         - ``variable`` -- The variable with respect to which we compute
           the discriminant
 
-        OUTPUT: An element of the base ring of the polynomial ring.
+        OUTPUT: an element of the base ring of the polynomial ring
 
         EXAMPLES::
 
@@ -1956,9 +1954,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - ``I`` -- an ideal of the polynomial ring in which ``self`` lives
 
-        OUTPUT:
-
-        a multivariate polynomial representing the inverse of ``f`` modulo `I`
+        OUTPUT: a multivariate polynomial representing the inverse of ``f`` modulo `I`
 
         EXAMPLES::
 

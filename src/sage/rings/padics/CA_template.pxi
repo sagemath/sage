@@ -607,9 +607,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         - ``absprec`` -- an integer or infinity
 
-        OUTPUT:
-
-        ``self`` with precision set to the minimum of ``self's`` precision and ``prec``
+        OUTPUT: ``self`` with precision set to the minimum of ``self's`` precision and ``prec``
 
         EXAMPLES::
 

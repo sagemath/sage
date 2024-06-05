@@ -542,9 +542,7 @@ cdef class RingExtension_generic(CommutativeRing):
             when it is ``False``, printing an element like its backend is
             disabled (and a :class:`RuntimeError` is raised when it would occur).
 
-        OUTPUT:
-
-        The extension defined by ``defining_morphism``
+        OUTPUT: the extension defined by ``defining_morphism``
 
         EXAMPLES::
 
@@ -856,9 +854,7 @@ cdef class RingExtension_generic(CommutativeRing):
 
         - ``over`` -- an integer or ``Infinity``
 
-        OUTPUT:
-
-        The normalized value of ``over``
+        OUTPUT: the normalized value of ``over``
 
         TESTS::
 
@@ -1930,9 +1926,7 @@ cdef class RingExtension_generic(CommutativeRing):
         r"""
         Return the characteristic of the extension as a ring.
 
-        OUTPUT:
-
-        A prime number or zero.
+        OUTPUT: a prime number or zero
 
         EXAMPLES::
 

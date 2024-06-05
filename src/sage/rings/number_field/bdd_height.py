@@ -370,9 +370,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     - ``precision`` -- (default: 53) positive integer
 
-    OUTPUT:
-
-    an iterator of number field elements
+    OUTPUT: an iterator of number field elements
 
     EXAMPLES:
 

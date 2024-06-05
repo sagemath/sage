@@ -113,9 +113,7 @@ def _canonicalize_show_prec(type, print_mode, show_prec=None):
 
     - ``show_prec`` -- a boolean, string or ``None``
 
-    OUTPUT:
-
-    A string, either ``'bigoh'``, ``'dots'`` or ``'none'``
+    OUTPUT: a string, either ``'bigoh'``, ``'dots'`` or ``'none'``
 
     EXAMPLES::
 

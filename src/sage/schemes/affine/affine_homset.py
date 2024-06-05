@@ -93,7 +93,7 @@ class SchemeHomset_points_spec(SchemeHomset_generic):
         """
         Return a string representation of a homset.
 
-        OUTPUT: A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -384,7 +384,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        OUTPUT: A list of points in the ambient space.
+        OUTPUT: a list of points in the ambient space
 
         .. WARNING::
 

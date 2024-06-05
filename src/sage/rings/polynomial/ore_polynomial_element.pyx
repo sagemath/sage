@@ -660,9 +660,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: return ``True`` or ``False``
 
         EXAMPLES::
 
@@ -696,9 +694,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: return ``True`` or ``False``
 
         EXAMPLES::
 
@@ -746,9 +742,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: return ``True`` or ``False``
 
         EXAMPLES::
 
@@ -782,9 +776,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: return ``True`` or ``False``
 
         EXAMPLES::
 
@@ -3105,9 +3097,7 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
         - ``e`` -- element belonging to the base ring according to ``self``
 
-        OUTPUT:
-
-        The Ore polynomial corresponding to `e` according to ``self``.
+        OUTPUT: the Ore polynomial corresponding to `e` according to ``self``
 
         TESTS::
 

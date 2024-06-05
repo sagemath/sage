@@ -91,9 +91,7 @@ def column_Log(SUK, iota, U, prec=106):
     - ``U`` -- a list of places (finite or infinite) of ``K``
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The log vector as a list of real numbers
+    OUTPUT: the log vector as a list of real numbers
 
     EXAMPLES::
 
@@ -126,9 +124,7 @@ def c3_func(SUK, prec=106):
     - ``SUK`` -- a group of `S`-units
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `c_3`, as a real number
+    OUTPUT: the constant `c_3`, as a real number
 
     EXAMPLES::
 
@@ -177,9 +173,7 @@ def c4_func(SUK, v, A, prec=106):
     - ``A`` -- the set of the product of the coefficients of the ``S``-unit equation with each root of unity of ``K``
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `c_4`, as a real number
+    OUTPUT: the constant `c_4`, as a real number
 
     EXAMPLES::
 
@@ -255,9 +249,7 @@ def mus(SUK, v):
     - ``SUK`` -- a group of `S`-units
     - ``v`` -- a finite place of ``K``
 
-    OUTPUT:
-
-    A list ``[mus]`` where each ``mu`` is an element of ``K``
+    OUTPUT: a list ``[mus]`` where each ``mu`` is an element of ``K``
 
     EXAMPLES::
 
@@ -295,9 +287,7 @@ def possible_mu0s(SUK, v):
     - ``SUK`` -- a group of `S`-units
     - ``v`` -- a finite place of ``K``
 
-    OUTPUT:
-
-    A list ``[mu0s]`` where each ``mu0`` is an element of ``K``
+    OUTPUT: a list ``[mu0s]`` where each ``mu0`` is an element of ``K``
 
     EXAMPLES::
 
@@ -532,9 +522,7 @@ def Omega_prime(dK, v, mu_list, prec=106):
     - ``mu_list`` -- a list of nonzero elements of `K`. It is assumed that the sublist ``mu_list[1:]`` is multiplicatively independent.
     - ``prec`` -- the precision of the real field
 
-    OUTPUT:
-
-    The constant `\Omega'`.
+    OUTPUT: the constant `\Omega'`
 
     EXAMPLES::
 
@@ -576,9 +564,7 @@ def Yu_C1_star(n, v, prec=106):
     - ``v`` -- a finite place of `K` (a fractional ideal)
     - ``prec`` -- the precision of the real field
 
-    OUTPUT:
-
-    The constant `C_1^*` as a real number.
+    OUTPUT: the constant `C_1^*` as a real number
 
     EXAMPLES::
 
@@ -638,9 +624,7 @@ def Yu_bound(SUK, v, prec=106):
     - ``v`` -- a finite place of `K` (a fractional ideal)
     - ``prec`` -- the precision of the real field
 
-    OUTPUT:
-
-    The constant `c_8` as a real number.
+    OUTPUT: the constant `c_8` as a real number
 
     EXAMPLES::
 
@@ -721,9 +705,7 @@ def K0_func(SUK, A, prec=106):
     - ``A`` -- the set of the products of the coefficients of the `S`-unit equation with each root of unity of `K`
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `K_0`, a real number.
+    OUTPUT: the constant `K_0`, a real number
 
     EXAMPLES::
 
@@ -772,9 +754,7 @@ def c11_func(SUK, v, A, prec=106):
     - ``A`` -- the set of the product of the coefficients of the `S`-unit equation with each root of unity of `K`
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `c_{11}`, a real number
+    OUTPUT: the constant `c_{11}`, a real number
 
     EXAMPLES::
 
@@ -813,9 +793,7 @@ def c13_func(SUK, v, prec=106):
     - ``v`` -- an infinite place of ``K`` (element of ``SUK.number_field().places(prec)``)
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `c_{13}`, as a real number
+    OUTPUT: the constant `c_{13}`, as a real number
 
     EXAMPLES::
 
@@ -866,9 +844,7 @@ def K1_func(SUK, v, A, prec=106):
     - ``A`` -- a list of all products of each potential `a`, `b` in the `S`-unit equation `ax + by + 1 = 0` with each root of unity of `K`
     - ``prec`` -- the precision of the real field (default: 106)
 
-    OUTPUT:
-
-    The constant `K_1`, a real number
+    OUTPUT: the constant `K_1`, a real number
 
     EXAMPLES::
 
@@ -933,9 +909,7 @@ def minimal_vector(A, y, prec=106):
     - ``y`` -- a row (1 by `n`) vector with integer coordinates
     - ``prec`` -- precision of real field (default: 106)
 
-    OUTPUT:
-
-    A lower bound for the square of
+    OUTPUT: a lower bound for the square of
 
     .. MATH::
 
@@ -999,9 +973,7 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
     - ``torsion_gen`` -- an element of the torsion part of the group
     - ``c13`` -- a positive real number
 
-    OUTPUT:
-
-    A tuple consisting of:
+    OUTPUT: a tuple consisting of:
 
     1. a new upper bound, an integer
     2. a boolean value, ``True`` if we have to increase precision, otherwise ``False``
@@ -1181,9 +1153,7 @@ def cx_LLL_bound(SUK, A, prec=106):
     - ``A`` -- a list of all products of each potential `a`, `b` in the `S`-unit equation `ax + by + 1 = 0` with each root of unity of `K`
     - ``prec`` -- precision of real field (default: 106)
 
-    OUTPUT:
-
-    A bound for the exponents at the infinite place, as a real number
+    OUTPUT: a bound for the exponents at the infinite place, as a real number
 
     EXAMPLES::
 
@@ -1394,9 +1364,7 @@ def defining_polynomial_for_Kp(prime, prec=106):
     - ``prime`` -- a prime ideal of a number field `K`
     - ``prec`` -- a positive natural number (default: 106)
 
-    OUTPUT:
-
-    A polynomial with integer coefficients that is equivalent ``mod p^prec`` to a defining polynomial for the completion of `K` associated to the specified prime.
+    OUTPUT: a polynomial with integer coefficients that is equivalent ``mod p^prec`` to a defining polynomial for the completion of `K` associated to the specified prime
 
     .. NOTE::
 
@@ -1510,9 +1478,7 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
     - ``c3`` -- a positive real constant
     - ``prec`` -- the precision of the calculations (default: 106), i.e., values are known to ``O(p^prec)``
 
-    OUTPUT:
-
-    A pair consisting of:
+    OUTPUT: a pair consisting of:
 
     1. a new upper bound, an integer
     2. a boolean value, ``True`` if we have to increase precision, otherwise ``False``
@@ -1718,9 +1684,7 @@ def split_primes_large_lcm(SUK, bound):
     - ``SUK`` -- the `S`-unit group of an absolute number field `K`.
     - ``bound`` -- a positive integer
 
-    OUTPUT:
-
-    A list `L` of rational primes `q`, with the following properties:
+    OUTPUT: a list `L` of rational primes `q`, with the following properties:
 
     - each prime `q` in `L` splits completely in `K`
     - if `Q` is a prime in `S` and `q` is the rational
@@ -1788,9 +1752,7 @@ def sieve_ordering(SUK, q):
     - ``SUK`` -- the `S`-unit group of a number field `K`
     - ``q``   -- a rational prime number which splits completely in `K`
 
-    OUTPUT:
-
-    A list of tuples, ``[ideals_over_q, residue_fields, rho_images, product_rho_orders]``, where
+    OUTPUT: a list of tuples, ``[ideals_over_q, residue_fields, rho_images, product_rho_orders]``, where
 
     1. ``ideals_over_q`` is a list of the `d = [K:\QQ]` ideals in `K` over `q`
     2. ``residue_fields[i]`` is the residue field of ``ideals_over_q[i]``
@@ -1857,9 +1819,7 @@ def clean_rfv_dict(rfv_dictionary):
 
     - ``rfv_dictionary`` -- a dictionary whose keys are exponent vectors and whose values are residue field vectors
 
-    OUTPUT:
-
-    ``None``. But it removes some keys from the input dictionary.
+    OUTPUT: ``None``. But it removes some keys from the input dictionary
 
     .. NOTE::
 
@@ -2033,9 +1993,7 @@ def construct_comp_exp_vec(rfv_to_ev_dict, q):
     - ``rfv_to_ev_dict`` -- a dictionary whose keys are residue field vectors and whose values are lists of exponent vectors with the associated residue field vector.
     - ``q`` -- the characteristic of the residue field
 
-    OUTPUT:
-
-    A dictionary whose typical key is an exponent vector ``a``, and whose associated value is a list of complementary exponent vectors to ``a``.
+    OUTPUT: a dictionary whose typical key is an exponent vector ``a``, and whose associated value is a list of complementary exponent vectors to ``a``
 
     EXAMPLES:
 
@@ -2106,9 +2064,7 @@ def drop_vector(ev, p, q, complement_ev_dict):
       ``complement_ev_dict[q]`` is a dictionary whose keys are exponent vectors modulo `q-1`
       and whose values are lists of complementary exponent vectors modulo `q-1`
 
-    OUTPUT:
-
-    Returns ``True`` if ``ev`` may be dropped from the complement exponent vector dictionary, and ``False`` if not.
+    OUTPUT: returns ``True`` if ``ev`` may be dropped from the complement exponent vector dictionary, and ``False`` if not
 
     .. NOTE::
 
@@ -2385,9 +2341,7 @@ def compatible_vectors_check(a0, a1, g, l):
     - ``g`` -- the gcd of ``m0`` and ``m1``
     - ``l`` -- the length of ``a0`` and of ``a1``
 
-    OUTPUT:
-
-    ``True`` if there is an integer exponent vector a satisfying
+    OUTPUT: ``True`` if there is an integer exponent vector a satisfying
 
     .. MATH::
 
@@ -2430,9 +2384,7 @@ def compatible_vectors(a, m0, m1, g):
     - ``m1`` -- a positive integer (specifying the alternate modulus)
     - ``g`` -- the gcd of ``m0`` and ``m1``
 
-    OUTPUT:
-
-    A list of exponent vectors modulo ``m1`` which are compatible with ``a``.
+    OUTPUT: a list of exponent vectors modulo ``m1`` which are compatible with ``a``
 
     .. NOTE::
 
@@ -2473,9 +2425,7 @@ def compatible_systems(split_prime_list, complement_exp_vec_dict):
     - ``split_prime_list`` -- a list of rational primes that split completely in `K`
     - ``complement_exp_vec_dict`` -- a dictionary of dictionaries. The keys are primes from ``split_prime_list``.
 
-    OUTPUT:
-
-    A list of compatible systems of exponent vectors.
+    OUTPUT: a list of compatible systems of exponent vectors
 
     .. NOTE::
 
@@ -2540,9 +2490,7 @@ def compatible_system_lift(compatible_system, split_primes_list):
       where [vi, wi] is a pair of complementary exponent vectors modulo ``qi - 1``, and all pairs are compatible.
     - ``split_primes_list`` -- a list of primes ``[ q0, q1, .., qk ]``
 
-    OUTPUT:
-
-    A pair of vectors ``[v, w]`` satisfying:
+    OUTPUT: a pair of vectors ``[v, w]`` satisfying:
 
     1. ``v[0] == vi[0]`` for all ``i``
     2. ``w[0] == wi[0]`` for all ``i``

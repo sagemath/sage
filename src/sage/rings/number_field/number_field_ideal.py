@@ -148,7 +148,7 @@ class NumberFieldIdeal(Ideal_generic):
         -  ``magma`` -- a Magma interpreter
 
 
-        OUTPUT: :class:`MagmaElement` corresponding to this ideal.
+        OUTPUT: :class:`MagmaElement` corresponding to this ideal
 
 
         EXAMPLES::
@@ -2476,9 +2476,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         - ``other`` -- another ideal of the same field, or generators
           of an ideal.
 
-        OUTPUT:
-
-        ``True`` if ``self`` and ``other`` are coprime, else ``False``.
+        OUTPUT: ``True`` if ``self`` and ``other`` are coprime, else ``False``
 
         .. note::
 
@@ -2542,9 +2540,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         - ``J`` -- another integral ideal of the same field as ``self``, which must also be integral.
 
-        OUTPUT:
-
-        an element `l` such that ``l*self`` is coprime to the ideal `J`
+        OUTPUT: an element `l` such that ``l*self`` is coprime to the ideal `J`
 
         .. TODO::
 
@@ -3087,9 +3083,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         - ``M`` -- an integral ideal of the same field, or generators of an ideal
 
-        OUTPUT:
-
-        An ideal which is the largest divisor of ``self`` that is coprime to `M`.
+        OUTPUT: an ideal which is the largest divisor of ``self`` that is coprime to `M`
 
         AUTHOR: Maite Aranes
 

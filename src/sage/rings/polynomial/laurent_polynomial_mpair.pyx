@@ -700,9 +700,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``mon`` -- a monomial
 
-        OUTPUT:
-
-        Element of the parent of ``self``.
+        OUTPUT: element of the parent of ``self``
 
         .. NOTE::
 
@@ -1059,9 +1057,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``right`` -- a Laurent polynomial
 
-        OUTPUT:
-
-        A pair of Laurent polynomials.
+        OUTPUT: a pair of Laurent polynomials
 
         EXAMPLES::
 
@@ -1405,9 +1401,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``**kwds`` -- keyword arguments
 
-        OUTPUT:
-
-        A Laurent polynomial.
+        OUTPUT: a Laurent polynomial
 
         EXAMPLES::
 

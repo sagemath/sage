@@ -797,9 +797,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         - ``x`` -- An element of the cover ring
 
-        OUTPUT:
-
-        The image of the given element in ``self``.
+        OUTPUT: the image of the given element in ``self``
 
         EXAMPLES::
 

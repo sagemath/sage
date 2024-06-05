@@ -1022,9 +1022,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         - ``names`` -- the name of the variable in the residue field.
         - ``check`` -- whether or not to check the primality of prime.
 
-        OUTPUT:
-
-        The residue field at this prime.
+        OUTPUT: the residue field at this prime
 
         EXAMPLES::
 
@@ -1713,9 +1711,7 @@ class Order_absolute(Order):
 
         - ``magma`` -- a magma interpreter
 
-        OUTPUT:
-
-        a :class:`MagmaElement`, the magma version of this absolute order
+        OUTPUT: a :class:`MagmaElement`, the magma version of this absolute order
 
         EXAMPLES::
 
@@ -2009,9 +2005,7 @@ class Order_absolute(Order):
 
         - ``other`` -- another absolute order with the same ambient number field.
 
-        OUTPUT:
-
-        a rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -2578,9 +2572,7 @@ class Order_relative(Order):
         Return the absolute discriminant of ``self``, which is the discriminant
         of the absolute order associated to ``self``.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2630,9 +2622,7 @@ class Order_relative(Order):
 
         - ``other`` -- another order with the same ambient absolute number field.
 
-        OUTPUT:
-
-        a rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -2754,9 +2744,7 @@ def absolute_order_from_module_generators(gens,
     - ``is_maximal`` -- bool (or ``None``); set if maximality of the generated order is known
     - ``is_maximal_at`` -- a tuple of primes where this order is known to be maximal
 
-    OUTPUT:
-
-    an absolute order
+    OUTPUT: an absolute order
 
     EXAMPLES:
 

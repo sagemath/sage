@@ -1485,9 +1485,7 @@ cdef class ComplexBall(RingElement):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1816,9 +1814,7 @@ cdef class ComplexBall(RingElement):
         """
         Return the real part of this ball.
 
-        OUTPUT:
-
-        A :class:`~sage.rings.real_arb.RealBall`.
+        OUTPUT: a :class:`~sage.rings.real_arb.RealBall`
 
         EXAMPLES::
 
@@ -1837,9 +1833,7 @@ cdef class ComplexBall(RingElement):
         """
         Return the imaginary part of this ball.
 
-        OUTPUT:
-
-        A :class:`~sage.rings.real_arb.RealBall`.
+        OUTPUT: a :class:`~sage.rings.real_arb.RealBall`
 
         EXAMPLES::
 
@@ -1882,9 +1876,7 @@ cdef class ComplexBall(RingElement):
           make sure that the returned lower bound is positive, raising
           an error if the ball contains zero.
 
-        OUTPUT:
-
-        A ball with zero radius
+        OUTPUT: a ball with zero radius
 
         EXAMPLES::
 
@@ -1915,9 +1907,7 @@ cdef class ComplexBall(RingElement):
         """
         Return an upper bound for the absolute value of this complex ball.
 
-        OUTPUT:
-
-        A ball with zero radius
+        OUTPUT: a ball with zero radius
 
         EXAMPLES::
 
@@ -1990,9 +1980,7 @@ cdef class ComplexBall(RingElement):
         """
         Return an exact ball with the same midpoint as this ball.
 
-        OUTPUT:
-
-        A :class:`ComplexBall`.
+        OUTPUT: a :class:`ComplexBall`
 
         EXAMPLES::
 
@@ -2208,9 +2196,7 @@ cdef class ComplexBall(RingElement):
         - ``ampl`` -- A **real** ball (or an object that can be coerced to a
           real ball).
 
-        OUTPUT:
-
-        A new complex ball.
+        OUTPUT: a new complex ball
 
         EXAMPLES::
 
@@ -3823,9 +3809,7 @@ cdef class ComplexBall(RingElement):
         - ``regularized`` -- if True, the regularized generalized hypergeometric
           function is computed.
 
-        OUTPUT:
-
-        The generalized hypergeometric function defined by
+        OUTPUT: the generalized hypergeometric function defined by
 
         .. MATH::
 

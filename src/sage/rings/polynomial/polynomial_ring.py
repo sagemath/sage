@@ -1118,9 +1118,7 @@ class PolynomialRing_general(Ring):
 
         - ``depth`` -- an integer or :mod:`Infinity <sage.rings.infinity>`.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -2662,9 +2660,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
           - ``'first_lexicographic'``: try polynomials in
             lexicographic order until an irreducible one is found.
 
-        OUTPUT:
-
-        A monic irreducible polynomial of degree `n` in ``self``.
+        OUTPUT: a monic irreducible polynomial of degree `n` in ``self``
 
         EXAMPLES::
 
@@ -2724,9 +2720,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
         - ``precision`` -- if given, roots are computed modulo `x^d` where `d` is
           ``precision`` (see below)
 
-        OUTPUT:
-
-        The list of roots of ``p`` of degree at most ``degree_bound``:
+        OUTPUT: the list of roots of ``p`` of degree at most ``degree_bound``:
 
         - If `precision = None` actual roots are computed, i.e. all `f \in F[x]`
           such that `p(f) = 0`.
@@ -2819,9 +2813,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
         - ``dc_threshold`` -- if given, the algorithm calls :meth:`_roth_ruckenetein`
           to compute roots of degree at most ``dc_threshold``
 
-        OUTPUT:
-
-        The list of roots of ``p`` of degree at most ``degree_bound``:
+        OUTPUT: the list of roots of ``p`` of degree at most ``degree_bound``:
 
         - If `precision = None` actual roots are computed, i.e. all `f \in F[x]`
           such that `p(f) = 0`.
@@ -3543,9 +3535,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
           is used if `p = 2`, and the algorithm ``'adleman-lenstra'`` if
           `p > 2`.
 
-        OUTPUT:
-
-        A monic irreducible polynomial of degree `n` in ``self``.
+        OUTPUT: a monic irreducible polynomial of degree `n` in ``self``
 
         EXAMPLES::
 

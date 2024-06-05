@@ -202,9 +202,7 @@ cpdef Integer integer_rational_power(Integer a, Rational b):
     - a -- an ``Integer``
     - b -- a nonnegative ``Rational``
 
-    OUTPUT:
-
-    `a^b` as an ``Integer`` or ``None``
+    OUTPUT: `a^b` as an ``Integer`` or ``None``
 
     EXAMPLES::
 
@@ -2291,7 +2289,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         -  ``n`` -- an integer (error if not 0 or -1)
 
-        OUTPUT: Rational
+        OUTPUT: rational
 
         EXAMPLES::
 
@@ -2526,7 +2524,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         Return the multiplicative inverse of ``self``.
 
-        OUTPUT: Rational
+        OUTPUT: rational
 
         EXAMPLES::
 
@@ -2704,7 +2702,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         Return ``self``.
 
-        OUTPUT: Rational
+        OUTPUT: rational
 
         EXAMPLES::
 
@@ -2719,7 +2717,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         Return the negative of ``self``.
 
-        OUTPUT: Rational
+        OUTPUT: rational
 
         EXAMPLES::
 
@@ -2753,7 +2751,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         Return the absolute value of this rational number.
 
-        OUTPUT: Rational
+        OUTPUT: rational
 
         EXAMPLES::
 
@@ -2773,7 +2771,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         depending on whether this number is negative, zero, or positive
         respectively.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2932,7 +2930,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         -  ``var`` -- a string
 
-        OUTPUT: Polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
@@ -2962,7 +2960,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         -  ``var`` -- a string
 
-        OUTPUT: Polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
@@ -2983,7 +2981,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         Return ``self`` coerced to an integer. Of course this rational number
         must have a denominator of 1.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3096,7 +3094,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         Return the factorization of this rational number.
 
-        OUTPUT: Factorization
+        OUTPUT: factorization
 
         EXAMPLES::
 
@@ -3119,7 +3117,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         Return a sorted list of the primes where this rational number has
         non-zero valuation.
 
-        OUTPUT: The set of primes appearing in the factorization of this
+        OUTPUT: the set of primes appearing in the factorization of this
         rational with nonzero exponent, as a sorted list.
 
         EXAMPLES::
@@ -3309,7 +3307,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         Return the floor of this rational number as an integer.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3333,7 +3331,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         Return the ceiling of this rational number.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         If this rational number is an integer, this returns this number,
         otherwise it returns the floor of this number +1.
@@ -3395,7 +3393,7 @@ cdef class Rational(sage.structure.element.FieldElement):
            - 'even' rounds toward the even integer
            - 'odd' rounds toward the odd integer
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3477,7 +3475,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         The max absolute value of the numerator and denominator of ``self``, as
         an :class:`Integer`.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3557,7 +3555,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         Return the multiplicative order of ``self``.
 
-        OUTPUT: Integer or ``infinity``
+        OUTPUT: integer or ``infinity``
 
         EXAMPLES::
 
@@ -3716,7 +3714,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         -  ``x, y`` -- integer or rational
 
-        OUTPUT: Rational
+        OUTPUT: rational
 
         EXAMPLES::
 
@@ -3764,7 +3762,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         -  ``x, y`` -- integer or rational
 
-        OUTPUT: Rational
+        OUTPUT: rational
 
         EXAMPLES::
 
@@ -4095,7 +4093,7 @@ def make_rational(s):
 
     -  ``s`` -- string in base 32
 
-    OUTPUT: Rational
+    OUTPUT: rational
 
     EXAMPLES::
 

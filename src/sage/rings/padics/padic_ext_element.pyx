@@ -423,9 +423,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
           element has insufficient precision to determine the reduction.  Errors are never
           raised for fixed-mod or floating-point types.
 
-        OUTPUT:
-
-        This element reduced modulo `\pi^\mathrm{absprec}`.
+        OUTPUT: this element reduced modulo `\pi^\mathrm{absprec}`
 
         If ``absprec`` is zero, then as an element of `\ZZ/(1)`.
 

@@ -361,9 +361,7 @@ cdef class SymmetricReductionStrategy:
 
         A polynomial or an infinite polynomial
 
-        OUTPUT:
-
-        A polynomial whose parent ring allows for coercion of any generator of self
+        OUTPUT: a polynomial whose parent ring allows for coercion of any generator of self
 
         EXAMPLES::
 
@@ -532,9 +530,7 @@ cdef class SymmetricReductionStrategy:
         - ``report`` -- (object, default ``None``) If not ``None``, print
           information on the progress of the computation.
 
-        OUTPUT:
-
-        Reduction of ``p`` with respect to ``self``.
+        OUTPUT: reduction of ``p`` with respect to ``self``
 
         .. NOTE::
 

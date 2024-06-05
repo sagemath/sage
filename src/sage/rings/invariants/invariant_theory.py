@@ -336,9 +336,7 @@ class FormsBase(SageObject):
           homogeneous degree. Must be a covariant, that is, polynomial
           in the given :meth:`variables`
 
-        OUTPUT:
-
-        The Jacobian determinant with respect to the variables.
+        OUTPUT: the Jacobian determinant with respect to the variables
 
         EXAMPLES::
 
@@ -644,9 +642,7 @@ class AlgebraicForm(FormsBase):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -688,9 +684,7 @@ class AlgebraicForm(FormsBase):
         """
         Return the defining polynomial.
 
-        OUTPUT:
-
-        The polynomial used to define the algebraic form.
+        OUTPUT: the polynomial used to define the algebraic form
 
         EXAMPLES::
 
@@ -997,9 +991,7 @@ class QuadraticForm(AlgebraicForm):
         - ``discriminant`` -- Value of the discriminant used to reconstruct
           the binary quadratic.
 
-        OUTPUT:
-
-        A QuadraticForm with 2 variables.
+        OUTPUT: a QuadraticForm with 2 variables
 
         EXAMPLES::
 
@@ -1184,9 +1176,7 @@ class QuadraticForm(AlgebraicForm):
         - ``type`` -- The type of invariants to return. The default choice
           is to return the discriminant.
 
-        OUTPUT:
-
-        The invariants of the binary quadratic.
+        OUTPUT: the invariants of the binary quadratic
 
         EXAMPLES::
 
@@ -1683,9 +1673,7 @@ class BinaryQuintic(AlgebraicForm):
         - ``invariants`` -- A list or tuple of invariants that are used to
           reconstruct the binary quintic.
 
-        OUTPUT:
-
-        A BinaryQuintic.
+        OUTPUT: a BinaryQuintic
 
         EXAMPLES::
 
@@ -2313,9 +2301,7 @@ class BinaryQuintic(AlgebraicForm):
         - ``type`` -- The type of invariants to return. The default choice
           is to return the Clebsch invariants.
 
-        OUTPUT:
-
-        The invariants of the binary quintic.
+        OUTPUT: the invariants of the binary quintic
 
         EXAMPLES::
 
@@ -2348,9 +2334,7 @@ class BinaryQuintic(AlgebraicForm):
 
         The following invariants are returned: `A`, `B`, `C` and `R`.
 
-        OUTPUT:
-
-        The Clebsch invariants of the binary quintic.
+        OUTPUT: the Clebsch invariants of the binary quintic
 
         EXAMPLES::
 
@@ -2396,9 +2380,7 @@ class BinaryQuintic(AlgebraicForm):
         of the Clebsch invariants, such that they still generate the ring of
         invariants.
 
-        OUTPUT:
-
-        The arithmetic invariants of the binary quintic. They are given by
+        OUTPUT: the arithmetic invariants of the binary quintic. They are given by
 
         .. MATH::
 
@@ -3327,9 +3309,7 @@ class TwoAlgebraicForms(SeveralAlgebraicForms):
         """
         Return the first of the two forms.
 
-        OUTPUT:
-
-        The first algebraic form used in the definition.
+        OUTPUT: the first algebraic form used in the definition
 
         EXAMPLES::
 
@@ -3351,9 +3331,7 @@ class TwoAlgebraicForms(SeveralAlgebraicForms):
         """
         Return the second of the two forms.
 
-        OUTPUT:
-
-        The second form used in the definition.
+        OUTPUT: the second form used in the definition
 
         EXAMPLES::
 
@@ -4032,9 +4010,7 @@ class InvariantTheoryFactory():
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

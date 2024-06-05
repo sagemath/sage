@@ -489,9 +489,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         - ``x`` -- an element in the domain of this valuation
 
-        OUTPUT:
-
-        An element of the :meth:`~sage.rings.valuation.valuation_space.DiscretePseudoValuationSpace.ElementMethods.residue_field`.
+        OUTPUT: an element of the :meth:`~sage.rings.valuation.valuation_space.DiscretePseudoValuationSpace.ElementMethods.residue_field`
 
         EXAMPLES::
 
@@ -897,9 +895,7 @@ class pAdicValuation_padic(pAdicValuation_base):
 
         - ``x`` -- an element of the domain of this valuation
 
-        OUTPUT:
-
-        An element of the :meth:`~sage.rings.valuation.valuation_space.DiscretePseudoValuationSpace.ElementMethods.residue_field`.
+        OUTPUT: an element of the :meth:`~sage.rings.valuation.valuation_space.DiscretePseudoValuationSpace.ElementMethods.residue_field`
 
         EXAMPLES::
 

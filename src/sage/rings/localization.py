@@ -197,9 +197,7 @@ def normalize_extra_units(base_ring, add_units, warning=True):
     - ``add_units`` -- list of elements from base ring
     - ``warning`` -- (default: ``True``) to suppress a warning which is thrown if no normalization was possible
 
-    OUTPUT:
-
-    List of all prime factors of the elements of the given list.
+    OUTPUT: list of all prime factors of the elements of the given list
 
     EXAMPLES::
 
@@ -527,9 +525,7 @@ class LocalizationElement(IntegralDomainElement):
 
         This is only possible if its base ring is the ring of integers.
 
-        OUTPUT:
-
-        A rational.
+        OUTPUT: a rational
 
         TESTS::
 
@@ -550,9 +546,7 @@ class LocalizationElement(IntegralDomainElement):
         This is only possible if its base ring is the ring of integers and
         the denominator of ``self`` is one.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -906,9 +900,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         - ``x`` -- an element of the fraction field of the base ring
 
-        OUTPUT:
-
-        An instance of the element class of self representing `x`.
+        OUTPUT: an instance of the element class of self representing `x`
 
         EXAMPLES::
 

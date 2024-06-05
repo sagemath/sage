@@ -415,9 +415,7 @@ class Sandpile(DiGraph):
         r"""
         The version number of Sage Sandpiles.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
 
         EXAMPLES::
@@ -440,9 +438,7 @@ class Sandpile(DiGraph):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        printed string
+        OUTPUT: printed string
 
         EXAMPLES::
 
@@ -526,9 +522,7 @@ class Sandpile(DiGraph):
           ``sink`` argument is omitted, the first vertex in the list of the
           Sandpile's vertices is set as the sink.
 
-        OUTPUT:
-
-        Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES:
 
@@ -653,9 +647,7 @@ class Sandpile(DiGraph):
         """
         Make a copy of this sandpile.
 
-        OUTPUT:
-
-        A new :class:`Sandpile` instance.
+        OUTPUT: a new :class:`Sandpile` instance
 
         EXAMPLES::
 
@@ -757,9 +749,7 @@ class Sandpile(DiGraph):
         r"""
         The name of the sandpile.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -831,9 +821,7 @@ class Sandpile(DiGraph):
         r"""
         A dictionary of dictionaries representing a directed graph.
 
-        OUTPUT:
-
-        dict
+        OUTPUT: dict
 
         EXAMPLES::
 
@@ -852,9 +840,7 @@ class Sandpile(DiGraph):
         r"""
         The sink vertex.
 
-        OUTPUT:
-
-        sink vertex
+        OUTPUT: sink vertex
 
         EXAMPLES::
 
@@ -873,9 +859,7 @@ class Sandpile(DiGraph):
         r"""
         The Laplacian matrix of the graph.  Its *rows* encode the vertex firing rules.
 
-        OUTPUT:
-
-        matrix
+        OUTPUT: matrix
 
         EXAMPLES::
 
@@ -897,9 +881,7 @@ class Sandpile(DiGraph):
         r"""
         The reduced Laplacian matrix of the graph.
 
-        OUTPUT:
-
-        matrix
+        OUTPUT: matrix
 
         EXAMPLES::
 
@@ -925,9 +907,7 @@ class Sandpile(DiGraph):
         r"""
         The size of the sandpile group.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1024,9 +1004,7 @@ class Sandpile(DiGraph):
 
         - ``v`` -- (optional) vertex name
 
-        OUTPUT:
-
-        integer or dict
+        OUTPUT: integer or dict
 
         EXAMPLES::
 
@@ -1063,9 +1041,7 @@ class Sandpile(DiGraph):
 
         - ``v`` -- (optional) vertex name
 
-        OUTPUT:
-
-        integer or dict
+        OUTPUT: integer or dict
 
         EXAMPLES::
 
@@ -1173,9 +1149,7 @@ class Sandpile(DiGraph):
         r"""
         A script for the minimal burning configuration.
 
-        OUTPUT:
-
-        dict
+        OUTPUT: dict
 
         EXAMPLES::
 
@@ -1225,9 +1199,7 @@ class Sandpile(DiGraph):
         r"""
         The nonsink vertices.
 
-        OUTPUT:
-
-        list of vertices
+        OUTPUT: list of vertices
 
         EXAMPLES::
 
@@ -1245,9 +1217,7 @@ class Sandpile(DiGraph):
 
         - ``k`` -- integer
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -1261,9 +1231,7 @@ class Sandpile(DiGraph):
         r"""
         The all-zero configuration.
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -1372,9 +1340,7 @@ class Sandpile(DiGraph):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        list of recurrent configurations
+        OUTPUT: list of recurrent configurations
 
 
         EXAMPLES::
@@ -1431,9 +1397,7 @@ class Sandpile(DiGraph):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        list of SandpileConfig
+        OUTPUT: list of SandpileConfig
 
 
         EXAMPLES::
@@ -1521,9 +1485,7 @@ class Sandpile(DiGraph):
 
         This is only defined for undirected graphs.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1541,9 +1503,7 @@ class Sandpile(DiGraph):
         Is the underlying graph undirected?  ``True`` if `(u,v)` is and edge if
         and only if `(v,u)` is an edge, each edge with the same weight.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1588,9 +1548,7 @@ class Sandpile(DiGraph):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        list of SandpileConfig
+        OUTPUT: list of SandpileConfig
 
         EXAMPLES::
 
@@ -1625,9 +1583,7 @@ class Sandpile(DiGraph):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        tuple of SandpileConfig
+        OUTPUT: tuple of SandpileConfig
 
         EXAMPLES::
 
@@ -1657,9 +1613,7 @@ class Sandpile(DiGraph):
         The Tutte polynomial of the underlying graph.
         Only defined for undirected sandpile graphs.
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
@@ -1708,9 +1662,7 @@ class Sandpile(DiGraph):
 
         - ``multivariable`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
@@ -1793,9 +1745,7 @@ class Sandpile(DiGraph):
         The canonical divisor.  This is the divisor with `\deg(v)-2` grains of
         sand on each vertex (not counting loops).  Only for undirected graphs.
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -1835,9 +1785,7 @@ class Sandpile(DiGraph):
         r"""
         The invariant factors of the sandpile group.
 
-        OUTPUT:
-
-        list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1875,9 +1823,7 @@ class Sandpile(DiGraph):
         this is the list of first differences of the Hilbert function of the
         (homogeneous) toppling ideal.
 
-        OUTPUT:
-
-        list of nonnegative integers
+        OUTPUT: list of nonnegative integers
 
         EXAMPLES::
 
@@ -1893,9 +1839,7 @@ class Sandpile(DiGraph):
         r"""
         The Hilbert function of the homogeneous toppling ideal.
 
-        OUTPUT:
-
-        list of nonnegative integers
+        OUTPUT: list of nonnegative integers
 
         EXAMPLES::
 
@@ -1912,9 +1856,7 @@ class Sandpile(DiGraph):
         The postulation number of the toppling ideal.  This is the
         largest weight of a superstable configuration of the graph.
 
-        OUTPUT:
-
-        nonnegative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1944,9 +1886,7 @@ class Sandpile(DiGraph):
         Laplacian, `D` is diagonal, and  `U` and `V` are invertible over the
         integers.
 
-        OUTPUT:
-
-        list of integer matrices
+        OUTPUT: list of integer matrices
 
         EXAMPLES::
 
@@ -1969,9 +1909,7 @@ class Sandpile(DiGraph):
         After reordering, vertex `u` comes before vertex `v` in the
         list of vertices if `u` is closer to the sink.
 
-        OUTPUT:
-
-        Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -2139,9 +2077,7 @@ class Sandpile(DiGraph):
         - ``smax`` -- (optional) SandpileConfig or list representing a SandpileConfig
 
 
-        OUTPUT:
-
-        generator for all stable configurations
+        OUTPUT: generator for all stable configurations
 
         EXAMPLES::
 
@@ -2313,9 +2249,7 @@ class Sandpile(DiGraph):
         r"""
         The stationary density of the sandpile.
 
-        OUTPUT:
-
-        rational number
+        OUTPUT: rational number
 
         EXAMPLES::
 
@@ -2350,9 +2284,7 @@ class Sandpile(DiGraph):
 
         - ``k`` -- integer
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -2366,9 +2298,7 @@ class Sandpile(DiGraph):
         r"""
         The all-zero divisor.
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -2516,9 +2446,7 @@ class Sandpile(DiGraph):
         r"""
         The unsaturated, homogeneous toppling ideal.
 
-        OUTPUT:
-
-        ideal
+        OUTPUT: ideal
 
         EXAMPLES::
 
@@ -2540,9 +2468,7 @@ class Sandpile(DiGraph):
 
         - ``gens`` -- (default: ``False``) boolean
 
-        OUTPUT:
-
-        ideal or, optionally, the generators of an ideal
+        OUTPUT: ideal or, optionally, the generators of an ideal
 
         EXAMPLES::
 
@@ -2567,9 +2493,7 @@ class Sandpile(DiGraph):
         r"""
         The ring containing the homogeneous toppling ideal.
 
-        OUTPUT:
-
-        ring
+        OUTPUT: ring
 
         EXAMPLES::
 
@@ -2632,9 +2556,7 @@ class Sandpile(DiGraph):
 
         - ``verbose`` -- (default: ``False``) boolean
 
-        OUTPUT:
-
-        free resolution of the toppling ideal
+        OUTPUT: free resolution of the toppling ideal
 
         EXAMPLES::
 
@@ -2687,9 +2609,7 @@ class Sandpile(DiGraph):
         A Groebner basis for the homogeneous toppling ideal.  It is computed
         with respect to the standard sandpile ordering (see ``ring``).
 
-        OUTPUT:
-
-        Groebner basis
+        OUTPUT: Groebner basis
 
         EXAMPLES::
 
@@ -2710,9 +2630,7 @@ class Sandpile(DiGraph):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        Betti numbers for the sandpile
+        OUTPUT: Betti numbers for the sandpile
 
 
         EXAMPLES::
@@ -2740,9 +2658,7 @@ class Sandpile(DiGraph):
         Approximations of the complex affine zeros of the sandpile
         ideal.
 
-        OUTPUT:
-
-        list of complex numbers
+        OUTPUT: list of complex numbers
 
         EXAMPLES::
 
@@ -2813,9 +2729,7 @@ class Sandpile(DiGraph):
         Generators for the multiplicative group of zeros of the sandpile
         ideal.
 
-        OUTPUT:
-
-        list of complex numbers
+        OUTPUT: list of complex numbers
 
         EXAMPLES:
 
@@ -2839,9 +2753,7 @@ class Sandpile(DiGraph):
 
         - ``orbits`` -- list of lists partitioning the vertices
 
-        OUTPUT:
-
-        list of recurrent configurations
+        OUTPUT: list of recurrent configurations
 
         EXAMPLES::
 
@@ -2898,9 +2810,7 @@ class SandpileConfig(dict):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        printed string
+        OUTPUT: printed string
 
         EXAMPLES::
 
@@ -2959,9 +2869,7 @@ class SandpileConfig(dict):
 
         - ``c`` -- dict or list representing a configuration
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3082,9 +2990,7 @@ class SandpileConfig(dict):
         r"""
         Compute and store the degree of the configuration.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3100,9 +3006,7 @@ class SandpileConfig(dict):
         r"""
         The degree of the configuration.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3121,9 +3025,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig
 
-        OUTPUT:
-
-        sum of ``self`` and ``other``
+        OUTPUT: sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -3145,9 +3047,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig
 
-        OUTPUT:
-
-        sum of ``self`` and ``other``
+        OUTPUT: sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -3170,9 +3070,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig
 
-        OUTPUT:
-
-        sum of ``self`` and ``other``
+        OUTPUT: sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -3199,9 +3097,7 @@ class SandpileConfig(dict):
         r"""
         The additive inverse of the configuration.
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3223,9 +3119,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig or Integer
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3260,9 +3154,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- Integer
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3286,9 +3178,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3318,9 +3208,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3345,9 +3233,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3377,9 +3263,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3407,9 +3291,7 @@ class SandpileConfig(dict):
 
         - ``k`` -- SandpileConfig
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3448,9 +3330,7 @@ class SandpileConfig(dict):
 
         - ``other`` -- SandpileConfig
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3471,9 +3351,7 @@ class SandpileConfig(dict):
         r"""
         The configuration's underlying sandpile.
 
-        OUTPUT:
-
-        Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -3492,9 +3370,7 @@ class SandpileConfig(dict):
 
         The list is sorted in the order of the vertices.
 
-        OUTPUT:
-
-        list of integers
+        OUTPUT: list of integers
 
         boolean
 
@@ -3515,9 +3391,7 @@ class SandpileConfig(dict):
         r"""
         The difference with the maximal stable configuration.
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3540,9 +3414,7 @@ class SandpileConfig(dict):
 
         - ``v`` -- vertex
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3567,9 +3439,7 @@ class SandpileConfig(dict):
 
         - ``sigma`` -- SandpileConfig or (list or dict representing a SandpileConfig)
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3598,9 +3468,7 @@ class SandpileConfig(dict):
         r"""
         The unstable vertices.
 
-        OUTPUT:
-
-        list of vertices
+        OUTPUT: list of vertices
 
         EXAMPLES::
 
@@ -3616,9 +3484,7 @@ class SandpileConfig(dict):
         r"""
         Fire all unstable vertices.
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3671,9 +3537,7 @@ class SandpileConfig(dict):
 
         - ``with_firing_vector`` -- (default: ``False``)  boolean
 
-        OUTPUT:
-
-        ``SandpileConfig`` or ``[SandpileConfig, firing_vector]``
+        OUTPUT: ``SandpileConfig`` or ``[SandpileConfig, firing_vector]``
 
         EXAMPLES::
 
@@ -3700,9 +3564,7 @@ class SandpileConfig(dict):
         r"""
         The stabilized configuration.
 
-        OUTPUT:
-
-        ``SandpileConfig``
+        OUTPUT: ``SandpileConfig``
 
         Returns the stabilized configuration.
 
@@ -3744,9 +3606,7 @@ class SandpileConfig(dict):
 
         - ``distrib`` -- (optional) list of nonnegative numbers summing to 1 (representing a prob. dist.)
 
-        OUTPUT:
-
-        SandpileConfig
+        OUTPUT: SandpileConfig
 
         EXAMPLES::
 
@@ -3819,9 +3679,7 @@ class SandpileConfig(dict):
         r"""
         The order of the equivalent recurrent element.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3847,9 +3705,7 @@ class SandpileConfig(dict):
         r"""
         Is the configuration stable?
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3903,9 +3759,7 @@ class SandpileConfig(dict):
 
         - ``with_firing_vector`` -- (default: ``False``)  boolean
 
-        OUTPUT:
-
-        SandpileConfig or [SandpileConfig, firing_vector]
+        OUTPUT: SandpileConfig or [SandpileConfig, firing_vector]
 
 
         EXAMPLES::
@@ -3958,9 +3812,7 @@ class SandpileConfig(dict):
         r"""
         Is the configuration recurrent?
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3977,9 +3829,7 @@ class SandpileConfig(dict):
         Sets the superstable configuration equivalent to the given
         configuration and its corresponding firing vector.
 
-        OUTPUT:
-
-        [configuration, firing_vector]
+        OUTPUT: [configuration, firing_vector]
 
 
         EXAMPLES::
@@ -4002,9 +3852,7 @@ class SandpileConfig(dict):
 
         - ``with_firing_vector`` -- (default: ``False``) boolean
 
-        OUTPUT:
-
-        SandpileConfig or [SandpileConfig, firing_vector]
+        OUTPUT: SandpileConfig or [SandpileConfig, firing_vector]
 
 
         EXAMPLES::
@@ -4035,9 +3883,7 @@ class SandpileConfig(dict):
         r"""
         Computes and stores whether ``config`` is superstable.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4058,9 +3904,7 @@ class SandpileConfig(dict):
         r"""
         Is the configuration superstable?
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4080,9 +3924,7 @@ class SandpileConfig(dict):
 
          - ``orbits`` -- list of lists of vertices
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4105,9 +3947,7 @@ class SandpileConfig(dict):
 
         - ``v`` -- vertex
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4221,9 +4061,7 @@ class SandpileDivisor(dict):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        printed string
+        OUTPUT: printed string
 
         EXAMPLES::
 
@@ -4277,9 +4115,7 @@ class SandpileDivisor(dict):
 
         - ``D`` -- dict or list representing a divisor
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -4422,9 +4258,7 @@ class SandpileDivisor(dict):
         r"""
         Compute and store the degree of the divisor.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4440,9 +4274,7 @@ class SandpileDivisor(dict):
         r"""
         The degree of the divisor.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4461,9 +4293,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- SandpileDivisor
 
-        OUTPUT:
-
-        sum of ``self`` and ``other``
+        OUTPUT: sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -4485,9 +4315,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- integer
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -4510,9 +4338,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- Integer
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -4535,9 +4361,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- SandpileDivisor
 
-        OUTPUT:
-
-        sum of ``self`` and ``other``
+        OUTPUT: sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -4560,9 +4384,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- SandpileDivisor
 
-        OUTPUT:
-
-        Difference of ``self`` and ``other``
+        OUTPUT: difference of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -4585,9 +4407,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- SandpileDivisor
 
-        OUTPUT:
-
-        Difference of ``self`` and ``other``
+        OUTPUT: difference of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -4608,9 +4428,7 @@ class SandpileDivisor(dict):
         r"""
         The additive inverse of the divisor.
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -4630,9 +4448,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- SandpileDivisor
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4662,9 +4478,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- SandpileDivisor
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4689,9 +4503,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- SandpileDivisor
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4721,9 +4533,7 @@ class SandpileDivisor(dict):
 
         - ``other`` -- SandpileDivisor
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4743,9 +4553,7 @@ class SandpileDivisor(dict):
         r"""
         The divisor's underlying sandpile.
 
-        OUTPUT:
-
-        Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -4764,9 +4572,7 @@ class SandpileDivisor(dict):
 
         The list is sorted in the order of the vertices.
 
-        OUTPUT:
-
-        list of integers
+        OUTPUT: list of integers
 
         boolean
 
@@ -4787,9 +4593,7 @@ class SandpileDivisor(dict):
         r"""
         The difference with the maximal stable divisor.
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -4810,9 +4614,7 @@ class SandpileDivisor(dict):
 
         - ``v`` -- vertex
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -4836,9 +4638,7 @@ class SandpileDivisor(dict):
 
         - ``sigma`` -- SandpileDivisor or (list or dict representing a SandpileDivisor)
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -4866,9 +4666,7 @@ class SandpileDivisor(dict):
         r"""
         The unstable vertices.
 
-        OUTPUT:
-
-        list of vertices
+        OUTPUT: list of vertices
 
         EXAMPLES::
 
@@ -4884,9 +4682,7 @@ class SandpileDivisor(dict):
         r"""
         Fire all unstable vertices.
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -4929,9 +4725,7 @@ class SandpileDivisor(dict):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        SandpileDivisor or list representing SandpileDivisor
+        OUTPUT: SandpileDivisor or list representing SandpileDivisor
 
         EXAMPLES::
 
@@ -4957,9 +4751,7 @@ class SandpileDivisor(dict):
         Is the divisor `q`-reduced?  This would mean that `self = c + kq` where
         `c` is superstable, `k` is an integer, and `q` is the sink vertex.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5003,9 +4795,7 @@ class SandpileDivisor(dict):
 
         - ``with_firing_vector`` -- (default: ``False``) boolean
 
-        OUTPUT:
-
-        boolean or integer vector
+        OUTPUT: boolean or integer vector
 
         EXAMPLES::
 
@@ -5068,9 +4858,7 @@ class SandpileDivisor(dict):
 
         - ``distrib`` -- (optional)  list of nonnegative numbers representing a probability distribution on the vertices
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -5219,9 +5007,7 @@ class SandpileDivisor(dict):
         r"""
         The polytope determining the complete linear system.
 
-        OUTPUT:
-
-        polytope
+        OUTPUT: polytope
 
         EXAMPLES::
 
@@ -5270,9 +5056,7 @@ class SandpileDivisor(dict):
         here is the one determining the divisor's complete linear system (see the
         documentation for ``polytope``).
 
-        OUTPUT:
-
-        tuple of integer vectors
+        OUTPUT: tuple of integer vectors
 
         EXAMPLES::
 
@@ -5579,9 +5363,7 @@ class SandpileDivisor(dict):
 
         - ``v`` -- (default: ``sink``) vertex
 
-        OUTPUT:
-
-        tuple of int
+        OUTPUT: tuple of int
 
         EXAMPLES::
 
@@ -5664,9 +5446,7 @@ class SandpileDivisor(dict):
 
         - ``v`` -- (default: ``sink``) vertex
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5747,9 +5527,7 @@ class SandpileDivisor(dict):
 
         - ``verbose`` -- (default: ``True``) boolean
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -5779,9 +5557,7 @@ class SandpileDivisor(dict):
         r"""
         List of vertices at which the divisor is nonzero.
 
-        OUTPUT:
-
-        list representing the support of the divisor
+        OUTPUT: list representing the support of the divisor
 
         EXAMPLES::
 
@@ -5834,9 +5610,7 @@ class SandpileDivisor(dict):
         r"""
         The support-complex. (See NOTE.)
 
-        OUTPUT:
-
-        simplicial complex
+        OUTPUT: simplicial complex
 
         EXAMPLES::
 
@@ -5861,9 +5635,7 @@ class SandpileDivisor(dict):
         r"""
         The Betti numbers for the support-complex.  (See NOTE.)
 
-        OUTPUT:
-
-        dictionary of integers
+        OUTPUT: dictionary of integers
 
         EXAMPLES::
 
@@ -5887,9 +5659,7 @@ class SandpileDivisor(dict):
 
         - ``distrib`` -- (optional) list of nonnegative numbers representing a probability distribution on the vertices
 
-        OUTPUT:
-
-        SandpileDivisor
+        OUTPUT: SandpileDivisor
 
         EXAMPLES::
 
@@ -5925,9 +5695,7 @@ class SandpileDivisor(dict):
 
         - ``orbits`` -- list of lists of vertices
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5982,9 +5750,7 @@ class SandpileDivisor(dict):
 
         - ``cycle`` -- (default: ``False``) boolean
 
-        OUTPUT:
-
-        boolean or optionally, a list of SandpileDivisors
+        OUTPUT: boolean or optionally, a list of SandpileDivisors
 
         EXAMPLES::
 
@@ -6093,9 +5859,7 @@ def sandlib(selector=None):
 
     - ``selector`` -- (optional) identifier or None
 
-    OUTPUT:
-
-    sandpile or description
+    OUTPUT: sandpile or description
 
     EXAMPLES::
 
@@ -6172,9 +5936,7 @@ def triangle_sandpile(n):
 
     - ``n`` -- integer
 
-    OUTPUT:
-
-    Sandpile
+    OUTPUT: Sandpile
 
     EXAMPLES::
 
@@ -6218,9 +5980,7 @@ def aztec_sandpile(n):
 
     - ``n`` -- integer
 
-    OUTPUT:
-
-    dictionary for the aztec diamond graph
+    OUTPUT: dictionary for the aztec diamond graph
 
     EXAMPLES::
 
@@ -6278,9 +6038,7 @@ def glue_graphs(g, h, glue_g, glue_h):
 
      - ``glue_h``, ``glue_g`` -- dictionaries for a vertex
 
-    OUTPUT:
-
-    dictionary for a directed multigraph
+    OUTPUT: dictionary for a directed multigraph
 
 
     EXAMPLES::
@@ -6366,9 +6124,7 @@ def firing_graph(S, eff):
 
     - ``eff`` -- list of divisors
 
-    OUTPUT:
-
-    DiGraph
+    OUTPUT: DiGraph
 
     EXAMPLES::
 
@@ -6403,9 +6159,7 @@ def parallel_firing_graph(S, eff):
 
     - ``eff`` -- list of divisors
 
-    OUTPUT:
-
-    DiGraph
+    OUTPUT: DiGraph
 
     EXAMPLES::
 
@@ -6442,9 +6196,7 @@ def admissible_partitions(S, k):
 
     - ``k`` -- integer
 
-    OUTPUT:
-
-    partitions
+    OUTPUT: partitions
 
     EXAMPLES::
 
@@ -6496,9 +6248,7 @@ def partition_sandpile(S, p):
 
     - ``p`` -- partition of the vertices of ``S``
 
-    OUTPUT:
-
-    Sandpile
+    OUTPUT: Sandpile
 
     EXAMPLES::
 
@@ -6542,9 +6292,7 @@ def min_cycles(G, v):
 
     - ``v`` -- vertex of ``G``
 
-    OUTPUT:
-
-    list of lists of vertices
+    OUTPUT: list of lists of vertices
 
     EXAMPLES::
 

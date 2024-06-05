@@ -621,9 +621,7 @@ class NumberField_relative(NumberField_generic):
           for compatibility with the absolute version of this method.  In every
           case the list of all possible compositums is returned.
 
-        OUTPUT:
-
-        list of the composite fields, possibly with maps.
+        OUTPUT: list of the composite fields, possibly with maps
 
         EXAMPLES::
 
@@ -1838,9 +1836,7 @@ class NumberField_relative(NumberField_generic):
 
         - ``names`` -- string; name of generator of the absolute field
 
-        OUTPUT:
-
-        An absolute number field `K` that is isomorphic to this field.
+        OUTPUT: an absolute number field `K` that is isomorphic to this field
 
         Also, ``K.structure()`` returns ``from_K`` and ``to_K``, where
         ``from_K`` is an isomorphism from `K` to ``self`` and ``to_K``
@@ -2192,9 +2188,7 @@ class NumberField_relative(NumberField_generic):
 
         - ``prec`` -- desired floating point precision.
 
-        OUTPUT:
-
-        the morphism of ``self`` under the logarithmic embedding in the category Set.
+        OUTPUT: the morphism of ``self`` under the logarithmic embedding in the category Set
 
         EXAMPLES::
 
@@ -2360,7 +2354,7 @@ class NumberField_relative(NumberField_generic):
 
         - ``v`` (optional) -- list of element of this relative number field.
 
-        OUTPUT: Integer if ``v`` is omitted, and Rational otherwise.
+        OUTPUT: integer if ``v`` is omitted, and Rational otherwise
 
         EXAMPLES::
 

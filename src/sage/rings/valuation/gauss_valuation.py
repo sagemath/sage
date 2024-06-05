@@ -244,9 +244,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
           assuming that the result is only used to compute the valuation of
           ``f`` (default: ``False``)
 
-        OUTPUT:
-
-        A list, each entry a rational numbers or infinity, the valuations of `f_0, f_1\phi, \dots`
+        OUTPUT: a list, each entry a rational numbers or infinity, the valuations of `f_0, f_1\phi, \dots`
 
         EXAMPLES::
 
@@ -321,9 +319,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         - ``valuations`` -- the valuations of ``coefficients`` or ``None``
           (default: ``None``); ignored
 
-        OUTPUT:
-
-        A polynomial in the :meth:`residue_ring` of this valuation.
+        OUTPUT: a polynomial in the :meth:`residue_ring` of this valuation
 
         EXAMPLES::
 

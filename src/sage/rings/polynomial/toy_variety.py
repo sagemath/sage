@@ -44,9 +44,7 @@ def is_triangular(B) -> bool:
 
     - ``B`` -- a list/tuple of polynomials or a multivariate polynomial ideal
 
-    OUTPUT:
-
-    ``True`` if the basis is triangular; ``False`` otherwise.
+    OUTPUT: ``True`` if the basis is triangular; ``False`` otherwise
 
     EXAMPLES::
 
@@ -92,9 +90,7 @@ def coefficient_matrix(polys):
 
     - ``polys`` -- a list/tuple of polynomials
 
-    OUTPUT:
-
-    A matrix ``M`` of the coefficients of ``polys``
+    OUTPUT: a matrix ``M`` of the coefficients of ``polys``
 
     EXAMPLES::
 
@@ -245,9 +241,7 @@ def triangular_factorization(B, n=-1):
     - ``B`` -- a list/tuple of polynomials or a multivariate polynomial ideal
     - ``n`` -- the recursion parameter (default: ``-1``)
 
-    OUTPUT:
-
-    A list ``T`` of triangular sets ``T_0``, ``T_1``, etc.
+    OUTPUT: a list ``T`` of triangular sets ``T_0``, ``T_1``, etc
 
     EXAMPLES::
 
