@@ -310,7 +310,7 @@ class Graphics(WithEqualityById, SageObject):
             False
             sage: P.legend(True)
             sage: P  # show with the legend
-            Graphics object consisting of 1 graphics primitive   
+            Graphics object consisting of 1 graphics primitive
         """
         if show is None:
             return self._show_legend
