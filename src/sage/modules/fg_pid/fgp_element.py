@@ -357,9 +357,7 @@ class FGP_Element(ModuleElement):
 
         - ``base_ring`` -- the desired base ring of the vector.
 
-        OUTPUT:
-
-        A vector over the base ring.
+        OUTPUT: a vector over the base ring
 
         EXAMPLES::
 

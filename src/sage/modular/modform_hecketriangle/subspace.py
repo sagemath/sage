@@ -150,9 +150,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
                                 independent subset of ``basis`` is choosen. Otherwise
                                 it is assumed that ``basis`` is linearly independent.
 
-        OUTPUT:
-
-        The corresponding submodule.
+        OUTPUT: the corresponding submodule
 
         EXAMPLES::
 

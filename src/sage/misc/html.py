@@ -75,9 +75,7 @@ def math_parse(s):
 
     - ``s`` -- a string
 
-    OUTPUT:
-
-    A :class:`HtmlFragment` instance.
+    OUTPUT: :class:`HtmlFragment`
 
     Specifically this method does the following:
 
@@ -249,9 +247,7 @@ class MathJax:
           and instead returns a string with all the elements separated by
           a single space.
 
-        OUTPUT:
-
-        A :class:`MathJaxExpr`
+        OUTPUT: :class:`MathJaxExpr`
 
         EXAMPLES::
 
@@ -286,9 +282,7 @@ class MathJax:
           and instead returns a string with all the elements separated by
           a single space.
 
-        OUTPUT:
-
-        A :class:`MathJaxExpr`
+        OUTPUT: :class:`MathJaxExpr`
 
         EXAMPLES::
 
@@ -392,9 +386,7 @@ class HTMLFragmentFactory(SageObject):
         """
         Return string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -418,9 +410,7 @@ class HTMLFragmentFactory(SageObject):
         - ``strict`` -- if ``True``, construct an HTML representation of
           ``obj`` even if ``obj`` is a string
 
-        OUTPUT:
-
-        A :class:`HtmlFragment` instance.
+        OUTPUT: :class:`HtmlFragment`
 
         EXAMPLES::
 
@@ -492,9 +482,7 @@ class HTMLFragmentFactory(SageObject):
         - ``globals`` -- dictionary. The global variables when
           evaluating ``s``. Default: the current global variables.
 
-        OUTPUT:
-
-        A :class:`HtmlFragment` instance.
+        OUTPUT: :class:`HtmlFragment`
 
         EXAMPLES::
 
@@ -538,9 +526,7 @@ class HTMLFragmentFactory(SageObject):
         - ``width`` -- the number of pixels for the page width.
           Defaults to 800.
 
-        OUTPUT:
-
-        A :class:`HtmlFragment` instance.
+        OUTPUT: :class:`HtmlFragment`
 
         EXAMPLES::
 

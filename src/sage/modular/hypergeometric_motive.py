@@ -118,9 +118,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
 
     - ``use_fe`` -- a boolean (default: ``True``)
 
-    OUTPUT:
-
-    a polynomial
+    OUTPUT: a polynomial
 
     If ``deg`` is specified, only the coefficients up to this degree (inclusive) are computed.
 
@@ -323,9 +321,7 @@ def capital_M(n):
 
     - ``n`` -- an integer
 
-    OUTPUT:
-
-    a rational
+    OUTPUT: a rational
 
     EXAMPLES::
 
@@ -999,9 +995,7 @@ class HypergeometricData:
         """
         Return the `M` coefficient that appears in the trace formula.
 
-        OUTPUT:
-
-        a rational
+        OUTPUT: a rational
 
         .. SEEALSO:: :meth:`canonical_scheme`
 
@@ -1339,9 +1333,7 @@ class HypergeometricData:
 
         - ``cache_p`` -- a boolean
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         EXAMPLES:
 
@@ -1484,9 +1476,7 @@ class HypergeometricData:
 
         The ring could be also ``ComplexField(n)`` or ``QQbar``.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         .. WARNING::
 
@@ -1663,9 +1653,7 @@ class HypergeometricData:
 
         - ``deg`` -- integer (optional)
 
-        OUTPUT:
-
-        a polynomial
+        OUTPUT: a polynomial
 
         If ``deg`` is specified, the output is truncated to that degree (inclusive).
 
@@ -1756,9 +1744,7 @@ class HypergeometricData:
 
         - ``deg`` -- integer or ``None``
 
-        OUTPUT:
-
-        a polynomial
+        OUTPUT: a polynomial
 
         See [Benasque2009]_ for explicit examples of Euler factors.
 

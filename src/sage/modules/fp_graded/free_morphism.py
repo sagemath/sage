@@ -178,9 +178,7 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
         r"""
         Create a finitely presented module from ``self``.
 
-        OUTPUT:
-
-        The finitely presented module with presentation equal to ``self``.
+        OUTPUT: the finitely presented module with presentation equal to ``self``
 
         EXAMPLES::
 

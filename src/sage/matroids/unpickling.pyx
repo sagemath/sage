@@ -61,9 +61,7 @@ def unpickle_basis_matroid(version, data):
       of the matroid, ``R`` is the rank, ``name`` is a custom name, and ``BB``
       is the bitpacked list of bases, as pickled by Sage's ``bitset_pickle``.
 
-    OUTPUT:
-
-    A matroid.
+    OUTPUT: matroid
 
     .. WARNING::
 
@@ -109,9 +107,7 @@ def unpickle_circuits_matroid(version, data):
       of the matroid, ``C`` is the list of circuits , and ``name`` is a custom
       name.
 
-    OUTPUT:
-
-    A matroid.
+    OUTPUT: matroid
 
     .. WARNING::
 
@@ -152,9 +148,7 @@ def unpickle_circuit_closures_matroid(version, data):
       of the matroid, ``CC`` is the dictionary of circuit closures, and
       ``name`` is a custom name.
 
-    OUTPUT:
-
-    A matroid.
+    OUTPUT: matroid
 
     .. WARNING::
 
@@ -195,9 +189,7 @@ def unpickle_flats_matroid(version, data):
       the matroid, ``F`` is the dictionary of flats, and ``name`` is a custom
       name.
 
-    OUTPUT:
-
-    A matroid.
+    OUTPUT: matroid
 
     .. WARNING::
 
@@ -238,9 +230,7 @@ def unpickle_dual_matroid(version, data):
     - ``data`` -- a tuple ``(M, name)`` in which ``M`` is
       the internal matroid, and ``name`` is a custom name.
 
-    OUTPUT:
-
-    A matroid.
+    OUTPUT: matroid
 
     .. WARNING::
 
@@ -468,9 +458,7 @@ def unpickle_linear_matroid(version, data):
       ``reduced`` is a boolean indicating whether ``A`` is a reduced matrix,
       and ``name`` is a custom name.
 
-    OUTPUT:
-
-    A :class:`LinearMatroid` instance.
+    OUTPUT: :class:`LinearMatroid`
 
     .. WARNING::
 
@@ -514,9 +502,7 @@ def unpickle_binary_matroid(version, data):
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
-      OUTPUT:
-
-      A :class:`BinaryMatroid` instance.
+      OUTPUT: :class:`BinaryMatroid`
 
     .. WARNING::
 
@@ -560,9 +546,7 @@ def unpickle_ternary_matroid(version, data):
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
-    OUTPUT:
-
-    A :class:`TernaryMatroid` instance.
+    OUTPUT: :class:`TernaryMatroid`
 
     .. WARNING::
 
@@ -607,9 +591,7 @@ def unpickle_quaternary_matroid(version, data):
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
-    OUTPUT:
-
-    A :class:`TernaryMatroid` instance.
+    OUTPUT: :class:`TernaryMatroid`
 
     .. WARNING::
 
@@ -660,9 +642,7 @@ def unpickle_regular_matroid(version, data):
       ``reduced`` is a boolean indicating whether ``A`` is a reduced matrix,
       and ``name`` is a custom name.
 
-    OUTPUT:
-
-    A :class:`RegularMatroid` instance.
+    OUTPUT: :class:`RegularMatroid`
 
     .. WARNING::
 
@@ -710,9 +690,7 @@ def unpickle_minor_matroid(version, data):
       contractions, ``D`` is the set of deletions, and ``name`` is a custom
       name.
 
-    OUTPUT:
-
-    A :class:`MinorMatroid` instance.
+    OUTPUT: :class:`MinorMatroid`
 
     .. WARNING::
 
@@ -750,9 +728,7 @@ def unpickle_graphic_matroid(version, data):
     - ``version`` -- an integer (currently 0).
     - ``data`` -- a tuple consisting of a SageMath graph and a name.
 
-    OUTPUT:
-
-    A :class:`GraphicMatroid` instance.
+    OUTPUT: :class:`GraphicMatroid`
 
     .. WARNING::
 

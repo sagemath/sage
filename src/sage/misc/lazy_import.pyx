@@ -134,9 +134,7 @@ cpdef bint is_during_startup() noexcept:
     """
     Return whether Sage is currently starting up.
 
-    OUTPUT:
-
-    Boolean
+    OUTPUT: boolean
 
     TESTS::
 

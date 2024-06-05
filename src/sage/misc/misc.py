@@ -187,9 +187,7 @@ def exactly_one_is_true(iterable):
 
     - ``iterable`` -- an iterable object
 
-    OUTPUT:
-
-    A boolean.
+    OUTPUT: boolean
 
     .. NOTE::
 

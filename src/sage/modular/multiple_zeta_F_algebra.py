@@ -198,9 +198,7 @@ def morphism_constructor(data: dict, start=3):
 
     - ``start`` -- (default: 3) start index for odd generators
 
-    OUTPUT:
-
-    the unique morphism defined by the dictionary ``data``
+    OUTPUT: the unique morphism defined by the dictionary ``data``
 
     The codomain must be a zinbiel algebra, namely have both a
     commutative associative product ``*`` and a zinbiel product
@@ -560,9 +558,7 @@ class F_algebra(CombinatorialFreeModule):
 
         - ``N`` -- integer, the homogeneous weight
 
-        OUTPUT:
-
-        a homogeneous element of :func:`F_ring` over this base ring
+        OUTPUT: a homogeneous element of :func:`F_ring` over this base ring
 
         .. SEEALSO:: :meth:`F_algebra.homogeneous_to_vector`
 
@@ -723,9 +719,7 @@ class F_algebra(CombinatorialFreeModule):
 
             This is using a fixed enumeration of the basis.
 
-            OUTPUT:
-
-            a vector with coefficients in the base ring
+            OUTPUT: a vector with coefficients in the base ring
 
             .. SEEALSO:: :meth:`F_algebra.homogeneous_from_vector`
 

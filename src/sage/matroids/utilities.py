@@ -50,9 +50,7 @@ def setprint(X):
 
     - ``X`` -- Any Python object
 
-    OUTPUT:
-
-    ``None``. However, the function prints a nice representation of ``X``.
+    OUTPUT: ``None``. However, the function prints a nice representation of ``X``
 
     EXAMPLES:
 
@@ -141,9 +139,7 @@ def newlabel(groundset):
 
     - ``groundset`` -- A set of objects.
 
-    OUTPUT:
-
-    A string not in the set ``groundset``.
+    OUTPUT: a string not in the set ``groundset``
 
     For direct access to ``newlabel``, run::
 
@@ -192,9 +188,7 @@ def sanitize_contractions_deletions(matroid, contractions, deletions):
     - ``contractions`` -- a subset of the groundset.
     - ``deletions`` -- a subset of the groundset.
 
-    OUTPUT:
-
-    An independent set ``C`` and a coindependent set ``D`` such that
+    OUTPUT: an independent set ``C`` and a coindependent set ``D`` such that
 
         ``matroid / contractions \ deletions == matroid / C \ D``
 

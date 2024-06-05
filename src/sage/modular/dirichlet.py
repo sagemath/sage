@@ -1833,8 +1833,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
         r"""
         Return the kernel of this character.
 
-        OUTPUT: Currently the kernel is returned as a list. This may
-        change.
+        OUTPUT: currently the kernel is returned as a list; this may
+        change
 
         EXAMPLES::
 

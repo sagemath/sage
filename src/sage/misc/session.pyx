@@ -127,9 +127,7 @@ def _is_new_var(x, v, hidden):
     - ``hidden`` -- bool; if ``True``, always return ``False`` on variables
       that start with ``_``)
 
-    OUTPUT:
-
-    A bool
+    OUTPUT: boolean
 
     EXAMPLES:
 
@@ -182,9 +180,7 @@ def show_identifiers(hidden=False):
     - ``hidden`` -- bool (Default: ``False``); If ``True``, also return
       identifiers that start with an underscore.
 
-    OUTPUT:
-
-    A list of variable names
+    OUTPUT: a list of variable names
 
     EXAMPLES:
 

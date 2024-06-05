@@ -12,9 +12,7 @@ def coeff_repr(c, is_latex=False):
 
     - ``c`` -- a coefficient (i.e., an element of a ring)
 
-    OUTPUT:
-
-    A string
+    OUTPUT: string
 
     EXAMPLES::
 

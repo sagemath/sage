@@ -183,9 +183,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         - ``proof`` -- a boolean (default: ``True``)
 
-        OUTPUT:
-
-        The order of this torsion subgroup.
+        OUTPUT: the order of this torsion subgroup
 
         EXAMPLES::
 
@@ -347,9 +345,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         Return a divisor of the order of this torsion subgroup of a modular
         abelian variety.
 
-        OUTPUT:
-
-        A divisor of this torsion subgroup.
+        OUTPUT: a divisor of this torsion subgroup
 
         EXAMPLES::
 

@@ -895,9 +895,7 @@ class ManinRelations(PollackStevensModularDomain):
         contains a point fixed by a `\Gamma_0(N)` element of order 2 (where the
         order is computed in `PSL_2(\ZZ)`).
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -940,9 +938,7 @@ class ManinRelations(PollackStevensModularDomain):
         point fixed by a `\Gamma_0(N)` element of order 2 (where the order is
         computed in `PSL_2(\ZZ)`).
 
-        OUTPUT:
-
-        A list of matrices.
+        OUTPUT: a list of matrices
 
         EXAMPLES::
 
@@ -1310,9 +1306,7 @@ class ManinRelations(PollackStevensModularDomain):
         - ``r1``, ``r2`` -- rational numbers (that are assumed to be connected
           by a unimodular path)
 
-        OUTPUT:
-
-        A pair of `2 \times 2` matrices of determinant 1
+        OUTPUT: a pair of `2 \times 2` matrices of determinant 1
 
         EXAMPLES::
 
@@ -1552,9 +1546,7 @@ def basic_hecke_matrix(a, l):
     - `a` -- an integer or Infinity
     - ``l`` -- a prime
 
-    OUTPUT:
-
-    A `2 \times 2` matrix of determinant l
+    OUTPUT: a `2 \times 2` matrix of determinant l
 
     EXAMPLES::
 

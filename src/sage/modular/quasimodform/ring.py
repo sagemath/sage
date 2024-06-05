@@ -323,7 +323,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         - ``weight`` (int, Integer)
 
-        OUTPUT: A quasimodular forms space of the given weight.
+        OUTPUT: a quasimodular forms space of the given weight
 
         EXAMPLES::
 
@@ -621,7 +621,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
           - In any other cases, we use the letters ``Fk``, ``Gk``, ``Hk``, ...,
             ``FFk``, ``FGk``, ... to denote any generator of weight `k`.
 
-        OUTPUT: A multivariate polynomial ring in the variables ``names``
+        OUTPUT: a multivariate polynomial ring in the variables ``names``
 
         EXAMPLES::
 
@@ -791,9 +791,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         - ``weight`` (integer) -- the weight of the subspace
 
-        OUTPUT:
-
-        A list of quasimodular forms of the given weight.
+        OUTPUT: a list of quasimodular forms of the given weight
 
         EXAMPLES::
 

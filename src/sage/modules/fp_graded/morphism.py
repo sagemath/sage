@@ -301,9 +301,7 @@ class FPModuleMorphism(Morphism):
         r"""
         The degree of ``self``.
 
-        OUTPUT:
-
-        The integer degree of ``self``.
+        OUTPUT: the integer degree of ``self``
 
         EXAMPLES::
 
@@ -346,9 +344,7 @@ class FPModuleMorphism(Morphism):
         r"""
         The values under ``self`` of the module generators of the domain module.
 
-        OUTPUT:
-
-        A sequence of module elements of the codomain.
+        OUTPUT: a sequence of module elements of the codomain
 
         EXAMPLES::
 
@@ -619,9 +615,7 @@ class FPModuleMorphism(Morphism):
         r"""
         Decide if ``self`` is the zero homomorphism.
 
-        OUTPUT:
-
-        The boolean value ``True`` if ``self`` is trivial and ``False`` otherwise.
+        OUTPUT: the boolean value ``True`` if ``self`` is trivial and ``False`` otherwise
 
         EXAMPLES::
 
@@ -1352,9 +1346,7 @@ class FPModuleMorphism(Morphism):
 
         - ``t`` -- an integer by which the morphism is suspended
 
-        OUTPUT:
-
-        The morphism which is the suspension of ``self`` by the degree ``t``.
+        OUTPUT: the morphism which is the suspension of ``self`` by the degree ``t``
 
         EXAMPLES::
 

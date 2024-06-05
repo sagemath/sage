@@ -87,9 +87,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         """
         Return the rank of this ambient Hecke module.
 
-        OUTPUT:
-
-        Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -293,7 +291,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         -  ``t`` -- int, the parameter of the degeneracy map, i.e., the map is
            related to `f(q)` - `f(q^t)`.
 
-        OUTPUT: A morphism from ``self`` to ``codomain``.
+        OUTPUT: a morphism from ``self`` to ``codomain``
 
         EXAMPLES::
 

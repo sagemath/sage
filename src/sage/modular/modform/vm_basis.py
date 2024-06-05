@@ -61,9 +61,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
     - ``var`` -- string (default: 'q')
 
-    OUTPUT:
-
-        A sequence whose entries are power series in ``ZZ[[var]]``.
+    OUTPUT: a sequence whose entries are power series in ``ZZ[[var]]``
 
     EXAMPLES::
 
@@ -340,9 +338,7 @@ def delta_qexp(prec=10, var='q', K=ZZ) :
 
     - ``K`` -- ring (default: `\ZZ`), base ring of answer
 
-    OUTPUT:
-
-    a power series over K in the variable ``var``
+    OUTPUT: a power series over K in the variable ``var``
 
     ALGORITHM:
 

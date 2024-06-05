@@ -123,9 +123,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         Return canonical label that defines this newform modular
         abelian variety.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -146,9 +144,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         """
         Return factor number.
 
-        OUTPUT:
-
-        int
+        OUTPUT: int
 
         EXAMPLES::
 

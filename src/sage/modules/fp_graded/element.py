@@ -65,9 +65,7 @@ class FPElement(IndexedFreeModuleElement):
         r"""
         The degree of ``self``.
 
-        OUTPUT:
-
-        The integer degree of ``self`` or raise an error if the zero element.
+        OUTPUT: the integer degree of ``self`` or raise an error if the zero element
 
         EXAMPLES::
 
@@ -147,9 +145,7 @@ class FPElement(IndexedFreeModuleElement):
 
         - ``a`` -- an element of the algebra the parent module is defined over
 
-        OUTPUT:
-
-        The module element `a \cdot x` where `x` is ``self``.
+        OUTPUT: the module element `a \cdot x` where `x` is ``self``
 
         EXAMPLES::
 

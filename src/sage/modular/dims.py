@@ -69,7 +69,7 @@ def eisen(p):
 
     - ``p`` -- a prime
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -189,7 +189,7 @@ def CohenOesterle(eps, k):
 
     -  ``k`` -- integer
 
-    OUTPUT: element of the base ring of eps.
+    OUTPUT: element of the base ring of eps
 
     EXAMPLES::
 
@@ -221,7 +221,7 @@ def CohenOesterle(eps, k):
 
         -  ``r, s, p`` -- integers
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES: (indirect doctest)
 

@@ -48,8 +48,8 @@ def profile_elt(elt, char=2):
     element of the Steenrod algebra: ``(a, b, c) <-> Sq(a, b, c)`` or
     ``((a, b, c), (x, y, z)) <-> Q_a Q_b Q_c P(x, y, z)``.
 
-    OUTPUT: The profile function corresponding to the smallest
-    sub-Hopf algebra containing the element passed.
+    OUTPUT: the profile function corresponding to the smallest
+    sub-Hopf algebra containing the element passed
 
     EXAMPLES::
 
@@ -107,8 +107,8 @@ def enveloping_profile_elements(alist, char=2):
     As with :func:`profile_elt`, the entries of ``alist`` could also
     be iterables or pairs of iterables.
 
-    OUTPUT: The profile function for the minimum sub-algebra
-    containing all the elements of ``alist``.
+    OUTPUT: the profile function for the minimum sub-algebra
+    containing all the elements of ``alist``
 
     EXAMPLES::
 

@@ -641,9 +641,7 @@ class Standalone(SageObject):
           ``'lualatex'``. If ``None``, it uses ``'lualatex'`` if it is
           available, otherwise ``'pdflatex'``.
 
-        OUTPUT:
-
-        string, path to pdf file
+        OUTPUT: string, path to pdf file
 
         EXAMPLES::
 
@@ -765,9 +763,7 @@ class Standalone(SageObject):
 
         - ``program`` -- string (default:``'latex'``), ``'latex'``
 
-        OUTPUT:
-
-        string, path to dvi file
+        OUTPUT: string, path to dvi file
 
         EXAMPLES::
 
@@ -893,9 +889,7 @@ class Standalone(SageObject):
           png viewer. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
-        OUTPUT:
-
-        string, path to png file
+        OUTPUT: string, path to png file
 
         EXAMPLES::
 
@@ -982,9 +976,7 @@ class Standalone(SageObject):
         - ``program`` -- string (default:``'pdftocairo'``) ``'pdftocairo'`` or
           ``'pdf2svg'``.
 
-        OUTPUT:
-
-        string, path to svg file
+        OUTPUT: string, path to svg file
 
         EXAMPLES::
 
@@ -1084,9 +1076,7 @@ class Standalone(SageObject):
         - ``program`` -- string (default:``'dvips'``),
           ``'pdftocairo'`` or ``'dvips'``
 
-        OUTPUT:
-
-        string, path to eps file
+        OUTPUT: string, path to eps file
 
         EXAMPLES::
 
@@ -1197,9 +1187,7 @@ class Standalone(SageObject):
           the header latex part. If ``True``, it prints only the
           content to the file.
 
-        OUTPUT:
-
-        string, path to tex file
+        OUTPUT: string, path to tex file
 
         EXAMPLES::
 

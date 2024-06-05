@@ -168,9 +168,7 @@ cdef class ArgumentFixer:
 
         - any positional and named arguments.
 
-        OUTPUT:
-
-        We return a tuple
+        OUTPUT: we return a tuple
 
             `(e_1, e_2, ..., e_k), ((n_1, v_1), ... , (n_m, v_m))`
 
@@ -239,9 +237,7 @@ cdef class ArgumentFixer:
 
         Any positional or named arguments
 
-        OUTPUT:
-
-        We return a tuple
+        OUTPUT: we return a tuple
 
             `(e_1, e_2, ..., e_k), ((n_1, v_1), ... , (n_m, v_m))`
 

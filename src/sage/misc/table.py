@@ -575,9 +575,7 @@ class table(SageObject):
         dollar signs are not automatically added, so tables can
         include both plain text and mathematics.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -656,9 +654,7 @@ class table(SageObject):
         visible effect in the Sage notebook, depending on the version
         of the notebook.
 
-        OUTPUT:
-
-        A :class:`~sage.misc.html.HtmlFragment` instance.
+        OUTPUT: :class:`~sage.misc.html.HtmlFragment`
 
         EXAMPLES::
 
@@ -785,9 +781,7 @@ class table(SageObject):
         - ``header`` -- bool (default: ``False``). If True, treat this as a
           header row, using ``<th>`` instead of ``<td>``.
 
-        OUTPUT:
-
-        This method returns nothing. All output is written to ``file``.
+        OUTPUT: this method returns nothing; all output is written to ``file``
 
         Strings are written verbatim unless they seem to be LaTeX
         code, in which case they are enclosed in a ``script`` tag

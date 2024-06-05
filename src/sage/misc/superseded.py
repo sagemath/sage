@@ -284,9 +284,7 @@ class experimental:
 
         - ``func`` -- the function to decorate.
 
-        OUTPUT:
-
-        The wrapper to this function.
+        OUTPUT: the wrapper to this function
 
         TESTS::
 

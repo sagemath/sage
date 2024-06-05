@@ -766,7 +766,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         -  ``R`` -- either ZZ, QQ, or the base_ring of self
            (which is the default)
 
-        OUTPUT: A free module over R.
+        OUTPUT: a free module over `R`
 
         .. TODO::
 

@@ -169,9 +169,7 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
         - ``generators``            -- A list of elements of some ambient space
                                        over some base ring.
 
-        OUTPUT:
-
-        The construction functor for the corresponding forms sub space.
+        OUTPUT: the construction functor for the corresponding forms sub space
 
         EXAMPLES::
 
@@ -367,9 +365,7 @@ class FormsSpaceFunctor(ConstructionFunctor):
 
         - ``ep``             -- `1` or `-1`, the multiplier of the space.
 
-        OUTPUT:
-
-        The construction functor for the corresponding forms space/ring.
+        OUTPUT: the construction functor for the corresponding forms space/ring
 
         EXAMPLES::
 
@@ -552,9 +548,7 @@ class FormsRingFunctor(ConstructionFunctor):
         - ``red_hom``        -- A boolean variable for the parameter ``red_hom``
                                 (also see ``FormsRing_abstract``).
 
-        OUTPUT:
-
-        The construction functor for the corresponding forms ring.
+        OUTPUT: the construction functor for the corresponding forms ring
 
         EXAMPLES::
 

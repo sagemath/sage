@@ -328,7 +328,7 @@ class FiniteSubgroup(Module):
         """
         Return the exponent of this finite abelian group.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 

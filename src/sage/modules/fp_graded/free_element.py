@@ -164,9 +164,7 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
 
         - ``a`` -- an element of the algebra the parent module is defined over
 
-        OUTPUT:
-
-        The module element `a \cdot x` where `x` is this module element.
+        OUTPUT: the module element `a \cdot x` where `x` is this module element
 
         EXAMPLES::
 

@@ -91,9 +91,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
         - ``prec``       -- An integer (default: 10), the default precision used
                             in calculations in the LaurentSeriesRing or PowerSeriesRing.
 
-        OUTPUT:
-
-        The constructor for Fourier expansion with the specified settings.
+        OUTPUT: the constructor for Fourier expansion with the specified settings
 
         EXAMPLES::
 

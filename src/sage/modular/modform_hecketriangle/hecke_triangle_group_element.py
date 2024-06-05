@@ -1094,9 +1094,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
           The result should not depend on the method.
 
-        OUTPUT:
-
-        The primitive part as a group element of ``self``.
+        OUTPUT: the primitive part as a group element of ``self``
 
         EXAMPLES::
 

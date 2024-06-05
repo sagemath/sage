@@ -37,9 +37,7 @@ cpdef search(object v, object x):
 
     - x -- Python object
 
-    OUTPUT:
-
-    bool, int
+    OUTPUT: bool, int
 
     This is implemented using the built-in ``bisect`` module.
 

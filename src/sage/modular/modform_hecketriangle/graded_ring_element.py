@@ -1030,9 +1030,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
           ``new_parent``. If ``new_parent == None`` (default)
           then the parent is extended to a "quasi meromorphic" ring.
 
-        OUTPUT:
-
-        The new element.
+        OUTPUT: the new element
 
         EXAMPLES::
 
@@ -1611,9 +1609,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
           increased such that the output has exactly the specified
           precision O(q^prec).
 
-        OUTPUT:
-
-        The Fourier expansion of ``self`` as a ``FormalPowerSeries`` or ``FormalLaurentSeries``.
+        OUTPUT: the Fourier expansion of ``self`` as a ``FormalPowerSeries`` or ``FormalLaurentSeries``
 
         EXAMPLES::
 
@@ -1712,9 +1708,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
           increased such that the output has exactly the specified
           precision O(q^prec).
 
-        OUTPUT:
-
-        The Fourier expansion of self as a ``FormalPowerSeries`` or ``FormalLaurentSeries``.
+        OUTPUT: the Fourier expansion of self as a ``FormalPowerSeries`` or ``FormalLaurentSeries``
 
         EXAMPLES::
 

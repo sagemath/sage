@@ -475,7 +475,7 @@ cdef class Matroid(SageObject):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT: a set
+        OUTPUT: set
 
         .. NOTE::
 
@@ -503,7 +503,7 @@ cdef class Matroid(SageObject):
 
         - ``X`` -- an object with Python's ``frozenset`` interface.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         .. NOTE::
 
@@ -740,7 +740,7 @@ cdef class Matroid(SageObject):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1232,7 +1232,7 @@ cdef class Matroid(SageObject):
         - ``F`` -- a subset of the groundset, assumed to be a closed set of
           rank `r(M) - 2`.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1313,7 +1313,7 @@ cdef class Matroid(SageObject):
         """
         Return the size of the groundset.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1398,7 +1398,7 @@ cdef class Matroid(SageObject):
         - ``X`` -- (default: the groundset) a subset (or any iterable)
           of the groundset
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1423,7 +1423,7 @@ cdef class Matroid(SageObject):
         The *rank* of the matroid is the size of the largest independent
         subset of the groundset.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1688,7 +1688,7 @@ cdef class Matroid(SageObject):
         - ``X`` -- (default: the groundset) a subset (or any iterable)
           of the groundset
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         .. SEEALSO::
 
@@ -1716,7 +1716,7 @@ cdef class Matroid(SageObject):
         The *corank* of the matroid equals the rank of the dual matroid. It is
         given by ``M.size() - M.full_rank()``.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         .. SEEALSO::
 
@@ -5123,7 +5123,7 @@ cdef class Matroid(SageObject):
         - ``T`` -- (optional) a subset (or any iterable) of the groundset
           disjoint from ``S``
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -5163,7 +5163,7 @@ cdef class Matroid(SageObject):
         - ``S`` -- a subset of the groundset
         - ``T`` -- (optional) a subset of the groundset disjoint from ``S``
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         ALGORITHM:
 
@@ -6255,9 +6255,7 @@ cdef class Matroid(SageObject):
 
         - ``basis`` -- (optional) a set; the basis `B` as above
 
-        OUTPUT:
-
-        A :class:`BinaryMatroid <sage.matroids.linear_matroid.BinaryMatroid>`.
+        OUTPUT: a :class:`BinaryMatroid <sage.matroids.linear_matroid.BinaryMatroid>`
 
         EXAMPLES::
 
@@ -6384,9 +6382,7 @@ cdef class Matroid(SageObject):
 
         - ``basis`` -- (optional) a set; the basis `B` as above
 
-        OUTPUT:
-
-        A :class:`TernaryMatroid <sage.matroids.linear_matroid.TernaryMatroid>`.
+        OUTPUT: a :class:`TernaryMatroid <sage.matroids.linear_matroid.TernaryMatroid>`
 
         ALGORITHM:
 
@@ -6481,7 +6477,7 @@ cdef class Matroid(SageObject):
           ``False``, any output will represent ``self`` if and only if the
           matroid is ternary
 
-        OUTPUT: Either a
+        OUTPUT: either a
         :class:`TernaryMatroid <sage.matroids.linear_matroid.TernaryMatroid>`,
         or ``None``
 

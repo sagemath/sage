@@ -293,9 +293,7 @@ def lazy_list_formatter(L, name='lazy list',
     - ``preview`` -- (default: ``3``) an integer specifying the number of
       elements shown in the representation string
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 

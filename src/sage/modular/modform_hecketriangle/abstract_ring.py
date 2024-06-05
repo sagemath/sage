@@ -413,9 +413,7 @@ class FormsRing_abstract(Parent):
 
         - ``ring``           -- Whether to extend to a graded ring (default: ``False``).
 
-        OUTPUT:
-
-        The new extended space.
+        OUTPUT: the new extended space
 
         EXAMPLES::
 
@@ -459,9 +457,7 @@ class FormsRing_abstract(Parent):
         - ``degree``          -- ``None`` (default) or the degree of the homogeneous component to which
                                  ``self`` should be reduced.
 
-        OUTPUT:
-
-        The new reduced space.
+        OUTPUT: the new reduced space
 
         EXAMPLES::
 

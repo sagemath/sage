@@ -1990,9 +1990,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
            compute dual subspace. This are useful for many algorithms.
 
 
-        OUTPUT:
-
-        A subspace of modular symbols
+        OUTPUT: a subspace of modular symbols
 
         EXAMPLES::
 
@@ -2104,9 +2102,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         - ``check`` (bool, default: ``True``) -- if True, check that `M` is
            a submodule, i.e. is invariant under all Hecke operators.
 
-        OUTPUT:
-
-        A subspace of this modular symbol space.
+        OUTPUT: a subspace of this modular symbol space
 
         EXAMPLES::
 
@@ -2430,7 +2426,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
             E\colon M \times P \to K.
 
-        OUTPUT: The matrix of the bilinear map `E`.
+        OUTPUT: the matrix of the bilinear map `E`
 
         This is currently only implemented for spaces of modular
         symbols of trivial character.
@@ -2489,7 +2485,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
             T \in P \otimes_K M.
 
-        OUTPUT: The matrix of the element `T \in P \otimes_K M`.
+        OUTPUT: the matrix of the element `T \in P \otimes_K M`.
         This is the inverse of the matrix returned by
         :meth:`_pari_pairing`.
 

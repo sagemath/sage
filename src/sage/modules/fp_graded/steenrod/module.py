@@ -361,9 +361,7 @@ class SteenrodFPModule(FPModule, SteenrodModuleMixin):
         - ``top_dim`` -- (optional) stop the computation at this degree
         - ``verbose`` -- (default: ``False``) whether log messages are printed
 
-        OUTPUT:
-
-        A list of homomorphisms `[\epsilon, f_1, \ldots, f_k]` such that
+        OUTPUT: a list of homomorphisms `[\epsilon, f_1, \ldots, f_k]` such that
 
         .. MATH::
 

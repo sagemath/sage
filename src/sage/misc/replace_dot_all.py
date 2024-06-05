@@ -285,9 +285,7 @@ def process_line(location, line, replacements, row_index, verbose=False):
     - ``row_index`` -- the line number where ``import`` appears
     - ``verbose`` -- if True, issue print statements when interesting examples are found
 
-    OUTPUT:
-
-    an array ``[new_line, replacements]`` with entries
+    OUTPUT: an array ``[new_line, replacements]`` with entries
 
     - ``new_line`` -- the modified import statement (possibly now on several lines)
     - ``replacements`` -- just returns the original replacements with its index 0 element removed if ``replacements`` is nonempty

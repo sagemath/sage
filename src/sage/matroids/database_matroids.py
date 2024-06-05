@@ -5188,7 +5188,7 @@ def CompleteGraphic(n, groundset=None):
     - ``n`` -- an integer, the number of vertices of the underlying complete
       graph.
 
-    OUTPUT: The graphic matroid associated with the `n`-vertex complete graph.
+    OUTPUT: the graphic matroid associated with the `n`-vertex complete graph.
     This matroid has rank `n - 1`.
 
     EXAMPLES::

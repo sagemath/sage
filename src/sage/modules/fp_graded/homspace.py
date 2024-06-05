@@ -143,9 +143,7 @@ class FPModuleHomspace(Homset):
 
         - ``n`` -- (default: 0) an integer degree
 
-        OUTPUT:
-
-        A module homomorphism of degree ``n``.
+        OUTPUT: a module homomorphism of degree ``n``
 
         EXAMPLES::
 
@@ -194,9 +192,7 @@ class FPModuleHomspace(Homset):
 
         - ``n`` -- an integer degree
 
-        OUTPUT:
-
-        A basis for the set of all module homomorphisms of degree ``n``.
+        OUTPUT: a basis for the set of all module homomorphisms of degree ``n``
 
         EXAMPLES::
 

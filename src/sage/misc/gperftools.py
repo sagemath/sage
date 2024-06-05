@@ -75,9 +75,7 @@ class Profiler(SageObject):
         """
         Return the file name
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -92,9 +90,7 @@ class Profiler(SageObject):
         """
         Return string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -108,9 +104,7 @@ class Profiler(SageObject):
         """
         Return libc
 
-        OUTPUT:
-
-        A ctypes shared library handle.
+        OUTPUT: a ctypes shared library handle
 
         EXAMPLES::
 
@@ -132,9 +126,7 @@ class Profiler(SageObject):
         """
         Return libprofiler
 
-        OUTPUT:
-
-        A ctypes shared library handle.
+        OUTPUT: a ctypes shared library handle
 
         EXAMPLES::
 
@@ -235,9 +227,7 @@ class Profiler(SageObject):
         """
         Return the name of the Sage Python interpreter.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -275,9 +265,7 @@ class Profiler(SageObject):
         """
         Print text report
 
-        OUTPUT:
-
-        Nothing. A textual report is printed to stdout.
+        OUTPUT: nothing; a textual report is printed to stdout
 
         EXAMPLES::
 

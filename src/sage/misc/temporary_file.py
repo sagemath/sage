@@ -107,9 +107,7 @@ def tmp_filename(name="tmp_", ext=""):
       want a filename extension in the usual sense, this should start
       with a dot.
 
-    OUTPUT:
-
-    The absolute path of the temporary file created.
+    OUTPUT: the absolute path of the temporary file created
 
     EXAMPLES::
 
@@ -335,7 +333,7 @@ class atomic_write:
         If ``self.append``, then copy the current contents of
         ``self.target`` to the temporary file.
 
-        OUTPUT: a file returned by :func:`tempfile.NamedTemporaryFile`.
+        OUTPUT: a file returned by :func:`tempfile.NamedTemporaryFile`
 
         TESTS::
 
@@ -477,7 +475,7 @@ class atomic_dir:
         Create and return a temporary directory in ``self.tmpdir`` (normally
         the same directory as the target file).
 
-        OUTPUT: a directory returned by :func:`tempfile.TemporaryDirectory`.
+        OUTPUT: a directory returned by :func:`tempfile.TemporaryDirectory`
 
         TESTS::
 

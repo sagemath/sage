@@ -165,9 +165,7 @@ cdef class SetSystem:
 
         - ``k`` -- integer; the index of the subset in the system
 
-        OUTPUT:
-
-        The subset at index `k`.
+        OUTPUT: the subset at index `k`
 
         EXAMPLES::
 

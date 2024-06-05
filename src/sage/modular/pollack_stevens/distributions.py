@@ -412,9 +412,7 @@ class OverconvergentDistributions_abstract(Module):
         The standard caveat applies, namely that the weight of `Sym^k`
         is defined to be `k`, not `k+2`.
 
-        OUTPUT:
-
-        nonnegative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 

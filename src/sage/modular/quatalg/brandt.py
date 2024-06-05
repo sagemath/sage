@@ -241,9 +241,7 @@ def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
     - ``base_ring`` -- the base ring (default: ``QQ``)
     - ``use_cache`` -- whether to use the cache (default: ``True``)
 
-    OUTPUT:
-
-    a Brandt module
+    OUTPUT: a Brandt module
 
     EXAMPLES::
 
@@ -326,9 +324,7 @@ def class_number(p, r, M):
     - `r` -- an odd positive integer (default: 1)
     - `M` -- an integer coprime to `q` (default: 1)
 
-    OUTPUT:
-
-    Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -362,9 +358,7 @@ def maximal_order(A):
 
     - `A` -- quaternion algebra ramified precisely at `p` and infinity
 
-    OUTPUT:
-
-    a maximal order in `A`
+    OUTPUT: a maximal order in `A`
 
     EXAMPLES::
 
@@ -393,9 +387,7 @@ def basis_for_left_ideal(R, gens):
     - `R` -- quaternion order
     - ``gens`` -- list of elements of `R`
 
-    OUTPUT:
-
-    list of four elements of `R`
+    OUTPUT: list of four elements of `R`
 
     EXAMPLES::
 
@@ -422,9 +414,7 @@ def right_order(R, basis):
     - `R` -- order in quaternion algebra
     - ``basis`` -- basis for an ideal `I`
 
-    OUTPUT:
-
-    order in quaternion algebra
+    OUTPUT: order in quaternion algebra
 
     EXAMPLES:
 
@@ -1160,9 +1150,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
         - `B` -- positive integer, precision of theta series vectors
 
-        OUTPUT:
-
-        dictionary
+        OUTPUT: dictionary
 
         EXAMPLES:
 
@@ -1258,9 +1246,7 @@ class BrandtModule_class(AmbientHeckeModule):
         Return sorted tuple of representatives for the equivalence
         classes of right ideals in ``self``.
 
-        OUTPUT:
-
-        sorted tuple of fractional ideals
+        OUTPUT: sorted tuple of fractional ideals
 
         EXAMPLES::
 
@@ -1341,9 +1327,7 @@ class BrandtModule_class(AmbientHeckeModule):
         - ``diagonal_only`` -- bool (default: ``False``) if ``True`` returns
           only the diagonal ideal products
 
-        OUTPUT:
-
-        list of ideals
+        OUTPUT: list of ideals
 
         EXAMPLES::
 
@@ -1449,9 +1433,7 @@ class BrandtModule_class(AmbientHeckeModule):
         - ``prec`` -- positive integer
         - ``var`` -- string (default: `q`)
 
-        OUTPUT:
-
-        matrix of power series with coefficients in `\QQ`
+        OUTPUT: matrix of power series with coefficients in `\QQ`
 
         EXAMPLES::
 

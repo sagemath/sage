@@ -167,7 +167,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         -  ``new_prec`` -- positive integer (default: None)
 
 
-        OUTPUT: if new_prec is None, returns the current precision.
+        OUTPUT: if new_prec is None, returns the current precision
 
         EXAMPLES::
 
@@ -937,7 +937,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         -  ``self, right`` -- spaces of modular forms
 
 
-        OUTPUT: True if self embeds in right, and False otherwise.
+        OUTPUT: ``True`` if self embeds in right, and ``False`` otherwise
 
         TODO: Barring a few trivial cases, this only works in the case that
         right.is_ambient() returns True.
@@ -1152,7 +1152,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         - ``other`` -- ``ModularFormSpace`` or a ``ModularFormRing``
 
-        OUTPUT: If ``self`` and ``other`` have the same groups and base rings, then this method returns
+        OUTPUT: if ``self`` and ``other`` have the same groups and base rings, then this method returns
         ``self`` if the weights of the two spaces are equal, otherwise it returns a ``ModularFormsRing``.
 
 
@@ -1869,7 +1869,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
            of forms are assumed to form a basis.
 
 
-        OUTPUT: A list of numbers that give f as a linear combination of
+        OUTPUT: a list of numbers that give f as a linear combination of
         the basis for this space or of the given forms if
         independent=True.
 

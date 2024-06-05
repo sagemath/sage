@@ -75,9 +75,7 @@ def pickle_function(func):
 
         func -- a Python function
 
-    OUTPUT:
-
-        a string
+    OUTPUT: string
 
     EXAMPLES::
 

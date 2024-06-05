@@ -221,9 +221,7 @@ def low_weight_generators(N,p,m,NN):
     - ``p`` -- prime.
     - ``m``, ``NN`` -- positive integers.
 
-    OUTPUT:
-
-    a tuple consisting of:
+    OUTPUT: a tuple consisting of:
 
     - a list of lists of `q`-expansions modulo `(p^m,q^{NN})`,
     - an even natural number (twice the length of the list).
@@ -1131,9 +1129,7 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     - ``weightbound`` -- a positive even integer (default: 6). Ignored
       if `N = 1` or ``modformsring`` is ``True``.
 
-    OUTPUT:
-
-    Either a list of polynomials or a single polynomial over the integers modulo `p^m`.
+    OUTPUT: either a list of polynomials or a single polynomial over the integers modulo `p^m`
 
     EXAMPLES::
 

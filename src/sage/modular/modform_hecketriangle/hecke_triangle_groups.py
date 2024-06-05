@@ -79,9 +79,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         - ``n`` -- ``infinity`` or an integer greater or equal to ``3``.
 
-        OUTPUT:
-
-        The Hecke triangle group for the given parameter ``n``.
+        OUTPUT: the Hecke triangle group for the given parameter ``n``
 
         EXAMPLES::
 
@@ -482,9 +480,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         - ``j``  -- Any integer. To get the usual representatives
           ``j`` should range from ``1`` to ``self.n()-1``.
 
-        OUTPUT:
-
-        The corresponding matrix/element.
+        OUTPUT: the corresponding matrix/element
 
         The matrix is parabolic if ``j`` is congruent to `\pm 1` modulo ``self.n()``.
         It is elliptic if ``j`` is congruent to 0 modulo ``self.n()``.
@@ -1263,9 +1259,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
           (also higher) discriminants which were gathered so far are listed
           (however there might be missing discriminants inbetween).
 
-        OUTPUT:
-
-        A list of discriminants less than or equal to ``D``.
+        OUTPUT: a list of discriminants less than or equal to ``D``
 
         EXAMPLES::
 

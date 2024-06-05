@@ -341,9 +341,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         Return this graded Drinfeld forms as a multivariate polynomial
         over the generators of the ring.
 
-        OUTPUT:
-
-        A multivariate polynomial over the base ring.
+        OUTPUT: a multivariate polynomial over the base ring
 
         EXAMPLES::
 

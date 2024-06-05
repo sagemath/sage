@@ -52,9 +52,7 @@ class NumericalEigenforms(SageObject):
     - ``tp`` -- use the Hecke operators T_p for p in tp when searching
       for a random Hecke operator with distinct Hecke eigenvalues.
 
-    OUTPUT:
-
-    A numerical eigenforms object, with the following useful methods:
+    OUTPUT: a numerical eigenforms object, with the following useful methods:
 
     - :meth:`ap` -- return all eigenvalues of `T_p`
 
@@ -402,9 +400,7 @@ class NumericalEigenforms(SageObject):
 
         - ``primes`` -- a list of primes
 
-        OUTPUT:
-
-        list of lists of eigenvalues.
+        OUTPUT: list of lists of eigenvalues
 
         EXAMPLES::
 

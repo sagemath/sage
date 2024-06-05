@@ -204,9 +204,7 @@ def detex(s, embedded=False):
     ``math_substitutes`` and ``nonmath_substitutes``.  If True, then
     only do ``nonmath_substitutes``.
 
-    OUTPUT:
-
-    string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -1085,7 +1083,9 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
       ``module`` doesn't start with "sage", then the links in the
       notebook output may not function.
 
-    OUTPUT: If ``interact`` is False, then return a string with all of
+    OUTPUT:
+
+    If ``interact`` is False, then return a string with all of
     the matches, separated by newlines.  On the other hand, if
     ``interact`` is True (the default), there is no output.  Instead:
     at the command line, the search results are printed on the screen
@@ -1235,7 +1235,7 @@ def search_doc(string, extra1='', extra2='', extra3='', extra4='',
 
     INPUT: same as for :func:`search_src`.
 
-    OUTPUT: same as for :func:`search_src`.
+    OUTPUT: same as for :func:`search_src`
 
     EXAMPLES:
 
@@ -1276,7 +1276,7 @@ def search_def(name, extra1='', extra2='', extra3='', extra4='',
 
     INPUT: same as for :func:`search_src`.
 
-    OUTPUT: same as for :func:`search_src`.
+    OUTPUT: same as for :func:`search_src`
 
     .. note::
 

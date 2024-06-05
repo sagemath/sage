@@ -20,9 +20,7 @@ def version():
     """
     Return the version of Sage.
 
-    OUTPUT:
-
-    str
+    OUTPUT: str
 
     EXAMPLES::
 
@@ -40,9 +38,7 @@ def banner_text(full=True):
 
     - ``full`` -- boolean (default: ``True``)
 
-    OUTPUT:
-
-    A string containing the banner message.
+    OUTPUT: a string containing the banner message
 
     If option full is ``False``, a simplified plain ASCII banner is
     displayed; if ``True`` the full banner with box art is displayed.
@@ -90,7 +86,7 @@ def banner():
     """
     Print the Sage banner.
 
-    OUTPUT: None
+    OUTPUT: none
 
     If the environment variable ``SAGE_BANNER`` is set to ``no``, no
     banner is displayed. If ``SAGE_BANNER`` is set to ``bare``, a
@@ -129,9 +125,7 @@ def version_dict():
 
     nothing
 
-    OUTPUT:
-
-    dictionary with keys 'major', 'minor', 'tiny', 'prerelease'
+    OUTPUT: dictionary with keys 'major', 'minor', 'tiny', 'prerelease'
 
     This process the Sage version string and produces a dictionary.
     It expects the Sage version to be in one of these forms::
@@ -198,9 +192,8 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
     - prerelease -- boolean (default: ``False``)
     - print_message -- boolean (default: ``False``)
 
-    OUTPUT:
-
-    True if major.minor.tiny is <= version of Sage, False otherwise
+    OUTPUT: ``True`` if major.minor.tiny is <= version of Sage, ``False``
+    otherwise
 
     For example, if the Sage version number is 3.1.2, then
     require_version(3, 1, 3) will return False, while

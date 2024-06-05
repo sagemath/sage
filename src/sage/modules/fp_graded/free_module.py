@@ -735,9 +735,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         - ``coordinates`` -- a sequence of elements of the ground ring
         - ``n`` -- an integer
 
-        OUTPUT:
-
-        A module element of degree ``n``.
+        OUTPUT: a module element of degree ``n``
 
         .. SEEALSO::
 
@@ -1047,9 +1045,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         r"""
         Return a minimal presentation of ``self``.
 
-        OUTPUT:
-
-        The identity morphism as ``self`` is free.
+        OUTPUT: the identity morphism as ``self`` is free
 
         EXAMPLES::
 

@@ -1040,7 +1040,7 @@ class ModularForm_abstract(ModuleElement):
           `\CC`, or an integer `i` (in which case take the `i`-th embedding)
         - ``prec`` -- The desired precision in bits (default 53).
 
-        OUTPUT: The symmetric square L-series of the cusp form, as a
+        OUTPUT: the symmetric square L-series of the cusp form, as a
         :class:`sage.lfunctions.dokchitser.Dokchitser` object.
 
         EXAMPLES::
@@ -1218,9 +1218,7 @@ class ModularForm_abstract(ModuleElement):
 
         - ``eps`` -- a Dirichlet character
 
-        OUTPUT:
-
-        A positive integer.
+        OUTPUT: a positive integer
 
         EXAMPLES:
 
@@ -1260,9 +1258,7 @@ class ModularForm_abstract(ModuleElement):
         r"""
         Return whether the modular form ``self`` has complex multiplication.
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -3213,9 +3209,7 @@ class GradedModularFormElement(ModuleElement):
           or a list ``[f_1, f_2,..., f_n]`` where `f_i` is a modular form of
           weight `k_i`
 
-        OUTPUT:
-
-        A ``GradedModularFormElement`` corresponding to `f_1 + f_2 + ... + f_n`
+        OUTPUT: a ``GradedModularFormElement`` corresponding to `f_1 + f_2 + ... + f_n`
 
         TESTS::
 
@@ -3577,7 +3571,7 @@ class GradedModularFormElement(ModuleElement):
 
         - ``c`` -- an element of the base ring of self
 
-        OUTPUT: A ``GradedModularFormElement``.
+        OUTPUT: a ``GradedModularFormElement``
 
         TESTS::
 
@@ -3709,7 +3703,7 @@ class GradedModularFormElement(ModuleElement):
         - ``names`` -- a list or tuple of names (strings), or a comma separated string;
         - ``gens`` -- (list) a list of generator of ``self``.
 
-        OUTPUT: A polynomial in the variables ``names``
+        OUTPUT: a polynomial in the variables ``names``
 
         TESTS::
 
@@ -3792,7 +3786,7 @@ class GradedModularFormElement(ModuleElement):
           the list returned by :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead
 
-        OUTPUT: A polynomial in the variables ``names``
+        OUTPUT: a polynomial in the variables ``names``
 
         EXAMPLES::
 

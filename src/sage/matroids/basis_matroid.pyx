@@ -317,9 +317,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             i.e. ``len(X) == self.full_rank()``. Otherwise its behavior is
             undefined.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -342,9 +340,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         of `M`, then the set `\{E - b : b \in B\}` is the set of bases of
         another matroid, the *dual* of `M`.
 
-        OUTPUT:
-
-        The dual matroid.
+        OUTPUT: the dual matroid
 
         EXAMPLES::
 
@@ -394,9 +390,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             - ``deletions`` is coindependent
             - ``contractions`` and ``deletions`` are disjoint.
 
-        OUTPUT:
-
-        A matroid.
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -419,9 +413,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         can be obtained by adding an element freely to the span of the matroid
         and then contracting that element.
 
-        OUTPUT:
-
-        A matroid.
+        OUTPUT: matroid
 
         .. SEEALSO::
 
@@ -456,9 +448,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         - ``hyperplanes`` -- the set of hyperplanes of a linear subclass of
           ``self``.
 
-        OUTPUT:
-
-        A matroid.
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -504,9 +494,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         - ``e`` -- the label of the new element. Assumed to be outside the
           current groundset.
 
-        OUTPUT:
-
-        The extension of this matroid by a coloop.
+        OUTPUT: the extension of this matroid by a coloop
 
         EXAMPLES::
 
@@ -570,9 +558,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         r"""
         Return the number of bases of the matroid.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -592,9 +578,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         A *basis* is a maximal independent set.
 
-        OUTPUT:
-
-        An iterable containing all bases of the matroid.
+        OUTPUT: an iterable containing all bases of the matroid
 
         EXAMPLES::
 
@@ -624,9 +608,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         A *nonbasis* is a set with cardinality ``self.full_rank()`` that is
         not a basis.
 
-        OUTPUT:
-
-        An iterable containing the nonbases of the matroid.
+        OUTPUT: an iterable containing the nonbases of the matroid
 
         .. SEEALSO::
 
@@ -671,9 +653,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         - Nothing
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -730,9 +710,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         takes more time to compute.
         See also :meth:`<BasisMatroid.basis_partition2>`.
 
-        OUTPUT:
-
-        an integer isomorphism invariant.
+        OUTPUT: an integer isomorphism invariant
 
         EXAMPLES::
 
@@ -835,9 +813,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         - ``e`` -- an element of the ground set
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -939,9 +915,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
           the groundset of ``other``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -970,11 +944,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``other`` -- a matroid.
+        - ``other`` -- matroid
 
-        OUTPUT:
-
-        A dictionary, or ``None``
+        OUTPUT: a dictionary, or ``None``
 
         .. NOTE::
 

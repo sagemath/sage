@@ -298,7 +298,7 @@ class ModularFormsRing(Parent):
         - ``i`` (Integer) -- correspond to the `i`-th modular form generating
           the ring of modular forms.
 
-        OUTPUT: A ``GradedModularFormElement``
+        OUTPUT: a ``GradedModularFormElement``
 
         EXAMPLES::
 
@@ -343,7 +343,7 @@ class ModularFormsRing(Parent):
           ``None`` then the generators returned by :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead.
 
-        OUTPUT: A multivariate polynomial ring in the variable ``names``. Each variable of the
+        OUTPUT: a multivariate polynomial ring in the variable ``names``. Each variable of the
         polynomial ring correspond to a generator given in gens (following the ordering of the list).
 
         EXAMPLES::
@@ -415,7 +415,7 @@ class ModularFormsRing(Parent):
         - ``gens`` -- list (default: ``None``) of generators of the modular
           forms ring
 
-        OUTPUT: A ``GradedModularFormElement`` given by the polynomial
+        OUTPUT: a ``GradedModularFormElement`` given by the polynomial
         relation ``polynomial``.
 
         EXAMPLES::
@@ -864,9 +864,7 @@ class ModularFormsRing(Parent):
           coerced into ``self.base_ring()`. Either (but not both) of `f` and `F`
           may be ``None``.
 
-        OUTPUT:
-
-        a list of tuples, formatted as with ``start_gens``.
+        OUTPUT: a list of tuples, formatted as with ``start_gens``
 
         EXAMPLES::
 

@@ -14,9 +14,7 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
     - ``ltypes`` -- optional list of particular types to flatten
     - ``max_level`` -- the maximum level to flatten
 
-    OUTPUT:
-
-    a flat list of the entries of ``in_list``
+    OUTPUT: a flat list of the entries of ``in_list``
 
     EXAMPLES::
 

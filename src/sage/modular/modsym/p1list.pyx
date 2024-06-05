@@ -43,7 +43,9 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     -  ``v`` -- an integer
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    OUTPUT:
+
+    If `\gcd(u,v,N) = 1`, then returns
 
     -  ``uu`` -- an integer
 
@@ -142,8 +144,9 @@ def p1_normalize_int(N, u, v):
     -  ``v`` -- an integer
 
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    OUTPUT:
 
+    If `\gcd(u,v,N) = 1`, then returns
 
     -  ``uu`` -- an integer
 
@@ -280,8 +283,9 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
     -  ``compute_s`` -- a boolean (int)
 
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    OUTPUT:
 
+    If `\gcd(u,v,N) = 1`, then returns
 
     -  ``uu`` -- an integer
 
@@ -407,8 +411,9 @@ def p1_normalize_llong(N, u, v):
     -  ``v`` -- an integer
 
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    OUTPUT:
 
+    If `\gcd(u,v,N) = 1`, then returns
 
     -  ``uu`` -- an integer
 
@@ -546,8 +551,9 @@ def p1_normalize(int N, int u, int v):
     -  ``v`` -- an integer
 
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    OUTPUT:
 
+    If `\gcd(u,v,N) = 1`, then returns
 
     -  ``uu`` -- an integer
 

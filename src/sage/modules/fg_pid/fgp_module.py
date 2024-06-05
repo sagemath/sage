@@ -393,9 +393,7 @@ class FGP_Module_class(Module):
 
         - ``check`` -- bool (default: ``True``)
 
-        OUTPUT:
-
-        The quotient `V/W`.
+        OUTPUT: the quotient `V/W`
 
         EXAMPLES::
 
@@ -416,9 +414,7 @@ class FGP_Module_class(Module):
 
         - ``S`` -- anything
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

@@ -227,9 +227,7 @@ def FormsSpace(analytic_type, group=3, base_ring=ZZ, k=QQ(0), ep=None):
     In particular the multiplier ``ep`` is calculated
     as usual from ``k`` if ``ep == None``.
 
-    OUTPUT:
-
-    The FormsSpace with the given properties.
+    OUTPUT: the FormsSpace with the given properties
 
     EXAMPLES::
 
@@ -338,9 +336,7 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
     the same arguments as for the class :class:`FormsRing_abstract` can be used.
     The variables will then be put in canonical form.
 
-    OUTPUT:
-
-    The FormsRing with the given properties.
+    OUTPUT: the FormsRing with the given properties
 
     EXAMPLES::
 

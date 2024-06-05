@@ -212,7 +212,7 @@ def str_function(x):
 
     - ``x`` -- a string
 
-    OUTPUT: A string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -853,9 +853,7 @@ class LatexCall:
           tuple and instead returns a string with all the elements separated by
           a single space.
 
-        OUTPUT:
-
-        A :class:`LatexExpr` built from ``x``
+        OUTPUT: a :class:`LatexExpr` built from ``x``
 
         EXAMPLES::
 
@@ -1749,9 +1747,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
       instead returns a string with all the elements separated by a single
       space.
 
-    OUTPUT:
-
-    Display typeset objects.
+    OUTPUT: display typeset objects
 
     The output is displayed in a separate viewer displaying a dvi (or pdf)
     file, with the following: the title string is printed, centered, at the
@@ -1974,9 +1970,7 @@ def coeff_repr(c):
 
     - ``c`` -- a coefficient (i.e., an element of a ring)
 
-    OUTPUT:
-
-    A string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -2009,7 +2003,7 @@ def repr_lincomb(symbols, coeffs):
 
     - ``coeffs`` -- list of coefficients of the symbols
 
-    OUTPUT: A string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -2140,7 +2134,7 @@ def latex_varify(a, is_fname=False):
 
     - ``a`` -- string
 
-    OUTPUT: A string
+    OUTPUT: string
 
     EXAMPLES::
 

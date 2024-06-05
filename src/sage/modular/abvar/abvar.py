@@ -540,7 +540,7 @@ class ModularAbelianVariety_abstract(Parent):
         - ``names`` -- (default: ``None``) If the newform has coefficients
           in a number field, then a generator name must be specified.
 
-        OUTPUT: A newform `f` so that ``self`` is isogenous to `A_f`.
+        OUTPUT: a newform `f` so that ``self`` is isogenous to `A_f`
 
         EXAMPLES::
 
@@ -632,7 +632,7 @@ class ModularAbelianVariety_abstract(Parent):
         practice, only the most committed users will see this
         :class:`RuntimeError`.
 
-        OUTPUT: an elliptic curve isogenous to ``self``.
+        OUTPUT: an elliptic curve isogenous to ``self``
 
         EXAMPLES::
 
@@ -898,7 +898,7 @@ class ModularAbelianVariety_abstract(Parent):
            group
 
 
-        OUTPUT: If other is a modular abelian variety:
+        OUTPUT: if other is a modular abelian variety:
 
 
         -  ``G`` -- finite subgroup of self
@@ -2360,9 +2360,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         - ``p`` -- prime number
 
-        OUTPUT:
-
-        a monic integral polynomial
+        OUTPUT: a monic integral polynomial
 
         EXAMPLES::
 
@@ -5101,7 +5099,7 @@ def factor_modsym_space_new_factors(M):
 
     - ``M`` -- ambient modular symbols space
 
-    OUTPUT: list of decompositions corresponding to each new space.
+    OUTPUT: list of decompositions corresponding to each new space
 
     EXAMPLES::
 

@@ -646,9 +646,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         - ``n`` --  (optional) the degree of the element to construct
 
-        OUTPUT:
-
-        A module element of the given degree.
+        OUTPUT: a module element of the given degree
 
         EXAMPLES::
 
@@ -798,9 +796,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         - ``n`` -- the degree of the presentation
 
-        OUTPUT:
-
-        A vector space.
+        OUTPUT: a vector space
 
         .. SEEALSO::
 
@@ -1115,9 +1111,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         - ``spanning_elements``  -- an iterable of elements
 
-        OUTPUT:
-
-        The inclusion of the submodule into this module.
+        OUTPUT: the inclusion of the submodule into this module
 
         Because a submodule of a finitely presented module need not be
         finitely presented, this method will only work if the
@@ -1162,9 +1156,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         - ``verbose`` -- (default: ``False``) a boolean to control if
           log messages should be emitted
 
-        OUTPUT:
-
-        A list of homomorphisms `[\epsilon, f_1, \ldots, f_k]` such that
+        OUTPUT: a list of homomorphisms `[\epsilon, f_1, \ldots, f_k]` such that
 
         .. MATH::
 

@@ -369,7 +369,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         -  ``new_prec`` -- positive integer (default: None)
 
 
-        OUTPUT: if new_prec is None, returns the current precision.
+        OUTPUT: if new_prec is None, returns the current precision
 
         EXAMPLES::
 

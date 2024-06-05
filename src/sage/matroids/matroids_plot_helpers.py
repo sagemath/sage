@@ -96,9 +96,7 @@ def it(M, B1, nB1, lps):
     - ``lps`` -- A list of elements in the ground set of matroid M that are
       loops.
 
-    OUTPUT:
-
-    A tuple containing 4 elements in this order:
+    OUTPUT: a tuple containing 4 elements in this order:
 
     1. A dictionary containing 2-tuple (x,y) coordinates with
        ``M.simplify.groundset()`` elements that can be placed on the sides of
@@ -188,9 +186,7 @@ def trigrid(tripts):
     - ``tripts`` -- A list of 3 lists of the form [x,y] where x and y are the
       Cartesian coordinates of a point.
 
-    OUTPUT:
-
-    A list of lists containing 4 points in following order:
+    OUTPUT: a list of lists containing 4 points in following order:
 
     - 1. Barycenter of 3 input points.
     - 2,3,4. Barycenters of 1. with 3 different 2-subsets of input points
@@ -304,9 +300,7 @@ def createline(ptsdict, ll, lineorders2=None):
       corresponding to values of the keys will be traversed in that order thus
       overriding internal order deciding heuristic.
 
-    OUTPUT:
-
-    A tuple containing 4 elements in this order:
+    OUTPUT: a tuple containing 4 elements in this order:
 
     1. Ordered list of x-coordinates of values of keys in ``ll`` specified in
        ptsdict.
@@ -386,9 +380,7 @@ def slp(M1, pos_dict=None, B=None):
     - ``B`` -- (optional) A basis of M1 that has been chosen for placement on
       vertices of triangle.
 
-    OUTPUT:
-
-    A tuple containing 3 elements in this order:
+    OUTPUT: a tuple containing 3 elements in this order:
 
     1. Simple matroid corresponding to ``M1``.
     2. Loops of matroid ``M1``.
@@ -571,9 +563,7 @@ def line_hasorder(l, lodrs=None):
       a subset of ground set elements that may or may not correspond to a
       line in geometric representation.
 
-    OUTPUT:
-
-    A tuple containing 2 elements in this order:
+    OUTPUT: a tuple containing 2 elements in this order:
 
     1. A boolean indicating whether there is any list in ``lordrs`` that is
        setwise equal to ``l``.
@@ -704,9 +694,7 @@ def tracklims(lims, x_i=[], y_i=[]):
     - ``x_i`` -- New x values to track
     - ``y_i`` -- New y values to track
 
-    OUTPUT:
-
-    A list with 4 elements ``[xmin,xmax,ymin,ymax]``
+    OUTPUT: a list with 4 elements ``[xmin,xmax,ymin,ymax]``
 
     EXAMPLES::
 

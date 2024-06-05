@@ -1094,7 +1094,9 @@ class HeckeModule_free_module(HeckeModule_generic):
         -  ``nz`` -- if not ``None``, then normalize vector so dot
            product with this basis vector of ambient space is 1.
 
-        OUTPUT: A vector with entries possibly in an extension of the base
+        OUTPUT:
+
+        A vector with entries possibly in an extension of the base
         ring. This vector is an eigenvector for all Hecke operators acting
         via their transpose.
 

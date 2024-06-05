@@ -1202,9 +1202,7 @@ class ManinSymbolList_character(ManinSymbolList):
         """
         Return the character of this :class:`ManinSymbolList_character` object.
 
-        OUTPUT:
-
-        The Dirichlet character of this Manin symbol list.
+        OUTPUT: the Dirichlet character of this Manin symbol list
 
         EXAMPLES::
 

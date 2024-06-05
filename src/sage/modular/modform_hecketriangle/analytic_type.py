@@ -208,9 +208,7 @@ class AnalyticTypeElement(LatticePosetElement):
         - ``reduce_type``  -- an analytic type or something which is
           convertible to an analytic type
 
-        OUTPUT:
-
-        The new reduced analytic type.
+        OUTPUT: the new reduced analytic type
 
         EXAMPLES::
 
@@ -238,9 +236,7 @@ class AnalyticTypeElement(LatticePosetElement):
         - ``extend_type``  -- an analytic type or something which is
           convertible to an analytic type
 
-        OUTPUT:
-
-        The new extended analytic type.
+        OUTPUT: the new extended analytic type
 
         EXAMPLES::
 

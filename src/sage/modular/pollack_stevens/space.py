@@ -328,9 +328,7 @@ class PollackStevensModularSymbolspace(Module):
         r"""
         Return the domain of the modular symbols in this space.
 
-        OUTPUT:
-
-        A :class:`sage.modular.pollack_stevens.fund_domain.PollackStevensModularDomain`
+        OUTPUT: a :class:`sage.modular.pollack_stevens.fund_domain.PollackStevensModularDomain`
 
         EXAMPLES::
 
@@ -577,9 +575,7 @@ class PollackStevensModularSymbolspace(Module):
 
         - ``new_base_ring`` -- a ring
 
-        OUTPUT:
-
-        A space of modular symbols to which our space specializes.
+        OUTPUT: a space of modular symbols to which our space specializes
 
         EXAMPLES::
 
@@ -607,9 +603,7 @@ class PollackStevensModularSymbolspace(Module):
         - ``M`` -- precision cap
         - ``new_base_ring`` -- ring
 
-        OUTPUT:
-
-        A space of distribution valued modular symbols.
+        OUTPUT: a space of distribution valued modular symbols
 
         EXAMPLES::
 
@@ -637,9 +631,7 @@ class PollackStevensModularSymbolspace(Module):
 
         - ``new_base_ring`` -- a ring
 
-        OUTPUT:
-
-        A space of modular symbols over the specified base.
+        OUTPUT: a space of modular symbols over the specified base
 
         EXAMPLES::
 
@@ -657,9 +649,7 @@ class PollackStevensModularSymbolspace(Module):
         r"""
         Return the cusps associated to an element of a congruence subgroup.
 
-        OUTPUT:
-
-        an element of the modular symbol space
+        OUTPUT: an element of the modular symbol space
 
         This returns a "typical" element of this space; in this case
         the constant map sending every element to an element of the
@@ -694,9 +684,7 @@ class PollackStevensModularSymbolspace(Module):
 
         - ``M`` -- positive integer
 
-        OUTPUT:
-
-        An element of the modular symbol space with `M` moments
+        OUTPUT: an element of the modular symbol space with `M` moments
 
         Returns a random element in this space by randomly choosing
         values of distributions on all but one divisor, and solves the
@@ -811,9 +799,7 @@ def cusps_from_mat(g):
 
     - ``g`` -- an element of a congruence subgroup or a matrix
 
-    OUTPUT:
-
-    A tuple of cusps associated to ``g``.
+    OUTPUT: a tuple of cusps associated to ``g``
 
     EXAMPLES::
 
@@ -869,9 +855,7 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
       determines which implementation of the underlying classical
       modular symbols is used.
 
-    OUTPUT:
-
-    The overconvergent modular symbol associated to ``E``
+    OUTPUT: the overconvergent modular symbol associated to ``E``
 
     EXAMPLES::
 

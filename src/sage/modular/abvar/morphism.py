@@ -518,9 +518,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
         - ``G`` -- a finite subgroup of the domain of ``self``
 
-        OUTPUT:
-
-        A finite subgroup of the codomain.
+        OUTPUT: a finite subgroup of the codomain
 
         EXAMPLES::
 
@@ -826,7 +824,7 @@ class HeckeOperator(Morphism):
         -  ``var`` -- a string (default: 'x')
 
 
-        OUTPUT: a polynomial in var over the rational numbers.
+        OUTPUT: a polynomial in var over the rational numbers
 
         EXAMPLES::
 

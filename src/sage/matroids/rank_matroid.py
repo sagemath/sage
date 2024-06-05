@@ -70,9 +70,7 @@ class RankMatroid(Matroid):
     - ``rank_function`` -- a function mapping subsets of ``groundset`` to
       nonnegative integers.
 
-    OUTPUT:
-
-    A matroid on ``groundset`` whose rank function equals ``rank_function``
+    OUTPUT: a matroid on ``groundset`` whose rank function equals ``rank_function``
 
     EXAMPLES::
 

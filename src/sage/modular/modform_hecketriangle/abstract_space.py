@@ -546,9 +546,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         - ``vec`` -- A coordinate vector with respect to ``self.gens()``.
 
-        OUTPUT:
-
-        An element of ``self`` corresponding to the coordinate vector ``vec``.
+        OUTPUT: an element of ``self`` corresponding to the coordinate vector ``vec``
 
         EXAMPLES::
 
@@ -590,9 +588,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         - ``vec`` -- An element of ``self.module()`` or ``self.ambient_module()``.
 
-        OUTPUT:
-
-        An element of ``self`` corresponding to ``vec``.
+        OUTPUT: an element of ``self`` corresponding to ``vec``
 
         EXAMPLES::
 
@@ -1777,9 +1773,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                                much the precision should be increased compared to
                                the size of the corresponding basis.
 
-        OUTPUT:
-
-        The corresponding base change matrix.
+        OUTPUT: the corresponding base change matrix
 
         EXAMPLES::
 

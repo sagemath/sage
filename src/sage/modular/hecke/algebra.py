@@ -73,9 +73,7 @@ def _heckebasis(M):
 
     - ``M`` -- a Hecke module
 
-    OUTPUT:
-
-    a list of Hecke algebra elements represented as matrices
+    OUTPUT: a list of Hecke algebra elements represented as matrices
 
     EXAMPLES::
 

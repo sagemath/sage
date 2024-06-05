@@ -218,9 +218,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         - ``g`` -- a harmonic cocycle
 
-        OUTPUT:
-
-        A harmonic cocycle
+        OUTPUT: a harmonic cocycle
 
         EXAMPLES::
 
@@ -241,9 +239,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         - ``g`` -- a harmonic cocycle
 
-        OUTPUT:
-
-        A harmonic cocycle
+        OUTPUT: a harmonic cocycle
 
         EXAMPLES::
 
@@ -266,9 +262,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         - ``a`` -- a ring element
 
-        OUTPUT:
-
-        A harmonic cocycle
+        OUTPUT: a harmonic cocycle
 
         EXAMPLES::
 
@@ -366,9 +360,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         Return the valuation of the cocycle, defined as the
         minimum of the values it takes on a set of representatives.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -541,9 +533,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         - ``level`` -- an integer. How fine of a mesh should the Riemann
           sum use.
 
-        OUTPUT:
-
-        An element of the quadratic unramified extension of `\QQ_p`.
+        OUTPUT: an element of the quadratic unramified extension of `\QQ_p`
 
         EXAMPLES::
 
@@ -785,9 +775,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         - ``base_ring`` -- a ring that has a coerce map from the
           current base ring
 
-        OUTPUT:
-
-        A new space of HarmonicCocycles with the base extended.
+        OUTPUT: a new space of HarmonicCocycles with the base extended
 
         EXAMPLES::
 
@@ -813,9 +801,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         - ``new_base_ring`` -- a ring that has a coerce map from the
           current base ring
 
-        OUTPUT:
-
-        New space of HarmonicCocycles with different base ring
+        OUTPUT: new space of HarmonicCocycles with different base ring
 
         EXAMPLES::
 
@@ -841,9 +827,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         r"""
         Return the rank (dimension) of ``self``.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -867,9 +851,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         - ``check`` -- Boolean (default = False).
 
-        OUTPUT:
-
-        Subspace of harmonic cocycles.
+        OUTPUT: subspace of harmonic cocycles
 
         EXAMPLES::
 
@@ -891,9 +873,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         r"""
         Whether ``self`` is irreducible.
 
-        OUTPUT:
-
-        Boolean. True if and only if ``self`` is irreducible.
+        OUTPUT: boolean. True if and only if ``self`` is irreducible
 
         EXAMPLES::
 
@@ -946,9 +926,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         r"""
         Return an element of the ambient space
 
-        OUTPUT:
-
-        A harmonic cocycle in self.
+        OUTPUT: a harmonic cocycle in self
 
         EXAMPLES::
 
@@ -993,9 +971,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         - ``other`` -- a BruhatTitsHarmonicCocycles class.
 
-        OUTPUT:
-
-        A boolean value
+        OUTPUT: a boolean value
 
         EXAMPLES::
 
@@ -1020,9 +996,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         - ``other`` -- a BruhatTitsHarmonicCocycles class.
 
-        OUTPUT:
-
-        A boolean value
+        OUTPUT: a boolean value
 
         EXAMPLES::
 
@@ -1056,9 +1030,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         - ``x`` -- an object coercible into a harmonic cocycle.
 
-        OUTPUT:
-
-        A harmonic cocycle.
+        OUTPUT: a harmonic cocycle
 
         EXAMPLES::
 
@@ -1096,9 +1068,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         r"""
         Return the underlying free module
 
-        OUTPUT:
-
-        A free module.
+        OUTPUT: a free module
 
         EXAMPLES::
 
@@ -1120,9 +1090,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         r"""
         The trivial character.
 
-        OUTPUT:
-
-        The identity map.
+        OUTPUT: the identity map
 
         EXAMPLES::
 
@@ -1395,9 +1363,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         - ``T`` -- A linear function on the space of harmonic cocycles.
 
-        OUTPUT:
-
-        The matrix of ``T`` acting on the space of harmonic cocycles.
+        OUTPUT: the matrix of ``T`` acting on the space of harmonic cocycles
 
         EXAMPLES::
 
@@ -1652,9 +1618,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         """
         Tell whether the form is zero or not.
 
-        OUTPUT:
-
-        Boolean. ``True`` if self is zero, ``False`` otherwise.
+        OUTPUT: boolean. ``True`` if self is zero, ``False`` otherwise
 
         EXAMPLES::
 
@@ -1755,9 +1719,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         If self corresponds to a modular form of weight `k`, then the
         cohomological weight is `k-2`.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1775,9 +1737,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         valuations of the values that it takes on a set of edge
         representatives.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2110,9 +2070,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         - ``mult`` -- boolean (default: ``False``). Whether to compute the
           multiplicative version.
 
-        OUTPUT:
-
-        The result of the Coleman integral
+        OUTPUT: the result of the Coleman integral
 
         EXAMPLES::
 
@@ -2335,9 +2293,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         - ``other`` -- another space of `p`-automorphic forms.
 
-        OUTPUT:
-
-        A boolean value
+        OUTPUT: a boolean value
 
         EXAMPLES::
 
@@ -2362,9 +2318,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         - ``other`` -- another space of `p`-automorphic forms.
 
-        OUTPUT:
-
-        A boolean value
+        OUTPUT: a boolean value
 
         EXAMPLES::
 
@@ -2414,9 +2368,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         - ``S`` -- a BruhatTitsHarmonicCocycle or pAdicAutomorphicForm
 
-        OUTPUT:
-
-        A boolean value. True if and only if ``S`` is coercible into self.
+        OUTPUT: a boolean value. True if and only if ``S`` is coercible into self
 
         EXAMPLES::
 
@@ -2492,9 +2444,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         r"""
         Return an element of the module.
 
-        OUTPUT:
-
-        A harmonic cocycle.
+        OUTPUT: a harmonic cocycle
 
         EXAMPLES::
 
@@ -2509,9 +2459,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         """
         Return the precision of self.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2571,9 +2519,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         - ``F`` -- a classical (nonoverconvergent) pAdicAutomorphicForm or
           BruhatTitsHarmonicCocycle.
 
-        OUTPUT:
-
-        An overconvergent pAdicAutomorphicForm
+        OUTPUT: an overconvergent pAdicAutomorphicForm
 
         EXAMPLES::
 

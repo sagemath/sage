@@ -875,7 +875,7 @@ def qexp_eta(ps_ring, prec):
 
     -  ``prec`` -- (integer): the number of terms to compute
 
-    OUTPUT: An element of ps_ring which is the q-expansion of
+    OUTPUT: an element of ps_ring which is the q-expansion of
     `\eta(q)/q^{1/24}` truncated to prec terms.
 
     ALGORITHM: We use the Euler identity

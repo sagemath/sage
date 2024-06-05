@@ -223,9 +223,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
       the input matrix may have redundant rows, and sometimes it is desirable
       to store only a row-reduced copy.
 
-    OUTPUT:
-
-    A ``LinearMatroid`` instance based on the data above.
+    OUTPUT: a ``LinearMatroid`` instance based on the data above
 
     .. NOTE::
 
@@ -848,9 +846,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
           the groundset of ``other``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. WARNING::
 
@@ -933,9 +929,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         - ``other`` -- A matroid.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -1026,9 +1020,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
           :meth:`M.is_isomorphism() <sage.matroids.matroid.Matroid.is_isomorphism>`
           method for more on what is accepted as input.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -1152,9 +1144,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         - ``other`` -- A matroid.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -1337,9 +1327,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             - ``deletions`` is coindependent
             - ``contractions`` and ``deletions`` are disjoint.
 
-        OUTPUT:
-
-        A matroid.
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -1373,9 +1361,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         represented by `[-A^T\ \ I_2]` for appropriately sized identity
         matrices `I_1, I_2`.
 
-        OUTPUT:
-
-        The dual matroid.
+        OUTPUT: the dual matroid
 
         EXAMPLES::
 
@@ -1413,9 +1399,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
           where ``F`` is a flat and ``self.minor(contractions=F)`` has a
           `U_{2,k}` restriction or ``False, None``.
 
-        OUTPUT:
-
-        Boolean or tuple.
+        OUTPUT: boolean or tuple
 
         EXAMPLES::
 
@@ -1454,9 +1438,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         - ``N`` -- A matroid.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -3049,9 +3031,7 @@ cdef class BinaryMatroid(LinearMatroid):
       by ``basis`` is an identity matrix. In this case, no row reduction takes
       place in the initialization phase.
 
-    OUTPUT:
-
-    A :class:`BinaryMatroid` instance based on the data above.
+    OUTPUT: a :class:`BinaryMatroid` instance based on the data above
 
     .. NOTE::
 
@@ -3432,9 +3412,7 @@ cdef class BinaryMatroid(LinearMatroid):
         - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
           the groundset of ``other``
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3578,9 +3556,7 @@ cdef class BinaryMatroid(LinearMatroid):
         bicycle dimension of its cocycle-space, and is an invariant for binary
         matroids. See [Pen2012]_, [GR2001]_ for more information.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3610,9 +3586,7 @@ cdef class BinaryMatroid(LinearMatroid):
         The Brown invariant of a binary matroid equals the Brown invariant of
         its cocycle-space.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3719,9 +3693,7 @@ cdef class BinaryMatroid(LinearMatroid):
 
         - Nothing
 
-        OUTPUT:
-
-        An ordered partition.
+        OUTPUT: an ordered partition
 
         sage: from sage.matroids.advanced import *
         sage: M = matroids.catalog.R12()
@@ -3794,9 +3766,7 @@ cdef class BinaryMatroid(LinearMatroid):
             - ``deletions`` is coindependent
             - ``contractions`` and ``deletions`` are disjoint.
 
-        OUTPUT:
-
-        A matroid.
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -3826,9 +3796,7 @@ cdef class BinaryMatroid(LinearMatroid):
         matroid is independent if and only if the corresponding subgraph is
         acyclic.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3895,9 +3863,7 @@ cdef class BinaryMatroid(LinearMatroid):
         Since this is a linear matroid over the field `\GF{2}`, this is always
         the case.
 
-        OUTPUT:
-
-        ``True``.
+        OUTPUT: ``True``
 
         EXAMPLES::
 
@@ -3918,9 +3884,7 @@ cdef class BinaryMatroid(LinearMatroid):
         - ``randomized_tests`` -- Ignored.
         - ``verify`` -- Ignored
 
-        OUTPUT:
-
-        A binary matroid.
+        OUTPUT: a binary matroid
 
         ALGORITHM:
 
@@ -3947,9 +3911,7 @@ cdef class BinaryMatroid(LinearMatroid):
 
         - ``randomized_tests`` -- Ignored.
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -4100,9 +4062,7 @@ cdef class TernaryMatroid(LinearMatroid):
       by ``basis`` is an identity matrix. In this case, no row reduction takes
       place in the initialization phase.
 
-    OUTPUT:
-
-    A ``TernaryMatroid`` instance based on the data above.
+    OUTPUT: a ``TernaryMatroid`` instance based on the data above
 
     .. NOTE::
 
@@ -4579,9 +4539,7 @@ cdef class TernaryMatroid(LinearMatroid):
         bicycle dimension of its rowspace, and is a matroid invariant.
         See [Pen2012]_.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4605,9 +4563,7 @@ cdef class TernaryMatroid(LinearMatroid):
         character of its cocycle-space, and is an invariant for ternary
         matroids. See [Pen2012]_.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4744,9 +4700,7 @@ cdef class TernaryMatroid(LinearMatroid):
             - ``deletions`` is coindependent
             - ``contractions`` and ``deletions`` are disjoint.
 
-        OUTPUT:
-
-        A matroid.
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -4773,9 +4727,7 @@ cdef class TernaryMatroid(LinearMatroid):
         Since this is a linear matroid over the field `\GF{3}`, this is always
         the case.
 
-        OUTPUT:
-
-        ``True``.
+        OUTPUT: ``True``
 
         EXAMPLES::
 
@@ -4796,9 +4748,7 @@ cdef class TernaryMatroid(LinearMatroid):
         - ``randomized_tests`` -- Ignored.
         - ``verify`` -- Ignored
 
-        OUTPUT:
-
-        A binary matroid.
+        OUTPUT: a binary matroid
 
         ALGORITHM:
 
@@ -4825,9 +4775,7 @@ cdef class TernaryMatroid(LinearMatroid):
 
         - ``randomized_tests`` -- Ignored.
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -4984,9 +4932,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
       by ``basis`` is an identity matrix. In this case, no row reduction takes
       place in the initialization phase.
 
-    OUTPUT:
-
-    A ``QuaternaryMatroid`` instance based on the data above.
+    OUTPUT: a ``QuaternaryMatroid`` instance based on the data above
 
     .. NOTE::
 
@@ -5418,9 +5364,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         The bicycle dimension of a matroid equals the bicycle dimension of its
         rowspace, and is a matroid invariant. See [Pen2012]_.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -5520,9 +5464,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             - ``deletions`` is coindependent
             - ``contractions`` and ``deletions`` are disjoint.
 
-        OUTPUT:
-
-        A matroid.
+        OUTPUT: matroid
 
         EXAMPLES::
 
@@ -5549,9 +5491,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         Since this is a linear matroid over the field `\GF{4}`, this is always
         the case.
 
-        OUTPUT:
-
-        ``True``.
+        OUTPUT: ``True``
 
         EXAMPLES::
 
@@ -5694,9 +5634,7 @@ cdef class RegularMatroid(LinearMatroid):
       by ``basis`` is an identity matrix. In this case, no row reduction takes
       place in the initialization phase.
 
-    OUTPUT:
-
-    A ``RegularMatroid`` instance based on the data above.
+    OUTPUT: a ``RegularMatroid`` instance based on the data above
 
     .. NOTE::
 
@@ -6232,9 +6170,7 @@ cdef class RegularMatroid(LinearMatroid):
           where ``F`` is a flat and ``self.minor(contractions=F)`` has a
           `U_{2,k}` restriction or ``False, None``.
 
-        OUTPUT:
-
-        Boolean or tuple.
+        OUTPUT: boolean or tuple
 
         .. SEEALSO::
 
@@ -6310,9 +6246,7 @@ cdef class RegularMatroid(LinearMatroid):
         matroid is independent if and only if the corresponding subgraph is
         acyclic.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -6342,9 +6276,7 @@ cdef class RegularMatroid(LinearMatroid):
         representation matrix is *totally unimodular*, i.e. if all square
         submatrices have determinant in `\{-1, 0, 1\}`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -6388,9 +6320,7 @@ cdef class RegularMatroid(LinearMatroid):
         - ``randomized_tests`` -- Ignored.
         - ``verify`` -- Ignored
 
-        OUTPUT:
-
-        A binary matroid.
+        OUTPUT: a binary matroid
 
         ALGORITHM:
 
@@ -6418,9 +6348,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         - ``randomized_tests`` -- Ignored.
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -6447,9 +6375,7 @@ cdef class RegularMatroid(LinearMatroid):
         - ``randomized_tests`` -- Ignored.
         - ``verify`` -- Ignored
 
-        OUTPUT:
-
-        A ternary matroid.
+        OUTPUT: a ternary matroid
 
         ALGORITHM:
 
@@ -6477,9 +6403,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         - ``randomized_tests`` -- Ignored.
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 

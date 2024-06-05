@@ -60,9 +60,7 @@ class Lseries(SageObject):
         """
         Return the abelian variety that this `L`-series is attached to.
 
-        OUTPUT:
-
-        a modular abelian variety
+        OUTPUT: a modular abelian variety
 
         EXAMPLES::
 
@@ -155,9 +153,7 @@ class Lseries_complex(Lseries):
 
         - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -180,9 +176,7 @@ class Lseries_complex(Lseries):
 
         - ``other`` -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -199,9 +193,7 @@ class Lseries_complex(Lseries):
         """
         String representation of `L`-series.
 
-        OUTPUT:
-
-        a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -215,9 +207,7 @@ class Lseries_complex(Lseries):
         """
         Return True if `L(1)=0` and return False otherwise.
 
-        OUTPUT:
-
-        a boolean
+        OUTPUT: boolean
 
         EXAMPLES:
 
@@ -272,9 +262,7 @@ class Lseries_complex(Lseries):
         Return the rational part of this `L`-function at the central critical
         value 1.
 
-        OUTPUT:
-
-        a rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -337,9 +325,7 @@ class Lseries_padic(Lseries):
 
         other -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -366,9 +352,7 @@ class Lseries_padic(Lseries):
 
         other -- object
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 

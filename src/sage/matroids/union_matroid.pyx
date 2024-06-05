@@ -59,9 +59,7 @@ cdef class MatroidUnion(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -83,9 +81,7 @@ cdef class MatroidUnion(Matroid):
 
         - ``X`` -- an object with Python's ``frozenset`` interface.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -192,9 +188,7 @@ cdef class MatroidSum(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -216,9 +210,7 @@ cdef class MatroidSum(Matroid):
 
         - ``X`` -- an object with Python's ``frozenset`` interface.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -291,9 +283,7 @@ cdef class PartitionMatroid(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -315,9 +305,7 @@ cdef class PartitionMatroid(Matroid):
 
         - ``X`` -- an object with Python's ``frozenset`` interface.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

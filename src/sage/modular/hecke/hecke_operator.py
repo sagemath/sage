@@ -277,7 +277,7 @@ class HeckeAlgebraElement(AlgebraElement):
         -  ``var`` -- string (default: 'x')
 
 
-        OUTPUT: a monic polynomial in the given variable.
+        OUTPUT: a monic polynomial in the given variable
 
         EXAMPLES::
 

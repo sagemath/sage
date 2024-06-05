@@ -533,9 +533,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
             - ``a`` -- a p-adic integer.
 
-            OUTPUT:
-
-            An integer.
+            OUTPUT: integer
 
             EXAMPLES::
 
@@ -737,9 +735,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``M`` -- 2x2 integer matrix
 
-        OUTPUT:
-
-        List of size `p+1` of 2x2 integer matrices
+        OUTPUT: list of size `p+1` of 2x2 integer matrices
 
         EXAMPLES::
 
@@ -763,9 +759,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``e`` -- 2x2 integer matrix
 
-        OUTPUT:
-
-        2x2 integer matrix
+        OUTPUT: 2x2 integer matrix
 
         EXAMPLES::
 
@@ -792,9 +786,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``v`` -- 2x2 integer matrix
 
-        OUTPUT:
-
-        A list of size `p+1` of 2x2 integer matrices
+        OUTPUT: a list of size `p+1` of 2x2 integer matrices
 
         EXAMPLES::
 
@@ -823,9 +815,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``level`` -- an integer
 
-        OUTPUT:
-
-        A list of 2x2 integer matrices
+        OUTPUT: a list of 2x2 integer matrices
 
         EXAMPLES::
 
@@ -956,9 +946,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         - ``z`` -- an element of an unramified extension of `\QQ_p`
           that is not contained in `\QQ_p`.
 
-        OUTPUT:
-
-        A 2x2 integer matrix representing a vertex of ``self``.
+        OUTPUT: a 2x2 integer matrix representing a vertex of ``self``
 
         EXAMPLES::
 
@@ -1057,9 +1045,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``z1``, ``z2`` -- unramified algebraic points of h_p
 
-        OUTPUT:
-
-        a list of 2x2 integer matrices representing edges of self
+        OUTPUT: a list of 2x2 integer matrices representing edges of self
 
         EXAMPLES::
 
@@ -1610,9 +1596,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         This function returns the vertices of the quotient viewed as
         a dict.
 
-        OUTPUT:
-
-        A python dict with the vertices of the quotient.
+        OUTPUT: a Python dict with the vertices of the quotient
 
         EXAMPLES::
 
@@ -1653,9 +1637,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Return a list of ``Edge`` which represent a fundamental
         domain inside the Bruhat-Tits tree for the quotient.
 
-        OUTPUT:
-
-        A list of ``Edge``.
+        OUTPUT: a list of ``Edge``
 
         EXAMPLES::
 
@@ -1677,9 +1659,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         together with a list of the opposite edges. This is used
         to work with automorphic forms.
 
-        OUTPUT:
-
-        A list of ``Edge``.
+        OUTPUT: a list of ``Edge``
 
         EXAMPLES::
 
@@ -1793,9 +1773,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
            e_k =\prod_{\ell\mid pN^-}\left(1-\left(\frac{-3}{\ell}\right)\right)\prod_{\ell \| N^+}\left(1+\left(\frac{-3}{\ell}\right)\right)\prod_{\ell^2\mid N^+} \nu_\ell(3)
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1815,9 +1793,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
            e_k =\prod_{\ell\mid pN^-}\left(1-\left(\frac{-k}{\ell}\right)\right)\prod_{\ell \| N^+}\left(1+\left(\frac{-k}{\ell}\right)\right)\prod_{\ell^2\mid N^+} \nu_\ell(k)
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1833,9 +1809,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         """
         Compute the mu invariant of self.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1888,9 +1862,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute the genus of the quotient from the data of the
         quotient graph. This should agree with self.genus().
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1920,9 +1892,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - Nplus: Integer (default: None) a conductor. By default, use
           that of ``self``.
 
-        OUTPUT:
-
-        An integer equal to the genus
+        OUTPUT: an integer equal to the genus
 
         EXAMPLES::
 
@@ -1941,9 +1911,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute the dimension of the space of harmonic cocycles
         of weight `k` on ``self``.
 
-        OUTPUT:
-
-        An integer equal to the dimension
+        OUTPUT: an integer equal to the dimension
 
         EXAMPLES::
 
@@ -2014,9 +1982,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the tame level `N^+`.
 
-        OUTPUT:
-
-        An integer equal to `N^+`.
+        OUTPUT: an integer equal to `N^+`
 
         EXAMPLES::
 
@@ -2066,9 +2032,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the prime one is working with.
 
-        OUTPUT:
-
-        An integer equal to the fixed prime `p`
+        OUTPUT: an integer equal to the fixed prime `p`
 
         EXAMPLES::
 
@@ -2102,9 +2066,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the fundamental domain (and computes it if needed).
 
-        OUTPUT:
-
-        A fundamental domain for the action of `\Gamma`.
+        OUTPUT: a fundamental domain for the action of `\Gamma`
 
         EXAMPLES::
 
@@ -2122,9 +2084,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Plot the quotient graph.
 
-        OUTPUT:
-
-        A plot of the quotient graph
+        OUTPUT: a plot of the quotient graph
 
         EXAMPLES::
 
@@ -2155,9 +2115,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Plot a fundamental domain.
 
-        OUTPUT:
-
-        A plot of the fundamental domain.
+        OUTPUT: a plot of the fundamental domain
 
         EXAMPLES::
 
@@ -2194,9 +2152,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``D`` -- an integer whose squarefree part will define the
           quadratic field
 
-        OUTPUT:
-
-        A boolean describing whether the quadratic field is admissible
+        OUTPUT: a boolean describing whether the quadratic field is admissible
 
         EXAMPLES::
 
@@ -2222,9 +2178,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         - ``prec`` -- Integer. The precision of the splitting.
 
-        OUTPUT:
-
-        A function giving the splitting.
+        OUTPUT: a function giving the splitting
 
         EXAMPLES::
 
@@ -2682,9 +2636,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the underlying quaternion algebra.
 
-        OUTPUT:
-
-        The underlying definite quaternion algebra
+        OUTPUT: the underlying definite quaternion algebra
 
         EXAMPLES::
 
@@ -2703,9 +2655,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return the underlying Eichler order of level `N^+`.
 
-        OUTPUT:
-
-        An Eichler order.
+        OUTPUT: an Eichler order
 
         EXAMPLES::
 
@@ -2734,9 +2684,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Return the underlying maximal order containing the
         Eichler order.
 
-        OUTPUT:
-
-        A maximal order.
+        OUTPUT: a maximal order
 
         EXAMPLES::
 
@@ -2792,9 +2740,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         r"""
         Return a basis for the global Eichler order.
 
-        OUTPUT:
-
-        Basis for the underlying Eichler order of level Nplus.
+        OUTPUT: basis for the underlying Eichler order of level Nplus
 
         EXAMPLES::
 
@@ -2815,9 +2761,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Eichler order of level ``Nplus``. Required for finding elements in
         the arithmetic subgroup Gamma.
 
-        OUTPUT:
-
-        The norm form of the underlying Eichler order
+        OUTPUT: the norm form of the underlying Eichler order
 
         EXAMPLES::
 
@@ -2841,9 +2785,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         This function returns the matrix of the quadratic form of
         the underlying Eichler order in the fixed basis.
 
-        OUTPUT:
-
-        A 4x4 integral matrix describing the norm form.
+        OUTPUT: a 4x4 integral matrix describing the norm form
 
         EXAMPLES::
 
@@ -3169,9 +3111,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         - ``v1`` -- a 2x2 matrix representing a normalized vertex.
 
-        OUTPUT:
-
-        A ``Vertex`` equivalent to ``v1``, in the fundamental domain.
+        OUTPUT: a ``Vertex`` equivalent to ``v1``, in the fundamental domain
 
         EXAMPLES::
 
@@ -3215,9 +3155,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``m`` -- integer -- The valuation of the determinant of
           ``v1``*``v2``.
 
-        OUTPUT:
-
-        A 4x4 integer matrix whose columns encode a lattice and a 4x4 integer matrix encoding a quadratic form.
+        OUTPUT: a 4x4 integer matrix whose columns encode a lattice and a 4x4 integer matrix encoding a quadratic form
 
         EXAMPLES::
 
@@ -3514,9 +3452,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Return a quaternion having coordinates in the fixed
         basis for the order given by ``v``.
 
-        OUTPUT:
-
-        A quaternion.
+        OUTPUT: a quaternion
 
         EXAMPLES::
 
@@ -3731,9 +3667,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``prec`` -- (default: None) If specified, the harmonic cocycle will take values
           in `\QQ_p` with precision ``prec``. Otherwise it will take values in `\ZZ`.
 
-        OUTPUT:
-
-        A harmonic cocycle attached via modularity to the given elliptic curve.
+        OUTPUT: a harmonic cocycle attached via modularity to the given elliptic curve
 
         EXAMPLES::
 
@@ -3792,7 +3726,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         - ``base_field`` -- a ring (default: None)
 
-        OUTPUT: A space of harmonic cocycles
+        OUTPUT: a space of harmonic cocycles
 
         EXAMPLES::
 

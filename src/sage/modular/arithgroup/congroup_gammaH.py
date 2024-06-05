@@ -512,9 +512,7 @@ class GammaH_class(CongruenceSubgroup):
 
         - ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
 
-        OUTPUT:
-
-        A list v such that
+        OUTPUT: a list v such that
 
         v[u] = (min(u*h: h in H),
         gcd(u,N) ,
@@ -1250,7 +1248,7 @@ class GammaH_class(CongruenceSubgroup):
         -  ``k`` -- an integer (default: 2), the weight. Not fully implemented for k = 1.
         -  ``p`` -- integer (default: 0); if nonzero, compute the `p`-new subspace.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1452,7 +1450,7 @@ def mumu(N):
 
     - ``N`` -- an integer at least 1
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 

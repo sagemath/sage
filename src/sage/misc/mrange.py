@@ -191,7 +191,7 @@ def mrange_iter(iter_list, typ=list):
     -  ``typ`` -- (default: list) a type or class; more
        generally, something that can be called with a list as input.
 
-    OUTPUT: a list
+    OUTPUT: list
 
     EXAMPLES::
 
@@ -442,7 +442,7 @@ def mrange(sizes, typ=list):
     -  ``typ`` -- (default: list) a type or class; more
        generally, something that can be called with a list as input.
 
-    OUTPUT: a list
+    OUTPUT: list
 
     EXAMPLES::
 

@@ -584,7 +584,7 @@ class Gamma0_class(GammaH_class):
         - `p` -- integer (default: 0); if nonzero, compute the
           `p`-new subspace.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         ALGORITHM:
 

@@ -21,9 +21,7 @@ def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
     - var -- (default: 'q') variable name
     - K -- (default: ZZ) base ring of answer
 
-    OUTPUT:
-
-    a power series over K
+    OUTPUT: a power series over K
 
     EXAMPLES::
 
@@ -71,9 +69,7 @@ def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
     - var -- (default: 'q') variable name
     - K -- (default: ZZ) base ring of answer
 
-    OUTPUT:
-
-    a power series over K
+    OUTPUT: a power series over K
 
     EXAMPLES::
 

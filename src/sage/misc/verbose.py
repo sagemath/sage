@@ -254,7 +254,7 @@ def get_verbose():
 
     INPUT: int level: an integer between 0 and 2, inclusive.
 
-    OUTPUT: changes the state of the verbosity flag.
+    OUTPUT: changes the state of the verbosity flag
 
     EXAMPLES::
 

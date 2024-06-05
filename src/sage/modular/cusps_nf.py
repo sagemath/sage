@@ -124,9 +124,7 @@ def NFCusps(number_field):
 
     - ``number_field`` -- a number field
 
-    OUTPUT:
-
-    The set of cusps over the given number field.
+    OUTPUT: the set of cusps over the given number field
 
     EXAMPLES::
 
@@ -1031,9 +1029,7 @@ def Gamma0_NFCusps(N):
 
     - ``N`` -- an integral ideal of the number field k (the level).
 
-    OUTPUT:
-
-    A list of inequivalent number field cusps.
+    OUTPUT: a list of inequivalent number field cusps
 
     EXAMPLES::
 

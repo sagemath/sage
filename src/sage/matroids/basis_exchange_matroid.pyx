@@ -469,9 +469,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -487,9 +485,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         The order of the list does not change between calls.
 
-        OUTPUT:
-
-        A list.
+        OUTPUT: list
 
         .. SEEALSO::
 
@@ -533,9 +529,7 @@ cdef class BasisExchangeMatroid(Matroid):
         The *rank* of the matroid is the size of the largest independent
         subset of the groundset.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -554,9 +548,7 @@ cdef class BasisExchangeMatroid(Matroid):
         The *corank* of the matroid equals the rank of the dual matroid. It is
         given by ``M.size() - M.full_rank()``.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         .. SEEALSO::
 
@@ -587,9 +579,7 @@ cdef class BasisExchangeMatroid(Matroid):
             the internal state of the matroid. This state is updated by lots
             of methods, including the method ``M._move_current_basis()``.
 
-        OUTPUT:
-
-        Set of elements.
+        OUTPUT: set of elements
 
         EXAMPLES::
 
@@ -615,9 +605,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``Y`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         EXAMPLES::
 
@@ -642,9 +630,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        A subset of ``F``.
+        OUTPUT: a subset of ``F``
 
         EXAMPLES::
 
@@ -672,9 +658,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -741,9 +725,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``B`` -- a basis of the matroid.
         - ``e`` -- an element not in ``B``.
 
-        OUTPUT:
-
-        A set of elements.
+        OUTPUT: a set of elements
 
         EXAMPLES::
 
@@ -766,9 +748,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        The smallest closed set containing ``F``.
+        OUTPUT: the smallest closed set containing ``F``
 
         EXAMPLES::
 
@@ -796,9 +776,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        A maximal coindependent subset of ``F``.
+        OUTPUT: a maximal coindependent subset of ``F``
 
         EXAMPLES::
 
@@ -826,9 +804,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        Integer, the corank of ``F``.
+        OUTPUT: integer, the corank of ``F``
 
         EXAMPLES::
 
@@ -895,9 +871,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``B`` -- a basis of the matroid.
         - ``e`` -- an element of ``B``.
 
-        OUTPUT:
-
-        A set of elements.
+        OUTPUT: a set of elements
 
         EXAMPLES::
 
@@ -920,9 +894,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        The smallest coclosed set containing ``X``.
+        OUTPUT: the smallest coclosed set containing ``X``
 
         EXAMPLES::
 
@@ -980,9 +952,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1013,9 +983,7 @@ cdef class BasisExchangeMatroid(Matroid):
         deleting the complement of that subset is
         :meth:`connected <sage.matroids.matroid.Matroid.is_connected>`.
 
-        OUTPUT:
-
-        A list of subsets.
+        OUTPUT: a list of subsets
 
         .. SEEALSO::
 
@@ -1302,9 +1270,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         - ``r`` -- A natural number.
 
-        OUTPUT:
-
-        An iterable containing all flats of rank ``r``.
+        OUTPUT: an iterable containing all flats of rank ``r``
 
         .. SEEALSO::
 
@@ -1377,9 +1343,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         - ``r`` -- A natural number.
 
-        OUTPUT:
-
-        An iterable containing all coflats of corank ``r``.
+        OUTPUT: an iterable containing all coflats of corank ``r``
 
         .. SEEALSO::
 
@@ -1514,9 +1478,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
             :meth:`M.basis() <sage.matroids.matroid.Matroid.basis>`.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1541,9 +1503,7 @@ cdef class BasisExchangeMatroid(Matroid):
         r"""
         Return the list of independent subsets of the matroid.
 
-        OUTPUT:
-
-        An iterable containing all independent subsets of the matroid.
+        OUTPUT: an iterable containing all independent subsets of the matroid
 
         EXAMPLES::
 
@@ -1633,9 +1593,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         A *basis* is a maximal independent set.
 
-        OUTPUT:
-
-        An iterable containing all bases of the matroid.
+        OUTPUT: an iterable containing all bases of the matroid
 
         EXAMPLES::
 
@@ -1655,9 +1613,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         - ``r`` -- a nonnegative integer.
 
-        OUTPUT:
-
-        An iterable containing all dependent subsets of size ``r``.
+        OUTPUT: an iterable containing all dependent subsets of size ``r``
 
         EXAMPLES::
 
@@ -1693,9 +1649,7 @@ cdef class BasisExchangeMatroid(Matroid):
         A *nonbasis* is a set with cardinality ``self.full_rank()`` that is
         not a basis.
 
-        OUTPUT:
-
-        An iterable containing the nonbases of the matroid.
+        OUTPUT: an iterable containing the nonbases of the matroid
 
         .. SEEALSO::
 
@@ -1718,9 +1672,7 @@ cdef class BasisExchangeMatroid(Matroid):
         A *nonspanning circuit* is a circuit whose rank is strictly smaller
         than the rank of the matroid.
 
-        OUTPUT:
-
-        An iterable containing all nonspanning circuits.
+        OUTPUT: an iterable containing all nonspanning circuits
 
         .. SEEALSO::
 
@@ -1767,9 +1719,7 @@ cdef class BasisExchangeMatroid(Matroid):
         A *noncospanning cocircuit* is a cocircuit whose corank is strictly
         smaller than the corank of the matroid.
 
-        OUTPUT:
-
-        An iterable containing all nonspanning circuits.
+        OUTPUT: an iterable containing all nonspanning circuits
 
         .. SEEALSO::
 
@@ -1814,9 +1764,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         Return the list of cocircuits of the matroid.
 
-        OUTPUT:
-
-        An iterable containing all cocircuits.
+        OUTPUT: an iterable containing all cocircuits
 
         .. SEEALSO::
 
@@ -1862,9 +1810,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         Return the list of circuits of the matroid.
 
-        OUTPUT:
-
-        An iterable containing all circuits.
+        OUTPUT: an iterable containing all circuits
 
         .. SEEALSO::
 
@@ -1915,9 +1861,7 @@ cdef class BasisExchangeMatroid(Matroid):
         Return a characteristic set-system for this matroid, on the same
         ground set.
 
-        OUTPUT:
-
-        A :class:`<sage.matroids.set_system.SetSystem>` instance.
+        OUTPUT: a :class:`<sage.matroids.set_system.SetSystem>` instance
 
         EXAMPLES::
 
@@ -1941,9 +1885,7 @@ cdef class BasisExchangeMatroid(Matroid):
         less time to compute. See also
         :meth:`<BasisExchangeMatroid._weak_partition>`.
 
-        OUTPUT:
-
-        An integer isomorphism invariant.
+        OUTPUT: an integer isomorphism invariant
 
         EXAMPLES::
 
@@ -1987,9 +1929,7 @@ cdef class BasisExchangeMatroid(Matroid):
         more time to compute. See also
         :meth:`<BasisExchangeMatroid._strong_partition>`.
 
-        OUTPUT:
-
-        An integer isomorphism invariant.
+        OUTPUT: an integer isomorphism invariant
 
         EXAMPLES::
 
@@ -2081,9 +2021,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``P`` -- (default: ``None``) an ordered partition of the groundset.
           If ``None``, the trivial partition is used.
 
-        OUTPUT:
-
-        A SetSystem.
+        OUTPUT: SetSystem
 
         EXAMPLES::
 
@@ -2110,9 +2048,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
           the groundset of ``other``
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2175,11 +2111,9 @@ cdef class BasisExchangeMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
-        OUTPUT:
-
-        A dictionary, or ``None``
+        OUTPUT: a dictionary, or ``None``
 
         EXAMPLES::
 
@@ -2352,9 +2286,7 @@ cdef class BasisExchangeMatroid(Matroid):
         * if `X` and `Y` are in `B`, and `x` is in `X - Y`, then there is a
           `y` in `Y - X` such that `(X - x) + y` is again a member of `B`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

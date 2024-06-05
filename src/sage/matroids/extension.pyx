@@ -266,9 +266,7 @@ cdef class LinearSubclasses:
       `e \in E(N)` and some `f \in E(M)`, we have
       `N\setminus e= M\setminus f`.
 
-    OUTPUT:
-
-    An enumerator for the linear subclasses of M.
+    OUTPUT: an enumerator for the linear subclasses of M
 
     If ``line_length`` is not ``None``, the enumeration is restricted to
     linear subclasses ``mc`` so containing at least one of each set of

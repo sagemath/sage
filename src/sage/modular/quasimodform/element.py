@@ -103,9 +103,7 @@ class QuasiModularFormsElement(ModuleElement):
           each `f_i` are modular forms ring elements and `E_2` correspond to the
           weight 2 Eisenstein series
 
-        OUTPUT:
-
-        ``QuasiModularFormsElement``
+        OUTPUT: ``QuasiModularFormsElement``
 
         TESTS::
 
@@ -460,7 +458,7 @@ class QuasiModularFormsElement(ModuleElement):
           of the form ``ABCk`` where ``k`` is a number corresponding to the
           weight of the form ``ABC``.
 
-        OUTPUT: A multivariate polynomial in the variables ``names``
+        OUTPUT: a multivariate polynomial in the variables ``names``
 
         EXAMPLES::
 

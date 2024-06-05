@@ -419,9 +419,10 @@ class HeckeSubmodule(module.HeckeModule_free_module):
            i.e., the map is related to `f(q)` - `f(q^t)`.
 
 
-        OUTPUT: A linear function from self to the space of modular symbols
-        of given level with the same weight, character, sign, etc., as this
-        space.
+        OUTPUT:
+
+        A linear function from self to the space of modular symbols of given
+        level with the same weight, character, sign, etc., as this space.
 
         EXAMPLES::
 

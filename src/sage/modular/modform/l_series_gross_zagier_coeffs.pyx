@@ -52,9 +52,7 @@ def bqf_theta_series(Q, long bound, var=None):
     - ``bound`` -- how many terms to compute
     - ``var`` -- (optional) the variable in which to express this power series
 
-    OUTPUT:
-
-    A power series in ``var``, or list of ints if ``var`` is unspecified.
+    OUTPUT: a power series in ``var``, or list of ints if ``var`` is unspecified
 
     EXAMPLES::
 
@@ -109,9 +107,7 @@ def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
     - ``u`` -- number of roots of unity in the field associated with ``Q``
     - ``var`` -- (optional) the variable in which to express this power series
 
-    OUTPUT:
-
-    A power series in ``var``, or list of ints if ``var`` is unspecified.
+    OUTPUT: a power series in ``var``, or list of ints if ``var`` is unspecified
 
     The number of terms is the length of the input ``an_list``.
 

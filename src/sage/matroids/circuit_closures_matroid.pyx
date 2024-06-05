@@ -169,9 +169,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -192,9 +190,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
         - ``X`` -- an object with Python's ``frozenset`` interface.
 
-        OUTPUT:
-
-        The rank of ``X`` in the matroid.
+        OUTPUT: the rank of ``X`` in the matroid
 
         EXAMPLES::
 
@@ -213,9 +209,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         The *rank* of the matroid is the size of the largest independent
         subset of the groundset.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -236,9 +230,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -266,9 +258,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT:
-
-        A maximal independent subset of ``X``.
+        OUTPUT: a maximal independent subset of ``X``
 
         EXAMPLES::
 

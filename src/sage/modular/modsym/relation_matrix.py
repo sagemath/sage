@@ -212,8 +212,8 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
     -  ``sparse`` -- (True or False) whether to use sparse rather than dense
        linear algebra
 
-    OUTPUT: A sparse matrix whose rows correspond to the reduction of
-    the T relations modulo the S and I relations.
+    OUTPUT: a sparse matrix whose rows correspond to the reduction of
+    the `T` relations modulo the `S` and `I` relations.
 
     EXAMPLES::
 
