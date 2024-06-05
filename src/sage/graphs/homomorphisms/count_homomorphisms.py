@@ -2,8 +2,6 @@ from sage.graphs.graph import Graph
 
 from sage.graphs.homomorphisms.helper_functions import *
 
-from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition, label_nice_tree_decomposition
-
 # In integer rep, the DP table is of the following form:
 # { node_index: [1, 2, 3, 4, 5],
 #   second_node_index: [10, 20, 30, 40, 50], ...}
@@ -17,14 +15,26 @@ class GraphHomomorphismCounter:
 
         - ``target_graph`` -- the graph to which ``graph`` is sent
 
-        - ``density_threshold`` (default: 0.25) -- the desnity threshold for `target_graph` representation
+        - ``density_threshold`` -- float (default: ``0.25``); the density threshold for ``target_graph`` representation
 
-        - ``graph_clr`` (default: None) -- a list of integers representing the colours of the vertices of `graph`
+        - ``graph_clr`` -- list (default: ``None``); a list of integers representing the colours of the vertices of ``graph``
 
-        - ``target_clr`` (default: None) -- a list of integers representing the colours of the vertices of `target_graph`
+        - ``target_clr`` -- list (default: ``None``); a list of integers representing the colors of the vertices of ``target_graph``
 
-        - ``colourful`` (default: False) -- whether the graph homomorphism is colour-preserving
+        - ``colourful`` -- boolean (default: ``False``); whether the graph homomorphism is colour-preserving
         """
+        # Check for valid graphs and settings
+        if not isinstance(graph, Graph):
+            raise ValueError("first argument must be a sage Graph")
+        if not isinstance(target_graph, Graph):
+            raise ValueError("second argument must be a sage Graph")
+
+        if colourful and (graph_clr is None or target_clr is None):
+            raise ValueError("Both graph_clr and target_clr must be provided when colourful is True")
+
+        # Only used in `__init__`
+        from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition, label_nice_tree_decomposition
+
         self.graph = graph
         self.target_graph = target_graph
         self.density_threshold = density_threshold
@@ -34,22 +44,15 @@ class GraphHomomorphismCounter:
 
         # Bookkeeping for colourful mappings
         self.actual_target_graph = target_graph
-        self.actual_target_size = len(self.actual_target_graph)
-
-        if not isinstance(graph, Graph):
-            raise ValueError("first argument must be a sage Graph")
-        if not isinstance(target_graph, Graph):
-            raise ValueError("second argument must be a sage Graph")
-
-        if colourful and (graph_clr is None or target_clr is None):
-            raise ValueError("Both graph_clr and target_clr must be provided when colourful is True")
+        self.actual_target_size = self.actual_target_graph.order()
 
         self.graph._scream_if_not_simple()
         self.target_graph._scream_if_not_simple()
 
         self.tree_decomp = graph.treewidth(certificate=True)
         self.nice_tree_decomp = make_nice_tree_decomposition(graph, self.tree_decomp)
-        self.root = sorted(self.nice_tree_decomp)[0]
+        self.root = min(self.nice_tree_decomp)
+        # self.root = sorted(self.nice_tree_decomp)[0]
 
         # Make it into directed graph for better access
         # to children and parent, if needed
@@ -66,19 +69,10 @@ class GraphHomomorphismCounter:
         # forgotten vertices in a nice tree decomposition
         self.node_changes_dict = node_changes(self.dir_labelled_TD)
 
-        # `DP_table` is a vector/list of dictionaries
-        # Each element (dict) corresponds to the (induced) hom's of a tree node.
-        # For each pair inside a dict, the key is the hom, and the value is the number of hom's:
-        #
-        # An example of K2 to K3, the values are arbitrary for demo purpose:
-        #
-        # [{((4, 0), (5, 1)): 10,
-        #   ((4, 0), (5, 2)): 20,
-        #   ((4, 1), (5, 0)): 30,
-        #   ((4, 1), (5, 2)): 40,
-        #   ((4, 2), (5, 0)): 50,
-        #   ((4, 2), (5, 1)): 60}, {}, ...]
-        self.DP_table = [{} for _ in range(len(self.dir_labelled_TD))]
+        # `DP_table` is a list of lists of natural numbers (0 included)
+        # Each element (list) corresponds to the (induced) homomorphisms of
+        # a tree node.
+        self.DP_table = [] * self.dir_labelled_TD.order()
 
     def count_homomorphisms(self):
         r"""
@@ -151,7 +145,13 @@ class GraphHomomorphismCounter:
 
         # Use the adjacency matrix when dense, otherwise the graph itself
         target_density = self.actual_target_graph.density()
-        target = self.actual_target_graph.adjacency_matrix() if target_density >= self.density_threshold else self.actual_target_graph
+
+        if target_density >= self.density_threshold:
+            target = self.actual_target_graph.adjacency_matrix(
+                vertices=self.actual_target_graph.vertices()
+            )
+        else:
+            target = self.actual_target_graph
 
         # Intro node specifically
         intro_vertex = self.node_changes_dict[node_index]
