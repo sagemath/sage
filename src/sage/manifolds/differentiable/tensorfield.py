@@ -1877,12 +1877,12 @@ class TensorField(ModuleElementWithMutability):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the components; if ``None``, the default chart of the
           tensor field domain is used
-        - ``coordinate_labels`` -- (default: ``True``) boolean; if ``True``,
+        - ``coordinate_labels`` -- boolean (default: ``True``); if ``True``,
           coordinate symbols are used by default (instead of integers) as
           index labels whenever ``frame`` is a coordinate frame
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero components are displayed
-        - ``only_nonredundant`` -- (default: ``False``) boolean; if ``True``,
+        - ``only_nonredundant`` -- boolean (default: ``False``); if ``True``,
           only nonredundant components are displayed in case of symmetries
 
         EXAMPLES:
@@ -2257,7 +2257,7 @@ class TensorField(ModuleElementWithMutability):
             sage: t == a  # False since a has not been defined on V
             False
             sage: a.set_restriction(t.restrict(V))
-            sage: t == a  # True now
+            sage: t == a  # ``True`` now
             True
             sage: a[e_xy, 0, 0] = -1
             sage: t == a  # False since a has been reset on U (domain of e_xy)
@@ -4526,7 +4526,7 @@ class TensorField(ModuleElementWithMutability):
         - ``order`` -- integer; the order `n` of the expansion, defined as the
           degree of the polynomial representing the truncated power series in
           ``symbol``
-        - ``truncate`` -- (default: ``False``) determines whether the
+        - ``truncate`` -- boolean (default: ``False``); determines whether the
           components of ``self`` are replaced by their expansions to the
           given order
 
@@ -4609,7 +4609,7 @@ class TensorField(ModuleElementWithMutability):
           with respect to ``chart`` of the components w.r.t. ``frame``; if
           ``None``, the operation ``fun`` is performed on all available
           coordinate expressions
-        - ``keep_other_components`` -- (default: ``False``) determine whether
+        - ``keep_other_components`` -- boolean (default: ``False``); determine whether
           the components with respect to vector frames distinct from ``frame``
           and having the same domain as ``frame`` are kept. If ``fun`` is
           non-destructive, ``keep_other_components`` can be set to ``True``;

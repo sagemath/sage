@@ -68,7 +68,7 @@ def WordOptions(**kwargs):
             word_options['display'] = kwargs['display']
     elif 'truncate' in kwargs:
         if not isinstance(kwargs['truncate'], bool):
-            raise ValueError("truncate must be True or False")
+            raise ValueError("truncate must be ``True`` or False")
         else:
             word_options['truncate'] = kwargs['truncate']
     elif 'truncate_length' in kwargs:
@@ -88,11 +88,11 @@ def WordOptions(**kwargs):
             word_options['identifier'] = kwargs['identifier']
     elif 'cache' in kwargs:
         if not isinstance(kwargs['cache'], bool):
-            raise ValueError("cache must be True or False")
+            raise ValueError("cache must be ``True`` or False")
         else:
             word_options['cache'] = kwargs['cache']
     elif 'old_repr' in kwargs:
         if not isinstance(kwargs['old_repr'], bool):
-            raise ValueError("old_repr must be True or False")
+            raise ValueError("old_repr must be ``True`` or False")
         else:
             word_options['old_repr'] = kwargs['old_repr']

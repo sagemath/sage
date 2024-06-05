@@ -1009,7 +1009,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``);
 
         OUTPUT: a point in this map's codomain
 
@@ -1156,7 +1156,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           Otherwise, we take ``n``-th preimages of the point given by ``g_starting_point``
           under ``g`` on the affine line.
 
-        - ``check_primes_of_bad_reduction`` -- (default: ``False``) boolean.
+        - ``check_primes_of_bad_reduction`` -- boolean (default: ``False``);.
           Passed to the ``primes_of_bad_reduction`` function for ``self`` and ``g``.
 
         - ``prec`` -- (default: ``RealField`` default)
@@ -1524,9 +1524,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``check`` --  (default: ``True``) boolean
+        - ``check`` --  boolean (default: ``True``);
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``);
 
         OUTPUT: a list of points in this dynamical system's codomain
 
@@ -1668,7 +1668,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``);
 
         OUTPUT: an element of the base ring of this map
 
@@ -1762,7 +1762,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``check`` -- (default: ``True``) boolean
+        - ``check`` -- boolean (default: ``True``);
 
         OUTPUT: a list of primes
 
@@ -1873,12 +1873,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``M`` -- a square invertible matrix
 
-        - ``adjugate`` -- (default: ``False``) boolean, also classically called
+        - ``adjugate`` -- boolean (default: ``False``);, also classically called
           adjoint, takes a square matrix ``M`` and finds the transpose of its
           cofactor matrix. Used for conjugation in place of inverse when
           specified ``True``. Functionality is the same in projective space.
 
-        - ``normalize`` -- (default: ``False``) boolean, if ``normalize`` is
+        - ``normalize`` -- boolean (default: ``False``);, if ``normalize`` is
           ``True``, then the method ``normalize_coordinates`` is called.
 
         OUTPUT: a dynamical system
@@ -2500,7 +2500,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``n`` -- a positive integer, the period of ``P``
 
-        - ``check`` -- (default: ``True``) boolean; verify that ``P``
+        - ``check`` -- boolean (default: ``True``); verify that ``P``
           has period ``n``
 
         OUTPUT:
@@ -2732,25 +2732,25 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``return_points`` -- (default: ``False``) boolean; if ``True``,
+        - ``return_points`` -- boolean (default: ``False``); if ``True``,
           return a list of lists where the index `i` is the level of the tree
           and the elements of the list at that index are the `i`-th preimage
           points as an algebraic element of the splitting field of the
           polynomial `f^n - Q = 0`
 
-        - ``numerical`` -- (default: ``False``) boolean; calculate pre-images
+        - ``numerical`` -- boolean (default: ``False``); calculate pre-images
           numerically. Note if this is set to ``True``, preimage points are
           displayed as complex numbers
 
         - ``prec`` -- (default: 100) positive integer; the precision of the
           ``ComplexField`` if we compute the preimage points numerically
 
-        - ``display_labels`` -- (default: ``True``) boolean; whether to display
+        - ``display_labels`` -- boolean (default: ``True``); whether to display
           vertex labels. Since labels can be very cluttered, can set
           ``display_labels`` to ``False`` and use ``return_points`` to get a
           hold of the points themselves, either as algebraic or complex numbers
 
-        - ``display_complex`` -- (default: ``False``) boolean; display vertex
+        - ``display_complex`` -- boolean (default: ``False``); display vertex
           labels as complex numbers. Note if this option is chosen that we must
           choose an embedding from the splitting field ``field_def`` of the
           `n`-th-preimage equation into `\CC`. We make the choice of the first
@@ -3075,7 +3075,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``return_transformation`` -- (default: ``False``) boolean; this
+        - ``return_transformation`` -- boolean (default: ``False``); this
           signals a return of the `PGL_2` transformation to conjugate
           this map to the calculated minimal model
 
@@ -3259,7 +3259,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``return_transformation`` -- (default: ``False``) boolean; this
+        - ``return_transformation`` -- boolean (default: ``False``); this
           signals a return of the `PGL_2` transformation to conjugate
           this map to the calculated models
 
@@ -3391,7 +3391,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
          - ``n`` -- the period of the preperiodic points to make affine.
 
-         - ``return_conjugation`` -- (default: ``False``) If ``True``, return a tuple
+         - ``return_conjugation`` -- boolean (default: ``False``); If ``True``, return a tuple
            ``(g, phi)`` where ``g`` is a model with affine (n, m) preperiodic points
            and ``phi`` is the matrix that moves ``f`` to ``g``.
 
@@ -3591,11 +3591,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           * ``'CRT'`` -- Chinese Remainder Theorem
           * ``'fixed_points'`` -- fixed points algorithm
 
-        - ``return_functions`` -- (default: ``False``) boolean; ``True``
+        - ``return_functions`` -- boolean (default: ``False``); ``True``
           returns elements as linear fractional transformations and
           ``False`` returns elements as `PGL2` matrices
 
-        - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the
+        - ``iso_type`` -- boolean (default: ``False``); ``True`` returns the
           isomorphism type of the automorphism group
 
         OUTPUT: a list of elements in the automorphism group
@@ -3914,7 +3914,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``err`` -- (default: 0.01) positive real number
 
-        - ``use_algebraic_closure`` -- boolean (default: ``True``) -- If ``True``, uses the
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); -- If ``True``, uses the
           algebraic closure. If ``False``, uses the smallest extension of the base field
           containing all the critical points.
 
@@ -4109,7 +4109,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``check`` -- boolean (default: ``True``)
 
-        - ``use_algebraic_closure`` -- boolean (default: ``True``) -- If ``True``, uses the
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); -- If ``True``, uses the
           algebraic closure. If ``False``, uses the smallest extension of the base field
           containing all the critical points.
 
@@ -4235,7 +4235,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``error_bound`` -- (optional) a positive real number
 
-        - ``use_algebraic_closure`` -- boolean (default: ``True``) -- If ``True``, uses the
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); -- If ``True``, uses the
           algebraic closure. If ``False``, uses the smallest extension of the base field
           containing all the critical points.
 
@@ -4322,19 +4322,19 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``minimal`` -- (default: ``True``) boolean; ``True`` specifies to
+        - ``minimal`` -- boolean (default: ``True``); ``True`` specifies to
           find only the preperiodic points of minimal period ``m``,``n`` and
           ``False`` specifies to find all preperiodic points of period
           ``m``, ``n``
 
-        - ``formal`` -- (default: ``False``) boolean; ``True`` specifies to
+        - ``formal`` -- boolean (default: ``False``); ``True`` specifies to
           find the formal periodic points only. The formal periodic points
           are the points in the support of the dynatomic cycle.
 
         - ``R`` -- (default: the base ring of the dynamical system) a
           commutative ring over which to find the preperiodic points
 
-        - ``return_scheme`` -- (default: ``False``) boolean; return a
+        - ``return_scheme`` -- boolean (default: ``False``); return a
           subscheme of the ambient space that defines the ``m``,``n`` th
           preperiodic points
 
@@ -4661,11 +4661,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``n`` -- a positive integer
 
-        - ``minimal`` -- (default: ``True``) boolean; ``True`` specifies to
+        - ``minimal`` -- boolean (default: ``True``); ``True`` specifies to
           find only the periodic points of minimal period ``n`` and ``False``
           specifies to find all periodic points of period ``n``
 
-        - ``formal`` -- (default: ``False``) boolean; ``True`` specifies to
+        - ``formal`` -- boolean (default: ``False``); ``True`` specifies to
           find the formal periodic points only. The formal periodic points
           are the points in the support of the dynatomic cycle.
 
@@ -5013,7 +5013,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``n`` -- a positive integer, the period
 
-        - ``formal`` -- (default: ``False``) boolean; ``True`` specifies
+        - ``formal`` -- boolean (default: ``False``); ``True`` specifies
           to find the formal ``n`` multiplier spectra of this map and
           ``False`` specifies to find the ``n`` multiplier spectra
 
@@ -5021,7 +5021,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           or ``'cycle'`` depending on whether you compute one multiplier
           per point or one per cycle
 
-        - ``use_algebraic_closure`` -- boolean (default: ``True``) -- If ``True`` uses the
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); -- If ``True`` uses the
           algebraic closure. Using the algebraic closure can sometimes lead to numerical instability
           and extraneous errors. For most accurate results in dimension 1, set to ``False``.
           If ``False``, and the map is defined over projective space of
@@ -5475,7 +5475,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``n`` -- a positive integer, the period
 
-        - ``formal`` -- (default: ``False``) boolean; ``True`` specifies
+        - ``formal`` -- boolean (default: ``False``); ``True`` specifies
           to find the values of the elementary symmetric polynomials
           corresponding to the formal ``n`` multiplier spectra and ``False``
           specifies to instead find the values corresponding to the ``n``
@@ -5490,26 +5490,26 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           multiplier per point or one per cycle. Not implemented for
           dimension greater than 1.
 
-        - ``return polynomial`` -- (default: ``False``) boolean;
+        - ``return polynomial`` -- boolean (default: ``False``);
           ``True`` specifies returning the polynomial which generates
           the sigma invariants, see [Hutz2019]_ for the full definition.
           The polynomial is always a multivariate polynomial with variables
           ``w`` and ``t``.
 
-        - ``chow`` -- (default: ``False``) boolean; ``True`` specifies
+        - ``chow`` -- boolean (default: ``False``); ``True`` specifies
           using the Chow algorithm from [Hutz2019]_ to compute the sigma
           invariants. While slower, the Chow algorithm does not lose
           information about multiplicities of the multipliers. In order
           to accurately compute the sigma polynomial when there is a
           repeated multiplier, ``chow`` must be ``True``.
 
-        - ``deform`` -- (default: ``False``) boolean; ``True`` specifies
+        - ``deform`` -- boolean (default: ``False``); ``True`` specifies
           first deforming the map so that all periodic points are distinct
           and then calculating the sigma invariants. In order to accurately
           calculate the sigma polynomial when there is a periodic point with
           multiplicity, ``deform`` must be ``True``.
 
-        - ``check`` -- (default: ``True``) boolean; when ``True`` the degree of
+        - ``check`` -- boolean (default: ``True``); when ``True`` the degree of
           the sigma polynomial is checked against the expected degree. This is
           done as the sigma polynomial may drop degree if multiplicities of periodic
           points or multipliers are not correctly accounted for using ``chow`` or
@@ -6010,7 +6010,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``prec`` -- (default: 300) integer, desired precision
 
-        - ``return_conjuagtion`` -- (default: ``True``) boolean; return
+        - ``return_conjuagtion`` -- boolean (default: ``True``); return
           an element of `SL(2, \ZZ)`
 
         - ``error_limit`` -- (default: 0.000001) a real number, sets
@@ -6019,7 +6019,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
-        - ``dynatomic`` -- (default: ``True``) boolean, to use formal periodic points
+        - ``dynatomic`` -- boolean (default: ``True``);, to use formal periodic points
 
         - ``start_n`` -- (default: 1), positive integer, firs period to rry to find
           appropriate binary form
@@ -6332,7 +6332,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           sets the error_bound used in the canonical height computation
           and ``return_period`` a boolean which
 
-        - ``return_period`` -- (default: ``False``) boolean; controls if
+        - ``return_period`` -- boolean (default: ``False``); controls if
           the period is returned if the point is preperiodic
 
         OUTPUT:
@@ -6465,7 +6465,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``check`` -- (default: ``True``) boolean; whether to check
+        - ``check`` -- boolean (default: ``True``); whether to check
           if this dynamical system is postcritically finite or not.
 
         OUTPUT: the set of postcritical points
@@ -6535,7 +6535,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r"""
         Check if ``self`` is a Chebyshev polynomial.
 
-        OUTPUT: true if ``self`` is Chebyshev, False otherwise
+        OUTPUT: ``True`` if ``self`` is Chebyshev, ``False`` otherwise
 
         EXAMPLES::
 
@@ -8368,7 +8368,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         INPUT:
 
-        - ``return_conjugation`` -- (default: ``False``) boolean; if ``True``,
+        - ``return_conjugation`` -- boolean (default: ``False``); if ``True``,
           then return the conjugation element of PGL along with the embedding
           into the new field
 
@@ -8576,7 +8576,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
           points of the map, or a prime number in `\QQ` if the field of definition
           of the fixed points is `\QQ`.
 
-        - ``return_conjugation`` -- (default: ``False``) if set to ``True``,
+        - ``return_conjugation`` -- boolean (default: ``False``); if set to ``True``,
           the `PGL_2` map used to achieve good reduction will be returned
 
         OUTPUT: a tuple:
@@ -8829,7 +8829,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         INPUT:
 
-        - ``return_conjugation`` -- (default: ``False``) if the map is Newton
+        - ``return_conjugation`` -- boolean (default: ``False``); if the map is Newton
           and ``True``, then return the conjugation that moves this map to
           the above form
 
@@ -8964,7 +8964,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         keywords:
 
-        - ``return_period`` -- (default: ``False``) boolean; controls if
+        - ``return_period`` -- boolean (default: ``False``); controls if
           the period is returned
 
         OUTPUT: the boolean ``True`` or a tuple ``(m,n)`` of integers
@@ -9135,7 +9135,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         INPUT:
 
-        - ``return_points`` -- (default: ``False``) boolean; if ``True``,
+        - ``return_points`` -- boolean (default: ``False``); if ``True``,
           then return the points as well as the possible periods
 
         OUTPUT:
@@ -9195,13 +9195,13 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
         The following keywords are used when the dimension of the domain is 1:
 
-        - ``absolute`` -- (default: ``False``) boolean; if ``True``, then
+        - ``absolute`` -- boolean (default: ``False``); if ``True``, then
           return the absolute automorphism group and a field of definition
 
-        - ``iso_type`` -- (default: ``False``) boolean; if ``True``, then
+        - ``iso_type`` -- boolean (default: ``False``); if ``True``, then
           return the isomorphism type of the automorphism group
 
-        - ``return_functions`` -- (default: ``False``) boolean; ``True``
+        - ``return_functions`` -- boolean (default: ``False``); ``True``
           returns elements as linear fractional transformations and
           ``False`` returns elements as `PGL2` matrices
 

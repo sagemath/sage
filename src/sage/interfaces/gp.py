@@ -466,7 +466,7 @@ class Gp(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``t`` -- (default: None); if not None, then returns
+        -  ``t`` -- (default: ``None``); if not None, then returns
            time since t
 
 
@@ -1045,7 +1045,7 @@ GpFunction = ExpectFunction
 
 def is_GpElement(x):
     """
-    Return True if ``x`` is of type :class:`GpElement`
+    Return ``True`` if ``x`` is of type :class:`GpElement`
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.GpElement`) instead.

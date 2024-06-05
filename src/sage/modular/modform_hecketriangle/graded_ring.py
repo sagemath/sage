@@ -87,7 +87,7 @@ class QuasiMeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation)
 
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
-        - ``red_hom``    -- If True then results of binary operations are considered
+        - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
@@ -150,7 +150,7 @@ class QuasiWeakModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
-        - ``red_hom``    -- If True then results of binary operations are considered
+        - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
@@ -210,7 +210,7 @@ class QuasiModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
-        - ``red_hom``    -- If True then results of binary operations are considered
+        - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
@@ -270,7 +270,7 @@ class QuasiCuspFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
-        - ``red_hom``    -- If True then results of binary operations are considered
+        - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
@@ -330,7 +330,7 @@ class MeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
-        - ``red_hom``    -- If True then results of binary operations are considered
+        - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
@@ -390,7 +390,7 @@ class WeakModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
-        - ``red_hom``    -- If True then results of binary operations are considered
+        - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
@@ -449,7 +449,7 @@ class ModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
-        - ``red_hom``    -- If True then results of binary operations are considered
+        - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 
@@ -509,7 +509,7 @@ class CuspFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         - ``base_ring``  -- The base_ring (default: ``ZZ``).
 
-        - ``red_hom``    -- If True then results of binary operations are considered
+        - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
                             This is mainly used by the spaces of homogeneous elements.
 

@@ -1195,7 +1195,7 @@ class Patch(SageObject):
           matrix. Its number of lines must be two. Its number of columns
           must equal the dimension of the ambient space of the faces. If
           ``None``, the isometric projection is used by default.
-        - ``print_tikz_env`` -- boolean (default: ``True``) if ``True``,
+        - ``print_tikz_env`` -- boolean (default: ``True``); if ``True``,
           the tikzpicture environment are printed
         - ``edgecolor`` -- string (default: ``'black'``) either
           ``'black'`` or ``'facecolor'`` (color of unit face edges)
@@ -1554,8 +1554,7 @@ class E1Star(SageObject):
         INPUT:
 
         - ``face`` -- a face
-        - ``color`` -- string, RGB tuple or color, (default: None)
-          RGB color
+        - ``color`` -- string (default: ``None``); RGB tuple or color
 
         OUTPUT: iterator of faces
 

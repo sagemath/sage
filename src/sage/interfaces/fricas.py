@@ -1384,7 +1384,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         - ``s`` -- string
         - ``start`` -- integer; specifies where the symbol begins
-        - ``make_fun`` -- (default: ``False``) a Boolean; specifying
+        - ``make_fun`` -- boolean (default: ``False``); a Boolean; specifying
           whether the atom should be interpreted as a function call
 
         TESTS::

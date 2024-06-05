@@ -1885,14 +1885,14 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         - ``gens`` -- a list or family of elements of ``self``
 
-        - ``check`` -- (default: ``True``) whether to verify that the
+        - ``check`` -- boolean (default: ``True``); whether to verify that the
            elements of ``gens`` are in ``self``
 
-        - ``already_echelonized`` -- (default: ``False``) whether
+        - ``already_echelonized`` -- boolean (default: ``False``); whether
            the elements of ``gens`` are already in (not necessarily
            reduced) echelon form
 
-        - ``unitriangular`` -- (default: ``False``) whether
+        - ``unitriangular`` -- boolean (default: ``False``); whether
           the lift morphism is unitriangular
 
         - ``support_order`` -- (optional) either something that can
@@ -2199,7 +2199,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         - ``x`` -- data to construct a new matrix from. See :func:`matrix`
 
-        - ``coerce`` -- (default: ``True``) if False, assume without
+        - ``coerce`` -- boolean (default: ``True``); if ``False``, assume without
           checking that the values in ``x`` lie in the base ring
 
         OUTPUT:

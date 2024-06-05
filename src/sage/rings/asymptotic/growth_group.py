@@ -1875,7 +1875,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``condense`` -- (default: ``False``) if set, then a shorter
+        - ``condense`` -- boolean (default: ``False``); if set, then a shorter
           output is returned, e.g. the prefix-string ``Growth Group``
           is not show in this case.
 
@@ -2800,7 +2800,7 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
+        - ``latex`` -- boolean (default: ``False``); a boolean. If set, then
           LaTeX-output is returned.
 
         OUTPUT: string
@@ -3876,7 +3876,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
+        - ``latex`` -- boolean (default: ``False``); a boolean. If set, then
           LaTeX-output is returned.
 
         OUTPUT: string

@@ -270,7 +270,7 @@ class OperationTable(SageObject):
             .  False  True
              +------------
         False| False  True
-         True|  True  True
+         True|  ``True``  True
 
 
     TESTS:
@@ -1029,7 +1029,7 @@ class OperationTable(SageObject):
 
         INPUT:
 
-        - ``element_names`` -- (default: ``True``) whether to display text with element names on the image
+        - ``element_names`` -- boolean (default: ``True``); whether to display text with element names on the image
 
         - ``**options`` -- passed on to :func:`~sage.plot.matrix_plot.matrix_plot`
 

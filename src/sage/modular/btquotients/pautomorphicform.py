@@ -667,12 +667,12 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         - ``k`` -- integer -- The weight. It must be even.
 
-        - ``prec`` -- integer (default: None). If specified, the
+        - ``prec`` -- integer (default: ``None``). If specified, the
           precision for the coefficient module
 
-        - ``basis_matrix`` -- a matrix (default: None).
+        - ``basis_matrix`` -- a matrix (default: ``None``).
 
-        - ``base_field`` -- a ring (default: None)
+        - ``base_field`` -- a ring (default: ``None``)
 
         EXAMPLES::
 
@@ -873,7 +873,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         r"""
         Whether ``self`` is irreducible.
 
-        OUTPUT: boolean. True if and only if ``self`` is irreducible
+        OUTPUT: boolean; ``True`` if and only if ``self`` is irreducible
 
         EXAMPLES::
 
@@ -944,7 +944,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         OUTPUT:
 
-        Boolean. True if and only if ``self`` is a space of
+        Boolean. ``True`` if and only if ``self`` is a space of
         BruhatTitsHarmonicCocycles or pAdicAutomorphicForms.
 
         EXAMPLES::
@@ -1435,7 +1435,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 #
 #         - ``submodule`` -- submodule of the ambient space.
 #
-#         - ``check`` -- (default: ``False``) whether to check that the
+#         - ``check`` -- boolean (default: ``False``); whether to check that the
 #           submodule is Hecke equivariant
 #
 #         EXAMPLES::
@@ -1900,7 +1900,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``z`` -- (default: None). If specified, returns the value of
+        - ``z`` -- (default: ``None``). If specified, returns the value of
           the form at the point ``z`` in the `p`-adic upper half
           plane.
 
@@ -1959,7 +1959,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``z`` -- (default: None). If specified, evaluates the derivative
+        - ``z`` -- (default: ``None``). If specified, evaluates the derivative
           at the point ``z`` in the `p`-adic upper half plane.
 
         - ``level`` -- integer (default: 0). If ``method`` is
@@ -2057,7 +2057,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         - ``t1``, ``t2`` -- elements of `P^1(\QQ_p)` (the endpoints
           of integration)
 
-        - ``E`` -- (default: None). If specified, will not compute the
+        - ``E`` -- (default: ``None``). If specified, will not compute the
           covering adapted to ``t1`` and ``t2`` and instead use the
           given one. In that case, ``E`` should be a list of matrices
           corresponding to edges describing the open balls to be
@@ -2368,7 +2368,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         - ``S`` -- a BruhatTitsHarmonicCocycle or pAdicAutomorphicForm
 
-        OUTPUT: a boolean value. True if and only if ``S`` is coercible into self
+        OUTPUT: boolean; ``True`` if and only if `S` is coercible into ``self``
 
         EXAMPLES::
 
@@ -2558,7 +2558,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         INPUT:
 
         - f -- a `p`-adic automorphic form.
-        - scale -- (default: ``True``) whether to scale by the appropriate power of `p`
+        - scale -- boolean (default: ``True``); whether to scale by the appropriate power of `p`
           at each iteration.
 
         EXAMPLES::

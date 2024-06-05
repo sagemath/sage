@@ -271,7 +271,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         - ``name`` -- (default: ``None``) name given to the point
         - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           point; if none are provided, the LaTeX symbol is set to ``name``
-        - ``check_coords`` -- (default: ``True``) determines whether
+        - ``check_coords`` -- boolean (default: ``True``); determines whether
           ``coords`` are valid coordinates for the chart ``chart``;
           for symbolic coordinates, it is recommended to set ``check_coords``
           to ``False``
@@ -599,9 +599,9 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``trivial`` -- (default: ``True``) if ``self`` is open, include the trivial
+        - ``trivial`` -- boolean (default: ``True``); if ``self`` is open, include the trivial
           open cover of ``self`` by itself
-        - ``supersets`` -- (default: ``False``) if ``True``, include open covers of
+        - ``supersets`` -- boolean (default: ``False``); if ``True``, include open covers of
           all the supersets; it can also be an iterable of supersets to include
 
         EXAMPLES::
@@ -671,9 +671,9 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``trivial`` -- (default: ``True``) if ``self`` is open, include the trivial
+        - ``trivial`` -- boolean (default: ``True``); if ``self`` is open, include the trivial
           open cover of ``self`` by itself
-        - ``supersets`` -- (default: ``False``) if ``True``, include open covers of
+        - ``supersets`` -- boolean (default: ``False``); if ``True``, include open covers of
           all the supersets; it can also be an iterable of supersets to include
 
         EXAMPLES::
@@ -874,14 +874,14 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``loops`` -- (default: ``False``) whether to include the trivial containment
+        - ``loops`` -- boolean (default: ``False``); whether to include the trivial containment
           of each subset in itself as loops of the digraph
-        - ``quotient`` -- (default: ``False``) whether to contract directed cycles in the graph,
+        - ``quotient`` -- boolean (default: ``False``); whether to contract directed cycles in the graph,
            replacing equivalence classes of equal subsets by a single vertex.
            In this case, each vertex of the digraph is a set of :class:`ManifoldSubset`
            instances.
-        - ``open_covers`` -- (default: ``False``) whether to include vertices for open covers
-        - ``points`` -- (default: ``False``) whether to include vertices for declared points;
+        - ``open_covers`` -- boolean (default: ``False``); whether to include vertices for open covers
+        - ``points`` -- boolean (default: ``False``); whether to include vertices for declared points;
           this can also be an iterable for the points to include
         - ``lower_bound`` -- (default: ``None``) only include supersets of this
 
@@ -1046,8 +1046,8 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``open_covers`` -- (default: ``False``) whether to include vertices for open covers
-        - ``points`` -- (default: ``False``) whether to include vertices for declared points;
+        - ``open_covers`` -- boolean (default: ``False``); whether to include vertices for open covers
+        - ``points`` -- boolean (default: ``False``); whether to include vertices for declared points;
           this can also be an iterable for the points to include
         - ``lower_bound`` -- (default: ``None``) only include supersets of this
 
@@ -1218,14 +1218,14 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``loops`` -- (default: ``False``) whether to include the trivial containment
+        - ``loops`` -- boolean (default: ``False``); whether to include the trivial containment
           of each subset in itself as loops of the digraph
-        - ``quotient`` -- (default: ``False``) whether to contract directed cycles in the graph,
+        - ``quotient`` -- boolean (default: ``False``); whether to contract directed cycles in the graph,
            replacing equivalence classes of equal subsets by a single vertex.
            In this case, each vertex of the digraph is a set of :class:`ManifoldSubset`
            instances.
-        - ``open_covers`` -- (default: ``False``) whether to include vertices for open covers
-        - ``points`` -- (default: ``False``) whether to include vertices for declared points;
+        - ``open_covers`` -- boolean (default: ``False``); whether to include vertices for open covers
+        - ``points`` -- boolean (default: ``False``); whether to include vertices for declared points;
           this can also be an iterable for the points to include
         - ``upper_bound`` -- (default: ``None``) only include subsets of this
 
@@ -1249,8 +1249,8 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``open_covers`` -- (default: ``False``) whether to include vertices for open covers
-        - ``points`` -- (default: ``False``) whether to include vertices for declared points;
+        - ``open_covers`` -- boolean (default: ``False``); whether to include vertices for open covers
+        - ``points`` -- boolean (default: ``False``); whether to include vertices for declared points;
           this can also be an iterable for the points to include
         - ``upper_bound`` -- (default: ``None``) only include subsets of this
 
@@ -1353,7 +1353,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         INPUT:
 
         - ``subsets_or_families`` -- finitely many subsets or iterables of subsets
-        - ``disjoint`` -- (default: ``False``) whether to declare the subsets
+        - ``disjoint`` -- boolean (default: ``False``); whether to declare the subsets
           pairwise disjoint
 
         EXAMPLES::
@@ -1832,7 +1832,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``subsets`` -- (default: ``True``) if ``False``, only consider points that have
+        - ``subsets`` -- boolean (default: ``True``); if ``False``, only consider points that have
           been defined directly on ``self``; if ``True``, also consider points on all subsets.
 
         EXAMPLES::
@@ -1944,7 +1944,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         - ``name`` -- name given to the subset
         - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote
           the subset; if none are provided, it is set to ``name``
-        - ``is_open`` -- (default: ``False``) if ``True``, the created subset
+        - ``is_open`` -- boolean (default: ``False``); if ``True``, the created subset
           is assumed to be open with respect to the manifold's topology
 
         OUTPUT:
@@ -2106,7 +2106,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         - ``name`` -- name given to the superset
         - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote
           the superset; if none are provided, it is set to ``name``
-        - ``is_open`` -- (default: ``False``) if ``True``, the created subset
+        - ``is_open`` -- boolean (default: ``False``); if ``True``, the created subset
           is assumed to be open with respect to the manifold's topology
 
         OUTPUT:
@@ -2627,7 +2627,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
           complement in the case the latter has to be created; the default
           is built upon the symbol `\setminus`
-        - ``is_open`` -- (default: ``False``) if ``True``, the created subset
+        - ``is_open`` -- boolean (default: ``False``); if ``True``, the created subset
           is assumed to be open with respect to the manifold's topology
 
         OUTPUT:
@@ -2681,7 +2681,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
           difference in the case the latter has to be created; the default
           is built upon the symbol `\setminus`
-        - ``is_open`` -- (default: ``False``) if ``True``, the created subset
+        - ``is_open`` -- boolean (default: ``False``); if ``True``, the created subset
           is assumed to be open with respect to the manifold's topology
 
         OUTPUT:

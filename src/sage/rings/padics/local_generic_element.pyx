@@ -931,7 +931,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         INPUT:
 
         - ``other`` -- an element in the same ring
-        - ``integral`` -- if True, use integral-style remainders even when the parent is a field.
+        - ``integral`` -- if ``True``, use integral-style remainders even when the parent is a field.
           Namely, the remainder will have no terms in its p-adic expansion above
           the valuation of ``other``.
 

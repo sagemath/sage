@@ -397,7 +397,7 @@ class QuadraticFormLocalRepresentationConditions:
             v = self.local_repn_array[0]
             if p != v[0]:
                 raise RuntimeError("Error... The first vector should be for the real numbers!")
-            return (v[1:3] == [0, 0])     # True iff the form is indefinite
+            return (v[1:3] == [0, 0])     # ``True`` iff the form is indefinite
 
         # Check non-generic "finite" primes
         v = self.local_conditions_vector_for_prime(p)

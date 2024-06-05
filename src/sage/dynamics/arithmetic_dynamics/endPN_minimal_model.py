@@ -223,7 +223,7 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
     - ``D`` -- a list of primes, in case one only wants to check minimality
       at those specific primes
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the `PGL_2` transformation to conjugate
       this map to the calculated models
 
@@ -491,7 +491,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
 
     - ``vp`` -- a minimal model of a dynamical system on the projective line
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 
@@ -637,7 +637,7 @@ def HS_minimal(f, return_transformation=False, D=None):
 
     - ``f`` -- dynamical system on the projective line with minimal resultant
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the `PGL_2` transformation to conjugate
       this map to the calculated models
 
@@ -733,7 +733,7 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
 
     - ``m`` -- (optional) `2 \times 2` matrix associated with ``f``
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 
@@ -828,7 +828,7 @@ def HS_all_minimal(f, return_transformation=False, D=None):
 
     - ``f`` -- dynamical system on the projective line with minimal resultant
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 

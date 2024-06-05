@@ -257,7 +257,7 @@ class Standalone(SageObject):
       ``\standaloneconfig{...}``
     - ``usepackage`` -- list of strings (default: ``[]``), latex packages.
     - ``macros`` -- list of strings (default: ``[]``), stuff you need for the picture.
-    - ``use_sage_preamble`` -- bool (default: ``False``), whether to include sage
+    - ``use_sage_preamble`` -- boolean (default: ``False``), whether to include sage
       latex preamble and sage latex macros, that is, the content of
       :func:`sage.misc.latex.extra_preamble()`,
       :func:`sage.misc.latex.extra_macros()` and
@@ -633,7 +633,7 @@ class Standalone(SageObject):
         - ``filename`` -- string (default: ``None``), the output filename.
           If ``None``, it saves the file in a temporary directory.
 
-        - ``view`` -- bool (default:``True``), whether to open the file in a
+        - ``view`` -- boolean (default:``True``), whether to open the file in a
           pdf viewer. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
@@ -757,7 +757,7 @@ class Standalone(SageObject):
         - ``filename`` -- string (default: ``None``), the output filename.
           If ``None``, it saves the file in a temporary directory.
 
-        - ``view`` -- bool (default:``True``), whether to open the file in a
+        - ``view`` -- boolean (default:``True``), whether to open the file in a
           dvi viewer. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
@@ -885,7 +885,7 @@ class Standalone(SageObject):
         - ``density`` -- integer, (default: ``150``), horizontal and vertical
           density of the image
 
-        - ``view`` -- bool (default:``True``), whether to open the file in a
+        - ``view`` -- boolean (default:``True``), whether to open the file in a
           png viewer. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
@@ -969,7 +969,7 @@ class Standalone(SageObject):
         - ``filename`` -- string (default:``None``), the output filename.
           If ``None``, it saves the file in a temporary directory.
 
-        - ``view`` -- bool (default:``True``), whether to open the file in
+        - ``view`` -- boolean (default:``True``), whether to open the file in
           a browser. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
@@ -1069,7 +1069,7 @@ class Standalone(SageObject):
         - ``filename`` -- string (default:``None``), the output filename.
           If ``None``, it saves the file in a temporary directory.
 
-        - ``view`` -- bool (default:``True``), whether to open the file in
+        - ``view`` -- boolean (default:``True``), whether to open the file in
           a browser. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
@@ -1183,7 +1183,7 @@ class Standalone(SageObject):
 
         - ``filename`` -- string (default:``None``), the output filename.
           If ``None``, it saves the file in a temporary directory.
-        - ``content_only`` -- bool (default:``False``) whether to include
+        - ``content_only`` -- boolean (default:``False``) whether to include
           the header latex part. If ``True``, it prints only the
           content to the file.
 
@@ -1312,7 +1312,7 @@ class TikzPicture(Standalone):
     - ``usetikzlibrary`` -- list of strings (default: ``[]``), tikz libraries
       to use.
     - ``macros`` -- list of strings (default: ``[]``), stuff you need for the picture.
-    - ``use_sage_preamble`` -- bool (default: ``False``), whether to include sage
+    - ``use_sage_preamble`` -- boolean (default: ``False``), whether to include sage
       latex preamble and sage latex macros, that is, the content of
       :func:`sage.misc.latex.extra_preamble()`,
       :func:`sage.misc.latex.extra_macros()` and
@@ -1519,7 +1519,7 @@ class TikzPicture(Standalone):
         INPUT:
 
         - ``graph`` -- graph
-        - ``merge_multiedges`` -- bool (default: ``True``), if the graph
+        - ``merge_multiedges`` -- boolean (default: ``True``), if the graph
           has multiple edges, whether to merge the multiedges into one
           single edge
         - ``merge_label_function`` -- function (default:``tuple``), a
@@ -1532,8 +1532,8 @@ class TikzPicture(Standalone):
         - ``prog`` -- string (default: ``'dot'``) the program used for the
           layout corresponding to one of the software of the graphviz
           suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
-        - ``edge_labels`` -- bool (default: ``True``)
-        - ``color_by_label`` -- bool (default: ``False``)
+        - ``edge_labels`` -- boolean (default: ``True``)
+        - ``color_by_label`` -- boolean (default: ``False``)
         - ``rankdir`` -- string (default: ``'down'``)
         - ``subgraph_clusters`` -- (default: ``[]``) a list of lists of
           vertices, if supported by the layout engine, nodes belonging to
@@ -1668,7 +1668,7 @@ class TikzPicture(Standalone):
 
         - ``graph`` -- graph (with predefined positions)
         - ``scale`` -- number (default:``1``), tikzpicture scale
-        - ``merge_multiedges`` -- bool (default: ``True``), if the graph
+        - ``merge_multiedges`` -- boolean (default: ``True``), if the graph
           has multiple edges, whether to merge the multiedges into one
           single edge
         - ``merge_label_function`` -- function (default:``tuple``), a
@@ -1804,8 +1804,8 @@ class TikzPicture(Standalone):
         - ``prog`` -- string (default: ``'dot'``) the program used for the
           layout corresponding to one of the software of the graphviz
           suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
-        - ``edge_labels`` -- bool (default: ``True``)
-        - ``color_by_label`` -- bool (default: ``False``)
+        - ``edge_labels`` -- boolean (default: ``True``)
+        - ``color_by_label`` -- boolean (default: ``False``)
         - ``rankdir`` -- string (default: ``'down'``)
 
         EXAMPLES::

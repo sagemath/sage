@@ -181,7 +181,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``id`` -- a texture (default: None), a dict, a color, a
+        - ``id`` -- a texture (default: ``None``), a dict, a color, a
           str, a tuple, None or any other type acting as an ID. If ``id`` is
           None and keyword ``texture`` is empty, then it returns a unique texture object.
         - ``texture`` -- a texture
@@ -191,7 +191,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
         - ``diffuse`` -- number (default: 1)
         - ``specular`` -- number (default: 0)
         - ``shininess`` -- number (default: 1)
-        - ``name`` -- str (default: None)
+        - ``name`` -- str (default: ``None``)
         - ``**kwds`` -- other valid keywords
 
         OUTPUT: a texture object

@@ -250,7 +250,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries are of type :class:`Integer`.
 
         EXAMPLES:
@@ -1802,13 +1802,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
            the Hadamard bound). It is *incredibly* unlikely that one would
            ever get an incorrect result with proof=False.
 
-        -  ``include_zero_rows`` -- (default: ``True``) if False,
+        -  ``include_zero_rows`` -- boolean (default: ``True``); if False,
            don't include zero rows
 
         -  ``transformation`` -- if given, also compute
            transformation matrix; only valid for flint and padic algorithm
 
-        -  ``D`` -- (default: None) if given and the algorithm
+        -  ``D`` -- (default: ``None``) if given and the algorithm
            is 'ntl', then D must be a multiple of the determinant and this
            function will use that fact.
 
@@ -2135,7 +2135,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
            self.
 
         -  ``proof`` -- (default: use proof.linear_algebra());
-           if False, the determinant calculations are done with proof=False.
+           if ``False``, the determinant calculations are done with proof=False.
 
         -  ``max_dets`` -- (default: 5); technical parameter -
            max number of determinant to compute when bounding prime divisor of
@@ -2205,7 +2205,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
 
         -  ``proof`` -- (default: use proof.linear_algebra());
-           if False, the determinant calculations are done with proof=False.
+           if ``False``, the determinant calculations are done with proof=False.
 
 
         OUTPUT:
@@ -3001,17 +3001,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``prec`` -- (default: auto choose) precision, ignored by NTL and pari
 
-        - ``early_red`` -- (default: ``False``) perform early reduction,
+        - ``early_red`` -- boolean (default: ``False``); perform early reduction,
           ignored by NTL and pari
 
-        - ``use_givens`` -- (default: ``False``) use Givens
+        - ``use_givens`` -- boolean (default: ``False``); use Givens
           orthogonalization.  Only applies to approximate reduction
           using NTL.  This is slower but generally more stable.
 
-        - ``use_siegel`` -- (default: ``False``) use Siegel's condition
+        - ``use_siegel`` -- boolean (default: ``False``); use Siegel's condition
           instead of Lovász's condition, ignored by NTL and pari
 
-        - ``transformation`` -- (default: ``False``) also return transformation
+        - ``transformation`` -- boolean (default: ``False``); also return transformation
            matrix.
 
         - ``**kwds`` -- keywords to be passed to :mod:`fpylll`.  See
@@ -3480,7 +3480,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         -  ``distribution`` -- would also be passed into ``ZZ.random_element``
            if given
 
-        -  ``nonzero`` -- bool (default: ``False``); whether the new entries
+        -  ``nonzero`` -- boolean (default: ``False``); whether the new entries
            are guaranteed to be zero
 
         OUTPUT:
@@ -4006,7 +4006,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
            use nullspace algorithm, which is slower, but doesn't require
            checking that the matrix is invertible as a precondition.
 
-        -  ``check_invertible`` -- (default: ``True``) whether to
+        -  ``check_invertible`` -- boolean (default: ``True``); whether to
            check that the matrix is invertible.
 
 
@@ -4200,7 +4200,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``B`` -- a matrix or vector
 
-        -  ``check_rank`` -- bool (default: ``True``); if True
+        -  ``check_rank`` -- boolean (default: ``True``); if True
            verify that in fact the rank is full.
 
         - ``algorithm`` -- ``'iml'`` (default) or ``'flint'``
@@ -5809,7 +5809,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``flag`` -- 0 (default), 1, 3 or 4 (see docstring for
           ``pari.mathnf``).
 
-        - ``include_zero_rows`` -- boolean. if False, do not include
+        - ``include_zero_rows`` -- boolean. if ``False``, do not include
           any of the zero rows at the bottom of the matrix in the
           output.
 

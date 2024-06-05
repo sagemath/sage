@@ -304,7 +304,7 @@ class EllipticCurveSaturator(SageObject):
 
         - ``p`` (integer) -- a prime number.
 
-        - ``sieve`` (boolean) -- if True, use a sieve (when there are at
+        - ``sieve`` (boolean) -- if ``True``, use a sieve (when there are at
           least 2 points); otherwise test all combinations.
 
         .. NOTE::
@@ -338,7 +338,7 @@ class EllipticCurveSaturator(SageObject):
             False
 
         Here we see an example where 19-saturation is proved, with the
-        verbose flag set to True so that we can see what is going on::
+        verbose flag set to ``True`` so that we can see what is going on::
 
             sage: saturator = EllipticCurveSaturator(EK, verbose=True)
             sage: saturator.p_saturation([P, Q, R], 19)

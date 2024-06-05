@@ -131,7 +131,7 @@ _CommRings = _Rings.Commutative()
 
 def is_ProjectiveSpace(x):
     r"""
-    Return True if ``x`` is a projective space.
+    Return ``True`` if ``x`` is a projective space.
 
     In other words, if ``x`` is an ambient space `\mathbb{P}^n_R`,
     where `R` is a ring and `n\geq 0` is an integer.
@@ -1173,7 +1173,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if is_RationalField(R):
             field_type = False
         elif R in NumberFields():
-            # True for the rational field as well, so check is_RationalField first
+            # ``True`` for the rational field as well, so check is_RationalField first
             field_type = True
         elif (R is ZZ) or (isinstance(R, Order) and R.is_integrally_closed()): # Ensure ring of integers / maximal order
             is_ring_of_ints = True
@@ -1240,7 +1240,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``i`` -- integer between 0 and dimension of ``self``, inclusive.
 
-        - ``AA`` -- (default: None) ambient affine space, this is constructed
+        - ``AA`` -- (default: ``None``) ambient affine space, this is constructed
           if it is not given.
 
         OUTPUT:
@@ -1573,7 +1573,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``points_target`` -- points in target projective space.
 
-        - ``normalize`` -- (default: ``True``) If the returned matrix should be normalized.
+        - ``normalize`` -- boolean (default: ``True``); If the returned matrix should be normalized.
           Only works over exact rings. If the base ring is a field, the matrix is normalized so
           that the last nonzero entry in the last row is 1. If the base ring is a ring, then
           the matrix is normalized so that the entries are elements of the base ring.

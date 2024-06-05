@@ -1386,9 +1386,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         - `p` -- unramified odd prime
 
-        OUTPUT:
-
-        - 2-tuple of matrices over finite field
+        OUTPUT: 2-tuple of matrices over finite field
 
         EXAMPLES::
 
@@ -1924,9 +1922,7 @@ class QuaternionOrder(Parent):
         inside the vector space corresponding to the ambient
         quaternion algebra.
 
-        OUTPUT:
-
-        A free `\ZZ`-module of rank 4.
+        OUTPUT: a free `\ZZ`-module of rank 4
 
         EXAMPLES::
 
@@ -2955,12 +2951,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def reduced_basis(self):
         r"""
-        Let `I` = ``self`` be a fractional ideal in a (rational) definite quaternion algebra.
-        This function returns an LLL reduced basis of I.
+        Let `I` = ``self`` be a fractional ideal in a (rational) definite
+        quaternion algebra. This function returns an LLL reduced basis of `I`.
 
-        OUTPUT:
-
-        - A tuple of four elements in I forming an LLL reduced basis of I as a lattice
+        OUTPUT: a tuple of four elements in `I` forming an LLL reduced basis of
+        `I` as a lattice
 
         EXAMPLES::
 
@@ -2989,13 +2984,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     def theta_series_vector(self, B):
         r"""
         Return theta series coefficients of ``self``, as a vector
-        of ``B`` integers.
+        of `B` integers.
 
         INPUT:
 
         - ``B`` -- positive integer
 
-        OUTPUT: vector over `\ZZ` with ``B`` entries
+        OUTPUT: vector over `\ZZ` with `B` entries
 
         EXAMPLES::
 
@@ -3280,9 +3275,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         r"""
         Return the underlying free `\ZZ`-module corresponding to this ideal.
 
-        OUTPUT:
-
-        Free `\ZZ`-module of rank 4 embedded in an ambient `\QQ^4`.
+        OUTPUT: free `\ZZ`-module of rank 4 embedded in an ambient `\QQ^4`
 
         EXAMPLES::
 
@@ -3783,9 +3776,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
           ideals `J`.  More precisely the `J`'s are the right annihilators
           of `(1,0) \alpha^i` for `i=0,1,2,...,p`
 
-        OUTPUT:
-
-        - list of right ideals
+        OUTPUT: list of right ideals
 
         .. NOTE::
 
@@ -4263,9 +4254,7 @@ def maxord_solve_aux_eq(a, b, p):
 
     - ``p`` -- even prime ideal (actually only ``p=ZZ(2)`` is implemented)
 
-    OUTPUT:
-
-    - A tuple `(y, z, w)`
+    OUTPUT: a tuple `(y, z, w)`
 
     EXAMPLES::
 

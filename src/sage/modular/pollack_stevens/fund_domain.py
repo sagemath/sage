@@ -283,7 +283,7 @@ class PollackStevensModularDomain(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer (default: None)
+        - ``n`` -- integer (default: ``None``)
 
         OUTPUT:
 
@@ -320,7 +320,7 @@ class PollackStevensModularDomain(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer (default: None)
+        - ``n`` -- integer (default: ``None``)
 
         OUTPUT:
 
@@ -1200,7 +1200,7 @@ class ManinRelations(PollackStevensModularDomain):
                     # Check if we need to flip (since this P1 element has not
                     # yet been accounted for!)
                     if not v[pos]:
-                        v[pos] = True      # Say this P1 element now occurs
+                        v[pos] = ``True``      # Say this P1 element now occurs
                         v[P.index(b1, -(b1 + b2))] = True
                         # Say that the other two ideal triangle edges
                         # also occur!

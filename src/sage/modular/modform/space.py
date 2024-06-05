@@ -87,7 +87,7 @@ WARN = False
 
 def is_ModularFormsSpace(x):
     r"""
-    Return True if x is a ```ModularFormsSpace```.
+    Return ``True`` if x is a ```ModularFormsSpace```.
 
     EXAMPLES::
 
@@ -164,7 +164,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``new_prec`` -- positive integer (default: None)
+        -  ``new_prec`` -- positive integer (default: ``None``)
 
 
         OUTPUT: if new_prec is None, returns the current precision
@@ -346,10 +346,10 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def has_character(self):
         r"""
-        Return True if this space of modular forms has a specific
+        Return ``True`` if this space of modular forms has a specific
         character.
 
-        This is True exactly when the character() function does not return
+        This is ``True`` exactly when the character() function does not return
         None.
 
         EXAMPLES: A space for `\Gamma_0(N)` has trivial character,
@@ -374,7 +374,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def is_ambient(self):
         """
-        Return True if this an ambient space of modular forms.
+        Return ``True`` if this an ambient space of modular forms.
 
         EXAMPLES::
 
@@ -388,7 +388,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: E.is_ambient()
             False
         """
-        return False   # returning True is defined in the derived AmbientSpace class.
+        return False   # returning ``True`` is defined in the derived AmbientSpace class.
 
     def __normalize_prec(self, prec):
         """
@@ -937,7 +937,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         -  ``self, right`` -- spaces of modular forms
 
 
-        OUTPUT: ``True`` if self embeds in right, and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` embeds in ``right``, ``False`` otherwise
 
         TODO: Barring a few trivial cases, this only works in the case that
         right.is_ambient() returns True.
@@ -1587,7 +1587,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def is_cuspidal(self):
         r"""
-        Return True if this space is cuspidal.
+        Return ``True`` if this space is cuspidal.
 
         EXAMPLES::
 
@@ -1601,7 +1601,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def is_eisenstein(self):
         r"""
-        Return True if this space is Eisenstein.
+        Return ``True`` if this space is Eisenstein.
 
         EXAMPLES::
 
@@ -1859,13 +1859,13 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         -  ``f`` -- a modular form or power series
 
-        -  ``forms`` -- (default: None) a specific list of
+        -  ``forms`` -- (default: ``None``) a specific list of
            modular forms or q-expansions.
 
         -  ``prec`` -- if forms are given, compute with them to
            the given precision
 
-        -  ``indep`` -- (default: ``True``) whether the given list
+        -  ``indep`` -- boolean (default: ``True``); whether the given list
            of forms are assumed to form a basis.
 
 

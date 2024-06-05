@@ -1111,12 +1111,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``);
+        -  ``extend`` -- boolean (default: ``True``);
            if ``True``, return a square root in an extension ring,
            if necessary. Otherwise, raise a ``ValueError`` if the
            square root is not in the base ring.
 
-        -  ``all`` -- bool (default: ``False``); if
+        -  ``all`` -- boolean (default: ``False``); if
            ``True``, return {all} square roots of self, instead of
            just one.
 
@@ -1335,19 +1335,19 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         - ``n`` -- integer `\geq 1`
 
-        - ``extend`` -- bool (default: ``True``); if True, return an nth
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return an nth
           root in an extension ring, if necessary. Otherwise, raise a
           ValueError if the root is not in the base ring.  Warning:
           this option is not implemented!
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return all `n`\th
+        - ``all`` -- boolean (default: ``False``); if ``True``, return all `n`\th
           roots of ``self``, instead of just one.
 
-        - ``algorithm`` -- string (default: None); The algorithm for the prime modulus case.
+        - ``algorithm`` -- string (default: ``None``); The algorithm for the prime modulus case.
           CRT and p-adic log techniques are used to reduce to this case.
           'Johnston' is the only currently supported option.
 
-        - ``cunningham`` -- bool (default: ``False``); In some cases,
+        - ``cunningham`` -- boolean (default: ``False``); In some cases,
           factorization of ``n`` is computed. If cunningham is set to ``True``,
           the factorization of ``n`` is computed using trial division for all
           primes in the so called Cunningham table. Refer to
@@ -2902,12 +2902,12 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``);
+        -  ``extend`` -- boolean (default: ``True``);
            if ``True``, return a square root in an extension ring,
            if necessary. Otherwise, raise a ``ValueError`` if the
            square root is not in the base ring.
 
-        -  ``all`` -- bool (default: ``False``); if
+        -  ``all`` -- boolean (default: ``False``); if
            ``True``, return {all} square roots of self, instead of
            just one.
 

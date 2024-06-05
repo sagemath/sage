@@ -197,7 +197,7 @@ class Polyhedron_base(Polyhedron_base7):
         - ``solver`` -- select a solver (MIP backend). See the documentation
           of for :class:`MixedIntegerLinearProgram`. Set to ``None`` by default.
 
-        - ``return_variable`` -- (default: ``False``) If ``True``, return a tuple
+        - ``return_variable`` -- boolean (default: ``False``); If ``True``, return a tuple
           ``(p, x)``, where ``p`` is the :class:`MixedIntegerLinearProgram` object
           and ``x`` is the vector-valued MIP variable in this problem, indexed
           from 0.  If ``False``, only return ``p``.
@@ -457,7 +457,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) boolean; specifies whether to
+        - ``certificate`` -- boolean (default: ``False``); specifies whether to
           return the circumcenter, if found.
 
         OUTPUT: if ``certificate`` is true, returns a tuple containing:

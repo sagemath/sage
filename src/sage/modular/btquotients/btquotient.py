@@ -879,7 +879,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``v`` -- a 2x2 matrix representing a vertex ``boundary``
 
-        - a list of matrices (default: None). If omitted, finds the
+        - a list of matrices (default: ``None``). If omitted, finds the
           geodesic from ``v`` to the central vertex.
 
         OUTPUT:
@@ -1109,10 +1109,10 @@ class Vertex(SageObject):
     - ``entering_edges`` -- (default: empty list) A list of edges
       entering this vertex.
 
-    - ``determinant`` -- (default: None) The determinant of ``rep``,
+    - ``determinant`` -- (default: ``None``) The determinant of ``rep``,
       if known.
 
-    - ``valuation`` -- (default: None) The valuation of the
+    - ``valuation`` -- (default: ``None``) The valuation of the
       determinant of ``rep``, if known.
 
     EXAMPLES::
@@ -1383,7 +1383,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
     - ``use_magma`` -- boolean (default: ``False``). If True, uses Magma
       for quaternion arithmetic.
 
-    - ``magma_session`` -- (default: None). If specified, the Magma session
+    - ``magma_session`` -- (default: ``None``). If specified, the Magma session
       to use.
 
     EXAMPLES:
@@ -1886,10 +1886,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - level: Integer (default: None) a level. By default, use that
+        - level: Integer (default: ``None``) a level. By default, use that
           of ``self``.
 
-        - Nplus: Integer (default: None) a conductor. By default, use
+        - Nplus: Integer (default: ``None``) a conductor. By default, use
           that of ``self``.
 
         OUTPUT: an integer equal to the genus
@@ -3664,7 +3664,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         - ``E`` -- an elliptic curve over the rational numbers
 
-        - ``prec`` -- (default: None) If specified, the harmonic cocycle will take values
+        - ``prec`` -- (default: ``None``) If specified, the harmonic cocycle will take values
           in `\QQ_p` with precision ``prec``. Otherwise it will take values in `\ZZ`.
 
         OUTPUT: a harmonic cocycle attached via modularity to the given elliptic curve
@@ -3719,12 +3719,12 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         - ``k`` -- integer -- The weight. It must be even.
 
-        - ``prec`` -- integer (default: None). If specified, the
+        - ``prec`` -- integer (default: ``None``). If specified, the
           precision for the coefficient module
 
-        - ``basis_matrix`` -- a matrix (default: None).
+        - ``basis_matrix`` -- a matrix (default: ``None``).
 
-        - ``base_field`` -- a ring (default: None)
+        - ``base_field`` -- a ring (default: ``None``)
 
         OUTPUT: a space of harmonic cocycles
 

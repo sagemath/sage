@@ -126,7 +126,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
     def is_cuspidal(self):
         """
-        Return True since spaces of cusp forms are cuspidal.
+        Return ``True`` since spaces of cusp forms are cuspidal.
 
         EXAMPLES::
 

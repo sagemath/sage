@@ -254,7 +254,7 @@ class AlgebraicScheme(scheme.Scheme):
 
     def is_projective(self):
         """
-        Return True if self is presented as a subscheme of an ambient
+        Return ``True`` if self is presented as a subscheme of an ambient
         projective space.
 
         OUTPUT: boolean

@@ -790,7 +790,7 @@ class Components(SageObject):
 
         - ``ind_slice`` --  a slice object. Unless the dimension is 1,
           this must be ``[:]``.
-        - ``no_format`` -- (default: ``True``) determines whether some
+        - ``no_format`` -- boolean (default: ``True``); determines whether some
           formatting of the components is to be performed
         - ``format_type`` -- (default: ``None``) argument to be passed
           to the formatting function ``self._output_formatter``, as the
@@ -1120,9 +1120,9 @@ class Components(SageObject):
           ``None``, integers labels are used
         - ``format_spec`` -- (default: ``None``) format specification passed
           to the output formatter declared at the construction of the object
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero components are displayed
-        - ``only_nonredundant`` -- (default: ``False``) boolean; if ``True``,
+        - ``only_nonredundant`` -- boolean (default: ``False``); if ``True``,
           only nonredundant components are displayed in case of symmetries
 
         EXAMPLES:
@@ -1498,7 +1498,7 @@ class Components(SageObject):
 
         OUTPUT:
 
-        - True if ``self`` is different from ``other``,  or False otherwise
+        - ``True`` if ``self`` is different from ``other``,  or False otherwise
 
         EXAMPLES::
 

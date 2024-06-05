@@ -195,7 +195,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
        operation.  If left as ``None``, it will be set to the global
        default (20) in the univariate case, and 12 in the multivariate case.
 
-    -  ``sparse`` -- (default: ``False``) whether power series
+    -  ``sparse`` -- boolean (default: ``False``); whether power series
        are represented as sparse objects.
 
     - ``order`` -- (default: ``negdeglex``) term ordering, for multivariate case
@@ -730,7 +730,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         -  ``prec`` -- (default: infinity); truncation precision
            for coercion
 
-        -  ``check`` -- bool (default: ``True``), whether to verify
+        -  ``check`` -- boolean (default: ``True``), whether to verify
            that the coefficients, etc., coerce in correctly.
 
         EXAMPLES::
@@ -981,7 +981,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
            homomorphism.
         """
         if im_gens[0] == 0:
-            return True   # this is allowed.
+            return ``True``   # this is allowed.
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
         v = im_gens[0]

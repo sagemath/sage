@@ -901,7 +901,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             INPUT:
 
-            - ``latex`` -- (default: ``False``) a boolean. If set, then
+            - ``latex`` -- boolean (default: ``False``); a boolean. If set, then
               LaTeX-output is returned.
 
             OUTPUT: string

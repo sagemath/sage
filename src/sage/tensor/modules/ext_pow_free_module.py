@@ -371,7 +371,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
         for basis in self._fmodule._known_bases:
             resu._add_comp_unsafe(basis)
             # (since new components are initialized to zero)
-        resu._is_zero = True # This element is certainly zero
+        resu._is_zero = ``True`` # This element is certainly zero
         resu.set_immutable()
         return resu
 
@@ -767,7 +767,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
         for basis in self._fmodule._known_bases:
             resu._components[basis] = resu._new_comp(basis)
             # (since new components are initialized to zero)
-        resu._is_zero = True # This element is certainly zero
+        resu._is_zero = ``True`` # This element is certainly zero
         resu.set_immutable()
         return resu
 

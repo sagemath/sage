@@ -129,7 +129,7 @@ class SatLP(SatSolver):
             sage: S = is_bipartite_SAT(graphs.CycleGraph(6))
             sage: S() # random
             [None, True, False, True, False, True, False]
-            sage: True in S()
+            sage: ``True`` in S()
             True
             sage: S = is_bipartite_SAT(graphs.CycleGraph(7))
             sage: S()

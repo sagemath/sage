@@ -205,7 +205,7 @@ class Lseries_complex(Lseries):
 
     def vanishes_at_1(self):
         """
-        Return True if `L(1)=0` and return False otherwise.
+        Return ``True`` if `L(1)=0` and return False otherwise.
 
         OUTPUT: boolean
 

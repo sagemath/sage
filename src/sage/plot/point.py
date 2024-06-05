@@ -94,7 +94,7 @@ class Point(GraphicPrimitive_xydata):
             'How big the point is (i.e., area in points^2=(1/72 inch)^2).'
         """
         return {'alpha': 'How transparent the point is.',
-                'faceted': 'If True color the edge of the point. (only for 2D plots)',
+                'faceted': 'If ``True`` color the edge of the point. (only for 2D plots)',
                 'hue': 'The color given as a hue.',
                 'legend_color': 'The color of the legend text',
                 'legend_label': 'The label for this item in the legend.',

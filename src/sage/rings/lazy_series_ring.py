@@ -717,7 +717,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                                  checker=lambda x: x is None or x in ZZ and x > 0)
         secure = dict(default=False,
                       description='whether to raise an error when a comparison is unknown',
-                      checker=lambda x: x is True or x is False)
+                      checker=lambda x: x is ``True`` or x is False)
 
     @cached_method
     def one(self):
@@ -1245,7 +1245,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
     - ``base_ring`` -- base ring
     - ``names`` -- name of the generator
-    - ``sparse`` -- (default: ``True``) whether the implementation of
+    - ``sparse`` -- boolean (default: ``True``); whether the implementation of
       the series is sparse or not
 
     EXAMPLES::
@@ -1963,7 +1963,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
     - ``base_ring`` -- base ring of this Taylor series ring
     - ``names`` -- name(s) of the generator of this Taylor series ring
-    - ``sparse`` -- (default: ``True``) whether this series is sparse or not
+    - ``sparse`` -- boolean (default: ``True``); whether this series is sparse or not
 
     EXAMPLES::
 
@@ -2641,7 +2641,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
     - ``basis`` -- a graded algebra
     - ``names`` -- name(s) of the alphabets
-    - ``sparse`` -- (default: ``True``) whether we use a sparse or
+    - ``sparse`` -- boolean (default: ``True``); whether we use a sparse or
       a dense representation
 
     EXAMPLES::
@@ -3045,7 +3045,7 @@ class LazySymmetricFunctions(LazyCompletionGradedAlgebra):
 
     - ``basis`` -- the ring of symmetric functions
     - ``names`` -- name(s) of the alphabets
-    - ``sparse`` -- (default: ``True``) whether we use a sparse or a dense representation
+    - ``sparse`` -- boolean (default: ``True``); whether we use a sparse or a dense representation
 
     EXAMPLES::
 
@@ -3072,7 +3072,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
 
     - ``base_ring`` -- base ring of this Dirichlet series ring
     - ``names`` -- name of the generator of this Dirichlet series ring
-    - ``sparse`` -- (default: ``True``) whether this series is sparse or not
+    - ``sparse`` -- boolean (default: ``True``); whether this series is sparse or not
 
     Unlike formal univariate Laurent/power series (over a field),
     the ring of formal Dirichlet series is not a

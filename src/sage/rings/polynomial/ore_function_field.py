@@ -579,7 +579,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
         - ``degree`` -- (default: 2) an integer or a list of
           two integers; the degrees of the denominator and numerator
 
-        - ``monic`` -- (default: ``False``) if ``True``, return a monic
+        - ``monic`` -- boolean (default: ``False``); if ``True``, return a monic
           Ore function with monic numerator and denominator
 
         - ``*args``, ``**kwds`` -- passed in to the :meth:`random_element`

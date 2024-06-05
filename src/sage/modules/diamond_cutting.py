@@ -137,7 +137,7 @@ def diamond_cut(V, GM, C, verbose=False):
 
     - ``C`` -- radius to use in cutting algorithm
 
-    - ``verbose`` -- (default: ``False``) whether to print debug information
+    - ``verbose`` -- boolean (default: ``False``); whether to print debug information
 
     OUTPUT: a :class:`Polyhedron` instance
 

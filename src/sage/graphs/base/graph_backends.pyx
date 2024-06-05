@@ -23,8 +23,8 @@ Any graph backend must redefine the following methods (for which
     :meth:`~GenericGraphBackend.del_vertex` | Delete a labelled vertex in ``self``.
     :meth:`~GenericGraphBackend.del_vertices` | Delete labelled vertices in ``self``.
     :meth:`~GenericGraphBackend.get_edge_label` | Return the edge label of `(u,v)`.
-    :meth:`~GenericGraphBackend.has_edge` | True if ``self`` has an edge `(u,v)` with label `l`.
-    :meth:`~GenericGraphBackend.has_vertex` | True if ``self`` has a vertex with label `v`.
+    :meth:`~GenericGraphBackend.has_edge` | ``True`` if ``self`` has an edge `(u,v)` with label `l`.
+    :meth:`~GenericGraphBackend.has_vertex` | ``True`` if ``self`` has a vertex with label `v`.
     :meth:`~GenericGraphBackend.iterator_edges` | Iterate over the edges incident to a sequence of vertices.
     :meth:`~GenericGraphBackend.iterator_in_edges` | Iterate over the incoming edges incident to a sequence of vertices.
     :meth:`~GenericGraphBackend.iterator_out_edges` | Iterate over the outbound edges incident to a sequence of vertices.

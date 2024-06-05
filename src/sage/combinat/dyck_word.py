@@ -365,7 +365,7 @@ class DyckWord(CombinatorialElement):
 
         - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
 
-        - ``diagonal`` -- (default: ``False``) boolean value to draw the
+        - ``diagonal`` -- boolean (default: ``False``); value to draw the
           diagonal or not.
 
         - ``line width`` -- (default: 2*``tikz_scale``) value representing the
@@ -373,13 +373,13 @@ class DyckWord(CombinatorialElement):
 
         - ``color`` -- (default: black) the line color.
 
-        - ``bounce path`` -- (default: ``False``) boolean value to indicate
+        - ``bounce path`` -- boolean (default: ``False``); value to indicate
           if the bounce path should be drawn.
 
-        - ``peaks`` -- (default: ``False``) boolean value to indicate if the
+        - ``peaks`` -- boolean (default: ``False``); value to indicate if the
           peaks should be displayed.
 
-        - ``valleys`` -- (default: ``False``) boolean value to indicate if the
+        - ``valleys`` -- boolean (default: ``False``); value to indicate if the
           valleys should be displayed.
 
         INPUT:
@@ -408,21 +408,21 @@ class DyckWord(CombinatorialElement):
 
         - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
 
-        - ``diagonal`` -- (default: ``False``) boolean value to draw the
+        - ``diagonal`` -- boolean (default: ``False``); value to draw the
           diagonal or not.
 
-        - ``line width`` -- (default: 2*``tikz_scale``) value representing the
+        - ``line width`` -- (default: ``2*tikz_scale``) value representing the
           line width.
 
         - ``color`` -- (default: black) the line color.
 
-        - ``bounce path`` -- (default: ``False``) boolean value to indicate
+        - ``bounce path`` -- boolean (default: ``False``); value to indicate
           if the bounce path should be drawn.
 
-        - ``peaks`` -- (default: ``False``) boolean value to indicate if the
+        - ``peaks`` -- boolean (default: ``False``); value to indicate if the
           peaks should be displayed.
 
-        - ``valleys`` -- (default: ``False``) boolean value to indicate if the
+        - ``valleys`` -- boolean (default: ``False``); value to indicate if the
           valleys should be displayed.
 
         EXAMPLES::

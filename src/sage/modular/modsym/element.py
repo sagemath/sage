@@ -31,7 +31,7 @@ _print_mode = "manin"
 
 def is_ModularSymbolsElement(x) -> bool:
     r"""
-    Return True if x is an element of a modular symbols space.
+    Return ``True`` if x is an element of a modular symbols space.
 
     EXAMPLES::
 

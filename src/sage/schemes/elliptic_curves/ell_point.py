@@ -635,7 +635,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def has_infinite_order(self):
         """
-        Return True if this point has infinite additive order as an element
+        Return ``True`` if this point has infinite additive order as an element
         of the group of points on this curve.
 
         For fields other than number fields and finite fields, this is
@@ -890,7 +890,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     def is_divisible_by(self, m):
         """
-        Return True if there exists a point `Q` defined over the same
+        Return ``True`` if there exists a point `Q` defined over the same
         field as self such that `mQ` == self.
 
         INPUT:
@@ -899,7 +899,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         OUTPUT:
 
-        (bool) -- True if there is a solution, else False.
+        (bool) -- ``True`` if there is a solution, else False.
 
         .. WARNING::
 
@@ -1001,7 +1001,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         # Now 2*P==0
 
         if m % 2 == 1:
-            return True  # P itself is a solution when m is odd
+            return ``True``  # P itself is a solution when m is odd
 
         # Now m is even and 2*P=0.  Roots of g in K may or may not
         # lift to solutions in E(K), so we fall back to the default.
@@ -1021,7 +1021,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         - ``m`` -- a positive integer
 
-        - ``poly_only`` -- bool (default: ``False``); if True return
+        - ``poly_only`` -- boolean (default: ``False``); if ``True`` return
           polynomial whose roots give all possible `x`-coordinates of
           `m`-th roots of ``self``.
 
@@ -2138,7 +2138,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         - ``t`` -- the trace of Frobenius of the curve over `GF(q)`.
 
-        - ``q`` -- (default: None) the size of base field (the "big"
+        - ``q`` -- (default: ``None``) the size of base field (the "big"
           field is `GF(q^k)`). `q` needs to be set only if its value
           cannot be deduced.
 
@@ -2535,7 +2535,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def has_infinite_order(self):
         r"""
-        Return True iff this point has infinite order on the elliptic curve.
+        Return ``True`` iff this point has infinite order on the elliptic curve.
 
         EXAMPLES::
 
@@ -2558,7 +2558,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def is_on_identity_component(self, embedding=None):
         r"""
-        Return True iff this point is on the identity component of
+        Return ``True`` iff this point is on the identity component of
         its curve with respect to a given (real or complex) embedding.
 
         INPUT:
@@ -2636,7 +2636,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     def has_good_reduction(self, P=None):
         r"""
-        Returns True iff this point has good reduction modulo a prime.
+        Returns ``True`` iff this point has good reduction modulo a prime.
 
         INPUT:
 
@@ -2646,7 +2646,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         OUTPUT:
 
         (bool) If a prime `P` of the base field is specified, returns
-        True iff the point has good reduction at `P`; otherwise,
+        ``True`` iff the point has good reduction at `P`; otherwise,
         return true if the point has god reduction at all primes in
         the support of the discriminant of this model.
 
@@ -2819,7 +2819,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
           precision in bits of the result. If None, the default real
           precision is used.
 
-        - ``normalised`` -- boolean. If True (default), the height is
+        - ``normalised`` -- boolean. If ``True`` (default), the height is
           normalised to be invariant under extension of `K`. If False,
           return this normalised height multiplied by the degree of
           `K`.

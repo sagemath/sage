@@ -163,7 +163,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
         """
         ma = MatrixArgs_init(parent, entries)

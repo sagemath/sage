@@ -451,7 +451,7 @@ class PermutationGroup_generic(FiniteGroup):
         - ``gap_group`` -- a gap or libgap permutation group, or a string
           defining one (default: ``None``)
 
-        - ``canonicalize`` -- bool (default: ``True``); if ``True``,
+        - ``canonicalize`` -- boolean (default: ``True``); if ``True``,
           sort generators and remove duplicates
 
         OUTPUT: a permutation group
@@ -5272,7 +5272,7 @@ class PermutationGroup_action(PermutationGroup_generic):
         - ``gap_group`` -- a gap or libgap permutation group, or a string
           defining one (default: ``None``), this is currently not supported
 
-        - ``canonicalize`` -- bool (default: ``True``); if ``True``,
+        - ``canonicalize`` -- boolean (default: ``True``); if ``True``,
           sort generators and remove duplicates
 
         OUTPUT: a finite group action given as a permutation group

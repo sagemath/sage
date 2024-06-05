@@ -744,7 +744,7 @@ class PseudoRiemannianMetric(TensorField):
           Levi-Civita connection; if ``None``, it is set to ``name``, or if the
           latter is None as well, it formed from the symbol `\nabla` and the
           metric symbol
-        - ``init_coef`` -- (default: ``True``) determines whether the
+        - ``init_coef`` -- boolean (default: ``True``); determines whether the
           connection coefficients are initialized, as Christoffel symbols
           in the top charts of the domain of ``self`` (i.e. disregarding
           the subcharts)
@@ -905,11 +905,11 @@ class PseudoRiemannianMetric(TensorField):
           representing the LaTeX labels of each index; if ``None``, coordinate
           LaTeX symbols are used, except if ``coordinate_symbols`` is set to
           ``False``, in which case integer labels are used
-        - ``coordinate_labels`` -- (default: ``True``) boolean; if ``True``,
+        - ``coordinate_labels`` -- boolean (default: ``True``); if ``True``,
           coordinate symbols are used by default (instead of integers)
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero connection coefficients are displayed
-        - ``only_nonredundant`` -- (default: ``True``) boolean; if ``True``,
+        - ``only_nonredundant`` -- boolean (default: ``True``); if ``True``,
           only nonredundant (w.r.t. the symmetry of the last two indices)
           connection coefficients are displayed
 
@@ -2167,7 +2167,7 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether the
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether the
           restrictions of ``self`` to subdomains are deleted.
 
         TESTS::

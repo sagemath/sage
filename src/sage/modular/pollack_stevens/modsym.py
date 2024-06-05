@@ -619,9 +619,9 @@ class PSModularSymbolElement(ModuleElement):
 
         - ``q`` -- prime of the Hecke operator
 
-        - ``p`` -- prime we are working modulo (default: None)
+        - ``p`` -- prime we are working modulo (default: ``None``)
 
-        - ``M`` -- degree of accuracy of approximation (default: None)
+        - ``M`` -- degree of accuracy of approximation (default: ``None``)
 
         - ``check`` -- check that ``self`` is an eigensymbol
 
@@ -860,17 +860,17 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``k`` -- Pollack-Stevens weight
 
-        - ``M`` -- precision (default: None) of `\QQ_p`
+        - ``M`` -- precision (default: ``None``) of `\QQ_p`
 
-        - ``ap`` -- Hecke eigenvalue at `p` (default: None)
+        - ``ap`` -- Hecke eigenvalue at `p` (default: ``None``)
 
-        - ``new_base_ring`` -- field of definition of `\alpha` (default: None)
+        - ``new_base_ring`` -- field of definition of `\alpha` (default: ``None``)
 
-        - ``ordinary`` -- True if the prime is ordinary (default: ``True``)
+        - ``ordinary`` -- ``True`` if the prime is ordinary (default: ``True``)
 
         - ``check`` -- check to see if the prime is ordinary (default: ``True``)
 
-        - ``find_extraprec`` -- setting this to True finds extra precision (default: ``True``)
+        - ``find_extraprec`` -- setting this to ``True`` finds extra precision (default: ``True``)
 
         OUTPUT:
 
@@ -980,10 +980,10 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``new_base_ring`` -- change of base ring
 
-        - ``ordinary`` -- (default: ``True``) whether to return the ordinary
+        - ``ordinary`` -- boolean (default: ``True``); whether to return the ordinary
                           (at ``p``) eigensymbol.
 
-        - ``check`` -- (default: ``True``) whether to perform extra sanity checks
+        - ``check`` -- boolean (default: ``True``); whether to perform extra sanity checks
 
         OUTPUT:
 
@@ -1140,7 +1140,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``algorithm`` -- 'stevens' or 'greenberg' (default 'stevens')
 
-        - ``eigensymbol`` -- if True, lifts to Hecke eigensymbol (self must
+        - ``eigensymbol`` -- if ``True``, lifts to Hecke eigensymbol (self must
           be a `p`-ordinary eigensymbol)
 
         (Note: ``eigensymbol = True`` does *not* just indicate to the code that
@@ -1452,13 +1452,13 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         - ``M`` -- precision
 
-        - ``alpha`` -- (default: None) the `U_p` eigenvalue, if known
+        - ``alpha`` -- (default: ``None``) the `U_p` eigenvalue, if known
 
-        - ``ap`` -- (default: None) the Hecke eigenvalue at p (before stabilizing), if known
+        - ``ap`` -- (default: ``None``) the Hecke eigenvalue at p (before stabilizing), if known
 
-        - ``new_base_ring`` -- (default: None) if specified, force the resulting eigensymbol to take values in the given ring
+        - ``new_base_ring`` -- (default: ``None``) if specified, force the resulting eigensymbol to take values in the given ring
 
-        - ``ordinary`` -- (default: ``True``) whether to return the ordinary
+        - ``ordinary`` -- boolean (default: ``True``); whether to return the ordinary
                           (at ``p``) eigensymbol.
 
         - ``algorithm`` -- (default: 'greenberg') a string, either 'greenberg'
@@ -1467,9 +1467,9 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
           The latter one solves the difference equation, which is not needed. The
           option to use Pollack--Stevens' algorithm here is just for historical reasons.
 
-        - ``eigensymbol`` -- (default: ``False``) if True, return an overconvergent eigensymbol. Otherwise just perform a naive lift
+        - ``eigensymbol`` -- boolean (default: ``False``); if ``True``, return an overconvergent eigensymbol. Otherwise just perform a naive lift
 
-        - ``check`` -- (default: ``True``) whether to perform extra sanity checks
+        - ``check`` -- boolean (default: ``True``); whether to perform extra sanity checks
 
         OUTPUT:
 

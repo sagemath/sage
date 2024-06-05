@@ -343,7 +343,7 @@ class SchemeHomset_generic(HomsetWithBase):
         - `x` -- a ring morphism, or a list or a tuple that define a
           ring morphism.
 
-        - ``check`` -- boolean (default: ``True``) passed onto
+        - ``check`` -- boolean (default: ``True``); passed onto
           functions called by this one to be more careful about input
           argument type checking.
 

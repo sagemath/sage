@@ -1213,7 +1213,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``as_ETuples`` -- (default: ``True``) if ``True``, iterate over
+        - ``as_ETuples`` -- boolean (default: ``True``); if ``True``, iterate over
           pairs whose first element is an :class:`ETuple`, otherwise as a tuples
 
         EXAMPLES::

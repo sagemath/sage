@@ -217,7 +217,7 @@ def factor_cunningham(m, proof=None):
 
     INPUT:
 
-    - ``proof`` -- bool (default: ``None``); whether or not to
+    - ``proof`` -- boolean (default: ``None``); whether or not to
       prove primality of each factor, this is only for factors
       not in the Cunningham table
 

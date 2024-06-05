@@ -286,7 +286,7 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
                       (smallest) vertex, terminated by -1, -1.
                       The first two entries represent the first edge, and so on.
         n          -- number of vertices in the graph
-        height     -- if True, do not update the last coordinate ever
+        height     -- if ``True``, do not update the last coordinate ever
 
     OUTPUT: modifies contents of pos
 
@@ -1185,7 +1185,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     - ``backtrack_bound`` -- number of iterations to elapse before
        discarding the last 5 vertices of the path.
 
-    - ``find_path`` -- (default: ``False``) if set to ``True``, will
+    - ``find_path`` -- boolean (default: ``False``); if set to ``True``, will
        search a Hamiltonian path; if ``False``, will search for a
        Hamiltonian cycle
 

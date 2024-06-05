@@ -317,7 +317,7 @@ cpdef RealIntervalField_class RealIntervalField(prec=53, sci_not=False):
        :func:`mpfr_prec_min()` and :func:`mpfr_prec_max()`. In the current
        implementation, :func:`mpfr_prec_min()` is equal to 2.
 
-    -  ``sci_not`` -- (default: ``False``) whether or not to display using
+    -  ``sci_not`` -- boolean (default: ``False``); whether or not to display using
        scientific notation
 
     EXAMPLES::
@@ -358,7 +358,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
        implementation, :func:`~sage.rings.real_mpfr.mpfr_prec_min()`
        is equal to 2.
 
-    -  ``sci_not`` -- (default: ``False``) whether or not to display using
+    -  ``sci_not`` -- boolean (default: ``False``); whether or not to display using
        scientific notation
 
     EXAMPLES::

@@ -454,7 +454,7 @@ cdef class WordDatatype_str(WordDatatype):
         -  ``sub`` -- string or word to search for.
         -  ``start`` -- non negative integer (default: 0) specifying
            the position from which to start the search.
-        -  ``end`` -- non negative integer (default: None) specifying
+        -  ``end`` -- non negative integer (default: ``None``) specifying
            the position at which the search must stop. If None, then
            the search is performed up to the end of the string.
 
@@ -492,7 +492,7 @@ cdef class WordDatatype_str(WordDatatype):
         -  ``sub`` -- string or word to search for.
         -  ``start`` -- non negative integer (default: 0) specifying
            the position at which the search must stop.
-        -  ``end`` -- non negative integer (default: None) specifying
+        -  ``end`` -- non negative integer (default: ``None``) specifying
            the position from which to start the search. If None, then
            the search is performed up to the end of the string.
 
@@ -652,9 +652,9 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``sep`` -- string or word (default: None)
+        - ``sep`` -- string or word (default: ``None``)
 
-        - ``maxsplit`` -- positive integer (default: None)
+        - ``maxsplit`` -- positive integer (default: ``None``)
 
         OUTPUT:
 

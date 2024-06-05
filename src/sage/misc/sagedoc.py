@@ -1056,20 +1056,20 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     - ``extra1``, ..., ``extra5`` -- additional strings to require when
       searching.  Lines must match all of these, as well as ``string``.
 
-    - ``whole_word`` (default: ``False``) -- if True, search for
+    - ``whole_word`` -- (default: ``False``); if ``True``, search for
       ``string`` and ``extra1`` (etc.) as whole words only.  This
       assumes that each of these arguments is a single word, not a
       regular expression, and it might have unexpected results if used
       with regular expressions.
 
-    - ``ignore_case`` (default: ``True``) -- if False, perform a
+    - ``ignore_case`` boolean (default: ``True``); -- if ``False``, perform a
       case-sensitive search
 
-    - ``multiline`` (default: ``False``) -- if True, search more
+    - ``multiline`` -- (default: ``False``); if ``True``, search more
       than one line at a time.  In this case, print any matching file
       names, but don't print line numbers.
 
-    - ``interact`` (default: ``True``) -- if ``False``, return
+    - ``interact`` boolean (default: ``True``); -- if ``False``, return
       a string with all the matches. Otherwise, this function returns
       ``None``, and the results are displayed appropriately, according
       to whether you are using the notebook or the command-line
@@ -1087,7 +1087,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
 
     If ``interact`` is False, then return a string with all of
     the matches, separated by newlines.  On the other hand, if
-    ``interact`` is True (the default), there is no output.  Instead:
+    ``interact`` is ``True`` (the default), there is no output.  Instead:
     at the command line, the search results are printed on the screen
     in the form ``filename:line_number:line of text``, showing the
     filename in which each match occurs, the line number where it
@@ -1451,7 +1451,7 @@ class _sage_doc:
       "browse_sage_doc(identity_matrix, 'html').  ``output`` can be
       either 'html' or 'rst': the form of the output.  ``view`` is
       only relevant if ``output`` is ``html``; in this case, if
-      ``view`` is True (its default value), then open up the
+      ``view`` is ``True`` (its default value), then open up the
       documentation in a web browser.  Otherwise, just output the
       documentation as a string.
 

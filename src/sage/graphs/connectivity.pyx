@@ -23,7 +23,7 @@ Here is what the module can do:
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
-    :meth:`is_cut_edge` | Return True if the input edge is a cut-edge or a bridge.
+    :meth:`is_cut_edge` | Return ``True`` if the input edge is a cut-edge or a bridge.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
     :meth:`edge_connectivity` | Return the edge connectivity of the graph.
     :meth:`vertex_connectivity` | Return the vertex connectivity of the graph.
@@ -734,7 +734,7 @@ def blocks_and_cuts_tree(G):
 
 def is_cut_edge(G, u, v=None, label=None):
     """
-    Returns True if the input edge is a cut-edge or a bridge.
+    Returns ``True`` if the input edge is a cut-edge or a bridge.
 
     A cut edge (or bridge) is an edge that when removed increases
     the number of connected components.  This function works with
@@ -754,7 +754,7 @@ def is_cut_edge(G, u, v=None, label=None):
 
     OUTPUT:
 
-    - Returns True if (u,v) is a cut edge, False otherwise
+    - Returns ``True`` if (u,v) is a cut edge, False otherwise
 
     EXAMPLES::
 

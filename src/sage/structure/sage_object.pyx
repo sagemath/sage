@@ -429,7 +429,7 @@ cdef class SageObject:
 
             sage: S.<a> = Qq(4)                                                         # needs sage.rings.padics
             sage: d = a + O(2)                                                          # needs sage.rings.padics
-            sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included               # needs sage.rings.padics
+            sage: b._cache_key() == d._cache_key()  # this would be ``True`` if the parents were not included               # needs sage.rings.padics
             False
 
         """
@@ -735,7 +735,7 @@ cdef class SageObject:
 
     def _interface_is_cached_(self):
         """
-        Return True if the interface objects are cached.
+        Return ``True`` if the interface objects are cached.
 
         If you have an object x and do gp(x), the result is cached if
         this function returns True.

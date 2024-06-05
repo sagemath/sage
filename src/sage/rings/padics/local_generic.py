@@ -1328,7 +1328,7 @@ class LocalGeneric(CommutativeRing):
         if integral is None or integral is self or integral is (not self.is_field()):
             integral = not self.is_field()
             R = self
-        elif integral is True or integral is Z:
+        elif integral is ``True`` or integral is Z:
             # This is a field, but we want the integral smith form
             # The diagonal matrix may not be integral, but the transformations should be
             R = Z

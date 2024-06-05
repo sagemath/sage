@@ -118,7 +118,7 @@ class AsymptoticExpansionGenerators(SageObject):
         - ``precision`` -- (default: ``None``) an integer `\ge 3`. If ``None``, then
           the default precision of the asymptotic ring is used.
 
-        - ``skip_constant_factor`` -- (default: ``False``) a
+        - ``skip_constant_factor`` -- boolean (default: ``False``); a
           boolean. If set, then the constant factor `\sqrt{2\pi}` is left out.
           As a consequence, the coefficient ring of the output changes
           from ``Symbolic Constants Subring`` (if ``False``) to
@@ -208,7 +208,7 @@ class AsymptoticExpansionGenerators(SageObject):
         - ``precision`` -- (default: ``None``) an integer. If ``None``, then
           the default precision of the asymptotic ring is used.
 
-        - ``skip_constant_summand`` -- (default: ``False``) a
+        - ``skip_constant_summand`` -- boolean (default: ``False``); a
           boolean. If set, then the constant summand `\log(2\pi)/2` is left out.
           As a consequence, the coefficient ring of the output changes
           from ``Symbolic Constants Subring`` (if ``False``) to
@@ -375,7 +375,7 @@ class AsymptoticExpansionGenerators(SageObject):
         - ``precision`` -- (default: ``None``) an integer. If ``None``, then
           the default precision of the asymptotic ring is used.
 
-        - ``skip_constant_summand`` -- (default: ``False``) a
+        - ``skip_constant_summand`` -- boolean (default: ``False``); a
           boolean. If set, then the constant summand ``euler_gamma`` is left out.
           As a consequence, the coefficient ring of the output changes
           from ``Symbolic Constants Subring`` (if ``False``) to
@@ -481,7 +481,7 @@ class AsymptoticExpansionGenerators(SageObject):
         - ``precision`` -- (default: ``None``) an integer. If ``None``, then
           the default precision of the asymptotic ring is used.
 
-        - ``skip_constant_factor`` -- (default: ``False``) a
+        - ``skip_constant_factor`` -- boolean (default: ``False``); a
           boolean. If set, then the constant factor `\sqrt{k/(2\pi(k-1))}`
           is left out.
           As a consequence, the coefficient ring of the output changes
@@ -632,7 +632,7 @@ class AsymptoticExpansionGenerators(SageObject):
         - ``precision`` -- (default: ``None``) an integer. If ``None``, then
           the default precision of the asymptotic ring is used.
 
-        - ``normalized`` -- (default: ``True``) a boolean, see above.
+        - ``normalized`` -- boolean (default: ``True``); a boolean, see above.
 
         OUTPUT: an asymptotic expansion
 

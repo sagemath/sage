@@ -47,7 +47,7 @@ class InducedCrystal(UniqueRepresentation, Parent):
     - ``X`` -- the base set
     - ``phi`` -- the map `\Phi`
     - ``inverse`` -- (optional) the inverse map `\Phi^{-1}`
-    - ``from_crystal`` -- (default: ``False``) if the induced structure is
+    - ``from_crystal`` -- boolean (default: ``False``); if the induced structure is
       of the second type `\Phi : C \to X`
 
     EXAMPLES:

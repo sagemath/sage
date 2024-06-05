@@ -630,7 +630,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         INPUT:
 
         - code -- str
-        - strip -- Default is True and removes ``\n``
+        - strip -- Default is ``True`` and removes ``\n``
 
         EXAMPLES::
 
@@ -926,7 +926,7 @@ class GiacElement(ExpectElement):
             return rich_to_bool(op, 0)
         # (to be tested with giac). Maple  does not allow comparing objects
         # of different types and it raises an error in this case.
-        # We catch the error, and return True for <
+        # We catch the error, and return ``True`` for <
         try:
             if P.eval("evalb(%s %s %s)" % (self.name(), P._lessthan_symbol(),
                                            other.name())) == P._true_symbol():

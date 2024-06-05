@@ -2367,7 +2367,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
          - ``l`` -- the edge label
 
-         - ``directed`` -- if False, also add ``(v,u)``
+         - ``directed`` -- if ``False``, also add ``(v,u)``
 
         .. NOTE::
 

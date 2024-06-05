@@ -744,7 +744,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         - ``n`` -- a positive integer, the period of ``P``
 
-        - ``check`` -- (default: ``True``) boolean, verify that ``P``
+        - ``check`` -- boolean (default: ``True``);, verify that ``P``
           has period ``n``
 
         OUTPUT:

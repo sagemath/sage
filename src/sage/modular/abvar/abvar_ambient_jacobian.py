@@ -262,7 +262,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         -  ``t`` -- divisor of quotient of level of self and
            level
 
-        -  ``check`` -- bool (default: ``True``); if True do some
+        -  ``check`` -- boolean (default: ``True``); if ``True`` do some
            checks on the input
 
 
@@ -372,7 +372,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         factors = modsym_lattices(M, factors)
 
         D = []
-        is_simple = True if simple else None
+        is_simple = ``True`` if simple else None
         for newform_level, isogeny_number, number, modsym, lattice in factors:
             A = ModularAbelianVariety_modsym(modsym, lattice=lattice,
                                newform_level=(newform_level, group),

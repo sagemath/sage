@@ -331,14 +331,14 @@ cdef inline bint mpn_equal_bits_shifted(mp_srcptr b1, mp_srcptr b2, mp_bitcnt_t 
 
 cdef inline bint bitset_isempty(fused_bitset_t bits) noexcept nogil:
     """
-    Test whether bits is empty.  Return True (i.e., 1) if the set is
+    Test whether bits is empty.  Return ``True`` (i.e., 1) if the set is
     empty, False (i.e., 0) otherwise.
     """
     return _bitset_isempty(bits.bits, bits.limbs)
 
 cdef inline bint bitset_is_zero(fused_bitset_t bits) noexcept:
     """
-    Test whether bits is empty (i.e., zero).  Return True (1) if
+    Test whether bits is empty (i.e., zero).  Return ``True`` (1) if
     the set is empty, False (0) otherwise.
 
     This function is the same as bitset_is_empty(bits).
@@ -347,7 +347,7 @@ cdef inline bint bitset_is_zero(fused_bitset_t bits) noexcept:
 
 cdef inline bint bitset_eq(fused_bitset_t a, fused_bitset_t b) noexcept:
     """
-    Compare bitset a and b.  Return True (i.e., 1) if the sets are
+    Compare bitset a and b.  Return ``True`` (i.e., 1) if the sets are
     equal, and False (i.e., 0) otherwise.
 
     We assume ``a.limbs >= b.limbs``.
@@ -432,14 +432,14 @@ cdef inline bint bitset_are_disjoint(fused_bitset_t a, fused_bitset_t b) noexcep
 
 cdef inline bint bitset_in(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
     """
-    Check if n is in bits.  Return True (i.e., 1) if n is in the
+    Check if n is in bits.  Return ``True`` (i.e., 1) if n is in the
     set, False (i.e., 0) otherwise.
     """
     return (bits.bits[n >> index_shift] >> (n % GMP_LIMB_BITS)) & 1
 
 cdef inline bint bitset_check(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
     """
-    Check if n is in bits.  Return True (i.e., 1) if n is in the
+    Check if n is in bits.  Return ``True`` (i.e., 1) if n is in the
     set, False (i.e., 0) otherwise.
 
     This function is the same as bitset_in(bits, n).
@@ -448,7 +448,7 @@ cdef inline bint bitset_check(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
 
 cdef inline bint bitset_not_in(fused_bitset_t bits, mp_bitcnt_t n) noexcept:
     """
-    Check if n is not in bits.  Return True (i.e., 1) if n is not in the
+    Check if n is not in bits.  Return ``True`` (i.e., 1) if n is not in the
     set, False (i.e., 0) otherwise.
     """
     return not bitset_in(bits, n)

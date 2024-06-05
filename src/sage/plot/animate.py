@@ -586,7 +586,7 @@ class Animation(WithEqualityById, SageObject):
         -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
-        - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if ``True``, use
           'ffmpeg' by default instead of 'convert'.
 
         If ``savefile`` is not specified: in notebook mode, display the
@@ -1112,12 +1112,12 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``filename`` -- (default: None) name of save file
+        -  ``filename`` -- (default: ``None``) name of save file
 
         -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
-        - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if ``True``, use
           'ffmpeg' by default instead of 'convert' when creating GIF
           files.
 

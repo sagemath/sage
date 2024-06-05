@@ -506,7 +506,7 @@ def is_comparability(g, algorithm="greedy", certificate=False, check=True,
       - ``"MILP"`` -- a Mixed Integer Linear Program formulation of the
         problem. Beware, for this implementation is unable to return negative
         certificates ! When ``certificate = True``, negative certificates are
-        always equal to ``None``. True certificates are valid, though.
+        always equal to ``None``. ``True`` certificates are valid, though.
 
     - ``certificate`` (boolean) -- whether to return a
       certificate. *Yes*-answers the certificate is a transitive orientation of
@@ -594,7 +594,7 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
       - ``"MILP"`` -- a Mixed Integer Linear Program formulation of the
         problem. Beware, for this implementation is unable to return negative
         certificates ! When ``certificate = True``, negative certificates are
-        always equal to ``None``. True certificates are valid, though.
+        always equal to ``None``. ``True`` certificates are valid, though.
 
     - ``certificate`` (boolean) -- whether to return a certificate for the
       answer given. For ``True`` answers the certificate is a permutation, for

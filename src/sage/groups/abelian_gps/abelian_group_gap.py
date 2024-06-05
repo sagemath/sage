@@ -562,7 +562,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         INPUT:
 
         - ``N`` -- a subgroup
-        - ``check`` -- bool (default: ``True``) check if `N` is normal
+        - ``check`` -- boolean (default: ``True``); check if `N` is normal
 
         EXAMPLES::
 

@@ -760,7 +760,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
         - ``q`` -- (default: ``None``) a variable or ``None``; if ``None``,
           a variable ``q`` is set in the code
-        - ``group_components`` -- (default: ``True``) boolean; if ``True``,
+        - ``group_components`` -- boolean (default: ``True``); if ``True``,
           then the terms are grouped by classical component
 
         The one-dimensional configuration sum is the sum of the weights
@@ -1305,7 +1305,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             - ``i`` -- element of the index set
             - ``power`` -- (default: 1) positive integer; specifies the
               power of the lowering operator to be applied
-            - ``length_only`` -- (default: ``False``) boolean; if ``True``,
+            - ``length_only`` -- boolean (default: ``False``); if ``True``,
               then return the distance to the anti-dominant end of the
               `i`-string of ``self``
 
@@ -1382,7 +1382,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             - ``i`` -- element of the index set
             - ``power`` -- (default: 1) positive integer; specifies the
               power of the lowering operator to be applied
-            - ``length_only`` -- (default: ``False``) boolean; if ``True``,
+            - ``length_only`` -- boolean (default: ``False``); if ``True``,
               then return the distance to the anti-dominant end of the
               `i`-string of ``self``
 

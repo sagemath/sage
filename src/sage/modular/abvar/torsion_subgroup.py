@@ -493,7 +493,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         INPUT:
 
 
-        -  ``maxp`` -- (default: None) If maxp is None (the
+        -  ``maxp`` -- (default: ``None``) If maxp is None (the
            default), return gcd of best bound computed so far with bound
            obtained by computing GCD's of orders modulo p until this gcd
            stabilizes for 3 successive primes. If maxp is given, just use all

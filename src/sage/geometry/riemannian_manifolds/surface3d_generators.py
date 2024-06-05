@@ -315,7 +315,7 @@ class SurfaceGenerators:
 
         - ``a``, ``b``, ``c`` -- Surface parameters.
 
-        - ``elliptic`` (default: ``True``) -- whether to create an elliptic or
+        - ``elliptic`` boolean (default: ``True``); -- whether to create an elliptic or
           hyperbolic paraboloid.
 
         - ``name`` -- string. Name of the surface.

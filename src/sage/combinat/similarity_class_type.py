@@ -1437,7 +1437,7 @@ def ext_orbits(input_data, q=None, selftranspose=False):
 
     - ``input_data`` -- input for :func:`input_parsing()`
     - ``q`` -- (default: `q`) an integer or an indeterminate
-    - ``selftranspose`` -- (default: ``False``) boolean stating if we only want
+    - ``selftranspose`` -- boolean (default: ``False``); stating if we only want
       selftranspose type
 
     TESTS::
@@ -1514,9 +1514,9 @@ def matrix_similarity_classes_length_two(n, q=None, selftranspose=False, inverti
 
     - ``n`` -- the order
     - ``q`` -- (default: `q`) an integer or an indeterminate
-    - ``selftranspose`` -- (default: ``False``) boolean stating if we only want
+    - ``selftranspose`` -- boolean (default: ``False``); stating if we only want
       selftranspose type
-    - ``invertible`` -- (default: ``False``) boolean stating if we only want
+    - ``invertible`` -- boolean (default: ``False``); stating if we only want
       invertible type
 
     EXAMPLES:
@@ -1567,7 +1567,7 @@ def ext_orbit_centralizers(input_data, q=None, selftranspose=False):
 
     - ``input_data`` -- input for :func:`input_parsing()`
     - ``q`` -- (default: `q`) an integer or an indeterminate
-    - ``selftranspose`` -- (default: ``False``) boolean stating if we only want
+    - ``selftranspose`` -- boolean (default: ``False``); stating if we only want
       selftranspose type
 
     TESTS::
@@ -1692,9 +1692,9 @@ def matrix_centralizer_cardinalities_length_two(n, q=None, selftranspose=False, 
 
     - ``n`` -- the order
     - ``q`` -- (default: `q`) an integer or an indeterminate
-    - ``selftranspose`` -- (default: ``False``) boolean stating if we only want
+    - ``selftranspose`` -- boolean (default: ``False``); stating if we only want
       selftranspose type
-    - ``invertible`` -- (default: ``False``) boolean stating if we only want
+    - ``invertible`` -- boolean (default: ``False``); stating if we only want
       invertible type
 
     TESTS::

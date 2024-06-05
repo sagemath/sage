@@ -350,7 +350,7 @@ cdef class ntl_GF2E():
 
     def IsZero(ntl_GF2E self):
         """
-        Returns True if this element equals zero, False otherwise.
+        Returns ``True`` if this element equals zero, False otherwise.
 
         EXAMPLES::
 
@@ -365,7 +365,7 @@ cdef class ntl_GF2E():
 
     def IsOne(ntl_GF2E self):
         """
-        Returns True if this element equals one, False otherwise.
+        Returns ``True`` if this element equals one, False otherwise.
 
         EXAMPLES::
 

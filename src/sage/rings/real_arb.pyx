@@ -2705,7 +2705,7 @@ cdef class RealBall(RingElement):
 
         .. WARNING::
 
-            Contrary to the usual convention, a return value of True does
+            Contrary to the usual convention, a return value of ``True`` does
             not imply that all points of the ball satisfy the predicate.
             This is due to the way comparisons with symbolic infinities work in
             sage.

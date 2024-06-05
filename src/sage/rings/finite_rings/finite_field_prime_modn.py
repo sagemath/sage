@@ -58,7 +58,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
 
         - ``p`` -- an integer at least 2
 
-        - ``check`` -- bool (default: ``True``); if ``False``, do not
+        - ``check`` -- boolean (default: ``True``); if ``False``, do not
           check ``p`` for primality
 
         EXAMPLES::

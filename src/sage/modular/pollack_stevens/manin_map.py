@@ -593,8 +593,8 @@ class ManinMap():
         INPUT:
 
         - ``f`` -- anything that can be called with elements of the coefficient module
-        - ``codomain`` -- (default: None) the codomain of the return map
-        - ``to_moments`` -- (default: ``False``) if True, will apply ``f`` to each of the moments instead
+        - ``codomain`` -- (default: ``None``) the codomain of the return map
+        - ``to_moments`` -- boolean (default: ``False``); if ``True``, will apply ``f`` to each of the moments instead
 
         EXAMPLES::
 

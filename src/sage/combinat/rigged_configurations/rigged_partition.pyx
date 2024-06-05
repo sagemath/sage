@@ -611,7 +611,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
 
         INPUT:
 
-        - ``half_width_boxes`` -- (default: ``True``) display the partition
+        - ``half_width_boxes`` -- boolean (default: ``True``); display the partition
           using half width boxes
 
         EXAMPLES::

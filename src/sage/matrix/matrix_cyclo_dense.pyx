@@ -119,7 +119,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         EXAMPLES:
@@ -1233,7 +1233,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             - 'pari': use pari (quite slow; comparable to Magma v2.14 though)
             - 'hessenberg': put matrix in Hessenberg form (double dog slow)
 
-        - proof -- bool (default: None) proof flag determined by global linalg
+        - proof -- boolean (default: ``None``) proof flag determined by global linalg
           proof.
 
         OUTPUT: polynomial
@@ -1349,7 +1349,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         multimodular algorithm.
 
         INPUT:
-            proof -- bool (default: global flag); if False, compute
+            proof -- boolean (default: global flag); if ``False``, compute
                      using primes `p_i` until the lift modulo all
                      primes up to `p_i` is the same as the lift modulo
                      all primes up to `p_{i+3}` or the bound is
@@ -1867,7 +1867,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         INPUT:
 
         - ``A`` -- a matrix
-        - ``subdivide`` -- (default: ``True``) whether or not to return
+        - ``subdivide`` -- boolean (default: ``True``); whether or not to return
           natural subdivisions with the matrix
 
         OUTPUT:

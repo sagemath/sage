@@ -144,7 +144,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
 
 def is_optimal_id(id):
     """
-    Return True if the Cremona id refers to an optimal curve, and
+    Return ``True`` if the Cremona id refers to an optimal curve, and
     false otherwise.
 
     The curve is optimal if the id, which is of the
@@ -1720,7 +1720,7 @@ def CremonaDatabase(name=None,mini=None,set_global=None):
     elif name == 'cremona mini':
         mini = True
     if mini is None:
-        raise ValueError('mini must be set as either True or False')
+        raise ValueError('mini must be set as either ``True`` or False')
 
     if mini:
         return MiniCremonaDatabase(name)

@@ -1482,7 +1482,7 @@ class FindStatFunction(SageObject):
         """
         if self._function is False and FindStat()._allow_execution is False:
             raise ValueError("execution of verified code provided by FindStat is not enabled for %s" % self)
-        if self._function is True or (self._function is False and FindStat()._allow_execution is True):
+        if self._function is ``True`` or (self._function is False and FindStat()._allow_execution is True):
             if not self.sage_code():
                 raise ValueError("there is no verified code available for %s" % self)
             from sage.repl.preparse import preparse
@@ -2039,7 +2039,7 @@ class FindStatCombinatorialStatistic(SageObject):
           sequence. If this is chosen too big, the OEIS result may be
           corrupted.
 
-        - ``verbose`` (default: ``True``) if true, some information about
+        - ``verbose`` boolean (default: ``True``); if true, some information about
           the search are printed.
 
         OUTPUT:

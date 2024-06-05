@@ -1496,7 +1496,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         - ``HT2step`` -- equivariant cohomology of the *2-step* Grassmannian
         - ``BK`` -- Belkale-Kumar puzzle pieces
 
-    - ``max_letter`` -- (default: None) None or a positive integer. This is
+    - ``max_letter`` -- (default: ``None``) None or a positive integer. This is
       only required only for Belkale-Kumar puzzles.
 
     EXAMPLES:

@@ -81,7 +81,7 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     - ``pypi_url`` -- (string, default: standard PyPI url) an optional Python
       package repository to use
 
-    - ``ignore_URLError`` -- (default: ``False``) if set to ``True`` then no
+    - ``ignore_URLError`` -- boolean (default: ``False``); if set to ``True`` then no
       error is raised if the connection fails and the function returns ``None``
 
     EXAMPLES:
@@ -253,15 +253,15 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
       If provided, list only the packages with the given source(s), otherwise list all
       packages.
 
-    - ``local`` -- (default: ``False``) if set to ``True``, then do not
+    - ``local`` -- boolean (default: ``False``); if set to ``True``, then do not
       consult remote (PyPI) repositories for package versions (only applicable for
       ``'pip'`` type)
 
-    - ``exclude_pip`` -- (default: ``False``) if set to ``True``, then
+    - ``exclude_pip`` -- boolean (default: ``False``); if set to ``True``, then
       pip packages are not considered.  This is the same as removing ``'pip'``
       from ``pkg_sources``.
 
-    - ``ignore_URLError`` -- (default: ``False``) if set to ``True``, then
+    - ``ignore_URLError`` -- boolean (default: ``False``); if set to ``True``, then
       connection errors will be ignored
 
     EXAMPLES::
@@ -386,7 +386,7 @@ def installed_packages(exclude_pip=True):
 
     INPUT:
 
-    - ``exclude_pip`` -- (default: ``True``) whether "pip" packages
+    - ``exclude_pip`` -- boolean (default: ``True``); whether "pip" packages
       are excluded from the list
 
     EXAMPLES:
@@ -432,7 +432,7 @@ def is_package_installed(package, exclude_pip=True):
 
     - ``package`` -- the name of the package
 
-    - ``exclude_pip`` -- (default: ``True``) whether to consider pip
+    - ``exclude_pip`` -- boolean (default: ``True``); whether to consider pip
       type packages
 
 

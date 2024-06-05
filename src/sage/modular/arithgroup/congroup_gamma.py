@@ -309,7 +309,7 @@ class Gamma_class(CongruenceSubgroup):
 
 def is_Gamma(x):
     r"""
-    Return True if x is a congruence subgroup of type Gamma.
+    Return ``True`` if x is a congruence subgroup of type Gamma.
 
     EXAMPLES::
 

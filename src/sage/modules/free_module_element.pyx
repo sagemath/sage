@@ -956,7 +956,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
           represented by a dictionary ``d``, then make a copy of ``d``;
           if ``False``, then this can cause undesired behavior by
           mutating ``d``
@@ -2282,7 +2282,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
           represented by a dictionary ``d``, then make a copy of ``d``;
           if ``False``, then this can cause undesired behavior by
           mutating ``d``
@@ -2489,7 +2489,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         -  ``res`` -- (default: all points) total number of
            points to include in the graph
 
-        -  ``connect`` -- (default: ``True``) if True draws a line;
+        -  ``connect`` -- boolean (default: ``True``); if ``True`` draws a line;
            otherwise draw a list of points.
 
 
@@ -3890,7 +3890,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         automatically determine the base ring of the resulting element.
 
         INPUT:
-            sparse -- True or False will control whether the result
+            sparse -- ``True`` or False will control whether the result
               is sparse.  By default, the result is sparse iff self
               is sparse.
 
@@ -4470,7 +4470,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             if type(entries) is not list:
                 if not isinstance(entries, (list, tuple)):
                     raise TypeError("entries must be a list or tuple, not %s" % type(entries))
-                copy = True  # ensure we have a true Python list
+                copy = ``True``  # ensure we have a true Python list
 
             if len(entries) != self._degree:
                 raise TypeError("entries must be a list of length %s" % self.degree())
@@ -5314,7 +5314,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
           represented by a dictionary ``d``, then make a copy of ``d``;
           if ``False``, then this can cause undesired behavior by
           mutating ``d``

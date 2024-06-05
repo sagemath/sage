@@ -305,7 +305,7 @@ def external_ray(theta, **kwds):
 
     kwds:
 
-    - ``image`` -- 24-bit RGB image (default: None) user specified
+    - ``image`` -- 24-bit RGB image (default: ``None``) user specified
       image of Mandelbrot set.
 
     - ``D`` -- long (default: ``25``) depth of the approximation.

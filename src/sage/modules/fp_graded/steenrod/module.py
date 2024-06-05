@@ -359,7 +359,7 @@ class SteenrodFPModule(FPModule, SteenrodModuleMixin):
 
         - ``k`` -- non-negative integer
         - ``top_dim`` -- (optional) stop the computation at this degree
-        - ``verbose`` -- (default: ``False``) whether log messages are printed
+        - ``verbose`` -- boolean (default: ``False``); whether log messages are printed
 
         OUTPUT: a list of homomorphisms `[\epsilon, f_1, \ldots, f_k]` such that
 

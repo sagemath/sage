@@ -1834,7 +1834,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         Some further optional input is specific to sage code treatment:
 
-        - ``preparsing`` -- boolean (default: ``True``) whether to preparse
+        - ``preparsing`` -- boolean (default: ``True``); whether to preparse
           sage code
         - ``keep_comments`` -- boolean (default: ``False``) whether to keep
           comments in sage code

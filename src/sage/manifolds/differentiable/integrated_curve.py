@@ -696,7 +696,7 @@ class IntegratedCurve(DifferentiableCurve):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) prints a detailed
+        - ``verbose`` -- boolean (default: ``False``); prints a detailed
           description of the curve
 
         OUTPUT:
@@ -983,7 +983,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``parameters_values`` -- (default: ``None``) list of numerical
           values of the parameters present in the system defining the
           curve, to be substituted in the equations before integration
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the computation in progress
         - ``**control_param`` -- extra control parameters to be passed to the
           chosen solver; see the example with ``rtol`` and ``atol`` below
@@ -1444,7 +1444,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``parameters_values`` -- (default: ``None``) list of numerical
           values of the parameters present in the system defining the
           curve, to be substituted in the equations before integration
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the computation in progress
         - ``**control_param`` -- extra control parameters to be passed to the
           solver
@@ -1840,7 +1840,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``solution_key`` -- (default: ``None``) key which the
           requested numerical solution is associated to; a default
           value is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the solution returned
 
         OUTPUT:
@@ -1914,7 +1914,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key which the
           resulting interpolation will be associated to ; a default
           value is given if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation in progress
 
         OUTPUT:
@@ -2045,7 +2045,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key which the
           requested interpolation is associated to; a default
           value is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation object returned
 
         OUTPUT:
@@ -2122,7 +2122,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key which the
           interpolation requested to compute the point is associated to;
           a default value is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation used
 
         OUTPUT:
@@ -2204,7 +2204,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key which the
           interpolation requested to compute the tangent vector is
           associated to; a default value is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation used
 
         OUTPUT:
@@ -2314,9 +2314,9 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key associated to
           the interpolation object used for the plot; a default value
           is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation object used and the plotting in progress
-        - ``display_tangent`` -- (default: ``False``) determines whether
+        - ``display_tangent`` -- boolean (default: ``False``); determines whether
           some tangent vectors should also be plotted
         - ``color_tangent`` -- (default: ``blue``) color of the tangent
           vectors when these are plotted
@@ -3572,7 +3572,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) prints a detailed
+        - ``verbose`` -- boolean (default: ``False``); prints a detailed
           description of the curve
 
         OUTPUT:
@@ -3951,7 +3951,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) prints a detailed
+        - ``verbose`` -- boolean (default: ``False``); prints a detailed
           description of the curve
 
         OUTPUT:

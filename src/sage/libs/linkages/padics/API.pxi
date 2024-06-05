@@ -166,7 +166,7 @@ cdef inline bint creduce(celement out, celement a, long prec, PowComputer_class 
 
     OUTPUT:
 
-    - returns True if the reduction is zero; False otherwise.
+    - returns ``True`` if the reduction is zero; False otherwise.
     """
     pass
 
@@ -187,7 +187,7 @@ cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_
 
     OUTPUT:
 
-    - returns True if the reduction is zero; False otherwise.
+    - returns ``True`` if the reduction is zero; False otherwise.
     """
     pass
 
@@ -244,7 +244,7 @@ cdef inline bint cisunit(celement a, PowComputer_class prime_pow) except -1:
 
     OUTPUT:
 
-    - returns True if `a` has valuation 0, and False otherwise.
+    - returns ``True`` if `a` has valuation 0, and False otherwise.
     """
     pass
 
@@ -382,7 +382,7 @@ cdef inline bint cisone(celement a, PowComputer_class prime_pow) except -1:
 
     OUTPUT:
 
-    - returns True if `a = 1`, and False otherwise.
+    - returns ``True`` if `a = 1`, and False otherwise.
     """
     pass
 
@@ -397,7 +397,7 @@ cdef inline bint ciszero(celement a, PowComputer_class prime_pow) except -1:
 
     OUTPUT:
 
-    - returns True if `a = 0`, and False otherwise.
+    - returns ``True`` if `a = 0`, and False otherwise.
     """
     pass
 
@@ -554,7 +554,7 @@ cdef inline long cconv_mpz_t(celement out, mpz_t x, long prec, bint absolute, Po
     - ``prec`` -- a long, giving the precision desired: absolute or
                   relative depending on the ``absolute`` input.
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
+                      it, storing the unit in ``out``; if ``True`` then
                       just reduces ``x`` modulo the precision.
     - ``prime_pow`` -- a PowComputer for the ring.
 
@@ -591,7 +591,7 @@ cdef inline long cconv_mpq_t(celement out, mpq_t x, long prec, bint absolute, Po
     - ``prec`` -- a long, giving the precision desired: absolute or
                   relative depending on the ``absolute`` input.
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
+                      it, storing the unit in ``out``; if ``True`` then
                       just reduces ``x`` modulo the precision.
     - ``prime_pow`` -- a PowComputer for the ring.
 

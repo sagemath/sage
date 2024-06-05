@@ -261,7 +261,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             sage: v.fft(inplace=True)
             Traceback (most recent call last):
             ...
-            ValueError: inplace can only be True for CDF vectors
+            ValueError: inplace can only be ``True`` for CDF vectors
         """
         if direction not in ('forward', 'backward'):
             raise ValueError("direction must be either 'forward' or 'backward'")
@@ -273,7 +273,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         if inplace:
             if self._sage_dtype is not CDF:
-                raise ValueError("inplace can only be True for CDF vectors")
+                raise ValueError("inplace can only be ``True`` for CDF vectors")
             if direction == 'forward':
                 self._vector_numpy = scipy.fftpack.fft(self._vector_numpy, overwrite_x = True)
             else:

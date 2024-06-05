@@ -129,7 +129,7 @@ cdef class Cache_givaro(Cache_base):
           - 'int': repr is :meth:`~FiniteField_givaroElement.int_repr()`
           - 'poly': repr is :meth:`~FiniteField_givaroElement.poly_repr()`
 
-        - ``cache`` -- (default: ``False``) if ``True`` a cache of all
+        - ``cache`` -- boolean (default: ``False``); if ``True`` a cache of all
           elements of this field is created. Thus, arithmetic does not
           create new elements which speeds calculations up. Also, if many
           elements are needed during a calculation this cache reduces the
@@ -1002,7 +1002,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         INPUT:
 
-        - ``extend`` -- bool (default: ``True``); if ``True``, return a
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
           square root in an extension ring, if necessary. Otherwise,
           raise a ``ValueError`` if the root is not in the base ring.
 
@@ -1010,7 +1010,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
               this option is not implemented!
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return all square
+        - ``all`` -- boolean (default: ``False``); if ``True``, return all square
           roots of ``self``, instead of just one.
 
         .. WARNING::

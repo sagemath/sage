@@ -108,7 +108,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
 
     - ``module`` -- the module object to modify with the mangled name
 
-    - ``first_run`` -- optional bool (default ``True``): whether or not
+    - ``first_run`` -- optional boolean (default ``True``): whether or not
       this function is run for the first time on ``cls``
 
     NOTE:

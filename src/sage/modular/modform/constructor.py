@@ -174,7 +174,7 @@ def ModularForms(group=1,
 
     - ``base_ring`` -- the base ring (ignored if group is a Dirichlet character)
 
-    - ``eis_only`` -- if True, compute only the Eisenstein part of the space.
+    - ``eis_only`` -- if ``True``, compute only the Eisenstein part of the space.
       Only permitted (and only useful) in weight 1, where computing dimensions
       of cusp form spaces is expensive.
 

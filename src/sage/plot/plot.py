@@ -916,7 +916,7 @@ def plot(funcs, *args, **kwds):
     - ``ymax`` -- ending y value in the rendered figure. This parameter is passed
       directly to the ``show`` procedure and it could be overwritten.
 
-    - ``detect_poles`` -- (default: ``False``) If set to ``True`` poles are detected.
+    - ``detect_poles`` -- boolean (default: ``False``); If set to ``True`` poles are detected.
       If set to "show" vertical asymptotes are drawn.
 
     - ``legend_label`` -- a (TeX) string serving as the label for `X` in the legend.
@@ -1047,7 +1047,7 @@ def plot(funcs, *args, **kwds):
 
     FILLING OPTIONS:
 
-    - ``fill`` -- (default: ``False``) One of:
+    - ``fill`` -- boolean (default: ``False``); One of:
 
       - "axis" or ``True``: Fill the area between the function and the x-axis.
 

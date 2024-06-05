@@ -165,7 +165,7 @@ def is_Parent(x):
 
 
 cdef bint guess_pass_parent(parent, element_constructor) noexcept:
-    # Returning True here is deprecated, see #26879
+    # Returning ``True`` here is deprecated, see #26879
     if isinstance(element_constructor, MethodType):
         return False
     elif isinstance(element_constructor, BuiltinMethodType):
@@ -1065,8 +1065,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     #############################################################################
     def __contains__(self, x):
         r"""
-        True if there is an element of self that is equal to x under
-        ==, or if x is already an element of self.  Also, True in other
+        ``True`` if there is an element of self that is equal to x under
+        ==, or if x is already an element of self.  Also, ``True`` in other
         cases involving the Symbolic Ring, which is handled specially.
 
         For many structures we test this by using :meth:`__call__` and
@@ -1293,7 +1293,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""
-        Return True if ``im_gens`` defines a valid homomorphism
+        Return ``True`` if ``im_gens`` defines a valid homomorphism
         from self to codomain; otherwise return False.
 
         If determining whether or not a homomorphism is valid has not
@@ -1477,7 +1477,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         - ``convert_method_name`` -- a name to look for that other elements
           can implement to create elements of self (e.g. _integer_)
 
-        - ``init_no_parent`` -- if True omit passing self in as the
+        - ``init_no_parent`` -- if ``True`` omit passing self in as the
           first argument of element_constructor for conversion. This
           is useful if parents are unique, or element_constructor is a
           bound method (this latter case can be detected
@@ -2102,7 +2102,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         If no such coercion exists, return None or False. Otherwise, it may
         return either an actual Map to use for the coercion, a callable
-        (in which case it will be wrapped in a Map), or True (in which case
+        (in which case it will be wrapped in a Map), or ``True`` (in which case
         a generic map will be provided).
         """
         try:
@@ -2397,7 +2397,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 return best_mor
             # Continue searching for better maps.  If there is something
             # better in the list, return that instead.  This is so, for
-            # example, _coerce_map_from_ can return True but still take
+            # example, _coerce_map_from_ can return ``True`` but still take
             # advantage of the _populate_coercion_lists_ data.
         elif isinstance(user_provided_mor, map.Map):
             return user_provided_mor
@@ -2878,7 +2878,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         OUTPUT:
 
-        Return True if elements of this ring are represented exactly, i.e.,
+        Return ``True`` if elements of this ring are represented exactly, i.e.,
         there is no precision loss when doing arithmetic.
 
         EXAMPLES::
@@ -2999,7 +2999,7 @@ cdef class Set_generic(Parent):
 
     def __bool__(self):
         """
-        A set is considered True unless it is empty, in which case it is
+        A set is considered ``True`` unless it is empty, in which case it is
         considered to be False.
 
         EXAMPLES::

@@ -319,7 +319,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
       Heegner index before switching over to trying to compute the
       Heegner index bound. (Rank 0 only!)
 
-    - ``return_BSD`` -- bool (default: ``False``) whether to return an object
+    - ``return_BSD`` -- boolean (default: ``False``) whether to return an object
       which contains information to reconstruct a proof
 
     .. NOTE::
@@ -343,34 +343,34 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     EXAMPLES::
 
         sage: EllipticCurve('11a').prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 5} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2, 5} by Kolyvagin.
         Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
-        True for p = 5 by Kolyvagin bound
+        ``True`` for p = 5 by Kolyvagin bound
         []
 
         sage: EllipticCurve('14a').prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 3} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2, 3} by Kolyvagin.
         Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
-        True for p = 3 by Kolyvagin bound
+        ``True`` for p = 3 by Kolyvagin bound
         []
 
         sage: E = EllipticCurve("20a1")
         sage: E.prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 3} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2, 3} by Kolyvagin.
         Kato further implies that #Sha[3] is trivial.
         []
 
         sage: E = EllipticCurve("50b1")
         sage: E.prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 3, 5} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2, 3, 5} by Kolyvagin.
         Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
         Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
-        True for p = 3 by Kolyvagin bound
-        True for p = 5 by Kolyvagin bound
+        ``True`` for p = 3 by Kolyvagin bound
+        ``True`` for p = 5 by Kolyvagin bound
         []
         sage: E.prove_BSD(two_desc='pari')
         []
@@ -393,10 +393,10 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
         sage: E = EllipticCurve('19a')
         sage: E.prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 3} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2, 3} by Kolyvagin.
         Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
-        True for p = 3 by Kolyvagin bound
+        ``True`` for p = 3 by Kolyvagin bound
         []
 
         sage: E = EllipticCurve('37a')
@@ -430,18 +430,18 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
         sage: E = EllipticCurve('123a1')
         sage: E.prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 5} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2, 5} by Kolyvagin.
         Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
-        True for p = 5 by Kolyvagin bound
+        ``True`` for p = 5 by Kolyvagin bound
         []
 
     A curve for which 3 divides the order of the Tate-Shafarevich group::
 
         sage: E = EllipticCurve('681b')
         sage: E.prove_BSD(verbosity=2)               # long time
-        p = 2: True by 2-descent...
-        True for p not in {2, 3} by Kolyvagin....
+        p = 2: ``True`` by 2-descent...
+        ``True`` for p not in {2, 3} by Kolyvagin....
         Remaining primes:
         p = 3: irreducible, surjective, non-split multiplicative
             (0 <= ord_p <= 2)
@@ -452,8 +452,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
         sage: E = EllipticCurve('198b')
         sage: E.prove_BSD(verbosity=1, secs_hi=1)
-        p = 2: True by 2-descent
-        True for p not in {2, 3} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2, 3} by Kolyvagin.
         [3]
 
     The ``return_BSD`` option gives an object with detailed information
@@ -477,24 +477,24 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     This was fixed by :issue:`8184` and :issue:`7575`::
 
         sage: EllipticCurve('438e1').prove_BSD(verbosity=1)
-        p = 2: True by 2-descent...
-        True for p not in {2} by Kolyvagin.
+        p = 2: ``True`` by 2-descent...
+        ``True`` for p not in {2} by Kolyvagin.
         []
 
     ::
 
         sage: E = EllipticCurve('960d1')
         sage: E.prove_BSD(verbosity=1)  # long time (4s on sage.math, 2011)
-        p = 2: True by 2-descent
-        True for p not in {2} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2} by Kolyvagin.
         []
 
     ::
 
         sage: E = EllipticCurve('66b3')
         sage: E.prove_BSD(two_desc="pari",verbosity=1)
-        p = 2: True by 2-descent
-        True for p not in {2} by Kolyvagin.
+        p = 2: ``True`` by 2-descent
+        ``True`` for p not in {2} by Kolyvagin.
         []
 
     """
@@ -561,7 +561,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         raise RuntimeError("Apparent contradiction: %d <= rank(sha[2]) <= %d, but ord_2(sha_an) = %d" % (sha2_lower_bd, sha2_upper_bd, BSD.sha_an.ord(2)))
     if BSD.bounds[2][0] == BSD.sha_an.ord(2) and BSD.sha_an.ord(2) == BSD.bounds[2][1]:
         if verbosity > 0:
-            print('p = 2: True by 2-descent')
+            print('p = 2: ``True`` by 2-descent')
         BSD.primes = []
         BSD.bounds.pop(2)
         BSD.proof[2] = ['2-descent']

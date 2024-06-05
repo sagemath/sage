@@ -60,7 +60,7 @@ class Gfan():
 
         - ``input`` -- string, input
         - ``cmd`` -- string (default:``''``), GFan command
-        - ``verbose`` -- bool (default:``False``)
+        - ``verbose`` -- boolean (default:``False``)
 
         EXAMPLES::
 

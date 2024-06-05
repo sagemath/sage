@@ -255,7 +255,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def is_x_coord(self, x):
         """
-        Return True if ``x`` is the `x`-coordinate of a point on this curve.
+        Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve.
 
         .. SEEALSO::
 
@@ -601,7 +601,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     def has_odd_degree_model(self):
         r"""
-        Return True if an odd degree model of self exists over the field of definition; False otherwise.
+        Return ``True`` if an odd degree model of self exists over the field of definition; False otherwise.
 
         Use ``odd_degree_model`` to calculate an odd degree model.
 

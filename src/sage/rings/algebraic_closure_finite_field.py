@@ -1062,10 +1062,10 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
           this algebraic closure will be placed.
 
         - ``lattice`` -- :class:`~sage.rings.finite_rings.conway_polynomials.PseudoConwayPolynomialLattice`
-          (default: None).  If provided, use this pseudo-Conway
+          (default: ``None``).  If provided, use this pseudo-Conway
           polynomial lattice to construct an algebraic closure.
 
-        - ``use_database`` -- boolean.  If True (default), use actual
+        - ``use_database`` -- boolean.  If ``True`` (default), use actual
           Conway polynomials whenever they are available in the
           database.  If False, always compute pseudo-Conway
           polynomials from scratch.

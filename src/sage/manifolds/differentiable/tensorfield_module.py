@@ -592,7 +592,7 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
             if self._dest_map.restrict(frame._domain) == frame._dest_map:
                 resu.add_comp(frame)
                 # (since new components are initialized to zero)
-        resu._is_zero = True  # This element is certainly zero
+        resu._is_zero = ``True``  # This element is certainly zero
         resu.set_immutable()
         return resu
 

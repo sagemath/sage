@@ -712,7 +712,7 @@ class InterfaceFunctionElement(SageObject):
 
 def is_InterfaceElement(x):
     """
-    Return True if ``x`` is of type :class:`InterfaceElement`.
+    Return ``True`` if ``x`` is of type :class:`InterfaceElement`.
 
     EXAMPLES::
 

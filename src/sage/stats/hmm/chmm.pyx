@@ -76,7 +76,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
     - ``A`` -- matrix; the `N \times N` transition matrix
     - ``B`` -- list of pairs ``(mu, sigma)`` that define the distributions
     - ``pi`` -- initial state probabilities
-    - ``normalize`` -- bool (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
 
     EXAMPLES:
 
@@ -176,7 +176,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
           state, i.e., ``pi[i]`` is the probability of starting in
           state `i`.
 
-        - ``normalize`` -- bool (default: ``True``); if given, input is
+        - ``normalize`` -- boolean (default: ``True``); if given, input is
           normalized to define valid probability distributions,
           e.g., the entries of `A` are made nonnegative and the rows
           sum to 1.
@@ -872,7 +872,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
           reestimating, the standard deviation of emissions is not
           allowed to be less than ``min_sd``.
 
-        - ``fix_emissions`` -- bool (default: ``False``); if ``True``, do not
+        - ``fix_emissions`` -- boolean (default: ``False``); if ``True``, do not
           change emissions when updating
 
         OUTPUT:
@@ -1056,7 +1056,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
     - ``pi`` -- initial state probabilities
 
-    - ``normalize`` -- bool (default: ``True``); if given, input is
+    - ``normalize`` -- boolean (default: ``True``); if given, input is
       normalized to define valid probability distributions,
       e.g., the entries of `A` are made nonnegative and the rows
       sum to 1, and the probabilities in ``pi`` are normalized.
@@ -1356,7 +1356,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         - ``min_sd`` -- positive float (default: 0.01); when
           reestimating, the standard deviation of emissions is not
           allowed to be less than ``min_sd``.
-        - ``fix_emissions`` -- bool (default: ``False``); if ``True``, do not
+        - ``fix_emissions`` -- boolean (default: ``False``); if ``True``, do not
           change emissions when updating
 
         OUTPUT:

@@ -249,7 +249,7 @@ class RingClassField(SageObject):
 
         - `c` -- conductor (positive integer coprime to `D`)
 
-        - ``check`` -- bool (default: ``True``); whether to check
+        - ``check`` -- boolean (default: ``True``); whether to check
           validity of input
 
         EXAMPLES::
@@ -2086,7 +2086,7 @@ class HeegnerPoints_level(HeegnerPoints):
 
         - `n` -- nonnegative integer
 
-        - ``weak`` -- bool (default: ``False``); if ``True`` only require
+        - ``weak`` -- boolean (default: ``False``); if ``True`` only require
           weak Heegner hypothesis, which is the same as usual but
           without the condition that `\gcd(D,N)=1`.
 
@@ -3017,7 +3017,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
            - `x` -- Heegner point on `X_0(N)`
 
-           - ``check`` -- bool (default: ``True``); if ``True``, ensure that `D`,
+           - ``check`` -- boolean (default: ``True``); if ``True``, ensure that `D`,
              `c` are of type Integer and define a Heegner point on `E`
 
         EXAMPLES::
@@ -3542,7 +3542,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         - ``var`` -- string (default: 'a')
 
-        - ``optimize`` -- bool (default; False) if ``True``, try to
+        - ``optimize`` -- boolean (default; False) if ``True``, try to
           optimize defining polynomial for the number field that
           the point is defined over.  Off by default, since this
           can be very expensive.
@@ -5670,7 +5670,7 @@ def kolyvagin_reduction_data(E, q, first_only=True):
     - `q` -- an odd prime that does not divide the order of the
        rational torsion subgroup of `E`
 
-    - ``first_only`` -- bool (default: ``True``) whether two only return
+    - ``first_only`` -- boolean (default: ``True``); whether two only return
        the first prime that one can work modulo to get data about
        the Euler system
 
@@ -5785,7 +5785,7 @@ def kolyvagin_reduction_data(E, q, first_only=True):
     from sage.modular.quatalg.all import BrandtModule
 
     def twist_is_minimal(D):
-        # return True if the quadratic twist E^D has analytic rank <= 1
+        # return ``True`` if the quadratic twist E^D has analytic rank <= 1
         return E.quadratic_twist(D).analytic_rank() <= 1
 
     def red(P, ell):
@@ -6418,7 +6418,7 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
     - `f`        -- binary quadratic form or 3-tuple `(A,B,C)` of coefficients
       of `AX^2 + BXY + CY^2`
 
-    - ``check``  -- bool (default: ``True``)
+    - ``check``  -- boolean (default: ``True``)
 
     OUTPUT: the Heegner point `y_c`
 
@@ -6477,7 +6477,7 @@ def kolyvagin_point(self, D, c=ZZ(1), check=True):
 
     - `c`        -- (default: 1) conductor, must be coprime to `DN`
 
-    - ``check``  -- bool (default: ``True``)
+    - ``check``  -- boolean (default: ``True``)
 
     OUTPUT: the Kolyvagin point `P` of conductor `c`
 

@@ -47,9 +47,9 @@ class Test:
 
         - levels --  list or int
         - weights -- list or int
-        - onlyg0 -- bool, if True only select Gamma0 spaces for testing
-        - onlyg1 -- bool, if True only select Gamma1 spaces for testing
-        - onlychar -- bool, if True only selects spaces with character for testing
+        - onlyg0 -- bool, if ``True`` only select Gamma0 spaces for testing
+        - onlyg1 -- bool, if ``True`` only select Gamma1 spaces for testing
+        - onlychar -- bool, if ``True`` only selects spaces with character for testing
 
         EXAMPLES::
 

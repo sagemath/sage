@@ -1236,12 +1236,12 @@ class AffineConnection(SageObject):
           labels are used, except if ``frame`` is a coordinate frame and
           ``coordinate_symbols`` is set to ``True``, in which case the
           coordinate LaTeX symbols are used
-        - ``coordinate_labels`` -- (default: ``True``) boolean; if ``True``,
+        - ``coordinate_labels`` -- boolean (default: ``True``); if ``True``,
           coordinate symbols are used by default (instead of integers) as
           index labels whenever ``frame`` is a coordinate frame
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero connection coefficients are displayed
-        - ``only_nonredundant`` -- (default: ``False``) boolean; if ``True``,
+        - ``only_nonredundant`` -- boolean (default: ``False``); if ``True``,
           only nonredundant connection coefficients are displayed in case of
           symmetries
 
@@ -2440,7 +2440,7 @@ class AffineConnection(SageObject):
         - ``order`` -- integer; the order `n` of the expansion, defined as the
           degree of the polynomial representing the truncated power series in
           ``symbol``
-        - ``truncate`` -- (default: ``False``) determines whether the
+        - ``truncate`` -- boolean (default: ``False``); determines whether the
           connection coefficients are replaced by their expansions to the
           given order
 

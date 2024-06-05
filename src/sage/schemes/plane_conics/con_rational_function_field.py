@@ -88,7 +88,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
     def has_rational_point(self, point=False, algorithm='default',
                            read_cache=True):
         r"""
-        Returns True if and only if the conic ``self``
+        Returns ``True`` if and only if the conic ``self``
         has a point over its base field `F(t)`, which is a field of rational
         functions.
 

@@ -957,7 +957,7 @@ cdef class TateAlgebraTerm(MonoidElement):
 
         - ``other`` -- a Tate term
 
-        - ``integral`` -- (default: ``False``) if ``True``, test for
+        - ``integral`` -- boolean (default: ``False``); if ``True``, test for
           divisibility in the ring of integers of the Tate algebra
 
         EXAMPLES::

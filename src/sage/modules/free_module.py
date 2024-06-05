@@ -267,7 +267,7 @@ class FreeModuleFactory(UniqueFactory):
             return FreeQuadraticModule(base_ring, rank, inner_product_matrix=inner_product_matrix, sparse=sparse)
 
         if not isinstance(sparse, bool):
-            raise TypeError("Argument sparse (= %s) must be True or False" % sparse)
+            raise TypeError("Argument sparse (= %s) must be ``True`` or False" % sparse)
 
         if base_ring not in CommutativeRings():
             warn("You are constructing a free module\n"
@@ -845,7 +845,7 @@ def basis_seq(V, vecs):
 
 def is_FreeModule(M):
     """
-    Return True if M inherits from FreeModule_generic.
+    Return ``True`` if M inherits from FreeModule_generic.
 
     EXAMPLES::
 
@@ -1738,7 +1738,7 @@ class Module_free_ambient(Module):
 
         - ``gens`` -- a list of free module elements or a free module
 
-        - ``check`` -- (default: ``True``) whether or not to verify
+        - ``check`` -- boolean (default: ``True``); whether or not to verify
           that the gens are in ``self``
 
         OUTPUT:
@@ -1819,7 +1819,7 @@ class Module_free_ambient(Module):
         - ``sub`` -- a submodule of ``self`` or something that can
           be turned into one via ``self.submodule(sub)``
 
-        - ``check`` -- (default: ``True``) whether or not to check that
+        - ``check`` -- boolean (default: ``True``); whether or not to check that
           ``sub`` is a submodule
 
         EXAMPLES::
@@ -3217,7 +3217,7 @@ class FreeModule_generic(Module_free_ambient):
 
     def is_finite(self):
         """
-        Returns True if the underlying set of this free module is finite.
+        Returns ``True`` if the underlying set of this free module is finite.
 
         EXAMPLES::
 
@@ -4347,7 +4347,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
         - ``sub`` -- a submodule of ``self``, or something that can
           be turned into one via ``self.submodule(sub)``
 
-        - ``check`` -- (default: ``True``) whether or not to check
+        - ``check`` -- boolean (default: ``True``); whether or not to check
           that ``sub`` is a submodule
 
         - further named arguments, that are passed to the constructor
@@ -4637,7 +4637,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
     def is_subspace(self, other):
         """
-        True if this vector space is a subspace of other.
+        ``True`` if this vector space is a subspace of other.
 
         EXAMPLES::
 
@@ -4720,11 +4720,11 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
         -  ``gens`` -- list of vectors
 
-        -  ``check`` -- boolean (default: ``True``) verify that gens
+        -  ``check`` -- boolean (default: ``True``); verify that gens
            are all in ``self``.
 
         -  ``already_echelonized`` -- boolean (default: ``False``) set
-           to True if you know the gens are in Echelon form.
+           to ``True`` if you know the gens are in Echelon form.
 
         EXAMPLES:
 
@@ -5163,7 +5163,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         - ``sub`` -- a submodule of ``self``, or something that can
           be turned into one via ``self.submodule(sub)``
 
-        - ``check`` -- (default: ``True``) whether or not to check
+        - ``check`` -- boolean (default: ``True``); whether or not to check
           that ``sub`` is a submodule
 
         EXAMPLES::
@@ -5304,7 +5304,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         -  ``sub`` -- a submodule of ``self`` or something that can
            be turned into one via ``self.submodule(sub)``
 
-        -  ``check`` -- (default: ``True``) whether or not to check
+        -  ``check`` -- boolean (default: ``True``); whether or not to check
            that sub is a submodule
 
         - further named arguments, that are currently ignored.
@@ -5875,7 +5875,7 @@ class FreeModule_ambient(FreeModule_generic):
 
         -  ``v`` -- vector
 
-        -  ``check`` -- boolean (default: ``True``); if True, also
+        -  ``check`` -- boolean (default: ``True``); if ``True``, also
            verify that `v` is really in ``self``.
 
         OUTPUT: list
@@ -6490,7 +6490,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
       of `R`. These elements must be linearly independent and will be used as
       the default basis of the constructed submodule;
 
-    - ``check`` -- (default: ``True``) if ``False``, correctness of the input
+    - ``check`` -- boolean (default: ``True``); if ``False``, correctness of the input
       will not be checked and type conversion may be omitted, use with care;
 
     - ``echelonize`` -- (default:``False``) if ``True``, ``basis`` will be
@@ -6500,7 +6500,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
     - `` echelonized_basis`` -- (default: ``None``) if not ``None``, must be
       the echelonized basis spanning the same submodule as ``basis``;
 
-    - ``already_echelonized`` -- (default: ``False``) if ``True``, ``basis``
+    - ``already_echelonized`` -- boolean (default: ``False``); if ``True``, ``basis``
       must be already given in the echelonized form.
 
     OUTPUT:

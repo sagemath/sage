@@ -75,7 +75,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         If ``point`` or ``obstruction`` is True, then the output is
         a pair ``(out, S)``, where ``out`` is as above and:
 
-        - if ``point`` is True and ``self`` has a rational point,
+        - if ``point`` is ``True`` and ``self`` has a rational point,
           then ``S`` is a rational point,
 
         - if ``obstruction`` is True, ``self`` has no rational point,
@@ -130,7 +130,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             Traceback (most recent call last):
             ...
             ValueError: Algorithm rnfisnorm cannot be combined with
-            obstruction = True in has_rational_point
+            obstruction = ``True`` in has_rational_point
 
             sage: P.<x> = QQ[]
             sage: L.<b> = NumberField(x^3 - 5)
@@ -266,7 +266,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         if algorithm == 'local':
             if point:
                 raise ValueError("Algorithm 'local' cannot be combined "
-                                 "with point = True in has_rational_point")
+                                 "with point = ``True`` in has_rational_point")
             obs = self.local_obstructions(infinite=True, finite=False,
                                           read_cache=read_cache)
             if obs:
@@ -285,7 +285,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             from sage.modules.free_module_element import vector
             if obstruction:
                 raise ValueError("Algorithm rnfisnorm cannot be combined "
-                                 "with obstruction = True in "
+                                 "with obstruction = ``True`` in "
                                  "has_rational_point")
             D, T = self.diagonal_matrix()
             abc = [D[0, 0], D[1, 1], D[2, 2]]
@@ -391,7 +391,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
 
         If the base field is `\QQ`, then the infinite place is denoted `-1`.
 
-        The parameters ``finite`` and ``infinite`` (both True by default) are
+        The parameters ``finite`` and ``infinite`` (both ``True`` by default) are
         used to specify whether to look at finite and/or infinite places.
         Note that ``finite = True`` involves factorization of the determinant
         of ``self``, hence may be slow.

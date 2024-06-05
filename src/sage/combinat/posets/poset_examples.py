@@ -1407,7 +1407,7 @@ class Posets(metaclass=ClasscallMetaclass):
         INPUT:
 
         - ``lam`` -- a partition
-        - ``dual`` -- (default: ``False``) determines the orientation
+        - ``dual`` -- boolean (default: ``False``); determines the orientation
           of the poset; if ``True``, then it is a join semilattice,
           otherwise it is a meet semilattice
 

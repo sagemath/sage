@@ -197,7 +197,7 @@ class EllipticCurveFactory(UniqueFactory):
     By default, when a rational value of `j` is given, the constructed
     curve is a minimal twist (minimal conductor for curves with that
     `j`-invariant).  This can be changed by setting the optional
-    parameter ``minimal_twist``, which is True by default, to False::
+    parameter ``minimal_twist``, which is ``True`` by default, to False::
 
         sage: EllipticCurve(j=100)
         Elliptic Curve defined by y^2 = x^3 + x^2 + 3392*x + 307888 over Rational Field
@@ -615,7 +615,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
 
     - ``j`` -- an element of some field.
 
-    - ``minimal_twist`` (boolean, default: ``True``) -- If True and ``j``
+    - ``minimal_twist`` (boolean, default: ``True``) -- If ``True`` and ``j``
       is in `\QQ`, the curve returned is a minimal twist, i.e. has
       minimal conductor; when there is more than one curve with
       minimal conductor, the curve returned is the one whose label
@@ -644,7 +644,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
         1
 
     The ``minimal_twist`` parameter (ignored except over `\QQ` and
-    True by default) controls whether or not a minimal twist is
+    ``True`` by default) controls whether or not a minimal twist is
     computed::
 
         sage: EllipticCurve_from_j(100)
@@ -685,7 +685,7 @@ def coefficients_from_j(j, minimal_twist=True):
         [1, 0, 0, 36, 3455]
 
     The ``minimal_twist`` parameter (ignored except over `\QQ` and
-    True by default) controls whether or not a minimal twist is
+    ``True`` by default) controls whether or not a minimal twist is
     computed::
 
         sage: coefficients_from_j(100)

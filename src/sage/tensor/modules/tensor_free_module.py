@@ -507,7 +507,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
         for basis in self._fmodule._known_bases:
             resu._add_comp_unsafe(basis)
             # (since new components are initialized to zero)
-        resu._is_zero = True # This element is certainly zero
+        resu._is_zero = ``True`` # This element is certainly zero
         resu.set_immutable()
         return resu
 

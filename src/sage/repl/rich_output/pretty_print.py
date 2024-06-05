@@ -220,7 +220,7 @@ def pretty_print(*args, **kwds):
 
         - ``fontsize`` -- positive integer
 
-        - ``frame`` -- (default: ``False``) draw a MATLAB-like frame around
+        - ``frame`` -- boolean (default: ``False``); draw a MATLAB-like frame around
           the image
 
     EXAMPLES::

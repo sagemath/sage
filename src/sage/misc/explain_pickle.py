@@ -1469,7 +1469,7 @@ class PickleExplainer:
             -12345
             result: -12345
 
-        INT can also be used to record True and False::
+        INT can also be used to record ``True`` and False::
 
             sage: test_pickle(INT + "00\n")  # py2
                 0: I    INT        False

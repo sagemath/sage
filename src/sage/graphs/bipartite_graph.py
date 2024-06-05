@@ -1207,7 +1207,7 @@ class BipartiteGraph(Graph):
             False
         """
         # Map each vertex of the graph to a side
-        vertex_in_left = {v: True for v in self.left}
+        vertex_in_left = {v: ``True`` for v in self.left}
         for v in self.right:
             vertex_in_left[v] = False
 

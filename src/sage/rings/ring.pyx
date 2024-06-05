@@ -376,7 +376,7 @@ cdef class Ring(ParentWithGens):
 
         - ``*x`` -- list or tuple of generators (or several input arguments)
 
-        - ``coerce`` -- bool (default: ``True``); this must be a keyword
+        - ``coerce`` -- boolean (default: ``True``); this must be a keyword
           argument. Only set it to ``False`` if you are certain that each
           generator is already in the ring.
 
@@ -661,14 +661,14 @@ cdef class Ring(ParentWithGens):
 
         INPUT:
 
-        - ``proof`` -- (default: ``True``) Determines what to do in unknown
+        - ``proof`` -- boolean (default: ``True``); Determines what to do in unknown
           cases
 
         ALGORITHM:
 
         If the parameter ``proof`` is set to ``True``, the returned value is
         correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns True if it can establish that self is
+        to ``False``, the method returns ``True`` if it can establish that self is
         a field and False otherwise.
 
         EXAMPLES::
@@ -820,7 +820,7 @@ cdef class Ring(ParentWithGens):
 
         - ``n`` -- positive integer
 
-        - ``all`` -- bool (default: ``False``); whether to return
+        - ``all`` -- boolean (default: ``False``); whether to return
           a list of all primitive `n`-th roots of unity. If True, raise a ``ValueError``
           if ``self`` is not an integral domain.
 

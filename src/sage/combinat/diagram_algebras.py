@@ -1021,9 +1021,9 @@ class BrauerDiagram(AbstractPartitionDiagram):
 
         INPUT:
 
-        - ``curt`` -- (default: ``True``) if ``True``, then return bijection
-          on free nodes as a one-line notation (standardized to look like a
-          permutation), else, return the honest mapping, a list of pairs
+        - ``curt`` -- boolean (default: ``True``); if ``True``, then return
+          bijection on free nodes as a one-line notation (standardized to look
+          like a permutation), else, return the honest mapping, a list of pairs
           `(i, -j)` describing the bijection on free nodes
 
         EXAMPLES::

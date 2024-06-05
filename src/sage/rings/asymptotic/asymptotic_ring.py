@@ -939,7 +939,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
+        - ``latex`` -- boolean (default: ``False``); a boolean. If set, then
           LaTeX-output is returned.
 
         OUTPUT: string
@@ -1683,7 +1683,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``precision`` -- a non-negative integer.
 
-        - ``check_convergence`` -- (default: ``False``) a boolean. If set,
+        - ``check_convergence`` -- boolean (default: ``False``); a boolean. If set,
           then an additional check on the input is performed to ensure
           that the calculated sum converges.
 
@@ -2190,7 +2190,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``return_inverse_main_term`` -- (default: ``False``) a boolean.
+        - ``return_inverse_main_term`` -- boolean (default: ``False``); a boolean.
           If set, then the pair `(m^{-1},x)` is returned instead of `(m,x)`.
 
         OUTPUT:
@@ -2680,7 +2680,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``values`` -- a list or iterable of values where the comparison
           shall be carried out.
 
-        - ``rescaled`` -- (default: ``True``) determines whether
+        - ``rescaled`` -- boolean (default: ``True``); determines whether
           the difference is divided by the error term of the asymptotic
           expansion.
 
@@ -2839,7 +2839,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``values`` -- a list or iterable of values where the comparison
           shall be carried out.
 
-        - ``rescaled`` -- (default: ``True``) determines whether
+        - ``rescaled`` -- boolean (default: ``True``); determines whether
           the difference is divided by the error term of the asymptotic
           expansion.
 
@@ -3844,10 +3844,10 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         - ``data`` -- an object representing the element to be
           initialized.
 
-        - ``simplify`` -- (default: ``True``) if set, then the constructed
+        - ``simplify`` -- boolean (default: ``True``); if set, then the constructed
           element is simplified (terms are absorbed) automatically.
 
-        - ``convert`` -- (default: ``True``) passed on to the element
+        - ``convert`` -- boolean (default: ``True``); passed on to the element
           constructor.  If set, then the ``summands`` are converted to
           the asymptotic ring (the parent of this expansion). If not,
           then the summands are taken as they are. In that case, the
@@ -4255,7 +4255,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         - ``precision`` -- (default: ``None``) an integer. If ``None``, then
           the default precision of the asymptotic ring is used.
 
-        - ``return_singular_expansions`` -- (default: ``False``) a boolean.
+        - ``return_singular_expansions`` -- boolean (default: ``False``); a boolean.
           If set, the singular expansions are also returned.
 
         - ``error_term`` -- (default: ``None``) an asymptotic expansion.

@@ -1411,7 +1411,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         INPUT:
 
         - ``L`` -- a number field
-        - ``element`` -- (default: ``False``) boolean whether to also output
+        - ``element`` -- boolean (default: ``False``); whether to also output
           an element of which ``self`` is a norm
         - ``proof`` -- If ``True``, then the output is correct unconditionally.
           If ``False``, then the output assumes GRH.
@@ -1890,12 +1890,12 @@ cdef class Rational(sage.structure.element.FieldElement):
            an exact square root; otherwise returns a numerical square root if
            necessary, to the given bits of precision.
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
+        -  ``extend`` -- boolean (default: ``True``); if ``True``, return a
            square root in an extension ring, if necessary. Otherwise, raise a
            ``ValueError`` if the square is not in the base ring. Ignored if ``prec``
            is not ``None``.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return all
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return all
            square roots of ``self`` (a list of length 0, 1, or 2).
 
         EXAMPLES::
@@ -4017,7 +4017,7 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
         remainder_is_zero = True
 
     # Now divide by b to get q = trunc(a/b / 2^shift).
-    # remainder_is_zero is True if and only if no truncation occurred
+    # remainder_is_zero is ``True`` if and only if no truncation occurred
     # (in neither division).
     mpz_tdiv_qr(q, r, q, b)
     if remainder_is_zero:

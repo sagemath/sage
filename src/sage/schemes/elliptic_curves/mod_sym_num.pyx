@@ -918,7 +918,7 @@ cdef class ModularSymbolNumerical:
 
         - ``prec`` -- an integer (default 20)
 
-        - ``use_twist`` -- True (default) allows to use a
+        - ``use_twist`` -- ``True`` (default) allows to use a
           quadratic twist of the curve to lower the conductor.
 
         OUTPUT: a real number

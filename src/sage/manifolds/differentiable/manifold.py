@@ -1251,7 +1251,7 @@ class DifferentiableManifold(TopologicalManifold):
           identity map (case of vector fields *on* `M`), otherwise
           ``dest_map`` must be a
           :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
-        - ``force_free`` -- (default: ``False``) if set to ``True``, force
+        - ``force_free`` -- boolean (default: ``False``); if set to ``True``, force
           the construction of a *free* module (this implies that `N` is
           parallelizable)
 
@@ -2991,7 +2991,7 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismFieldParal`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: ``True``) -- if set to True, the inverse
+        - ``compute_inverse`` boolean (default: ``True``); -- if set to True, the inverse
           automorphism is computed and the change from basis `(f_i)` to `(e_i)`
           is set to it in the internal dictionary ``self._frame_changes``
 

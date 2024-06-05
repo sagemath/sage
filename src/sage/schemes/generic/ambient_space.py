@@ -19,7 +19,7 @@ from sage.schemes.generic.scheme import Scheme
 
 def is_AmbientSpace(x):
     """
-    Return True if `x` is an ambient space.
+    Return ``True`` if `x` is an ambient space.
 
     EXAMPLES::
 

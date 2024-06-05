@@ -1398,7 +1398,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         - ``S`` -- a set of primes of the coefficient ring
 
-        - ``proof`` -- if False, assume the GRH in computing the class group
+        - ``proof`` -- if ``False``, assume the GRH in computing the class group
 
         OUTPUT:
 
@@ -1570,7 +1570,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         INPUT:
 
-        - ``proof`` -- if False, assume the GRH in computing the class group
+        - ``proof`` -- if ``False``, assume the GRH in computing the class group
 
         OUTPUT:
 
@@ -1681,7 +1681,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         - ``S`` -- a set of primes of the base field
 
-        - ``proof`` -- if False, assume the GRH in computing the class group
+        - ``proof`` -- if ``False``, assume the GRH in computing the class group
 
         OUTPUT:
 
@@ -1776,7 +1776,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         INPUT:
 
-        - ``proof`` -- if False, assume the GRH in computing the class group
+        - ``proof`` -- if ``False``, assume the GRH in computing the class group
 
         OUTPUT:
 
@@ -1859,7 +1859,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         - ``m`` -- a positive integer
 
-        - ``proof`` -- if False, assume the GRH in computing the class group
+        - ``proof`` -- if ``False``, assume the GRH in computing the class group
 
         OUTPUT:
 

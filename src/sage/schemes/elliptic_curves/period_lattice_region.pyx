@@ -157,7 +157,7 @@ cdef class PeriodicRegion:
 
         OUTPUT:
 
-        True or False according to whether the condition holds for all
+        ``True`` or False according to whether the condition holds for all
         lines on the boundary.
 
         EXAMPLES::

@@ -709,7 +709,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
            embedding is that which has a 1 in the i-th coordinate, numbered
            from 0.
 
-        -  ``PP`` -- (default: None) ambient projective space, i.e.,
+        -  ``PP`` -- (default: ``None``) ambient projective space, i.e.,
            codomain of morphism; this is constructed if it is not
            given.
 

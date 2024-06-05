@@ -1820,7 +1820,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``subdivide`` -- (default: ``False``) whether to subdivide the
+        - ``subdivide`` -- boolean (default: ``False``); whether to subdivide the
           the differential matrices
 
         EXAMPLES::
@@ -1948,7 +1948,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``subdivide`` -- (default: ``False``) whether to subdivide the
+        - ``subdivide`` -- boolean (default: ``False``); whether to subdivide the
           the differential matrices
 
         .. TODO::

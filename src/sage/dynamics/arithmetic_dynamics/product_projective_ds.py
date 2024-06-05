@@ -127,7 +127,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``n`` -- a positive integer
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``);
 
         OUTPUT: a point in ``self.codomain()``
 
@@ -184,9 +184,9 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean
+        - ``check`` -- boolean (default: ``True``);
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``);
 
 
         OUTPUT: a list of points in ``self.codomain()``

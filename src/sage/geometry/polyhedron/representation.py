@@ -440,7 +440,7 @@ class Hrepresentation(PolyhedronRepresentation):
 
     def is_H(self):
         """
-        Return True if the object is part of a H-representation
+        Return ``True`` if the object is part of a H-representation
         (inequality or equation).
 
         EXAMPLES::
@@ -454,7 +454,7 @@ class Hrepresentation(PolyhedronRepresentation):
 
     def is_inequality(self):
         """
-        Return True if the object is an inequality of the H-representation.
+        Return ``True`` if the object is an inequality of the H-representation.
 
         EXAMPLES::
 
@@ -467,7 +467,7 @@ class Hrepresentation(PolyhedronRepresentation):
 
     def is_equation(self):
         """
-        Return True if the object is an equation of the H-representation.
+        Return ``True`` if the object is an equation of the H-representation.
 
         EXAMPLES::
 
@@ -750,7 +750,7 @@ class Inequality(Hrepresentation):
 
     def is_inequality(self):
         """
-        Return True since this is, by construction, an inequality.
+        Return ``True`` since this is, by construction, an inequality.
 
         EXAMPLES::
 
@@ -1167,7 +1167,7 @@ class Vrepresentation(PolyhedronRepresentation):
 
     def is_V(self):
         """
-        Return True if the object is part of a V-representation
+        Return ``True`` if the object is part of a V-representation
         (a vertex, ray, or line).
 
         EXAMPLES::
@@ -1181,7 +1181,7 @@ class Vrepresentation(PolyhedronRepresentation):
 
     def is_vertex(self):
         """
-        Return True if the object is a vertex of the V-representation.
+        Return ``True`` if the object is a vertex of the V-representation.
         This method is over-ridden by the corresponding method in the
         derived class Vertex.
 
@@ -1200,7 +1200,7 @@ class Vrepresentation(PolyhedronRepresentation):
 
     def is_ray(self):
         """
-        Return True if the object is a ray of the V-representation.
+        Return ``True`` if the object is a ray of the V-representation.
         This method is over-ridden by the corresponding method in the
         derived class Ray.
 
@@ -1220,7 +1220,7 @@ class Vrepresentation(PolyhedronRepresentation):
 
     def is_line(self):
         """
-        Return True if the object is a line of the V-representation.
+        Return ``True`` if the object is a line of the V-representation.
         This method is over-ridden by the corresponding method in the
         derived class Line.
 
@@ -1480,7 +1480,7 @@ class Ray(Vrepresentation):
 
     def is_ray(self):
         """
-        Tests if this object is a ray.  Always True by construction.
+        Tests if this object is a ray.  Always ``True`` by construction.
 
         EXAMPLES::
 

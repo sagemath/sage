@@ -758,8 +758,8 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: ``True``)
-        - ``atomic_coefficients`` -- bool (default: ``True``)
+        - ``atomic_exponents`` -- boolean (default: ``True``)
+        - ``atomic_coefficients`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -851,8 +851,8 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: ``True``)
-        - ``atomic_coefficients`` -- bool (default: ``True``)
+        - ``atomic_exponents`` -- boolean (default: ``True``)
+        - ``atomic_coefficients`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -2562,7 +2562,7 @@ cdef class ETuple:
 
         INPUT:
 
-        - ``sort`` -- (default: ``False``) if ``True`` a sorted list is
+        - ``sort`` -- boolean (default: ``False``); if ``True`` a sorted list is
           returned; if ``False`` an unsorted list is returned
 
         EXAMPLES::
@@ -2604,7 +2604,7 @@ cdef class ETuple:
 
         INPUT:
 
-        - ``sort`` -- (default: ``True``) if ``True`` the values are sorted
+        - ``sort`` -- boolean (default: ``True``); if ``True`` the values are sorted
           by their indices; otherwise the values are returned unsorted
 
         EXAMPLES::

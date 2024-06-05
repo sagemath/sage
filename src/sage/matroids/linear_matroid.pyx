@@ -216,7 +216,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     - ``ring`` -- (default: ``None``) the desired base ring of the matrix. If
       the base ring is different, an attempt will be made to create a new
       matrix with the correct base ring.
-    - ``keep_initial_representation`` -- (default: ``True``) decides whether
+    - ``keep_initial_representation`` -- boolean (default: ``True``); decides whether
       or not an internal copy of the input matrix should be preserved. This
       can help to see the structure of the matroid (e.g. in the case of
       graphic matroids), and makes it easier to look at extensions. However,
@@ -494,7 +494,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
           the representation is such that a basis `B'` that maximally
           intersects `B` is an identity matrix.
 
-        - ``reduced`` -- (default: ``False``) when ``True``, return a reduced
+        - ``reduced`` -- boolean (default: ``False``); when ``True``, return a reduced
           matrix `D` (so `[I\ \  D]` is a representation of the matroid).
           Otherwise return a full representation matrix.
 
@@ -2323,7 +2323,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         INPUT:
 
         - ``F`` -- (default: ``self.groundset()``) a subset of the groundset.
-        - ``simple`` -- (default: ``False``) a boolean variable.
+        - ``simple`` -- boolean (default: ``False``); a boolean variable.
         - ``fundamentals`` -- (default: ``None``) a set elements of the base
           ring.
 
@@ -2423,7 +2423,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         INPUT:
 
         - ``F`` -- (default: ``self.groundset()``) a subset of the groundset.
-        - ``cosimple`` -- (default: ``False``) a boolean variable.
+        - ``cosimple`` -- boolean (default: ``False``); a boolean variable.
         - ``fundamentals`` -- (default: ``None``) a set elements of the base
           ring.
 
@@ -2477,7 +2477,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         - ``element`` -- (default: ``None``) the name of the new element of
           the groundset.
         - ``F`` -- (default: ``None``) a subset of the ground set.
-        - ``simple`` -- (default: ``False``) a boolean variable.
+        - ``simple`` -- boolean (default: ``False``); a boolean variable.
         - ``fundamentals`` -- (default: ``None``) a set elements of the base
           ring.
 
@@ -2545,7 +2545,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         - ``element`` -- (default: ``None``) the name of the new element of
           the groundset.
         - ``F`` -- (default: ``None``) a subset of the ground set.
-        - ``cosimple`` -- (default: ``False``) a boolean variable.
+        - ``cosimple`` -- boolean (default: ``False``); a boolean variable.
         - ``fundamentals`` -- (default: ``None``) a set elements of the base
           ring.
 
@@ -2664,7 +2664,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+        - ``certificate`` -- boolean (default: ``False``); a boolean; if ``True``,
           then return ``True, None`` if the matroid is 3-connected,
           and ``False,`` `X` otherwise, where `X` is a `<3`-separation
 
@@ -2743,7 +2743,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+        - ``certificate`` -- boolean (default: ``False``); a boolean; if ``True``,
           then return ``True, None`` if the matroid is 4-connected,
           and ``False,`` `X` otherwise, where `X` is a `<4`-separation
 
@@ -3020,7 +3020,7 @@ cdef class BinaryMatroid(LinearMatroid):
       number of columns of ``matrix`` or the number of rows plus the number
       of columns of ``reduced_matrix``.
     - ``ring`` -- (default: ``None``) ignored.
-    - ``keep_initial_representation`` -- (default: ``True``) decides whether
+    - ``keep_initial_representation`` -- boolean (default: ``True``); decides whether
       or not an internal copy of the input matrix should be preserved. This
       can help to see the structure of the matroid (e.g. in the case of
       graphic matroids), and makes it easier to look at extensions. However,
@@ -4051,7 +4051,7 @@ cdef class TernaryMatroid(LinearMatroid):
       number of columns of ``matrix`` or the number of rows plus the number
       of columns of ``reduced_matrix``.
     - ``ring`` -- (default: ``None``) ignored.
-    - ``keep_initial_representation`` -- (default: ``True``) boolean. Decides
+    - ``keep_initial_representation`` -- boolean (default: ``True``);. Decides
       whether or not an internal copy of the input matrix should be preserved.
       This can help to see the structure of the matroid (e.g. in the case of
       graphic matroids), and makes it easier to look at extensions. However,
@@ -4921,7 +4921,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
       the number of columns of ``matrix`` or the number of rows plus the
       number of columns of ``reduced_matrix``.
     - ``ring`` -- (default: ``None``) must be a copy of `\GF{4}`.
-    - ``keep_initial_representation`` -- (default: ``True``) boolean. Decides
+    - ``keep_initial_representation`` -- boolean (default: ``True``);. Decides
       whether or not an internal copy of the input matrix should be preserved.
       This can help to see the structure of the matroid (e.g. in the case of
       graphic matroids), and makes it easier to look at extensions. However,
@@ -5623,7 +5623,7 @@ cdef class RegularMatroid(LinearMatroid):
       number of columns of ``matrix`` or the number of rows plus the number of
       columns of ``reduced_matrix``.
     - ``ring`` -- (default: ``None``) ignored.
-    - ``keep_initial_representation`` -- (default: ``True``) boolean. Decides
+    - ``keep_initial_representation`` -- boolean (default: ``True``);. Decides
       whether or not an internal copy of the input matrix should be preserved.
       This can help to see the structure of the matroid (e.g. in the case of
       graphic matroids), and makes it easier to look at extensions. However,

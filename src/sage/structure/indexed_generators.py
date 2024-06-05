@@ -87,13 +87,13 @@ class IndexedGenerators():
     - ``sorting_key`` -- a key function (default: ``lambda x: x``),
       to use for sorting elements in the output of elements
 
-    - ``sorting_reverse`` -- bool (default: ``False``), if ``True``
+    - ``sorting_reverse`` -- boolean (default: ``False``), if ``True``
       sort elements in reverse order in the output of elements
 
-    - ``string_quotes`` -- bool (default: ``True``), if ``True`` then
+    - ``string_quotes`` -- boolean (default: ``True``), if ``True`` then
       display string indices with quotes
 
-    - ``iterate_key`` -- bool (default: ``False``) iterate through
+    - ``iterate_key`` -- boolean (default: ``False``) iterate through
       the elements of the key and print the result as comma separated
       objects for string output
 
@@ -144,7 +144,7 @@ class IndexedGenerators():
 
         # printing options for elements (set when initializing self).
         # This includes self._repr_option_bracket (kept for backwards
-        # compatibility, declared to be True by default, needs to be
+        # compatibility, declared to be ``True`` by default, needs to be
         # overridden explicitly).
         self._print_options = {'prefix': prefix,
                                'names': None,
@@ -161,7 +161,7 @@ class IndexedGenerators():
                                'iterate_key': False}
         # 'bracket': its default value here is None, meaning that
         # the value of self._repr_option_bracket is used; the default
-        # value of that attribute is True -- see immediately before
+        # value of that attribute is ``True`` -- see immediately before
         # the method _repr_generator.  If 'bracket' is any value
         # except None, then it overrides the value of
         # self._repr_option_bracket.  Future users might consider

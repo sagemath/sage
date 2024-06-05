@@ -478,7 +478,7 @@ class InstanceTester(unittest.TestCase):
           time, or the result of :meth:`.some_elements` if no elements
           were specified.
 
-        - ``repeat`` -- integer (default: None).  If given, instead returns
+        - ``repeat`` -- integer (default: ``None``).  If given, instead returns
           a list of tuples of length ``repeat`` from ``S``.
 
         OUTPUT:

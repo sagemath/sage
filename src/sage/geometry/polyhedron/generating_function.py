@@ -60,7 +60,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
       :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
       (see also :mod:`sage.geometry.polyhedron.constructor`)
 
-    - ``split`` -- (default: ``False``) a boolean or list
+    - ``split`` -- boolean (default: ``False``); a boolean or list
 
       - ``split=False`` computes the generating function directly,
         without any splitting.
@@ -98,13 +98,13 @@ def generating_function_of_integral_points(polyhedron, split=False,
       both at the same time.
 
     - ``Factorization_sort`` (default: ``False``) and
-      ``Factorization_simplify`` (default: ``True``) -- booleans
+      ``Factorization_simplify`` boolean (default: ``True``); -- booleans
 
       These are passed on to
       :class:`sage.structure.factorization.Factorization` when creating
       the result.
 
-    - ``sort_factors`` -- (default: ``False``) a boolean
+    - ``sort_factors`` -- boolean (default: ``False``); a boolean
 
       If set, then
       the factors of the output are sorted such that the numerator is
@@ -1529,7 +1529,7 @@ def _compositions_mod(u, m, r=0, multidimensional=False):
 
     - ``m`` -- the modulus as a positive integer
 
-    - ``multidimensional`` -- (default: ``False``) a boolean
+    - ``multidimensional`` -- boolean (default: ``False``); a boolean
 
     If ``multidimensional=False``:
 

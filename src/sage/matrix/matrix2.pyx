@@ -1037,7 +1037,7 @@ cdef class Matrix(Matrix1):
 
         -  ``B`` -- a matrix
 
-        -  ``check`` -- bool (default: ``True``); if False, if there
+        -  ``check`` -- boolean (default: ``True``); if ``False``, if there
            is no solution this function will not detect that fact.
 
 
@@ -1860,7 +1860,7 @@ cdef class Matrix(Matrix1):
         # number of non-zero coefficients and to see whether or not it contains
         # only elements in {0,1}... but this is not always needed
         if complement or use_complement is None or algorithm == "Godsil":
-            # z2 flag is True if all coefficients belong to {0,1}
+            # z2 flag is ``True`` if all coefficients belong to {0,1}
             z2 = True
             num_ones = 1
             for i in range(m):
@@ -2331,7 +2331,7 @@ cdef class Matrix(Matrix1):
           * ``'definition'`` -- using the definition given by perfect
             matchings
 
-        - ``check`` (default: ``True``) -- boolean determining whether to
+        - ``check`` boolean (default: ``True``); -- boolean determining whether to
           check ``self`` for alternatingness and squareness. This has to
           be set to ``False`` if ``self`` is defined over a non-discrete
           ring.
@@ -2700,7 +2700,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``sparse`` -- True to make the output a sparse matrix; default: ``False``
+        - ``sparse`` -- ``True`` to make the output a sparse matrix; default: ``False``
 
         -  ``phi`` -- arbitrary Python function or callable object
 
@@ -5508,7 +5508,7 @@ cdef class Matrix(Matrix1):
            iterating the action of self on a vector. 'kernel': naively just
            compute `ker(f_i(A))` for each factor `f_i`.
 
-        -  ``dual`` -- bool (default: ``False``): If True, also
+        -  ``dual`` -- boolean (default: ``False``): If True, also
            returns the corresponding decomposition of V under the action of
            the transpose of A. The factors are guaranteed to correspond.
 
@@ -5526,12 +5526,12 @@ cdef class Matrix(Matrix1):
 
 
         - ``Sequence`` -- list of pairs (V,t), where V is a vector
-          spaces and t is a bool, and t is True exactly when the
+          spaces and t is a bool, and t is ``True`` exactly when the
           charpoly of self on V is irreducible.
 
 
         - (optional) list -- list of pairs (W,t), where W is a vector
-          space and t is a bool, and t is True exactly when the
+          space and t is a bool, and t is ``True`` exactly when the
           charpoly of the transpose of self on W is irreducible.
 
         EXAMPLES::
@@ -5719,7 +5719,7 @@ cdef class Matrix(Matrix1):
         """
         Suppose the right action of self on M leaves M invariant. Return
         the decomposition of M as a list of pairs (W, is_irred) where
-        is_irred is True if the charpoly of self acting on the factor W is
+        is_irred is ``True`` if the charpoly of self acting on the factor W is
         irreducible.
 
         Additional inputs besides M are passed onto the decomposition
@@ -6445,10 +6445,10 @@ cdef class Matrix(Matrix1):
             sage: B.eigenspaces_left(algebraic_multiplicity='garbage')
             Traceback (most recent call last):
             ...
-            ValueError: algebraic_multiplicity keyword must be True or False
+            ValueError: algebraic_multiplicity keyword must be ``True`` or False
         """
         if algebraic_multiplicity not in [True, False]:
-            msg = 'algebraic_multiplicity keyword must be True or False'
+            msg = 'algebraic_multiplicity keyword must be ``True`` or False'
             raise ValueError(msg.format(algebraic_multiplicity))
         if not self.is_square():
             msg = 'matrix must be square, not {0} x {1}'
@@ -6698,10 +6698,10 @@ cdef class Matrix(Matrix1):
             sage: B.eigenspaces_right(algebraic_multiplicity='garbage')
             Traceback (most recent call last):
             ...
-            ValueError: algebraic_multiplicity keyword must be True or False
+            ValueError: algebraic_multiplicity keyword must be ``True`` or False
         """
         if algebraic_multiplicity not in [True, False]:
-            msg = 'algebraic_multiplicity keyword must be True or False'
+            msg = 'algebraic_multiplicity keyword must be ``True`` or False'
             raise ValueError(msg.format(algebraic_multiplicity))
         if not self.is_square():
             msg = 'matrix must be square, not {0} x {1}'
@@ -8420,10 +8420,10 @@ cdef class Matrix(Matrix1):
             sage: A.extended_echelon_form(subdivide='junk')
             Traceback (most recent call last):
             ...
-            TypeError: subdivide must be True or False, not junk
+            TypeError: subdivide must be ``True`` or False, not junk
         """
         if subdivide not in [True, False]:
-            raise TypeError("subdivide must be True or False, not %s" % subdivide)
+            raise TypeError("subdivide must be ``True`` or False, not %s" % subdivide)
         ident = self.matrix_space(self.nrows(), self.nrows()).one()
         E = self.augment(ident)
         extended = E.echelon_form(**kwds)
@@ -8550,7 +8550,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``check`` -- (default: ``False``) If ``True`` return a tuple of
+        - ``check`` -- boolean (default: ``False``); If ``True`` return a tuple of
           the maximal matrix and the permutations taking ``self``
           to the maximal matrix.
           If ``False``, return only the maximal matrix.
@@ -9534,7 +9534,7 @@ cdef class Matrix(Matrix1):
 
     def is_one(self):
         """
-        Return True if this matrix is the identity matrix.
+        Return ``True`` if this matrix is the identity matrix.
 
         EXAMPLES::
 
@@ -9555,7 +9555,7 @@ cdef class Matrix(Matrix1):
 
     def is_scalar(self, a=None):
         """
-        Return True if this matrix is a scalar matrix.
+        Return ``True`` if this matrix is a scalar matrix.
 
         INPUT:
 
@@ -12362,7 +12362,7 @@ cdef class Matrix(Matrix1):
             sage: A.is_similar(B, transformation='junk')
             Traceback (most recent call last):
             ...
-            ValueError: transformation keyword must be True or False
+            ValueError: transformation keyword must be ``True`` or False
 
         Mismatched sizes raise an error::
 
@@ -12387,7 +12387,7 @@ cdef class Matrix(Matrix1):
         if not isinstance(other, Matrix):
             raise TypeError('similarity requires a matrix as an argument, not {0}'.format(other))
         if transformation not in [True, False]:
-            raise ValueError('transformation keyword must be True or False')
+            raise ValueError('transformation keyword must be ``True`` or False')
         if not self.is_square() or not other.is_square():
             raise ValueError('similarity only makes sense for square matrices')
         if self.nrows() != other.nrows():
@@ -14555,7 +14555,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-          * ``classical`` -- (default: ``False``) whether or not to
+          * ``classical`` -- boolean (default: ``False``); whether or not to
             attempt a classical non-block `LDL^{T}` factorization
             with no row/column swaps.
 
@@ -14880,7 +14880,7 @@ cdef class Matrix(Matrix1):
             return False
 
         if self._nrows == 0:
-            return True  # vacuously
+            return ``True``  # vacuously
 
         cdef list d
         _, _, d = self._block_ldlt(False)
@@ -15046,7 +15046,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
         - ``self`` -- a matrix
-        - ``certificate`` -- (default: ``False``) return the
+        - ``certificate`` -- boolean (default: ``False``); return the
           lower-triangular and diagonal parts of the :meth:`block_ldlt`
           factorization when the matrix is positive-definite. Deprecated.
 
@@ -16397,10 +16397,10 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-            - ``include_zero_rows`` -- bool (default: ``True``); if False
+            - ``include_zero_rows`` -- boolean (default: ``True``); if False
               the zero rows in the output matrix are deleted.
 
-            - ``transformation`` -- bool (default: ``False``) a matrix U such that U*self == H.
+            - ``transformation`` -- boolean (default: ``False``) a matrix U such that U*self == H.
 
         OUTPUT:
 
@@ -16678,9 +16678,9 @@ cdef class Matrix(Matrix1):
         if basis:
             from sage.matrix.constructor import identity_matrix
             U = identity_matrix(R, n)  # transformation matrix
-        # parity switch, True iff working on transpose
-        # if False, mimic row operations only on U
-        # if True,  mimic column operations only on U
+        # parity switch, ``True`` iff working on transpose
+        # if ``False``, mimic row operations only on U
+        # if ``True``,  mimic column operations only on U
         cdef bint trans = False, zigging
         s = 0  # index of top row of current block
         c = 0  # index of current row of current block
@@ -17060,13 +17060,13 @@ cdef class Matrix(Matrix1):
             sage: A.zigzag_form(transformation='junk')
             Traceback (most recent call last):
             ...
-            ValueError: 'transformation' keyword must be True or False, not junk
+            ValueError: 'transformation' keyword must be ``True`` or False, not junk
 
             sage: A = matrix(QQ, 2, range(4))
             sage: A.zigzag_form(subdivide='garbage')
             Traceback (most recent call last):
             ...
-            ValueError: 'subdivide' keyword must be True or False, not garbage
+            ValueError: 'subdivide' keyword must be ``True`` or False, not garbage
         """
         R = self.base_ring()
         if not self.is_square():
@@ -17074,9 +17074,9 @@ cdef class Matrix(Matrix1):
         if not (R in _Fields and R.is_exact()):
             raise TypeError("matrix entries must come from an exact field, not {0}".format(R))
         if transformation not in [True, False]:
-            raise ValueError("'transformation' keyword must be True or False, not {0}".format(transformation))
+            raise ValueError("'transformation' keyword must be ``True`` or False, not {0}".format(transformation))
         if subdivide not in [True, False]:
-            raise ValueError("'subdivide' keyword must be True or False, not {0}".format(subdivide))
+            raise ValueError("'subdivide' keyword must be ``True`` or False, not {0}".format(subdivide))
         if transformation:
             U, Z, polys, corners = self._zigzag_form(basis=True)
         else:
@@ -17448,7 +17448,7 @@ cdef class Matrix(Matrix1):
             sage: A.rational_form(subdivide='garbage')
             Traceback (most recent call last):
             ...
-            ValueError: 'subdivide' keyword must be True or False, not garbage
+            ValueError: 'subdivide' keyword must be ``True`` or False, not garbage
         """
         from sage.arith.misc import GCD as gcd
         import sage.rings.polynomial.polynomial_ring_constructor
@@ -17463,7 +17463,7 @@ cdef class Matrix(Matrix1):
         if format not in ['right', 'bottom', 'left', 'top', 'invariants']:
             raise ValueError("'format' keyword must be 'right', 'bottom', 'left', 'top' or 'invariants', not {0}".format(format))
         if subdivide not in [True, False]:
-            raise ValueError("'subdivide' keyword must be True or False, not {0}".format(subdivide))
+            raise ValueError("'subdivide' keyword must be ``True`` or False, not {0}".format(subdivide))
 
         _, polys, corners = self._zigzag_form(basis=False)
         cdef Py_ssize_t k = len(polys), j, i

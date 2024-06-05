@@ -857,7 +857,7 @@ class EndomorphismSubring(Homspace):
         -  ``other`` -- another endomorphism subring of the
            same abelian variety
 
-        -  ``check`` -- bool (default: ``True``); whether to do some
+        -  ``check`` -- boolean (default: ``True``); whether to do some
            type and other consistency checks
 
         EXAMPLES::

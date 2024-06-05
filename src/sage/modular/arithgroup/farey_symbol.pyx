@@ -355,7 +355,7 @@ cdef class Farey:
         - ``M`` -- An element `M` of `\SL_2(\ZZ)`.
         - ``output`` -- (default: ``'standard'``) Should be one of ``'standard'``,
           ``'syllables'``, ``'gens'``.
-        - ``check`` -- (default: ``True``) Whether to check for correct input and output.
+        - ``check`` -- boolean (default: ``True``); Whether to check for correct input and output.
 
         OUTPUT:
 
@@ -917,7 +917,7 @@ cdef class Farey:
         - ``color`` -- (default: 'lightgray') fill color; fill
           color for odd part of Dedekind tesselation.
 
-        - ``show_pairing`` -- boolean (default: ``True``) flag for pairing
+        - ``show_pairing`` -- boolean (default: ``True``); flag for pairing
 
         - ``tesselation`` -- (default: 'Dedekind') The type of
           hyperbolic tesselation which is one of

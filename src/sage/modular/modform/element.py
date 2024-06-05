@@ -286,7 +286,7 @@ class ModularForm_abstract(ModuleElement):
 
     def __ne__(self, other):
         """
-        Return True if ``self != other``.
+        Return ``True`` if ``self != other``.
 
         EXAMPLES::
 
@@ -1444,7 +1444,7 @@ class Newform(ModularForm_abstract):
 
     def __eq__(self, other):
         """
-        Return True if self equals other, and False otherwise.
+        Return ``True`` if self equals other, and False otherwise.
 
         EXAMPLES::
 
@@ -3674,7 +3674,7 @@ class GradedModularFormElement(ModuleElement):
 
     def is_homogeneous(self):
         r"""
-        Return True if the graded modular form is homogeneous, i.e. if it is a modular forms of a certain weight.
+        Return ``True`` if the graded modular form is homogeneous, i.e. if it is a modular forms of a certain weight.
 
         An alias of this method is ``is_modular_form``
 
@@ -3782,7 +3782,7 @@ class GradedModularFormElement(ModuleElement):
 
         - ``names`` -- a list or tuple of names (strings), or a comma separated string. Correspond
           to the names of the variables;
-        - ``gens`` -- (default: None) a list of generator of the parent of ``self``. If set to ``None``,
+        - ``gens`` -- (default: ``None``) a list of generator of the parent of ``self``. If set to ``None``,
           the list returned by :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead
 

@@ -524,7 +524,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         """
         from .chart_func import ChartFunctionRing
         if isinstance(other, SymbolicRing):
-            return True  # coercion from the base ring (multiplication by the
+            return ``True``  # coercion from the base ring (multiplication by the
                          # algebra unit, i.e. self.one())
                          # cf. ScalarField._lmul_() for the implementation of
                          # the coercion map

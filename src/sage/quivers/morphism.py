@@ -1131,7 +1131,7 @@ class QuiverRepHom(CallMorphism):
 
         - ``maps`` -- :class:`QuiverRepHom` or list of :class:`QuiverRepHom`'s
 
-        - ``return_maps`` -- bool (default: ``False``). If ``False``, then
+        - ``return_maps`` -- boolean (default: ``False``). If ``False``, then
           the return value is a :class:`QuiverRepHom` which is the direct sum
           of ``self`` with the :class:`QuiverRepHoms` in ``maps``.
           If ``True``, then the return value is a tuple of length either 3

@@ -273,7 +273,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     - ``mat`` -- a 2D matrix or array
 
-    - ``xrange`` -- (default: None) tuple of the horizontal extent
+    - ``xrange`` -- (default: ``None``) tuple of the horizontal extent
       ``(xmin, xmax)`` of the bounding box in which to draw the matrix.  The
       image is stretched individually along x and y to fill the box.
 
@@ -284,7 +284,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
       If the matrix is sparse, this keyword is ignored.
 
-    - ``yrange`` -- (default: None) tuple of the vertical extent
+    - ``yrange`` -- (default: ``None``) tuple of the vertical extent
       ``(ymin, ymax)`` of the bounding box in which to draw the matrix.
       See ``xrange`` for details.
 
@@ -325,7 +325,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     - ``vmax`` -- The maximum value (values above this are set to this value)
 
-    - ``flip_y`` -- (default: ``True``) boolean.  If False, the first row of the
+    - ``flip_y`` -- boolean (default: ``True``);.  If False, the first row of the
       matrix is on the bottom of the graph.  Otherwise, the first row is on the
       top of the graph.
 
@@ -511,7 +511,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         Graphics object consisting of 1 graphics primitive
 
     The title position is adjusted upwards if the ``flip_y`` keyword is set
-    to True (this is the default).::
+    to ``True`` (this is the default).::
 
         sage: matrix_plot(identity_matrix(50), title='identity')
         Graphics object consisting of 1 graphics primitive

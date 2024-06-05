@@ -2144,7 +2144,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``unique`` -- boolean (default: ``True``) if set to ``False``
+        - ``unique`` -- boolean (default: ``True``); if set to ``False``
           it is only checked if ``self`` is among the recovered items
 
         EXAMPLES::
@@ -2210,7 +2210,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``); to suppress
           the message printed on the invocation
 
         EXAMPLES::
@@ -2647,7 +2647,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``unique`` -- boolean (default: ``True``) see
+        - ``unique`` -- boolean (default: ``True``); see
           :meth:`KnotInfoBase.is_recoverable`
         - ``max_samples`` -- non negative integer or ``infinity`` (optional,
           default ``8``) limits the number of items to check (random sample).
@@ -2705,7 +2705,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``); to suppress
           the message printed on the invocation
 
         EXAMPLES::

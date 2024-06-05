@@ -461,7 +461,7 @@ class OpenInterval(DifferentiableManifold):
         - ``name`` -- (default: ``None``) name given to the point
         - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           point; if none is provided, the LaTeX symbol is set to ``name``
-        - ``check_coords`` -- (default: ``True``) determines whether ``coords``
+        - ``check_coords`` -- boolean (default: ``True``); determines whether ``coords``
           are valid coordinates for the chart ``chart``; for symbolic
           coordinates, it is recommended to set ``check_coords`` to ``False``
 

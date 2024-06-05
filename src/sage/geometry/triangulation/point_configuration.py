@@ -267,7 +267,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
     # we cache the output of _have_TOPCOM() in this class variable
     _have_TOPCOM_cached = None
 
-    # whether to use TOPCOM. Will be set to True or False during
+    # whether to use TOPCOM. Will be set to ``True`` or False during
     # initialization. All implementations should check this boolean
     # variable to decide whether to call TOPCOM or not
     _use_TOPCOM = None

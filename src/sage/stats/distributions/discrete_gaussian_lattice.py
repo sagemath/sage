@@ -428,7 +428,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
           set to be the maximal possible such that `\Sigma - rBB^T` is positive
           definite
         - ``precision`` -- bit precision `\geq 53`.
-        - ``sigma_basis`` -- (default: ``False``) When set, ``sigma`` is treated as
+        - ``sigma_basis`` -- boolean (default: ``False``); When set, ``sigma`` is treated as
             a (row) basis, i.e. the covariance matrix is computed by `\Sigma = SS^T`
 
         EXAMPLES::

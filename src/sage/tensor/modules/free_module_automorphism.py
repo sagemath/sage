@@ -56,7 +56,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
     - ``name`` -- (default: ``None``) name given to the automorphism
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
       automorphism; if none is provided, the LaTeX symbol is set to ``name``
-    - ``is_identity`` -- (default: ``False``) determines whether the
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
       constructed object is the identity automorphism, i.e. the identity map
       of `M` considered as an automorphism (the identity element of the
       general linear group)

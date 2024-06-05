@@ -162,7 +162,7 @@ class UnknownClass(UniqueRepresentation):
         """
         if other is False:
             return False
-        elif other is True or other is Unknown:
+        elif other is ``True`` or other is Unknown:
             return self
         else:
             return NotImplemented

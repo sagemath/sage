@@ -380,7 +380,7 @@ cdef class ntl_zz_p():
 
     def is_zero(self):
         """
-        Return True exactly if this element is 0.
+        Return ``True`` exactly if this element is 0.
 
         EXAMPLES::
 
@@ -396,7 +396,7 @@ cdef class ntl_zz_p():
 
     def is_one(self):
         """
-        Return True exactly if this element is 1.
+        Return ``True`` exactly if this element is 1.
 
         EXAMPLES::
 

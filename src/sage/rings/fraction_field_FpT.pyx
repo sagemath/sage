@@ -768,11 +768,11 @@ cdef class FpTElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if True, return a
+        -  ``extend`` -- boolean (default: ``True``); if ``True``, return a
            square root in an extension ring, if necessary. Otherwise, raise a
            ValueError if the square is not in the base ring.
 
-        -  ``all`` -- bool (default: ``False``); if True, return all
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return all
            square roots of self, instead of just one.
 
         EXAMPLES::
@@ -1909,7 +1909,7 @@ cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic) noexcept:
     """
     Set poly to the "next" polynomial: this is just counting in base p.
 
-    If monic is True then will only iterate through monic polynomials.
+    If monic is ``True`` then will only iterate through monic polynomials.
     """
     cdef long n
     cdef long a

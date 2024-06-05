@@ -63,10 +63,10 @@ class DifferentiableCurve(DiffMap):
     - ``name`` -- (default: ``None``) string; symbol given to the curve
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
       the curve; if none is provided, ``name`` will be used
-    - ``is_isomorphism`` -- (default: ``False``) determines whether the
+    - ``is_isomorphism`` -- boolean (default: ``False``); determines whether the
       constructed object is a diffeomorphism; if set to ``True``,
       then `M` must have dimension one
-    - ``is_identity`` -- (default: ``False``) determines whether the
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
       constructed object is the identity map; if set to ``True``,
       then `M` must be the interval `I`
 
@@ -739,7 +739,7 @@ class DifferentiableCurve(DiffMap):
 
         - ``plot_points`` -- (default: 75) number of points to plot the curve
 
-        - ``label_axes`` -- (default: ``True``) boolean determining whether the
+        - ``label_axes`` -- boolean (default: ``True``); determining whether the
           labels of the coordinate axes of ``chart`` shall be added to the
           graph; can be set to ``False`` if the graph is 3D and must be
           superposed with another graph.

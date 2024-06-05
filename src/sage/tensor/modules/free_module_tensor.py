@@ -796,9 +796,9 @@ class FreeModuleTensor(ModuleElementWithMutability):
         - ``index_latex_labels`` -- (default: ``None``) list of strings
           representing the LaTeX labels of each of the individual indices; if
           ``None``, integers labels are used
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero components are displayed
-        - ``only_nonredundant`` -- (default: ``False``) boolean; if ``True``,
+        - ``only_nonredundant`` -- boolean (default: ``False``); if ``True``,
           only nonredundant components are displayed in case of symmetries
 
         EXAMPLES:

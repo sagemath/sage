@@ -188,7 +188,7 @@ def std(v, bias=False):
 
     - ``v`` -- a list of numbers
 
-    - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+    - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
       ``len(v) - 1`` instead of ``len(v)`` to give a less biased
       estimator (sample) for the standard deviation.
 
@@ -276,7 +276,7 @@ def variance(v, bias=False):
 
     - ``v`` -- a list of numbers
 
-    - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+    - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
       ``len(v) - 1`` instead of ``len(v)`` to give a less biased
       estimator (sample) for the standard deviation.
 

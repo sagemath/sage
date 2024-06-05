@@ -769,7 +769,7 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - ``transformation`` -- bool (default: ``False``); if ``True``,
+        - ``transformation`` -- boolean (default: ``False``); if ``True``,
           return both the reduced form and a matrix transforming
           ``self`` into the reduced form.
 
@@ -1298,7 +1298,7 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - ``proper`` -- bool (default: ``True``); if ``True`` use proper
+        - ``proper`` -- boolean (default: ``True``); if ``True`` use proper
           equivalence
         - ``other`` -- a binary quadratic form
 

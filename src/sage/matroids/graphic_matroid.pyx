@@ -501,7 +501,7 @@ cdef class GraphicMatroid(Matroid):
         INPUT:
 
         - ``N`` -- matroid
-        - ``certificate`` -- (default: ``False``) if ``True``, returns the
+        - ``certificate`` -- boolean (default: ``False``); if ``True``, returns the
           certificate isomorphism from the minor of ``self`` to ``N``
 
         OUTPUT:
@@ -1365,7 +1365,7 @@ cdef class GraphicMatroid(Matroid):
           each extension
         - ``vertices`` -- (optional) a set of vertices over which the extension
           may be taken
-        - ``simple`` -- (default: ``False``) if true, extensions by loops and
+        - ``simple`` -- boolean (default: ``False``); if true, extensions by loops and
           parallel elements are not taken
 
         OUTPUT:
@@ -1574,7 +1574,7 @@ cdef class GraphicMatroid(Matroid):
         - ``vertices`` -- (optional) the vertices to be split
         - ``v`` -- (optional) the name of the new vertex
         - ``element`` -- (optional) the name of the new element
-        - ``cosimple`` -- (default: ``False``) if true, coextensions
+        - ``cosimple`` -- boolean (default: ``False``); if true, coextensions
           by a coloop or series elements will not be taken
 
         OUTPUT:

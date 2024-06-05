@@ -1059,7 +1059,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             weak order
           * ``'depth'`` -- iterate by a depth-first-search
 
-        - ``tracking_words`` (default: ``True``) -- whether or not to keep
+        - ``tracking_words`` boolean (default: ``True``); -- whether or not to keep
           track of the reduced words and store them in ``_reduced_word``
 
         .. NOTE::

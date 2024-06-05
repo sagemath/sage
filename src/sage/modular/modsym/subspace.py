@@ -46,7 +46,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         -  ``dual_free_module`` -- underlying free module of
            the dual of the submodule (optional)
 
-        -  ``check`` -- (default: ``False``) whether to check that
+        -  ``check`` -- boolean (default: ``False``); whether to check that
            the submodule is invariant under all Hecke operators T_p.
 
 
@@ -325,7 +325,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
     def is_cuspidal(self) -> bool:
         """
-        Return True if self is cuspidal.
+        Return ``True`` if self is cuspidal.
 
         EXAMPLES::
 
@@ -357,7 +357,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
     def is_eisenstein(self):
         """
-        Return True if self is an Eisenstein subspace.
+        Return ``True`` if self is an Eisenstein subspace.
 
         EXAMPLES::
 
@@ -382,7 +382,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
         -  ``sign`` -- int (either -1 or +1)
 
-        -  ``compute_dual`` -- bool (default: ``True``) also
+        -  ``compute_dual`` -- boolean (default: ``True``); also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols

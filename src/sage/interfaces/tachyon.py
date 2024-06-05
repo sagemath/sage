@@ -728,7 +728,7 @@ class TachyonRT(SageObject):
 
        -  ``2`` -- very verbose output
 
-    -  ``block`` -- bool (default: ``True``); if False, run the
+    -  ``block`` -- boolean (default: ``True``); if ``False``, run the
        rendering command in the background.
 
     -  ``extra_opts`` -- passed directly to tachyon command

@@ -1802,11 +1802,11 @@ cdef class RealDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
+        -  ``extend`` -- boolean (default: ``True``); if ``True``, return a
            square root in a complex field if necessary if ``self`` is negative;
            otherwise raise a ``ValueError``.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return a
            list of all square roots.
 
         EXAMPLES::

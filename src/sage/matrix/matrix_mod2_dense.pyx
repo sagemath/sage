@@ -223,7 +223,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         EXAMPLES::
@@ -486,7 +486,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         - ``i`` -- integer
 
-        - ``from_list`` -- bool (default: ``False``); if ``True``,
+        - ``from_list`` -- boolean (default: ``False``); if ``True``,
           returns the ``i``'th element of ``self.rows()`` (see
           :func:`rows`), which may be faster, but requires building a
           list of all rows the first time it is called after an entry
@@ -2014,7 +2014,7 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
     - ``c`` -- number of columns of matrix
     - ``s`` -- a string
     - ``size`` -- length of the string ``s``
-    - ``immutable`` -- (default: ``False``) whether the
+    - ``immutable`` -- boolean (default: ``False``); whether the
       matrix is immutable or not
 
     EXAMPLES::

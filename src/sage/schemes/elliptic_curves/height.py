@@ -419,13 +419,13 @@ class UnionOfIntervals:
 
     def __contains__(self, x):
         r"""
-        Return True if ``x`` is in the UnionOfIntervals.
+        Return ``True`` if ``x`` is in the UnionOfIntervals.
 
         INPUT:
 
         - ``x`` (real) -- a real number
 
-        OUTPUT: boolean: True if and only if ``x`` is in the union of intervals
+        OUTPUT: boolean; ``True`` if and only if `x` is in the union of intervals
 
         EXAMPLES::
 
@@ -615,7 +615,7 @@ def min_on_disk(f, tol, max_iter=10000):
             return region, -value
         for s in region.bisection(): # 4 sub-regions
             if in_disk:
-                s_in_disk = True     # if the original region si in the disk so are all its children
+                s_in_disk = ``True``     # if the original region si in the disk so are all its children
             else:
                 r = abs(s)          # otherwise we test each one
                 if r > 1:
@@ -719,7 +719,7 @@ def eps(err, is_real):
 
     - ``err`` (real) -- a positive real number, the radius of the interval
 
-    - ``is_real`` (boolean) -- if True, returns a real interval in
+    - ``is_real`` (boolean) -- if ``True``, returns a real interval in
       RIF, else a complex interval in CIF
 
     OUTPUT:
@@ -1285,7 +1285,7 @@ class EllipticCurveCanonicalHeight:
 
     def real_intersection_is_empty(self, Bk, v):
         r"""
-        Returns True iff an intersection of `S_n^{(v)}` sets is empty.
+        Returns ``True`` iff an intersection of `S_n^{(v)}` sets is empty.
 
         INPUT:
 
@@ -1295,7 +1295,7 @@ class EllipticCurveCanonicalHeight:
 
         OUTPUT:
 
-        True or False, according as the intersection of the unions of
+        ``True`` or False, according as the intersection of the unions of
         intervals `S_n^{(v)}(-b,b)` for `b` in the list ``Bk`` is
         empty or not.  When ``Bk`` is the list of `b=B_n(\mu)` for
         `n=1,2,3,\dots` for some `\mu>0` this means that all
@@ -1605,7 +1605,7 @@ class EllipticCurveCanonicalHeight:
         - ``N`` (int) -- The number of terms to use in the
           `q`-expansion of `\wp`.
 
-        - ``half`` (boolean, default: ``False``) -- if True, use an array of
+        - ``half`` (boolean, default: ``False``) -- if ``True``, use an array of
           size `N\times N/2` instead of `N\times N`.
 
         OUTPUT:
@@ -1651,7 +1651,7 @@ class EllipticCurveCanonicalHeight:
 
     def complex_intersection_is_empty(self, Bk, v, verbose=False, use_half=True):
         r"""
-        Returns True iff an intersection of `T_n^{(v)}` sets is empty.
+        Returns ``True`` iff an intersection of `T_n^{(v)}` sets is empty.
 
         INPUT:
 
@@ -1661,12 +1661,12 @@ class EllipticCurveCanonicalHeight:
 
         - ``verbose`` (boolean, default: ``False``) -- verbosity flag.
 
-        - ``use_half`` (boolean, default: ``False``) -- if True, use only half
+        - ``use_half`` (boolean, default: ``False``) -- if ``True``, use only half
           the fundamental region.
 
         OUTPUT:
 
-        True or False, according as the intersection of the unions of
+        ``True`` or False, according as the intersection of the unions of
         intervals `T_n^{(v)}(-b,b)` for `b` in the list ``Bk`` (see
         [Tho2010]_, section 7) is empty or not.  When ``Bk`` is the list of
         `b=\sqrt{B_n(\mu)}` for `n=1,2,3,\dots` for some `\mu>0` this
@@ -1838,7 +1838,7 @@ class EllipticCurveCanonicalHeight:
             []
         """
         # Compute the list of values `B_n(\mu)` for n in 1..N.  If any
-        # of these is 1 we can return True right away (see [Tho2010]_,
+        # of these is 1 we can return ``True`` right away (see [Tho2010]_,
         # Proposition 5.1).
         Bk = []
         for n in ZZ.range(1, N + 1):
@@ -1851,7 +1851,7 @@ class EllipticCurveCanonicalHeight:
 
         # Each real or complex embedding of the number field gives us
         # a chance to prove the lower bound.  We try each in turn,
-        # stopping if one gives a True result.
+        # stopping if one gives a ``True`` result.
 
         from sage.rings.number_field.number_field import refine_embedding
         for v in self.K.places():

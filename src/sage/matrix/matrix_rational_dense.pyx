@@ -168,7 +168,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries are of type :class:`Rational`.
 
         TESTS::
@@ -1964,7 +1964,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
 
         -  ``Sequence`` -- list of tuples (V,t), where V is a
-           vector spaces and t is True if and only if the charpoly of self on
+           vector spaces and t is ``True`` if and only if the charpoly of self on
            V is irreducible. The tuples are in order corresponding to the
            elements of the sorted list self.charpoly().factor().
         """

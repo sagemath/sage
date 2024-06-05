@@ -424,7 +424,7 @@ class VectorField(MultivectorField):
           values of the parameters that may appear in the coordinate expression
           of the vector field (see example below)
 
-        - ``label_axes`` -- (default: ``True``) boolean determining whether
+        - ``label_axes`` -- boolean (default: ``True``); determining whether
           the labels of the coordinate axes of ``chart`` shall be added to
           the graph; can be set to ``False`` if the graph is 3D and must be
           superposed with another graph
@@ -1685,7 +1685,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether
           the restrictions of ``self`` to subdomains are deleted
 
         TESTS::

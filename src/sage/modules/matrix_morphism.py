@@ -58,7 +58,7 @@ from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
 def is_MatrixMorphism(x):
     """
-    Return True if x is a Matrix morphism of free modules.
+    Return ``True`` if x is a Matrix morphism of free modules.
 
     This function is deprecated.
 
@@ -1559,7 +1559,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
     -  ``A`` -- matrix or a :class:`MatrixMorphism_abstract` instance
 
-    -  ``copy_matrix`` -- (default: ``True``) make an immutable copy of
+    -  ``copy_matrix`` -- boolean (default: ``True``); make an immutable copy of
        the matrix ``A`` if it is mutable; if ``False``, then this makes
        ``A`` immutable
     """

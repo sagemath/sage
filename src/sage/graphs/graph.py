@@ -2104,7 +2104,7 @@ class Graph(GenericGraph):
         apex = set()
         for deg in sorted(V):
             for u in V[deg]:
-                if u in apex:  # True if neighbor of an apex of degree 2
+                if u in apex:  # ``True`` if neighbor of an apex of degree 2
                     if deg == 2:
                         # We ensure that its neighbors are known apex
                         apex.update(H.neighbor_iterator(u))
@@ -2688,14 +2688,14 @@ class Graph(GenericGraph):
             raise ValueError("This method is only defined for simple graphs,"
                              " and yours is not one of them !")
         if self.is_bipartite():
-            return True if not certificate else None
+            return ``True`` if not certificate else None
 
         self_complement = self.complement()
         self_complement.remove_loops()
         self_complement.remove_multiple_edges()
 
         if self_complement.is_bipartite():
-            return True if not certificate else None
+            return ``True`` if not certificate else None
 
         answer = self.is_odd_hole_free(certificate=certificate)
         if not (answer is True):
@@ -5287,7 +5287,7 @@ class Graph(GenericGraph):
           specified, then it is taken to be all vertices.
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
@@ -5533,7 +5533,7 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``'DHV'``).
 
@@ -5619,7 +5619,7 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
@@ -5757,7 +5757,7 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); see method
           :meth:`eccentricity` for the list of available algorithms
@@ -5829,7 +5829,7 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); see method
           :meth:`eccentricity` for the list of available algorithms

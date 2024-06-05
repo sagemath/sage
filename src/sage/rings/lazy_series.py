@@ -1179,7 +1179,7 @@ class LazyModuleElement(Element):
 
         INPUT:
 
-        - ``proof`` -- (default: ``False``) if ``True``, this will also return
+        - ``proof`` -- boolean (default: ``False``); if ``True``, this will also return
           an index such that ``self`` has a nonzero coefficient
 
         .. WARNING::

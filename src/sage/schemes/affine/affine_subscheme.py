@@ -145,7 +145,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
            embedding is that which has a 1 in the i-th coordinate, numbered
            from 0.
 
-        -  ``PP`` -- (default: None) ambient projective space, i.e., ambient space
+        -  ``PP`` -- (default: ``None``) ambient projective space, i.e., ambient space
             of codomain of morphism; this is constructed if it is not given.
 
         EXAMPLES::
@@ -249,11 +249,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``i`` -- (default: None) determines the embedding to use to compute the projective
+        - ``i`` -- (default: ``None``) determines the embedding to use to compute the projective
           closure of this affine subscheme. The embedding used is the one which has a 1 in the
           i-th coordinate, numbered from 0.
 
-        -  ``PP`` -- (default: None) ambient projective space, i.e., ambient space
+        -  ``PP`` -- (default: ``None``) ambient projective space, i.e., ambient space
            of codomain of morphism; this is constructed if it is not given
 
         OUTPUT: a projective subscheme

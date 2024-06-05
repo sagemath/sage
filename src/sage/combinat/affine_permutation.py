@@ -743,8 +743,8 @@ class AffinePermutationTypeA(AffinePermutation):
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) chooses
           whether to find maximal sets starting from the left or the right
 
-        - ``verbose`` -- (default: ``False``) print extra information while
-          finding the decomposition
+        - ``verbose`` -- boolean (default: ``False``); print extra information
+          while finding the decomposition
 
         EXAMPLES::
 

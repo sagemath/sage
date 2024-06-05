@@ -730,7 +730,7 @@ class ToricVariety_field(AmbientSpace):
         for i in zero_positions:
             possible_charts.intersection_update(fan._ray_to_cones(i))
         if possible_charts:
-            return True     # All zeros are inside one generating cone
+            return ``True``     # All zeros are inside one generating cone
         raise TypeError(f"coordinates {coordinates} are in the exceptional set")
 
     def _point_homset(self, *args, **kwds):
@@ -2376,7 +2376,7 @@ class ToricVariety_field(AmbientSpace):
         # Divisor by a ray index - must be treated here, see Issue #12812.
         if arg in ZZ:
             arg = [(1, self.gen(arg))]
-            check = True  # 1 must be coerced into the coefficient ring
+            check = ``True``  # 1 must be coerced into the coefficient ring
             reduce = False
         from sage.schemes.toric.divisor import ToricDivisor
         return ToricDivisor(self, ring=base_ring, arg=arg,

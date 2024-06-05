@@ -97,7 +97,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
 
     - ``x`` -- element of ``parent.V()``
 
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     TESTS::
 
@@ -205,7 +205,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
     - ``W`` -- a submodule of ``V`` of the same rank as ``V``
 
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     - ``modulus`` -- a rational number dividing `m` (default: `m`);
       the inner product `b` is defined in `\QQ /` ``modulus`` `\ZZ`
@@ -328,7 +328,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         - ``W`` -- a submodule of ``V`` over the same base ring
 
-        - ``check`` -- bool (default: ``False``);
+        - ``check`` -- boolean (default: ``False``);
 
           * if ``False``, then the value modulus is inherited from ``self``
           * if ``True``, it figures it out on its own. But that is expensive
@@ -753,7 +753,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         INPUT:
 
         - ``signature_pair`` -- a tuple of non negative integers ``(s_plus, s_minus)``
-        - ``even`` -- bool (default: ``True``)
+        - ``even`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -983,7 +983,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
 
         INPUT:
 
-        - ``partial`` -- bool (default: ``False``) return only a partial normal form;
+        - ``partial`` -- boolean (default: ``False``) return only a partial normal form;
           it is not unique but still useful to extract invariants
 
         OUTPUT:

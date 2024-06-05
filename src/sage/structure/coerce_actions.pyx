@@ -257,7 +257,7 @@ cdef class ModuleAction(Action):
     - ``S`` -- the object that is acted upon.
     - ``g`` -- optional, an element of ``G``.
     - ``a`` -- optional, an element of ``S``.
-    - ``check`` -- if True (default), then there will be no consistency tests
+    - ``check`` -- if ``True`` (default), then there will be no consistency tests
       performed on sample elements.
 
     NOTE:

@@ -228,7 +228,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
         i = 0
         while not nonzero_flag and i < len(nzvec):
             if w[nzvec[i]] % p:
-                nonzero_flag = True           # The non-zero condition is satisfied when we find one non-zero entry
+                nonzero_flag = ``True``           # The non-zero condition is satisfied when we find one non-zero entry
             i += 1
 
     if not nonzero_flag:

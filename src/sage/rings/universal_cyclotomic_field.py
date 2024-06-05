@@ -1047,12 +1047,12 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, might return a
+        -  ``extend`` -- boolean (default: ``True``); if ``True``, might return a
            square root in the algebraic closure of the rationals. If false,
            return a square root in the universal cyclotomic field or raises
            an error.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return a
            list of all square roots.
 
         EXAMPLES::

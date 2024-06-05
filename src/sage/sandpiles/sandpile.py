@@ -436,7 +436,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: printed string
 
@@ -1275,7 +1275,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT:
 
@@ -1338,7 +1338,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: list of recurrent configurations
 
@@ -1395,7 +1395,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: list of SandpileConfig
 
@@ -1453,7 +1453,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT:
 
@@ -1546,7 +1546,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: list of SandpileConfig
 
@@ -1581,7 +1581,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: tuple of SandpileConfig
 
@@ -1660,7 +1660,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``multivariable`` -- (default: ``True``) boolean
+        - ``multivariable`` -- boolean (default: ``True``);
 
         OUTPUT: polynomial
 
@@ -1698,7 +1698,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT:
 
@@ -1985,7 +1985,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT:
 
@@ -2041,7 +2041,7 @@ class Sandpile(DiGraph):
 
         - ``d`` -- integer
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT:
 
@@ -2466,7 +2466,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``gens`` -- (default: ``False``) boolean
+        - ``gens`` -- boolean (default: ``False``);
 
         OUTPUT: ideal or, optionally, the generators of an ideal
 
@@ -2554,7 +2554,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) boolean
+        - ``verbose`` -- boolean (default: ``False``);
 
         OUTPUT: free resolution of the toppling ideal
 
@@ -2628,7 +2628,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: Betti numbers for the sandpile
 
@@ -2808,7 +2808,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: printed string
 
@@ -3535,7 +3535,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``with_firing_vector`` -- (default: ``False``)  boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``);  boolean
 
         OUTPUT: ``SandpileConfig`` or ``[SandpileConfig, firing_vector]``
 
@@ -3757,7 +3757,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``with_firing_vector`` -- (default: ``False``)  boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``);  boolean
 
         OUTPUT: SandpileConfig or [SandpileConfig, firing_vector]
 
@@ -3850,7 +3850,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``with_firing_vector`` -- (default: ``False``) boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``);
 
         OUTPUT: SandpileConfig or [SandpileConfig, firing_vector]
 
@@ -3982,11 +3982,11 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``sink`` -- (default: ``True``) whether to show the sink
+        - ``sink`` -- boolean (default: ``True``); whether to show the sink
 
-        - ``colors`` -- (default: ``True``) whether to color-code the amount of sand on each vertex
+        - ``colors`` -- boolean (default: ``True``); whether to color-code the amount of sand on each vertex
 
-        - ``heights`` -- (default: ``False``) whether to label each vertex with the amount of sand
+        - ``heights`` -- boolean (default: ``False``); whether to label each vertex with the amount of sand
 
         - ``directed`` -- (optional) whether to draw directed edges
 
@@ -4059,7 +4059,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: printed string
 
@@ -4723,7 +4723,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: SandpileDivisor or list representing SandpileDivisor
 
@@ -4793,7 +4793,7 @@ class SandpileDivisor(dict):
 
         - ``D`` -- SandpileDivisor or list, tuple, etc. representing a divisor
 
-        - ``with_firing_vector`` -- (default: ``False``) boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``);
 
         OUTPUT: boolean or integer vector
 
@@ -5103,9 +5103,9 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
-        - ``with_firing_vectors`` -- (default: ``False``) boolean
+        - ``with_firing_vectors`` -- boolean (default: ``False``);
 
         OUTPUT:
 
@@ -5176,7 +5176,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``)  boolean
+        - ``verbose`` -- boolean (default: ``False``);  boolean
 
         EXAMPLES::
 
@@ -5247,7 +5247,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``with_witness`` -- (default: ``False``) boolean
+        - ``with_witness`` -- boolean (default: ``False``);
 
         OUTPUT:
 
@@ -5312,7 +5312,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) boolean
+        - ``verbose`` -- boolean (default: ``False``);
 
         EXAMPLES::
 
@@ -5401,7 +5401,7 @@ class SandpileDivisor(dict):
 
         - ``v`` -- (default: ``sink``) vertex
 
-        - ``weight`` -- (default: ``True``) boolean
+        - ``weight`` -- boolean (default: ``True``);
 
         OUTPUT:
 
@@ -5491,7 +5491,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``with_rank_seq`` -- (default: ``False``) boolean
+        - ``with_rank_seq`` -- boolean (default: ``False``);
 
         OUTPUT:
 
@@ -5525,7 +5525,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``);
 
         OUTPUT: SandpileDivisor
 
@@ -5748,7 +5748,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``cycle`` -- (default: ``False``) boolean
+        - ``cycle`` -- boolean (default: ``False``);
 
         OUTPUT: boolean or optionally, a list of SandpileDivisors
 
@@ -5794,7 +5794,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``with_firing_vector`` -- (default: ``False``) boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``);
 
         EXAMPLES::
 
@@ -5815,7 +5815,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``heights`` -- (default: ``True``) whether to label each vertex with the amount of sand
+        - ``heights`` -- boolean (default: ``True``); whether to label each vertex with the amount of sand
 
         - ``directed`` -- (optional) whether to draw directed edges
 

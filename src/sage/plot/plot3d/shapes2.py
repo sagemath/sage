@@ -56,7 +56,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
 
     - ``thickness`` -- (default: 1)
 
-    - ``radius`` -- (default: None)
+    - ``radius`` -- (default: ``None``)
 
     - ``arrow_head`` -- (default: ``False``)
 
@@ -564,10 +564,10 @@ def ruler(start, end, ticks=4, sub_ticks=4, absolute=False, snap=False, **kwds):
     - ``sub_ticks`` -- (default: 4) the number of shown
       subdivisions between each major tick.
 
-    - ``absolute`` -- (default: ``False``) if ``True``, makes a huge ruler
+    - ``absolute`` -- boolean (default: ``False``); if ``True``, makes a huge ruler
       in the direction of an axis.
 
-    - ``snap`` -- (default: ``False``) if ``True``, snaps to an implied
+    - ``snap`` -- boolean (default: ``False``); if ``True``, snaps to an implied
       grid.
 
     EXAMPLES:
@@ -1040,7 +1040,7 @@ class Line(PrimitiveObject):
     - ``corner_cutoff`` -- (default: 0.5) threshold for
       smoothing (see :meth:`corners`).
 
-    - ``arrow_head`` -- (default: ``False``) if ``True`` make
+    - ``arrow_head`` -- boolean (default: ``False``); if ``True`` make
       this curve into an arrow
 
     The parameter ``corner_cutoff`` is a bound for the cosine of the

@@ -33,7 +33,7 @@ class TorsionPoint(ModuleElement):
     - ``element`` -- a `\QQ`-vector space element that represents
       this element in terms of the ambient rational homology
 
-    - ``check`` -- bool (default: ``True``): whether to check that
+    - ``check`` -- boolean (default: ``True``): whether to check that
       element is in the appropriate vector space
 
     EXAMPLES:

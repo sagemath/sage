@@ -597,7 +597,7 @@ cdef class ntl_ZZ_pX():
 
     def is_zero(self):
         """
-        Return True exactly if this polynomial is 0.
+        Return ``True`` exactly if this polynomial is 0.
 
         EXAMPLES::
 
@@ -616,7 +616,7 @@ cdef class ntl_ZZ_pX():
 
     def is_one(self):
         """
-        Return True exactly if this polynomial is 1.
+        Return ``True`` exactly if this polynomial is 1.
 
         EXAMPLES::
 
@@ -633,7 +633,7 @@ cdef class ntl_ZZ_pX():
 
     def is_monic(self):
         """
-        Return True exactly if this polynomial is monic.
+        Return ``True`` exactly if this polynomial is monic.
 
         EXAMPLES::
 
@@ -896,7 +896,7 @@ cdef class ntl_ZZ_pX():
 
     def is_x(self):
         """
-        True if this is the polynomial "x".
+        ``True`` if this is the polynomial "x".
 
         EXAMPLES::
 

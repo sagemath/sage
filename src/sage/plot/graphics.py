@@ -55,7 +55,7 @@ do_verify = True
 
 def is_Graphics(x):
     """
-    Return True if `x` is a Graphics object.
+    Return ``True`` if `x` is a Graphics object.
 
     EXAMPLES::
 
@@ -323,13 +323,13 @@ class Graphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``title`` -- (default: None) string, the legend title
+        - ``title`` -- (default: ``None``) string, the legend title
 
         - ``ncol`` -- (default: 1) positive integer, the number of columns
 
-        - ``columnspacing`` -- (default: None) the spacing between columns
+        - ``columnspacing`` -- (default: ``None``) the spacing between columns
 
-        - ``borderaxespad`` -- (default: None) float, length between the axes and the legend
+        - ``borderaxespad`` -- (default: ``None``) float, length between the axes and the legend
 
         - ``back_color`` -- (default: 'white') This parameter can be a string
           denoting a color or an RGB tuple. The string can be a color name
@@ -392,9 +392,9 @@ class Graphics(WithEqualityById, SageObject):
         - ``font_size`` -- (default: 'medium') string, one of 'xx-small', 'x-small', 'small',
           'medium', 'large', 'x-large', 'xx-large' or an absolute font size (e.g. 12)
 
-        -  ``shadow`` -- (default: ``True``) boolean -- draw a shadow behind the legend
+        -  ``shadow`` -- boolean (default: ``True``); -- draw a shadow behind the legend
 
-        - ``fancybox`` -- (default: ``False``) a boolean.  If True, draws a frame with a round
+        - ``fancybox`` -- boolean (default: ``False``); a boolean.  If True, draws a frame with a round
           fancybox.
 
         These are all keyword arguments.
@@ -746,7 +746,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``l`` -- (default: None) a list of two strings or
+        -  ``l`` -- (default: ``None``) a list of two strings or
            None
 
 
@@ -1483,7 +1483,7 @@ class Graphics(WithEqualityById, SageObject):
           inches, at the default ``dpi`` of 100 dpi, which is just shy of
           the maximum allowed value of 32768 dots (pixels).
 
-        - ``fig_tight`` -- (default: ``True``) whether to clip the drawing
+        - ``fig_tight`` -- boolean (default: ``True``); whether to clip the drawing
           tightly around drawn objects.  If True, then the resulting
           image will usually not have dimensions corresponding to
           ``figsize``.  If False, the resulting image will have
@@ -1499,7 +1499,7 @@ class Graphics(WithEqualityById, SageObject):
 
         - ``axes`` -- (default: ``True``)
 
-        - ``axes_labels`` -- (default: None) list (or tuple) of two
+        - ``axes_labels`` -- (default: ``None``) list (or tuple) of two
           strings; the first is used as the label for the horizontal
           axis, and the second for the vertical axis.
 
@@ -1511,9 +1511,9 @@ class Graphics(WithEqualityById, SageObject):
           integer; used for axes labels; if you make this very large,
           you may have to increase figsize to see all labels.
 
-        - ``frame`` -- (default: ``False``) draw a frame around the image
+        - ``frame`` -- boolean (default: ``False``); draw a frame around the image
 
-        - ``gridlines`` -- (default: None) can be any of the following:
+        - ``gridlines`` -- (default: ``None``) can be any of the following:
 
           - None, False: do not add grid lines.
 
@@ -1540,11 +1540,11 @@ class Graphics(WithEqualityById, SageObject):
 
 
         - ``gridlinesstyle, hgridlinesstyle, vgridlinesstyle`` -
-          (default: None) a dictionary of MATPLOTLIB options for the
+          (default: ``None``) a dictionary of MATPLOTLIB options for the
           rendering of the grid lines, the horizontal grid lines or the
           vertical grid lines, respectively.
 
-        - ``transparent`` -- (default: ``False``) If True, make the background transparent.
+        - ``transparent`` -- boolean (default: ``False``); If True, make the background transparent.
 
         - ``axes_pad`` -- (default: 0.02 on ``"linear"`` scale, 1 on
           ``"log"`` scale).
@@ -1562,7 +1562,7 @@ class Graphics(WithEqualityById, SageObject):
             then the new minimum after padding the axis will be
             `m - m/b^{\mathrm{axes\_pad}}`.
 
-        - ``ticks_integer`` -- (default: ``False``) guarantee that the ticks
+        - ``ticks_integer`` -- boolean (default: ``False``); guarantee that the ticks
           are integers (the ``ticks`` option, if specified, will
           override this)
 
@@ -1624,9 +1624,9 @@ class Graphics(WithEqualityById, SageObject):
             use an external LaTeX compiler, then set the keyword option
             ``typeset``.  See examples.
 
-        - ``title`` -- (default: None) The title for the plot
+        - ``title`` -- (default: ``None``) The title for the plot
 
-        - ``title_pos`` -- (default: None) The position of the title for the
+        - ``title_pos`` -- (default: ``None``) The position of the title for the
             plot. It must be a tuple or a list of two real numbers
             ``(x_pos, y_pos)`` which indicate the relative position of the
             title within the plot. The plot itself can be considered to
@@ -1650,7 +1650,7 @@ class Graphics(WithEqualityById, SageObject):
             entry of ``ticks`` must also be a list of numbers which give the
             positions of the labels. See the examples below.
 
-        - ``show_legend`` -- (default: None) If True, show the legend
+        - ``show_legend`` -- (default: ``None``) If True, show the legend
 
         - ``legend_*`` -- all the options valid for :meth:`set_legend_options`
             prefixed with ``legend_``
@@ -1689,10 +1689,10 @@ class Graphics(WithEqualityById, SageObject):
 
         - ``ymax`` -- ending y value in the rendered figure.
 
-        - ``flip_x`` -- (default: ``False``) boolean. If True, flip the horizontal
+        - ``flip_x`` -- boolean (default: ``False``);. If True, flip the horizontal
           axis.
 
-        - ``flip_y`` -- (default: ``False``) boolean. If True, flip the vertical
+        - ``flip_y`` -- boolean (default: ``False``);. If True, flip the vertical
           axis.
 
         - ``typeset`` -- (default: ``"default"``) string. The type of
@@ -3141,7 +3141,7 @@ class Graphics(WithEqualityById, SageObject):
             subplot.set_xlabel(self._axes_labels[0], **label_options)
             subplot.set_ylabel(self._axes_labels[1], **label_options)
 
-            if axes is True and frame is False:
+            if axes is ``True`` and frame is False:
                 # We set the label positions according to where we are
                 # drawing the axes.
                 if xaxis == 'bottom':

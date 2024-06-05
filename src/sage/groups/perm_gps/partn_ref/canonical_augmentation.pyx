@@ -403,7 +403,7 @@ cdef iterator *setup_canonical_generator(int degree,
         PS -- pointer to a partition stack
         S -- pointer to the structure
         OUTPUT:
-        bint -- returns True if it can be determined that all refinements below
+        bint -- returns ``True`` if it can be determined that all refinements below
             the current one will result in an equivalent discrete partition
 
     - ``refine_and_return_invariant`` -- pointer to a function

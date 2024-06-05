@@ -3707,7 +3707,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
              The order of the big `O` in the power series expansion is `n+1`,
              where `n` is ``order``.
 
-        - ``truncate`` -- (default: ``False``) determines whether the
+        - ``truncate`` -- boolean (default: ``False``); determines whether the
           coordinate expressions of ``self`` are replaced by their expansions
           to the given order
 

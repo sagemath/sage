@@ -41,28 +41,28 @@ We can create a truth table from a formula::
     sage: f.truthtable()
     a      b      c      value
     False  False  False  True
-    False  False  True   True
-    False  True   False  False
-    False  True   True   False
-    True   False  False  True
-    True   False  True   False
-    True   True   False  True
-    True   True   True   True
+    False  False  ``True``   True
+    False  ``True``   False  False
+    False  ``True``   ``True``   False
+    ``True``   False  False  True
+    ``True``   False  ``True``   False
+    ``True``   ``True``   False  True
+    ``True``   ``True``   ``True``   True
     sage: f.truthtable(end=3)
     a      b      c      value
     False  False  False  True
-    False  False  True   True
-    False  True   False  False
+    False  False  ``True``   True
+    False  ``True``   False  False
     sage: f.truthtable(start=4)
     a      b      c      value
-    True   False  False  True
-    True   False  True   False
-    True   True   False  True
-    True   True   True   True
+    ``True``   False  False  True
+    ``True``   False  ``True``   False
+    ``True``   ``True``   False  True
+    ``True``   ``True``   ``True``   True
     sage: propcalc.formula("a").truthtable()
     a      value
     False  False
-    True   True
+    ``True``   True
 
 Now we can evaluate the formula for a given set of input::
 

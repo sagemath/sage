@@ -52,7 +52,7 @@ class JmolData(SageObject):
 
     def is_jvm_available(self):
         """
-        Returns True if the Java Virtual Machine is available and False if not.
+        Returns ``True`` if the Java Virtual Machine is available and False if not.
 
         EXAMPLES:
 
@@ -89,7 +89,7 @@ class JmolData(SageObject):
 
     def is_jmol_available(self):
         """
-        Returns True if jmol is available and False if not.
+        Returns ``True`` if jmol is available and False if not.
 
         EXAMPLES:
 
@@ -147,7 +147,7 @@ class JmolData(SageObject):
             Programmers using this module should check that the JVM is
             available before making calls to avoid the user getting
             error messages.  Check for the JVM using the function
-            :meth:`is_jvm_available`, which returns True if a JVM is available.
+            :meth:`is_jvm_available`, which returns ``True`` if a JVM is available.
 
         EXAMPLES:
 

@@ -2351,7 +2351,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         INPUT:
 
         - ``i`` -- a number to insert
-        - ``left`` -- (default: ``False``) boolean; if set to
+        - ``left`` -- boolean (default: ``False``); if set to
           ``True``, the insertion will be done from the left. That
           is, if one thinks of the algorithm as appending a letter
           to the reading word of ``self``, we append the letter to

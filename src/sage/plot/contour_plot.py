@@ -254,7 +254,7 @@ def contour_plot(f, xrange, yrange, **options):
       in each direction of the grid.  For old computers, 25 is fine, but
       should not be used to verify specific intersection points.
 
-    - ``fill`` -- bool (default: ``True``), whether to color in the area
+    - ``fill`` -- boolean (default: ``True``), whether to color in the area
       between contour lines
 
     - ``cmap`` -- a colormap (default: ``'gray'``), the name of
@@ -269,13 +269,13 @@ def contour_plot(f, xrange, yrange, **options):
       is passed (or the option is not given), then the number of contour
       lines is determined automatically, and is usually about 5.
 
-    - ``linewidths`` -- integer or list of integer (default: None), if
+    - ``linewidths`` -- integer or list of integer (default: ``None``), if
       a single integer all levels will be of the width given,
       otherwise the levels will be plotted with the width in the order
       given.  If the list is shorter than the number of contours, then
       the widths will be repeated cyclically.
 
-    - ``linestyles`` -- string or list of strings (default: None), the
+    - ``linestyles`` -- string or list of strings (default: ``None``), the
       style of the lines to be plotted, one of: ``"solid"``, ``"dashed"``,
       ``"dashdot"``, ``"dotted"``, respectively ``"-"``, ``"--"``,
       ``"-."``, ``":"``.  If the list is shorter than the number of
@@ -328,7 +328,7 @@ def contour_plot(f, xrange, yrange, **options):
 
     - ``legend_label`` -- the label for this item in the legend
 
-    -  ``region`` -- (default: None) If region is given, it must be a function
+    -  ``region`` -- (default: ``None``) If region is given, it must be a function
         of two variables. Only segments of the surface where region(x,y)
         returns a number >0 will be included in the plot.
 
@@ -1064,11 +1064,11 @@ def implicit_plot(f, xrange, yrange, **options):
       where `f(x,y) < 0` if ``fill = True``. Colors are defined in
       :mod:`sage.plot.colors`; try ``colors?`` to see them all.
 
-    - ``linewidth`` -- integer (default: None), if a single integer all levels
+    - ``linewidth`` -- integer (default: ``None``), if a single integer all levels
       will be of the width given, otherwise the levels will be plotted with the
       widths in the order given.
 
-    - ``linestyle`` -- string (default: None), the style of the line to be
+    - ``linestyle`` -- string (default: ``None``), the style of the line to be
       plotted, one of: ``"solid"``, ``"dashed"``, ``"dashdot"`` or
       ``"dotted"``, respectively ``"-"``, ``"--"``, ``"-."``, or ``":"``.
 
@@ -1397,7 +1397,7 @@ def implicit_plot(f, xrange, yrange, **options):
 def region_plot(f, xrange, yrange, **options):
     r"""
     ``region_plot`` takes a boolean function of two variables, `f(x, y)`
-    and plots the region where f is True over the specified
+    and plots the region where f is ``True`` over the specified
     ``xrange`` and ``yrange`` as demonstrated below.
 
     ``region_plot(f, (xmin,xmax), (ymin,ymax), ...)``

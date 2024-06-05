@@ -27,7 +27,7 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
     -  ``contour`` -- (default: 0) plot the isosurface ``f(x,y,z) == contour``.
        Can be a list, in which case multiple contours are plotted.
 
-    -  ``region`` -- (default: None) If region is given, it must be a Python
+    -  ``region`` -- (default: ``None``) If region is given, it must be a Python
        callable. Only segments of the surface where ``region(x,y,z)`` returns a
        number `>0` will be included in the plot. (Note that returning a Python
        boolean is acceptable, since ``True == 1`` and ``False == 0``).
@@ -644,7 +644,7 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
     # since IndexFaceSet does not support surface normals:
     # smooth: (default: ``False``) Whether to use vertex normals to produce a
     #   smooth-looking surface. False is slightly faster.
-    # gradient: (default: None) If smooth is True (the default), then
+    # gradient: (default: ``None``) If smooth is ``True`` (the default), then
     #   Tachyon rendering needs vertex normals. In that case, if gradient is None
     #   (the default), then we try to differentiate the function to get the
     #   gradient. If that fails, then we use central differencing on the scalar

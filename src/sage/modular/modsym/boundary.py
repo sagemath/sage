@@ -1022,7 +1022,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
 
     def _is_equiv(self, c1, c2):
         """
-        Return a pair of the form (b, t), where b is True if c1 and c2 are
+        Return a pair of the form (b, t), where b is ``True`` if c1 and c2 are
         equivalent cusps for self, and False otherwise, and t gives extra
         information about the equivalence between c1 and c2.
 
@@ -1272,7 +1272,7 @@ class BoundarySpace_wtk_eps(BoundarySpace):
 
     def _is_equiv(self, c1, c2):
         """
-        Return a pair (b, t), where b is True if c1 and c2 are equivalent
+        Return a pair (b, t), where b is ``True`` if c1 and c2 are equivalent
         cusps for self, and False otherwise, and t gives extra information
         about the equivalence of c1 and c2.
 

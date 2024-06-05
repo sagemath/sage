@@ -1159,7 +1159,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         INPUT:
 
         - ``terms`` -- a list (or iterable) of pairs ``(index, coeff)``
-        - ``distinct`` -- (default: ``False``) whether the indices are
+        - ``distinct`` -- boolean (default: ``False``); whether the indices are
           guaranteed to be distinct
 
         EXAMPLES::

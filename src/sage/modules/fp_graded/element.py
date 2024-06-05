@@ -277,7 +277,7 @@ class FPElement(IndexedFreeModuleElement):
 
     def __eq__(self, other):
         r"""
-        True iff ``self`` and ``other`` are equal.
+        ``True`` iff ``self`` and ``other`` are equal.
 
         EXAMPLES::
 

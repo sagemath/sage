@@ -190,7 +190,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT: ``P`` -- point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
-        OUTPUT: AttributeError True if the point is not on the surface
+        OUTPUT: AttributeError ``True`` if the point is not on the surface
 
         EXAMPLES::
 
@@ -697,7 +697,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
     @cached_method
     def is_degenerate(self):
         r"""
-        Function will return True if there is a fiber (over the algebraic closure of the
+        Function will return ``True`` if there is a fiber (over the algebraic closure of the
         base ring) of dimension greater than 0 and False otherwise.
 
         OUTPUT: boolean
@@ -890,7 +890,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         Raises an error if the surface is degenerate.
         Works only for ``ZZ`` or ``QQ``.
 
-        INPUT: ``check`` -- (default: ``True``) boolean, whether the primes are verified
+        INPUT: ``check`` -- boolean (default: ``True``);, whether the primes are verified
 
         ALGORITHM:
 
@@ -1057,9 +1057,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``True``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``True``); normalizes the point
 
         OUTPUT: a point on the K3 surface
 
@@ -1304,9 +1304,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``True``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``True``); normalizes the point
 
         OUTPUT: a point on the K3 surface
 
@@ -1540,9 +1540,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``True``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``True``); normalizes the point
 
         OUTPUT: a point on this surface
 
@@ -1580,9 +1580,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``True``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``True``); normalizes the point
 
         OUTPUT: a point on this surface
 
@@ -2169,9 +2169,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``False``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``False``); normalizes the point
 
         OUTPUT: the nth iterate of the point given the phi function (if ``n`` is positive), or the
         psi function (if ``n`` is negative)
@@ -2234,9 +2234,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean, checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``);, checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``False``) boolean, normalizes the point
+        - ``normalize`` -- boolean (default: ``False``);, normalizes the point
 
         OUTPUT: the nth iterate of the point given the psi function (if ``n`` is positive),
         or the phi function (if ``n`` is negative)
@@ -2291,9 +2291,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean, checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``);, checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``False``) boolean, normalizes the point
+        - ``normalize`` -- boolean (default: ``False``);, normalizes the point
 
         OUTPUT: list of points in the orbit
 
@@ -2350,9 +2350,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean, checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``);, checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``False``) boolean, normalizes the point
+        - ``normalize`` -- boolean (default: ``False``);, normalizes the point
 
         OUTPUT: a list of points in the orbit
 

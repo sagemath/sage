@@ -907,8 +907,8 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``max_depth`` -- (default: ``self._max_depth``) specifies the
           maximal depth for which outgoing edges of elements are computed
-        - ``loops`` -- (default: ``True``) option for the digraph
-        - ``multiedges`` -- (default: ``True``) option of the digraph
+        - ``loops`` -- boolean (default: ``True``); option for the digraph
+        - ``multiedges`` -- boolean (default: ``True``); option of the digraph
 
         OUTPUT: a directed graph
 

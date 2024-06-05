@@ -1462,7 +1462,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return a
            list of all square roots.
 
         If all is ``False``, the branch cut is the negative real axis. The
@@ -1504,7 +1504,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return a
            list of all ``n``-th roots.
 
         EXAMPLES::

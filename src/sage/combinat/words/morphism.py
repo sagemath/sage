@@ -2330,7 +2330,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: None) on the alphabet of ``self``.
+        -  ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
            It must be callable on letters as well as words (e.g. WordMorphism).
 
         REFERENCES:
@@ -2408,7 +2408,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: None) on the alphabet of ``self``.
+        -  ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
            It must be callable on letters as well as words (e.g. WordMorphism).
 
         REFERENCES:

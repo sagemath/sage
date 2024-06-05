@@ -54,7 +54,7 @@ def Minkowski(positive_spacelike=True, names=None):
 
     INPUT:
 
-    - ``positive_spacelike`` -- (default: ``True``) if ``False``, then
+    - ``positive_spacelike`` -- boolean (default: ``True``); if ``False``, then
       the spacelike vectors yield a negative sign (i.e., the signature
       is `(+ - - - )`)
     - ``names`` -- (default: ``None``) name of the coordinates,

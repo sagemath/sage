@@ -50,14 +50,14 @@ class SymbolicLogic:
         sage: log.print_table(t)
         a     | b     | c     | value |
         --------------------------------
-        False | False | False | True  |
-        False | False | True  | False |
-        False | True  | False | True  |
-        False | True  | True  | False |
-        True  | False | False | False |
-        True  | False | True  | False |
-        True  | True  | False | True  |
-        True  | True  | True  | True  |
+        False | False | False | ``True``  |
+        False | False | ``True``  | False |
+        False | ``True``  | False | ``True``  |
+        False | ``True``  | ``True``  | False |
+        ``True``  | False | False | False |
+        ``True``  | False | ``True``  | False |
+        ``True``  | ``True``  | False | ``True``  |
+        ``True``  | ``True``  | ``True``  | ``True``  |
     """
     def statement(self, s):
         r"""
@@ -217,14 +217,14 @@ class SymbolicLogic:
             sage: log.print_table(t)
             a     | b     | c     | value |
             --------------------------------
-            False | False | False | True  |
-            False | False | True  | False |
-            False | True  | False | True  |
-            False | True  | True  | False |
-            True  | False | False | False |
-            True  | False | True  | False |
-            True  | True  | False | True  |
-            True  | True  | True  | True  |
+            False | False | False | ``True``  |
+            False | False | ``True``  | False |
+            False | ``True``  | False | ``True``  |
+            False | ``True``  | ``True``  | False |
+            ``True``  | False | False | False |
+            ``True``  | False | ``True``  | False |
+            ``True``  | ``True``  | False | ``True``  |
+            ``True``  | ``True``  | ``True``  | ``True``  |
 
         We can also print a shortened table::
 
@@ -232,10 +232,10 @@ class SymbolicLogic:
             sage: log.print_table(t)
             a     | b     | c     | value |
             --------------------------------
-            False | False | True  | False |
-            False | True  | False | True  |
-            False | True  | True  | False |
-            True  | False | False | False |
+            False | False | ``True``  | False |
+            False | ``True``  | False | ``True``  |
+            False | ``True``  | ``True``  | False |
+            ``True``  | False | False | False |
 
         TESTS:
 

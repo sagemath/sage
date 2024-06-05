@@ -542,8 +542,8 @@ class R(ExtraTabCompletion, Interface):
              True
         """
         if not self._initialized:
-            # Set this to True *before* the call to start, since that will call eval() which will in turn call this function.
-            # Setting this to True early prevents infinite recursion.
+            # Set this to ``True`` *before* the call to start, since that will call eval() which will in turn call this function.
+            # Setting this to ``True`` early prevents infinite recursion.
             self._initialized = True
             self._r_to_sage_converter = _setup_r_to_sage_converter()
             self._start()
@@ -918,7 +918,7 @@ class R(ExtraTabCompletion, Interface):
 
     def _true_symbol(self):
         """
-        Return the symbol that represents True in R.
+        Return the symbol that represents ``True`` in R.
 
         OUTPUT: string
 
@@ -933,7 +933,7 @@ class R(ExtraTabCompletion, Interface):
 
     def _false_symbol(self):
         """
-        Return the symbol that represents True in R.
+        Return the symbol that represents ``True`` in R.
 
         OUTPUT: string
 
@@ -1220,8 +1220,8 @@ class R(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - verbose -- bool (default: ``True``); if True, display debugging information
-        - use_disk_cache -- bool (default: ``True``); if True, use the disk cache of
+        - verbose -- boolean (default: ``True``); if ``True``, display debugging information
+        - use_disk_cache -- boolean (default: ``True``); if ``True``, use the disk cache of
           tab completions to save time.
 
         OUTPUT: list -- list of string
@@ -1610,7 +1610,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         .. note::
 
-            bool(self) will only return True if self == 0 contains a FALSE in its representation.
+            bool(self) will only return ``True`` if self == 0 contains a FALSE in its representation.
 
         EXAMPLES::
 
@@ -2008,7 +2008,7 @@ class RFunction(InterfaceFunction):
 
 def is_RElement(x):
     """
-    Return True if x is an element in an R interface.
+    Return ``True`` if x is an element in an R interface.
 
     INPUT:
 

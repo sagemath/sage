@@ -638,7 +638,7 @@ class PeriodLattice_ell(PeriodLattice):
         INPUT:
 
         - `prec` (int or ``None`` (default)) -- floating point
-          precision (in bits); if None, use the default precision.
+          precision (in bits); if ``None``, use the default precision.
 
         - `algorithm` (string, default 'sage') -- choice of implementation between
           - `pari`: use the PARI library
@@ -1338,7 +1338,7 @@ class PeriodLattice_ell(PeriodLattice):
         - ``prec`` (default: ``None``) -- real precision in bits
           (default real precision if None).
 
-        - ``reduce`` (default: ``True``) -- if ``True``, the result
+        - ``reduce`` boolean (default: ``True``); -- if ``True``, the result
           is reduced with respect to the period lattice basis.
 
         OUTPUT:
@@ -1541,7 +1541,7 @@ class PeriodLattice_ell(PeriodLattice):
         - ``prec`` (default: ``None``) -- real precision in bits
           (default real precision if ``None``).
 
-        - ``reduce`` (default: ``True``) -- if ``True``, the result
+        - ``reduce`` boolean (default: ``True``); -- if ``True``, the result
           is reduced with respect to the period lattice basis.
 
         OUTPUT:

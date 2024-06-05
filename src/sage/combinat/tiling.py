@@ -304,7 +304,7 @@ def ncube_isometry_group(n, orientation_preserving=True):
     INPUT:
 
     - ``n`` -- positive integer, dimension of the space
-    - ``orientation_preserving`` -- bool (default: ``True``),
+    - ``orientation_preserving`` -- boolean (default: ``True``),
       whether the orientation is preserved
 
     OUTPUT: list of matrices
@@ -370,7 +370,7 @@ def ncube_isometry_group_cosets(n, orientation_preserving=True):
     INPUT:
 
     - ``n`` -- positive integer, dimension of the space
-    - ``orientation_preserving`` -- bool (default: ``True``),
+    - ``orientation_preserving`` -- boolean (default: ``True``),
       whether the orientation is preserved
 
     OUTPUT: list of cosets, each coset being a sorted list of matrices
@@ -923,11 +923,11 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``orientation_preserving`` -- bool (default: ``True``);
+        - ``orientation_preserving`` -- boolean (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
-        - ``mod_box_isometries`` -- bool (default: ``False``), whether to
+        - ``mod_box_isometries`` -- boolean (default: ``False``), whether to
           quotient the group of isometries of the `n`-cube by the
           subgroup of isometries of the `a_1\times a_2\cdots \times a_n`
           rectangular box where are the `a_i` are assumed to be distinct.
@@ -1143,11 +1143,11 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        - ``orientation_preserving`` -- bool (default: ``True``);
+        - ``orientation_preserving`` -- boolean (default: ``True``);
           If ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
-        - ``mod_box_isometries`` -- bool (default: ``False``), whether to
+        - ``mod_box_isometries`` -- boolean (default: ``False``), whether to
           quotient the group of isometries of the `n`-cube by the
           subgroup of isometries of the `a_1\times a_2\cdots \times a_n`
           rectangular box where are the `a_i` are assumed to be distinct.
@@ -1211,7 +1211,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        - ``orientation_preserving`` -- bool (default: ``True``);
+        - ``orientation_preserving`` -- boolean (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -1436,7 +1436,7 @@ class Polyomino(SageObject):
 
         - ``self`` -- a polyomino of dimension 2
         - ``radius`` -- integer
-        - ``remove_incomplete_copies`` -- bool (default: ``True``), whether
+        - ``remove_incomplete_copies`` -- boolean (default: ``True``), whether
           to keep only complete copies of ``self`` in the output
         - ``ncpus`` -- integer (default: ``None``), maximal number of
           subprocesses to use at the same time. If ``None``, it detects the
@@ -1522,13 +1522,13 @@ class TilingSolver(SageObject):
 
     - ``pieces`` -- iterable of Polyominoes
     - ``box`` -- Polyomino or tuple of integers (size of a box)
-    - ``rotation`` -- bool (default: ``True``), whether to allow
+    - ``rotation`` -- boolean (default: ``True``), whether to allow
       rotations
-    - ``reflection`` -- bool (default: ``False``), whether to allow
+    - ``reflection`` -- boolean (default: ``False``), whether to allow
       reflections
-    - ``reusable`` -- bool (default: ``False``), whether to allow
+    - ``reusable`` -- boolean (default: ``False``), whether to allow
       the pieces to be reused
-    - ``outside`` -- bool (default: ``False``), whether to allow
+    - ``outside`` -- boolean (default: ``False``), whether to allow
       pieces to partially go outside of the box (all non-empty intersection
       of the pieces with the box are considered)
 
@@ -1788,7 +1788,7 @@ class TilingSolver(SageObject):
 
         - ``i`` -- integer, the `i`-th piece
 
-        - ``mod_box_isometries`` -- bool (default: ``False``), whether to
+        - ``mod_box_isometries`` -- boolean (default: ``False``), whether to
           consider only rows for positions up to the action of the
           quotient the group of isometries of the `n`-cube by the
           subgroup of isometries of the `a_1\times a_2\cdots \times a_n`
@@ -2378,7 +2378,7 @@ class TilingSolver(SageObject):
           ``1 \times 1`` square. This does a homothety with respect
           to the center of each polyomino.
 
-        - ``axes`` -- bool (default:``False``), whether the x and
+        - ``axes`` -- boolean (default:``False``), whether the x and
           y axes are shown.
 
         EXAMPLES::

@@ -91,7 +91,7 @@ def setprint_s(X, toplevel=False):
     INPUT:
 
     - ``X`` -- any Python object
-    - ``toplevel`` -- (default: ``False``) indicates whether this is a
+    - ``toplevel`` -- boolean (default: ``False``); indicates whether this is a
       recursion or not.
 
     OUTPUT:

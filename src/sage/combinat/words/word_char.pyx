@@ -646,7 +646,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def is_square(self):
         r"""
-        Return True if self is a square, and False otherwise.
+        Return ``True`` if self is a square, and False otherwise.
 
         EXAMPLES::
 

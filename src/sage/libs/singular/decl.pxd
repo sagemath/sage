@@ -519,7 +519,7 @@ cdef extern from "singular/Singular/libsingular.h":
 
     void rChangeCurrRing(ring *r)
 
-    # return True if ring has components
+    # return ``True`` if ring has components
 
     int rRing_has_Comp(ring *r)
 

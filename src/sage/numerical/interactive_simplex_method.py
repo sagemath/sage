@@ -221,7 +221,7 @@ def _assemble_arrayl(lines, stretch=None):
 
     - ``lines`` -- a list of strings suitable for math mode typesetting
 
-    - ``stretch`` -- (default: None) if given, a command setting
+    - ``stretch`` -- (default: ``None``) if given, a command setting
       ``\arraystretch`` to this value will be added before the array
 
     OUTPUT:
@@ -281,10 +281,10 @@ def _latex_product(coefficients, variables,
     - ``tail`` -- either ``None`` (default) or a list of entries to be
       added to the end of the output
 
-    - ``drop_plus`` -- (default: ``True``) whether to drop the leading plus
+    - ``drop_plus`` -- boolean (default: ``True``); whether to drop the leading plus
       sign or not
 
-    - ``allow_empty`` -- (default: ``False``) whether to allow empty output or
+    - ``allow_empty`` -- boolean (default: ``False``); whether to allow empty output or
       produce at least "0"
 
     OUTPUT:
@@ -591,7 +591,7 @@ class InteractiveLPProblem(SageObject):
       input coefficients) a field to which all input coefficients will be
       converted
 
-    - ``is_primal`` -- (default: ``True``) whether this problem is primal or
+    - ``is_primal`` -- boolean (default: ``True``); whether this problem is primal or
       dual: each problem is of course dual to its own dual, this flag is mostly
       for internal use and affects default variable names only
 
@@ -1721,7 +1721,7 @@ class InteractiveLPProblem(SageObject):
 
         INPUT:
 
-        - ``transformation`` -- (default: ``False``) if ``True``, a map
+        - ``transformation`` -- boolean (default: ``False``); if ``True``, a map
           converting solutions of the problem in standard form to the original
           one will be returned as well
 
@@ -1934,7 +1934,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
       input coefficients) a field to which all input coefficients will be
       converted
 
-    - ``is_primal`` -- (default: ``True``) whether this problem is primal or
+    - ``is_primal`` -- boolean (default: ``True``); whether this problem is primal or
       dual: each problem is of course dual to its own dual, this flag is mostly
       for internal use and affects default variable names only
 
@@ -2919,7 +2919,7 @@ class LPAbstractDictionary(SageObject):
 
         INPUT:
 
-        - ``include_slack_variables`` -- (default: ``False``) if ``True``,
+        - ``include_slack_variables`` -- boolean (default: ``False``); if ``True``,
           values of slack variables will be appended at the end
 
         OUTPUT:

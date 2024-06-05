@@ -238,7 +238,7 @@ def FGP_Module(V, W, check=True):
 
     - ``W`` -- a free `R`-submodule of `V`
 
-    - ``check`` -- bool (default: ``True``); if ``True``, more checks
+    - ``check`` -- boolean (default: ``True``); if ``True``, more checks
       on correctness are performed; in particular, we check the data
       types of ``V`` and ``W``, and that `W` is a submodule of `V`
       with the same base ring.
@@ -302,7 +302,7 @@ class FGP_Module_class(Module):
 
     - ``W`` -- an `R`-submodule of `V`
 
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     EXAMPLES::
 
@@ -346,7 +346,7 @@ class FGP_Module_class(Module):
 
         - ``W`` -- an `R`-submodule of `V`
 
-        - ``check`` -- bool (default: ``True``); if ``True``, more checks on
+        - ``check`` -- boolean (default: ``True``); if ``True``, more checks on
           correctness are performed; in particular, we check the data types of
           ``V`` and ``W``, and that `W` is a submodule of `V` with the same
           base ring `R`.
@@ -391,7 +391,7 @@ class FGP_Module_class(Module):
 
         - ``W`` -- an `R`-submodule of `V`
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
         OUTPUT: the quotient `V/W`
 
@@ -453,7 +453,7 @@ class FGP_Module_class(Module):
         INPUT:
 
         - ``other`` -- an element of the base ring
-        - ``switch_sides`` -- (default: ``False``) left or right multiplication
+        - ``switch_sides`` -- boolean (default: ``False``); left or right multiplication
 
         EXAMPLES::
 
@@ -532,7 +532,7 @@ class FGP_Module_class(Module):
 
     def __ne__(self, other):
         """
-        True iff ``self`` is not equal to ``other``.
+        ``True`` iff ``self`` is not equal to ``other``.
 
         This may not be needed for modules created using the function
         :func:`FGP_Module`, since those have uniqueness built into
@@ -572,7 +572,7 @@ class FGP_Module_class(Module):
 
     def __lt__(self, other):
         """
-        True iff ``self`` is a proper submodule of ``other``.
+        ``True`` iff ``self`` is a proper submodule of ``other``.
 
         EXAMPLES::
 
@@ -590,7 +590,7 @@ class FGP_Module_class(Module):
 
     def __gt__(self, other):
         """
-        True iff ``other`` is a proper submodule of ``self``.
+        ``True`` iff ``other`` is a proper submodule of ``self``.
 
         EXAMPLES::
 
@@ -608,7 +608,7 @@ class FGP_Module_class(Module):
 
     def __ge__(self, other):
         """
-        True iff ``other`` is a submodule of ``self``.
+        ``True`` iff ``other`` is a submodule of ``self``.
 
         EXAMPLES::
 
@@ -637,7 +637,7 @@ class FGP_Module_class(Module):
             space and try to put into `V`.  If ``x`` is in ``self`` already,
             just return ``x``.
 
-        - `check` -- bool (default: ``True``)
+        - `check` -- boolean (default: ``True``)
 
         .. SEEALSO:: :meth:`linear_combination_of_smith_form_gens`
 
@@ -988,7 +988,7 @@ class FGP_Module_class(Module):
 
         INPUT:
 
-        - ``include_ones`` -- bool (default: ``False``); if ``True``, also
+        - ``include_ones`` -- boolean (default: ``False``); if ``True``, also
           include 1's in the output list.
 
         EXAMPLES::
@@ -1996,7 +1996,7 @@ def random_fgp_module(n, R=ZZ, finite=False):
 
     - ``R`` -- base ring (default: ``ZZ``)
 
-    - ``finite`` -- bool (default: ``True``); if True, make the random module finite
+    - ``finite`` -- boolean (default: ``True``); if ``True``, make the random module finite
 
     EXAMPLES::
 

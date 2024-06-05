@@ -776,7 +776,7 @@ class GraphLatex(SageObject):
 
         - ``edge_fill_color`` -- (default: ``'black'``); a single color to use
           as the default for the fill color of an edge. The boolean switch
-          ``edge_fills`` must be set to True for this to have an effect. See
+          ``edge_fills`` must be set to ``True`` for this to have an effect. See
           the explanation above for the ``vertex_color`` option to see possible
           values.
 
@@ -994,7 +994,7 @@ class GraphLatex(SageObject):
             sage: opts.set_option('vertex_labels_math', 'maybe')
             Traceback (most recent call last):
             ...
-            ValueError: vertex_labels_math option must be True or False, not maybe
+            ValueError: vertex_labels_math option must be ``True`` or False, not maybe
             sage: opts.set_option('vertex_shape', 'decagon')
             Traceback (most recent call last):
             ...
@@ -1030,7 +1030,7 @@ class GraphLatex(SageObject):
             sage: opts.set_option('edge_label_slopes', {(0,1):'possibly'})
             Traceback (most recent call last):
             ...
-            ValueError: edge_label_slopes option for (0, 1) needs to be True or False, not possibly
+            ValueError: edge_label_slopes option for (0, 1) needs to be ``True`` or False, not possibly
             sage: opts.set_option('vertex_shapes', {0:'pentagon'})
             Traceback (most recent call last):
             ...
@@ -1135,7 +1135,7 @@ class GraphLatex(SageObject):
                 except Exception:
                     raise ValueError('%s option needs to be a matplotlib color (always as a string), not %s' % (name, value))
             elif name in boolean_options and not isinstance(value, bool):
-                raise ValueError('%s option must be True or False, not %s' % (name, value))
+                raise ValueError('%s option must be ``True`` or False, not %s' % (name, value))
             elif name == 'vertex_shape' and value not in shape_names:
                 raise ValueError('%s option must be the shape of a vertex, not %s' % (name, value))
             elif name in positive_scalars and not (type(value) in number_types and (value >= 0.0)):
@@ -1178,7 +1178,7 @@ class GraphLatex(SageObject):
                 else:
                     for key, b in value.items():
                         if not isinstance(b, bool):
-                            raise ValueError('%s option for %s needs to be True or False, not %s' % (name, key, b))
+                            raise ValueError('%s option for %s needs to be ``True`` or False, not %s' % (name, key, b))
             elif name == 'vertex_shapes':
                 if not isinstance(value, dict):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))

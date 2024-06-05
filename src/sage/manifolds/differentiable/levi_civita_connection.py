@@ -115,7 +115,7 @@ class LeviCivitaConnection(AffineConnection):
     - ``name`` -- name given to the connection
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
       connection
-    - ``init_coef`` -- (default: ``True``) determines whether the Christoffel
+    - ``init_coef`` -- boolean (default: ``True``); determines whether the Christoffel
       symbols are initialized (in the top charts on the domain, i.e.
       disregarding the subcharts)
 

@@ -117,7 +117,7 @@ def modular_symbol_space(E, sign, base_ring, bound=None):
     - ``E`` -- an elliptic curve over `\QQ`
     - ``sign`` -- integer, -1, 0, or 1
     - ``base_ring`` -- ring
-    - ``bound`` -- (default: None) maximum number of Hecke operators to
+    - ``bound`` -- (default: ``None``) maximum number of Hecke operators to
       use to cut out modular symbols factor.  If None, use
       enough to provably get the correct answer.
 

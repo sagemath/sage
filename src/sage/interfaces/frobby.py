@@ -40,7 +40,7 @@ class Frobby:
         - action -- A string telling Frobby what to do.
         - input -- None or a string that is passed to Frobby as standard in.
         - options -- A list of options without the dash in front.
-        - verbose -- bool (default: false) Print detailed information.
+        - verbose -- boolean (default: false) Print detailed information.
 
         OUTPUT:
 

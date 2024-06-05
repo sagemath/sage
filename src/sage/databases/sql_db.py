@@ -303,8 +303,8 @@ def _create_print_table(cur, col_titles, **kwds):
     - ``id_col`` -- reference to a column that can be used as an object
       identifier for each row
 
-    - ``html_table`` -- boolean that if True creates an html table instead of
-      a print table. Always set to True in the notebook.
+    - ``html_table`` -- boolean that if ``True`` creates an html table instead of
+      a print table. Always set to ``True`` in the notebook.
 
     EXAMPLES::
 
@@ -1243,7 +1243,7 @@ class SQLDatabase(SageObject):
 
         INPUT:
 
-        - ``check`` -- if True, checks to make sure the database's actual
+        - ``check`` -- if ``True``, checks to make sure the database's actual
           structure matches the skeleton on record.
 
         EXAMPLES::
@@ -1360,7 +1360,7 @@ class SQLDatabase(SageObject):
 
             sage: D = SQLDatabase(read_only=True)
             sage: con = D.get_connection()
-            doctest:...: RuntimeWarning: Database is read only, using the connection can alter the stored data. Set self.ignore_warnings to True in order to mute future warnings.
+            doctest:...: RuntimeWarning: Database is read only, using the connection can alter the stored data. Set self.ignore_warnings to ``True`` in order to mute future warnings.
             sage: con = D.get_connection(True)
             sage: D.ignore_warnings = True
             sage: con = D.get_connection()
@@ -1388,7 +1388,7 @@ class SQLDatabase(SageObject):
                 import warnings
                 warnings.warn('Database is read only, using the connection '
                     'can alter the stored data. Set self.ignore_warnings '
-                    'to True in order to mute future warnings.',
+                    'to ``True`` in order to mute future warnings.',
                     RuntimeWarning)
         return self.__connection__
 

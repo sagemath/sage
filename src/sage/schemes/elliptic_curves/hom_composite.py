@@ -450,7 +450,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         - ``maps`` -- sequence of :class:`EllipticCurveHom` objects
         - ``E`` (optional) -- the domain elliptic curve
-        - ``strict`` (default: ``True``) -- if ``True``,
+        - ``strict`` boolean (default: ``True``); -- if ``True``,
           always return an :class:`EllipticCurveHom_composite` object;
           else may return another :class:`EllipticCurveHom` type
 

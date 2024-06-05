@@ -4376,7 +4376,7 @@ cdef class Matroid(SageObject):
         - ``k`` -- the length of the line minor
         - ``hyperlines`` -- (default: ``None``) a set of flats of codimension
           2. Defaults to the set of all flats of codimension 2.
-        - ``certificate`` -- (default: ``False``) if ``True`` returns ``(True, F)``,
+        - ``certificate`` -- boolean (default: ``False``); if ``True`` returns ``(True, F)``,
           where ``F`` is a flat and ``self.minor(contractions=F)`` has a
           `U_{2,k}` restriction or ``(False, None)``.
 
@@ -4440,7 +4440,7 @@ cdef class Matroid(SageObject):
         INPUT:
 
         - ``k`` -- the length of the line minor
-        - ``hyperlines`` -- (default: None) a set of flats of codimension 2.
+        - ``hyperlines`` -- (default: ``None``) a set of flats of codimension 2.
           The flats are assumed to be ``frozenset`` compatible.
 
         OUTPUT: boolean or tuple
@@ -5314,7 +5314,7 @@ cdef class Matroid(SageObject):
         INPUT:
 
         - ``k`` -- an integer greater or equal to 1
-        - ``certificate`` -- (default: ``False``) boolean; if ``True``,
+        - ``certificate`` -- boolean (default: ``False``); if ``True``,
           then return ``True, None`` if the matroid is k-connected,
           and ``False, X`` otherwise, where ``X`` is a `<k`-separation
 
@@ -5441,7 +5441,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) boolean; if ``True``,
+        - ``certificate`` -- boolean (default: ``False``); if ``True``,
           then return ``True, None`` if the matroid is 3-connected,
           and ``False,`` `X` otherwise, where `X` is a `<3`-separation
         - ``algorithm`` -- (default: ``None``); specify which algorithm
@@ -6759,7 +6759,7 @@ cdef class Matroid(SageObject):
         - ``k1`` -- (optional) the integer `k_1`
         - ``k2`` -- (optional) the integer `k_2`; if not specified,
           then this method returns if ``self`` is `k_1`-chordal
-        - ``certificate`` -- (default: ``False``) boolean;  if
+        - ``certificate`` -- boolean (default: ``False``);  if
           ``True`` return ``True, C``, where ``C`` is a non
           ``k1`` ``k2`` circuit
 

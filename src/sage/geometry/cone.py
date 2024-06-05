@@ -3200,7 +3200,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         if self.is_equivalent(cone):
             return True
         # Obviously False case
-        if self.dim() >= cone.dim(): # if == and face, we return True above
+        if self.dim() >= cone.dim(): # if == and face, we return ``True`` above
             return False
 
         # It remains to test whether self is a proper face of cone:
@@ -6209,7 +6209,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - ``other`` -- (default: ``None``) a rational, polyhedral
           convex cone
 
-        - ``exact`` -- (default: ``True``) whether or not to use exact
+        - ``exact`` -- boolean (default: ``True``); whether or not to use exact
           rational arithmetic instead of floating point computations;
           beware that ``True`` is not guaranteed to avoid floating
           point computations if the algorithm runs into trouble in

@@ -161,7 +161,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
 
 def is_FreeAbelianMonoid(x):
     """
-    Return True if `x` is a free abelian monoid.
+    Return ``True`` if `x` is a free abelian monoid.
 
     EXAMPLES::
 
@@ -229,7 +229,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __contains__(self, x):
         """
-        Return True if `x` is an element of this abelian monoid.
+        Return ``True`` if `x` is an element of this abelian monoid.
 
         EXAMPLES::
 

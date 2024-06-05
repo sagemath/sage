@@ -410,7 +410,7 @@ from sage.symbolic.symbols import symbol_table, register_symbol  # used to be de
 
 cpdef bint is_SymbolicEquation(x) noexcept:
     """
-    Return True if *x* is a symbolic equation.
+    Return ``True`` if *x* is a symbolic equation.
 
     This function is deprecated.
 
@@ -2322,7 +2322,7 @@ cdef class Expression(Expression_abc):
 
             sage: (x > 2).assume()
 
-        Bool returns True below if the inequality is *definitely* known to
+        Bool returns ``True`` below if the inequality is *definitely* known to
         be True.
 
         ::
@@ -2515,7 +2515,7 @@ cdef class Expression(Expression_abc):
 
     def is_algebraic(self):
         """
-        Return True if this expression is known to be algebraic.
+        Return ``True`` if this expression is known to be algebraic.
 
         EXAMPLES::
 
@@ -2574,7 +2574,7 @@ cdef class Expression(Expression_abc):
 
     def is_real(self):
         """
-        Return True if this expression is known to be a real number.
+        Return ``True`` if this expression is known to be a real number.
 
         EXAMPLES::
 
@@ -2649,7 +2649,7 @@ cdef class Expression(Expression_abc):
 
     def is_positive(self):
         """
-        Return True if this expression is known to be positive.
+        Return ``True`` if this expression is known to be positive.
 
         EXAMPLES::
 
@@ -2745,7 +2745,7 @@ cdef class Expression(Expression_abc):
 
     def is_negative(self):
         """
-        Return True if this expression is known to be negative.
+        Return ``True`` if this expression is known to be negative.
 
         EXAMPLES::
 
@@ -2776,7 +2776,7 @@ cdef class Expression(Expression_abc):
 
     def is_integer(self):
         """
-        Return True if this expression is known to be an integer.
+        Return ``True`` if this expression is known to be an integer.
 
         EXAMPLES::
 
@@ -2803,7 +2803,7 @@ cdef class Expression(Expression_abc):
 
     def is_symbol(self):
         """
-        Return True if this symbolic expression consists of only a symbol, i.e.,
+        Return ``True`` if this symbolic expression consists of only a symbol, i.e.,
         a symbolic variable.
 
         EXAMPLES::
@@ -2890,7 +2890,7 @@ cdef class Expression(Expression_abc):
         """
         A Pynac numeric is an object you can do arithmetic with
         that is not a symbolic variable, function, or constant.
-        Return True if this expression only consists of a numeric object.
+        Return ``True`` if this expression only consists of a numeric object.
 
         EXAMPLES::
 
@@ -2907,7 +2907,7 @@ cdef class Expression(Expression_abc):
 
     def is_terminating_series(self):
         """
-        Return True if ``self`` is a series without order term.
+        Return ``True`` if ``self`` is a series without order term.
 
         A series is terminating if it can be represented exactly,
         without requiring an order term. You can explicitly
@@ -3293,7 +3293,7 @@ cdef class Expression(Expression_abc):
 
     def __bool__(self):
         """
-        Return True unless this symbolic expression can be shown by Sage
+        Return ``True`` unless this symbolic expression can be shown by Sage
         to be zero.  Note that deciding if an expression is zero is
         undecidable in general.
 
@@ -3533,7 +3533,7 @@ cdef class Expression(Expression_abc):
         test this relation after casting into the domain.
 
         Because the interval fields never return false positives, we can be
-        assured that if True or False is returned (and proof is False) then
+        assured that if ``True`` or False is returned (and proof is False) then
         the answer is correct.
 
         INPUT:
@@ -3767,7 +3767,7 @@ cdef class Expression(Expression_abc):
 
     def is_unit(self):
         """
-        Return True if this expression is a unit of the symbolic ring.
+        Return ``True`` if this expression is a unit of the symbolic ring.
 
         Note that a proof may be attempted to get the result. To avoid
         this use ``(ex-1).is_trivial_zero()``.
@@ -5230,20 +5230,20 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``full`` -- (default: ``False``) To enhance user control
+        -  ``full`` -- boolean (default: ``False``); To enhance user control
            of simplification, this function expands only one level at a time
            by default, expanding sums of angles or multiple angles. To obtain
            full expansion into sines and cosines immediately, set the optional
            parameter full to ``True``.
 
-        - ``half_angles`` -- (default: ``False``) If ``True``, causes
+        - ``half_angles`` -- boolean (default: ``False``); If ``True``, causes
           half-angles to be simplified away.
 
-        -  ``plus`` -- (default: ``True``) Controls the sum rule;
+        -  ``plus`` -- boolean (default: ``True``); Controls the sum rule;
            expansion of sums (e.g. `\sin(x + y)`) will take place only
            if ``plus`` is ``True``.
 
-        -  ``times`` -- (default: ``True``) Controls the product
+        -  ``times`` -- boolean (default: ``True``); Controls the product
            rule, expansion of products (e.g. `\sin(2 x)`) will take place only
            if ``times`` is ``True``.
 
@@ -10003,7 +10003,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``normalize`` -- (default: ``True``) a boolean.
+        - ``normalize`` -- boolean (default: ``True``); a boolean.
 
         If ``normalize`` is ``True``, the expression is first normalized to
         have it as a fraction before getting the numerator.
@@ -10099,7 +10099,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``normalize`` -- (default: ``True``) a boolean.
+        - ``normalize`` -- boolean (default: ``True``); a boolean.
 
         If ``normalize`` is ``True``, the expression is first normalized to
         have it as a fraction before getting the denominator.
@@ -10190,7 +10190,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``normalize`` -- (default: ``True``) a boolean.
+        - ``normalize`` -- boolean (default: ``True``); a boolean.
 
         If ``normalize`` is ``True``, the expression is first normalized to
         have it as a fraction before getting the numerator and denominator.
@@ -10483,7 +10483,7 @@ cdef class Expression(Expression_abc):
         INPUT:
 
         - ``self`` -- an expression with held operations
-        - ``exclude`` -- (default: None) a list of operators to exclude from
+        - ``exclude`` -- (default: ``None``) a list of operators to exclude from
           evaluation. Excluding arithmetic operators does not yet work (see
           :issue:`10169`).
 
@@ -10968,7 +10968,7 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- symbolic expression
 
-        - ``expand`` -- (default: ``True``) if True, expands trigonometric
+        - ``expand`` -- boolean (default: ``True``); if ``True``, expands trigonometric
           and hyperbolic functions of sums of angles and of multiple
           angles occurring in ``self`` first. For best results,
           ``self`` should be expanded. See also :meth:`expand_trig` to
@@ -11026,7 +11026,7 @@ cdef class Expression(Expression_abc):
 
           - 'noexpand' (convert to common denominator and add)
 
-        - ``map`` -- (default: ``False``) if ``True``, the result is an
+        - ``map`` -- boolean (default: ``False``); if ``True``, the result is an
           expression whose leading operator is the same as that of the
           expression ``self`` but whose subparts are the results of
           applying simplification rules to the corresponding subparts
@@ -11459,7 +11459,7 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- expression to be simplified
 
-        - ``algorithm`` -- (default: None) optional, governs the condition
+        - ``algorithm`` -- (default: ``None``) optional, governs the condition
           on `a` and `c` which must be satisfied to contract expression
           `a \log(b) + c \log(d)`. Values are
 
@@ -12099,10 +12099,10 @@ cdef class Expression(Expression_abc):
         - ``x`` -- variable to view the function in terms of
           (use default variable if not given)
 
-        - ``explicit_solutions`` -- bool (default ``True``); require that
+        - ``explicit_solutions`` -- boolean (default ``True``); require that
           roots be explicit rather than implicit
 
-        - ``multiplicities`` -- bool (default ``True``); when ``True``, return
+        - ``multiplicities`` -- boolean (default ``True``); when ``True``, return
           multiplicities
 
         - ``ring`` -- a ring (default ``None``): if not ``None``, convert
@@ -12276,20 +12276,20 @@ cdef class Expression(Expression_abc):
 
         -  ``x`` -- variable(s) to solve for
 
-        -  ``multiplicities`` -- bool (default: ``False``); if ``True``,
+        -  ``multiplicities`` -- boolean (default: ``False``); if ``True``,
            return corresponding multiplicities.  This keyword is
            incompatible with ``to_poly_solve=True`` and does not make
            any sense when solving an inequality.
 
-        -  ``solution_dict`` -- bool (default: ``False``); if ``True`` or non-zero,
+        -  ``solution_dict`` -- boolean (default: ``False``); if ``True`` or non-zero,
            return a list of dictionaries containing solutions. Not used
            when solving an inequality.
 
-        -  ``explicit_solutions`` -- bool (default: ``False``); require that
+        -  ``explicit_solutions`` -- boolean (default: ``False``); require that
            all roots be explicit rather than implicit. Not used
            when solving an inequality.
 
-        -  ``to_poly_solve`` -- bool (default: ``False``) or string; use
+        -  ``to_poly_solve`` -- boolean (default: ``False``) or string; use
            Maxima's ``to_poly_solver`` package to search for more possible
            solutions, but possibly encounter approximate solutions.
            This keyword is incompatible with ``multiplicities=True``
@@ -12473,7 +12473,7 @@ cdef class Expression(Expression_abc):
         -  ``maxiter`` -- integer; if convergence is not
            achieved in maxiter iterations, an error is raised. Must be >= 0.
 
-        -  ``full_output`` -- bool (default: ``False``), if ``True``,
+        -  ``full_output`` -- boolean (default: ``False``), if ``True``,
            also return object that contains information about convergence.
 
         - ``imaginary_tolerance`` -- (default: ``1e-8``); if an imaginary
@@ -13127,7 +13127,7 @@ cdef class Expression(Expression_abc):
           - ``'giac'`` -- (optional) use Giac
           - ``'sympy'`` -- use SymPy
 
-        - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
+        - ``hold`` -- boolean (default: ``False``); if ``True``, don't evaluate
 
         TESTS:
 
@@ -13780,7 +13780,7 @@ cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=Tr
 
     - ``x`` -- a Python object.
 
-    - ``force`` -- bool, default ``True``, if True, the Python object
+    - ``force`` -- bool, default ``True``, if ``True``, the Python object
       is taken as is without attempting coercion or list traversal.
 
     - ``recursive`` -- bool, default ``True``, disables recursive

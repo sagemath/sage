@@ -766,7 +766,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             - ``index_set`` -- (default: all of them) a subset (as a list
               or iterable) of the nodes of the Dynkin diagram
             - ``side`` -- (default: ``'right'``) ``'left'`` or ``'right'``
-            - ``positive`` -- (default: ``False``) boolean
+            - ``positive`` -- boolean (default: ``False``);
 
             EXAMPLES::
 

@@ -444,7 +444,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``with_translations`` -- (default: ``False``) if ``True``, then
+        - ``with_translations`` -- boolean (default: ``False``); if ``True``, then
           include the arrows corresponding to the translations.
 
         EXAMPLES::

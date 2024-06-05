@@ -882,7 +882,7 @@ cdef class PartitionRefinement_generic:
             sage: from sage.groups.perm_gps.partn_ref2.refinement_generic import PartitionRefinement_generic
             sage: P = PartitionRefinement_generic(5)
             sage: P._latex_view()
-            sorry, no debug output was written. Set BACKTRACK_WITHLATEX_DEBUG to True if interested in this information
+            sorry, no debug output was written. Set BACKTRACK_WITHLATEX_DEBUG to ``True`` if interested in this information
         """
         if BACKTRACK_WITHLATEX_DEBUG:
             from sage.misc.latex import latex, view
@@ -892,7 +892,7 @@ cdef class PartitionRefinement_generic:
             view(self._latex_debug_string, engine="pdflatex", title=title)
         else:
             print("sorry, no debug output was written. " +
-                  "Set BACKTRACK_WITHLATEX_DEBUG to True if interested in this information")
+                  "Set BACKTRACK_WITHLATEX_DEBUG to ``True`` if interested in this information")
 
     cdef void _init_latex(self) noexcept:
         r"""

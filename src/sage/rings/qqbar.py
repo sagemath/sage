@@ -4225,11 +4225,11 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``extend`` -- bool (default: ``True``); ignored if self is in QQbar, or
+        - ``extend`` -- boolean (default: ``True``); ignored if self is in QQbar, or
           positive in AA. If self is negative in AA, do the following: if True,
           return a square root of self in QQbar, otherwise raise a ValueError.
 
-        - ``all`` -- bool (default: ``False``); if True, return a list of all square
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a list of all square
           roots. If False, return just one square root, or raise an ValueError
           if self is a negative element of AA and extend=False.
 
@@ -4275,7 +4275,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: AA(-2).sqrt(extend=False)
             Traceback (most recent call last):
             ...
-            ValueError: -2 is not a square in AA, being negative. Use extend = True for a square root in QQbar.
+            ValueError: -2 is not a square in AA, being negative. Use extend = ``True`` for a square root in QQbar.
         """
         # deal with 0 first:
 
@@ -4289,7 +4289,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         if self.parent() is AA and self < 0 and not extend:
             if not all:
-                raise ValueError(lazy_string("%s is not a square in AA, being negative. Use extend = True for a square root in QQbar.", self))
+                raise ValueError(lazy_string("%s is not a square in AA, being negative. Use extend = ``True`` for a square root in QQbar.", self))
             else:
                 return []
 
@@ -4306,7 +4306,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` -- bool (default: ``False``). If ``True``, return a list of
+        -  ``all`` -- boolean (default: ``False``). If ``True``, return a list of
            all `n`-th roots as complex algebraic numbers.
 
         .. WARNING::
@@ -7153,7 +7153,7 @@ class ANRoot(ANDescr):
     def is_complex(self):
         r"""
         Whether this is a root in `\overline{\QQ}` (rather than `\mathbf{A}`).
-        Note that this may return True even if the root is actually real, as
+        Note that this may return ``True`` even if the root is actually real, as
         the second example shows; it does *not* trigger exact computation to
         see if the root is real.
 

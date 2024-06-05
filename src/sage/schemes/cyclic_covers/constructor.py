@@ -30,7 +30,7 @@ def CyclicCover(r, f, names=None, check_smooth=True):
     - ``names``  (default: ``["x","y"]``) -- names for the
       coordinate functions
 
-    - ``check_squarefree`` (default: ``True``) -- test if
+    - ``check_squarefree`` boolean (default: ``True``); -- test if
       the input defines a unramified cover of the projective line.
 
     .. WARNING::

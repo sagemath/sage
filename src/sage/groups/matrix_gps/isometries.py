@@ -57,7 +57,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
     - ``gens`` -- a list of matrices over the base ring
     - ``invariant_bilinear_form`` -- a symmetric matrix
     - ``category`` -- (default: ``None``) a category of groups
-    - ``check`` -- bool (default: ``True``) check if the generators
+    - ``check`` -- boolean (default: ``True``); check if the generators
       preserve the bilinear form
     - ``invariant_submodule`` -- a submodule preserved by the group action
       (default: ``None``) registers an action on this submodule
@@ -269,7 +269,7 @@ class GroupActionOnSubmodule(Action):
 
     - ``MatrixGroup`` --  an instance of :class:`GroupOfIsometries`
     - ``submodule`` -- an invariant submodule
-    - ``is_left`` -- bool (default: ``False``)
+    - ``is_left`` -- boolean (default: ``False``)
 
     EXAMPLES::
 

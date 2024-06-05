@@ -136,7 +136,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
 
         - A -- either a matrix or a list/tuple of images of generators,
           or a function returning elements of the codomain for elements of the domain.
-        - check -- bool (default: ``True``)
+        - check -- boolean (default: ``True``)
         - the keyword ``side`` can be assigned the values ``"left"`` or
           ``"right"``. It corresponds to the side of vectors relative to the matrix.
 

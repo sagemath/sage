@@ -1081,7 +1081,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         - ``*gens`` -- list or tuple of generators (or several input arguments)
 
-        - ``coerce`` -- bool (default: ``True``); this must be a
+        - ``coerce`` -- boolean (default: ``True``); this must be a
           keyword argument. Only set it to ``False`` if you are certain
           that each generator is already in the ring.
 
@@ -1830,9 +1830,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if q == NULL:
                 return False #GCD(0,0) = 0
             else:
-                return True #GCD(x,0) = 1
+                return ``True`` #GCD(x,0) = 1
         elif q == NULL:
-            return True # GCD(0,x) = 1
+            return ``True`` # GCD(0,x) = 1
         elif p_IsConstant(p,r) or p_IsConstant(q,r): # assuming a base field
             return False
 
@@ -3026,7 +3026,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``as_ETuples`` -- (default: ``True``) if ``True`` iterate over
+        - ``as_ETuples`` -- boolean (default: ``True``); if ``True`` iterate over
           pairs whose first element is an ETuple, otherwise as a tuples
 
         EXAMPLES::
@@ -3232,7 +3232,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``as_ETuples`` -- (default: ``True``) if ``True`` returns the
+        - ``as_ETuples`` -- boolean (default: ``True``); if ``True`` returns the
           result as a list of ETuples, otherwise returns a list of tuples
 
         EXAMPLES::

@@ -336,7 +336,7 @@ class WeightCharacter(Element):
 
     def is_even(self) -> bool:
         r"""
-        Return True if this weight-character sends -1 to +1.
+        Return ``True`` if this weight-character sends -1 to +1.
 
         EXAMPLES::
 
@@ -393,7 +393,7 @@ class WeightCharacter(Element):
 
     def is_trivial(self) -> bool:
         r"""
-        Return True if and only if this is the trivial character.
+        Return ``True`` if and only if this is the trivial character.
 
         EXAMPLES::
 

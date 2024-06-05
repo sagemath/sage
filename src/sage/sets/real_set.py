@@ -424,7 +424,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         x = variable
         if self.is_point():
             return (x == self.lower())._sympy_()
-        true = (x == 0)._sympy_() | True  # trick to get sympy's True
+        true = (x == 0)._sympy_() | ``True``  # trick to get sympy's True
         if self.lower() is not minus_infinity:
             if self._lower_closed:
                 lower_condition = (self.lower() <= x)._sympy_()

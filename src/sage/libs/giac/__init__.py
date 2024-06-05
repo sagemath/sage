@@ -122,7 +122,7 @@ def local_giacsettings(func):
 @local_giacsettings
 def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
                    elim_variables=None, *args, **kwds):
-    """
+    r"""
     Compute a Groebner Basis of an ideal using ``giacpy_sage``. The result is
     automatically converted to sage.
 
@@ -132,9 +132,9 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
     INPUT:
 
     - ``gens`` -- an ideal (or a list) of polynomials over a prime field
-      of characteristic 0 or p<2^31
+      of characteristic 0 or `p<2^31`
 
-    - ``proba_epsilon`` -- (default: None) majoration of the probability
+    - ``proba_epsilon`` -- (default: ``None``) majoration of the probability
        of a wrong answer when probabilistic algorithms are allowed.
 
         * if ``proba_epsilon`` is None, the value of
@@ -145,13 +145,13 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         * if ``proba_epsilon`` is 0, probabilistic algorithms are
           disabled.
 
-    - ``threads`` -- (default: None) Maximal number of threads allowed
+    - ``threads`` -- (default: ``None``) Maximal number of threads allowed
       for giac. If None, the global ``giacpy_sage.giacsettings.threads`` is
       considered.
 
-    - ``prot`` -- (default: ``False``) if True print detailled informations
+    - ``prot`` -- boolean (default: ``False``); if ``True`` print detailled informations
 
-    - ``elim_variables`` -- (default: None) a list of variables to eliminate
+    - ``elim_variables`` -- (default: ``None``) a list of variables to eliminate
       from the ideal.
 
         * if ``elim_variables`` is None, a Groebner basis with respect to the

@@ -978,7 +978,7 @@ def read_palp_point_collection(f, lattice=None, permutation=False):
       :class:`toric lattice <sage.geometry.toric_lattice.ToricLatticeFactory>`
       `M` of dimension `n` will be used.
 
-    - ``permutation`` -- (default: ``False``) if ``True``, try to retrieve
+    - ``permutation`` -- boolean (default: ``False``); if ``True``, try to retrieve
       the permutation. This parameter makes sense only when PALP computed the
       normal form of a lattice polytope.
 

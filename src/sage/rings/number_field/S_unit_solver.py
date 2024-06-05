@@ -2099,7 +2099,7 @@ def drop_vector(ev, p, q, complement_ev_dict):
         sage: drop_vector((0, 1, 0), 3, 7, P)
         False
     """
-    # returns True if it is OK to drop exp_vec given the current comp_exp_vec dictionary associated to some q.
+    # returns ``True`` if it is OK to drop exp_vec given the current comp_exp_vec dictionary associated to some q.
     # returns False otherwise
     # loop over the possible compatible vectors in the other modulus
     g = gcd(p-1, q-1)

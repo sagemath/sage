@@ -113,7 +113,7 @@ class Text(GraphicPrimitive):
                 'bounding_box': 'A dictionary specifying a bounding box',
                 'hue': 'The color given as a hue',
                 'alpha': 'A float (0.0 transparent through 1.0 opaque)',
-                'axis_coords': 'If True use axis coordinates: (0,0) lower left and (1,1) upper right',
+                'axis_coords': 'If ``True`` use axis coordinates: (0,0) lower left and (1,1) upper right',
                 'rotation': 'How to rotate the text: angle in degrees, vertical, horizontal',
                 'vertical_alignment': 'How to align vertically: top, center, bottom',
                 'horizontal_alignment': 'How to align horizontally: left, center, right',
@@ -253,9 +253,9 @@ def text(string, xy, **options):
 
     - ``zorder`` -- The layer level in which to draw
 
-    - ``clip`` -- (default: ``False``) Whether to clip or not
+    - ``clip`` -- boolean (default: ``False``); Whether to clip or not
 
-    - ``axis_coords`` -- (default: ``False``) If True, use axis coordinates, so that
+    - ``axis_coords`` -- boolean (default: ``False``); If True, use axis coordinates, so that
       (0,0) is the lower left and (1,1) upper right, regardless of the x and y
       range of plotted values.
 

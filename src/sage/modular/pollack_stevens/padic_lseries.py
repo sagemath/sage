@@ -309,7 +309,7 @@ class pAdicLseries(SageObject):
 
         - ``chip`` -- the value of the nebentype at p (default: 1)
 
-        - ``psi`` -- a twisting character (default: None)
+        - ``psi`` -- a twisting character (default: ``None``)
 
         OUTPUT: a `p`-adic number
 

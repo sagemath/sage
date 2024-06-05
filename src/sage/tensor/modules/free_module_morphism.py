@@ -1319,7 +1319,7 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
     - ``name`` -- (default: ``None``) string; name given to the endomorphism
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote the
       endomorphism; if ``None``, ``name`` will be used.
-    - ``is_identity`` -- (default: ``False``) determines whether the
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
       constructed object is the identity endomorphism; if set to ``True``,
       then the entry ``matrix_rep`` is not used.
 

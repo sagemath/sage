@@ -452,7 +452,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
             if self._dest_map.restrict(frame._domain) == frame._dest_map:
                 zero.add_comp(frame)
                 # (since new components are initialized to zero)
-        zero._is_zero = True  # This element is certainly zero
+        zero._is_zero = ``True``  # This element is certainly zero
         zero.set_immutable()
         return zero
 

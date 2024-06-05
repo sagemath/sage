@@ -55,7 +55,7 @@ def GF2XHexOutput(have_hex=None):
 
     INPUT:
 
-    - have_hex -- if True hex representation will be used
+    - have_hex -- if ``True`` hex representation will be used
 
     EXAMPLES::
 

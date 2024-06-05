@@ -682,7 +682,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
           input for
           :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
 
-        - ``check`` -- bool (default: ``True``). See
+        - ``check`` -- boolean (default: ``True``). See
           :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
 
         EXAMPLES::

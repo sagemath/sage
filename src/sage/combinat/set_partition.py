@@ -660,11 +660,11 @@ class SetPartition(AbstractSetPartition,
 
         - ``color`` -- (default: ``'black'``) the arc colors
 
-        - ``fill`` -- (default: ``False``) if ``True`` then fills ``color``,
+        - ``fill`` -- boolean (default: ``False``); if ``True`` then fills ``color``,
           else you can pass in a color to alter the fill color -
           *only works with cyclic plot*
 
-        - ``show_labels`` -- (default: ``True``) if ``True`` shows labels -
+        - ``show_labels`` -- boolean (default: ``True``); if ``True`` shows labels -
           *only works with plots*
 
         - ``radius`` -- (default: ``"1cm"``) radius of circle for cyclic

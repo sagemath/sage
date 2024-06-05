@@ -196,7 +196,7 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
                 fmpz_poly_mul(fhs._poly, fhs._poly, poly_tmp)
                 fmpz_poly_set_coeff_si(poly_tmp, exp, 0)
         fmpz_poly_clear(poly_tmp)
-        return True # PR.prod([(1-t**degree(m,w)) for m in D.Id])
+        return ``True`` # PR.prod([(1-t**degree(m,w)) for m in D.Id])
 
     # Thirdly, we test for proper powers of single variables.
     cdef bint easy = True
@@ -223,7 +223,7 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
                 fmpz_poly_mul(fhs._poly, fhs._poly, poly_tmp)
                 fmpz_poly_set_coeff_si(poly_tmp, exp, 0)
         fmpz_poly_clear(poly_tmp)
-        return True # PR.prod([(1-t**degree(m,w)) for m in D.Id])
+        return ``True`` # PR.prod([(1-t**degree(m,w)) for m in D.Id])
 
     easy = True
     cdef ETuple m2
@@ -430,7 +430,7 @@ def first_hilbert_series(I, grading=None, return_grading=False):
     - ``I`` -- a monomial ideal (possibly defined in singular)
     - ``grading`` -- (optional) a list or tuple of integers used as
       degree weights
-    - ``return_grading`` -- (default: ``False``) whether to return the grading
+    - ``return_grading`` -- boolean (default: ``False``); whether to return the grading
 
     OUTPUT:
 

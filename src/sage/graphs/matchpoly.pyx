@@ -64,7 +64,7 @@ def matching_polynomial(G, complement=True, name=None):
 
     INPUT:
 
-    - ``complement`` -- (default: ``True``) whether to use Godsil's duality
+    - ``complement`` -- boolean (default: ``True``); whether to use Godsil's duality
       theorem to compute the matching polynomial from that of the graphs
       complement (see ALGORITHM).
 

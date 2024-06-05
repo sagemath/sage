@@ -141,7 +141,7 @@ cdef class SymbolicSeries(Expression):
 
     def is_terminating_series(self):
         """
-        Return True if the series is without order term.
+        Return ``True`` if the series is without order term.
 
         A series is terminating if it can be represented exactly,
         without requiring an order term. You can explicitly

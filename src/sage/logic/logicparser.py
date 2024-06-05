@@ -517,7 +517,7 @@ def tree_parse(toks, polish=False):
 
     - ``toks`` -- a list of tokens from a boolean formula
 
-    - ``polish`` -- (default: ``False``) a boolean; when ``True``,
+    - ``polish`` -- boolean (default: ``False``); a boolean; when ``True``,
       :func:`~sage.logic.logicparser.tree_parse()` will return
       the full syntax parse tree
 
@@ -577,7 +577,7 @@ def parse_ltor(toks, n=0, polish=False):
     - ``n`` -- (default: 0) an integer representing which order of
       operations are occurring
 
-    - ``polish`` -- (default: ``False``) a boolean; when ``True``, double
+    - ``polish`` -- boolean (default: ``False``); a boolean; when ``True``, double
       negations are not cancelled and negated statements are turned into
       list of length two.
 

@@ -60,7 +60,7 @@ from sage.misc.sage_unittest import TestSuite
 # The pickling method (namely `__reduce__`) checks if the id of the
 # current element appears in the dictionary `already_pickled`. If it
 # does not, the methods records that this element is about to be
-# pickled by adding the entry { id: True } to `already_pickled`.
+# pickled by adding the entry { id: ``True`` } to `already_pickled`.
 # In all cases, the pickling method pickles the element and includes
 # the id in the tuple of arguments that will be passed in afterwards
 # to the unpickling function.
@@ -930,7 +930,7 @@ def loads(s, compress=True, **kwargs):
         [   1    2]
         [   3 -4/3]
 
-    If compress is True (the default), it will try to decompress
+    If compress is ``True`` (the default), it will try to decompress
     the data with zlib and with bz2 (in turn); if neither succeeds,
     it will assume the data is actually uncompressed.  If compress=False
     is explicitly specified, then no decompression is attempted.

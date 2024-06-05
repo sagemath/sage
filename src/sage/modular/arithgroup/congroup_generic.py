@@ -117,7 +117,7 @@ def CongruenceSubgroup_constructor(*args):
 
 def is_CongruenceSubgroup(x):
     r"""
-    Return True if x is of type CongruenceSubgroup.
+    Return ``True`` if x is of type CongruenceSubgroup.
 
     Note that this may be False even if `x` really is a congruence subgroup --
     it tests whether `x` is "obviously" congruence, i.e.~whether it has a

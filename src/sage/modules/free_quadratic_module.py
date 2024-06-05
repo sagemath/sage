@@ -739,10 +739,10 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
 
         - ``gens`` -- list of vectors
 
-        - ``check`` -- bool (default: ``True``): whether or not to coerce
+        - ``check`` -- boolean (default: ``True``): whether or not to coerce
           entries of gens into base field
 
-        - ``already_echelonized`` -- bool (default: ``False``): set this if
+        - ``already_echelonized`` -- boolean (default: ``False``): set this if
           you know the gens are already in echelon form
 
         EXAMPLES::
@@ -779,10 +779,10 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
 
         - ``basis`` -- list of vectors
 
-        - ``check`` -- bool (default: ``True``): whether or not to coerce
+        - ``check`` -- boolean (default: ``True``): whether or not to coerce
           entries of gens into base field
 
-        - ``already_echelonized`` -- bool (default: ``False``): set this if
+        - ``already_echelonized`` -- boolean (default: ``False``): set this if
           you know the gens are already in echelon form
 
         EXAMPLES::
@@ -1049,9 +1049,9 @@ class FreeQuadraticModule_ambient_pid(free_module.FreeModule_ambient_pid,
 
         - ``rank`` -- a non-negative integer
 
-        - ``sparse`` -- bool (default: ``False``)
+        - ``sparse`` -- boolean (default: ``False``)
 
-        - ``inner_product_matrix`` -- bool (default: ``None``)
+        - ``inner_product_matrix`` -- boolean (default: ``None``)
 
         EXAMPLES::
 
@@ -1133,7 +1133,7 @@ class FreeQuadraticModule_ambient_field(free_module.FreeModule_ambient_field,
 
         - ``dimension`` -- a non-negative integer
 
-        - ``sparse`` -- bool (default: ``False``)
+        - ``sparse`` -- boolean (default: ``False``)
 
         EXAMPLES::
 

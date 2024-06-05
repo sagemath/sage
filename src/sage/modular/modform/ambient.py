@@ -288,7 +288,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def is_ambient(self):
         """
-        Return True if this an ambient space of modular forms.
+        Return ``True`` if this an ambient space of modular forms.
 
         This is an ambient space, so this function always returns True.
 
@@ -366,7 +366,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         INPUT:
 
 
-        -  ``new_prec`` -- positive integer (default: None)
+        -  ``new_prec`` -- positive integer (default: ``None``)
 
 
         OUTPUT: if new_prec is None, returns the current precision
@@ -469,7 +469,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         INPUT:
 
 
-        -  ``p`` -- (default: None), if specified return only
+        -  ``p`` -- (default: ``None``), if specified return only
            the `p`-new submodule.
 
 

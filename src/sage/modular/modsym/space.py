@@ -1771,7 +1771,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``compute_dual`` -- bool (default: ``True``) also
+        -  ``compute_dual`` -- boolean (default: ``True``); also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -1791,7 +1791,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``compute_dual`` -- bool (default: ``True``) also
+        -  ``compute_dual`` -- boolean (default: ``True``); also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -1872,7 +1872,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         -  ``sign`` -- int (either -1, 0 or +1)
 
-        -  ``compute_dual`` -- bool (default: ``True``) also
+        -  ``compute_dual`` -- boolean (default: ``True``); also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -2096,7 +2096,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         -  ``sign`` -- an integer, one of -1, 0, or 1
 
-        -  ``bound`` -- integer (default: None); if specified
+        -  ``bound`` -- integer (default: ``None``); if specified
            only use Hecke operators up to the given bound.
 
         EXAMPLES::

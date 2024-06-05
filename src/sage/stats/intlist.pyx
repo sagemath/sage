@@ -296,7 +296,7 @@ cdef class IntList:
             True
 
         Note that dumping and loading with compress False is much faster, though
-        dumping with compress True can save a lot of space::
+        dumping with compress ``True`` can save a lot of space::
 
             sage: v = stats.IntList([1..10^5])
             sage: loads(dumps(v, compress=False),compress=False) == v
@@ -419,7 +419,7 @@ cdef class IntList:
 
         INPUT:
 
-        - ``index`` -- bool (default: ``False``); if ``True``, also return
+        - ``index`` -- boolean (default: ``False``); if ``True``, also return
           index of minimal entry.
 
         OUTPUT:
@@ -457,7 +457,7 @@ cdef class IntList:
 
         INPUT:
 
-        - ``index`` -- bool (default: ``False``); if ``True``, also return
+        - ``index`` -- boolean (default: ``False``); if ``True``, also return
           index of maximum entry.
 
         OUTPUT:

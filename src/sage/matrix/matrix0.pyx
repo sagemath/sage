@@ -216,7 +216,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) make a copy of the ``dict``
+        - ``copy`` -- boolean (default: ``True``); make a copy of the ``dict``
           corresponding to ``self``
 
         If ``copy=True``, then is safe to change the returned dictionary.
@@ -478,7 +478,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_immutable(self):
         """
-        Return True if this matrix is immutable.
+        Return ``True`` if this matrix is immutable.
 
         See the documentation for self.set_immutable for more details
         about mutability.
@@ -496,7 +496,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_mutable(self):
         """
-        Return True if this matrix is mutable.
+        Return ``True`` if this matrix is mutable.
 
         See the documentation for self.set_immutable for more details
         about mutability.
@@ -3774,7 +3774,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         - ``sign`` -- `\pm 1`, depending on symmetric or skew-symmetric is tested.
 
-        - ``positive`` -- if True, only positive entries for the values of the dictionary are allowed.
+        - ``positive`` -- if ``True``, only positive entries for the values of the dictionary are allowed.
 
         OUTPUT:
 
@@ -3816,13 +3816,13 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is (skew)-symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``skew`` -- bool(default: ``False``) if True, (skew-)symmetrizability is checked.
-        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if ``True`` and ``self`` is (skew)-symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``skew`` -- bool(default: ``False``) if ``True``, (skew-)symmetrizability is checked.
+        - ``positive`` -- bool(default: ``True``) if ``True``, the condition that `D` has positive entries is added.
 
         OUTPUT:
 
-        - True -- if ``self`` is (skew-)symmetrizable and ``return_diag`` is False
+        - ``True`` -- if ``self`` is (skew-)symmetrizable and ``return_diag`` is False
         - the diagonal entries of the matrix `D` such that `DB` is (skew-)symmetric -- iff ``self`` is (skew-)symmetrizable and ``return_diag`` is True
         - False -- iff ``self`` is not (skew-)symmetrizable
 
@@ -4454,12 +4454,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if ``True`` and ``self`` is symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``positive`` -- bool(default: ``True``) if ``True``, the condition that `D` has positive entries is added.
 
         OUTPUT:
 
-        - True -- if ``self`` is symmetrizable and ``return_diag`` is False
+        - ``True`` -- if ``self`` is symmetrizable and ``return_diag`` is False
         - the diagonal entries of a matrix `D` such that `DB` is symmetric -- iff ``self`` is symmetrizable and ``return_diag`` is True
         - False -- iff ``self`` is not symmetrizable
 
@@ -4497,12 +4497,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is skew-symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if ``True`` and ``self`` is skew-symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``positive`` -- bool(default: ``True``) if ``True``, the condition that `D` has positive entries is added.
 
         OUTPUT:
 
-        - True -- if ``self`` is skew-symmetrizable and ``return_diag`` is False
+        - ``True`` -- if ``self`` is skew-symmetrizable and ``return_diag`` is False
         - the diagonal entries of a matrix `D` such that `DB` is skew-symmetric -- iff ``self`` is skew-symmetrizable and ``return_diag`` is True
         - False -- iff ``self`` is not skew-symmetrizable
 
@@ -4541,7 +4541,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_dense(self):
         """
-        Return True if this is a dense matrix.
+        Return ``True`` if this is a dense matrix.
 
         In Sage, being dense is a property of the underlying
         representation, not the number of nonzero entries.
@@ -4557,7 +4557,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_sparse(self):
         """
-        Return True if this is a sparse matrix.
+        Return ``True`` if this is a sparse matrix.
 
         In Sage, being sparse is a property of the underlying
         representation, not the number of nonzero entries.
@@ -4573,7 +4573,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_square(self):
         """
-        Return True precisely if this matrix is square, i.e., has the same
+        Return ``True`` precisely if this matrix is square, i.e., has the same
         number of rows and columns.
 
         EXAMPLES::
@@ -4587,7 +4587,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_invertible(self):
         r"""
-        Return True if this matrix is invertible.
+        Return ``True`` if this matrix is invertible.
 
         EXAMPLES: The following matrix is invertible over
         `\QQ` but not over `\ZZ`.
@@ -4814,10 +4814,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``copy`` -- (default: ``True``) it is safe to change the
+        -  ``copy`` -- boolean (default: ``True``); it is safe to change the
            resulting list (unless you give the option ``copy=False``)
 
-        -  ``column_order`` -- (default: ``False``) If ``True``,
+        -  ``column_order`` -- boolean (default: ``False``); If ``True``,
            returns the list of pairs ``(i,j)`` such that ``self[i,j] != 0``, but
            sorted by columns, i.e., column ``j=0`` entries occur first, then
            column ``j=1`` entries, etc.

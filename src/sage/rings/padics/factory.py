@@ -278,7 +278,7 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
 
     # We eliminate irrelevant print options (e.g. print_pos if p = 2)
     if p == 2 or print_mode == 'digits':
-        print_pos = True # we want this hard-coded so that we don't get duplicate parents if the keys differ.
+        print_pos = ``True`` # we want this hard-coded so that we don't get duplicate parents if the keys differ.
     if print_mode == 'digits':
         print_ram_name = None
         print_alphabet = print_alphabet[:p]
@@ -358,7 +358,7 @@ class Qp_class(UniqueFactory):
     - ``ram_name`` -- string.  Another way to specify the name; for
       consistency with the ``Qq`` and ``Zq`` and extension functions.
 
-    - ``print_pos`` -- bool (default ``None``) Whether to only use positive
+    - ``print_pos`` -- boolean (default ``None``) Whether to only use positive
       integers in the representations of elements. See PRINTING below.
 
     - ``print_sep`` -- string (default ``None``) The separator character used
@@ -373,7 +373,7 @@ class Qp_class(UniqueFactory):
     - ``show_prec`` -- a boolean or a string (default ``None``) Specify how
       the precision is printed. See PRINTING below.
 
-    - ``check`` -- bool (default ``True``) whether to check if `p` is prime.
+    - ``check`` -- boolean (default ``True``) whether to check if `p` is prime.
       Non-prime input may cause seg-faults (but can also be useful for
       base n expansions for example)
 
@@ -863,7 +863,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
       adding a ``'0'`` to the end of the name).  Controls how elements of
       the residue field print.
 
-    - ``print_pos`` -- bool (default ``None``) Whether to only use positive
+    - ``print_pos`` -- boolean (default ``None``) Whether to only use positive
       integers in the representations of elements. See PRINTING below.
 
     - ``print_sep`` -- string (default ``None``) The separator character used
@@ -880,10 +880,10 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
       number of terms in the polynomial representation of an element
       (using ``'terse'``).  See PRINTING below.
 
-    - ``show_prec`` -- bool (default ``None``) whether to show the precision
+    - ``show_prec`` -- boolean (default ``None``) whether to show the precision
       for elements.  See PRINTING below.
 
-    - ``check`` -- bool (default ``True``) whether to check inputs.
+    - ``check`` -- boolean (default ``True``) whether to check inputs.
 
     OUTPUT:
 
@@ -1526,7 +1526,7 @@ class Zp_class(UniqueFactory):
     - ``names`` -- string or tuple (defaults to a string
       representation of `p`).  What to use whenever `p` is printed.
 
-    - ``print_pos`` -- bool (default ``None``) Whether to only use
+    - ``print_pos`` -- boolean (default ``None``) Whether to only use
       positive integers in the representations of elements. See
       PRINTING below.
 
@@ -1539,10 +1539,10 @@ class Zp_class(UniqueFactory):
     - ``print_max_terms`` -- integer (default ``None``) The maximum
       number of terms shown.  See PRINTING below.
 
-    - ``show_prec`` -- bool (default ``None``) whether to show the precision
+    - ``show_prec`` -- boolean (default ``None``) whether to show the precision
       for elements.  See PRINTING below.
 
-    - ``check`` -- bool (default ``True``) whether to check if `p` is
+    - ``check`` -- boolean (default ``True``) whether to check if `p` is
       prime.  Non-prime input may cause seg-faults (but can also be
       useful for base `n` expansions for example)
 
@@ -2079,7 +2079,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       to adding a ``'0'`` to the end of the name).  Controls how
       elements of the residue field print.
 
-    - ``print_pos`` -- bool (default ``None``) Whether to only use
+    - ``print_pos`` -- boolean (default ``None``) Whether to only use
       positive integers in the representations of elements. See
       PRINTING below.
 
@@ -2097,10 +2097,10 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       number of terms in the polynomial representation of an element
       (using ``'terse'``).  See PRINTING below.
 
-    - ``show_prec`` -- bool (default ``None``) Whether to show the precision
+    - ``show_prec`` -- boolean (default ``None``) Whether to show the precision
       for elements.  See PRINTING below.
 
-    - ``check`` -- bool (default ``True``) whether to check inputs.
+    - ``check`` -- boolean (default ``True``) whether to check inputs.
 
     - ``implementation`` -- string (default ``'FLINT'``) which
       implementation to use.  ``'NTL'`` is the other option.
@@ -3535,7 +3535,7 @@ def krasner_check(poly, prec):
         sage: krasner_check(1,2)  # this is a stupid example.
         True
     """
-    return True #This needs to be implemented
+    return ``True`` #This needs to be implemented
 
 def is_eisenstein(poly):
     r"""

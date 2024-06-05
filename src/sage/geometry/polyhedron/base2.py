@@ -701,7 +701,7 @@ class Polyhedron_base2(Polyhedron_base1):
         The following keyword arguments are passed to
         :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`:
 
-        - ``split`` -- (default: ``False``) a boolean or list
+        - ``split`` -- boolean (default: ``False``); a boolean or list
 
           - ``split=False`` computes the generating function directly,
             without any splitting.
@@ -739,13 +739,13 @@ class Polyhedron_base2(Polyhedron_base1):
           both at the same time.
 
         - ``Factorization_sort`` (default: ``False``) and
-          ``Factorization_simplify`` (default: ``True``) -- booleans
+          ``Factorization_simplify`` boolean (default: ``True``); -- booleans
 
           These are passed on to
           :class:`sage.structure.factorization.Factorization` when creating
           the result.
 
-        - ``sort_factors`` -- (default: ``False``) a boolean
+        - ``sort_factors`` -- boolean (default: ``False``); a boolean
 
           If set, then
           the factors of the output are sorted such that the numerator is

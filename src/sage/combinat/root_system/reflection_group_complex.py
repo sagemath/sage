@@ -2002,7 +2002,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             INPUT:
 
-            - ``in_unitary_group`` -- (default: ``False``) if ``True``,
+            - ``in_unitary_group`` -- boolean (default: ``False``); if ``True``,
               the reflection length is computed in the unitary group
               which is the dimension of the move space of ``self``
 

@@ -2143,7 +2143,7 @@ class HyperplaneArrangementElement(Element):
         - ``B`` -- a region (optional); if ``None``, then
           an arbitrary region is chosen as the base region.
 
-        - ``numbered_labels`` -- bool (default: ``True``); if ``True``,
+        - ``numbered_labels`` -- boolean (default: ``True``); if ``True``,
           then the elements of the poset are numbered. Else they are labelled
           with the regions themselves.
 

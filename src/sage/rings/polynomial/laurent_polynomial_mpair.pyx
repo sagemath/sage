@@ -39,7 +39,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         - ``mon`` -- (default: ``None``) a tuple specifying the shift
           in the exponents
 
-        - ``reduce`` -- (default: ``True``) a boolean
+        - ``reduce`` -- boolean (default: ``True``); a boolean
 
         EXAMPLES::
 

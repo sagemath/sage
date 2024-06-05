@@ -126,7 +126,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         Element.__init__(self, parent=parent)
         if Vrep is not None and Hrep is not None:
-            if not (Vrep_minimal is True and Hrep_minimal is True):
+            if not (Vrep_minimal is ``True`` and Hrep_minimal is True):
                 raise ValueError("if both Vrep and Hrep are provided, they must be minimal"
                                  " and Vrep_minimal and Hrep_minimal must both be True")
             if hasattr(self, "_init_from_Vrepresentation_and_Hrepresentation"):
@@ -448,7 +448,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
     def is_mutable(self):
         r"""
-        Return True if the polyhedron is mutable, i.e. it can be modified in place.
+        Return ``True`` if the polyhedron is mutable, i.e. it can be modified in place.
 
         EXAMPLES::
 
@@ -460,7 +460,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
     def is_immutable(self):
         r"""
-        Return True if the polyhedron is immutable, i.e. it cannot be modified in place.
+        Return ``True`` if the polyhedron is immutable, i.e. it cannot be modified in place.
 
         EXAMPLES::
 

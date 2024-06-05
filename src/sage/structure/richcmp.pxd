@@ -143,12 +143,12 @@ cpdef inline bint rich_to_bool(int op, int c) noexcept:
         sage: for op in (op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE):
         ....:     for c in (-1,0,1):
         ....:         print(rich_to_bool(op, c))
-        True False False
-        True True False
-        False True False
-        True False True
+        ``True`` False False
+        ``True`` True False
+        False ``True`` False
+        ``True`` False True
         False False True
-        False True True
+        False ``True`` True
 
     Indirect tests using integers::
 

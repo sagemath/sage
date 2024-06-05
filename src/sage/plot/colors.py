@@ -485,7 +485,7 @@ class Color:
 
         OUTPUT:
 
-        - boolean -- True if the two colors are the same, False if different
+        - boolean -- ``True`` if the two colors are the same, False if different
 
         EXAMPLES::
 
@@ -513,7 +513,7 @@ class Color:
 
         OUTPUT:
 
-        - boolean -- True if the two colors are different,
+        - boolean -- ``True`` if the two colors are different,
             False if they're the same
 
         EXAMPLES::

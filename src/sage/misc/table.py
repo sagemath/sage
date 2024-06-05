@@ -314,9 +314,9 @@ class table(SageObject):
 
         INPUT:
 
-        - ``header_row`` -- if True, first row is highlighted.
-        - ``header_column`` -- if True, first column is highlighted.
-        - ``frame`` -- if True, put a box around each cell.
+        - ``header_row`` -- if ``True``, first row is highlighted.
+        - ``header_column`` -- if ``True``, first column is highlighted.
+        - ``frame`` -- if ``True``, put a box around each cell.
         - ``align`` -- the alignment of each entry: either 'left',
           'center', or 'right'
 
@@ -363,7 +363,7 @@ class table(SageObject):
             sage: T.options(header_row=['x', 'y', 'z'])
             Traceback (most recent call last):
             ...
-            TypeError: header_row should be either True or False.
+            TypeError: header_row should be either ``True`` or False.
         """
         if kwds:
             for option in ['align', 'frame']:
@@ -376,7 +376,7 @@ class table(SageObject):
                     elif kwds[option] is True:
                         self._options[option] = kwds[option]
                     else:
-                        raise TypeError("%s should be either True or False." % option)
+                        raise TypeError("%s should be either ``True`` or False." % option)
         else:
             return self._options
 
@@ -513,7 +513,7 @@ class table(SageObject):
         Check that :issue:`14601` has been fixed::
 
             sage: table([['111111', '222222', '333333']])._str_table_row([False,True,None], False)
-            '  False    True     None\n'
+            '  False    ``True``     None\n'
         """
         frame = self._options['frame']
         widths = self._widths()
@@ -778,7 +778,7 @@ class table(SageObject):
         - ``row`` -- a list with the same number of entries as each row
           of the table.
 
-        - ``header`` -- bool (default: ``False``). If True, treat this as a
+        - ``header`` -- boolean (default: ``False``). If True, treat this as a
           header row, using ``<th>`` instead of ``<td>``.
 
         OUTPUT: this method returns nothing; all output is written to ``file``

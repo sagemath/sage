@@ -406,7 +406,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
     def has_rational_point(self, point=False,
                            algorithm='default', read_cache=True):
         r"""
-        Return True if and only if the conic ``self``
+        Return ``True`` if and only if the conic ``self``
         has a point over its base field `B`.
 
         If ``point`` is True, then returns a second output, which is
@@ -567,7 +567,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def has_singular_point(self, point=False):
         r"""
-        Return True if and only if the conic ``self`` has a rational
+        Return ``True`` if and only if the conic ``self`` has a rational
         singular point.
 
         If ``point`` is True, then also return a rational singular
@@ -731,7 +731,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def is_diagonal(self):
         r"""
-        Return True if and only if the conic has the form
+        Return ``True`` if and only if the conic has the form
         `a x^2 + b y^2 + c z^2`.
 
         EXAMPLES:
@@ -750,7 +750,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def is_smooth(self):
         r"""
-        Return True if and only if ``self`` is smooth.
+        Return ``True`` if and only if ``self`` is smooth.
 
         EXAMPLES:
 

@@ -1710,7 +1710,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         INPUT:
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return a list
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a list
           of all square roots.
 
         EXAMPLES::

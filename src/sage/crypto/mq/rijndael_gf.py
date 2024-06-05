@@ -682,7 +682,7 @@ class RijndaelGF(SageObject):
         - ``H`` -- A hex string where every two hex characters correspond to a
           single element in `\GF{2^8}`
 
-        - ``matrix`` -- (default: ``True``) Return a list if ``False``;
+        - ``matrix`` -- boolean (default: ``True``); Return a list if ``False``;
           return a state matrix if ``True``.
 
         OUTPUT:
@@ -798,7 +798,7 @@ class RijndaelGF(SageObject):
         - ``B`` -- A binary string where every eight bits correspond to a
           single element in `\GF{2^8}`
 
-        - ``matrix`` -- (default: ``True``) Return a list if ``False``.
+        - ``matrix`` -- boolean (default: ``True``); Return a list if ``False``.
           Return a state matrix over `\GF{2^8}` if ``True``.
 
         OUTPUT:
@@ -1333,7 +1333,7 @@ class RijndaelGF(SageObject):
           ``rcpc`` to select encryption or decryption. The
           encryption flag is "encrypt" and the decrypt flag is "decrypt".
 
-        - ``keys`` -- (default: None) An array of `N_r` subkey matrices to
+        - ``keys`` -- (default: ``None``) An array of `N_r` subkey matrices to
           replace any key variables in any polynomials returned by
           ``poly_method``. Must be identical to the format returned by
           ``expand_key``. If any polynomials have key variables and ``keys``
@@ -1461,10 +1461,10 @@ class RijndaelGF(SageObject):
           ``Round_Component_Poly_Constr`` object. The encryption flag is
           "encrypt" and the decryption flag is "decrypt".
 
-        - ``f_attr`` -- (default: None) A dictionary of keyword attributes to
+        - ``f_attr`` -- (default: ``None``) A dictionary of keyword attributes to
           pass to ``f`` when it is called.
 
-        - ``g_attr`` -- (default: None) A dictionary of keyword attributes to
+        - ``g_attr`` -- (default: ``None``) A dictionary of keyword attributes to
           pass to ``g`` when it is called. Does nothing if ``g`` is a
           polynomial.
 
@@ -1814,7 +1814,7 @@ class RijndaelGF(SageObject):
           polynomial as an encryption or as a decryption. The encryption flag
           is "encrypt" and the decryption  flag is "decrypt".
 
-        - ``no_inversion`` -- (default: ``False``) Don't perform the inversion
+        - ``no_inversion`` -- boolean (default: ``False``); Don't perform the inversion
           step, only perform the affine transformation. Primarily intended
           to increase performance during decryption, as is shown in the
           below example.

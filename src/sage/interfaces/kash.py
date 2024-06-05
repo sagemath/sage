@@ -460,7 +460,7 @@ class Kash(Expect):
                  server_tmpdir=None):
         """
         INPUT:
-            max_workspace_size -- (default: None)
+            max_workspace_size -- (default: ``None``)
                     set maximal workspace memory usage to <mem>
                     <mem> stands for byte-wise allocation
                     <mem>k stands for kilobyte-wise allocation
@@ -544,7 +544,7 @@ class Kash(Expect):
 
         -  ``s`` -- string containing Kash code.
 
-        -  ``newlines`` -- bool (default: ``True``); if False,
+        -  ``newlines`` -- boolean (default: ``True``); if False,
            remove all backslash-newlines inserted by the Kash output
            formatter.
 
@@ -791,7 +791,7 @@ class KashDocumentation(list):
 
 def is_KashElement(x):
     """
-    Returns True if ``x`` is of type :class:`KashElement`.
+    Returns ``True`` if ``x`` is of type :class:`KashElement`.
 
     EXAMPLES::
 

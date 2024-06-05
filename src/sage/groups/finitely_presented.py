@@ -1003,10 +1003,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``H`` -- a finitely presented group
 
-        - ``reduced`` -- (default: ``False``) boolean; if ``True``, then
+        - ``reduced`` -- boolean (default: ``False``); if ``True``, then
           attempt to reduce the presentation of the product group
 
-        - ``new_names`` -- (default: ``True``) boolean; If ``True``, then
+        - ``new_names`` -- boolean (default: ``True``); If ``True``, then
           lexicographical variable names are assigned to the generators of
           the group to be returned. If ``False``, the group to be returned
           keeps the generator names of the two groups forming the direct

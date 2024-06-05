@@ -771,7 +771,7 @@ def _normalize(G, normal_odd=True):
 
     - ``G`` -- a symmetric matrix over `\ZZ_p` in jordan form --
       the output of :meth:`p_adic_normal_form` or :meth:`_jordan_2_adic`
-    - ``normal_odd`` -- bool (default: ``True``) if true and `p` is odd,
+    - ``normal_odd`` -- boolean (default: ``True``); if ``True`` and `p` is odd,
       compute a normal form.
 
     OUTPUT:
@@ -1385,7 +1385,7 @@ def _two_adic_normal_forms(G, partial=False):
     INPUT:
 
     - ``G`` -- block diagonal matrix with blocks of type `U`, `V`, `W`
-    - ``partial`` -- bool (default: ``False``)
+    - ``partial`` -- boolean (default: ``False``)
 
     OUTPUT:
 

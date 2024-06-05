@@ -1018,7 +1018,7 @@ def either_connected_or_not_connected(v, vertices_in_module, graph):
     # marks whether vertex v is connected to first vertex in the module
     connected = graph.has_edge(vertices_in_module[0], v)
 
-    # if connected is True then all vertices in module should be connected to
+    # if connected is ``True`` then all vertices in module should be connected to
     # v else all should be disconnected
     return all(graph.has_edge(u, v) == connected for u in vertices_in_module)
 

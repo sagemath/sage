@@ -64,7 +64,7 @@ class FqfIsometry(AbelianGroupAutomorphism):
 
     - ``parent`` -- the parent :class:`~FqfOrthogonalGroup`
     - ``x`` -- a libgap element
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     EXAMPLES::
 
@@ -389,8 +389,8 @@ class ActionOnFqf(Action):
 
     - ``orthogonal_grp`` --  an instance of :class:`GroupOfIsometries`
     - ``fqf`` -- a torsion quadratic module
-    - ``on_subquotient`` -- bool (default: ``False``)
-    - ``is_left`` -- bool (default: ``False``)
+    - ``on_subquotient`` -- boolean (default: ``False``)
+    - ``is_left`` -- boolean (default: ``False``)
 
     EXAMPLES::
 

@@ -1557,9 +1557,9 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``display_steps`` -- (default: ``False``) boolean which indicates
+        - ``display_steps`` -- boolean (default: ``False``); which indicates
           if we want to print each step in the algorithm
-        - ``build_graph`` -- (default: ``False``) boolean which indicates
+        - ``build_graph`` -- boolean (default: ``False``); which indicates
           if we want to construct and return a graph of the bijection whose
           vertices are rigged configurations obtained at each step and edges
           are labeled by either the return value of `\delta` or the
@@ -1643,9 +1643,9 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``display_steps`` -- (default: ``False``) boolean which indicates
+        - ``display_steps`` -- boolean (default: ``False``); which indicates
           if we want to print each step in the algorithm
-        - ``build_graph`` -- (default: ``False``) boolean which indicates
+        - ``build_graph`` -- boolean (default: ``False``); which indicates
           if we want to construct and return a graph of the bijection whose
           vertices are rigged configurations obtained at each step and edges
           are labeled by either the return value of `\delta` or the
@@ -1786,7 +1786,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``return_b`` -- (default: ``False``) whether to return the
+        - ``return_b`` -- boolean (default: ``False``); whether to return the
           resulting letter from `\delta`
 
         OUTPUT:
@@ -1974,7 +1974,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``reverse_factors`` -- (default: ``False``) if ``True``, then this
+        - ``reverse_factors`` -- boolean (default: ``False``); if ``True``, then this
           returns an element in `RC(B')` where `B'` is the tensor factors
           of ``self`` in reverse order
 

@@ -230,10 +230,10 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         - ``name`` -- (default: ``None``) name given to the continuous map
         - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           continuous map; if ``None``, the LaTeX symbol is set to ``name``
-        - ``is_isomorphism`` -- (default: ``False``) determines whether the
+        - ``is_isomorphism`` -- boolean (default: ``False``); determines whether the
           constructed object is a isomorphism (i.e. a homeomorphism); if set to
           ``True``, then the manifolds `M` and `N` must have the same dimension
-        - ``is_identity`` -- (default: ``False``) determines whether the
+        - ``is_identity`` -- boolean (default: ``False``); determines whether the
           constructed object is the identity map; if set to ``True``,
           then `N` must be `M` and the entry ``coord_functions`` is not used
 

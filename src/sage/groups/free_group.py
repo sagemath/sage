@@ -606,7 +606,7 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
     - ``index_set`` -- (optional) an index set for the generators; if
       specified then the optional keyword ``abelian`` can be used
 
-    - ``abelian`` -- (default: ``False``) whether to construct a free
+    - ``abelian`` -- boolean (default: ``False``); whether to construct a free
       abelian group or a free group
 
     .. NOTE::

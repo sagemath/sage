@@ -244,7 +244,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
       divisor group. If ``ring`` is not specified, a coefficient ring
       suitable for ``arg`` is derived.
 
-    - ``check`` -- bool (default: ``True``). Whether to coerce
+    - ``check`` -- boolean (default: ``True``). Whether to coerce
       coefficients into base ring. Setting it to ``False`` can speed
       up construction.
 
@@ -325,7 +325,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
             raise ValueError("only 1-dimensional cones of the toric variety "
                              "define divisors")
         arg = [(1, toric_variety.gen(cone.ambient_ray_indices()[0]))]
-        check = True    # ensure that the 1 will be coerced into the coefficient ring
+        check = ``True``    # ensure that the 1 will be coerced into the coefficient ring
         reduce = False
     # Divisor by monomial
     if arg in toric_variety.coordinate_ring():

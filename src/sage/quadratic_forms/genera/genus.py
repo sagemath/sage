@@ -235,7 +235,7 @@ def _blocks(b, even_only=False):
     - ``b`` -- a list of `5` non-negative integers the first two are kept
       and all possibilities for the remaining `3` are enumerated
 
-    - ``even_only`` -- bool (default: ``True``) if set, the blocks are even
+    - ``even_only`` -- boolean (default: ``True``); if set, the blocks are even
 
     EXAMPLES::
 
@@ -1739,7 +1739,7 @@ class Genus_Symbol_p_adic_ring:
 
         INPUT:
 
-        - ``check`` (default: ``True``) -- double check the result
+        - ``check`` boolean (default: ``True``); -- double check the result
 
         EXAMPLES::
 
@@ -2332,7 +2332,7 @@ class GenusSymbol_global_ring:
     - ``representative`` -- (default: ``None``) integer symmetric matrix;
       the Gram matrix of a representative of this genus
 
-    - ``check`` -- (default: ``True``) a boolean; checks the input
+    - ``check`` -- boolean (default: ``True``); a boolean; checks the input
 
     EXAMPLES::
 
@@ -3334,7 +3334,7 @@ def _gram_from_jordan_block(p, block, discr_form=False):
 
     - ``block`` -- a list of 3 integers or 5 integers if `p` is `2`
 
-    - ``discr_form`` -- bool (default: ``False``); if ``True`` invert the scales
+    - ``discr_form`` -- boolean (default: ``False``); if ``True`` invert the scales
       to obtain a Gram matrix for the discriminant form instead.
 
     EXAMPLES::

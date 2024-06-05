@@ -317,7 +317,7 @@ def T_sequences_construction_from_base_sequences(base_sequences, check=True):
 
     - ``base_sequences`` -- the base sequences that should be used to construct the T-sequences.
 
-    - ``check`` -- boolean, if true (default) checks that the sequences created are T-sequences before returning them.
+    - ``check`` -- boolean, if ``True`` (default) checks that the sequences created are T-sequences before returning them.
 
     EXAMPLES::
 
@@ -396,7 +396,7 @@ def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
 
     - ``turyn_sequences`` -- the Turyn sequences that should be used to construct the T-sequences .
 
-    - ``check`` -- boolean, if true (default) checks that the sequences created are T-sequences before returning them.
+    - ``check`` -- boolean, if ``True`` (default) checks that the sequences created are T-sequences before returning them.
 
     EXAMPLES::
 
@@ -468,7 +468,7 @@ def T_sequences_smallcases(t, existence=False, check=True):
     - ``existence`` -- boolean (default false). If true, this method only returns whether a T-sequences of
       the given size can be constructed.
 
-    - ``check`` -- boolean, if true (default) check that the sequences are T-sequences before returning them.
+    - ``check`` -- boolean, if ``True`` (default) check that the sequences are T-sequences before returning them.
 
     EXAMPLES:
 
@@ -571,7 +571,7 @@ def base_sequences_construction(turyn_type_seqs, check=True):
 
     - ``turyn_type_seqs`` -- The list of 4 Turyn type sequences that should be used to construct the base sequences.
 
-    - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences
+    - ``check`` -- boolean, if ``True`` (default) check that the resulting sequences are base sequences
       before returning them.
 
     OUTPUT: a list containing the four base sequences
@@ -806,7 +806,7 @@ def base_sequences_smallcases(n, p, existence=False, check=True):
     - ``existence`` -- boolean (default: ``False``). If True, the function will only check whether the base
       sequences can be constructed.
 
-    - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences
+    - ``check`` -- boolean, if ``True`` (default) check that the resulting sequences are base sequences
       before returning them.
 
     OUTPUT:

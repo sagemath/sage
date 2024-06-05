@@ -491,7 +491,7 @@ class RiemannSurface:
     - ``prec`` -- the desired precision of computations on the surface in bits
       (default: 53)
 
-    - ``certification`` -- a boolean (default: ``True``) value indicating
+    - ``certification`` -- a boolean (default: ``True``); value indicating
       whether homotopy continuation is certified or not. Uncertified
       homotopy continuation can be faster.
 
@@ -3075,7 +3075,7 @@ class RiemannSurface:
         # The `raise_errors' variable toggles what we do in the event that
         # newton iteration hasn't converged to the desired precision in a
         # fixed number of steps, here set to 100.
-        # If the default value of True is taken, then the failure to converge
+        # If the default value of ``True`` is taken, then the failure to converge
         # raises an error. If the value of False is taken, this failure to
         # converge happens silently, thus allowing the user to get *an*
         # answer out of the integration, but numerical imprecision is to be

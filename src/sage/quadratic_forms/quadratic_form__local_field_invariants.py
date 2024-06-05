@@ -585,7 +585,7 @@ def is_hyperbolic(self, p) -> bool:
     if self.dim() % 2:
         return False
 
-    # True for the zero form
+    # ``True`` for the zero form
     if not self.dim():
         return True
 
@@ -928,7 +928,7 @@ def is_positive_definite(self):
 
         The zero-dimensional form is considered both positive definite and negative definite.
 
-    OUTPUT: boolean -- True or False
+    OUTPUT: boolean -- ``True`` or False
 
     EXAMPLES::
 
@@ -965,7 +965,7 @@ def is_negative_definite(self):
 
         The zero-dimensional form is considered both positive definite and negative definite.
 
-    OUTPUT: boolean -- True or False
+    OUTPUT: boolean -- ``True`` or False
 
     EXAMPLES::
 
@@ -1002,7 +1002,7 @@ def is_indefinite(self):
 
         The zero-dimensional form is not considered indefinite.
 
-    OUTPUT: boolean -- True or False
+    OUTPUT: boolean -- ``True`` or False
 
     EXAMPLES::
 
@@ -1040,7 +1040,7 @@ def is_definite(self):
 
         The zero-dimensional form is considered indefinite.
 
-    OUTPUT: boolean -- True or False
+    OUTPUT: boolean -- ``True`` or False
 
     EXAMPLES::
 

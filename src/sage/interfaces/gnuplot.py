@@ -66,7 +66,7 @@ class Gnuplot(SageObject):
 
         -  ``cmd`` -- string
 
-        -  ``file`` -- string (default: None), if specified save
+        -  ``file`` -- string (default: ``None``), if specified save
            plot to given file, which may be either an eps (default) or png
            file.
 

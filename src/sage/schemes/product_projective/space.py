@@ -63,7 +63,7 @@ from sage.schemes.product_projective.subscheme import AlgebraicScheme_subscheme_
 
 def is_ProductProjectiveSpaces(x):
     r"""
-    Return True if ``x`` is a product of projective spaces.
+    Return ``True`` if ``x`` is a product of projective spaces.
 
     This is an ambient space defined by `\mathbb{P}^n_R \times \cdots \times \mathbb{P}^m_R`,
     where `R` is a ring and `n,\ldots, m\geq 0` are integers.
@@ -900,7 +900,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         - ``I`` -- a list or tuple of positive integers.
 
-        - ``return_embedding`` -- Boolean, if true the projective embedding is also returned.
+        - ``return_embedding`` -- Boolean, if ``True`` the projective embedding is also returned.
 
         OUTPUT:
 

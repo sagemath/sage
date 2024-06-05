@@ -203,7 +203,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
     Further options:
 
-    - ``regular`` -- (default: ``False``) boolean. If ``True``,
+    - ``regular`` -- boolean (default: ``False``);. If ``True``,
       output a
       :class:`RegularMatroid <sage.matroids.linear_matroid.RegularMatroid>`
       instance such that, *if* the input defines a valid regular matroid, then
@@ -213,7 +213,7 @@ def Matroid(groundset=None, data=None, **kwds):
       ``reduced_matrix``, output will be a linear matroid over the ring or
       field ``ring``.
     - ``field`` -- any field. Same as ``ring``, but only fields are allowed.
-    - ``check`` -- (default: ``True``) boolean. If ``True`` and
+    - ``check`` -- boolean (default: ``True``);. If ``True`` and
       ``regular`` is true, the output is checked to make sure it is a valid
       regular matroid.
 

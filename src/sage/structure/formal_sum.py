@@ -90,10 +90,10 @@ class FormalSum(ModuleElement):
 
         - ``x`` -- object
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
-        - ``check`` -- bool (default: ``True``) if ``False``, might not coerce
+        - ``check`` -- boolean (default: ``True``); if ``False``, might not coerce
           coefficients into base ring, which can speed
           up constructing a formal sum.
-        - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
+        - ``reduce`` -- reduce boolean (default: ``True``); if ``False``, do not
           combine common terms
 
         .. WARNING::
@@ -377,9 +377,9 @@ class FormalSums(UniqueRepresentation, Module):
 
         - ``x`` -- formal sum, list or number
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``reduce`` -- bool (default: ``True``); whether to combine terms
+        - ``reduce`` -- boolean (default: ``True``); whether to combine terms
 
         EXAMPLES::
 

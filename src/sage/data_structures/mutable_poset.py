@@ -298,7 +298,7 @@ class MutablePosetShell(SageObject):
 
         INPUT:
 
-        - ``reverse`` -- (default: ``False``) if set, then return
+        - ``reverse`` -- boolean (default: ``False``); if set, then return
           successors instead.
 
         OUTPUT: set
@@ -327,7 +327,7 @@ class MutablePosetShell(SageObject):
 
         INPUT:
 
-        - ``reverse`` -- (default: ``False``) if set, then return
+        - ``reverse`` -- boolean (default: ``False``); if set, then return
           predecessors instead.
 
         OUTPUT: set
@@ -498,7 +498,7 @@ class MutablePosetShell(SageObject):
 
         - ``other`` -- a shell.
 
-        - ``reverse`` -- (default: ``False``) if set, then return
+        - ``reverse`` -- boolean (default: ``False``); if set, then return
           whether this shell is greater than or equal to ``other``.
 
         OUTPUT: ``True`` or ``False``
@@ -724,7 +724,7 @@ class MutablePosetShell(SageObject):
           If ``shell`` is contained in the poset, then use the more efficient
           methods :meth:`predecessors` and :meth:`successors`.
 
-        - ``reverse`` -- (default: ``False``) if set, then find
+        - ``reverse`` -- boolean (default: ``False``); if set, then find
           the upper covers (see also :meth:`upper_covers`)
           instead of the lower covers.
 
@@ -802,7 +802,7 @@ class MutablePosetShell(SageObject):
           If ``shell`` is contained in the poset, then use the more efficient
           methods :meth:`predecessors` and :meth:`successors`.
 
-        - ``reverse`` -- (default: ``False``) if set, then find
+        - ``reverse`` -- boolean (default: ``False``); if set, then find
           the lower covers (see also :meth:`lower_covers`)
           instead of the upper covers.
 
@@ -870,7 +870,7 @@ class MutablePosetShell(SageObject):
 
         - ``marked`` -- a set in which marked shells are stored.
 
-        - ``reverse`` -- (default: ``False``) if set, reverses the
+        - ``reverse`` -- boolean (default: ``False``); if set, reverses the
           order, i.e., ``False`` searches towards ``'oo'`` and
           ``True`` searches towards ``'null'``.
 
@@ -928,7 +928,7 @@ class MutablePosetShell(SageObject):
 
         INPUT:
 
-        - ``reverse`` -- (default: ``False``) if set, reverses the
+        - ``reverse`` -- boolean (default: ``False``); if set, reverses the
           order, i.e., ``False`` searches towards ``'oo'`` and
           ``True`` searches towards ``'null'``.
 
@@ -990,7 +990,7 @@ class MutablePosetShell(SageObject):
 
         - ``marked`` -- a set in which marked shells are stored.
 
-        - ``reverse`` -- (default: ``False``) if set, reverses the
+        - ``reverse`` -- boolean (default: ``False``); if set, reverses the
           order, i.e., ``False`` searches towards ``'oo'`` and
           ``True`` searches towards ``'null'``.
 
@@ -1049,7 +1049,7 @@ class MutablePosetShell(SageObject):
 
         INPUT:
 
-        - ``reverse`` -- (default: ``False``) if set, reverses the
+        - ``reverse`` -- boolean (default: ``False``); if set, reverses the
           order, i.e., ``False`` searches towards ``'oo'`` and
           ``True`` searches towards ``'null'``.
 
@@ -1160,12 +1160,12 @@ class MutablePosetShell(SageObject):
 
         - ``element`` -- an element (of the poset).
 
-        - ``check`` -- (default: ``True``) if set, then the
+        - ``check`` -- boolean (default: ``True``); if set, then the
           ``can_merge``-function of :class:`MutablePoset` determines
           whether the merge is possible. ``can_merge`` is ``None`` means
           that this check is always passed.
 
-        - ``delete`` -- (default: ``True``) if set, then ``element``
+        - ``delete`` -- boolean (default: ``True``); if set, then ``element``
           is removed from the poset after the merge.
 
         OUTPUT: nothing
@@ -1689,7 +1689,7 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        - ``include_special`` -- (default: ``False``) if set, then
+        - ``include_special`` -- boolean (default: ``False``); if set, then
           including shells containing a smallest element (`\emptyset`)
           and a largest element (`\infty`).
 
@@ -1957,11 +1957,11 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        - ``include_special`` -- (default: ``False``) a boolean
+        - ``include_special`` -- boolean (default: ``False``); a boolean
           indicating whether to include the special elements
           ``'null'`` and ``'oo'`` or not.
 
-        - ``reverse`` -- (default: ``False``) a boolean. If set, then
+        - ``reverse`` -- boolean (default: ``False``); a boolean. If set, then
           largest elements are displayed first.
 
         OUTPUT: string
@@ -1989,7 +1989,7 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        - ``reverse`` -- (default: ``False``) a boolean. If set, then
+        - ``reverse`` -- boolean (default: ``False``); a boolean. If set, then
           largest elements are displayed first.
 
         OUTPUT: string
@@ -2235,7 +2235,7 @@ class MutablePoset(SageObject):
 
         - ``key`` -- the key of an object.
 
-        - ``raise_key_error`` -- (default: ``True``) switch raising
+        - ``raise_key_error`` -- boolean (default: ``True``); switch raising
           :class:`KeyError` on and off.
 
         OUTPUT: nothing
@@ -2413,7 +2413,7 @@ class MutablePoset(SageObject):
 
         - ``key`` -- the key of an object.
 
-        - ``raise_key_error`` -- (default: ``False``) switch raising
+        - ``raise_key_error`` -- boolean (default: ``False``); switch raising
           :class:`KeyError` on and off.
 
         OUTPUT: nothing
@@ -3058,7 +3058,7 @@ class MutablePoset(SageObject):
           (default), in which case this method is called on each
           element in this poset.
 
-        - ``reverse`` -- (default: ``False``) specifies which
+        - ``reverse`` -- boolean (default: ``False``); specifies which
           direction to go first:
           ``False`` searches towards ``'oo'`` and
           ``True`` searches towards ``'null'``.
@@ -3265,7 +3265,7 @@ class MutablePoset(SageObject):
         - ``function`` -- a function mapping an existing element to
           a new element.
 
-        - ``topological`` -- (default: ``False``) if set, then the
+        - ``topological`` -- boolean (default: ``False``); if set, then the
           mapping is done in topological order, otherwise unordered.
 
         - ``reverse`` -- is passed on to topological ordering.
@@ -3327,7 +3327,7 @@ class MutablePoset(SageObject):
         - ``function`` -- a function mapping an existing element to
           a new element.
 
-        - ``topological`` -- (default: ``False``) if set, then the
+        - ``topological`` -- boolean (default: ``False``); if set, then the
           mapping is done in topological order, otherwise unordered.
 
         - ``reverse`` -- is passed on to topological ordering.

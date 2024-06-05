@@ -6,7 +6,7 @@ from sage.structure.sage_object import SageObject
 class _ProofPref(SageObject):
     """
     An object that holds global proof preferences.  For now these are merely True/False flags for various parts of Sage that use probabilistic algorithms.
-    A True flag means that the subsystem (such as linear algebra or number fields) should return results that are true unconditionally: the correctness should not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
+    A ``True`` flag means that the subsystem (such as linear algebra or number fields) should return results that are true unconditionally: the correctness should not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
     A False flag means that the subsystem can use faster methods to return answers that have a very small probability of being wrong.
     """
     def __init__(self, proof=True):

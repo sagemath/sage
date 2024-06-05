@@ -2074,7 +2074,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         -  ``self`` -- Irreducible polynomial
 
-        -  ``pari_group`` -- bool (default: ``False``); if ``True`` instead
+        -  ``pari_group`` -- boolean (default: ``False``); if ``True`` instead
            return the Galois group as a PARI group.  This has a useful label
            in it, and may be slightly faster since it doesn't require looking
            up a group in GAP.  To get a permutation group from a PARI

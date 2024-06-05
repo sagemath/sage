@@ -24,7 +24,7 @@ def set_state(bint mode):
 
     INPUT:
 
-    - ``mode`` -- (bool); if True, enable stopgaps; otherwise, disable.
+    - ``mode`` -- (bool); if ``True``, enable stopgaps; otherwise, disable.
 
     EXAMPLES::
 

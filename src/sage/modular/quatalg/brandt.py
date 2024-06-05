@@ -952,7 +952,7 @@ class BrandtModule_class(AmbientHeckeModule):
              dimension is very small; bad when the dimension
              is large)
 
-        - ``sparse`` -- bool (default: ``False``)
+        - ``sparse`` -- boolean (default: ``False``)
 
         - `B` -- integer or ``None`` (default: ``None``); in direct
           algorithm, use theta series to this precision as an initial
@@ -1012,11 +1012,11 @@ class BrandtModule_class(AmbientHeckeModule):
 
         - `p` -- prime number
 
-        - `B` -- integer or None (default: None); in direct algorithm,
+        - `B` -- integer or None (default: ``None``); in direct algorithm,
           use theta series to this precision as an initial check for
           equality of ideal classes.
 
-        - ``sparse`` -- bool (default: ``False``); whether matrix should be sparse
+        - ``sparse`` -- boolean (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1043,7 +1043,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
         - `n` -- integer, coprime to level
 
-        - ``sparse`` -- bool (default: ``False``); whether matrix should be sparse
+        - ``sparse`` -- boolean (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1192,7 +1192,7 @@ class BrandtModule_class(AmbientHeckeModule):
         INPUT:
 
         - n -- integer, coprime to level
-        - sparse -- bool (default: ``False``); whether matrix should be sparse
+        - sparse -- boolean (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1324,7 +1324,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
         INPUT:
 
-        - ``diagonal_only`` -- bool (default: ``False``) if ``True`` returns
+        - ``diagonal_only`` -- boolean (default: ``False``) if ``True`` returns
           only the diagonal ideal products
 
         OUTPUT: list of ideals

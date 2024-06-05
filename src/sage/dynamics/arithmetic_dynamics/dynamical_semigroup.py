@@ -1154,7 +1154,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         OUTPUT:
 
-        A boolean that is True if and only if the generators of the two
+        A boolean that is ``True`` if and only if the generators of the two
         dynamical semigroups are equal as sets and no generator is of degree 1.
 
         EXAMPLES::

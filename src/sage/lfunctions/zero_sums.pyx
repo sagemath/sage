@@ -142,7 +142,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         INPUT:
 
-        - ``include_euler_gamma`` -- bool (default: ``True``); if set to
+        - ``include_euler_gamma`` -- boolean (default: ``True``); if set to
           ``False``, return the constant `\log(N)/2 - \log(2\pi)`, i.e., do
           not subtract off the Euler-Mascheroni constant.
 
@@ -171,7 +171,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         - ``n`` -- non-negative integer
 
-        - ``python_floats`` -- bool (default: ``False``); if ``True`` return a list of
+        - ``python_floats`` -- boolean (default: ``False``); if ``True`` return a list of
           Python floats instead of Sage Real Double Field elements.
 
         OUTPUT: a list of real numbers
@@ -222,7 +222,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         - ``s`` -- A complex number
 
-        - ``include_constant_term`` -- (default: ``True``) boolean; if set
+        - ``include_constant_term`` -- boolean (default: ``True``); if set
           to ``False``,
           only the value of the sum over `k` is returned without subtracting
           off the Euler-Mascheroni constant, i.e. the returned value is
@@ -1551,7 +1551,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
           results show that for about 99.7% of all curves the returned value
           is the actual analytic rank.
 
-        - ``adaptive`` -- (default: ``True``) Boolean
+        - ``adaptive`` -- boolean (default: ``True``); Boolean
 
           - If ``True``, the computation is first run with small and then
             successively larger Delta values up to max_Delta. If at any

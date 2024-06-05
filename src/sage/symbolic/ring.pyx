@@ -386,7 +386,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         - ``x`` -- a Python object.
 
-        - ``force`` -- bool, default ``False``, if True, the Python object
+        - ``force`` -- bool, default ``False``, if ``True``, the Python object
           is taken as is without attempting coercion or list traversal.
 
         - ``recursive`` -- bool, default ``True``, disables recursive
@@ -477,7 +477,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
     def __contains__(self, x):
         r"""
-        True if there is an element of the symbolic ring that is equal to x
+        ``True`` if there is an element of the symbolic ring that is equal to x
         under ``==``.
 
         EXAMPLES:

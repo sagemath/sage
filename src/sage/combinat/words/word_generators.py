@@ -1462,7 +1462,7 @@ class WordGenerator:
         INPUT:
 
         - ``n`` -- non negative integer
-        - ``q_0`` -- first initial value (default: None) It can be None, 0, 1,
+        - ``q_0`` -- first initial value (default: ``None``) It can be None, 0, 1,
           2 or 3.
         - ``q_1`` -- second initial value (default: 3) It can be None, 0, 1, 2
           or 3.

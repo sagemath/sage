@@ -972,7 +972,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         - ``degree`` -- (default: ``(-1,2)``) integer with degree
           or a tuple of integers with minimum and maximum degrees
 
-        - ``monic`` -- (default: ``False``) if ``True``, return a monic
+        - ``monic`` -- boolean (default: ``False``); if ``True``, return a monic
           Ore polynomial
 
         - ``*args``, ``**kwds`` -- passed on to the ``random_element`` method

@@ -771,7 +771,7 @@ def pak_correspondence(M, copy=True):
 
     INPUT:
 
-    - ``copy`` (default: ``True``) -- boolean;
+    - ``copy`` boolean (default: ``True``); -- boolean;
       if set to ``False``, the algorithm will mutate the
       input (but be more efficient)
 

@@ -1453,7 +1453,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
                 \sum_{j\in S(\rho_1)}{\rho_2}_j = 1
 
-        - ``maximization`` -- (default: ``True``) whether a player is
+        - ``maximization`` -- boolean (default: ``True``); whether a player is
           trying to maximize their utility or minimize it:
 
           * When set to ``True`` it is assumed that players aim to

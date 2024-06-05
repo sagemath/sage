@@ -81,7 +81,7 @@ from .cuspidal_subgroup import (CuspidalSubgroup, RationalCuspidalSubgroup,
 
 def is_ModularAbelianVariety(x) -> bool:
     """
-    Return True if x is a modular abelian variety.
+    Return ``True`` if x is a modular abelian variety.
 
     INPUT:
 
@@ -98,7 +98,7 @@ def is_ModularAbelianVariety(x) -> bool:
         sage: is_ModularAbelianVariety(J0(37))
         True
 
-    Returning True is a statement about the data type not whether or
+    Returning ``True`` is a statement about the data type not whether or
     not some abelian variety is modular::
 
         sage: is_ModularAbelianVariety(EllipticCurve('37a'))
@@ -826,7 +826,7 @@ class ModularAbelianVariety_abstract(Parent):
 
     def in_same_ambient_variety(self, other):
         """
-        Return True if self and other are abelian subvarieties of the same
+        Return ``True`` if self and other are abelian subvarieties of the same
         ambient product Jacobian.
 
         EXAMPLES::
@@ -1641,7 +1641,7 @@ class ModularAbelianVariety_abstract(Parent):
 
     def is_subvariety_of_ambient_jacobian(self):
         """
-        Return True if self is (presented as) a subvariety of the ambient
+        Return ``True`` if self is (presented as) a subvariety of the ambient
         product Jacobian.
 
         Every abelian variety in Sage is a quotient of a subvariety of an
@@ -1755,7 +1755,7 @@ class ModularAbelianVariety_abstract(Parent):
 
     def is_ambient(self) -> bool:
         """
-        Return True if self equals the ambient product Jacobian.
+        Return ``True`` if self equals the ambient product Jacobian.
 
         OUTPUT: bool
 
@@ -1917,7 +1917,7 @@ class ModularAbelianVariety_abstract(Parent):
 
     def is_hecke_stable(self) -> bool:
         """
-        Return True if self is stable under the Hecke operators of its
+        Return ``True`` if self is stable under the Hecke operators of its
         ambient Jacobian.
 
         OUTPUT: bool
@@ -1957,9 +1957,9 @@ class ModularAbelianVariety_abstract(Parent):
 
     def is_subvariety(self, other) -> bool:
         """
-        Return True if self is a subvariety of other as they sit in a
+        Return ``True`` if self is a subvariety of other as they sit in a
         common ambient modular Jacobian. In particular, this function will
-        only return True if self and other have exactly the same ambient
+        only return ``True`` if self and other have exactly the same ambient
         Jacobians.
 
         EXAMPLES::
@@ -2039,7 +2039,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` -- (default: ``False``) if True,
+        -  ``none_if_not_known`` -- boolean (default: ``False``); if True,
            return None instead of attempting to compute the newform level, if
            it isn't already known. This None result is not cached.
 
@@ -3086,7 +3086,7 @@ class ModularAbelianVariety_abstract(Parent):
            be a finite subgroup itself that is contained in this abelian
            variety.
 
-        -  ``field_of_definition`` -- (default: None) field
+        -  ``field_of_definition`` -- (default: ``None``) field
            over which this group is defined. If None try to figure out the
            best base field.
 
@@ -3249,7 +3249,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        -  ``none_if_not_known`` -- bool (default: ``False``); if
+        -  ``none_if_not_known`` -- boolean (default: ``False``); if
            ``True`` then this function may return ``None`` instead of ``True``
            or ``False`` if
            we do not already know the isogeny number of ``self``.
@@ -3302,8 +3302,8 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` -- bool (default: ``False``); if
-           True then this function may return None instead of True of False if
+        -  ``none_if_not_known`` -- boolean (default: ``False``); if
+           ``True`` then this function may return None instead of ``True`` of False if
            we don't already know whether or not self is simple.
 
 
@@ -3333,12 +3333,12 @@ class ModularAbelianVariety_abstract(Parent):
         Return a sequence of abelian subvarieties of self that are all
         simple, have finite intersection and sum to self.
 
-        INPUT: simple- bool (default: ``True``) if True, all factors are
+        INPUT: simple- boolean (default: ``True``); if ``True``, all factors are
         simple. If False, each factor returned is isogenous to a power of a
         simple and the simples in each factor are distinct.
 
 
-        -  ``bound`` -- int (default: None) if given, only use
+        -  ``bound`` -- int (default: ``None``) if given, only use
            Hecke operators up to this bound when decomposing. This can give
            wrong answers, so use with caution!
 
@@ -3546,9 +3546,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``simple`` -- bool (default: ``True``)
+        -  ``simple`` -- boolean (default: ``True``)
 
-        -  ``bound`` -- integer (default: None); if given,
+        -  ``bound`` -- integer (default: ``None``); if given,
            passed onto decomposition function
 
 
@@ -3697,7 +3697,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        -  ``A`` -- (default: None); if given, A must be an
+        -  ``A`` -- (default: ``None``); if given, A must be an
            abelian variety that contains self, in which case the complement of
            self is taken inside A. Otherwise the complement is taken in the
            ambient product Jacobian.
@@ -3885,7 +3885,7 @@ class ModularAbelianVariety_abstract(Parent):
 
     def _complement_shares_no_factors_with_same_label(self):
         """
-        Return True if no simple factor of self has the same newform_label
+        Return ``True`` if no simple factor of self has the same newform_label
         as any factor in a Poincaré complement of self in the ambient
         product Jacobian.
 
@@ -4353,7 +4353,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
 
     def is_subvariety(self, other):
         """
-        Return True if self is a subvariety of other.
+        Return ``True`` if self is a subvariety of other.
 
         EXAMPLES::
 
@@ -4408,7 +4408,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
 
     def is_ambient(self):
         """
-        Return True if this abelian variety attached to a modular symbols
+        Return ``True`` if this abelian variety attached to a modular symbols
         space is attached to the cuspidal subspace of the ambient
         modular symbols space.
 
@@ -4528,12 +4528,12 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         Decompose this modular abelian variety as a product of abelian
         subvarieties, up to isogeny.
 
-        INPUT: simple- bool (default: ``True``) if True, all factors are
+        INPUT: simple- boolean (default: ``True``); if ``True``, all factors are
         simple. If False, each factor returned is isogenous to a power of a
         simple and the simples in each factor are distinct.
 
 
-        -  ``bound`` -- int (default: None) if given, only use
+        -  ``bound`` -- int (default: ``None``) if given, only use
            Hecke operators up to this bound when decomposing. This can give
            wrong answers, so use with caution!
 

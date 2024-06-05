@@ -89,7 +89,7 @@ def try_read(obj, splitlines=False):
     - ``obj`` -- typically a `file` or `io.BaseIO` object, but any other
       object with a ``read()`` method is accepted.
 
-    - ``splitlines`` -- `bool`, optional; if True, return a list of lines
+    - ``splitlines`` -- `bool`, optional; if ``True``, return a list of lines
       instead of a string.
 
     EXAMPLES::
@@ -660,7 +660,7 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
 def exists(S, P):
     """
     If S contains an element x such that P(x) is True, this function
-    returns True and the element x. Otherwise it returns False and
+    returns ``True`` and the element x. Otherwise it returns False and
     None.
 
     Note that this function is NOT suitable to be used in an
@@ -674,13 +674,13 @@ def exists(S, P):
 
     -  ``S`` -- object (that supports enumeration)
 
-    -  ``P`` -- function that returns True or False
+    -  ``P`` -- function that returns ``True`` or False
 
 
     OUTPUT:
 
 
-    -  ``bool`` -- whether or not P is True for some element
+    -  ``bool`` -- whether or not P is ``True`` for some element
        x of S
 
     -  ``object`` -- x
@@ -711,7 +711,7 @@ def exists(S, P):
 
 def forall(S, P):
     """
-    If P(x) is true every x in S, return True and None. If there is
+    If P(x) is true every x in S, return ``True`` and None. If there is
     some element x in S such that P is not True, return False and x.
 
     Note that this function is NOT suitable to be used in an
@@ -724,12 +724,12 @@ def forall(S, P):
 
     -  ``S`` -- object (that supports enumeration)
 
-    -  ``P`` -- function that returns True or False
+    -  ``P`` -- function that returns ``True`` or False
 
     OUTPUT:
 
 
-    -  ``bool`` -- whether or not P is True for all elements
+    -  ``bool`` -- whether or not P is ``True`` for all elements
        of S
 
     -  ``object`` -- x

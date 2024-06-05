@@ -53,7 +53,7 @@ def PermutationGroupElement(g, parent=None, check=True):
       it is mandatory if you want a permutation on a domain different
       from `\{1, \ldots, n\}`
 
-    - ``check`` -- (default: ``True``) whether additional check are performed;
+    - ``check`` -- boolean (default: ``True``); whether additional check are performed;
       setting it to ``False`` is likely to result in faster code
 
     EXAMPLES:
@@ -167,7 +167,7 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
     - ``convert_dict`` -- (optional) a dictionary used to convert the
       points to a number compatible with GAP
 
-    - ``as_cycles`` -- (default: ``False``) whether the output should be
+    - ``as_cycles`` -- boolean (default: ``False``); whether the output should be
       as cycles or in one-line notation
 
     OUTPUT: the permutation in as a list in one-line notation or a list of

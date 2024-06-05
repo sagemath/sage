@@ -81,7 +81,7 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
 
     - `A` -- a matrix
 
-    - `permanent_only` -- if True, return only the permanent of `A`
+    - `permanent_only` -- if ``True``, return only the permanent of `A`
 
     - `var` -- name of the polynomial variable
 

@@ -119,7 +119,7 @@ class ArithmeticSubgroup(Group):
         r"""
         Create an element of this congruence subgroup from x.
 
-        If the optional flag check is True (default), check whether
+        If the optional flag check is ``True`` (default), check whether
         x actually gives an element of self.
 
         EXAMPLES::
@@ -290,7 +290,7 @@ class ArithmeticSubgroup(Group):
         - ``G`` -- intermediate subgroup (currently not implemented if different
           from SL(2,Z))
 
-        - ``on_right`` -- boolean (default: ``True``); if True return right coset
+        - ``on_right`` -- boolean (default: ``True``); if ``True`` return right coset
           enumeration, if False return left one.
 
         This is *extremely* slow in general.
@@ -518,7 +518,7 @@ class ArithmeticSubgroup(Group):
 
     def is_abelian(self):
         r"""
-        Return True if this arithmetic subgroup is abelian.
+        Return ``True`` if this arithmetic subgroup is abelian.
 
         Since arithmetic subgroups are always nonabelian, this always
         returns False.
@@ -538,7 +538,7 @@ class ArithmeticSubgroup(Group):
 
     def is_finite(self):
         r"""
-        Return True if this arithmetic subgroup is finite.
+        Return ``True`` if this arithmetic subgroup is finite.
 
         Since arithmetic subgroups are always infinite, this always
         returns False.
@@ -558,7 +558,7 @@ class ArithmeticSubgroup(Group):
 
     def is_subgroup(self, right):
         r"""
-        Return True if self is a subgroup of right, and False otherwise. For
+        Return ``True`` if self is a subgroup of right, and False otherwise. For
         generic arithmetic subgroups this is done by the absurdly slow
         algorithm of checking all of the generators of self to see if they are
         in right.
@@ -582,7 +582,7 @@ class ArithmeticSubgroup(Group):
 
     def is_normal(self):
         r"""
-        Return True precisely if this subgroup is a normal subgroup of SL2Z.
+        Return ``True`` precisely if this subgroup is a normal subgroup of SL2Z.
 
         EXAMPLES::
 
@@ -599,7 +599,7 @@ class ArithmeticSubgroup(Group):
 
     def is_odd(self):
         r"""
-        Return True precisely if this subgroup does not contain the
+        Return ``True`` precisely if this subgroup does not contain the
         matrix -1.
 
         EXAMPLES::
@@ -617,7 +617,7 @@ class ArithmeticSubgroup(Group):
 
     def is_even(self):
         r"""
-        Return True precisely if this subgroup contains the matrix -1.
+        Return ``True`` precisely if this subgroup contains the matrix -1.
 
         EXAMPLES::
 
@@ -770,7 +770,7 @@ class ArithmeticSubgroup(Group):
         If self has a reduce_cusp() method, use that; otherwise do a
         slow explicit test.
 
-        If trans = False, returns True or False. If trans = True, then return
+        If trans = False, returns ``True`` or False. If trans = True, then return
         either False or an element of self mapping x onto y.
 
         EXAMPLES::
@@ -844,7 +844,7 @@ class ArithmeticSubgroup(Group):
 
     def is_regular_cusp(self, c):
         r"""
-        Return True if the orbit of the given cusp is a regular cusp for self,
+        Return ``True`` if the orbit of the given cusp is a regular cusp for self,
         otherwise False. This is automatically true if -1 is in self.
 
         EXAMPLES::
@@ -944,7 +944,7 @@ class ArithmeticSubgroup(Group):
 
     def is_congruence(self):
         r"""
-        Return True if self is a congruence subgroup.
+        Return ``True`` if self is a congruence subgroup.
 
         EXAMPLES::
 

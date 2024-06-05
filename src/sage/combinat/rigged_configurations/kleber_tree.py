@@ -650,8 +650,8 @@ class KleberTree(UniqueRepresentation, Parent):
         - ``vspace`` -- (default: ``x``) the vertical spacing of the tree
           nodes, here ``x`` is the minimum of `-2.5` or `-.75n` where `n` is
           the rank of the classical type
-        - ``edge_labels`` -- (default: ``True``) display edge labels
-        - ``use_vector_notation`` -- (default: ``False``) display edge labels
+        - ``edge_labels`` -- boolean (default: ``True``); display edge labels
+        - ``use_vector_notation`` -- boolean (default: ``False``); display edge labels
           using vector notation instead of a linear combination
 
         EXAMPLES::
@@ -1240,7 +1240,7 @@ class VirtualKleberTree(KleberTree):
 
         INPUT:
 
-        - ``all_nodes`` -- (default: ``False``) if ``True``, output all
+        - ``all_nodes`` -- boolean (default: ``False``); if ``True``, output all
           nodes in the tree
 
         EXAMPLES::
@@ -1276,7 +1276,7 @@ class VirtualKleberTree(KleberTree):
 
         INPUT:
 
-        - ``all_nodes`` -- (default: ``False``) if ``True``, output all
+        - ``all_nodes`` -- boolean (default: ``False``); if ``True``, output all
           nodes in the tree
 
         EXAMPLES::
@@ -1432,7 +1432,7 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
 
         INPUT:
 
-        - ``all_nodes`` -- (default: ``False``) if ``True``, output all
+        - ``all_nodes`` -- boolean (default: ``False``); if ``True``, output all
           nodes in the tree
 
         EXAMPLES::
@@ -1457,7 +1457,7 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
 
         INPUT:
 
-        - ``all_nodes`` -- (default: ``False``) if ``True``, output all
+        - ``all_nodes`` -- boolean (default: ``False``); if ``True``, output all
           nodes in the tree
 
         EXAMPLES::

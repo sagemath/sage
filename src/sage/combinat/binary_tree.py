@@ -65,8 +65,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
       be shortened to ``BinaryTree([None,None])``. It is also allowed to
       abbreviate ``[None, None]`` by ``[]``.
 
-    - ``check`` -- (default: ``True``) whether check for binary should be
-      performed or not.
+    - ``check`` -- boolean (default: ``True``); whether check for binary should
+      be performed or not.
 
     EXAMPLES::
 
@@ -707,7 +707,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``True``) a Boolean, determining
+        - ``with_leaves`` -- boolean (default: ``True``);
           whether the resulting graph will be formed from the leaves
           and the nodes of ``self`` (if ``True``), or only from the
           nodes of ``self`` (if ``False``)
@@ -1544,7 +1544,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``False``) a Boolean, determining
+        - ``with_leaves`` -- boolean (default: ``False``);
           whether the resulting graph will be formed from the leaves
           and the nodes of ``self`` (if ``True``), or only from the
           nodes of ``self`` (if ``False``)
@@ -1670,13 +1670,13 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``False``) a Boolean, determining
+        - ``with_leaves`` -- boolean (default: ``False``);
           whether the resulting poset will be formed from the leaves
           and the nodes of ``self`` (if ``True``), or only from the
           nodes of ``self`` (if ``False``)
-        - ``root_to_leaf`` -- (default: ``False``) a Boolean,
-          determining whether the poset orientation should be from root
-          to leaves (if ``True``) or from leaves to root (if ``False``).
+        - ``root_to_leaf`` -- boolean (default: ``False``); whether the poset
+          orientation should be from root to leaves (if ``True``) or from
+          leaves to root (if ``False``).
 
         EXAMPLES::
 
@@ -4631,7 +4631,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
     - ``label`` -- (default: ``None``) the label to be put on the root
       of this tree.
 
-    - ``check`` -- (default: ``True``) whether checks should be
+    - ``check`` -- boolean (default: ``True``); whether checks should be
       performed or not.
 
     .. TODO::

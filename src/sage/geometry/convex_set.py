@@ -833,7 +833,7 @@ class ConvexSet_base(SageObject, Set_base):
             sage: AlsoFaultyConvexSet()._test_contains()
             Traceback (most recent call last):
             ...
-            AssertionError: True != False
+            AssertionError: ``True`` != False
         """
         if tester is None:
             tester = self._tester(**options)

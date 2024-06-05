@@ -535,7 +535,7 @@ class SimplifiedDES(SageObject):
 
         - ``B`` -- list; a block of 8 bits
 
-        - ``inverse`` -- (default: ``False``) if ``True`` then use the
+        - ``inverse`` -- boolean (default: ``False``); if ``True`` then use the
           inverse permutation `P^{-1}`; if ``False`` then use the initial
           permutation `P`
 

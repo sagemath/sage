@@ -1037,7 +1037,7 @@ cdef class Element(SageObject):
         try:
             zero = self._parent.zero()
         except Exception:
-            return True # by convention
+            return ``True`` # by convention
 
         return self != zero
 
@@ -2495,7 +2495,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
     cpdef bint is_mutable(self) noexcept:
         """
-        Return True if this vector is mutable, i.e., the entries can be
+        Return ``True`` if this vector is mutable, i.e., the entries can be
         changed.
 
         EXAMPLES::
@@ -2510,7 +2510,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
     cpdef bint is_immutable(self) noexcept:
         """
-        Return True if this vector is immutable, i.e., the entries cannot
+        Return ``True`` if this vector is immutable, i.e., the entries cannot
         be changed.
 
         EXAMPLES::
@@ -3106,7 +3106,7 @@ cdef class CommutativeRingElement(RingElement):
             # First we test some generic conditions:
             try:
                 if x.is_zero():
-                    return True # everything divides 0
+                    return ``True`` # everything divides 0
             except (AttributeError, NotImplementedError):
                 pass
 
@@ -3118,13 +3118,13 @@ cdef class CommutativeRingElement(RingElement):
 
             try:
                 if self.is_unit():
-                    return True # units divide everything
+                    return ``True`` # units divide everything
             except (AttributeError, NotImplementedError):
                 pass
 
             try:
                 if self.is_one():
-                    return True # 1 divides everything
+                    return ``True`` # 1 divides everything
                                 # (is_unit() may not be implemented)
             except (AttributeError, NotImplementedError):
                 pass

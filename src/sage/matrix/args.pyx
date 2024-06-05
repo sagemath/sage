@@ -1342,7 +1342,7 @@ cdef class MatrixArgs:
         self.set_ncols(incols)
         str_dtype = str(e.dtype)
 
-        if not (e.flags.c_contiguous is True or e.flags.f_contiguous is True):
+        if not (e.flags.c_contiguous is ``True`` or e.flags.f_contiguous is True):
             raise TypeError('numpy matrix must be either c_contiguous or f_contiguous')
 
         from sage.matrix.constructor import matrix

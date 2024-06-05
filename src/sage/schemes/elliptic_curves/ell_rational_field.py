@@ -801,10 +801,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) print what mwrank is
+        - ``verbose`` -- boolean (default: ``True``); print what mwrank is
           doing; if ``False``, **no output** is printed
 
-        - ``selmer_only`` -- (default: ``False``) selmer_only
+        - ``selmer_only`` -- boolean (default: ``False``); selmer_only
           switch
 
         - ``first_limit`` -- (default: 20) firstlim is bound
@@ -856,7 +856,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``n`` -- integer
 
-        - ``python_ints`` -- bool (default: ``False``); if ``True``
+        - ``python_ints`` -- boolean (default: ``False``); if ``True``
           return a list of Python ints instead of Sage integers
 
         OUTPUT: list of integers
@@ -894,7 +894,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``n`` -- integer
 
-        - ``python_ints`` -- bool (default: ``False``); if ``True``
+        - ``python_ints`` -- boolean (default: ``False``); if ``True``
           return a list of Python ints instead of Sage integers
 
         OUTPUT: list of integers
@@ -1453,7 +1453,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           - ``'all'`` -- compute with PARI, sympow and lcalc, check that
             the answers agree, and return the common answer.
 
-        - ``leading_coefficient`` -- (default: ``False``) Boolean; if set to
+        - ``leading_coefficient`` -- boolean (default: ``False``); Boolean; if set to
           True, return a tuple `(rank, lead)` where `lead` is the value of
           the first non-zero derivative of the L-function of the elliptic
           curve. Only implemented for ``algorithm='pari'``.
@@ -1600,7 +1600,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           empirical results show that for about 99.7% of all curves the returned
           value is the actual analytic rank.
 
-        - ``adaptive`` -- (default: ``True``) boolean
+        - ``adaptive`` -- boolean (default: ``True``);
 
           - ``True`` -- the computation is first run with small and then
             successively larger `\Delta` values up to max_Delta. If at any
@@ -1807,7 +1807,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           and large prime numbers. Use probabilistic tests for large
           primes. If 0, don't any probabilistic tests.
 
-        - ``known_points`` -- (default: None) list of known points on
+        - ``known_points`` -- (default: ``None``) list of known points on
           the curve
 
         OUTPUT: a triple ``(lower, upper, list)`` consisting of
@@ -2012,7 +2012,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - ``use_database`` -- boolean (default: ``True``); if
           ``True``, try to look up the rank in the Cremona database
 
-        - ``verbose`` -- (default: ``False``) if specified changes
+        - ``verbose`` -- boolean (default: ``False``); if specified changes
           the verbosity of mwrank computations
 
         - ``algorithm`` -- (default: ``'mwrank_lib'``) one of:
@@ -2023,10 +2023,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'pari'`` -- call ellrank in pari
 
-        - ``only_use_mwrank`` -- (default: ``True``) if ``False`` try
+        - ``only_use_mwrank`` -- boolean (default: ``True``); if ``False`` try
           using analytic rank methods first
 
-        - ``proof`` -- bool (default: ``None``, see
+        - ``proof`` -- boolean (default: ``None``, see
           ``proof.elliptic_curve`` or ``sage.structure.proof``); note that
           results obtained from databases are considered ``proof=True``
 
@@ -2204,7 +2204,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 rank = Integer(X.split()[0])
             else:
                 if proof is False:
-                    proof = True #since we actually provably found the rank
+                    proof = ``True`` #since we actually provably found the rank
                 match = 'Rank ='
                 i = X.find(match)
                 if i == -1:
@@ -2250,7 +2250,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - ``proof`` -- bool or None (default None), see
           ``proof.elliptic_curve`` or ``sage.structure.proof``
 
-        - ``verbose`` -- (default: None), if specified changes the
+        - ``verbose`` -- (default: ``None``), if specified changes the
           verbosity of mwrank computations
 
         - ``rank1_search`` -- (default: 10), if the curve has analytic
@@ -2266,10 +2266,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'pari'`` -- use ellrank in pari
 
-        - ``only_use_mwrank`` -- bool (default: ``True``) if False, first
+        - ``only_use_mwrank`` -- boolean (default: ``True``); if ``False``, first
           attempts to use more naive, natively implemented methods
 
-        - ``use_database`` -- bool (default: ``True``) if True, attempts to
+        - ``use_database`` -- boolean (default: ``True``); if ``True``, attempts to
           find curve and gens in the (optional) database
 
         - ``descent_second_limit`` -- (default: 12) used in 2-descent
@@ -2508,7 +2508,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             C.two_descent(verbose=verbose, second_limit=descent_second_limit)
             C.saturate(bound=sat_bound)
             G = C.gens()
-            if proof is True and C.certain() is False:
+            if proof is ``True`` and C.certain() is False:
                 del self.__mwrank_curve
                 raise RuntimeError("Unable to compute the rank, hence generators, with certainty (lower bound=%s, generators found=%s).  This could be because Sha(E/Q)[2] is nontrivial." % (C.rank(), G) +
                                    "\nTry increasing descent_second_limit then trying this command again.")
@@ -2674,7 +2674,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``points (list)`` -- list of points on `E`
 
-        - ``verbose (bool)`` -- (default: ``False``) if ``True``, give
+        - ``verbose (bool)`` -- boolean (default: ``False``); if ``True``, give
           verbose output
 
         - ``max_prime`` -- int (default: `-1`); if `-1` (the default), an
@@ -4940,7 +4940,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``other`` -- another elliptic curve
 
-        - ``proof`` -- (default: ``True``) if ``False``, the function will
+        - ``proof`` -- boolean (default: ``True``); if ``False``, the function will
           return ``True`` whenever the two curves have the same
           conductor and are isogenous modulo `p` for `p` up to ``maxp``;
           otherwise this test is followed by a rigorous test (which
@@ -4951,7 +4951,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         OUTPUT:
 
-        (bool) True if there is an isogeny from curve ``self`` to
+        (bool) ``True`` if there is an isogeny from curve ``self`` to
         curve ``other``.
 
         ALGORITHM:

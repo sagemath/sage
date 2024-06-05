@@ -1029,13 +1029,13 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         INPUT:
 
-        - ``extend`` -- bool (default: ``False``)
+        - ``extend`` -- boolean (default: ``False``)
 
            .. WARNING::
 
                This option is not implemented.
 
-        - ``all`` -- bool (default: ``False``)
+        - ``all`` -- boolean (default: ``False``)
 
         OUTPUT:
 

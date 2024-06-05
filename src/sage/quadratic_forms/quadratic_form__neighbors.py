@@ -153,7 +153,7 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
 
     - ``p`` -- a prime number
     - ``y`` -- a vector with `q(y) \in p \ZZ`
-    - ``odd`` -- (default: ``False``) if `p=2`, return also odd neighbors
+    - ``odd`` -- boolean (default: ``False``); if `p=2`, return also odd neighbors
     - ``return_matrix`` -- (boolean, default ``False``) return
       the transformation matrix instead of the quadratic form
 

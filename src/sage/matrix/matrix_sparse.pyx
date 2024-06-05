@@ -659,7 +659,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         -  ``R`` -- (optional) ring
 
-        - ``sparse`` -- (default: ``True``) whether to return
+        - ``sparse`` -- boolean (default: ``True``); whether to return
           a sparse or a dense matrix
 
         OUTPUT: a matrix over ``R``

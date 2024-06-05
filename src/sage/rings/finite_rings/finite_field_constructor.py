@@ -258,7 +258,7 @@ class FiniteFieldFactory(UniqueFactory):
     - ``check_irreducible`` -- verify that the polynomial modulus is
       irreducible
 
-    - ``proof`` -- bool (default: ``True``): if ``True``, use provable
+    - ``proof`` -- boolean (default: ``True``): if ``True``, use provable
       primality test; otherwise only use pseudoprimality test.
 
     ALIAS: You can also use ``GF`` instead of ``FiniteField`` -- they

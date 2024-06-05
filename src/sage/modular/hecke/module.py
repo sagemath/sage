@@ -930,15 +930,15 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``anemic`` -- bool (default: ``True``), if True, use only
+        -  ``anemic`` -- boolean (default: ``True``), if ``True``, use only
            Hecke operators of index coprime to the level.
 
-        -  ``bound`` -- int or None, (default: None). If None,
+        -  ``bound`` -- int or None, (default: ``None``). If None,
            use all Hecke operators up to the Sturm bound, and hence obtain the
            same result as one would obtain by using every element of the Hecke
            ring. If a fixed integer, decompose using only Hecke operators
            `T_p`, with `p` prime, up to bound.
-        -  ``sort_by_basis`` -- bool (default: ``False``); If True the resulting
+        -  ``sort_by_basis`` -- boolean (default: ``False``); If ``True`` the resulting
            decomposition will be sorted as if it was free modules, ignoring the
            Hecke module structure. This will save a lot of time.
 
@@ -1089,7 +1089,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         -  ``name`` -- print name of generator for eigenvalue
            field.
 
-        -  ``lift`` -- bool (default: ``True``)
+        -  ``lift`` -- boolean (default: ``True``)
 
         -  ``nz`` -- if not ``None``, then normalize vector so dot
            product with this basis vector of ambient space is 1.

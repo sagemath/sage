@@ -1959,7 +1959,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: reversing the given edge is about to create two parallel
             edges but input digraph doesn't allow them - User needs to specify
-            multiedges is True or False.
+            multiedges is ``True`` or False.
 
         The following syntax is supported, but note that you must use the
         ``label`` keyword::
@@ -2029,12 +2029,12 @@ class DiGraph(GenericGraph):
                 tempG.delete_edge(u, v, label)
                 tempG.set_edge_label(v, u, label)
 
-            # User is supposed to specify multiedges True or False
+            # User is supposed to specify multiedges ``True`` or False
             else:
                 raise ValueError("reversing the given edge is about to "
                                  "create two parallel edges but input digraph "
                                  "doesn't allow them - User needs to specify "
-                                 "multiedges is True or False.")
+                                 "multiedges is ``True`` or False.")
         else:
             tempG.delete_edge(u, v, label)
             tempG.add_edge(v, u, label)
@@ -2169,7 +2169,7 @@ class DiGraph(GenericGraph):
           specified, then it is taken to be all vertices.
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
@@ -2381,7 +2381,7 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); see method
           :meth:`eccentricity` for the list of available algorithms
@@ -2450,7 +2450,7 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
@@ -2620,7 +2620,7 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); see method
           :meth:`eccentricity` for the list of available algorithms
@@ -2691,7 +2691,7 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
-          weights are taken into account; if False, all edges have weight 1
+          weights are taken into account; if ``False``, all edges have weight 1
 
         - ``algorithm`` -- string (default: ``None``); see method
           :meth:`eccentricity` for the list of available algorithms

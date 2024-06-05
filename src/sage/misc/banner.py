@@ -182,7 +182,7 @@ def version_dict():
 def require_version(major, minor=0, tiny=0, prerelease=False,
                     print_message=False):
     """
-    True if Sage version is at least major.minor.tiny.
+    ``True`` if Sage version is at least major.minor.tiny.
 
     INPUT:
 
@@ -205,7 +205,7 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
     if the optional argument prerelease is True, then a prerelease
     version of Sage counts as if it were the released version.
 
-    If optional argument print_message is True and this function
+    If optional argument print_message is ``True`` and this function
     is returning False, print a warning message.
 
     EXAMPLES::

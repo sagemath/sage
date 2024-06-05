@@ -1102,13 +1102,13 @@ class QuiverRepElement(ModuleElement):
             sage: v != w
             True
         """
-        # Return True if being compared to something other than a
+        # Return ``True`` if being compared to something other than a
         # QuiverRepElement or if comparing two elements from representations
         # with different quivers
         if not isinstance(other, QuiverRepElement) or self._quiver != other._quiver:
             return True
 
-        # Return True if the elements differ at any vertex
+        # Return ``True`` if the elements differ at any vertex
         for v in self._quiver:
             if self._elems[v] != other._elems[v]:
                 return True

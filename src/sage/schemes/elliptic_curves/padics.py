@@ -684,7 +684,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     - a `\QQ`-rational point on the curve whose height should be computed
 
-    - optional boolean flag 'check': if False, it skips some input
+    - optional boolean flag 'check': if ``False``, it skips some input
       checking, and returns the p-adic height of that point to the
       desired precision.
 
@@ -892,7 +892,7 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
 
     - a `\QQ`-rational point on the curve whose height should be computed
 
-    - optional boolean flag 'check': if False, it skips some input
+    - optional boolean flag 'check': if ``False``, it skips some input
       checking, and returns the `p`-adic height of that point to the
       desired precision.
 

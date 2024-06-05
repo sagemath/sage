@@ -117,7 +117,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         -  ``polynomial`` -- a polynomial
 
-        -  ``check`` -- bool (optional): whether or not to
+        -  ``check`` -- boolean (optional): whether or not to
            verify that x is a valid element of the polynomial ring and reduced
            (mod the modulus).
         """

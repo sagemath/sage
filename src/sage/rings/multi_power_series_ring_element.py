@@ -234,9 +234,9 @@ class MPowerSeries(PowerSeries):
 
     - ``prec`` -- (default: ``infinity``) The precision
 
-    - ``is_gen`` -- (default: ``False``) Is this element one of the generators?
+    - ``is_gen`` -- boolean (default: ``False``); Is this element one of the generators?
 
-    - ``check`` -- (default: ``False``) Needed by univariate power series class
+    - ``check`` -- boolean (default: ``False``); Needed by univariate power series class
 
     EXAMPLES:
 

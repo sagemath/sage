@@ -496,7 +496,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
                 i += 1
             Dg.add_edge(v, u)
 
-    # if true the obtained orientation is strong
+    # if ``True`` the obtained orientation is strong
     if not E:
         yield Dg.copy()
     else:

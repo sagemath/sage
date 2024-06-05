@@ -192,7 +192,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           small and large prime numbers. Use probabilistic tests for
           large primes. If 0, do not use probabilistic tests.
 
-        - ``known_points`` -- (default: None) list of known points on
+        - ``known_points`` -- (default: ``None``) list of known points on
           the curve
 
         OUTPUT: a triple ``(lower, upper, list)`` consisting of
@@ -418,7 +418,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         - ``points`` -- (default: empty list)  a list of points on this curve
 
-        - ``precision`` -- int or None (default: None): the precision
+        - ``precision`` -- int or None (default: ``None``): the precision
           in bits of the result (default real precision if None)
 
         - ``normalised`` (bool, default ``True``) -- if ``True``, use
@@ -1056,7 +1056,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
     def has_good_reduction(self, P):
         r"""
-        Return True if this elliptic curve has good reduction at the prime `P`.
+        Return ``True`` if this elliptic curve has good reduction at the prime `P`.
 
         INPUT:
 
@@ -1065,7 +1065,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         OUTPUT:
 
-        (bool) -- True if the curve has good reduction at `P`, else False.
+        (bool) -- ``True`` if the curve has good reduction at `P`, else False.
 
         .. NOTE::
 
@@ -1090,7 +1090,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
     def has_bad_reduction(self, P):
         r"""
-        Return True if this elliptic curve has bad reduction at the prime `P`.
+        Return ``True`` if this elliptic curve has bad reduction at the prime `P`.
 
         INPUT:
 
@@ -1099,7 +1099,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         OUTPUT:
 
-        (bool) True if the curve has bad reduction at `P`, else False.
+        (bool) ``True`` if the curve has bad reduction at `P`, else False.
 
         .. NOTE::
 
@@ -1124,7 +1124,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
     def has_multiplicative_reduction(self, P):
         r"""
-        Return True if this elliptic curve has (bad) multiplicative reduction at the prime `P`.
+        Return ``True`` if this elliptic curve has (bad) multiplicative reduction at the prime `P`.
 
         .. NOTE::
 
@@ -1138,7 +1138,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         OUTPUT:
 
-        (bool) True if the curve has multiplicative reduction at `P`,
+        (bool) ``True`` if the curve has multiplicative reduction at `P`,
         else False.
 
         EXAMPLES::
@@ -1158,7 +1158,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
     def has_split_multiplicative_reduction(self, P):
         r"""
-        Return True if this elliptic curve has (bad) split multiplicative reduction at the prime `P`.
+        Return ``True`` if this elliptic curve has (bad) split multiplicative reduction at the prime `P`.
 
         INPUT:
 
@@ -1167,7 +1167,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         OUTPUT:
 
-        (bool) True if the curve has split multiplicative reduction at
+        (bool) ``True`` if the curve has split multiplicative reduction at
         `P`, else False.
 
         EXAMPLES::
@@ -1187,7 +1187,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
     def has_nonsplit_multiplicative_reduction(self, P):
         r"""
-        Return True if this elliptic curve has (bad) non-split multiplicative reduction at the prime `P`.
+        Return ``True`` if this elliptic curve has (bad) non-split multiplicative reduction at the prime `P`.
 
         INPUT:
 
@@ -1196,7 +1196,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         OUTPUT:
 
-        (bool) True if the curve has non-split multiplicative
+        (bool) ``True`` if the curve has non-split multiplicative
         reduction at `P`, else False.
 
         EXAMPLES::
@@ -1216,7 +1216,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
     def has_additive_reduction(self, P):
         r"""
-        Return True if this elliptic curve has (bad) additive reduction at the prime `P`.
+        Return ``True`` if this elliptic curve has (bad) additive reduction at the prime `P`.
 
         INPUT:
 
@@ -1225,7 +1225,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         OUTPUT:
 
-        (bool) True if the curve has additive reduction at `P`, else False.
+        (bool) ``True`` if the curve has additive reduction at `P`, else False.
 
         EXAMPLES::
 
@@ -1751,7 +1751,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         OUTPUT:
 
-        Boolean, True iff a global minimal model exists, i.e. an
+        Boolean, ``True`` iff a global minimal model exists, i.e. an
         integral model which is minimal at every prime.
 
         EXAMPLES::
@@ -2168,7 +2168,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           small and large prime numbers. Use probabilistic tests for
           large primes. If 0, do not use probabilistic tests.
 
-        - ``known_points`` -- (default: None) list of known points on
+        - ``known_points`` -- (default: ``None``) list of known points on
           the curve
 
         OUTPUT:
@@ -2245,7 +2245,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           small and large prime numbers. Use probabilistic tests for
           large primes. If 0, do not use probabilistic tests.
 
-        - ``known_points`` -- (default: None) list of known points on
+        - ``known_points`` -- (default: ``None``) list of known points on
           the curve
 
         OUTPUT:
@@ -2327,7 +2327,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           small and large prime numbers. Use probabilistic tests for
           large primes. If 0, do not use probabilistic tests.
 
-        - ``known_points`` -- (default: None) list of known points on
+        - ``known_points`` -- (default: ``None``) list of known points on
           the curve
 
         OUTPUT:
@@ -3058,7 +3058,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         - ``other`` -- another elliptic curve.
 
-        - ``proof`` (default: ``True``) -- If ``False``, the function will
+        - ``proof`` boolean (default: ``True``); -- If ``False``, the function will
           return ``True`` whenever the two curves have the same
           conductor and are isogenous modulo `p` for all primes `p` of
           norm up to ``maxnorm``.  If ``True``, the function returns
@@ -3071,7 +3071,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         OUTPUT:
 
-        (bool) True if there is an isogeny from curve ``self`` to
+        (bool) ``True`` if there is an isogeny from curve ``self`` to
         curve ``other``.
 
         EXAMPLES::

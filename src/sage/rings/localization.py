@@ -195,7 +195,7 @@ def normalize_extra_units(base_ring, add_units, warning=True):
 
     - ``base_ring`` -- an instance of :class:`IntegralDomain`
     - ``add_units`` -- list of elements from base ring
-    - ``warning`` -- (default: ``True``) to suppress a warning which is thrown if no normalization was possible
+    - ``warning`` -- boolean (default: ``True``); to suppress a warning which is thrown if no normalization was possible
 
     OUTPUT: list of all prime factors of the elements of the given list
 
@@ -585,9 +585,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
     - ``base_ring`` -- an instance of :class:`Ring` allowing the construction of :meth:`fraction_field` (that is an integral domain)
     - ``extra_units`` -- tuple of elements of ``base_ring`` which should be turned into units
     - ``names`` -- passed to :class:`IntegralDomain`
-    - ``normalize`` -- (default: ``True``) passed to :class:`IntegralDomain`
-    - ``category`` -- (default: None) passed to :class:`IntegralDomain`
-    - ``warning`` -- (default: ``True``) to suppress a warning which is thrown if self cannot be represented uniquely
+    - ``normalize`` -- boolean (default: ``True``); passed to :class:`IntegralDomain`
+    - ``category`` -- (default: ``None``) passed to :class:`IntegralDomain`
+    - ``warning`` -- boolean (default: ``True``); to suppress a warning which is thrown if self cannot be represented uniquely
 
     REFERENCES:
 
@@ -1011,14 +1011,14 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         INPUT:
 
-        - ``proof`` -- (default: ``True``) Determines what to do in unknown
+        - ``proof`` -- boolean (default: ``True``); Determines what to do in unknown
           cases
 
         ALGORITHM:
 
         If the parameter ``proof`` is set to ``True``, the returned value is
         correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns True if it can establish that self is
+        to ``False``, the method returns ``True`` if it can establish that self is
         a field and False otherwise.
 
         EXAMPLES::

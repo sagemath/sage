@@ -1667,10 +1667,10 @@ end_scene""".format(
 
         -  ``zoom`` -- (default: 1) how zoomed in
 
-        -  ``frame`` -- (default: ``True``) if True, draw a
+        -  ``frame`` -- boolean (default: ``True``); if ``True``, draw a
            bounding frame with labels
 
-        -  ``axes`` -- (default: ``False``) if True, draw coordinate
+        -  ``axes`` -- boolean (default: ``False``); if ``True``, draw coordinate
            axes
 
         -  ``camera_position`` (for tachyon) -- (default: (2.3, 2.4, 2.0))
@@ -1680,7 +1680,7 @@ end_scene""".format(
            is scaled and centered.
            The default viewing direction is towards the origin.
 
-        -  ``viewdir`` (for tachyon) -- (default: None) three coordinates
+        -  ``viewdir`` (for tachyon) -- (default: ``None``) three coordinates
            specifying the viewing direction.
 
         -  ``updir`` (for tachyon) -- (default: (0,0,1)) the "upward"

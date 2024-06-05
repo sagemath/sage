@@ -2591,7 +2591,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     - ``upper_bound`` -- If designated, size control of the matrix entries is desired.
       Set ``upper_bound`` to 1 more than the maximum value entries can achieve.
-      If None, no size control occurs. But see the warning below.  (default: None)
+      If None, no size control occurs. But see the warning below.  (default: ``None``)
 
     - ``max_tries`` -- If designated, number of tries used to generate each new random row;
       only matters when upper_bound!=None. Used to prevent endless looping. (default: 100)
@@ -2801,7 +2801,7 @@ def random_subspaces_matrix(parent, rank=None):
     - ``parent`` -- A matrix space specifying the base ring, dimensions, and
       representation (dense/sparse) for the result.  The base ring must be exact.
 
-    - ``rank`` -- The desired rank of the return matrix (default: None).
+    - ``rank`` -- The desired rank of the return matrix (default: ``None``).
 
     OUTPUT:
 
@@ -3501,7 +3501,7 @@ def vandermonde(v, ring=None):
 
     - ``v`` -- vector, the second column of the Vandermonde matrix
 
-    - ``ring`` -- base ring (default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: ``None``) of the resulting matrix
 
     EXAMPLES:
 
@@ -3536,7 +3536,7 @@ def toeplitz(c, r, ring=None):
     - ``r`` -- vector, first row of the Toeplitz matrix, counting from the
       second column
 
-    - ``ring`` -- base ring (default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: ``None``) of the resulting matrix
 
     EXAMPLES:
 
@@ -3585,10 +3585,10 @@ def hankel(c, r=None, ring=None):
 
     - ``c`` -- vector, first column of the Hankel matrix
 
-    - ``r`` -- vector (default: None), last row of the Hankel matrix, from
+    - ``r`` -- vector (default: ``None``), last row of the Hankel matrix, from
       the second to the last column
 
-    - ``ring`` -- base ring (default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: ``None``) of the resulting matrix
 
     EXAMPLES:
 

@@ -130,7 +130,7 @@ class MSymbol(SageObject):
     - ``d`` -- (optional) when present, it must be an integral element such
       that `\langle c\rangle + \langle d\rangle + N = R`, where `R` is the corresponding ring of integers.
 
-    - ``check`` -- bool (default ``True``). If ``check=False`` the constructor does
+    - ``check`` -- boolean (default ``True``). If ``check=False`` the constructor does
       not check the condition `\langle c\rangle + \langle d\rangle + N = R`.
 
     OUTPUT:
@@ -384,7 +384,7 @@ class MSymbol(SageObject):
 
         INPUT:
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default ``False``)
 
         OUTPUT:
 
@@ -623,7 +623,7 @@ class P1NFList(SageObject):
         - ``d`` -- (optional) when present, it must be an integral element of
           the number field such that `(c, d)` defines an M-symbol of level `N`.
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default ``False``)
 
         OUTPUT:
 
@@ -695,7 +695,7 @@ class P1NFList(SageObject):
         - ``d`` -- (optional) when present, it must be an integral element of
           the number field such that `(c, d)` defines an M-symbol of level `N`.
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default ``False``)
 
         OUTPUT:
 

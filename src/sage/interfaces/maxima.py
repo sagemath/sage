@@ -1120,7 +1120,7 @@ class Maxima(MaximaAbstract, Expect):
 
 def is_MaximaElement(x):
     """
-    Return True if ``x`` is of type :class:`MaximaElement`.
+    Return ``True`` if ``x`` is of type :class:`MaximaElement`.
 
     EXAMPLES::
 

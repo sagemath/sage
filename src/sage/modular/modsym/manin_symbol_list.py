@@ -165,7 +165,7 @@ class ManinSymbolList(Parent):
 
     def _apply_S_only_0pm1(self) -> bool:
         """
-        Return True if the coefficient when applying the S relation is
+        Return ``True`` if the coefficient when applying the S relation is
         always 0, 1, or -1.  This is useful for optimizing code in
         relation_matrix.py.
 
@@ -500,7 +500,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
     def _apply_S_only_0pm1(self):
         """
-        Return True if the coefficient when applying the S relation is
+        Return ``True`` if the coefficient when applying the S relation is
         always 0, 1, or -1.  This is useful for optimizing code in
         relation_matrix.py.
 
@@ -1063,7 +1063,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
     def _apply_S_only_0pm1(self):
         """
-        Return True if the coefficient when applying the S relation is
+        Return ``True`` if the coefficient when applying the S relation is
         always 0, 1, or -1.  This is useful for optimizing code in
         relation_matrix.py.
 

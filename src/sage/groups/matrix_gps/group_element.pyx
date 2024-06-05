@@ -127,10 +127,10 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     - ``parent`` -- the parent
 
-    - ``check`` -- bool (default: ``True``); if ``True``, then
+    - ``check`` -- boolean (default: ``True``); if ``True``, then
       do some type checking
 
-    - ``convert`` -- bool (default: ``True``); if ``True``, then
+    - ``convert`` -- boolean (default: ``True``); if ``True``, then
       convert ``M`` to the right matrix space
 
     EXAMPLES::

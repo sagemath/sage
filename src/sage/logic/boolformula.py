@@ -23,28 +23,28 @@ We can create a truth table from a formula::
     sage: f.truthtable()
     a      b      c      value
     False  False  False  True
-    False  False  True   True
-    False  True   False  False
-    False  True   True   False
-    True   False  False  True
-    True   False  True   False
-    True   True   False  True
-    True   True   True   True
+    False  False  ``True``   True
+    False  ``True``   False  False
+    False  ``True``   ``True``   False
+    ``True``   False  False  True
+    ``True``   False  ``True``   False
+    ``True``   ``True``   False  True
+    ``True``   ``True``   ``True``   True
     sage: f.truthtable(end=3)
     a      b      c      value
     False  False  False  True
-    False  False  True   True
-    False  True   False  False
+    False  False  ``True``   True
+    False  ``True``   False  False
     sage: f.truthtable(start=4)
     a      b      c      value
-    True   False  False  True
-    True   False  True   False
-    True   True   False  True
-    True   True   True   True
+    ``True``   False  False  True
+    ``True``   False  ``True``   False
+    ``True``   ``True``   False  True
+    ``True``   ``True``   ``True``   True
     sage: propcalc.formula("a").truthtable()
     a      value
     False  False
-    True   True
+    ``True``   True
 
 Now we can evaluate the formula for a given set of inputs::
 
@@ -539,22 +539,22 @@ class BooleanFormula:
             sage: s.truthtable()
             a      b      c      value
             False  False  False  True
-            False  False  True   False
-            False  True   False  True
-            False  True   True   False
-            True   False  False  False
-            True   False  True   False
-            True   True   False  True
-            True   True   True   True
+            False  False  ``True``   False
+            False  ``True``   False  True
+            False  ``True``   ``True``   False
+            ``True``   False  False  False
+            ``True``   False  ``True``   False
+            ``True``   ``True``   False  True
+            ``True``   ``True``   ``True``   True
 
         We can now create a truthtable of rows 1 to 4, inclusive::
 
             sage: s.truthtable(1, 5)
             a      b      c      value
-            False  False  True   False
-            False  True   False  True
-            False  True   True   False
-            True   False  False  False
+            False  False  ``True``   False
+            False  ``True``   False  True
+            False  ``True``   ``True``   False
+            ``True``   False  False  False
 
         .. NOTE::
 
@@ -648,7 +648,7 @@ class BooleanFormula:
             False
         """
         table = self.truthtable().get_table_list()
-        return any(row[-1] is True for row in table[1:])
+        return any(row[-1] is ``True`` for row in table[1:])
 
     def is_tautology(self):
         r"""
@@ -848,7 +848,7 @@ class BooleanFormula:
 
         OUTPUT: a boolean value to be determined as follows:
 
-        True - if the two formulas are logically equivalent
+        ``True`` - if the two formulas are logically equivalent
 
         False - if the two formulas are not logically equivalent
 
@@ -1035,25 +1035,25 @@ class BooleanFormula:
 #            sage: f.truthtable()
 #            a      b      c      value
 #            False  False  False  True
-#            False  False  True   True
-#            False  True   False  False
-#            False  True   True   False
-#            True   False  False  True
-#            True   False  True   False
-#            True   True   False  True
-#            True   True   True   True
+#            False  False  ``True``   True
+#            False  ``True``   False  False
+#            False  ``True``   ``True``   False
+#            ``True``   False  False  True
+#            ``True``   False  ``True``   False
+#            ``True``   ``True``   False  True
+#            ``True``   ``True``   ``True``   True
 #            sage: f.simplify()
 #            (~a&~b)|(a&~b&~c)|(a&b)
 #            sage: f.truthtable()
 #            a      b      c      value
 #            False  False  False  True
-#            False  False  True   True
-#            False  True   False  False
-#            False  True   True   False
-#            True   False  False  True
-#            True   False  True   False
-#            True   True   False  True
-#            True   True   True   True
+#            False  False  ``True``   True
+#            False  ``True``   False  False
+#            False  ``True``   ``True``   False
+#            ``True``   False  False  True
+#            ``True``   False  ``True``   False
+#            ``True``   ``True``   False  True
+#            ``True``   ``True``   ``True``   True
 #
 #        .. NOTE::
 #

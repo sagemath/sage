@@ -1054,8 +1054,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-            - ``restricted`` -- (default: ``False``) if ``True``, only non-simple roots are considered.
-            - ``facade`` -- (default: ``False``) passes facade option to the poset generator.
+            - ``restricted`` -- boolean (default: ``False``); if ``True``, only non-simple roots are considered.
+            - ``facade`` -- boolean (default: ``False``); passes facade option to the poset generator.
 
             EXAMPLES::
 
@@ -3022,7 +3022,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             - ``plot_labels`` -- (default: ``None``) the distance to plot
               the LS labels from the endpoint of the path; set to ``None``
               to not display the labels
-            - ``colored_labels`` -- (default: ``True``) if ``True``, then
+            - ``colored_labels`` -- boolean (default: ``True``); if ``True``, then
               color the labels the same color as the LS path
             - ``**options`` -- plotting options
 
@@ -3082,7 +3082,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             INPUT:
 
             - ``mv_polytope`` -- an MV polytope
-            - ``mark_endpoints`` -- (default: ``True``) mark the endpoints
+            - ``mark_endpoints`` -- boolean (default: ``True``); mark the endpoints
               of the MV polytope
             - ``circle_size`` -- (default: 0.06) the size of the circles
             - ``circle_thickness`` -- (default: 1.6) the thinkness of the
@@ -3155,7 +3155,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             INPUT:
 
             - ``crystal`` -- the finite crystal to plot
-            - ``plot_labels`` -- (default: ``True``) can be one of the
+            - ``plot_labels`` -- boolean (default: ``True``); can be one of the
               following:
 
               * ``True`` -- use the latex labels
@@ -3165,7 +3165,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             - ``label_color`` -- (default: ``'black'``) the color of the
               labels
-            - ``edge_labels`` -- (default: ``False``) if ``True``, then draw
+            - ``edge_labels`` -- boolean (default: ``False``); if ``True``, then draw
               in the edge label
             - ``circle_size`` -- (default: 0.06) the size of the circles
             - ``circle_thickness`` -- (default: 1.6) the thinkness of the

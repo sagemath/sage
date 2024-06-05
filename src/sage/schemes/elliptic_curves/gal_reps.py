@@ -253,7 +253,7 @@ class GaloisRepresentation(SageObject):
 
     def is_reducible(self, p):
         r"""
-        Return True if the mod-p representation is
+        Return ``True`` if the mod-p representation is
         reducible. This is equivalent to the existence of an
         isogeny defined over `\QQ` of degree `p` from the
         elliptic curve.
@@ -307,7 +307,7 @@ class GaloisRepresentation(SageObject):
 
     def is_irreducible(self, p):
         r"""
-        Return True if the mod p representation is irreducible.
+        Return ``True`` if the mod p representation is irreducible.
 
         INPUT:
 
@@ -362,7 +362,7 @@ class GaloisRepresentation(SageObject):
 
     def is_surjective(self, p, A=1000):
         r"""
-        Return True if the mod-p representation is
+        Return ``True`` if the mod-p representation is
         surjective onto `Aut(E[p]) = GL_2(\GF{p})`.
 
         False if it is not, or None if we were unable to
@@ -376,7 +376,7 @@ class GaloisRepresentation(SageObject):
 
         OUTPUT:
 
-        - (boolean) -- True if the mod-p representation is surjective
+        - (boolean) -- ``True`` if the mod-p representation is surjective
           and False if not.
 
         The answer is cached.
@@ -424,7 +424,7 @@ class GaloisRepresentation(SageObject):
            for more details.
 
         2. For the primes `p=2` and 3, this will always answer either
-           True or False. For larger primes it might give None.
+           ``True`` or False. For larger primes it might give None.
         """
         if not arith.is_prime(p):
             raise TypeError("p (=%s) must be prime." % p)
@@ -484,7 +484,7 @@ class GaloisRepresentation(SageObject):
                 self.__image_type[p] = "The image is cyclic of order 3."
                 return False    #, "A3"
             self.__image_type[p] = "The image is all of GL_2(F_2), i.e. a symmetric group of order 6."
-            return True  #, None
+            return ``True``  #, None
 
         if p == 3:
             # Algorithm: Let f be the 3-division polynomial, which is
@@ -542,7 +542,7 @@ class GaloisRepresentation(SageObject):
             n = pari(f).polgalois()[0]
             if n == 24:
                 self.__image_type[p] = "The image is all of GL_2(F_3)."
-                return True   #, None
+                return ``True``   #, None
             else:
                 return False   #, "3-divpoly_galgroup_order_%s"%n
 
@@ -579,7 +579,7 @@ class GaloisRepresentation(SageObject):
                         signs.append(s)
                     if len(signs) == 2 and exclude_exceptional_image:
                         self.__image_type[p] = "The image is all of GL_2(F_%s)." % p
-                        return True   #,None
+                        return ``True``   #,None
 
         if A == -1: # we came in from is reducible. Now go out with False
             return False
@@ -1238,7 +1238,7 @@ class GaloisRepresentation(SageObject):
         if the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/\QQ)` has trivial image in
         `GL_2(\ZZ_p)`.
 
-        For a Galois representation attached to an elliptic curve `E`, this returns True if `\ell\neq p`
+        For a Galois representation attached to an elliptic curve `E`, this returns ``True`` if `\ell\neq p`
         and `E` has good reduction at `\ell`.
 
         INPUT:
@@ -1271,7 +1271,7 @@ class GaloisRepresentation(SageObject):
         Return true if the Galois representation to `GL_2(\ZZ_p)` is unipotent at `\ell\neq p`, i.e.
         if the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/\QQ)` maps into a Borel subgroup.
 
-        For a Galois representation attached to an elliptic curve `E`, this returns True if
+        For a Galois representation attached to an elliptic curve `E`, this returns ``True`` if
         `E` has semi-stable reduction at `\ell`.
 
         INPUT:
@@ -1443,7 +1443,7 @@ class GaloisRepresentation(SageObject):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially semistable.
 
-        For an elliptic curve `E`, this returns True always
+        For an elliptic curve `E`, this returns ``True`` always
 
         INPUT:
 

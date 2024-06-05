@@ -874,7 +874,7 @@ cdef tuple hyperbolicity_CCL(int N,
        best found solution is less than additive gap. When the gap is 0.0, the
        problem is solved optimally.
 
-    - ``verbose`` -- (default: ``False``) is boolean set to ``True`` to display
+    - ``verbose`` -- boolean (default: ``False``); is boolean set to ``True`` to display
       some information during execution
 
     OUTPUT:
@@ -1097,20 +1097,20 @@ def hyperbolicity(G,
             The ``additive_gap`` and ``approximation_factor`` parameters cannot
             be used in combination with this method and so are ignored.
 
-    - ``approximation_factor`` -- (default: None) When the approximation factor
+    - ``approximation_factor`` -- (default: ``None``) When the approximation factor
       is set to some value (larger than 1.0), the function stop computations as
       soon as the ratio between the upper bound and the best found solution is
       less than the approximation factor. When the approximation factor is 1.0,
       the problem is solved optimally. This parameter is used only when the
       chosen algorithm is ``'CCL'``, ``'CCL+FA'``, or ``'BCCM'``.
 
-    - ``additive_gap`` -- (default: None) When sets to a positive number, the
+    - ``additive_gap`` -- (default: ``None``) When sets to a positive number, the
       function stop computations as soon as the difference between the upper
       bound and the best found solution is less than additive gap. When the gap
       is 0.0, the problem is solved optimally. This parameter is used only when
       the chosen algorithm is ``'CCL'`` or ``'CCL+FA'``, or ``'BCCM'``.
 
-    - ``verbose`` -- (default: ``False``) is a boolean set to True to display
+    - ``verbose`` -- boolean (default: ``False``); is a boolean set to ``True`` to display
       some information during execution: new upper and lower bounds, etc.
 
     OUTPUT:

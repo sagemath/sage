@@ -392,7 +392,7 @@ cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN):
       :func:`mpfr_prec_min()` and :func:`mpfr_prec_max()`. In the current
       implementation, :func:`mpfr_prec_min()` is equal to 2.
 
-    - ``sci_not`` -- (default: ``False``) if ``True``, always display using
+    - ``sci_not`` -- boolean (default: ``False``); if ``True``, always display using
       scientific notation; if ``False``, display using scientific notation
       only for very large or very small numbers
 
@@ -1883,12 +1883,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
         - ``e`` -- symbol used in scientific notation; defaults to 'e' for
           base=10, and '@' otherwise
 
-        - ``truncate`` -- (default: ``False``) if ``True``, round off the
+        - ``truncate`` -- boolean (default: ``False``); if ``True``, round off the
           last digits in base-10 printing to lessen confusing base-2
           roundoff issues. This flag may not be used in other bases or
           when ``digits`` is given.
 
-        - ``skip_zeroes`` -- (default: ``False``) if ``True``, skip
+        - ``skip_zeroes`` -- boolean (default: ``False``); if ``True``, skip
           trailing zeroes in mantissa
 
         EXAMPLES::
@@ -4164,11 +4164,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
+        -  ``extend`` -- boolean (default: ``True``); if ``True``, return a
            square root in a complex field if necessary if ``self`` is negative;
            otherwise raise a ``ValueError``
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return a
            list of all square roots.
 
         EXAMPLES::

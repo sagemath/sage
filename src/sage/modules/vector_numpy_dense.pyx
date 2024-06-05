@@ -103,13 +103,13 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
     cdef bint is_dense_c(self) noexcept:
         """
-        Return True (i.e., 1) if self is dense.
+        Return ``True`` (i.e., 1) if self is dense.
         """
         return 1
 
     cdef bint is_sparse_c(self) noexcept:
         """
-        Return True (i.e., 1) if self is sparse.
+        Return ``True`` (i.e., 1) if self is sparse.
         """
         return 0
 

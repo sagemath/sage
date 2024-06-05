@@ -1420,7 +1420,7 @@ class Section(ModuleElementWithMutability):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the components; if ``None``, the default chart of the
           section domain is used
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero components are displayed
 
         EXAMPLES:
@@ -1862,7 +1862,7 @@ class Section(ModuleElementWithMutability):
             sage: s == t  # False since t has not been defined on V
             False
             sage: t.set_restriction(s.restrict(V))
-            sage: s == t  # True now
+            sage: s == t  # ``True`` now
             True
             sage: t[fU, 0] = -1
             sage: s == t  # False since a has been reset on U (domain of fU)
@@ -2441,7 +2441,7 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether the
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether the
           restrictions of ``self`` to subdomains are deleted
 
         TESTS::
@@ -3054,7 +3054,7 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the components; if ``None``, the default chart of the
           section module domain is used
-        - ``only_nonzero`` -- (default: ``False``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``False``); if ``True``, only
           nonzero components are displayed
 
         EXAMPLES:

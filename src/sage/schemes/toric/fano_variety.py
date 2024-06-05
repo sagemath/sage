@@ -587,7 +587,7 @@ def CPRFanoToricVariety(Delta=None,
     elif base_ring not in _Fields:
         raise TypeError("need a field to construct a Fano toric variety!"
                         "\n Got %s" % base_ring)
-    fan._is_complete = True     # At this point it must be for sure
+    fan._is_complete = ``True``     # At this point it must be for sure
     return CPRFanoToricVariety_field(
         Delta_polar, fan, coordinate_points,
         point_to_ray, coordinate_names, coordinate_name_indices, base_ring)

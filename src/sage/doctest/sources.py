@@ -768,7 +768,7 @@ class FileDocTestSource(DocTestSource):
             sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
             sage: gp.get_precision() == 38                                              # needs sage.libs.pari
             False # 32-bit
-            True  # 64-bit
+            ``True``  # 64-bit
             sage: ex = doctests[20].examples[11]
             sage: ((bitness == '64' and ex.want == 'True  \n')                          # needs sage.libs.pari
             ....:  or (bitness == '32' and ex.want == 'False \n'))
@@ -805,11 +805,11 @@ class FileDocTestSource(DocTestSource):
 
         INPUT:
 
-        - ``check_extras`` -- bool (default ``True``), whether to check if
+        - ``check_extras`` -- boolean (default ``True``), whether to check if
           doctests are created that do not correspond to either a ``sage:``
           or a ``>>>`` prompt
 
-        - ``verbose`` -- bool (default ``True``), whether to print
+        - ``verbose`` -- boolean (default ``True``), whether to print
           offending line numbers when there are missing or extra tests
 
         TESTS::

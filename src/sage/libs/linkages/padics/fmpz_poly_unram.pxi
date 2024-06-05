@@ -153,7 +153,7 @@ cdef inline bint creduce(celement out, celement a, long prec, PowComputer_ prime
 
     OUTPUT:
 
-    - returns True if the reduction is zero; False otherwise.
+    - returns ``True`` if the reduction is zero; False otherwise.
     """
     if prec == 0:
         csetzero(out, prime_pow)
@@ -181,7 +181,7 @@ cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_
 
     OUTPUT:
 
-    - returns True if the reduction is zero; False otherwise.
+    - returns ``True`` if the reduction is zero; False otherwise.
     """
     return creduce(out, a, prec, prime_pow)
 
@@ -259,7 +259,7 @@ cdef inline bint cisunit(celement a, PowComputer_ prime_pow) except -1:
 
     OUTPUT:
 
-    - returns True if `a` has valuation 0, and False otherwise.
+    - returns ``True`` if `a` has valuation 0, and False otherwise.
     """
     fmpz_poly_scalar_mod_fmpz(prime_pow.poly_cisunit, a, prime_pow.fprime)
     return not ciszero(prime_pow.poly_cisunit, prime_pow)
@@ -440,7 +440,7 @@ cdef inline bint cisone(celement a, PowComputer_ prime_pow) except -1:
 
     OUTPUT:
 
-    - returns True if `a = 1`, and False otherwise.
+    - returns ``True`` if `a = 1`, and False otherwise.
     """
     return fmpz_poly_is_one(a)
 
@@ -455,7 +455,7 @@ cdef inline bint ciszero(celement a, PowComputer_ prime_pow) except -1:
 
     OUTPUT:
 
-    - returns True if `a = 0`, and False otherwise.
+    - returns ``True`` if `a = 0`, and False otherwise.
     """
     return fmpz_poly_is_zero(a)
 
@@ -762,7 +762,7 @@ cdef inline long cconv_mpq_t(celement out, mpq_t x, long prec, bint absolute, Po
     - ``prec`` -- a long, giving the precision desired: absolute or
       relative depending on the ``absolute`` input.
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
+                      it, storing the unit in ``out``; if ``True`` then
                       just reduces ``x`` modulo the precision.
     - ``prime_pow`` -- a PowComputer for the ring.
 
@@ -809,7 +809,7 @@ cdef inline long cconv_mpz_t(celement out, mpz_t x, long prec, bint absolute, Po
     - ``prec`` -- a long, giving the precision desired: absolute or
                   relative depending on the ``absolute`` input.
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
+                      it, storing the unit in ``out``; if ``True`` then
                       just reduces ``x`` modulo the precision.
     - ``prime_pow`` -- a PowComputer for the ring.
 

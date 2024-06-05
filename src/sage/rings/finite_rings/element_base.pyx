@@ -455,7 +455,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``reverse`` -- if True, act on vectors in reversed order
+        - ``reverse`` -- if ``True``, act on vectors in reversed order
 
         EXAMPLES::
 
@@ -773,7 +773,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         INPUT:
 
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
+        -  ``extend`` -- boolean (default: ``True``); if ``True``, return a
            square root in an extension ring, if necessary. Otherwise, raise a
            ValueError if the root is not in the base ring.
 
@@ -781,7 +781,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
                This option is not implemented!
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return all
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return all
            square roots of ``self``, instead of just one.
 
         .. WARNING::
@@ -830,12 +830,12 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         - ``n`` -- integer `\geq 1`
 
-        - ``extend`` -- bool (default: ``False``); if ``True``, return an `n`\th
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return an `n`\th
           root in an extension ring, if necessary. Otherwise, raise a
           ValueError if the root is not in the base ring.  Warning:
           this option is not implemented!
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return all `n`\th
+        - ``all`` -- boolean (default: ``False``); if ``True``, return all `n`\th
           roots of ``self``, instead of just one.
 
         - ``algorithm`` -- string (default: ``None``); 'Johnston' is the only

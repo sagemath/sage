@@ -295,7 +295,7 @@ class Expect(Interface):
 
     def is_running(self):
         """
-        Return True if self is currently running.
+        Return ``True`` if self is currently running.
         """
         if self._expect is None:
             return False
@@ -1090,7 +1090,7 @@ If this all works, you can then make calls like:
                 except (pexpect.TIMEOUT, pexpect.EOF):
                     pass
                 else:
-                    return True  # Success
+                    return ``True``  # Success
         except Exception:
             pass
         # Failed to interrupt...
@@ -1186,9 +1186,9 @@ If this all works, you can then make calls like:
         INPUT:
 
         -  ``expr`` -- None or a string or list of strings
-           (default: None)
+           (default: ``None``)
 
-        -  ``timeout`` -- None or a number (default: None)
+        -  ``timeout`` -- None or a number (default: ``None``)
 
         EXAMPLES:
 
@@ -1370,14 +1370,14 @@ If this all works, you can then make calls like:
         - ``locals``      -- None (ignored); this is used for compatibility
                              with the Sage notebook's generic system interface.
 
-        - ``allow_use_file`` -- bool (default: ``True``); if True and ``code`` exceeds an
+        - ``allow_use_file`` -- boolean (default: ``True``); if ``True`` and ``code`` exceeds an
                                 interface-specific threshold then ``code`` will be communicated
                                 via a temporary file rather that the character-based interface.
                                 If False then the code will be communicated via the character interface.
 
         - ``split_lines`` -- Tri-state (default: "nofile"); if "nofile" then ``code`` is sent line by line
                              unless it gets communicated via a temporary file.
-                             If True then ``code`` is sent line by line, but some lines individually
+                             If ``True`` then ``code`` is sent line by line, but some lines individually
                              might be sent via temporary file. Depending on the interface, this may transform
                              grammatical ``code`` into ungrammatical input.
                              If False, then the whole block of code is evaluated all at once.
@@ -1475,7 +1475,7 @@ class FunctionElement(InterfaceFunctionElement):
 
 def is_ExpectElement(x):
     """
-    Return True if ``x`` is of type :class:`ExpectElement`
+    Return ``True`` if ``x`` is of type :class:`ExpectElement`
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.ExpectElement`) instead.

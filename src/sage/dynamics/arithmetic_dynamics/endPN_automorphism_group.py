@@ -511,7 +511,7 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
 
     - ``M`` -- a positive integer, a product of prime powers
 
-    - ``return_functions`` -- (default: ``False``) boolean
+    - ``return_functions`` -- boolean (default: ``False``);
 
     OUTPUT: a list of automorphisms over `\ZZ`
 
@@ -631,10 +631,10 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
     - ``prime_lower_bound`` -- (default: 4) a positive integer; a lower bound for the primes to use for
       the Chinese Remainder Theorem step
 
-    - ``return_functions`` -- (default: ``True``) boolean; ``True`` returns linear fractional transformations
+    - ``return_functions`` -- boolean (default: ``True``); ``True`` returns linear fractional transformations
       False returns elements of `PGL(2,\QQ)`
 
-    - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
+    - ``iso_type`` -- boolean (default: ``False``); ``True`` returns the isomorphism type of the automorphism group
 
     OUTPUT: a complete list of automorphisms of ``rational_function``
 
@@ -840,11 +840,11 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
     - ``rational_function`` -- a rational function defined over the fraction field
         of a polynomial ring in one variable with finite field coefficients
 
-    - ``absolute`` -- (default: ``False``) boolean; ``True`` returns the absolute automorphism group and a field of definition
+    - ``absolute`` -- boolean (default: ``False``); ``True`` returns the absolute automorphism group and a field of definition
 
-    - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
+    - ``iso_type`` -- boolean (default: ``False``); ``True`` returns the isomorphism type of the automorphism group
 
-    - ``return_functions`` -- (default: ``False``) boolean; ``True`` returns linear fractional transformations
+    - ``return_functions`` -- boolean (default: ``False``); ``True`` returns linear fractional transformations
       False returns elements of `PGL(2)`
 
     OUTPUT: a list of automorphisms of ``rational_function``

@@ -180,7 +180,7 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
           varieties. A matrix, fan morphism, or a list or tuple of
           homogeneous polynomials that define a morphism.
 
-        - ``check`` -- boolean (default: ``True``) passed onto
+        - ``check`` -- boolean (default: ``True``); passed onto
           functions called by this to be more careful about input
           argument type checking
 

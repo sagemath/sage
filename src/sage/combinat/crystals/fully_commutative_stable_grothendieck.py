@@ -450,7 +450,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
     - ``excess`` -- the total number of letters in the factorization minus the
       length of a reduced word for ``w``
 
-    - ``shape`` -- (default: ``False``) indicator for input ``w``, ``True`` if
+    - ``shape`` -- boolean (default: ``False``); indicator for input ``w``, ``True`` if
       ``w`` is entered as a (skew) shape and ``False`` otherwise.
 
     EXAMPLES::

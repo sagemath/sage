@@ -363,7 +363,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         - parent -- the parent Homset
         - polys -- Mumford's `u` and `v` polynomials
-        - check (default: ``True``) -- if ``True``, ensure that
+        - check boolean (default: ``True``); -- if ``True``, ensure that
           polynomials define a divisor on the appropriate curve and are
           reduced
 

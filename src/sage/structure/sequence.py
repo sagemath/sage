@@ -87,24 +87,24 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
 
     - ``x`` -- a list or tuple instance
 
-    - ``universe`` -- (default: None) the universe of elements; if None
+    - ``universe`` -- (default: ``None``) the universe of elements; if None
       determined using canonical coercions and the entire list of
       elements.  If list is empty, is category Objects() of all
       objects.
 
-    - ``check`` -- (default: ``True``) whether to coerce the elements of x
+    - ``check`` -- boolean (default: ``True``); whether to coerce the elements of x
       into the universe
 
-    - ``immutable`` -- (default: ``True``) whether or not this sequence is
+    - ``immutable`` -- boolean (default: ``True``); whether or not this sequence is
       immutable
 
-    - ``cr`` -- (default: ``False``) if True, then print a carriage return
+    - ``cr`` -- boolean (default: ``False``); if ``True``, then print a carriage return
       after each comma when printing this sequence.
 
-    - ``cr_str`` -- (default: ``False``) if True, then print a carriage return
+    - ``cr_str`` -- boolean (default: ``False``); if ``True``, then print a carriage return
       after each comma when calling ``str()`` on this sequence.
 
-    - ``use_sage_types`` -- (default: ``False``) if True, coerce the
+    - ``use_sage_types`` -- boolean (default: ``False``); if ``True``, coerce the
        built-in Python numerical types int, float, complex to the
        corresponding Sage types (this makes functions like vector()
        more flexible)
@@ -279,21 +279,21 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     - ``x`` -- a list or tuple instance
 
-    - ``universe`` -- (default: None) the universe of elements; if None
+    - ``universe`` -- (default: ``None``) the universe of elements; if None
       determined using canonical coercions and the entire list of
       elements.  If list is empty, is category Objects() of all
       objects.
 
-    - ``check`` -- (default: ``True``) whether to coerce the elements of x
+    - ``check`` -- boolean (default: ``True``); whether to coerce the elements of x
       into the universe
 
-    - ``immutable`` -- (default: ``True``) whether or not this sequence is
+    - ``immutable`` -- boolean (default: ``True``); whether or not this sequence is
       immutable
 
-    - ``cr`` -- (default: ``False``) if True, then print a carriage return
+    - ``cr`` -- boolean (default: ``False``); if ``True``, then print a carriage return
       after each comma when printing this sequence.
 
-    - ``use_sage_types`` -- (default: ``False``) if True, coerce the
+    - ``use_sage_types`` -- boolean (default: ``False``); if ``True``, coerce the
        built-in Python numerical types int, float, complex to the
        corresponding Sage types (this makes functions like vector()
        more flexible)
@@ -753,7 +753,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     def is_immutable(self):
         """
-        Return True if this object is immutable (can not be changed)
+        Return ``True`` if this object is immutable (can not be changed)
         and False if it is not.
 
         To make this object immutable use :meth:`set_immutable`.

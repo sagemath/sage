@@ -697,7 +697,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         OUTPUT:
 
         - ``bp1``, ``bp2`` -- the new interval Bernstein polynomials
-        - ``ok`` -- a boolean; True if the sign of the original polynomial at mid is known
+        - ``ok`` -- a boolean; ``True`` if the sign of the original polynomial at mid is known
 
         EXAMPLES::
 

@@ -61,7 +61,7 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
         sage: RandomGNP(150, .2, loops=True)
         Traceback (most recent call last):
         ...
-        ValueError: parameter 'loops' can be set to True only when 'directed' is True
+        ValueError: parameter 'loops' can be set to ``True`` only when 'directed' is True
     """
     if seed is not None:
         set_random_seed(seed)
@@ -78,7 +78,7 @@ def RandomGNP(n, p, bint directed=False, bint loops=False, seed=None):
         from sage.graphs.graph import Graph
         G = Graph()
         if loops:
-            raise ValueError("parameter 'loops' can be set to True only when 'directed' is True")
+            raise ValueError("parameter 'loops' can be set to ``True`` only when 'directed' is True")
     G.name('Random' + ('Directed' if directed else '') + 'GNP(%s,%s)' % (n, p))
 
     G.add_vertices(range(n))

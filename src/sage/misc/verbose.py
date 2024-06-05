@@ -129,7 +129,7 @@ def verbose(mesg="", t=0, level=1, caller_name=None):
     -  ``level`` -- int, (default: 1) the verbosity level of
        what we are printing
 
-    -  ``caller_name`` -- string (default: None), the name
+    -  ``caller_name`` -- string (default: ``None``), the name
        of the calling function; in most cases Python can deduce this, so
        it need not be provided.
 

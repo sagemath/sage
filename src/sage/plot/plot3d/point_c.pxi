@@ -49,7 +49,7 @@ cdef inline int point_c_cmp(point_c P, point_c Q) noexcept:
         return 1
 
 cdef inline void point_c_update_finite_lower_bound(point_c* res, point_c P) noexcept:
-    # We use the condition "not P.x > res.x" so that the condition returns True if res.x is NaN
+    # We use the condition "not P.x > res.x" so that the condition returns ``True`` if res.x is NaN
     if math.isfinite(P.x) and not P.x > res.x:
         res.x = P.x
     if math.isfinite(P.y) and not P.y > res.y:
@@ -58,7 +58,7 @@ cdef inline void point_c_update_finite_lower_bound(point_c* res, point_c P) noex
         res.z = P.z
 
 cdef inline void point_c_update_finite_upper_bound(point_c* res, point_c P) noexcept:
-    # We use the condition "not P.x < res.x" so that the condition returns True if res.x is NaN
+    # We use the condition "not P.x < res.x" so that the condition returns ``True`` if res.x is NaN
     if math.isfinite(P.x) and not P.x < res.x:
         res.x = P.x
     if math.isfinite(P.y) and not P.y < res.y:

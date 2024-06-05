@@ -1058,7 +1058,7 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``include_last`` -- bool (default: ``True``) whether to include the
+        - ``include_last`` -- boolean (default: ``True``); whether to include the
           last point
 
         EXAMPLES:
@@ -1235,11 +1235,11 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``) If None, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``ring`` -- ring (default: None) where to do the
+        - ``ring`` -- ring (default: ``None``) where to do the
           computations. If None, RealField(53) is used.
 
         OUTPUT: iterator of points
@@ -1295,17 +1295,17 @@ class FiniteWordPath_all(SageObject):
 
         - ``self`` -- a word path in a 3 or 4 dimension vector space
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``) If None, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``letters`` -- iterable (default: None) of the letters
+        - ``letters`` -- iterable (default: ``None``) of the letters
           to be projected. If None, then all the letters are considered.
 
-        - ``color`` -- dictionary (default: None) of the letters
+        - ``color`` -- dictionary (default: ``None``) of the letters
           mapped to colors. If None, automatic colors are chosen.
 
-        - ``ring`` -- ring (default: None) where to do the
+        - ``ring`` -- ring (default: ``None``) where to do the
           computations. If None, RealField(53) is used.
 
         - ``size`` -- number (default: ``12``) size of the points.
@@ -1414,11 +1414,11 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``) If None, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``ring`` -- ring (default: None) where to do the
+        - ``ring`` -- ring (default: ``None``) where to do the
           computations. If None, RealField(53) is used.
 
         OUTPUT: word path
@@ -1492,7 +1492,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
           default:dict(rgbcolor='red',thickness=3)), options for the
           path drawing
 
-        - ``fill`` -- (boolean, default: ``True``), if fill is True and if
+        - ``fill`` -- (boolean, default: ``True``), if fill is ``True`` and if
           the path is closed, the inside is colored
 
         - ``filloptions`` -- (dict,

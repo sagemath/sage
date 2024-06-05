@@ -8,7 +8,7 @@ from sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face       
 @cython.final
 cdef class PolyhedronFaceLattice:
     cdef int dimension              # dimension of Polyhedron
-    cdef readonly bint dual         # if True, then List of all faces by dual Polyhedron
+    cdef readonly bint dual         # if ``True``, then List of all faces by dual Polyhedron
     cdef size_t *f_vector           # a copy of the f-vector, is reversed if dual
     cdef size_t *atom_rep           # a place where atom-representation of face will be stored
     cdef size_t *coatom_rep         # a place where coatom-representation of face will be stored

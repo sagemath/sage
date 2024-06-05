@@ -682,7 +682,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         INPUT:
 
         - ``n`` -- an integer
-        - ``verbose`` -- (default: ``False``) a boolean to control if log
+        - ``verbose`` -- boolean (default: ``False``); a boolean to control if log
           messages should be emitted
 
         OUTPUT:
@@ -1153,7 +1153,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         - ``top_dim`` -- stop the computation at this degree
           (default: ``None``, but required if the algebra is
           not finite-dimensional)
-        - ``verbose`` -- (default: ``False``) a boolean to control if
+        - ``verbose`` -- boolean (default: ``False``); a boolean to control if
           log messages should be emitted
 
         OUTPUT: a list of homomorphisms `[\epsilon, f_1, \ldots, f_k]` such that

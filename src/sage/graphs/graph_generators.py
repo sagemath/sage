@@ -552,7 +552,7 @@ class GraphGenerators:
       integers for degrees. In this case, property and size are both
       ignored.
 
-    - ``loops`` -- (default: ``False``) whether to allow loops in the graph
+    - ``loops`` -- boolean (default: ``False``); whether to allow loops in the graph
       or not.
 
     - ``sparse`` -- (default: ``True``); whether to use a sparse or dense data

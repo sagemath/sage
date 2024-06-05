@@ -1004,7 +1004,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
             sage: t = maple((x+1)^2)
             sage: u = maple(x^2+2*x+1)
             sage: u == t # todo: not implemented
-            True         # returns False, should use 'testeq' in maple
+            ``True``         # returns False, should use 'testeq' in maple
             sage: maple.eval('testeq(%s = %s)' % (t.name(),u.name()))
             'true'
         """
@@ -1014,7 +1014,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
             return rich_to_bool(op, 0)
         # Maple does not allow comparing objects of different types and
         # it raises an error in this case.
-        # We catch the error, and return True for <
+        # We catch the error, and return ``True`` for <
         try:
             if P.eval("evalb(%s %s %s)" % (self.name(), P._lessthan_symbol(),
                                            other.name())) == P._true_symbol():

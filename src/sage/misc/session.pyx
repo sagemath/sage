@@ -177,7 +177,7 @@ def show_identifiers(hidden=False):
 
     INPUT:
 
-    - ``hidden`` -- bool (Default: ``False``); If ``True``, also return
+    - ``hidden`` -- boolean (Default: ``False``); If ``True``, also return
       identifiers that start with an underscore.
 
     OUTPUT: a list of variable names
@@ -259,7 +259,7 @@ def save_session(name='sage_session', verbose=False):
         - ``name`` -- string (default: 'sage_session') name of ``sobj``
           to save the session to.
 
-        - ``verbose`` -- bool (default: ``False``) if ``True``, print
+        - ``verbose`` -- boolean (default: ``False``) if ``True``, print
           info about why certain variables can't be saved.
 
     OUTPUT:

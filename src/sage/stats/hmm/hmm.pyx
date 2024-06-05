@@ -279,7 +279,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
       is the number of states.  Otherwise, they are the entries
       of the list ``emissions_symbols``, which must all be hashable.
 
-    - ``normalize`` -- bool (default: ``True``); if given, input is
+    - ``normalize`` -- boolean (default: ``True``); if given, input is
       normalized to define valid probability distributions,
       e.g., the entries of `A` are made nonnegative and the rows
       sum to 1, and the probabilities in ``pi`` are normalized.
@@ -855,7 +855,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         - ``seq`` -- sequence of emitted ints or symbols
 
-        - ``log_scale`` -- bool (default: ``True``) whether to scale the
+        - ``log_scale`` -- boolean (default: ``True``); whether to scale the
           sequence in order to avoid numerical overflow.
 
         OUTPUT:
@@ -1217,7 +1217,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
           the last iteration required to continue. Relative value
           to log likelihood.
 
-        - ``fix_emissions`` -- bool (default: ``False``); if ``True``, do not
+        - ``fix_emissions`` -- boolean (default: ``False``); if ``True``, do not
           change emissions when updating
 
         OUTPUT:

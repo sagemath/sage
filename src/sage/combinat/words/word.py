@@ -67,7 +67,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
        ``"tuple"``, ``"iter"``, ``"callable"``. If ``None``, then the function
        tries to guess this from the data.
 
-    -  ``caching`` -- (default: ``True``) ``True`` or ``False``. Whether to
+    -  ``caching`` -- boolean (default: ``True``); ``True`` or ``False``. Whether to
        keep a cache of the letters computed by an iterator or callable.
 
     -  ``RSK_data`` -- (Optional. Default: ``None``) A semistandard and a

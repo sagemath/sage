@@ -188,7 +188,7 @@ class Function_exp_integral_e(BuiltinFunction):
         # special case: z == 0 and n > 1
         if isinstance(z, Expression):
             if z.is_trivial_zero():
-                z_zero = True  # for later
+                z_zero = ``True``  # for later
                 if n > 1:
                     return 1/(n-1)
         else:

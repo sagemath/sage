@@ -1175,13 +1175,13 @@ class EllipticCurve_finite_field(EllipticCurve_field):
           field of the other, in which case it will test over the
           larger base field.
 
-        - ``proof`` (default: ``True``) -- this parameter is here only to
+        - ``proof`` boolean (default: ``True``); -- this parameter is here only to
           be consistent with versions for other types of elliptic
           curves.
 
         OUTPUT:
 
-        (bool) True if there is an isogeny from curve ``self`` to
+        (bool) ``True`` if there is an isogeny from curve ``self`` to
         curve ``other`` defined over ``field``.
 
         EXAMPLES::
@@ -1284,13 +1284,13 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
     def is_supersingular(self, proof=True):
         r"""
-        Return True if this elliptic curve is supersingular, else False.
+        Return ``True`` if this elliptic curve is supersingular, else False.
 
         INPUT:
 
         - ``proof`` (boolean, default: ``True``) -- If True, returns a
           proved result.  If False, then a return value of False is
-          certain but a return value of True may be based on a
+          certain but a return value of ``True`` may be based on a
           probabilistic test.  See the documentation of the function
           :meth:`is_j_supersingular` for more details.
 
@@ -1318,12 +1318,12 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
     def is_ordinary(self, proof=True):
         r"""
-        Return True if this elliptic curve is ordinary, else False.
+        Return ``True`` if this elliptic curve is ordinary, else False.
 
         INPUT:
 
         - ``proof`` (boolean, default: ``True``) -- If True, returns a
-          proved result.  If False, then a return value of True is
+          proved result.  If False, then a return value of ``True`` is
           certain but a return value of False may be based on a
           probabilistic test.  See the documentation of the function
           :meth:`is_j_supersingular` for more details.
@@ -2338,7 +2338,7 @@ def supersingular_j_polynomial(p, use_cache=True):
 
 def is_j_supersingular(j, proof=True):
     r"""
-    Return True if `j` is a supersingular `j`-invariant.
+    Return ``True`` if `j` is a supersingular `j`-invariant.
 
     INPUT:
 
@@ -2346,12 +2346,12 @@ def is_j_supersingular(j, proof=True):
 
     - ``proof`` (boolean, default: ``True``) -- If True, returns a proved
       result.  If False, then a return value of False is certain but a
-      return value of True may be based on a probabilistic test.  See
+      return value of ``True`` may be based on a probabilistic test.  See
       the ALGORITHM section below for more details.
 
     OUTPUT:
 
-    (boolean) True if `j` is supersingular, else False.
+    (boolean) ``True`` if `j` is supersingular, else False.
 
     ALGORITHM:
 
@@ -2364,7 +2364,7 @@ def is_j_supersingular(j, proof=True):
     `{\rm GF}(p)`, we check that `(p+1)P=0` for several random points
     `P`, returning False if any fail: supersingular curves over `{\rm
     GF}(p)` have cardinality `p+1`.  If Proof is false we now return
-    True.  Otherwise we compute the cardinality and return True if and
+    True.  Otherwise we compute the cardinality and return ``True`` if and
     only if it is divisible by `p`.
 
     EXAMPLES::
@@ -2460,7 +2460,7 @@ def is_j_supersingular(j, proof=True):
                 if not (n*P).is_zero():
                     return False
 
-    # when proof is False we return True for any curve which passes
+    # when proof is False we return ``True`` for any curve which passes
     # the probabilistic test:
 
     if not proof:

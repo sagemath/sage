@@ -300,7 +300,7 @@ class Sha(SageObject):
 
         INPUT:
 
-        - ``use_database`` -- bool (default: ``False``); if ``True``, try
+        - ``use_database`` -- boolean (default: ``False``); if ``True``, try
           to use any databases installed to lookup the analytic order of
           `Sha`, if possible.  The order of `Sha` is computed if it cannot
           be looked up.
@@ -465,7 +465,7 @@ class Sha(SageObject):
         - ``prec`` (optional) -- the precision used in the computation of the
           `p`-adic L-Series
 
-        - ``use_twists`` (default: ``True``) -- If ``True`` the algorithm may
+        - ``use_twists`` boolean (default: ``True``); -- If ``True`` the algorithm may
           change to a quadratic twist with minimal conductor to do the modular
           symbol computations rather than using the modular symbols of the
           curve itself. If ``False`` it forces the computation using the

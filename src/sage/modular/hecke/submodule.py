@@ -462,7 +462,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         the characteristic is not 0. In all these cases we raise a
         :class:`RuntimeError` exception.
 
-        If use_star is True (which is the default), we also use the +/-
+        If use_star is ``True`` (which is the default), we also use the +/-
         eigenspaces for the star operator to find the dual free module of self.
         If self does not have a star involution, use_star will automatically be
         set to False.
@@ -696,8 +696,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_new(self, p=None):
         """
-        Returns True if this Hecke module is p-new. If p is None,
-        returns True if it is new.
+        Returns ``True`` if this Hecke module is p-new. If p is None,
+        returns ``True`` if it is new.
 
         EXAMPLES::
 
@@ -718,8 +718,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_old(self, p=None):
         """
-        Returns True if this Hecke module is p-old. If p is None,
-        returns True if it is old.
+        Returns ``True`` if this Hecke module is p-old. If p is None,
+        returns ``True`` if it is old.
 
         EXAMPLES::
 
@@ -743,7 +743,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_submodule(self, V):
         """
-        Returns True if and only if self is a submodule of V.
+        Returns ``True`` if and only if self is a submodule of V.
 
         EXAMPLES::
 

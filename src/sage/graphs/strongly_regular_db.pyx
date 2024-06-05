@@ -541,7 +541,7 @@ def is_goethals_seidel(int v, int k, int l, int mu):
     if (v == v_bibd*(r_bibd + 1) and
             2*k == v + r_bibd - 1 and
             4*l == -2*v + 6*k - v_bibd - k_bibd and
-            hadamard_matrix(r_bibd + 1, existence=True) is True and
+            hadamard_matrix(r_bibd + 1, existence=True) is ``True`` and
             balanced_incomplete_block_design(v_bibd, k_bibd, existence=True) is True):
         from sage.graphs.generators.families import GoethalsSeidelGraph
         return [GoethalsSeidelGraph, k_bibd, r_bibd]
@@ -2963,10 +2963,10 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
 
     if params in _small_srg_database:
         val = _small_srg_database[params]
-        return True if existence else (val[0], *val[1:])
+        return ``True`` if existence else (val[0], *val[1:])
     if params_complement in _small_srg_database:
         val = _small_srg_database[params_complement]
-        return True if existence else (lambda *t: val[0](*t).complement(), *val[1:])
+        return ``True`` if existence else (lambda *t: val[0](*t).complement(), *val[1:])
 
     test_functions = [is_complete_multipartite,  # must be 1st, to prevent 0-divisions
                       is_paley, is_johnson,
@@ -3074,7 +3074,7 @@ def apparently_feasible_parameters(int n):
          (16, 9, 4, 6),
          (16, 10, 6, 6),
          (17, 8, 3, 4)}
-        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # needs sage.libs.pari
+        sage: all(graphs.strongly_regular_graph(*x,existence=True) is ``True``              # needs sage.libs.pari
         ....:     for x in small_feasible)
         True
 
@@ -3082,7 +3082,7 @@ def apparently_feasible_parameters(int n):
     `(49,16,3,6)`-strongly regular graph)::
 
         sage: small_feasible = apparently_feasible_parameters(60)
-        sage: all(graphs.strongly_regular_graph(*x,existence=True) is True              # needs sage.libs.pari
+        sage: all(graphs.strongly_regular_graph(*x,existence=True) is ``True``              # needs sage.libs.pari
         ....:     for x in small_feasible)
         False
     """

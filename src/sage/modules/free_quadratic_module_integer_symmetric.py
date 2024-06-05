@@ -264,7 +264,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     INPUT:
 
     - ``Lattices`` -- a list of lattices ``[L_1,...,L_n]``
-    - ``return_embeddings`` -- (default: ``False``) a boolean
+    - ``return_embeddings`` -- boolean (default: ``False``); a boolean
 
     OUTPUT:
 
@@ -377,7 +377,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
     - ``glue`` -- a list where the elements are lists in the form `[g_1,...,g_n]`;
       here `g_i` is an element of the discriminant group of `L_i`and
       the overlattice is spanned by the additional ``[sum(g) for g in glue]``
-    - ``return_embeddings`` -- (default: ``False``) a boolean
+    - ``return_embeddings`` -- boolean (default: ``False``); a boolean
 
 
     OUTPUT:
@@ -1163,7 +1163,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         INPUT:
 
         - ``gens`` -- a list of matrices (default:``None``)
-        - ``is_finite`` -- bool (default: ``None``) If set to ``True``,
+        - ``is_finite`` -- boolean (default: ``None``) If set to ``True``,
           then the group is placed in the category of finite groups. Sage does not check this.
 
         OUTPUT:

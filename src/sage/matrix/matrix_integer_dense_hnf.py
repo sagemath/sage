@@ -97,7 +97,7 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
 
     - ``A`` -- a square integer matrix
     - ``d`` -- a nonzero integer that is assumed to divide the determinant of A
-    - ``proof`` -- bool (default: ``True``) compute det modulo enough primes
+    - ``proof`` -- boolean (default: ``True``); compute det modulo enough primes
       so that the determinant is computed provably correctly (via the
       Hadamard bound).  It would be VERY hard for ``det()`` to fail even
       with proof=False.
@@ -1038,7 +1038,7 @@ def hnf(A, include_zero_rows=True, proof=True):
     INPUT:
 
     - A -- an n x m matrix A over the integers.
-    - include_zero_rows -- bool (default: ``True``) whether or not to include zero
+    - include_zero_rows -- boolean (default: ``True``); whether or not to include zero
       rows in the output matrix
     - proof -- whether or not to prove the result correct.
 
@@ -1223,7 +1223,7 @@ def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2,
     - m -- number of columns
     - proof -- test with proof true
     - stabilize -- parameter to pass to hnf algorithm when proof is False
-    - check_using_magma -- if True use Magma instead of PARI to check
+    - check_using_magma -- if ``True`` use Magma instead of PARI to check
       correctness of computed HNF's. Since PARI's HNF is buggy and slow (as of
       2008-02-16 non-pivot entries sometimes are not normalized to be
       nonnegative) the default is Magma.

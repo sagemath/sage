@@ -279,7 +279,7 @@ def sage_include_directories(use_sources=False):
 
     INPUT:
 
-    -  ``use_sources`` -- (default: ``False``) a boolean
+    -  ``use_sources`` -- boolean (default: ``False``)
 
     OUTPUT:
 

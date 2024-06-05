@@ -588,7 +588,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
       - ``"montgomery"``: The codomain is an (untwisted) Montgomery
         curve, assuming one exists over this field.
 
-    - ``check`` (default: ``True``) -- check whether the input is valid.
+    - ``check`` boolean (default: ``True``); -- check whether the input is valid.
       Setting this to ``False`` can lead to significant speedups.
 
     EXAMPLES:

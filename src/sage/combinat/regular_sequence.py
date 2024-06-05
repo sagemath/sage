@@ -199,7 +199,7 @@ class RegularSequence(RecognizableSeries):
         When created via the parent :class:`RegularSequenceRing`, then
         the following option is available.
 
-        - ``allow_degenerated_sequence`` -- (default: ``False``) a boolean. If set, then
+        - ``allow_degenerated_sequence`` -- boolean (default: ``False``); a boolean. If set, then
           there will be no check if the input is a degenerated sequence
           (see :meth:`is_degenerated`).
           Otherwise the input is checked and a :class:`DegeneratedSequenceError`
@@ -490,7 +490,7 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``allow_degenerated_sequence`` -- (default: ``False``) a boolean. If set, then
+        - ``allow_degenerated_sequence`` -- boolean (default: ``False``); a boolean. If set, then
           there will be no check if the transposed sequence is a degenerated sequence
           (see :meth:`is_degenerated`).
           Otherwise the transposed sequence is checked and a :class:`DegeneratedSequenceError`
@@ -1128,7 +1128,7 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``include_n`` -- (default: ``False``) a boolean. If set, then
+        - ``include_n`` -- boolean (default: ``False``); a boolean. If set, then
           the `n`-th entry of the result is the sum of the entries up
           to index `n` (included).
 
@@ -3752,7 +3752,7 @@ class RecurrenceParser:
 
         - ``rem`` -- an integer between ``0`` and ``k - 1``
 
-        - ``correct_offset`` -- (default: ``True``) a boolean. If
+        - ``correct_offset`` -- boolean (default: ``True``); a boolean. If
           ``True``, then the resulting linear representation has no
           offset.  See [HKL2022]_ for more information.
 

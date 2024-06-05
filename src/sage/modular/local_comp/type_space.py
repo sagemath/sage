@@ -331,7 +331,7 @@ class TypeSpace(SageObject):
     @cached_method
     def is_minimal(self):
         r"""
-        Return True if there exists a newform `g` of level strictly smaller
+        Return ``True`` if there exists a newform `g` of level strictly smaller
         than `N`, and a Dirichlet character `\chi` of `p`-power conductor, such
         that `f = g \otimes \chi` where `f` is the form of which this is the
         type space. To find such a form, use :meth:`~minimal_twist`.

@@ -70,7 +70,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     - ``base_ring`` -- must be a field
     - ``cell_complex`` -- the cell complex whose homology we are
       computing
-    - ``cohomology`` -- (default: ``False``) if ``True``, return
+    - ``cohomology`` -- boolean (default: ``False``); if ``True``, return
       the cohomology as a module
     - ``category`` -- (optional) a subcategory of modules with basis
 

@@ -1525,7 +1525,7 @@ class FractionWithFactoredDenominator(RingElement):
           if ``numerical`` is greater than 0, then return a numerical
           approximation of `F_{r \alpha}` with ``numerical`` digits of
           precision; otherwise return exact values
-        - ``verbose`` -- (default: ``False``) print the current state of
+        - ``verbose`` -- boolean (default: ``False``); print the current state of
           the algorithm
 
         OUTPUT:
@@ -1664,7 +1664,7 @@ class FractionWithFactoredDenominator(RingElement):
           if numerical is greater than 0, then return a numerical approximation
           of the Maclaurin ray coefficients of ``self`` with ``numerical``
           digits of precision; otherwise return exact values
-        - ``verbose`` -- (default: ``False``) print the current state of
+        - ``verbose`` -- boolean (default: ``False``); print the current state of
           the algorithm
 
         OUTPUT: the asymptotic expansion
@@ -2040,7 +2040,7 @@ class FractionWithFactoredDenominator(RingElement):
           if numerical is greater than 0, then return a numerical approximation
           of the Maclaurin ray coefficients of ``self`` with ``numerical``
           digits of precision; otherwise return exact values
-        - ``verbose`` -- (default: ``False``) print the current state of
+        - ``verbose`` -- boolean (default: ``False``); print the current state of
           the algorithm
 
         OUTPUT: the asymptotic expansion
@@ -3684,7 +3684,7 @@ def subs_all(f, sub, simplify=False):
     - ``f`` -- an individual or list of symbolic expressions
       or dictionaries
     - ``sub`` -- an individual or list of dictionaries
-    - ``simplify`` -- (default: ``False``) boolean; set to ``True`` to
+    - ``simplify`` -- boolean (default: ``False``); set to ``True`` to
       simplify the result
 
     OUTPUT:

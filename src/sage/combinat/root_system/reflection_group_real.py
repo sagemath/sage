@@ -309,7 +309,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
           * ``'depth'`` -- iterate by a depth-first-search
           * ``'parabolic'`` -- iterate by using parabolic subgroups
 
-        - ``tracking_words`` (default: ``True``) -- whether or not to keep
+        - ``tracking_words`` boolean (default: ``True``); -- whether or not to keep
           track of the reduced words and store them in ``_reduced_word``
 
         .. NOTE::

@@ -129,7 +129,7 @@ cdef class SBox(SageObject):
         - ``S`` -- a finite iterable defining the S-box with integer or
           finite field elements
 
-        - ``big_endian`` -- (default: ``True``) controls whether bits
+        - ``big_endian`` -- boolean (default: ``True``); controls whether bits
           shall be ordered in big endian order
 
         EXAMPLES:
@@ -946,7 +946,7 @@ cdef class SBox(SageObject):
 
         - ``degree`` -- (default: ``2``) integer > 0
 
-        - ``groebner`` -- (default: ``False``) calculate a reduced Groebner
+        - ``groebner`` -- boolean (default: ``False``); calculate a reduced Groebner
           basis of the spanning polynomials to obtain more polynomials
 
         EXAMPLES::

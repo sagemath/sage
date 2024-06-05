@@ -1886,7 +1886,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
       arguments to load/attach are evaluated in the namespace of this
       dict.
 
-    - ``numeric_literals`` -- bool (default: ``True``), whether to factor
+    - ``numeric_literals`` -- boolean (default: ``True``), whether to factor
       out wrapping of integers and floats, so they do not get created
       repeatedly inside loops
 

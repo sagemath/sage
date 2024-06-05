@@ -317,7 +317,7 @@ class Cusp(Element):
 
     def is_infinity(self):
         """
-        Returns True if this is the cusp infinity.
+        Returns ``True`` if this is the cusp infinity.
 
         EXAMPLES::
 
@@ -482,13 +482,13 @@ class Cusp(Element):
            Gamma_0(N))
 
         -  ``transformation`` -- None (default) or either the string 'matrix' or 'corner'. If 'matrix',
-           it also returns a matrix in Gamma_0(N) that sends self to other. The matrix is chosen such that the lower left entry is as small as possible in absolute value. If 'corner' (or True for backwards compatibility), it returns only the upper left entry of such a matrix.
+           it also returns a matrix in Gamma_0(N) that sends self to other. The matrix is chosen such that the lower left entry is as small as possible in absolute value. If 'corner' (or ``True`` for backwards compatibility), it returns only the upper left entry of such a matrix.
 
 
         OUTPUT:
 
 
-        -  a boolean -- True if self and other are equivalent
+        -  a boolean -- ``True`` if self and other are equivalent
 
         -  a matrix or an integer- returned only if transformation is 'matrix' or 'corner', respectively.
 
@@ -666,7 +666,7 @@ class Cusp(Element):
         OUTPUT:
 
 
-        -  ``bool`` -- True if self and other are equivalent
+        -  ``bool`` -- ``True`` if self and other are equivalent
 
         -  ``int`` -- 0, 1 or -1, gives further information
            about the equivalence: If the two cusps are u1/v1 and u2/v2, then
@@ -711,7 +711,7 @@ class Cusp(Element):
 
     def is_gamma_h_equiv(self, other, G):
         r"""
-        Return a pair (b, t), where b is True or False as self and other
+        Return a pair (b, t), where b is ``True`` or False as self and other
         are equivalent under the action of G, and t is 1 or -1, as
         described below.
 
@@ -734,7 +734,7 @@ class Cusp(Element):
         OUTPUT:
 
 
-        -  ``bool`` -- True if self and other are equivalent
+        -  ``bool`` -- ``True`` if self and other are equivalent
 
         -  ``int`` -- -1, 0, 1; extra info
 

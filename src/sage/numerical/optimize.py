@@ -40,7 +40,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
     - ``maxiter`` -- integer; if convergence is not achieved in
       ``maxiter`` iterations, an error is raised. Must be `\geq 0`.
 
-    - ``full_output`` -- bool (default: ``False``), if ``True``, also return
+    - ``full_output`` -- boolean (default: ``False``), if ``True``, also return
       object that contains information about convergence.
 
 
@@ -331,7 +331,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
       - ``'ncg'`` -- (newton-conjugate gradient) requires gradient and hessian
 
-    - ``verbose`` -- (default: ``False``) print convergence message
+    - ``verbose`` -- boolean (default: ``False``); print convergence message
 
     .. NOTE::
 
@@ -605,7 +605,7 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
       `(x_1, x_2, \ldots, x_k)`. If model is a symbolic function it is
       ignored, and the variables of the symbolic function are used.
 
-    - ``solution_dict`` -- (default: ``False``) if ``True``, return the
+    - ``solution_dict`` -- boolean (default: ``False``); if ``True``, return the
       solution as a dictionary rather than an equation.
 
 

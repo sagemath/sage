@@ -854,7 +854,7 @@ class Singular(ExtraTabCompletion, Expect):
         Load the Singular library named lib.
 
         Note that if the library was already loaded during this session it
-        is not reloaded unless the optional reload argument is True (the
+        is not reloaded unless the optional reload argument is ``True`` (the
         default is False).
 
         EXAMPLES::
@@ -1712,13 +1712,13 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         INPUT:
 
 
-        -  ``R`` -- (default: None); an optional polynomial ring.
+        -  ``R`` -- (default: ``None``); an optional polynomial ring.
            If it is provided, then you have to make sure that it
            matches the current singular ring as, e.g., returned by
            singular.current_ring(). By default, the output of
            :meth:`sage_global_ring` is used.
 
-        -  ``kcache`` -- (default: None); an optional dictionary
+        -  ``kcache`` -- (default: ``None``); an optional dictionary
            for faster finite field lookups, this is mainly useful for finite
            extension fields
 
@@ -1921,7 +1921,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
         INPUT:
 
-        -  ``R`` -- (default: None); an optional ring, over which
+        -  ``R`` -- (default: ``None``); an optional ring, over which
            the resulting matrix is going to be defined.
            By default, the output of :meth:`sage_global_ring` is used.
 
@@ -2335,7 +2335,7 @@ class SingularFunctionElement(FunctionElement):
 
 def is_SingularElement(x):
     r"""
-    Return True is ``x`` is of type :class:`SingularElement`.
+    Return ``True`` is ``x`` is of type :class:`SingularElement`.
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.SingularElement`) instead.

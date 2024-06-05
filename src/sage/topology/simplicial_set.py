@@ -3157,7 +3157,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
     - ``name`` (default: ``None``) -- string, the name of the
       simplicial set
 
-    - ``check`` (default: ``True``) -- boolean. If ``True``,
+    - ``check`` boolean (default: ``True``); -- boolean. If ``True``,
       check the simplicial identity on the face maps when defining the
       simplicial set.
 

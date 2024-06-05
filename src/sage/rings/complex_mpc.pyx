@@ -2131,7 +2131,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return a
            list of all `n`-th roots.
 
         EXAMPLES::

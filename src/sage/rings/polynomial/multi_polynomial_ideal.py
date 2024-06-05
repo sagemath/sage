@@ -383,7 +383,7 @@ class MPolynomialIdeal_magma_repr:
         - ``prot`` -- if ``True`` Magma's protocol is printed to
           stdout.
 
-        -  ``magma`` -- Magma instance or None (default instance) (default: None)
+        -  ``magma`` -- Magma instance or None (default instance) (default: ``None``)
 
         EXAMPLES::
 
@@ -487,8 +487,8 @@ class MPolynomialIdeal_singular_base_repr:
         INPUT:
 
         - ``algorithm`` -- see below for available algorithms
-        - ``redsb`` -- (default: ``True``) return a reduced Groebner basis
-        - ``red_tail`` -- (default: ``True``) perform tail reduction
+        - ``redsb`` -- boolean (default: ``True``); return a reduced Groebner basis
+        - ``red_tail`` -- boolean (default: ``True``); perform tail reduction
 
         ALGORITHMS:
 
@@ -1041,7 +1041,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        -  ``algorithm`` -- string or None (default: None)
+        -  ``algorithm`` -- string or None (default: ``None``)
 
         ALGORITHMS:
 
@@ -4193,14 +4193,14 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         INPUT:
 
 
-        -  ``is_groebner_basis`` -- bool (default: ``False``). if
+        -  ``is_groebner_basis`` -- boolean (default: ``False``). if
            True, then I.gens() must be a Groebner basis with respect to the
            standard degree lexicographic term order.
 
         -  ``symmetry`` -- default: None; if not None, describes
            symmetries of the ideal
 
-        -  ``verbose`` -- default: ``False``; if True, printout
+        -  ``verbose`` -- default: ``False``; if ``True``, printout
            useful info during computations
         """
         import sage.rings.polynomial.groebner_fan as groebner_fan
@@ -5197,7 +5197,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         - ``self`` -- a principal ideal in 2 variables
 
         - ``algorithm`` -- set this to 'surf' if you want 'surf' to
-          plot the ideal (default: None)
+          plot the ideal (default: ``None``)
 
         - ``*args`` -- optional tuples ``(variable, minimum, maximum)``
           for plotting dimensions

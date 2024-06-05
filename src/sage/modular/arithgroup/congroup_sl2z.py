@@ -29,7 +29,7 @@ from .arithgroup_element import ArithmeticSubgroupElement
 
 def is_SL2Z(x):
     r"""
-    Return True if x is the modular group `\SL_2(\ZZ)`.
+    Return ``True`` if x is the modular group `\SL_2(\ZZ)`.
 
     EXAMPLES::
 
@@ -154,7 +154,7 @@ class SL2Z_class(Gamma0_class):
 
     def is_subgroup(self, right):
         """
-        Return True if self is a subgroup of right.
+        Return ``True`` if self is a subgroup of right.
 
         EXAMPLES::
 

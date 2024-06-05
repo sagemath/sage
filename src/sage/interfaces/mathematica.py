@@ -1128,7 +1128,7 @@ def request_wolfram_alpha(input, verbose=False):
     INPUT:
 
     - ``input`` -- string
-    - ``verbose`` -- bool (default: ``False``)
+    - ``verbose`` -- boolean (default: ``False``)
 
     OUTPUT: json
 
@@ -1232,7 +1232,7 @@ def parse_moutput_from_json(page_data, verbose=False):
     INPUT:
 
     - ``page_data`` -- json obtained from Wolfram Alpha
-    - ``verbose`` -- bool (default: ``False``)
+    - ``verbose`` -- boolean (default: ``False``)
 
     OUTPUT: list of unicode strings
 

@@ -268,7 +268,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         - ``I`` -- a list or tuple of positive integers
 
-        - ``return_embedding`` -- Boolean, if true the projective embedding is also returned
+        - ``return_embedding`` -- Boolean, if ``True`` the projective embedding is also returned
 
         OUTPUT:
 

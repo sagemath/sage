@@ -318,7 +318,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         - ``server_tmpdir`` -- temporary directory to use in remote server
 
-        -  ``user_config`` -- if True, then local user
+        -  ``user_config`` -- if ``True``, then local user
            configuration files will be read by Magma. If False (the default),
            then Magma is started with the -n option which suppresses user
            configuration files.
@@ -926,7 +926,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``t`` -- float (default: None); if not None, return
+        -  ``t`` -- float (default: ``None``); if not None, return
            cputime since t
 
 
@@ -1474,11 +1474,11 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``verbose`` -- bool (default: ``True``); whether to
+        -  ``verbose`` -- boolean (default: ``True``); whether to
            verbosely output status info the first time the command list is
            built
 
-        -  ``use_disk_cache`` -- bool (default: ``True``); use
+        -  ``use_disk_cache`` -- boolean (default: ``True``); use
            cached command list, which is saved to disk.
 
 
@@ -1827,7 +1827,7 @@ class MagmaFunction(ExpectFunction):
 
 def is_MagmaElement(x):
     """
-    Return True if ``x`` is of type :class:`MagmaElement`, and False otherwise.
+    Return ``True`` if ``x`` is of type :class:`MagmaElement`, and False otherwise.
 
     INPUT:
 
@@ -2574,7 +2574,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         INPUT:
 
-        - ``any`` -- (bool: default is False) if True, also
+        - ``any`` -- (bool: default is False) if ``True``, also
           include signatures with Any as first argument.
 
         OUTPUT: list of strings

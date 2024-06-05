@@ -357,7 +357,7 @@ class BlockFinder:
                 if token == "lambda":
                     self.islambda = True
                 self.started = True
-            self.passline = True    # skip to the end of the line
+            self.passline = ``True``    # skip to the end of the line
         elif type == tokenize.NEWLINE:
             self.passline = False   # stop skipping when a NEWLINE is seen
             self.last = srow
@@ -2465,7 +2465,7 @@ def sage_getvariablename(self, omit_underscore_names=True):
     If the user has assigned an object ``obj`` to a variable name,
     then return that variable name.  If several variables point to
     ``obj``, return a sorted list of those names.  If
-    ``omit_underscore_names`` is True (the default) then omit names
+    ``omit_underscore_names`` is ``True`` (the default) then omit names
     starting with an underscore "_".
 
     EXAMPLES::

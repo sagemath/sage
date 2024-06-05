@@ -463,13 +463,13 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         -  ``s`` -- string containing GAP code.
 
-        -  ``newlines`` -- bool (default: ``True``); if False,
+        -  ``newlines`` -- boolean (default: ``True``); if False,
            remove all backslash-newlines inserted by the GAP output
            formatter.
 
         -  ``strip`` -- ignored
 
-        -  ``split_lines`` -- bool (default: ``True``); if True then each
+        -  ``split_lines`` -- boolean (default: ``True``); if ``True`` then each
            line is evaluated separately.  If False, then the whole
            block of code is evaluated all at once.
 
@@ -1627,7 +1627,7 @@ class GapFunction(ExpectFunction):
 
 def is_GapElement(x):
     """
-    Return True if ``x`` is a :class:`GapElement`
+    Return ``True`` if ``x`` is a :class:`GapElement`
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.GapElement`) instead.

@@ -3089,7 +3089,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         if name is None:
             name = self._parent._names[0]
-        # p-adic polynomials like (1 + O(p^20))*x have _is_gen set to True but
+        # p-adic polynomials like (1 + O(p^20))*x have _is_gen set to ``True`` but
         # want their coefficient printed with its O() term
         if self._is_gen and not isinstance(self._parent._base, pAdicGeneric):
             return name
@@ -5156,7 +5156,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         - ``names`` -- (default: ``None``)  a variable name for the splitting field.
 
-        - ``map`` -- (default: ``False``) also return an embedding of
+        - ``map`` -- boolean (default: ``False``); also return an embedding of
           ``self`` into the resulting field.
 
         - ``kwds`` -- additional keywords depending on the type.
@@ -6604,7 +6604,7 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``n`` -- (default: None); if given, an integer that
+        -  ``n`` -- (default: ``None``); if given, an integer that
            is at least 0
 
 
@@ -7036,7 +7036,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``name`` -- (default: None) Variable name.  If not given, use
+        - ``name`` -- (default: ``None``) Variable name.  If not given, use
           ``self.parent().variable_name()``.  This argument is irrelevant
           for constant polynomials.
 
@@ -8071,7 +8071,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         -  ``ring`` -- the ring to find roots in
 
-        -  ``multiplicities`` -- bool (default: ``True``) if ``True``
+        -  ``multiplicities`` -- boolean (default: ``True``); if ``True``
            return list of pairs `(r, n)`, where `r` is the root and `n` is the
            multiplicity. If ``False``, just return the unique roots, with no
            information about multiplicities.
@@ -11482,15 +11482,15 @@ cdef class Polynomial(CommutativePolynomial):
             NotImplementedError: divisibility test only implemented for polynomials over an integral domain unless obvious non divisibility of leading terms
         """
         if p.is_zero():
-            return True          # everything divides 0
+            return ``True``          # everything divides 0
         if self.is_zero():
             return False      # 0 only divides 0
         try:
             if self.is_unit():
-                return True   # units divide everything
+                return ``True``   # units divide everything
         except NotImplementedError:
             if self.is_one():
-                return True    # if is_unit is not implemented
+                return ``True``    # if is_unit is not implemented
 
         if self.degree() > p.degree():
             return False

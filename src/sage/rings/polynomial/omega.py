@@ -87,7 +87,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
       At the moment only ``operator.ge`` is implemented.
 
     - ``Factorization_sort`` (default: ``False``) and
-      ``Factorization_simplify`` (default: ``True``) -- are passed on to
+      ``Factorization_simplify`` boolean (default: ``True``); -- are passed on to
       :class:`sage.structure.factorization.Factorization` when creating
       the result
 

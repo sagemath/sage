@@ -224,7 +224,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: (1 + 2*t).is_gen()
             False
 
-        Note that this only returns True on the actual generator, not on
+        Note that this only returns ``True`` on the actual generator, not on
         something that happens to be equal to it.
 
         ::
@@ -1513,7 +1513,7 @@ cdef class PowerSeries(AlgebraElement):
             has infinite precision, truncates series at precision
             ``prec``.
 
-          - ``extend`` -- bool (default: ``False``); if ``True``, return a square
+          - ``extend`` -- boolean (default: ``False``); if ``True``, return a square
             root in an extension ring, if necessary. Otherwise, raise
             a :class:`ValueError` if the square root is not in the base power series
             ring. For example, if ``extend`` is ``True``, the square root of a
@@ -1523,7 +1523,7 @@ cdef class PowerSeries(AlgebraElement):
           - ``name`` -- string; if ``extend`` is ``True``, you must also specify the print
             name of the formal square root.
 
-          - ``all`` -- bool (default: ``False``); if ``True``, return all square
+          - ``all`` -- boolean (default: ``False``); if ``True``, return all square
             roots of ``self``, instead of just one.
 
         ALGORITHM: Newton's method

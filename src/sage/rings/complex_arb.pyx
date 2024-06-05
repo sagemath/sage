@@ -3806,7 +3806,7 @@ cdef class ComplexBall(RingElement):
         - ``b`` -- lower parameters, list of complex numbers that coerce into
           this ball's parent.
 
-        - ``regularized`` -- if True, the regularized generalized hypergeometric
+        - ``regularized`` -- if ``True``, the regularized generalized hypergeometric
           function is computed.
 
         OUTPUT: the generalized hypergeometric function defined by

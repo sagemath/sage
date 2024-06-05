@@ -251,7 +251,7 @@ class DrinfeldModuleHomset(Homset):
         - ``category`` (default: ``None``) -- the Drinfeld modules category of
           the domain and codomain
 
-        - ``check`` (default: ``True``) -- check the validity of the category
+        - ``check`` boolean (default: ``True``); -- check the validity of the category
 
         TESTS::
 

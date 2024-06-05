@@ -1282,7 +1282,7 @@ class BundleConnection(SageObject, Mutability):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the connection 1-forms; if ``None``,
           the default chart of the domain of ``frame`` is used
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero connection coefficients are displayed
 
         EXAMPLES:

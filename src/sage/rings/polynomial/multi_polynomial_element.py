@@ -897,7 +897,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``as_ETuples`` -- (default: ``True``) if ``True`` iterate over
+        - ``as_ETuples`` -- boolean (default: ``True``); if ``True`` iterate over
           pairs whose first element is an ETuple, otherwise as a tuples
 
         EXAMPLES::
@@ -1541,7 +1541,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
 
-        -  ``R`` -- (default: None) :class:`PolynomialRing`
+        -  ``R`` -- (default: ``None``) :class:`PolynomialRing`
 
 
         If this polynomial is not in at most one variable, then a

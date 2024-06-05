@@ -539,7 +539,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         INPUT:
 
-        - ``is_class_representative`` -- (default: ``False``) whether
+        - ``is_class_representative`` -- boolean (default: ``False``); whether
           to first replace ``self`` by the representative of its
           conjugacy class
 

@@ -165,7 +165,7 @@ class EllipticCurveLocalData(SageObject):
 
         - ``P`` -- a prime ideal of the field, or a prime integer if the field is `\QQ`.
 
-        - ``proof`` (bool)-- if True, only use provably correct
+        - ``proof`` (bool)-- if ``True``, only use provably correct
           methods (default controlled by global proof module).  Note
           that the proof module is number_field, not elliptic_curves,
           since the functions that actually need the flag are in
@@ -315,7 +315,7 @@ class EllipticCurveLocalData(SageObject):
 
         INPUT:
 
-        - ``reduce`` -- (default: ``True``) if set to ``True`` and if
+        - ``reduce`` -- boolean (default: ``True``); if set to ``True`` and if
           the initial elliptic curve had globally integral
           coefficients, then the elliptic curve returned by Tate's
           algorithm will be "reduced" as specified in _reduce_model()
@@ -805,7 +805,7 @@ class EllipticCurveLocalData(SageObject):
 
         def _pquadroots(a, b, c):
             r"""
-            Local function returning True iff `ax^2 + bx + c` has roots modulo `P`
+            Local function returning ``True`` iff `ax^2 + bx + c` has roots modulo `P`
             """
             (a, b, c) = (F(a), F(b), F(c))
             if a == 0:

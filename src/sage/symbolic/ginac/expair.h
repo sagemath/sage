@@ -44,21 +44,21 @@ public:
 	{
 		GINAC_ASSERT(is_exactly_a<numeric>(coeff));
 	}
-	
+
 	/** Member-wise check for canonical ordering equality. */
 	bool is_equal(const expair & other) const
 	{
 		return (rest.is_equal(other.rest) && coeff.is_equal(other.coeff));
 	}
-	
+
 	/** Member-wise check for canonical ordering lessness. */
-	bool is_less(const expair & other) const 
+	bool is_less(const expair & other) const
 	{
 		int restcmp = rest.compare(other.rest);
 		return ((restcmp<0) ||
 		        (!(restcmp>0) && (coeff.compare(other.coeff)<0)));
 	}
-	
+
 	/** Member-wise check for canonical ordering. */
 	int compare(const expair & other) const
 	{
@@ -67,10 +67,10 @@ public:
 			return restcmp;
                 return other.coeff.compare(coeff);
 	}
-	
+
 	void print(std::ostream & os) const;
-	
-	/** True if this is of the form (numeric,ex(1)). */
+
+	/** ``True`` if this is of the form (numeric,ex(1)). */
 	bool is_canonical_numeric() const
 	{
 		GINAC_ASSERT(is_exactly_a<numeric>(coeff));

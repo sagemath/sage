@@ -21,7 +21,7 @@ def QuarticCurve(F, PP=None, check=False):
 
     - ``F`` -- a polynomial in three variables, homogeneous of degree 4
 
-    - ``PP`` -- a projective plane (default: None)
+    - ``PP`` -- a projective plane (default: ``None``)
 
     - ``check`` -- whether to check for smoothness or not (default: ``False``)
 

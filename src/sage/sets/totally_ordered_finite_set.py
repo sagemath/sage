@@ -146,7 +146,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
 
     - ``elements`` -- A list of elements in the set
 
-    - ``facade`` -- (default: ``True``) if ``True``, a facade is used; it
+    - ``facade`` -- boolean (default: ``True``); if ``True``, a facade is used; it
       should be set to ``False`` if the elements do not inherit from
       :class:`~sage.structure.element.Element` or if you want a funny order. See
       examples for more details.

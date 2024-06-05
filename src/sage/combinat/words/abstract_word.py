@@ -565,7 +565,7 @@ class Word_class(SageObject):
 
     def is_empty(self):
         r"""
-        Returns True if the length of self is zero, and False otherwise.
+        Returns ``True`` if the length of self is zero, and False otherwise.
 
         EXAMPLES::
 
@@ -592,7 +592,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``use_parent_alphabet`` -- Bool (default: ``False``). When True and if
+        - ``use_parent_alphabet`` -- Bool (default: ``False``). When ``True`` and if
           the self parent's alphabet is finite, it uses the index of
           the letters in the alphabet. Otherwise, the first letter occurring in
           self is mapped to zero, and every letter that hasn't yet occurred in
@@ -665,7 +665,7 @@ class Word_class(SageObject):
 
     def lex_less(self, other):
         r"""
-        Returns True if self is lexicographically less than other.
+        Returns ``True`` if self is lexicographically less than other.
 
         EXAMPLES::
 
@@ -695,7 +695,7 @@ class Word_class(SageObject):
 
     def lex_greater(self, other):
         r"""
-        Returns True if self is lexicographically greater than other.
+        Returns ``True`` if self is lexicographically greater than other.
 
         EXAMPLES::
 
@@ -830,7 +830,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: ``None``) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         OUTPUT:
@@ -896,7 +896,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: ``None``) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         OUTPUT:
@@ -986,7 +986,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: None) on the alphabet of self. It must
+        -  ``f`` -- involution (default: ``None``) on the alphabet of self. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         -  ``algorithm`` -- string (default: ``'recursive'``) specifying which
@@ -1196,7 +1196,7 @@ class Word_class(SageObject):
 
         - ``self`` -- A word over the integers.
         - ``start`` -- integer, the first letter of the resulting word.
-        - ``mod`` -- (default: None) It can be one of the following:
+        - ``mod`` -- (default: ``None``) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1242,7 +1242,7 @@ class Word_class(SageObject):
 
         - ``self`` -- A word over the integers.
         - ``start`` -- integer, the first letter of the resulting word.
-        - ``mod`` -- (default: None) It can be one of the following:
+        - ``mod`` -- (default: ``None``) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1302,7 +1302,7 @@ class Word_class(SageObject):
         INPUT:
 
         - ``self`` -- A word over the integers.
-        - ``mod`` -- (default: None) It can be one of the following:
+        - ``mod`` -- (default: ``None``) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1378,7 +1378,7 @@ class Word_class(SageObject):
         INPUT:
 
         - ``self`` -- A word over the integers.
-        - ``mod`` -- (default: None) It can be one of the following:
+        - ``mod`` -- (default: ``None``) It can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 

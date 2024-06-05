@@ -119,7 +119,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
     def is_isogeny(self):
         """
-        Return True if this morphism is an isogeny of abelian varieties.
+        Return ``True`` if this morphism is an isogeny of abelian varieties.
 
         EXAMPLES::
 

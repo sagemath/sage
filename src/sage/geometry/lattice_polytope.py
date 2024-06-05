@@ -2624,7 +2624,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
     @cached_method
     def is_reflexive(self):
         r"""
-        Return True if this polytope is reflexive.
+        Return ``True`` if this polytope is reflexive.
 
         EXAMPLES: The 3-dimensional octahedron is reflexive (and 4319 other
         3-polytopes)::
@@ -2733,19 +2733,19 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``keep_symmetric`` -- (default: ``False``) if ``True``, "-s" option
+        - ``keep_symmetric`` -- boolean (default: ``False``); if ``True``, "-s" option
           will be passed to ``nef.x`` in order to keep symmetric partitions,
           i.e. partitions related by lattice automorphisms preserving ``self``;
 
-        - ``keep_products`` -- (default: ``True``) if ``True``, "-D" option
+        - ``keep_products`` -- boolean (default: ``True``); if ``True``, "-D" option
           will be passed to ``nef.x`` in order to keep product partitions,
           with corresponding complete intersections being direct products;
 
-        - ``keep_projections`` -- (default: ``True``) if ``True``, "-P" option
+        - ``keep_projections`` -- boolean (default: ``True``); if ``True``, "-P" option
           will be passed to ``nef.x`` in order to keep projection partitions,
           i.e. partitions with one of the parts consisting of a single vertex;
 
-        - ``hodge_numbers`` -- (default: ``False``) if ``False``, "-p" option
+        - ``hodge_numbers`` -- boolean (default: ``False``); if ``False``, "-p" option
           will be passed to ``nef.x`` in order to skip Hodge numbers
           computation, which takes a lot of time.
 
@@ -3508,21 +3508,21 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         -  ``facet_colors`` -- (default:None) if specified, must be a list of
            colors for each facet separately, used instead of ``facet_color``
 
-        -  ``show_edges`` -- (default: ``True``) whether to draw
+        -  ``show_edges`` -- boolean (default: ``True``); whether to draw
            edges as lines
 
         -  ``edge_thickness`` -- (default:3)
 
         -  ``edge_color`` -- (default:(0.5,0.5,0.5))
 
-        -  ``show_vertices`` -- (default: ``True``) whether to draw
+        -  ``show_vertices`` -- boolean (default: ``True``); whether to draw
            vertices as balls
 
         -  ``vertex_size`` -- (default:10)
 
         -  ``vertex_color`` -- (default:(1,0,0))
 
-        -  ``show_points`` -- (default: ``True``) whether to draw
+        -  ``show_points`` -- boolean (default: ``True``); whether to draw
            other points as balls
 
         -  ``point_size`` -- (default:10)
@@ -3896,7 +3896,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         -  ``keys`` -- a string of options passed to poly.x. The
            key "f" is added automatically.
 
-        -  ``reduce_dimension`` -- (default: ``False``) if ``True`` and this
+        -  ``reduce_dimension`` -- boolean (default: ``False``); if ``True`` and this
            polytope is not full-dimensional, poly.x will be called for the
            vertices of this polytope in some basis of the spanned affine space.
 
@@ -4904,7 +4904,7 @@ class NefPartition(SageObject, Hashable):
 
         - ``i`` -- an integer
 
-        - ``all_points`` -- (default: ``False``) whether to list all lattice points
+        - ``all_points`` -- boolean (default: ``False``); whether to list all lattice points
           or just vertices
 
         OUTPUT:
@@ -4938,7 +4938,7 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``all_points`` -- (default: ``False``) whether to list all lattice points
+        - ``all_points`` -- boolean (default: ``False``); whether to list all lattice points
           or just vertices
 
         OUTPUT:
@@ -5796,7 +5796,7 @@ def read_palp_matrix(data, permutation=False):
     - ``data`` -- Either a string containing the filename or the file itself
                   containing the output by PALP.
 
-    - ``permutation`` -- (default: ``False``) If ``True``, try to retrieve
+    - ``permutation`` -- boolean (default: ``False``); If ``True``, try to retrieve
       the permutation output by PALP. This parameter makes sense only
       when PALP computed the normal form of a lattice polytope.
 

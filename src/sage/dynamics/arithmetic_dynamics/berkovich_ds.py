@@ -648,7 +648,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         - ``M`` -- a square invertible matrix.
 
-        - ``adjugate`` -- (default: ``False``) boolean, also classically
+        - ``adjugate`` -- boolean (default: ``False``);, also classically
           called adjoint, takes a square matrix ``M`` and finds the transpose
           of its cofactor matrix. Used for conjugation in place of inverse
           when specified ``'True'``. Functionality is the same in projective space.
@@ -719,7 +719,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``normalize`` -- (default: ``False``) boolean.
+        - ``normalize`` -- boolean (default: ``False``);.
 
         OUTPUT: an element of the base ring of this map
 

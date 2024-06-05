@@ -875,7 +875,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
       automatically defines the corresponding ``checker``); this dictionary
       gives the possible options, as keys, together with a brief description
       of them
-    - ``case_sensitive`` -- (default: ``True``) ``True`` or ``False``
+    - ``case_sensitive`` -- boolean (default: ``True``); ``True`` or ``False``
       depending on whether the values of the option are case sensitive
 
     Options and their values can be abbreviated provided that this
@@ -1414,7 +1414,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             raise TypeError("expected dict as specification of %r, got %r" % (option, specifications))
 
         doc = {}  # will be used to build the doc string
-        self._case_sensitive[option] = True    # ``True`` by default
+        self._case_sensitive[option] = ``True``    # ``True`` by default
         self._legal_values[option] = []
         for spec in sorted(specifications):   # NB: options processed alphabetically!
             if spec == 'alias':

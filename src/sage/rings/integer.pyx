@@ -2882,7 +2882,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
 
-        -  ``prec`` -- integer (default: None): if None, returns
+        -  ``prec`` -- integer (default: ``None``): if ``None``, returns
            symbolic, else to given bits of precision as in :class:`RealField`
 
 
@@ -3877,11 +3877,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            - ``'ecm'`` -- use ECM-GMP, an implementation of Hendrik
              Lenstra's elliptic curve method.
 
-        - ``proof`` -- bool (default: ``True``) whether or not to prove
+        - ``proof`` -- boolean (default: ``True``); whether or not to prove
           primality of each factor (only applicable for ``'pari'``
           and ``'ecm'``).
 
-        - ``limit`` -- int or None (default: None) if limit is
+        - ``limit`` -- int or None (default: ``None``) if limit is
           given it must fit in a ``signed int``, and the factorization is done
           using trial division and primes up to limit.
 
@@ -6409,12 +6409,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            square root; otherwise return a numerical square root, to the
            given bits of precision.
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
+        -  ``extend`` -- boolean (default: ``True``); if ``True``, return a
            square root in an extension ring, if necessary. Otherwise, raise a
            :class:`ValueError` if the square is not in the base ring. Ignored if ``prec``
            is not ``None``.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return all
+        -  ``all`` -- boolean (default: ``False``); if ``True``, return all
            square roots of ``self`` (a list of length 0, 1, or 2).
 
         EXAMPLES::

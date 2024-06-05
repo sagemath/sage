@@ -634,7 +634,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         - ``algorithm`` -- either ``'recurrence'`` (default) or
           ``'definition'``
 
-        - ``cache`` -- if True, cache answers
+        - ``cache`` -- if ``True``, cache answers
 
         - ``**opts`` -- optional arguments; not used directly, but
           passed to the :func:`bernoulli` function if this is called
@@ -3040,7 +3040,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
            the list of orbits and the orbits themselves (slightly faster if
            ``False``).
 
-        -  ``check`` -- (default: ``True``) whether or not
+        -  ``check`` -- boolean (default: ``True``); whether or not
            to explicitly coerce each element of ``v`` into ``self``.
 
         The Galois group is the absolute Galois group of the prime subfield

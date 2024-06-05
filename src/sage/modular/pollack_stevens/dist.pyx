@@ -219,7 +219,7 @@ cdef class Dist(ModuleElement):
 
     def is_zero(self, p=None, M=None):
         r"""
-        Return True if the `i`-th moment is zero for all `i` (case ``M`` is None)
+        Return ``True`` if the `i`-th moment is zero for all `i` (case ``M`` is None)
         or zero modulo `p^{M-i}` for all `i` (when ``M`` is not None).
 
         Note that some moments are not known to precision ``M``, in which
@@ -302,10 +302,10 @@ cdef class Dist(ModuleElement):
 
         - ``p`` -- an integral prime (only used if the parent is not a Symk)
 
-        - ``M`` -- (default: None) an integer, the relative precision
+        - ``M`` -- (default: ``None``) an integer, the relative precision
           to which the scalar must be determined
 
-        - ``check`` -- (default: ``True``) boolean, whether to validate
+        - ``check`` -- boolean (default: ``True``);, whether to validate
           that ``other`` is actually a multiple of this element.
 
         OUTPUT:
@@ -427,10 +427,10 @@ cdef class Dist(ModuleElement):
 
         - ``p`` -- an integral prime (only used if the parent is not a Symk)
 
-        - ``M`` -- (default: None) an integer, the relative precision
+        - ``M`` -- (default: ``None``) an integer, the relative precision
           to which the scalar must be determined
 
-        - ``check`` -- (default: ``True``) boolean, whether to validate
+        - ``check`` -- boolean (default: ``True``);, whether to validate
           that ``other`` is actually a multiple of this element.
 
         OUTPUT:
@@ -538,7 +538,7 @@ cdef class Dist(ModuleElement):
 
         INPUT:
 
-        - ``p`` -- (default: None) a positive integral prime
+        - ``p`` -- (default: ``None``) a positive integral prime
 
         OUTPUT:
 
@@ -565,7 +565,7 @@ cdef class Dist(ModuleElement):
 
         INPUT:
 
-        - ``p`` -- (default: None) a positive integral prime
+        - ``p`` -- (default: ``None``) a positive integral prime
 
         OUTPUT:
 
@@ -603,7 +603,7 @@ cdef class Dist(ModuleElement):
 
         INPUT:
 
-        - ``new_base_ring`` -- (default: None) a ring giving the
+        - ``new_base_ring`` -- (default: ``None``) a ring giving the
           desired base ring of the result.
 
         OUTPUT:
@@ -635,14 +635,14 @@ cdef class Dist(ModuleElement):
 
         INPUT:
 
-        - ``p`` -- (default: None) a positive integral prime.  If None
+        - ``p`` -- (default: ``None``) a positive integral prime.  If None
           then ``p`` must be available in the parent.
 
-        - ``M`` -- (default: None) a positive integer giving the
+        - ``M`` -- (default: ``None``) a positive integer giving the
           desired number of moments. If None, returns a distribution having one
           more moment than this one.
 
-        - ``new_base_ring`` -- (default: None) a ring giving the desired base
+        - ``new_base_ring`` -- (default: ``None``) a ring giving the desired base
           ring of the result. If None, a base ring is chosen automatically.
 
         OUTPUT:
@@ -741,7 +741,7 @@ cdef class Dist_vector(Dist):
     - ``ordp`` -- an integer.  This MUST be zero in the case of Symk
       of an exact ring.
 
-    - ``check`` -- (default: ``True``) boolean, whether to validate input
+    - ``check`` -- boolean (default: ``True``);, whether to validate input
 
     EXAMPLES::
 
@@ -1212,7 +1212,7 @@ cdef class WeightKAction(Action):
     - ``adjuster`` -- a callable object that turns matrices into 4-tuples.
     - ``on_left`` -- whether this action should be on the left.
     - ``dettwist`` -- a power of the determinant to twist by
-    - ``padic`` -- if True, define an action of `p`-adic matrices (not just integer ones)
+    - ``padic`` -- if ``True``, define an action of `p`-adic matrices (not just integer ones)
 
     EXAMPLES::
 

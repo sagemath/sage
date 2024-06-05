@@ -338,7 +338,7 @@ class IntegerRangeFinite(IntegerRange):
 
     def __contains__(self, elt):
         r"""
-        Returns True if ``elt`` is in ``self``.
+        Returns ``True`` if ``elt`` is in ``self``.
 
         EXAMPLES::
 
@@ -564,7 +564,7 @@ class IntegerRangeInfinite(IntegerRange):
 
     def __contains__(self, elt):
         r"""
-        Returns True if ``elt`` is in ``self``.
+        Returns ``True`` if ``elt`` is in ``self``.
 
         EXAMPLES::
 
@@ -725,7 +725,7 @@ class IntegerRangeFromMiddle(IntegerRange):
 
     def __contains__(self, elt):
         r"""
-        Returns True if ``elt`` is in ``self``.
+        Returns ``True`` if ``elt`` is in ``self``.
 
         EXAMPLES::
 

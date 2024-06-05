@@ -23,7 +23,7 @@ from sage.modular.dirichlet import DirichletGroup
 
 def is_Gamma1(x):
     """
-    Return True if x is a congruence subgroup of type Gamma1.
+    Return ``True`` if x is a congruence subgroup of type Gamma1.
 
     EXAMPLES::
 
@@ -150,7 +150,7 @@ class Gamma1_class(GammaH_class):
 
     def is_even(self):
         """
-        Return True precisely if this subgroup contains the matrix -1.
+        Return ``True`` precisely if this subgroup contains the matrix -1.
 
         EXAMPLES::
 
@@ -165,7 +165,7 @@ class Gamma1_class(GammaH_class):
 
     def is_subgroup(self, right):
         """
-        Return True if self is a subgroup of right.
+        Return ``True`` if self is a subgroup of right.
 
         EXAMPLES::
 

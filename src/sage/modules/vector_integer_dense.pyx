@@ -307,7 +307,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - singular -- \Singular interface instance (default: None)
+        - singular -- \Singular interface instance (default: ``None``)
 
         EXAMPLES::
 

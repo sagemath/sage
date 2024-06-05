@@ -606,7 +606,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
 
     -  ``filename`` -- string; file to process, including full path
 
-    -  ``debug`` -- bool (default: ``False``); whether to print
+    -  ``debug`` -- boolean (default: ``False``); whether to print
        verbose debugging output
 
     -  ``density`` -- integer (default: 150); how big output
@@ -614,10 +614,10 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
 
     -  ``engine`` -- string: latex engine to use.
 
-    -  ``png`` -- bool (default: ``False``); whether to produce a
+    -  ``png`` -- boolean (default: ``False``); whether to produce a
        png file.
 
-    -  ``do_in_background`` -- bool (default: ``False``).  Unused,
+    -  ``do_in_background`` -- boolean (default: ``False``).  Unused,
        kept for backwards compatibility.
 
     OUTPUT:
@@ -1582,11 +1582,11 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
     - ``math_right`` -- string (default: '\\]'), right delimiter for math mode
 
-    - ``debug`` -- bool (default: ``False``); print verbose output
+    - ``debug`` -- boolean (default: ``False``); print verbose output
 
     - ``sep`` -- string (default: ``''``); separator between math objects
 
-    - ``tiny`` -- bool (default: ``False``); use 'tiny' font.
+    - ``tiny`` -- boolean (default: ``False``); use 'tiny' font.
 
     - ``extra_preamble`` -- string (default: ``''``); extra LaTeX commands,
        inserted before ``"\\begin{document}"``
@@ -1705,13 +1705,13 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     - ``title`` -- string (default: ``'Sage'``); title for the
        document
 
-    - ``debug`` -- bool (default: ``False``); print verbose
+    - ``debug`` -- boolean (default: ``False``); print verbose
        output
 
     - ``sep`` -- string (default: ``''``); separator between
        math objects
 
-    - ``tiny`` -- bool (default: ``False``); use tiny font.
+    - ``tiny`` -- boolean (default: ``False``); use tiny font.
 
     - ``engine`` -- string or ``None`` (default: ``None``); can take the
        following values:
@@ -1732,7 +1732,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     - ``viewer`` -- string or ``None`` (default: ``None``); specify a viewer
        to use; currently the only options are ``None`` and ``'pdf'``.
 
-    - ``tightpage`` -- bool (default: ``True``); use the LaTeX package
+    - ``tightpage`` -- boolean (default: ``True``); use the LaTeX package
        ``preview`` with the 'tightpage' option.
 
     - ``margin`` -- float or ``None`` (default: ``None``); adds a margin
@@ -1742,7 +1742,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     - ``mode`` -- string (default: ``'inline'``); ``'display'`` for
       displaymath or ``'inline'`` for inline math
 
-    - ``combine_all`` -- bool (default: ``False``); if ``combine_all`` is
+    - ``combine_all`` -- boolean (default: ``False``); if ``combine_all`` is
       ``True`` and the input is a tuple, then it does not return a tuple and
       instead returns a string with all the elements separated by a single
       space.
@@ -1911,12 +1911,12 @@ def png(x, filename, density=150, debug=False,
 
     - ``density`` -- integer (default: 150)
 
-    - ``debug`` -- bool (default: ``False``); print verbose output
+    - ``debug`` -- boolean (default: ``False``); print verbose output
 
-    - ``do_in_background`` -- bool (default: ``False``); Unused, kept for
+    - ``do_in_background`` -- boolean (default: ``False``); Unused, kept for
       backwards compatibility
 
-    - ``tiny`` -- bool (default: ``False``); use tiny font
+    - ``tiny`` -- boolean (default: ``False``); use tiny font
 
     - ``engine`` -- (default: ``None``) ``'latex'``, ``'pdflatex'``,
       ``'xelatex'`` or ``'lualatex'``

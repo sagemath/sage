@@ -270,7 +270,7 @@ cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absol
     - ``kwds`` -- a dictionary of keyword arguments (only
       ``'relprec'`` and ``'absprec'`` are used)
 
-    - ``absolute`` -- (boolean) True if the precision cap of the ring
+    - ``absolute`` -- (boolean) ``True`` if the precision cap of the ring
       is a cap on absolute precision, False if a cap on relative
       precision.
 
@@ -326,7 +326,7 @@ cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute
     - ``prec`` -- a long, giving the precision desired: absolute or
       relative depending on the ``absolute`` input.
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
+                      it, storing the unit in ``out``; if ``True`` then
                       just reduces ``x`` modulo the precision.
     - ``prime_pow`` -- a PowComputer for the ring.
 
@@ -461,7 +461,7 @@ cdef inline long cconv_mpz_t_shared(mpz_t out, mpz_t x, long prec, bint absolute
     - ``prec`` -- a long, giving the precision desired: absolute or
                   relative depending on the ``absolute`` input.
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
+                      it, storing the unit in ``out``; if ``True`` then
                       just reduces ``x`` modulo the precision.
     - ``prime_pow`` -- a PowComputer for the ring.
 

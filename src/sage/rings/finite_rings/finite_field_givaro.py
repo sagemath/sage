@@ -51,7 +51,7 @@ class FiniteField_givaro(FiniteField):
       - 'poly': repr is
         :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.poly_repr()`
 
-    - cache -- (default: ``False``) if ``True`` a cache of all elements of
+    - cache -- boolean (default: ``False``); if ``True`` a cache of all elements of
       this field is created. Thus, arithmetic does not create new elements
       which speeds calculations up. Also, if many elements are needed during a
       calculation this cache reduces the memory requirement as at most

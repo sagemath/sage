@@ -214,7 +214,7 @@ def edit(obj, editor=None, bg=None):
 
     INPUT:
 
-    - editor -- str (default: None); If given, use specified editor.
+    - editor -- str (default: ``None``); If given, use specified editor.
       Choice is stored for next time.
 
     AUTHOR:
@@ -269,7 +269,7 @@ def edit(obj, editor=None, bg=None):
     filename, lineno = file_and_line(obj)
     cmd = edit_template.substitute(line=lineno, file=filename)
 
-    if bg is True and cmd[-1] != '&':
+    if bg is ``True`` and cmd[-1] != '&':
         cmd = cmd + '&'
     if bg is False and cmd[-1] == '&':
         cmd = cmd[:-1]

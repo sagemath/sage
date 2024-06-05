@@ -509,7 +509,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default: ``False``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``False``); if ``True``, return
           maximal cells in increasing order of dimension.
           Otherwise it returns cells in decreasing order of dimension.
 
@@ -730,10 +730,10 @@ class PolyhedralComplex(GenericCellComplex):
           can be passed to :func:`exploded_plot`:
 
           - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
-          - ``sticky_vertices`` -- (default: ``False``) boolean or dict.
+          - ``sticky_vertices`` -- boolean (default: ``False``); or dict.
             Whether to draw line segments between shared vertices of the given polyhedra.
             A dict gives options for :func:`sage.plot.line`.
-          - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
+          - ``sticky_center`` -- boolean (default: ``True``); or dict. When ``center`` is
             a vertex of some of the polyhedra, whether to draw line segments connecting the
             ``center`` to the shifted copies of these vertices.
             A dict gives options for :func:`sage.plot.line`.
@@ -943,7 +943,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     def __contains__(self, x):
         """
-        True if ``x`` is a polyhedron which is contained in this complex.
+        ``True`` if ``x`` is a polyhedron which is contained in this complex.
 
         EXAMPLES::
 
@@ -2514,10 +2514,10 @@ def exploded_plot(polyhedra, *,
     - ``explosion_factor`` -- (default: 1) a nonnegative number; translate polyhedra by this
       factor of the distance from ``center`` to their center
 
-    - ``sticky_vertices`` -- (default: ``False``) boolean or dict. Whether to draw line segments between shared
+    - ``sticky_vertices`` -- boolean (default: ``False``); or dict. Whether to draw line segments between shared
       vertices of the given polyhedra. A dict gives options for :func:`sage.plot.line`.
 
-    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is a vertex of some
+    - ``sticky_center`` -- boolean (default: ``True``); or dict. When ``center`` is a vertex of some
       of the polyhedra, whether to draw line segments connecting the ``center`` to the shifted copies
       of these vertices. A dict gives options for :func:`sage.plot.line`.
 

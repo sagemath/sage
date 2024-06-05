@@ -94,7 +94,7 @@ def GammaH_constructor(level, H):
 
 def is_GammaH(x):
     """
-    Return True if x is a congruence subgroup of type GammaH.
+    Return ``True`` if x is a congruence subgroup of type GammaH.
 
     EXAMPLES::
 
@@ -437,7 +437,7 @@ class GammaH_class(CongruenceSubgroup):
 
     def is_even(self):
         """
-        Return True precisely if this subgroup contains the matrix -1.
+        Return ``True`` precisely if this subgroup contains the matrix -1.
 
         EXAMPLES::
 
@@ -1010,7 +1010,7 @@ class GammaH_class(CongruenceSubgroup):
 
     def is_subgroup(self, other):
         r"""
-        Return True if self is a subgroup of right, and False
+        Return ``True`` if self is a subgroup of right, and False
         otherwise.
 
         EXAMPLES::
@@ -1039,7 +1039,7 @@ class GammaH_class(CongruenceSubgroup):
 
         # easy cases
         if isinstance(other, Gamma0_class):
-            return True  # recall self is a GammaH, so it's contained in Gamma0
+            return ``True``  # recall self is a GammaH, so it's contained in Gamma0
 
         if isinstance(other, Gamma1_class) and len(self._generators_for_H()) > 0:
             return False
@@ -1347,10 +1347,10 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        - ``sign`` (default: None): if not None, return only characters of the
+        - ``sign`` (default: ``None``): if not None, return only characters of the
           given sign
 
-        - ``galois_orbits`` (default: ``False``): if True, return only one
+        - ``galois_orbits`` (default: ``False``): if ``True``, return only one
           character from each Galois orbit.
 
         EXAMPLES::

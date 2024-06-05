@@ -243,8 +243,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`~GenericGraph.blocks_and_cut_vertices` | Compute the blocks and cut vertices of the graph.
     :meth:`~GenericGraph.blocks_and_cuts_tree` | Compute the blocks-and-cuts tree of the graph.
-    :meth:`~GenericGraph.is_cut_edge` | Return True if the input edge is a cut-edge or a bridge.
-    :meth:`~GenericGraph.is_cut_vertex` | Return True if the input vertex is a cut-vertex.
+    :meth:`~GenericGraph.is_cut_edge` | Return ``True`` if the input edge is a cut-edge or a bridge.
+    :meth:`~GenericGraph.is_cut_vertex` | Return ``True`` if the input vertex is a cut-vertex.
     :meth:`~GenericGraph.edge_cut` | Return a minimum edge cut between vertices `s` and `t`
     :meth:`~GenericGraph.vertex_cut` | Return a minimum vertex cut between non-adjacent vertices `s` and `t`
     :meth:`~GenericGraph.flow` | Return a maximum flow in the graph from ``x`` to ``y``
@@ -4503,7 +4503,7 @@ class GenericGraph(GenericGraph_pyx):
         if path and None in uv:
             return False
 
-        return True if not path else tuple(uv)
+        return ``True`` if not path else tuple(uv)
 
     def order(self):
         """
@@ -6369,7 +6369,7 @@ class GenericGraph(GenericGraph_pyx):
             1
             sage: g.genus(on_embedding=True, maximal=True) # on_embedding overrides minimal and maximal arguments
             1
-            sage: g.genus(maximal=True) # setting maximal to True overrides default minimal=True
+            sage: g.genus(maximal=True) # setting maximal to ``True`` overrides default minimal=True
             3
             sage: g.genus(on_embedding=g.get_embedding()) # can also send a valid combinatorial embedding dict
             3
@@ -18911,14 +18911,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: list(G.breadth_first_search(1, report_distance=True, edges=True))
             Traceback (most recent call last):
             ...
-            ValueError: parameters edges and report_distance cannot be True simultaneously
+            ValueError: parameters edges and report_distance cannot be ``True`` simultaneously
         """
         from sage.rings.semirings.non_negative_integer_semiring import NN
         if (distance is not None and distance not in NN):
             raise ValueError("distance must be a non-negative integer, not {0}".format(distance))
 
         if (report_distance and edges):
-            raise ValueError("parameters edges and report_distance cannot be True simultaneously")
+            raise ValueError("parameters edges and report_distance cannot be ``True`` simultaneously")
 
         # Preferably use the Cython implementation
         if (neighbors is None and not isinstance(start, list) and distance is None
@@ -23502,7 +23502,7 @@ class GenericGraph(GenericGraph_pyx):
 
         -  ``partition`` -- a list of lists
 
-        -  ``quotient_matrix`` -- (default: ``False``) if True, and
+        -  ``quotient_matrix`` -- boolean (default: ``False``); if ``True``, and
            the partition is equitable, returns a matrix over the integers
            whose rows and columns represent cells of the partition, and whose
            i,j entry is the number of vertices in cell j adjacent to each
@@ -24172,7 +24172,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``certificate`` -- if True, then output is `(a, b)`, where `a`
+        - ``certificate`` -- if ``True``, then output is `(a, b)`, where `a`
           is a boolean and `b` is either a map or ``None``
 
         - ``edge_labels`` -- boolean (default: ``False``); if ``True`` allows

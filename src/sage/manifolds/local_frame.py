@@ -370,7 +370,7 @@ class LocalCoFrame(FreeModuleCoBasis):
         - ``index_position`` -- (default: ``'up'``) determines the position
           of the indices labelling the linear forms of the coframe; can be
           either ``'down'`` or ``'up'``
-        - ``include_domain`` -- (default: ``True``) boolean determining whether
+        - ``include_domain`` -- boolean (default: ``True``); determining whether
           the name of the domain is included in the beginning of the coframe
           name
 
@@ -1209,7 +1209,7 @@ class LocalFrame(FreeModuleBasis):
         - ``index_position`` -- (default: ``'down'``) determines the position
           of the indices labelling the local sections of the frame; can be
           either ``'down'`` or ``'up'``
-        - ``include_domain`` -- (default: ``True``) boolean determining whether
+        - ``include_domain`` -- boolean (default: ``True``); determining whether
           the name of the domain is included in the beginning of the vector
           frame name
 

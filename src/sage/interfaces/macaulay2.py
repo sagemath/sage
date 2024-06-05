@@ -1869,7 +1869,7 @@ class Macaulay2FunctionElement(FunctionElement):
 
 def is_Macaulay2Element(x):
     """
-    Return True if ``x`` is a :class:`Macaulay2Element`
+    Return ``True`` if ``x`` is a :class:`Macaulay2Element`
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.Macaulay2Element`) instead.

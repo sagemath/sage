@@ -440,13 +440,13 @@ class NuDyckWord(CombinatorialElement):
         - ``points_color`` -- (default: ``'black'``) str to indicate color
           points should be drawn with.
 
-        - ``show_grid`` -- (default: ``True``) boolean value to indicate if
+        - ``show_grid`` -- boolean (default: ``True``); value to indicate if
           grid should be shown.
 
-        - ``show_nu`` -- (default: ``True``) boolean value to indicate if `\nu`
+        - ``show_nu`` -- boolean (default: ``True``); value to indicate if `\nu`
           should be shown.
 
-        - ``show_points`` -- (default: ``False``) boolean value to indicate
+        - ``show_points`` -- boolean (default: ``False``); value to indicate
           if points should be shown on path.
 
         - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
@@ -487,13 +487,13 @@ class NuDyckWord(CombinatorialElement):
         - ``points_color`` -- (default: ``'black'``) str to indicate color
           points should be drawn with.
 
-        - ``show_grid`` -- (default: ``True``) boolean value to indicate if
+        - ``show_grid`` -- boolean (default: ``True``); value to indicate if
           grid should be shown.
 
-        - ``show_nu`` -- (default: ``True``) boolean value to indicate if `\nu`
+        - ``show_nu`` -- boolean (default: ``True``); value to indicate if `\nu`
           should be shown.
 
-        - ``show_points`` -- (default: ``False``) boolean value to indicate
+        - ``show_points`` -- boolean (default: ``False``); value to indicate
           if points should be shown on path.
 
         - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.

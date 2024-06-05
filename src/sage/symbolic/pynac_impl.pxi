@@ -1116,14 +1116,14 @@ cdef bint py_is_rational(x) noexcept:
 
 cdef bint py_is_equal(x, y) noexcept:
     """
-    Return True precisely if x and y are equal.
+    Return ``True`` precisely if x and y are equal.
     """
     return bool(x == y)
 
 
 cdef bint py_is_integer(x) noexcept:
     r"""
-    Returns True if pynac should treat this object as an integer.
+    Returns ``True`` if pynac should treat this object as an integer.
 
     EXAMPLES::
 
@@ -1193,7 +1193,7 @@ cdef bint py_is_crational(x) noexcept:
 
 def py_is_crational_for_doctest(x):
     r"""
-    Return True if pynac should treat this object as an element of `\QQ(i)`.
+    Return ``True`` if pynac should treat this object as an element of `\QQ(i)`.
 
     TESTS::
 
@@ -1339,7 +1339,7 @@ cdef bint py_is_cinteger(x) noexcept:
 
 def py_is_cinteger_for_doctest(x):
     r"""
-    Returns True if pynac should treat this object as an element of `\ZZ(i)`.
+    Returns ``True`` if pynac should treat this object as an element of `\ZZ(i)`.
 
     TESTS::
 

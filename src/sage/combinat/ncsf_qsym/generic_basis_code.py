@@ -243,7 +243,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             INPUT:
 
             - ``composition`` -- a composition
-            - ``conjugate`` -- (default: ``False``) a boolean
+            - ``conjugate`` -- boolean (default: ``False``); a boolean
 
             OUTPUT:
 

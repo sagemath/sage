@@ -36,7 +36,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
-    - ``fast`` -- boolean set to True (default) to use the algorithm with
+    - ``fast`` -- boolean set to ``True`` (default) to use the algorithm with
       time complexity in `O(n+m)` proposed in [BB2005a]_. It is designed
       for generating large sparse graphs. It is faster than other algorithms for
       *LARGE* instances (try it to know whether it is useful for you).

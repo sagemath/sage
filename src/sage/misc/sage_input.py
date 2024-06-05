@@ -2152,7 +2152,7 @@ class SIE_tuple(SageInputExpression):
         - ``values`` -- a list of instances of :class:`SageInputExpression`
           representing the elements of this tuple
 
-        - ``is_list`` -- is True if this class represents a list, False for a
+        - ``is_list`` -- is ``True`` if this class represents a list, False for a
           tuple
 
         EXAMPLES::

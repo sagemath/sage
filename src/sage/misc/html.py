@@ -572,7 +572,7 @@ def pretty_print_default(enable=True):
 
     INPUT:
 
-    -  ``enable`` -- bool (default: ``True``).  If ``True``, turn on
+    -  ``enable`` -- boolean (default: ``True``).  If ``True``, turn on
        pretty printing; if ``False``, turn it off.
 
     EXAMPLES::

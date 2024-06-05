@@ -1157,7 +1157,7 @@ cdef class EclObject:
 
     def fixnump(self):
         r"""
-        Return True if self is a fixnum, False otherwise
+        Return ``True`` if self is a fixnum, False otherwise
 
         EXAMPLES::
 
@@ -1172,7 +1172,7 @@ cdef class EclObject:
 
     def characterp(self):
         r"""
-        Return True if self is a character, False otherwise
+        Return ``True`` if self is a character, False otherwise
 
         Strings are not characters
 
@@ -1187,7 +1187,7 @@ cdef class EclObject:
 
     def nullp(self):
         r"""
-        Return True if self is NIL, False otherwise
+        Return ``True`` if self is NIL, False otherwise
 
         EXAMPLES::
 
@@ -1201,7 +1201,7 @@ cdef class EclObject:
 
     def listp(self):
         r"""
-        Return True if self is a list, False otherwise. NIL is a list.
+        Return ``True`` if self is a list, False otherwise. NIL is a list.
 
         EXAMPLES::
 
@@ -1215,7 +1215,7 @@ cdef class EclObject:
 
     def consp(self):
         r"""
-        Return True if self is a cons, False otherwise. NIL is not a cons.
+        Return ``True`` if self is a cons, False otherwise. NIL is not a cons.
 
         EXAMPLES::
 
@@ -1229,7 +1229,7 @@ cdef class EclObject:
 
     def atomp(self):
         r"""
-        Return True if self is atomic, False otherwise.
+        Return ``True`` if self is atomic, False otherwise.
 
         EXAMPLES::
 
@@ -1244,7 +1244,7 @@ cdef class EclObject:
 
     def symbolp(self):
         r"""
-        Return True if self is a symbol, False otherwise.
+        Return ``True`` if self is a symbol, False otherwise.
 
         EXAMPLES::
 

@@ -88,7 +88,7 @@ cdef class TimeSeries:
         - ``values`` -- integer (number of values) or an iterable of
           floats.
 
-        - ``initialize`` -- bool (default: ``True``); if ``False``, do not
+        - ``initialize`` -- boolean (default: ``True``); if ``False``, do not
           bother to zero out the entries of the new time series.
           For large series that you are going to just fill in,
           this can be way faster.
@@ -1025,7 +1025,7 @@ cdef class TimeSeries:
           plot the given number of equally spaced points in the time series.
           If 0, plot all points.
 
-        - ``points`` -- bool (default: ``False``). If ``True``, return just
+        - ``points`` -- boolean (default: ``False``). If ``True``, return just
           the points of the time series.
 
         - ``**kwds`` -- passed to the line or point command.
@@ -1504,7 +1504,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+        - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
           ``self.length() - 1`` instead of ``self.length()`` to give a less
           biased estimator for the variance.
 
@@ -1546,7 +1546,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+        - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
           ``self.length() - 1`` instead of ``self.length()`` to give a less
           biased estimator for the variance.
 
@@ -1677,7 +1677,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``index`` -- bool (default: ``False``); if ``True``, also return
+        - ``index`` -- boolean (default: ``False``); if ``True``, also return
           index of minimal entry.
 
         OUTPUT:
@@ -1715,7 +1715,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``index`` -- bool (default: ``False``); if ``True``, also return
+        - ``index`` -- boolean (default: ``False``); if ``True``, also return
           index of maximum entry.
 
         OUTPUT:
@@ -1831,7 +1831,7 @@ cdef class TimeSeries:
 
         - ``bins`` -- a positive integer (default: 50)
 
-        - ``normalize`` -- (default: ``False``) whether to normalize so the
+        - ``normalize`` -- boolean (default: ``False``); whether to normalize so the
           total area in the bars of the histogram is 1.
 
         OUTPUT:
@@ -1898,7 +1898,7 @@ cdef class TimeSeries:
 
         - ``bins`` -- positive integer (default: 50)
 
-        - ``normalize`` -- (default: ``True``) whether to normalize so the
+        - ``normalize`` -- boolean (default: ``True``); whether to normalize so the
           total area in the bars of the histogram is 1.
 
         OUTPUT: a histogram plot
@@ -1998,7 +1998,7 @@ cdef class TimeSeries:
 
         INPUT:
 
-        - ``copy`` -- bool (default: ``True``)
+        - ``copy`` -- boolean (default: ``True``)
 
         OUTPUT:
 

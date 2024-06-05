@@ -339,7 +339,7 @@ cdef class pAdicPrinter_class(SageObject):
                   printing mode for unramified extensions and
                   extensions with larger primes.
 
-            - pos -- if True then integers in the range [0,... p-1]
+            - pos -- if ``True`` then integers in the range [0,... p-1]
               will be used; if False integers in the range
               [(1-p)/2,..., p/2] will be used.
 
@@ -396,7 +396,7 @@ cdef class pAdicPrinter_class(SageObject):
             self.alphabet = _printer_defaults._alphabet
         else:
             self.alphabet = alphabet
-        # note that self.pos is reset to True if mode == 'digits'
+        # note that self.pos is reset to ``True`` if mode == 'digits'
         if pos is None:
             self.pos = _printer_defaults._pos
         else:

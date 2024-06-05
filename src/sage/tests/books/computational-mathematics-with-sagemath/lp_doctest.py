@@ -118,7 +118,7 @@ Sage example in ./lp.tex, line 429::
 Sage example in ./lp.tex, line 451::
 
   sage: p = MixedIntegerLinearProgram()
-  sage: taken = p.new_variable( binary = True )
+  sage: taken = p.new_variable( binary = ``True`` )
   sage: p.add_constraint(
   ....:   p.sum( weight[o] * taken[o] for o in L ) <= C )
   sage: p.set_objective(

@@ -98,7 +98,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries are of type :class:`Integer`.
         """
         ma = MatrixArgs_init(parent, entries)

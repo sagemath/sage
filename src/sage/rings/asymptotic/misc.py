@@ -201,7 +201,7 @@ def split_str_by_op(string, op, strip_parentheses=True):
       Thus, if this is ``None``, then any whitespace string is a
       separator and empty strings are removed from the result.
 
-    - ``strip_parentheses`` -- (default: ``True``) a boolean.
+    - ``strip_parentheses`` -- boolean (default: ``True``); a boolean.
 
     OUTPUT: a tuple of strings
 
@@ -309,7 +309,7 @@ def repr_op(left, op, right=None, latex=False):
 
     - ``right`` -- an element.
 
-    - ``latex`` -- (default: ``False``) a boolean. If set, then
+    - ``latex`` -- boolean (default: ``False``); a boolean. If set, then
       LaTeX-output is returned.
 
     OUTPUT: string

@@ -700,7 +700,7 @@ def higher_level_UpGj(p, N, klist, m, modformsring, bound, extra_data=False):
     - ``m`` -- positive integer.
     - ``modformsring`` -- ``True`` or ``False``.
     - ``bound`` -- (even) positive integer.
-    - ``extra_data`` -- (default: ``False``) boolean.
+    - ``extra_data`` -- boolean (default: ``False``);.
 
     OUTPUT:
 
@@ -964,7 +964,7 @@ def level1_UpGj(p, klist, m, extra_data=False):
     - ``p`` -- prime at least 5.
     - ``klist`` -- list of integers congruent modulo `(p-1)` (the weights).
     - ``m`` -- positive integer.
-    - ``extra_data`` -- (default: ``False``) boolean
+    - ``extra_data`` -- boolean (default: ``False``);
 
     OUTPUT:
 
@@ -1162,7 +1162,7 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     # convert single weight to list
     if ((isinstance(klist, int)) or (isinstance(klist, Integer))):
         klist = [klist]
-        oneweight = True # input is single weight
+        oneweight = ``True`` # input is single weight
 
     # algorithm may finish with false output unless:
     is_valid_weight_list(klist, p)

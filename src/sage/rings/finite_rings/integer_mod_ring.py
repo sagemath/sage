@@ -93,7 +93,7 @@ class IntegerModFactory(UniqueFactory):
     INPUT:
 
     - ``order`` -- integer (default: 0); positive or negative
-    - ``is_field`` -- bool (default: ``False``); assert that
+    - ``is_field`` -- boolean (default: ``False``); assert that
       the order is prime and hence the quotient ring belongs to
       the category of fields
     - ``category`` (optional) -- the category that the quotient ring belongs to.
@@ -715,7 +715,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
                 and Category of quotients of semigroups
 
         It is possible to mistakenly put `\ZZ/n\ZZ` into the category of fields.
-        In this case, :meth:`is_field` will return True without performing a
+        In this case, :meth:`is_field` will return ``True`` without performing a
         primality check. However, if the optional argument `proof=True` is
         provided, primality is tested and the mistake is uncovered in a warning
         message::

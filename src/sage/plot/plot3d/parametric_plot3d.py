@@ -54,10 +54,10 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
       how to draw the boundaries of regions by giving options that are passed
       to the line3d command.
 
-    - ``mesh`` -- bool (default: ``False``) whether to display
+    - ``mesh`` -- boolean (default: ``False``) whether to display
       mesh grid lines
 
-    - ``dots`` -- bool (default: ``False``) whether to display
+    - ``dots`` -- boolean (default: ``False``) whether to display
       dots at mesh grid points
 
     .. note::
@@ -977,15 +977,15 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
     #   * Iterative refinement
 
     # color_function -- (default: "automatic") how to determine the color of curves and surfaces
-    # color_function_scaling -- (default: ``True``) whether to scale the input to color_function
+    # color_function_scaling -- boolean (default: ``True``); whether to scale the input to color_function
     # exclusions -- (default: "automatic") u points or (u,v) conditions to exclude.
     #         (E.g., exclusions could be a function e = lambda u, v: False if u < v else True
-    # exclusions_style -- (default: None) what to draw at excluded points
+    # exclusions_style -- (default: ``None``) what to draw at excluded points
     # max_recursion -- (default: "automatic") maximum number of recursive subdivisions,
     #                   when ...
     # mesh -- (default: "automatic") how many mesh divisions in each direction to draw
     # mesh_functions -- (default: "automatic") how to determine the placement of mesh divisions
-    # mesh_shading -- (default: None) how to shade regions between mesh divisions
+    # mesh_shading -- (default: ``None``) how to shade regions between mesh divisions
     # plot_range -- (default: "automatic") range of values to include
 
     if isinstance(f, Vector):

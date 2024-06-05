@@ -763,7 +763,7 @@ class SubwordComplexFacet(Simplex, Element):
           to change the origin.
         - ``compact`` -- boolean (default: ``False``) to require
           a more compact representation.
-        - ``roots`` -- boolean (default: ``True``) to print
+        - ``roots`` -- boolean (default: ``True``); to print
           the extended root configuration.
 
         EXAMPLES::
@@ -1202,7 +1202,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         INPUT:
 
         - ``F`` -- an iterable of positions.
-        - ``facet_test`` -- boolean (default: ``True``) tells whether or
+        - ``facet_test`` -- boolean (default: ``True``); tells whether or
           not the facet ``F`` should be tested before creation.
 
         OUTPUT: the facet of ``self`` at positions given by ``F``

@@ -235,7 +235,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
         - ``i`` -- (default: 0) the index of the affine coordinate chart of the projective space that the affine
           ambient space of this curve embeds into.
 
-        - ``PP`` -- (default: None) ambient projective space to compute the projective closure in. This is
+        - ``PP`` -- (default: ``None``) ambient projective space to compute the projective closure in. This is
           constructed if it is not given.
 
         OUTPUT: a curve in projective space
@@ -612,7 +612,7 @@ class AffinePlaneCurve(AffineCurve):
 
         - ``P`` -- a point on this curve
 
-        - ``factor`` -- (default: ``True``) whether to attempt computing the
+        - ``factor`` -- boolean (default: ``True``); whether to attempt computing the
           polynomials of the individual tangent lines over the base field of this
           curve, or to just return the polynomial corresponding to the union of
           the tangent lines (which requires fewer computations)
@@ -884,7 +884,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
           two and one less than the dimension of the ambient space of this curve,
           inclusive.
 
-        - ``AS`` -- (default: None) the affine space the projected curve will
+        - ``AS`` -- (default: ``None``) the affine space the projected curve will
           be defined in. This space must be defined over the same base field as
           this curve, and must have dimension equal to the length of ``indices``.
           This space is constructed if not specified.
@@ -1045,7 +1045,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``AP`` -- (default: None) the affine plane to project this curve
+        - ``AP`` -- (default: ``None``) the affine plane to project this curve
           into. This space must be defined over the same base field as this
           curve, and must have dimension two. This space will be constructed if
           not specified.
@@ -1112,7 +1112,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve at which to blow up;
+        - ``P`` -- (default: ``None``) a point on this curve at which to blow up;
           if ``None``, then ``P`` is taken to be the origin.
 
         OUTPUT: a tuple of
@@ -1419,7 +1419,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``extend`` -- (default: ``False``) specifies whether to extend the base
+        - ``extend`` -- boolean (default: ``False``); specifies whether to extend the base
           field when necessary to find all singular points when this curve is
           defined over a number field. If ``extend`` is ``False``, then only
           singularities with coordinates in the base field of this curve will be
@@ -1804,9 +1804,9 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         INPUT:
 
-        - ``simplified`` -- (default: ``True``) boolean to simplify the presentation.
+        - ``simplified`` -- boolean (default: ``True``); to simplify the presentation.
 
-        - ``puiseux`` -- (default: ``True``) boolean to decide if the
+        - ``puiseux`` -- boolean (default: ``True``); to decide if the
           presentation is constructed in the classical way or using Puiseux
           shortcut.
 

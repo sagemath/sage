@@ -241,7 +241,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         - ``i`` -- affine coordinate chart of the projective ambient space of
           this curve to compute affine patch with respect to
 
-        - ``AA`` -- (default: None) ambient affine space, this is constructed
+        - ``AA`` -- (default: ``None``) ambient affine space, this is constructed
           if it is not given
 
         OUTPUT: a curve in affine space
@@ -283,10 +283,10 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point not on this curve that will be used
+        - ``P`` -- (default: ``None``) a point not on this curve that will be used
           to define the projection map; this is constructed if not specified.
 
-        - ``PS`` -- (default: None) the projective space the projected curve
+        - ``PS`` -- (default: ``None``) the projective space the projected curve
           will be defined in. This space must be defined over the same base ring
           as this curve, and must have dimension one less than that of the
           ambient space of this curve. This space will be constructed if not
@@ -502,7 +502,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         INPUT:
 
-        - ``PP`` -- (default: None) the projective plane the projected curve
+        - ``PP`` -- (default: ``None``) the projective plane the projected curve
           will be defined in. This space must be defined over the same base field
           as this curve, and must have dimension two. This space is constructed
           if not specified.
@@ -927,7 +927,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         - ``P`` -- a point on this curve.
 
-        - ``factor`` -- (default: ``True``) whether to attempt computing the
+        - ``factor`` -- boolean (default: ``True``); whether to attempt computing the
           polynomials of the individual tangent lines over the base field of this
           curve, or to just return the polynomial corresponding to the union of
           the tangent lines (which requires fewer computations).
@@ -1007,7 +1007,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         OUTPUT:
 
-        - Boolean. True or False depending on whether ``P`` is or is not an ordinary singularity of this
+        - Boolean. ``True`` or False depending on whether ``P`` is or is not an ordinary singularity of this
           curve, respectively. An error is raised if ``P`` is not a singular point of this curve.
 
         EXAMPLES::
@@ -2013,7 +2013,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         INPUT:
 
 
-        -  ``sort`` -- bool (default: ``True``), if ``True`` return the
+        -  ``sort`` -- boolean (default: ``True``), if ``True`` return the
            point list sorted. If ``False``, returns the points in the order
            computed by Singular.
 

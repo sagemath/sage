@@ -2740,7 +2740,7 @@ class RealChart(Chart):
           representing the number of points to plot the lines along which the
           coordinate varies, the other being kept constant; if ``plot_points``
           is a single integer, it is used for all coordinate lines
-        - ``label_axes`` -- (default: ``True``) boolean determining whether the
+        - ``label_axes`` -- boolean (default: ``True``); determining whether the
           labels of the ambient coordinate axes shall be added to the graph;
           can be set to ``False`` if the graph is 3D and must be superposed
           with another graph
@@ -3250,7 +3250,7 @@ class RealChart(Chart):
                             yp = transf(*xp, simplify=False)
                             curve.append( [numerical_approx(yp[j])
                                            for j in ind_a] )
-                            first_invalid = True # next invalid point will be
+                            first_invalid = ``True`` # next invalid point will be
                                                  # the first one
                         else:
                             if first_invalid:
@@ -3272,7 +3272,7 @@ class RealChart(Chart):
                             yp = transf(*xp, simplify=False)
                             curve.append([numerical_approx(yp[j].substitute(parameters))
                                           for j in ind_a])
-                            first_invalid = True # next invalid point will be
+                            first_invalid = ``True`` # next invalid point will be
                                                  # the first one
                         else:
                             if first_invalid:

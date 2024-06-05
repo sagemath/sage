@@ -177,7 +177,7 @@ def preparser(on=True):
     """
     Turn on or off the Sage preparser.
 
-    :keyword on: if True turn on preparsing; if False, turn it off.
+    :keyword on: if ``True`` turn on preparsing; if ``False``, turn it off.
     :type on: bool
 
     EXAMPLES::

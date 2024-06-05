@@ -2141,7 +2141,7 @@ class FiniteWord_class(Word_class):
 
         - ``other`` -- a finite word
 
-        OUTPUT: bool
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -6264,7 +6264,7 @@ class FiniteWord_class(Word_class):
         elif isinstance(overlap, (int, Integer)):
             from sage.combinat.shuffle import ShuffleProduct_overlapping_r
             return ShuffleProduct_overlapping_r(self, other, overlap, self.parent())
-        raise ValueError('overlapping must be True or an integer')
+        raise ValueError('overlapping must be ``True`` or an integer')
 
     def shifted_shuffle(self, other, shift=None):
         r"""

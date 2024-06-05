@@ -59,7 +59,7 @@ def Ideal(*args, **kwds):
 
     -  ``gens`` -- list of elements generating the ideal
 
-    -  ``coerce`` -- bool (default: ``True``);
+    -  ``coerce`` -- boolean (default: ``True``);
        whether ``gens`` need to be coerced into the ring.
 
 
@@ -259,7 +259,7 @@ class Ideal_generic(MonoidElement):
 
         - ``gens`` -- The generators for this ideal
 
-        - ``coerce`` -- (default: ``True``) If ``gens`` needs to be coerced
+        - ``coerce`` -- boolean (default: ``True``); If ``gens`` needs to be coerced
           into ``ring``.
 
         EXAMPLES::
@@ -1727,7 +1727,7 @@ def Cyclic(R, n=None, homog=False, singular=None):
     -  ``n`` -- number of cyclic roots (default: ``None``). If ``None``, then
        ``n`` is set to ``R.ngens()``.
 
-    -  ``homog`` -- (default: ``False``) if ``True`` a homogeneous ideal is
+    -  ``homog`` -- boolean (default: ``False``); if ``True`` a homogeneous ideal is
        returned using the last variable in the ideal
 
     -  ``singular`` -- singular instance to use

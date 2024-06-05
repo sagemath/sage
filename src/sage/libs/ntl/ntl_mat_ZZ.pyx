@@ -1208,7 +1208,7 @@ cdef class ntl_mat_ZZ():
            a        -- parameter a as described above (default: 3)
            b        -- parameter b as described above (default: 4)
            return_U -- return U as described above
-           verbose  -- if True NTL will produce some verbatim messages on
+           verbose  -- if ``True`` NTL will produce some verbatim messages on
                        what's going on internally (default: ``False``)
 
         OUTPUT:
@@ -1296,7 +1296,7 @@ cdef class ntl_mat_ZZ():
         INPUT:
            delta    -- as described above (0.5 <= delta < 1.0) (default: 0.75)
            return_U -- return U as described above
-           verbose  -- if True NTL will produce some verbatim messages on
+           verbose  -- if ``True`` NTL will produce some verbatim messages on
                        what's going on internally (default: ``False``)
 
         OUTPUT:

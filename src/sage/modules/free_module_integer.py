@@ -57,7 +57,7 @@ def IntegerLattice(basis, lll_reduce=True):
 
       - an element of an absolute order
 
-    - ``lll_reduce`` -- (default: ``True``) run LLL reduction on the basis
+    - ``lll_reduce`` -- boolean (default: ``True``); run LLL reduction on the basis
       on construction.
 
     EXAMPLES:
@@ -233,7 +233,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``basis`` -- either a list of vectors or a matrix over the integers
 
-        - ``check`` -- (default: ``True``) if ``False``, correctness of
+        - ``check`` -- boolean (default: ``True``); if ``False``, correctness of
           the input will not be checked and type conversion may be omitted,
           use with care
 
@@ -244,10 +244,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         - `` echelonized_basis`` -- (default: ``None``) if not ``None``, must
           be the echelonized basis spanning the same submodule as ``basis``
 
-        - ``already_echelonized`` -- (default: ``False``) if ``True``,
+        - ``already_echelonized`` -- boolean (default: ``False``); if ``True``,
           ``basis`` must be already given in the echelonized form
 
-        - ``lll_reduce`` -- (default: ``True``) run LLL reduction on the basis
+        - ``lll_reduce`` -- boolean (default: ``True``); run LLL reduction on the basis
           on construction
 
         EXAMPLES::
@@ -538,7 +538,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         INPUT:
 
-        - ``update_reduced_basis`` -- (default: ``True``) set this flag if
+        - ``update_reduced_basis`` -- boolean (default: ``True``); set this flag if
           the found vector should be used to improve the basis
 
         - ``algorithm`` -- (default: ``"fplll"``) either ``"fplll"`` or

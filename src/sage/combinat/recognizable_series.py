@@ -558,7 +558,7 @@ class RecognizableSeries(ModuleElement):
 
         INPUT:
 
-        - ``latex`` -- (default: ``False``) a boolean. If set, then
+        - ``latex`` -- boolean (default: ``False``); a boolean. If set, then
           LaTeX-output is returned.
 
         OUTPUT: string
@@ -651,10 +651,10 @@ class RecognizableSeries(ModuleElement):
         - ``w`` -- a word over the parent's
           :meth:`~RecognizableSeriesSpace.alphabet`
 
-        - ``multiply_left`` -- (default: ``True``) a boolean. If ``False``,
+        - ``multiply_left`` -- boolean (default: ``True``); a boolean. If ``False``,
           then multiplication by :meth:`left <left>` is skipped.
 
-        - ``multiply_right`` -- (default: ``True``) a boolean. If ``False``,
+        - ``multiply_right`` -- boolean (default: ``True``); a boolean. If ``False``,
           then multiplication by :meth:`right <right>` is skipped.
 
         OUTPUT:
@@ -1701,7 +1701,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         - ``category`` -- (default: ``None``) the category of this
           space
 
-        - ``minimize_results`` -- (default: ``True``) a boolean. If set, then
+        - ``minimize_results`` -- boolean (default: ``True``); a boolean. If set, then
           :meth:`RecognizableSeries.minimized` is automatically called
           after performing operations.
 

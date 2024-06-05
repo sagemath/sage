@@ -103,7 +103,7 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
 
     - ``len_bound`` -- bound for the length of the vectors
 
-    - ``up_to_sign_flag`` -- (default: ``False``) if set to True, then
+    - ``up_to_sign_flag`` -- boolean (default: ``False``); if set to True, then
       only one of the vectors of the pair `[v, -v]` is listed.
 
     OUTPUT:

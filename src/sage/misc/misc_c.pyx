@@ -445,7 +445,7 @@ cpdef list normalize_index(object key, int size):
 
     OUTPUT:
 
-    A tuple (SINGLE, VALUE), where SINGLE is True (i.e., 1) if VALUE
+    A tuple (SINGLE, VALUE), where SINGLE is ``True`` (i.e., 1) if VALUE
     is an integer and False (i.e., 0) if VALUE is a list.
 
     EXAMPLES::

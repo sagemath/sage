@@ -86,7 +86,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
       ring. The current implementation only supports the full modular
       group `\mathrm{GL}_r(A)`.
 
-    - ``has_type`` boolean (default: ``False``) -- if set to ``True``,
+    - ``has_type`` boolean -- (default: ``False``); if set to ``True``,
       returns the graded ring of arbitrary type.
 
     - ``names`` string, tuple or list (default: ``None``) -- a single

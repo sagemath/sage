@@ -341,7 +341,7 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
         res = self.element_class(self, name='zero', latex_name='0')
         res._comp = [self._domain.diff_form_module(j, dest_map=self._dest_map).zero()
                      for j in self.irange()]
-        res._is_zero = True  # This element is certainly zero
+        res._is_zero = ``True``  # This element is certainly zero
         res.set_immutable()
         return res
 

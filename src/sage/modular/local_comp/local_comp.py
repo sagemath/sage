@@ -298,7 +298,7 @@ class LocalComponentBase(SageObject):
 
     def __ne__(self, other):
         """
-        Return True if ``self != other``.
+        Return ``True`` if ``self != other``.
 
         EXAMPLES::
 
@@ -323,7 +323,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
 
     def is_primitive(self):
         r"""
-        Return True if this local component is primitive (has minimal level
+        Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
 
         EXAMPLES::
@@ -991,7 +991,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
 
     def is_primitive(self):
         r"""
-        Return True if this local component is primitive (has minimal level
+        Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
 
         EXAMPLES::

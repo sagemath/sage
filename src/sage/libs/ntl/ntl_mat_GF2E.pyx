@@ -493,7 +493,7 @@ cdef class ntl_mat_GF2E():
 
     def IsZero(self):
         """
-        Return True if self is zero, and false otherwise.
+        Return ``True`` if self is zero, and false otherwise.
 
         EXAMPLES::
 

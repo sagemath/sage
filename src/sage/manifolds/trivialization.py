@@ -344,7 +344,7 @@ class TransitionMap(SageObject):
       or coordinate functions (:class:`~sage.manifolds.chart_func.ChartFunction`),
       or a bundle automorphism
       (:class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`)
-    - ``compute_inverse`` -- (default: ``True``) determines whether the inverse
+    - ``compute_inverse`` -- boolean (default: ``True``); determines whether the inverse
       shall be computed or not
 
     EXAMPLES:

@@ -703,7 +703,7 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
         for basis in self._known_bases:
             resu._add_comp_unsafe(basis)
             # (since new components are initialized to zero)
-        resu._is_zero = True # This element is certainly zero
+        resu._is_zero = ``True`` # This element is certainly zero
         resu.set_immutable()
         return resu
 
@@ -3084,7 +3084,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
           :class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: ``True``) -- if set to ``True``, the
+        - ``compute_inverse`` boolean (default: ``True``); -- if set to ``True``, the
           inverse automorphism is computed and the change from basis `(f_i)`
           to `(e_i)` is set to it in the internal dictionary
           ``self._basis_changes``
@@ -3167,7 +3167,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         - ``name`` -- (default: ``None``) string; name given to the
           homomorphism
         - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
-          the homomorphism; if None, ``name`` will be used.
+          the homomorphism; if ``None``, ``name`` will be used.
 
         OUTPUT:
 
@@ -3591,7 +3591,7 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
         for basis in self._fmodule._known_bases:
             resu._components[basis] = resu._new_comp(basis)
             # (since new components are initialized to zero)
-        resu._is_zero = True # This element is certainly zero
+        resu._is_zero = ``True`` # This element is certainly zero
         resu.set_immutable()
         return resu
 

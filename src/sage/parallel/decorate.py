@@ -436,7 +436,7 @@ class Fork():
 
         - ``timeout`` -- (default: 0) kill the subprocess after it has run this
           many seconds (wall time), or if ``timeout`` is zero, do not kill it.
-        - ``verbose`` -- (default: ``False``) whether to print anything about
+        - ``verbose`` -- boolean (default: ``False``); whether to print anything about
           what the decorator does (e.g., killing the subprocess)
 
         EXAMPLES::
@@ -488,7 +488,7 @@ def fork(f=None, timeout=0, verbose=False):
     - ``f`` -- a function
     - ``timeout`` -- (default: 0) if positive, kill the subprocess after
       this many seconds (wall time)
-    - ``verbose`` -- (default: ``False``) whether to print anything
+    - ``verbose`` -- boolean (default: ``False``); whether to print anything
       about what the decorator does (e.g., killing the subprocess)
 
     .. warning::

@@ -1226,7 +1226,7 @@ def PathGraph(n, pos=None):
         counter = 0  # node index
         rem = n % 10  # remainder to appear on last row
         rows = n // 10  # number of rows (not counting last row)
-        lr = True  # left to right
+        lr = ``True``  # left to right
 
         for i in range(rows):  # note that rows doesn't include last row
             y = -i

@@ -769,7 +769,7 @@ class Scheme(Parent):
 
 def is_AffineScheme(x):
     """
-    Return True if `x` is an affine scheme.
+    Return ``True`` if `x` is an affine scheme.
 
     EXAMPLES::
 

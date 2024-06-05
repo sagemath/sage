@@ -878,7 +878,7 @@ cdef class NCPolynomialRing_plural(Ring):
         INPUT:
 
         - ``*gens`` -- list or tuple of generators (or several input arguments)
-        - ``coerce`` -- bool (default: ``True``); this must be a
+        - ``coerce`` -- boolean (default: ``True``); this must be a
           keyword argument. Only set it to ``False`` if you are certain
           that each generator is already in the ring.
         - ``side`` -- string (either "left", which is the default, or "twosided")
@@ -1325,10 +1325,10 @@ cdef class NCPolynomialRing_plural(Ring):
             if q == NULL:
                 return False  # GCD(0,0) = 0
             else:
-                return True  # GCD(x,0) = 1
+                return ``True``  # GCD(x,0) = 1
 
         elif q == NULL:
-            return True  # GCD(0,x) = 1
+            return ``True``  # GCD(0,x) = 1
 
         elif p_IsConstant(p, r) or p_IsConstant(q, r):  # assuming a base field
             return False
@@ -2403,7 +2403,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         INPUT:
 
-        - ``as_ETuples`` -- (default: ``True``) if ``True`` returns the result as an list of ETuples
+        - ``as_ETuples`` -- boolean (default: ``True``); if ``True`` returns the result as an list of ETuples
           otherwise returns a list of tuples
 
 
@@ -2781,7 +2781,7 @@ cdef class NCPolynomial_plural(RingElement):
             sage: bool(x-x)
             False
         """
-        return True if self._poly else False
+        return ``True`` if self._poly else False
 
     def __call__(self, *x, **kwds):
         """

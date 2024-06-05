@@ -28,7 +28,7 @@ _Fields = Fields()
 
 def is_Jacobian(J):
     """
-    Return True if `J` is of type Jacobian_generic.
+    Return ``True`` if `J` is of type Jacobian_generic.
 
     EXAMPLES::
 

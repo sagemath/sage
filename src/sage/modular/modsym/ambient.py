@@ -202,7 +202,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         INPUT:
 
 
-        -  ``p`` -- (default: None); if not None, return only
+        -  ``p`` -- (default: ``None``); if not None, return only
            the `p`-new submodule.
 
 
@@ -777,7 +777,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
           polynomial over `\ZZ` of degree `k` and `\alpha` and `\beta`
           are cusps.
 
-        - ``check`` (bool, default: ``True``) -- if True check the validity
+        - ``check`` (bool, default: ``True``) -- if ``True`` check the validity
           of the input tuple ``x``
 
         OUTPUT:
@@ -1800,7 +1800,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
     def is_cuspidal(self):
         r"""
-        Return True if this space is cuspidal, else False.
+        Return ``True`` if this space is cuspidal, else False.
 
         EXAMPLES::
 
@@ -1823,7 +1823,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
     def is_eisenstein(self):
         r"""
-        Return True if this space is Eisenstein, else False.
+        Return ``True`` if this space is Eisenstein, else False.
 
         EXAMPLES::
 
@@ -1986,7 +1986,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         -  ``sign`` -- int (either -1 or +1)
 
-        -  ``compute_dual`` -- bool (default: ``True``) also
+        -  ``compute_dual`` -- boolean (default: ``True``); also
            compute dual subspace. This are useful for many algorithms.
 
 
@@ -2099,7 +2099,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
            useful to speed up certain calculations; it is the
            corresponding submodule of the ambient dual module;
 
-        - ``check`` (bool, default: ``True``) -- if True, check that `M` is
+        - ``check`` (bool, default: ``True``) -- if ``True``, check that `M` is
            a submodule, i.e. is invariant under all Hecke operators.
 
         OUTPUT: a subspace of this modular symbol space

@@ -413,7 +413,7 @@ the parent as its first argument::
 
     sage: S.<a> = Qq(4)                                                                 # needs sage.rings.padics
     sage: d = a.add_bigoh(1)                                                            # needs sage.rings.padics
-    sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included
+    sage: b._cache_key() == d._cache_key()  # this would be ``True`` if the parents were not included
     False
 """
 

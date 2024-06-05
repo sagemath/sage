@@ -402,7 +402,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``t`` -- float (default: None); If \var{t} is not None, then
+        - ``t`` -- float (default: ``None``); If \var{t} is not None, then
           it returns the difference between the current CPU time and \var{t}.
 
         OUTPUT: float
@@ -665,7 +665,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
 #         INPUT:
 
-#         flag -- bool (default: ``True``)
+#         flag -- boolean (default: ``True``)
 
 #         EXAMPLES::
 
@@ -2067,7 +2067,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         INPUT:
 
-        - ``split`` -- boolean; if True return a tuple of strings,
+        - ``split`` -- boolean; if ``True`` return a tuple of strings,
           otherwise return a string of comma-separated arguments
 
         OUTPUT:

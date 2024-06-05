@@ -1213,7 +1213,7 @@ class FSMState(SageObject):
       equivalent. Note that :meth:`Automaton.determinisation` requires
       that ``color`` is hashable.
 
-    - ``allow_label_None`` -- (default: ``False``) If ``True`` allows also
+    - ``allow_label_None`` -- boolean (default: ``False``); If ``True`` allows also
       ``None`` as label. Note that a state with label ``None`` is used in
       :class:`FSMProcessIterator`.
 
@@ -5744,7 +5744,7 @@ class FiniteStateMachine(SageObject):
           what to do (e.g. if a non-deterministic machine returns more
           than one path, then the output is returned in list form).
 
-        - ``only_accepted`` -- (default: ``False``) a boolean. If set,
+        - ``only_accepted`` -- boolean (default: ``False``); a boolean. If set,
           then the first argument in the output is guaranteed to be
           ``True`` (if the output is a list, then the first argument
           of each element will be ``True``).
@@ -5759,20 +5759,20 @@ class FiniteStateMachine(SageObject):
           output (which is in form of a list) to something more
           readable. By default (``None``) identity is used here.
 
-        - ``check_epsilon_transitions`` -- (default: ``True``) a
+        - ``check_epsilon_transitions`` -- boolean (default: ``True``); a
           boolean. If ``False``, then epsilon transitions are not
           taken into consideration during process.
 
-        - ``write_final_word_out`` -- (default: ``True``) a boolean
+        - ``write_final_word_out`` -- boolean (default: ``True``); a boolean
           specifying whether the final output words should be written
           or not.
 
-        - ``use_multitape_input`` -- (default: ``False``) a
+        - ``use_multitape_input`` -- boolean (default: ``False``); a
           boolean. If ``True``, then the multi-tape mode of the
           process iterator is activated. See also the notes below for
           multi-tape machines.
 
-        - ``process_all_prefixes_of_input`` -- (default: ``False``) a
+        - ``process_all_prefixes_of_input`` -- boolean (default: ``False``); a
           boolean. If ``True``, then each prefix of the input word is
           processed (instead of processing the whole input word at
           once). Consequently, there is an output generated for each
@@ -5783,7 +5783,7 @@ class FiniteStateMachine(SageObject):
           then :class:`FSMProcessIterator` is taken. An instance of this
           class is created and is used during the processing.
 
-        - ``automatic_output_type`` -- (default: ``False``) a boolean.
+        - ``automatic_output_type`` -- boolean (default: ``False``); a boolean.
           If set and the input has a parent, then the
           output will have the same parent. If the input does not have
           a parent, then the output will be of the same type as the
@@ -9128,7 +9128,7 @@ class FiniteStateMachine(SageObject):
           list of such elements. This is repeated cyclically when
           needed.
 
-        - ``allow_non_final`` -- a boolean (default: ``True``) which
+        - ``allow_non_final`` -- a boolean (default: ``True``); which
           indicates whether we allow that some states may be non-final
           in the resulting finite state machine. I.e., if ``False`` then
           each state has to have a path to a final state with input
@@ -10237,7 +10237,7 @@ class FiniteStateMachine(SageObject):
           :meth:`is_Markov_chain`. This parameter only affects the
           input of the Markov chain.
 
-        - ``expectation_only`` -- (default: ``False``) if set, the
+        - ``expectation_only`` -- boolean (default: ``False``); if set, the
           variance is not computed (in order to save time). By default,
           the variance is computed.
 
@@ -11388,12 +11388,12 @@ class Automaton(FiniteStateMachine):
           what to do (e.g. if a non-deterministic machine returns more
           than one path, then the output is returned in list form).
 
-        - ``only_accepted`` -- (default: ``False``) a boolean. If set,
+        - ``only_accepted`` -- boolean (default: ``False``); a boolean. If set,
           then the first argument in the output is guaranteed to be
           ``True`` (if the output is a list, then the first argument
           of each element will be ``True``).
 
-        - ``full_output`` -- (default: ``True``) a boolean. If set,
+        - ``full_output`` -- boolean (default: ``True``); a boolean. If set,
           then the full output is given, otherwise only whether the
           sequence is accepted or not (the first entry below only).
 
@@ -11407,20 +11407,20 @@ class Automaton(FiniteStateMachine):
           output (which is in form of a list) to something more
           readable. By default (``None``) identity is used here.
 
-        - ``check_epsilon_transitions`` -- (default: ``True``) a
+        - ``check_epsilon_transitions`` -- boolean (default: ``True``); a
           boolean. If ``False``, then epsilon transitions are not
           taken into consideration during process.
 
-        - ``write_final_word_out`` -- (default: ``True``) a boolean
+        - ``write_final_word_out`` -- boolean (default: ``True``); a boolean
           specifying whether the final output words should be written
           or not.
 
-        - ``use_multitape_input`` -- (default: ``False``) a
+        - ``use_multitape_input`` -- boolean (default: ``False``); a
           boolean. If ``True``, then the multi-tape mode of the
           process iterator is activated. See also the notes below for
           multi-tape machines.
 
-        - ``process_all_prefixes_of_input`` -- (default: ``False``) a
+        - ``process_all_prefixes_of_input`` -- boolean (default: ``False``); a
           boolean. If ``True``, then each prefix of the input word is
           processed (instead of processing the whole input word at
           once). Consequently, there is an output generated for each
@@ -12479,12 +12479,12 @@ class Transducer(FiniteStateMachine):
           what to do (e.g. if a non-deterministic machine returns more
           than one path, then the output is returned in list form).
 
-        - ``only_accepted`` -- (default: ``False``) a boolean. If set,
+        - ``only_accepted`` -- boolean (default: ``False``); a boolean. If set,
           then the first argument in the output is guaranteed to be
           ``True`` (if the output is a list, then the first argument
           of each element will be ``True``).
 
-        - ``full_output`` -- (default: ``True``) a boolean. If set,
+        - ``full_output`` -- boolean (default: ``True``); a boolean. If set,
           then the full output is given, otherwise only the generated
           output (the third entry below only). If the input is not
           accepted, a :class:`ValueError` is raised.
@@ -12499,20 +12499,20 @@ class Transducer(FiniteStateMachine):
           output (which is in form of a list) to something more
           readable. By default (``None``) identity is used here.
 
-        - ``check_epsilon_transitions`` -- (default: ``True``) a
+        - ``check_epsilon_transitions`` -- boolean (default: ``True``); a
           boolean. If ``False``, then epsilon transitions are not
           taken into consideration during process.
 
-        - ``write_final_word_out`` -- (default: ``True``) a boolean
+        - ``write_final_word_out`` -- boolean (default: ``True``); a boolean
           specifying whether the final output words should be written
           or not.
 
-        - ``use_multitape_input`` -- (default: ``False``) a
+        - ``use_multitape_input`` -- boolean (default: ``False``); a
           boolean. If ``True``, then the multi-tape mode of the
           process iterator is activated. See also the notes below for
           multi-tape machines.
 
-        - ``process_all_prefixes_of_input`` -- (default: ``False``) a
+        - ``process_all_prefixes_of_input`` -- boolean (default: ``False``); a
           boolean. If ``True``, then each prefix of the input word is
           processed (instead of processing the whole input word at
           once). Consequently, there is an output generated for each
@@ -12523,7 +12523,7 @@ class Transducer(FiniteStateMachine):
           then :class:`FSMProcessIterator` is taken. An instance of this
           class is created and is used during the processing.
 
-        - ``automatic_output_type`` -- (default: ``False``) a boolean
+        - ``automatic_output_type`` -- boolean (default: ``False``); a boolean
           If set and the input has a parent, then the
           output will have the same parent. If the input does not have
           a parent, then the output will be of the same type as the
@@ -13116,7 +13116,7 @@ class _FSMTapeCache_(SageObject):
 
         - ``length`` -- (default: ``1``) the length of the word(s).
 
-        - ``return_word`` -- (default: ``False``) a boolean. If set,
+        - ``return_word`` -- boolean (default: ``False``); a boolean. If set,
           then a word is returned, otherwise a single letter (in which
           case ``length`` has to be ``1``).
 
@@ -13690,20 +13690,20 @@ class FSMProcessIterator(SageObject, Iterator):
       output (which is in form of a list) to something more
       readable. By default (``None``) identity is used here.
 
-    - ``check_epsilon_transitions`` -- (default: ``True``) a
+    - ``check_epsilon_transitions`` -- boolean (default: ``True``); a
       boolean. If ``False``, then epsilon transitions are not
       taken into consideration during process.
 
-    - ``write_final_word_out`` -- (default: ``True``) a boolean
+    - ``write_final_word_out`` -- boolean (default: ``True``); a boolean
       specifying whether the final output words should be written
       or not.
 
-    - ``use_multitape_input`` -- (default: ``False``) a
+    - ``use_multitape_input`` -- boolean (default: ``False``); a
       boolean. If ``True``, then the multi-tape mode of the
       process iterator is activated. See also the notes below for
       multi-tape machines.
 
-    - ``process_all_prefixes_of_input`` -- (default: ``False``) a
+    - ``process_all_prefixes_of_input`` -- boolean (default: ``False``); a
       boolean. If ``True``, then each prefix of the input word is
       processed (instead of processing the whole input word at
       once). Consequently, there is an output generated for each
@@ -14459,7 +14459,7 @@ class FSMProcessIterator(SageObject, Iterator):
 
         - ``length`` -- (default: ``1``) the length of the word(s).
 
-        - ``return_word`` -- (default: ``False``) a boolean. If set,
+        - ``return_word`` -- boolean (default: ``False``); a boolean. If set,
           then a word is returned, otherwise a single letter (in which
           case ``length`` has to be ``1``).
 

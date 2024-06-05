@@ -194,7 +194,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
     def is_finite(self):
         """
-        Return True if this is a finite Coxeter group.
+        Return ``True`` if this is a finite Coxeter group.
 
         EXAMPLES::
 
@@ -293,7 +293,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         INPUT:
 
         - ``u``, ``v`` -- elements of the underlying Coxeter group
-        - ``constant_term_one`` -- (default: ``True``) True uses the constant equals one convention,
+        - ``constant_term_one`` -- boolean (default: ``True``); ``True`` uses the constant equals one convention,
            False uses the Leclerc-Thibon convention
 
         .. SEEALSO::
@@ -625,7 +625,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
         def has_left_descent(self, i):
             """
-            Return True if ``i`` is a left descent of this element.
+            Return ``True`` if ``i`` is a left descent of this element.
 
             EXAMPLES::
 

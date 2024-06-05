@@ -468,7 +468,7 @@ class TropicalSemiring(Parent, UniqueRepresentation):
     INPUT:
 
     - ``base`` -- the base ordered additive semigroup `R`
-    - ``use_min`` -- (default: ``True``) if ``True``, then the semiring uses
+    - ``use_min`` -- boolean (default: ``True``); if ``True``, then the semiring uses
       `a \oplus b = \min(a, b)`; otherwise uses `a \oplus b = \max(a, b)`
 
     EXAMPLES::

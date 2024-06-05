@@ -1373,7 +1373,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default: ``True``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``True``); if ``True``, return
           faces in increasing order of dimension, thus starting with
           the empty face. Otherwise it returns faces in decreasing order of
           dimension.
@@ -2990,7 +2990,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``simplex`` -- a simplex in this simplicial complex
-        - ``is_mutable`` -- (default: ``True``) boolean; determines if the output
+        - ``is_mutable`` -- boolean (default: ``True``); determines if the output
           is mutable
 
         EXAMPLES::
@@ -3130,7 +3130,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``shelling_order`` -- an ordering of the facets of ``self``
-        - ``certificate`` -- (default: ``False``) if ``True`` then returns
+        - ``certificate`` -- boolean (default: ``False``); if ``True`` then returns
           the index of the first facet that violate the condition
 
         .. SEEALSO::
@@ -3203,7 +3203,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) if ``True`` then
+        - ``certificate`` -- boolean (default: ``False``); if ``True`` then
           returns the shelling order (if it exists)
 
         EXAMPLES::
@@ -3641,9 +3641,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``simplex`` -- a simplex face of ``self``
-        - ``inplace`` -- (default: ``False``) boolean; determines if the
+        - ``inplace`` -- boolean (default: ``False``); determines if the
           operation is done on ``self`` or on a copy
-        - ``is_mutable`` -- (default: ``True``) boolean; determines if the
+        - ``is_mutable`` -- boolean (default: ``True``); determines if the
           output is mutable
 
         OUTPUT:
@@ -4642,10 +4642,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``check_purity`` -- (default: ``False``) if this is ``True``,
+        - ``check_purity`` -- boolean (default: ``False``); if this is ``True``,
           require that ``self`` be pure as well as balanced
 
-        - ``certificate`` -- (default: ``False``) if this is ``True`` and
+        - ``certificate`` -- boolean (default: ``False``); if this is ``True`` and
           ``self`` is balanced, then return a `d`-coloring of the 1-skeleton.
 
         EXAMPLES:
@@ -4710,7 +4710,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``)  If ``True``,
+        - ``certificate`` -- boolean (default: ``False``);  If ``True``,
           and ``self`` is partitionable, then return a list of pairs `(R,F)`
           that form a partitioning.
 
@@ -4815,7 +4815,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         - ``base_ring`` -- (default: ``ZZ``) the base ring used
           when computing homology
-        - ``verbose`` -- (default: ``False``) if ``True``, print
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print
           messages during the computation, which indicate in which
           subcomplexes non-trivial homologies appear
 
@@ -4921,7 +4921,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         - ``base_ring`` -- (default: ``ZZ``) the base ring used
           when computing homology
-        - ``verbose`` -- (default: ``False``) if ``True``, print
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print
           messages during the computation, which indicate in which
           subcomplexes non-trivial homologies appear
 

@@ -272,7 +272,7 @@ def QueenGraph(dim_list, radius=None, relabel=False):
         sage: G.is_isomorphic(H)
         True
 
-    Also True in higher dimensions::
+    Also ``True`` in higher dimensions::
 
         sage: G = graphs.QueenGraph([3, 4, 5], radius=1)
         sage: H = graphs.KingGraph([5, 3, 4])
@@ -346,7 +346,7 @@ def KingGraph(dim_list, radius=None, relabel=False):
         sage: G.is_isomorphic( H )
         True
 
-    Also True in higher dimensions::
+    Also ``True`` in higher dimensions::
 
         sage: G = graphs.KingGraph( [2, 5, 4], radius=5 )
         sage: H = graphs.QueenGraph( [4, 5, 2] )

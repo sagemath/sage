@@ -451,7 +451,7 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
 
     - ``default`` -- initial value
 
-    - ``buttons`` -- (boolean) if True, display buttons instead of a
+    - ``buttons`` -- (boolean) if ``True``, display buttons instead of a
       dropdown box
 
     EXAMPLES::
@@ -569,7 +569,7 @@ def color_selector(default=(0, 0, 1), label=None, widget=None, hide_box=False):
 
     - ``label`` -- optional label
 
-    - ``hide_box`` -- (boolean) if True, do not show the textbox
+    - ``hide_box`` -- (boolean) if ``True``, do not show the textbox
 
     EXAMPLES::
 

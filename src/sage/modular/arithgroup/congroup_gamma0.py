@@ -26,7 +26,7 @@ from .congroup_generic import CongruenceSubgroup
 
 def is_Gamma0(x):
     """
-    Return True if x is a congruence subgroup of type Gamma0.
+    Return ``True`` if x is a congruence subgroup of type Gamma0.
 
     EXAMPLES::
 
@@ -245,7 +245,7 @@ class Gamma0_class(GammaH_class):
 
     def is_even(self):
         r"""
-        Return True precisely if this subgroup contains the matrix -1.
+        Return ``True`` precisely if this subgroup contains the matrix -1.
 
         Since `\Gamma0(N)` always contains the matrix -1, this always
         returns True.
@@ -261,7 +261,7 @@ class Gamma0_class(GammaH_class):
 
     def is_subgroup(self, right):
         """
-        Return True if self is a subgroup of right.
+        Return ``True`` if self is a subgroup of right.
 
         EXAMPLES::
 

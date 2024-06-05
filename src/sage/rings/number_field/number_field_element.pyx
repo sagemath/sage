@@ -1294,9 +1294,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
 
-        -  ``prec`` -- (default: None) integer bits of precision
+        -  ``prec`` -- (default: ``None``) integer bits of precision
 
-        -  ``i`` -- (default: None) integer, which embedding to
+        -  ``i`` -- (default: ``None``) integer, which embedding to
            use
 
 
@@ -1765,7 +1765,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: L.<c> = K.extension(x^3 + 2)
             sage: s = 2*a + b
             sage: y, q = s._rnfisnorm(L)
-            sage: q == 1 # True iff s is a norm
+            sage: q == 1 # ``True`` iff s is a norm
             False
             sage: s == y.norm(K)*q
             True

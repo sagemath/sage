@@ -426,7 +426,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         INPUT:
 
         - ``chi`` -- (default: trivial character) a linear group character of this group
-        - ``return_series`` -- boolean (default: ``True``) if ``True``, then returns
+        - ``return_series`` -- boolean (default: ``True``); if ``True``, then returns
           the Molien series as a power series, ``False`` as a rational function
         - ``prec`` -- integer (default: 20); power series default precision
           (possibly infinite, in which case it is computed lazily)

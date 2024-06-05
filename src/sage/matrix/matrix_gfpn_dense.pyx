@@ -377,7 +377,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         - ``coerce`` -- ignored
 
-        - ``mutable`` -- if False, the resulting matrix cannot be
+        - ``mutable`` -- if ``False``, the resulting matrix cannot be
           changed, and it can be used as key in a Python dictionary
 
         EXAMPLES::
@@ -1649,7 +1649,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         INPUT:
 
-        - ``reduced`` (default: ``True``) -- will result
+        - ``reduced`` boolean (default: ``True``); -- will result
           in the row-reduced echelon form (otherwise, only a
           semi-echelon form results).
 

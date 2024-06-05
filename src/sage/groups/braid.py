@@ -287,7 +287,7 @@ class Braid(FiniteTypeArtinGroupElement):
                 M = M * A
 
         else:
-            if reduced is True or reduced == "increasing":
+            if reduced is ``True`` or reduced == "increasing":
                 M = identity_matrix(R, n - 1)
                 for j in self.Tietze():
                     A = identity_matrix(R, n - 1)

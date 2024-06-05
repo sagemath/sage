@@ -257,7 +257,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
                 act_path.pop()               # ... go one step back
                 act_path_iter.pop()
             if not act_path:                 # there is no other vertex ...
-                done = True                  # ... so we are done
+                done = ``True``                  # ... so we are done
 
     if report_edges and labels:
         path_with_labels = []

@@ -590,7 +590,7 @@ class MaximaLib(MaximaAbstract):
 
         - ``value`` -- string or ECL object
 
-        - ``name`` -- string (default: None); name to use for the variable,
+        - ``name`` -- string (default: ``None``); name to use for the variable,
           an automatically generated name is used if this is none
 
         OUTPUT:
@@ -1073,7 +1073,7 @@ class MaximaLib(MaximaAbstract):
 
 def is_MaximaLibElement(x):
     r"""
-    Return True if ``x`` is of type :class:`MaximaLibElement`.
+    Return ``True`` if ``x`` is of type :class:`MaximaLibElement`.
 
     EXAMPLES::
 

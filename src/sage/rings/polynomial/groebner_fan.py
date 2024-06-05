@@ -787,7 +787,7 @@ class GroebnerFan(SageObject):
 
         -  ``I`` -- ideal in a multivariate polynomial ring
 
-        -  ``is_groebner_basis`` -- bool (default ``False``). if
+        -  ``is_groebner_basis`` -- boolean (default ``False``). if
            ``True``, then I.gens() must be a Groebner basis with respect to the
            standard degree lexicographic term order.
 
@@ -1116,7 +1116,7 @@ class GroebnerFan(SageObject):
 
         - ``cmd`` -- string (default:``'bases'``), GFan command
         - ``I`` -- ideal (default:``None``)
-        - ``format`` -- bool (default:``None``), deprecated
+        - ``format`` -- boolean (default:``None``), deprecated
 
         EXAMPLES::
 
@@ -1250,7 +1250,7 @@ class GroebnerFan(SageObject):
            (right), c (left), and d (top). The shifting is done modulo the
            number of variables in the polynomial ring. The default is 0.
 
-        -  ``larger`` -- bool (default: ``False``); if ``True``, make
+        -  ``larger`` -- boolean (default: ``False``); if ``True``, make
            the triangle larger so that the shape of the Groebner region
            appears. Affects the xfig file but probably not the sage graphics
            (?)
@@ -1262,7 +1262,7 @@ class GroebnerFan(SageObject):
            a color determined by the highest degree in each reduced Groebner
            basis for that cone.
 
-        -  ``scale_colors`` -- if True, this will normalize
+        -  ``scale_colors`` -- if ``True``, this will normalize
            color values to try to maximize the range
 
 
@@ -1608,7 +1608,7 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``check`` -- bool (default: ``True``); if True raises a
+        -  ``check`` -- boolean (default: ``True``); if ``True`` raises a
            ValueError exception if this ideal does not define a tropical curve
            (i.e., the condition that R/I has dimension equal to 1 + the
            dimension of the homogeneity space is not satisfied).
@@ -1888,7 +1888,7 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``restrict`` -- bool (default: ``False``); if True, add
+        -  ``restrict`` -- boolean (default: ``False``); if ``True``, add
            an inequality for each coordinate, so that the cone is restricted
            to the positive orthant.
 

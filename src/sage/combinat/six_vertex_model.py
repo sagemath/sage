@@ -555,8 +555,8 @@ class SixVertexModel(UniqueRepresentation, Parent):
             ]
         """
         # Boundary conditions ordered URDL
-        # The top row boundary condition of True is a downward arrow
-        # The left condition of True is a right arrow
+        # The top row boundary condition of ``True`` is a downward arrow
+        # The left condition of ``True`` is a right arrow
         # verts = ['LR', 'LU', 'LD', 'UD', 'UR', 'RD']
         next_top = [False, False, True, True, False, True]
         next_left = [True, False, False, False, True, True]

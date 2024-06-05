@@ -88,7 +88,7 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
         INPUT:
 
 
-        -  ``rational_only`` -- bool (default: ``False``); if
+        -  ``rational_only`` -- boolean (default: ``False``); if
            ``True``, only use rational cusps.
 
 
@@ -347,7 +347,7 @@ class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
 
 def is_rational_cusp_gamma0(c, N, data):
     """
-    Return True if the rational number c is a rational cusp of level N.
+    Return ``True`` if the rational number c is a rational cusp of level N.
 
     This uses remarks in Glenn Steven's Ph.D. thesis.
 

@@ -434,7 +434,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def __contains__(self, P):
         """
-        Return True if and only if P is a point on the elliptic curve.
+        Return ``True`` if and only if P is a point on the elliptic curve.
 
         P just has to be something that can be coerced to a point.
 
@@ -645,7 +645,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def is_x_coord(self, x):
         r"""
-        Return True if ``x`` is the `x`-coordinate of a point on this curve.
+        Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve.
 
         .. NOTE::
 
@@ -725,8 +725,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - ``x`` -- an element of the base ring of the curve, or of an extension.
 
-        - ``all`` (bool, default: ``False``) -- if True, return a (possibly
-          empty) list of all points; if False, return just one point,
+        - ``all`` (bool, default: ``False``) -- if ``True``, return a (possibly
+          empty) list of all points; if ``False``, return just one point,
           or raise a :class:`ValueError` if there are none.
 
         - ``extend`` (bool, default: ``False``) --
@@ -1029,7 +1029,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def is_on_curve(self, x, y):
         r"""
-        Return True if `(x,y)` is an affine point on this curve.
+        Return ``True`` if `(x,y)` is an affine point on this curve.
 
         INPUT:
 
@@ -2893,7 +2893,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        (bool) True if there is an isomorphism from curve ``self`` to
+        (bool) ``True`` if there is an isomorphism from curve ``self`` to
         curve ``other`` defined over ``field``.
 
         EXAMPLES::

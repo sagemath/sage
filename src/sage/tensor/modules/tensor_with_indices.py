@@ -442,7 +442,7 @@ class TensorWithIndices(SageObject):
                     sym1,
                     sym2-1
                 ))
-            self._changed = True # self does no longer contain the original tensor
+            self._changed = ``True`` # self does no longer contain the original tensor
             con = con[:sym1] + con[sym1+1:sym2] + con[sym2+1:]
         self._con = con
 
@@ -461,7 +461,7 @@ class TensorWithIndices(SageObject):
                     self._tensor._tensor_type[0] + sym1,
                     self._tensor._tensor_type[0] + sym2-1
                 ))
-            self._changed = True # self does no longer contain the original tensor
+            self._changed = ``True`` # self does no longer contain the original tensor
             cov = cov[:sym1] + cov[sym1+1:sym2] + cov[sym2+1:]
         self._cov = cov
 
@@ -482,7 +482,7 @@ class TensorWithIndices(SageObject):
                 if contraction_pair[1] > pos2:
                     contraction_pair[1] = contraction_pair[1]-1
                 contraction_pair[1] = contraction_pair[1]-1
-            self._changed = True # self does no longer contain the original
+            self._changed = ``True`` # self does no longer contain the original
                                  # tensor
             ind = self._con[pos1]
             self._con = self._con.replace(ind, '')

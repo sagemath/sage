@@ -826,7 +826,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - `n` -- a positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
-        - ``map`` -- (default: ``False``) also return an embedding of the
+        - ``map`` -- boolean (default: ``False``); also return an embedding of the
           :meth:`base_field` into the resulting field
         - ``kwds`` -- additional keyword arguments passed to
           :func:`~sage.rings.polynomial.polynomial_element.Polynomial.splitting_field`
@@ -1234,7 +1234,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           - ``"montgomery"``: The codomain is an (untwisted) Montgomery
             curve, assuming one exists over this field.
 
-        - ``check`` (default: ``True``) -- check whether the input is valid.
+        - ``check`` boolean (default: ``True``); -- check whether the input is valid.
           Setting this to ``False`` can lead to significant speedups.
 
         - ``algorithm`` -- string (optional). The possible choices are:
@@ -2034,7 +2034,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         OUTPUT:
 
-        (bool) True if there is an isogeny from curve ``self`` to
+        (bool) ``True`` if there is an isogeny from curve ``self`` to
         curve ``other`` defined over ``field``.
 
         METHOD:

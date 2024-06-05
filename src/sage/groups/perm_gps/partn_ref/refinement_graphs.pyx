@@ -187,9 +187,9 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
 
     - ``G_in`` -- a Sage graph
     - ``partition`` -- a list of lists representing a partition of the vertices
-    - ``lab`` -- if True, compute and return the canonical label in addition to the
+    - ``lab`` -- if ``True``, compute and return the canonical label in addition to the
       automorphism group
-    - ``dig`` -- set to True for digraphs and graphs with loops.  If True, does not
+    - ``dig`` -- set to ``True`` for digraphs and graphs with loops.  If True, does not
       use optimizations based on Lemma 2.25 in [1] that are valid only for
       simple graphs.
     - ``dict_rep`` -- if ``True``, return a dictionary with keys the vertices of the

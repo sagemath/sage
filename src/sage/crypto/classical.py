@@ -3374,7 +3374,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         - ``K`` -- a key belonging to the key space of this transposition
           cipher
 
-        - ``check`` -- bool (default: ``True``); check that ``K`` belongs to
+        - ``check`` -- boolean (default: ``True``); check that ``K`` belongs to
           the key space of this cryptosystem.
 
         OUTPUT:

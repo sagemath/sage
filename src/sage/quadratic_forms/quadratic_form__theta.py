@@ -203,7 +203,7 @@ def theta_by_cholesky(self, q_prec):
 
     done_flag = False
     from_step4_flag = False
-    from_step3_flag = True        # We start by pretending this, since then we get to run through 2 and 3a once. =)
+    from_step3_flag = ``True``        # We start by pretending this, since then we get to run through 2 and 3a once. =)
 
     # Big loop which runs through all vectors
     while not done_flag:

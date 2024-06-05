@@ -40,7 +40,7 @@ class CryptoMiniSat(SatSolver):
     - ``confl_limit`` -- an integer (default: ``None``). Abort after this many
       conflicts. If set to ``None``, never aborts.
 
-    - ``threads`` -- an integer (default: None). The number of thread to
+    - ``threads`` -- an integer (default: ``None``). The number of thread to
       use. If set to ``None``, the number of threads used corresponds to the
       number of cpus.
 

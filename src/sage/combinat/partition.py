@@ -2950,7 +2950,7 @@ class Partition(CombinatorialElement):
 
         - ``e`` -- a nonnegative integer; ``0`` is considered as `\infty`
           (analogous to the characteristic of a ring)
-        - ``ladder_sizes`` -- (default: ``False``) if ``True``, also return
+        - ``ladder_sizes`` -- boolean (default: ``False``); if ``True``, also return
           the sizes of the ladders
 
         .. SEEALSO::
@@ -5566,7 +5566,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``directed`` -- (default: ``False``) whether to have the dual
+        - ``directed`` -- boolean (default: ``False``); whether to have the dual
           equivalence graph be directed (where we have a directed edge
           `S \to T` if `i` appears to the left of `i+1` in the
           reading word of `T`; otherwise we have the directed edge

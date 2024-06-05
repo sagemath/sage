@@ -704,7 +704,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         """
         Return boolean representing emptiness of the set.
 
-        OUTPUT: true if the set is empty, False if otherwise
+        OUTPUT: ``True`` if the set is empty, ``False`` otherwise
 
         EXAMPLES::
 

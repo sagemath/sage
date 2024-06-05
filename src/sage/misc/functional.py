@@ -617,7 +617,7 @@ def symbolic_prod(expression, *args, **kwds):
 
       - ``'sympy'`` -- use SymPy
 
-    - ``hold`` -- (default: ``False``) if ``True`` don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True`` don't evaluate
 
     EXAMPLES::
 
@@ -1829,15 +1829,15 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
     -  ``prec`` -- a positive integer (default: ``None``); when specified,
        compute the square root with ``prec`` bits of precision
 
-    -  ``extend`` -- bool (default: ``True``); this is a placeholder, and is
+    -  ``extend`` -- boolean (default: ``True``); this is a placeholder, and is
        always ignored since in the symbolic ring everything
        has a square root.
 
-    -  ``extend`` -- bool (default: ``True``); whether to extend
+    -  ``extend`` -- boolean (default: ``True``); whether to extend
        the base ring to find roots. The extend parameter is ignored if
        ``prec`` is a positive integer.
 
-    -  ``all`` -- bool (default: ``False``); whether to return
+    -  ``all`` -- boolean (default: ``False``); whether to return
        a list of all the square roots of ``x``.
 
 
@@ -1889,11 +1889,11 @@ def sqrt(x, *args, **kwds):
        an exact square root; otherwise returns a numerical square root if
        necessary, to the given bits of precision.
 
-    -  ``extend`` -- bool (default: ``True``); this is a placeholder, and
+    -  ``extend`` -- boolean (default: ``True``); this is a placeholder, and
        is always ignored or passed to the ``sqrt`` method of ``x``,
        since in the symbolic ring everything has a square root.
 
-    -  ``all`` -- bool (default: ``False``); if ``True``, return all
+    -  ``all`` -- boolean (default: ``False``); if ``True``, return all
        square roots of ``self``, instead of just one.
 
     EXAMPLES::

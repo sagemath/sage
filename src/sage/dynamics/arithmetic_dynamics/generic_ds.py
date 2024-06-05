@@ -345,11 +345,11 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         INPUT:
 
-        - ``return_embedding`` -- (default: ``False``) boolean; If ``True``, return an
+        - ``return_embedding`` -- boolean (default: ``False``); If ``True``, return an
           embedding of base field of dynamical system into the returned number field or
           finite field. Note that computing this embedding might be expensive.
 
-        - ``simplify_all`` -- (default: ``False``) boolean; If ``True``, simplify
+        - ``simplify_all`` -- boolean (default: ``False``); If ``True``, simplify
           intermediate fields and also the resulting number field. Note that this
           is not implemented for finite fields and has no effect
 
@@ -450,17 +450,17 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         - ``n`` -- a positive integer
 
-        - ``formal`` -- (default: ``False``) boolean; ``True`` signals to return number
+        - ``formal`` -- boolean (default: ``False``); ``True`` signals to return number
           field or finite field over which the formal periodic points are defined, where a
           formal periodic point is a root of the ``n``-th dynatomic polynomial.
           ``False`` specifies to find number field or finite field over which all periodic
           points of the ``n``-th iterate are defined
 
-        - ``return_embedding`` -- (default: ``False``) boolean; If ``True``, return
+        - ``return_embedding`` -- boolean (default: ``False``); If ``True``, return
           an embedding of base field of dynamical system into the returned number
           field or finite field. Note that computing this embedding might be expensive.
 
-        - ``simplify_all`` -- (default: ``False``) boolean; If ``True``, simplify
+        - ``simplify_all`` -- boolean (default: ``False``); If ``True``, simplify
           intermediate fields and also the resulting number field. Note that this
           is not implemented for finite fields and has no effect
 
@@ -576,11 +576,11 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         - ``n`` -- a positive integer
 
-        - ``return_embedding`` -- (default: ``False``) boolean; If ``True``, return
+        - ``return_embedding`` -- boolean (default: ``False``); If ``True``, return
           an embedding of base field of dynamical system into the returned number
           field or finite field. Note that computing this embedding might be expensive.
 
-        - ``simplify_all`` -- (default: ``False``) boolean; If ``True``, simplify
+        - ``simplify_all`` -- boolean (default: ``False``); If ``True``, simplify
           intermediate fields and also the resulting number field. Note that this
           is not implemented for finite fields and has no effect
 

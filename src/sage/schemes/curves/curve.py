@@ -315,7 +315,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``F`` -- (default: None) field over which to find the singular
+        - ``F`` -- (default: ``None``) field over which to find the singular
           points; if not given, the base ring of this curve is used
 
         OUTPUT: a list of points in the ambient space of this curve
@@ -362,13 +362,13 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve
+        - ``P`` -- (default: ``None``) a point on this curve
 
         OUTPUT:
 
         A boolean. If a point ``P`` is provided, and if ``P`` lies on this
-        curve, returns True if ``P`` is a singular point of this curve, and
-        False otherwise. If no point is provided, returns True or False
+        curve, returns ``True`` if ``P`` is a singular point of this curve, and
+        False otherwise. If no point is provided, returns ``True`` or False
         depending on whether this curve is or is not singular, respectively.
 
         EXAMPLES::
@@ -450,7 +450,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``F`` -- (default: None); field over which to compute the
+        - ``F`` -- (default: ``None``); field over which to compute the
           intersection points; if not specified, the base ring of this curve is
           used
 

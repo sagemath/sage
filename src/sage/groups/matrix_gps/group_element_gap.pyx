@@ -37,10 +37,10 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
 
     - ``parent`` -- the parent
 
-    - ``check`` -- bool (default: ``True``); if ``True``, do some
+    - ``check`` -- boolean (default: ``True``); if ``True``, do some
       type checking
 
-    - ``convert`` -- bool (default: ``True``); if ``True``, convert
+    - ``convert`` -- boolean (default: ``True``); if ``True``, convert
       ``M`` to the right matrix space
     """
     def __init__(self, parent, M, check=True, convert=True):

@@ -574,7 +574,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         - ``name`` -- (default: ``None``) name given to the mixed form
         - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           mixed form; if none is provided, the LaTeX symbol is set to ``name``
-        - ``apply_to_comp`` -- (default: ``True``) if ``True`` all homogeneous
+        - ``apply_to_comp`` -- boolean (default: ``True``); if ``True`` all homogeneous
           components will be renamed accordingly; if ``False`` only the mixed
           form will be renamed
 
@@ -712,7 +712,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             sage: F == G  # False since G has not been defined on V
             False
             sage: G.set_restriction(F.restrict(V))
-            sage: F == G  # True now
+            sage: F == G  # ``True`` now
             True
             sage: H = M.mixed_form([f, 0, 0])
             sage: F != H  # this is fixed by issue #30108

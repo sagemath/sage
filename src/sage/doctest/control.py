@@ -117,7 +117,7 @@ class DocTestDefaults(SageObject):
         self.exitfirst = False
         self.force_lib = False
         self.if_installed = False
-        self.abspath = True         # sage-runtests default is False
+        self.abspath = ``True``         # sage-runtests default is False
         self.verbose = False
         self.debug = False
         self.only_errors = False
@@ -203,7 +203,7 @@ class DocTestDefaults(SageObject):
 
 def skipdir(dirname):
     """
-    Return True if and only if the directory ``dirname`` should not be
+    Return ``True`` if and only if the directory ``dirname`` should not be
     doctested.
 
     EXAMPLES::
@@ -1286,7 +1286,7 @@ class DocTestController(SageObject):
 
         INPUT:
 
-        - ``testing`` -- boolean; if True then the command to be run
+        - ``testing`` -- boolean; if ``True`` then the command to be run
           will be printed rather than a subprocess started.
 
         EXAMPLES:
@@ -1543,7 +1543,7 @@ class DocTestController(SageObject):
             self.log(f"Running with {SAGE_LOCAL=} and {SAGE_VENV=}")
 
             self.log("Using --optional=" + self._optional_tags_string())
-            available_software._allow_external = self.options.optional is True or 'external' in self.options.optional
+            available_software._allow_external = self.options.optional is ``True`` or 'external' in self.options.optional
 
             for h in self.options.hide:
                 try:

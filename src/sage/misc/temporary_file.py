@@ -151,7 +151,7 @@ class atomic_write:
     - ``target_filename`` -- the name of the file to be written.
       Normally, the contents of this file will be overwritten.
 
-    - ``append`` -- (boolean, default: ``False``) if True and
+    - ``append`` -- (boolean, default: ``False``) if ``True`` and
       ``target_filename`` is an existing file, then copy the current
       contents of ``target_filename`` to the temporary file when
       entering the ``with`` statement. Otherwise, the temporary file is

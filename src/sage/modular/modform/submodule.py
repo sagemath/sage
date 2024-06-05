@@ -41,8 +41,8 @@ class ModularFormsSubmodule(ModularFormsSpace,
 
         - ambient_module -- ModularFormsSpace
         - submodule -- a submodule of the ambient space.
-        - dual_module -- (default: None) ignored
-        - check -- (default: ``False``) whether to check that the
+        - dual_module -- (default: ``None``) ignored
+        - check -- boolean (default: ``False``); whether to check that the
                    submodule is Hecke equivariant
 
         EXAMPLES::

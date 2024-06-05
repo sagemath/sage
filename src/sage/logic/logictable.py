@@ -11,13 +11,13 @@ looks like::
 
     A      B      C      value
     False  False  False    ?
-    False  False  True     ?
-    False  True   False    ?
-    False  True   True     ?
-    True   False  False    ?
-    True   False  True     ?
-    True   True   False    ?
-    True   True   True     ?
+    False  False  ``True``     ?
+    False  ``True``   False    ?
+    False  ``True``   ``True``     ?
+    ``True``   False  False    ?
+    ``True``   False  ``True``     ?
+    ``True``   ``True``   False    ?
+    ``True``   ``True``   ``True``     ?
 
 This is equivalent to counting in binary, where a table would appear thus;
 
@@ -54,27 +54,27 @@ Create a truth table of a boolean formula::
     sage: s.truthtable()
     a      b      c      value
     False  False  False  True
-    False  False  True   False
-    False  True   False  True
-    False  True   True   False
-    True   False  False  False
-    True   False  True   False
-    True   True   False  True
-    True   True   True   True
+    False  False  ``True``   False
+    False  ``True``   False  True
+    False  ``True``   ``True``   False
+    ``True``   False  False  False
+    ``True``   False  ``True``   False
+    ``True``   ``True``   False  True
+    ``True``   ``True``   ``True``   True
 
 Get the LaTeX code for a truth table::
 
     sage: latex(s.truthtable(5,11))
-    \\\begin{tabular}{llll}c & b & a & value \\\hline True & False & True & False \\True & True & False & True \\True & True & True & True\end{tabular}
+    \\\begin{tabular}{llll}c & b & a & value \\\hline ``True`` & False & ``True`` & False \\True & ``True`` & False & ``True`` \\True & ``True`` & ``True`` & True\end{tabular}
 
 It is not an error to use nonsensical numeric inputs::
 
     sage: s = propcalc.formula("a&b|~(c|a)")
     sage: s.truthtable(5, 9)
     a      b      c      value
-    True   False  True   False
-    True   True   False  True
-    True   True   True   True
+    ``True``   False  ``True``   False
+    ``True``   ``True``   False  True
+    ``True``   ``True``   ``True``   True
 
     sage: s.truthtable(9, 5)
     a      b      c      value
@@ -84,22 +84,22 @@ If one argument is provided, truthtable defaults to the end::
     sage: s.truthtable(-1)
     a      b      c      value
     False  False  False  True
-    False  False  True   False
-    False  True   False  True
-    False  True   True   False
-    True   False  False  False
-    True   False  True   False
-    True   True   False  True
-    True   True   True   True
+    False  False  ``True``   False
+    False  ``True``   False  True
+    False  ``True``   ``True``   False
+    ``True``   False  False  False
+    ``True``   False  ``True``   False
+    ``True``   ``True``   False  True
+    ``True``   ``True``   ``True``   True
 
 If the second argument is negative, truthtable defaults to the end::
 
     sage: s.truthtable(4, -2)
     a      b      c      value
-    True   False  False  False
-    True   False  True   False
-    True   True   False  True
-    True   True   True   True
+    ``True``   False  False  False
+    ``True``   False  ``True``   False
+    ``True``   ``True``   False  True
+    ``True``   ``True``   ``True``   True
 
 .. NOTE::
 
@@ -148,13 +148,13 @@ class Truthtable:
             sage: s.truthtable()
             a      b      c      value
             False  False  False  True
-            False  False  True   False
-            False  True   False  True
-            False  True   True   False
-            True   False  False  False
-            True   False  True   False
-            True   True   False  True
-            True   True   True   True
+            False  False  ``True``   False
+            False  ``True``   False  True
+            False  ``True``   ``True``   False
+            ``True``   False  False  False
+            ``True``   False  ``True``   False
+            ``True``   ``True``   False  True
+            ``True``   ``True``   ``True``   True
         """
         self.__table = t
         self.__vars_order = vo
@@ -173,7 +173,7 @@ class Truthtable:
             sage: import sage.logic.propcalc as propcalc
             sage: s = propcalc.formula("man->monkey&human")
             sage: latex(s.truthtable())
-            \\\begin{tabular}{llll}human & monkey & man & value \\\hline False & False & False & True \\False & False & True & True \\False & True & False & True \\False & True & True & True \\True & False & False & False \\True & False & True & False \\True & True & False & False \\True & True & True & True\end{tabular}
+            \\\begin{tabular}{llll}human & monkey & man & value \\\hline False & False & False & ``True`` \\False & False & ``True`` & ``True`` \\False & ``True`` & False & ``True`` \\False & ``True`` & ``True`` & ``True`` \\True & False & False & False \\True & False & ``True`` & False \\True & ``True`` & False & False \\True & ``True`` & ``True`` & True\end{tabular}
 
         Now, we show that strange parameters can lead to a table header
         with no body::
@@ -215,13 +215,13 @@ class Truthtable:
             sage: s.truthtable()
             man    monkey  human  value
             False  False   False  True
-            False  False   True   True
-            False  True    False  True
-            False  True    True   True
-            True   False   False  False
-            True   False   True   False
-            True   True    False  False
-            True   True    True   True
+            False  False   ``True``   True
+            False  ``True``    False  True
+            False  ``True``    ``True``   True
+            ``True``   False   False  False
+            ``True``   False   ``True``   False
+            ``True``   ``True``    False  False
+            ``True``   ``True``    ``True``   True
 
         We now show that strange parameters can lead to the table
         header with no body::

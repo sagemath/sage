@@ -30,7 +30,7 @@ def canonical_parameters(ambient_space, basis, check=True):
     In particular the list/tuple ``basis`` is replaced by a
     tuple of linearly independent elements in the ambient space.
 
-    If ``check=False`` (default: ``True``) then ``basis``
+    If ``check=False`` boolean (default: ``True``); then ``basis``
     is assumed to already be a basis.
 
     EXAMPLES::

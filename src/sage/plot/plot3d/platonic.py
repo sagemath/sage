@@ -286,7 +286,7 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
     - ``frame_thickness`` -- (default: 0) if positive,
       then thickness of the frame
 
-    - ``frame_color`` -- (default: None) if given, gives
+    - ``frame_color`` -- (default: ``None``) if given, gives
       the color of the frame
 
     - ``opacity`` -- (default: 1) if less than 1 then it's
