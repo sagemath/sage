@@ -1,10 +1,5 @@
 from sage.graphs.graph import Graph
 
-from sage.graphs.homomorphisms.helper_functions import *
-
-# In integer rep, the DP table is of the following form:
-# { node_index: [1, 2, 3, 4, 5],
-#   second_node_index: [10, 20, 30, 40, 50], ...}
 
 class GraphHomomorphismCounter:
     def __init__(self, graph, target_graph, density_threshold=0.25, graph_clr=None, target_clr=None, colourful=False):
@@ -268,7 +263,6 @@ def node_changes(labelled_TD):
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.tree_decomposition import label_nice_tree_decomposition
-        sage: from sage.graphs.homomorphisms.helper_functions import node_changes
         sage: bip_one_four = graphs.CompleteBipartiteGraph(1, 4)
         sage: nice_tree_decomp = bip_one_four.treewidth(certificate=True, nice=True)
         sage: root = sorted(nice_tree_decomp)[0]
