@@ -532,7 +532,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
           modify it safely
 
         EXAMPLES:
@@ -542,7 +542,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: M2 = Matrix(GF(2), [[1, 0, 0], [0, 1, 0], [0, 1, 1]])
             sage: M2.columns()
             [(1, 0, 0), (0, 1, 1), (0, 0, 1)]
-
         """
         x = self.fetch('columns')
         if x is not None:
@@ -564,8 +563,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         self.cache('columns', C)
         if copy:
             return list(C)
-        else:
-            return C
+        return C
 
     ########################################################################
     # LEVEL 2 functionality
