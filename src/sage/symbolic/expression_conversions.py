@@ -1040,9 +1040,7 @@ def polynomial(ex, base_ring=None, ring=None):
       If just a ``base_ring`` is given, then the variables
       of the ``base_ring`` will be the variables of the expression ``ex``.
 
-    OUTPUT:
-
-    A polynomial.
+    OUTPUT: a polynomial
 
     EXAMPLES::
 
@@ -1129,9 +1127,7 @@ def laurent_polynomial(ex, base_ring=None, ring=None):
       If just a ``base_ring`` is given, then the variables
       of the ``base_ring`` will be the variables of the expression ``ex``.
 
-    OUTPUT:
-
-    A Laurent polynomial.
+    OUTPUT: a Laurent polynomial
 
     EXAMPLES::
 

@@ -658,7 +658,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         r"""
         Return the underlying toric variety.
 
-        OUTPUT: A :class:`ToricVariety
+        OUTPUT: a :class:`ToricVariety
         <sage.schemes.toric.variety.ToricVariety_field>`.
 
         EXAMPLES::
@@ -763,9 +763,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         r"""
         Return the quotient of the Chow group by a subgroup.
 
-        OUTPUT:
-
-        Currently not implemented.
+        OUTPUT: currently not implemented
 
         EXAMPLES::
 
@@ -1101,7 +1099,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return a string representation.
 
-        OUTPUT: A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1138,7 +1136,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the submodule of the toric Chow group generated.
 
-        OUTPUT: A :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`.
+        OUTPUT: a :class:`sage.modules.fg_pid.fgp_module.FGP_Module_class`
 
         EXAMPLES::
 
@@ -1153,7 +1151,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the number of generators.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1172,7 +1170,7 @@ class ChowGroup_degree_class(SageObject):
 
         - ``i`` -- integer. The index of the generator to be returned.
 
-        OUTPUT: A Chow cycle.
+        OUTPUT: a Chow cycle
 
         EXAMPLES::
 
@@ -1187,7 +1185,7 @@ class ChowGroup_degree_class(SageObject):
         """
         Return the generators of the Chow group of fixed degree.
 
-        OUTPUT: A tuple of Chow cycles of fixed degree generating
+        OUTPUT: a tuple of Chow cycles of fixed degree generating
         :meth:`module`.
 
         EXAMPLES::
@@ -1208,7 +1206,7 @@ def is_ChowGroup(x) -> bool:
 
     - ``x`` -- anything.
 
-    OUTPUT: ``True`` or ``False``.
+    OUTPUT: ``True`` or ``False``
 
     EXAMPLES::
 
@@ -1236,7 +1234,7 @@ def is_ChowCycle(x) -> bool:
 
     - ``x`` -- anything.
 
-    OUTPUT: ``True`` or ``False``.
+    OUTPUT: ``True`` or ``False``
 
     EXAMPLES::
 

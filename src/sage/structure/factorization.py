@@ -243,9 +243,7 @@ class Factorization(SageObject):
           factors from the factorization.  See the documentation for
           self.simplify.
 
-        OUTPUT:
-
-        a Factorization object
+        OUTPUT: a Factorization object
 
         EXAMPLES:
 

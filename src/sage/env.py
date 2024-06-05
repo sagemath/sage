@@ -82,9 +82,7 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
       ``True``, skip the environment variable and only use the
       fallbacks.
 
-    OUTPUT:
-
-    The value of the environment variable or its fallbacks.
+    OUTPUT: the value of the environment variable or its fallbacks
 
     EXAMPLES::
 

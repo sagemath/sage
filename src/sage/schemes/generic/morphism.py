@@ -274,9 +274,7 @@ class SchemeMorphism(Element):
         r"""
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -295,9 +293,7 @@ class SchemeMorphism(Element):
         r"""
         Return a string representation of the type of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -314,9 +310,7 @@ class SchemeMorphism(Element):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -411,9 +405,7 @@ class SchemeMorphism(Element):
 
         - ``n`` -- integer. The exponent.
 
-        OUTPUT:
-
-        A composite map that belongs to the same endomorphism set as ``self``.
+        OUTPUT: a composite map that belongs to the same endomorphism set as ``self``
 
         EXAMPLES::
 
@@ -436,9 +428,7 @@ class SchemeMorphism(Element):
         """
         Return the category of the Hom-set.
 
-        OUTPUT:
-
-        A category.
+        OUTPUT: a category
 
         EXAMPLES::
 
@@ -464,9 +454,7 @@ class SchemeMorphism(Element):
         """
         Return whether the morphism is an endomorphism.
 
-        OUTPUT:
-
-        Boolean. Whether the domain and codomain are identical.
+        OUTPUT: boolean. Whether the domain and codomain are identical
 
         EXAMPLES::
 
@@ -702,9 +690,7 @@ class SchemeMorphism_id(SchemeMorphism):
         r"""
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -752,9 +738,7 @@ class SchemeMorphism_structure_map(SchemeMorphism):
         r"""
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -840,9 +824,7 @@ class SchemeMorphism_spec(SchemeMorphism):
 
         - ``x`` -- a scheme point.
 
-        OUTPUT:
-
-        The image scheme point.
+        OUTPUT: the image scheme point
 
         EXAMPLES:
 
@@ -868,9 +850,7 @@ class SchemeMorphism_spec(SchemeMorphism):
         r"""
         Return a string representation of the type of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -887,9 +867,7 @@ class SchemeMorphism_spec(SchemeMorphism):
         r"""
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -909,9 +887,7 @@ class SchemeMorphism_spec(SchemeMorphism):
         """
         Return the underlying ring homomorphism.
 
-        OUTPUT:
-
-        A ring homomorphism.
+        OUTPUT: a ring homomorphism
 
         EXAMPLES::
 
@@ -1068,9 +1044,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         - ``x`` -- a point in the domain or a list or tuple that
           defines a point in the domain.
 
-        OUTPUT:
-
-        A point in the codomain.
+        OUTPUT: a point in the codomain
 
         EXAMPLES::
 
@@ -1145,9 +1119,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         - ``x`` -- a point in the domain or a list or tuple that defines a point in the domain.
         - ``check``, a boolean, either provided by position or name.
 
-        OUTPUT:
-
-        A point in the codomain.
+        OUTPUT: a point in the codomain
 
         EXAMPLES::
 
@@ -1230,9 +1202,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         """
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1303,7 +1273,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         r"""
         Return the coordinate ring of the ambient projective space.
 
-        OUTPUT: A multivariable polynomial ring over the base ring.
+        OUTPUT: a multivariable polynomial ring over the base ring
 
         EXAMPLES::
 
@@ -1808,9 +1778,7 @@ class SchemeMorphism_point(SchemeMorphism):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1825,9 +1793,7 @@ class SchemeMorphism_point(SchemeMorphism):
         r"""
         Return a latex representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1844,9 +1810,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Return the ``n``-th coordinate.
 
-        OUTPUT:
-
-        The coordinate values as an element of the base ring.
+        OUTPUT: the coordinate values as an element of the base ring
 
         EXAMPLES::
 
@@ -1863,9 +1827,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Iterate over the coordinates of the point.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -1885,9 +1847,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Return the coordinates as a tuple.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: a tuple
 
         EXAMPLES::
 
@@ -1902,9 +1862,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Return the number of coordinates.
 
-        OUTPUT:
-
-        Integer. The number of coordinates used to describe the point.
+        OUTPUT: integer. The number of coordinates used to describe the point
 
         EXAMPLES::
 
@@ -1924,9 +1882,7 @@ class SchemeMorphism_point(SchemeMorphism):
         - ``other`` -- anything. To compare against the scheme
           morphism ``self``.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1949,9 +1905,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         Return the scheme whose point is represented.
 
-        OUTPUT:
-
-        A scheme.
+        OUTPUT: a scheme
 
         EXAMPLES::
 

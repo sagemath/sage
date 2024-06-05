@@ -116,9 +116,7 @@ class _print_key():
 
         - ``other`` -- another :class:`_print_key` instance.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -144,9 +142,7 @@ cpdef print_sorted(expressions):
     - ``expressions`` -- a list/tuple/iterable of symbolic
       expressions, or something that can be converted to one.
 
-    OUTPUT:
-
-    The list sorted by :meth:`print_order`.
+    OUTPUT: the list sorted by :meth:`print_order`
 
     EXAMPLES::
 

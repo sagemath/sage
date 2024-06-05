@@ -43,9 +43,7 @@ def WeierstrassForm2(polynomial, variables=None, transformation=False):
     Currently, only the case of the complete intersection of two
     quadratic equations in `\mathbb{P}^3` is supported.
 
-    INPUT / OUTPUT:
-
-    See :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
+    INPUT / OUTPUT: see :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
 
     TESTS::
 
@@ -141,9 +139,7 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
 
     See :func:`WeierstrassForm_P3`
 
-    OUTPUT:
-
-    A triple consisting of
+    OUTPUT: a triple consisting of
 
     - The quaternary biquadratic as an algebraic form
       :class:`~sage.rings.invariant_theory.TwoQuaternaryQuadratics`

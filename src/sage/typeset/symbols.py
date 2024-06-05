@@ -135,9 +135,7 @@ class CompoundSymbol(SageObject):
 
         - ``num_lines`` -- integer. The total number of lines.
 
-        OUTPUT:
-
-        List of strings / unicode strings.
+        OUTPUT: list of strings / unicode strings
 
         EXAMPLES::
 

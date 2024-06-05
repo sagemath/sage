@@ -55,9 +55,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     - ``algorithm`` -- ``'default'`` or ``'magma'``. If set to ``'magma'``, uses
       Magma to parameterize Mestre's conic (needs Magma to be installed).
 
-    OUTPUT:
-
-    A hyperelliptic curve object.
+    OUTPUT: a hyperelliptic curve object
 
     EXAMPLES:
 
@@ -232,9 +230,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
       returns three invariants `x`,`y`,`z` used in Mestre's algorithm
     - ``names`` (default: ``'u,v,w'``) -- the variable names for the conic
 
-    OUTPUT:
-
-    A Conic object
+    OUTPUT: a Conic object
 
     EXAMPLES:
 

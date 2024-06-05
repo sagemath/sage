@@ -148,9 +148,7 @@ cdef class SymbolicSeries(Expression):
         request terminating series by setting the order to
         positive infinity.
 
-        OUTPUT:
-
-        Boolean. ``True`` if the series has no order term.
+        OUTPUT: boolean; ``True`` if the series has no order term
 
         EXAMPLES::
 
@@ -170,9 +168,7 @@ cdef class SymbolicSeries(Expression):
         Given a power series or expression, return the corresponding
         expression without the big oh.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -214,9 +210,7 @@ cdef class SymbolicSeries(Expression):
         -  ``sparse`` -- Boolean. If ``False`` return a list with as much
             entries as the order of the series.
 
-        OUTPUT:
-
-        Depending on the value of ``sparse``,
+        OUTPUT: depending on the value of ``sparse``,
 
         - A list of pairs ``(expr, n)``, where ``expr`` is a symbolic
           expression and ``n`` is a power (``sparse=True``, default)

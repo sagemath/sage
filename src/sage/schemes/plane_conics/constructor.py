@@ -93,9 +93,7 @@ def Conic(base_field, F=None, names=None, unique=True):
       If the conic through the points is not unique, then
       raise :class:`ValueError` if and only if ``unique`` is ``True``
 
-    OUTPUT:
-
-    A plane projective conic curve defined by ``F`` over a field.
+    OUTPUT: a plane projective conic curve defined by ``F`` over a field
 
     EXAMPLES:
 

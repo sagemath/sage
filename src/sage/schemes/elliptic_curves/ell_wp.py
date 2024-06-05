@@ -266,9 +266,7 @@ def compute_wp_fast(k, A, B, m):
     - ``B`` -- as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
     - ``m`` -- the precision to which the function is computed to.
 
-    OUTPUT:
-
-    the Weierstrass `\wp` function as a Laurent series to precision `m`.
+    OUTPUT: the Weierstrass `\wp` function as a Laurent series to precision `m`
 
     ALGORITHM:
 

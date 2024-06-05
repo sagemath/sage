@@ -242,9 +242,7 @@ class CharacterArt(SageObject):
         connected to a terminal. Otherwise you should treat ``stdout`` as
         being redirected to a file.
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -560,9 +558,7 @@ class CharacterArt(SageObject):
         r"""
         Return the length (width) of the ASCII art object.
 
-        OUTPUT:
-
-        Integer. The number of characters in each line.
+        OUTPUT: integer; the number of characters in each line
 
         TESTS::
 
@@ -582,9 +578,7 @@ class CharacterArt(SageObject):
         r"""
         Return the height of the ASCII art object.
 
-        OUTPUT:
-
-        Integer. The number of lines.
+        OUTPUT: integer; the number of lines
 
         TESTS::
 

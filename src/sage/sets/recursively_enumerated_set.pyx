@@ -705,9 +705,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         It is currently implemented only for graded or symmetric structure.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -733,9 +731,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -760,9 +756,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -916,9 +910,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         - ``loops`` -- (default: ``True``) option for the digraph
         - ``multiedges`` -- (default: ``True``) option of the digraph
 
-        OUTPUT:
-
-        A directed graph
+        OUTPUT: a directed graph
 
         .. WARNING::
 
@@ -1079,9 +1071,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         The enumeration remembers only the last two graded components
         generated since the structure is symmetric.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -1162,9 +1152,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -1331,9 +1319,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
         The algorithm remembers only the current graded component generated
         since the structure is graded.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -1384,9 +1370,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 

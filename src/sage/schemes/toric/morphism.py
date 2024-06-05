@@ -405,7 +405,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
     - ``check`` -- if ``True`` (default), the input will be checked for
       correctness.
 
-    OUTPUT: A :class:`SchemeMorphism_point_toric_field`.
+    OUTPUT: a :class:`SchemeMorphism_point_toric_field`
 
     TESTS::
 
@@ -466,7 +466,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
     Same as for
     :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial`.
 
-    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
+    OUTPUT: a :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`
 
     TESTS::
 
@@ -519,7 +519,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
         """
         Express the morphism as a map defined by a fan morphism.
 
-        OUTPUT: A :class:`SchemeMorphism_polynomial_toric_variety`.
+        OUTPUT: a :class:`SchemeMorphism_polynomial_toric_variety`
 
         This raises a :class:`TypeError` if the morphism cannot be written
         in such a way.
@@ -605,7 +605,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         r"""
         Return the cone corresponding to the torus orbit.
 
-        OUTPUT: A cone of the fan of the ambient toric variety.
+        OUTPUT: a cone of the fan of the ambient toric variety
 
         EXAMPLES::
 
@@ -657,9 +657,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         """
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -679,9 +677,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         """
         Express the morphism via homogeneous polynomials.
 
-        OUTPUT:
-
-        A :class:`SchemeMorphism_polynomial_toric_variety`.
+        OUTPUT: a :class:`SchemeMorphism_polynomial_toric_variety`
 
         This raises a :class:`TypeError` if the morphism cannot be
         written in terms of homogeneous polynomials.
@@ -803,7 +799,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         :class:`SchemeMorphism_fan_toric_variety_dominant` for
         additional functionality for fibrations.
 
-    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety`.
+    OUTPUT: a :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety`
 
     EXAMPLES::
 
@@ -872,7 +868,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         - ``right`` -- another toric morphism
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         Comparison is done first by domain, then by codomain, then by
         fan morphism.
@@ -913,7 +909,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         - ``right`` -- a toric morphism defined by a fan morphism.
 
-        OUTPUT: A toric morphism.
+        OUTPUT: a toric morphism
 
         EXAMPLES::
 
@@ -938,9 +934,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1050,7 +1044,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         Return the defining fan morphism.
 
-        OUTPUT: A :class:`~sage.geometry.fan_morphism.FanMorphism`.
+        OUTPUT: a :class:`~sage.geometry.fan_morphism.FanMorphism`
 
         EXAMPLES::
 
@@ -1070,7 +1064,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         Express the morphism via homogeneous polynomials.
 
-        OUTPUT: A :class:`SchemeMorphism_polynomial_toric_variety`.
+        OUTPUT: a :class:`SchemeMorphism_polynomial_toric_variety`
 
         This raises a :class:`TypeError` if the morphism cannot be written
         in terms of homogeneous polynomials.
@@ -1159,9 +1153,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         :meth:`~sage.geometry.fan_morphism.FanMorphism.is_injective`
         for fan morphisms for a description of the toric algorithm.
 
-        OUTPUT:
-
-        Boolean. Whether ``self`` is injective.
+        OUTPUT: boolean. Whether ``self`` is injective
 
         EXAMPLES::
 
@@ -1191,9 +1183,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         :meth:`~sage.geometry.fan_morphism.FanMorphism.is_surjective`
         for fan morphisms for a description of the toric algorithm.
 
-        OUTPUT:
-
-        Boolean. Whether ``self`` is surjective.
+        OUTPUT: boolean. Whether ``self`` is surjective
 
         EXAMPLES::
 
@@ -1223,9 +1213,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         :meth:`~sage.geometry.fan_morphism.FanMorphism.is_birational`
         for fan morphisms for a description of the toric algorithm.
 
-        OUTPUT:
-
-        Boolean. Whether ``self`` is birational.
+        OUTPUT: boolean. Whether ``self`` is birational
 
         EXAMPLES::
 
@@ -1251,9 +1239,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         :meth:`~sage.geometry.fan_morphism.FanMorphism.is_dominant`
         for fan morphisms for a description of the toric algorithm.
 
-        OUTPUT:
-
-        Boolean. Whether ``self`` is a dominant scheme morphism.
+        OUTPUT: boolean. Whether ``self`` is a dominant scheme morphism
 
         EXAMPLES::
 
@@ -1335,7 +1321,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
     morphism :meth:`must be dominant
     <sage.geometry.fan_morphism.FanMorphism.is_dominant>`.
 
-    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety_dominant`.
+    OUTPUT: a :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety_dominant`
 
     EXAMPLES::
 
@@ -1708,9 +1694,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         """
         Return a string representation of the definition of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1726,9 +1710,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         """
         Express the embedding morphism via homogeneous polynomials.
 
-        OUTPUT:
-
-        A :class:`SchemeMorphism_polynomial_toric_variety`.
+        OUTPUT: a :class:`SchemeMorphism_polynomial_toric_variety`
 
         This raises a :class:`ValueError` if the morphism cannot be
         written in terms of homogeneous polynomials.
@@ -1778,9 +1760,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         """
         Construct the fiber component as a toric variety.
 
-        OUTPUT:
-
-        The fiber component as a toric variety.
+        OUTPUT: the fiber component as a toric variety
 
         EXAMPLES::
 
@@ -1854,9 +1834,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         r"""
         Return the cone corresponding to the fiber torus orbit.
 
-        OUTPUT:
-
-        A cone of the fan of the total space of the toric fibration.
+        OUTPUT: a cone of the fan of the total space of the toric fibration
 
         EXAMPLES::
 
@@ -1879,9 +1857,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
 
         The fiber is constant over the base orbit closure `V(\sigma)`.
 
-        OUTPUT:
-
-        A cone of the base of the toric fibration.
+        OUTPUT: a cone of the base of the toric fibration
 
         EXAMPLES::
 

@@ -212,9 +212,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
         - ``right`` -- vector.
 
-        OUTPUT:
-
-        A :class:`TypeError` exception is raised.
+        OUTPUT: a :class:`TypeError` exception is raised
 
         TESTS::
 
@@ -266,9 +264,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
         r"""
         Return a divisor representing this divisor class.
 
-        OUTPUT:
-
-        An instance of :class:`ToricDivisor` representing ``self``.
+        OUTPUT: an instance of :class:`ToricDivisor` representing ``self``
 
         EXAMPLES::
 

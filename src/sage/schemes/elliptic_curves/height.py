@@ -381,9 +381,7 @@ class UnionOfIntervals:
 
         - ``left``, ``right`` (UnionOfIntervals) -- two UnionOfIntervals instances
 
-        OUTPUT:
-
-        A new UnionOfIntervals instance representing the union of ``left`` and ``right``.
+        OUTPUT: a new UnionOfIntervals instance representing the union of ``left`` and ``right``
 
         EXAMPLES::
 
@@ -405,9 +403,7 @@ class UnionOfIntervals:
 
         - ``left``, ``right`` (UnionOfIntervals) -- two UnionOfIntervals instances
 
-        OUTPUT:
-
-        A new UnionOfIntervals instance representing the intersection of ``left`` and ``right``.
+        OUTPUT: a new UnionOfIntervals instance representing the intersection of ``left`` and ``right``
 
         EXAMPLES::
 
@@ -429,9 +425,7 @@ class UnionOfIntervals:
 
         - ``x`` (real) -- a real number
 
-        OUTPUT:
-
-        Boolean: True if and only if ``x`` is in the union of intervals.
+        OUTPUT: boolean: True if and only if ``x`` is in the union of intervals
 
         EXAMPLES::
 
@@ -864,9 +858,7 @@ class EllipticCurveCanonicalHeight:
 
         - ``P`` -- a point on the elliptic curve.
 
-        OUTPUT:
-
-        The canonical height of ``P``.
+        OUTPUT: the canonical height of ``P``
 
         EXAMPLES::
 

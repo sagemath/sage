@@ -257,9 +257,7 @@ class AlgebraicScheme(scheme.Scheme):
         Return True if self is presented as a subscheme of an ambient
         projective space.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -604,9 +602,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         preferred method to construct such subschemes is to use
         :meth:`complement` method of algebraic schemes.
 
-    OUTPUT:
-
-    An instance of :class:`AlgebraicScheme_quasi`.
+    OUTPUT: an instance of :class:`AlgebraicScheme_quasi`
 
     EXAMPLES::
 
@@ -1152,9 +1148,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         Return the ideal that defines this scheme as a subscheme
         of its ambient space.
 
-        OUTPUT:
-
-        An ideal in the coordinate ring of the ambient space.
+        OUTPUT: an ideal in the coordinate ring of the ambient space
 
         EXAMPLES::
 
@@ -1176,9 +1170,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         r"""
         Return the codimension of the algebraic subscheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1277,7 +1269,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         r"""
         Return whether this subscheme is or is not irreducible.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1312,9 +1304,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         Return the matrix `\frac{\partial f_i}{\partial x_j}` of
         (formal) partial derivatives.
 
-        OUTPUT:
-
-        A matrix of polynomials.
+        OUTPUT: a matrix of polynomials
 
         EXAMPLES::
 
@@ -1355,9 +1345,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
           Jacobian ideal. An example of a reference that does include
           the defining equations is [Laz2004]_, p. 181.
 
-        OUTPUT:
-
-        An ideal in the coordinate ring of the ambient space.
+        OUTPUT: an ideal in the coordinate ring of the ambient space
 
         EXAMPLES::
 
@@ -1484,7 +1472,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         INPUT: ``m`` -- integer.
 
-        OUTPUT: subscheme of product of ambient spaces.
+        OUTPUT: subscheme of product of ambient spaces
 
         EXAMPLES::
 
@@ -1547,7 +1535,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         - ``right`` -- a subscheme of similar type
 
-        OUTPUT: a subscheme of a the product of the ambient spaces.
+        OUTPUT: a subscheme of a the product of the ambient spaces
 
         EXAMPLES::
 
@@ -2006,7 +1994,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         If the input and the output ideals are radical, this is
         equivalent to the statement about algebraic varieties above.
 
-        OUTPUT: Affine subscheme - the Weil restriction of ``self``.
+        OUTPUT: affine subscheme - the Weil restriction of ``self``.
 
         EXAMPLES::
 

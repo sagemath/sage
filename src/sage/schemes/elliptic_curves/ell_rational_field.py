@@ -4250,7 +4250,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         r"""
         Return the torsion subgroup of this elliptic curve.
 
-        OUTPUT: The EllipticCurveTorsionSubgroup instance associated to
+        OUTPUT: the EllipticCurveTorsionSubgroup instance associated to
         this elliptic curve.
 
         .. NOTE::
@@ -4298,7 +4298,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         Return the torsion points of this elliptic curve as a sorted
         list.
 
-        OUTPUT: A list of all the torsion points on this elliptic curve.
+        OUTPUT: a list of all the torsion points on this elliptic curve
 
         EXAMPLES::
 
@@ -5249,7 +5249,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         that in each class there is at least one, more precisely the so-called
         strong Weil curve or `X_0(N)`-optimal curve, that has Manin constant `1`.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         This function only works if the curve is in the installed
         Cremona database.  Sage includes by default a small database;
@@ -5322,9 +5322,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         curves and corresponding dictionary of shortest isogeny paths
         from self to each other curve in the isogeny class.
 
-        OUTPUT:
-
-        list, dict
+        OUTPUT: list, dict
 
         EXAMPLES::
 
@@ -5609,7 +5607,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         The ``order`` parameter is the number of terms used in the summation.
 
-        OUTPUT: A list of values for `s` in ``points``
+        OUTPUT: a list of values for `s` in ``points``
 
         EXAMPLES::
 
@@ -6038,7 +6036,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - ``verbose`` -- boolean (default: ``False``); if ``True``,
           some details of the computation are output
 
-        OUTPUT: A sorted list of all the integral points on `E` (up to sign
+        OUTPUT: a sorted list of all the integral points on `E` (up to sign
         unless ``both_signs`` is ``True``)
 
         .. NOTE::

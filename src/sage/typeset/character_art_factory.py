@@ -78,9 +78,7 @@ class CharacterArtFactory(SageObject):
           we want
         - ``baseline`` -- (optional) the baseline of the object
 
-        OUTPUT:
-
-        Character art object.
+        OUTPUT: character art object
 
         EXAMPLES::
 
@@ -138,9 +136,7 @@ class CharacterArtFactory(SageObject):
         """
         Return the empty character art object
 
-        OUTPUT:
-
-        Character art instance.
+        OUTPUT: character art instance
 
         EXAMPLES::
 
@@ -154,9 +150,7 @@ class CharacterArtFactory(SageObject):
         """
         Return the character art object created by the object's magic method
 
-        OUTPUT:
-
-        Character art instance.
+        OUTPUT: character art instance
 
         EXAMPLES::
 
@@ -183,9 +177,7 @@ class CharacterArtFactory(SageObject):
         - ``obj`` -- utf-8 encoded byte string or unicode
         - ``baseline`` -- (default: 0) the baseline of the object
 
-        OUTPUT:
-
-        Character art instance.
+        OUTPUT: character art instance
 
         EXAMPLES::
 

@@ -132,9 +132,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
 
         - ``i`` -- an int
 
-        OUTPUT:
-
-        an int
+        OUTPUT: an int
 
         EXAMPLES::
 
@@ -477,9 +475,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
 
         - ``i`` -- an int
 
-        OUTPUT:
-
-        an int
+        OUTPUT: an int
 
         EXAMPLES::
 

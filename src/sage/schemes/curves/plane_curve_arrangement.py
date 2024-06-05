@@ -138,9 +138,7 @@ class PlaneCurveArrangementElement(Element):
         r"""
         Return the number of curves in the arrangement.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -159,9 +157,7 @@ class PlaneCurveArrangementElement(Element):
         r"""
         Return the curves in the arrangement as a tuple.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: a tuple
 
         EXAMPLES::
 
@@ -182,9 +178,7 @@ class PlaneCurveArrangementElement(Element):
         r"""
         String representation for a curve arrangement.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -237,9 +231,7 @@ class PlaneCurveArrangementElement(Element):
         - ``other`` -- a curve arrangement or something that can
           be converted into a curve arrangement
 
-        OUTPUT:
-
-        A new curve arrangement.
+        OUTPUT: a new curve arrangement
 
         EXAMPLES::
 
@@ -334,9 +326,7 @@ class PlaneCurveArrangementElement(Element):
         """
         Return the coordinate ring of ``self``.
 
-        OUTPUT:
-
-        The coordinate ring of the curve arrangement.
+        OUTPUT: the coordinate ring of the curve arrangement
 
         EXAMPLES::
 
@@ -499,9 +489,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         - ``projective`` -- boolean (default: ``False``); to be used in the
           method for projective curves
 
-        OUTPUT:
-
-        A finitely presented group.
+        OUTPUT: a finitely presented group
 
         .. NOTE::
 
@@ -832,9 +820,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         - ``simplified`` -- boolean (default: ``True``); set if the group
           is simplified
 
-        OUTPUT:
-
-        A finitely presented group.
+        OUTPUT: a finitely presented group
 
         .. NOTE::
 
@@ -1045,9 +1031,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         Return the coordinate ring.
 
-        OUTPUT:
-
-        The coordinate ring of the curve arrangement.
+        OUTPUT: the coordinate ring of the curve arrangement
 
         EXAMPLES::
 
@@ -1106,9 +1090,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1182,9 +1164,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         Return the number of variables, i.e. 2 or 3, kept for completness.
 
-        OUTPUT:
-
-        An integer, 2 or 3, depending if the arrangement is projective or affine.
+        OUTPUT: an integer, 2 or 3, depending if the arrangement is projective or affine
 
         EXAMPLES::
 
@@ -1201,9 +1181,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         Return the coordinates.
 
-        OUTPUT:
-
-        A tuple of linear expressions, one for each linear variable.
+        OUTPUT: a tuple of linear expressions, one for each linear variable
 
         EXAMPLES::
 
@@ -1224,9 +1202,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        A variable.
+        OUTPUT: a variable
 
         EXAMPLES::
 

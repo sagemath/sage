@@ -766,9 +766,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
           by default, and possible options are (non-exhaustive list, see note below):
           ``'real'``, ``'complex'``, ``'positive'``, ``'integer'`` and ``'noninteger'``
 
-        OUTPUT:
-
-        Symbolic expression or tuple of symbolic expressions.
+        OUTPUT: symbolic expression or tuple of symbolic expressions
 
         .. SEEALSO::
 
@@ -1065,9 +1063,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
           then a symbolic subring of constant expressions (i.e.,
           expressions without a variable) is created.
 
-        OUTPUT:
-
-        A ring.
+        OUTPUT: a ring
 
         EXAMPLES:
 
@@ -1342,9 +1338,7 @@ def isidentifier(x):
 
     - ``x`` -- a string
 
-    OUTPUT:
-
-    Boolean. Whether the string ``x`` can be used as a variable name.
+    OUTPUT: boolean. Whether the string ``x`` can be used as a variable name
 
     This function should return ``False`` for keywords, so we can not
     just use the ``isidentifier`` method of strings,

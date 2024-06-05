@@ -175,9 +175,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         The normalized form of :class:`RealSet` has all intervals
         non-empty, so this method usually returns ``False``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -191,9 +189,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return whether the interval consists of a single point
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -207,9 +203,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return the lower bound
 
-        OUTPUT:
-
-        The lower bound as it was originally specified.
+        OUTPUT: the lower bound as it was originally specified
 
         EXAMPLES::
 
@@ -228,9 +222,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return the upper bound
 
-        OUTPUT:
-
-        The upper bound as it was originally specified.
+        OUTPUT: the upper bound as it was originally specified
 
         EXAMPLES::
 
@@ -249,9 +241,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return whether the interval is open at the lower bound
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -272,9 +262,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return whether the interval is closed at the lower bound
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -295,9 +283,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return whether the interval is closed at the upper bound
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -318,9 +304,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return whether the interval is closed at the upper bound
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -375,9 +359,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return a string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -523,9 +505,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return the closure
 
-        OUTPUT:
-
-        The closure as a new :class:`InternalRealInterval`
+        OUTPUT: the closure as a new :class:`InternalRealInterval`
 
         EXAMPLES::
 
@@ -548,9 +528,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return the interior
 
-        OUTPUT:
-
-        The interior as a new :class:`InternalRealInterval`
+        OUTPUT: the interior as a new :class:`InternalRealInterval`
 
         EXAMPLES::
 
@@ -633,9 +611,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         Return the convex hull of the two intervals
 
-        OUTPUT:
-
-        The convex hull as a new :class:`InternalRealInterval`.
+        OUTPUT: the convex hull as a new :class:`InternalRealInterval`
 
         EXAMPLES::
 
@@ -686,9 +662,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
 
         - ``other`` -- a :class:`InternalRealInterval`
 
-        OUTPUT:
-
-        The intersection as a new :class:`InternalRealInterval`
+        OUTPUT: the intersection as a new :class:`InternalRealInterval`
 
         EXAMPLES::
 
@@ -745,9 +719,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
 
         - ``x`` -- a real number.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1117,9 +1089,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         See :class:`RealSet`.
 
-        OUTPUT:
-
-        A :class:`RealSet`.
+        OUTPUT: a :class:`RealSet`
 
         EXAMPLES::
 
@@ -1383,9 +1353,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         r"""
         Iterate over the component intervals is ascending order
 
-        OUTPUT:
-
-        An iterator over the intervals.
+        OUTPUT: an iterator over the intervals
 
         EXAMPLES::
 
@@ -1567,9 +1535,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         - ``intervals`` -- a list/tuple/iterable of intervals.
 
-        OUTPUT:
-
-        A tuple of intervals such that
+        OUTPUT: a tuple of intervals such that
 
         * they are sorted in ascending order (by lower bound)
 
@@ -1593,9 +1559,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string representation.
+        OUTPUT: a string representation
 
         EXAMPLES::
 
@@ -1747,9 +1711,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         - ``**kwds`` -- see :class:`RealSet`.
 
-        OUTPUT:
-
-        A new :class:`RealSet`.
+        OUTPUT: a new :class:`RealSet`
 
         EXAMPLES::
 
@@ -1773,9 +1735,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         - ``**kwds`` -- see :class:`RealSet`.
 
-        OUTPUT:
-
-        A new :class:`RealSet`.
+        OUTPUT: a new :class:`RealSet`
 
         EXAMPLES::
 
@@ -1797,9 +1757,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         - ``**kwds`` -- see :class:`RealSet`.
 
-        OUTPUT:
-
-        A new :class:`RealSet`.
+        OUTPUT: a new :class:`RealSet`
 
         EXAMPLES::
 
@@ -1820,9 +1778,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         - ``**kwds`` -- see :class:`RealSet`.
 
-        OUTPUT:
-
-        A new :class:`RealSet`.
+        OUTPUT: a new :class:`RealSet`
 
         EXAMPLES::
 
@@ -2048,9 +2004,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
           ``(x, epsilon), delta``, see :meth:`_scan`
         - ``condition`` -- a function indicating the on or off boundary points
 
-        OUTPUT:
-
-        Generate :class:`InternalRealInterval` objects.
+        OUTPUT: generate :class:`InternalRealInterval` objects
 
         EXAMPLES::
 
@@ -2224,9 +2178,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         Return the infimum
 
-        OUTPUT:
-
-        A real number or infinity.
+        OUTPUT: a real number or infinity
 
         EXAMPLES::
 
@@ -2248,9 +2200,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         Return the supremum
 
-        OUTPUT:
-
-        A real number or infinity.
+        OUTPUT: a real number or infinity
 
         EXAMPLES::
 
@@ -2374,9 +2324,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         - ``x`` -- a real number.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2412,9 +2360,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         - ``*other`` -- a :class:`RealSet` or something that defines
           one.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2434,9 +2380,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         Return a point of the set
 
-        OUTPUT:
-
-        A real number.
+        OUTPUT: a real number
 
         It raises an :class:`~sage.categories.sets_cat.EmptySetError` if the set is empty.
 
@@ -2578,9 +2522,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         - ``*real_set_collection`` -- a list/tuple/iterable of :class:`RealSet`
           or data that defines one.
 
-        OUTPUT:
-
-        The convex hull as a new :class:`RealSet`.
+        OUTPUT: the convex hull as a new :class:`RealSet`
 
         EXAMPLES::
 
@@ -2629,9 +2571,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         Return whether ``self`` is a connected set.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2664,9 +2604,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
         - ``other`` -- a :class:`RealSet` or data defining one.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO:: :meth:`are_pairwise_disjoint`
 
@@ -2698,9 +2636,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         - ``*real_set_collection`` -- a list/tuple/iterable of :class:`RealSet`
           or data that defines one.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO:: :meth:`is_disjoint`
 

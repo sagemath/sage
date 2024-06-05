@@ -193,9 +193,7 @@ cdef class PeriodicRegion:
         - ``times`` (int, default 1) -- the number of times to refine;
           each refinement step halves the mesh size.
 
-        OUTPUT:
-
-        The refined PeriodicRegion.
+        OUTPUT: the refined PeriodicRegion
 
         EXAMPLES::
 

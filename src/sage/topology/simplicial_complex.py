@@ -1600,9 +1600,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         This is the bivariate generating polynomial of all faces,
         according to the number of elements in ``S`` and outside ``S``.
 
-        OUTPUT:
-
-        an :class:`~sage.combinat.triangles_FHM.F_triangle`
+        OUTPUT: an :class:`~sage.combinat.triangles_FHM.F_triangle`
 
         .. SEEALSO::
 

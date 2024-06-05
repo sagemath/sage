@@ -238,7 +238,7 @@ cdef class CategoryObject(SageObject):
         Return the underlying class (class without the attached
         categories) of the given object.
 
-        OUTPUT: A class
+        OUTPUT: a class
 
         EXAMPLES::
 
@@ -490,7 +490,7 @@ cdef class CategoryObject(SageObject):
         """
         Return the first variable name.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -937,7 +937,7 @@ cpdef normalize_names(Py_ssize_t ngens, names):
 
       - a string of single character names, such as 'xyz'
 
-    OUTPUT: a tuple of ``ngens`` strings to be used as variable names.
+    OUTPUT: a tuple of ``ngens`` strings to be used as variable names
 
     EXAMPLES::
 

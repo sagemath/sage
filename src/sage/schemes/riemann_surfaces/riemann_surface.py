@@ -206,9 +206,7 @@ def bisect(L, t):
 
     - ``t`` -- A real number between `t_0` and `t_n`.
 
-    OUTPUT:
-
-    An integer i, giving the position in L where t would be in
+    OUTPUT: an integer i, giving the position in L where t would be in
 
     EXAMPLES:
 
@@ -424,9 +422,7 @@ def reparameterize_differential_minpoly(minpoly, z0):
     - ``z0`` -- complex number or infinity; the point about which to
       reparameterize
 
-    OUTPUT:
-
-    A polynomial in two variables giving the reparameterize minimal polynomial.
+    OUTPUT: a polynomial in two variables giving the reparameterize minimal polynomial
 
     EXAMPLES:
 
@@ -864,9 +860,7 @@ class RiemannSurface:
         The result of this routine can be useful to interpret the labelling of
         the vertices. See also :meth:`upstairs_graph`.
 
-        OUTPUT:
-
-        The Voronoi decomposition as a graph, with appropriate planar embedding.
+        OUTPUT: the Voronoi decomposition as a graph, with appropriate planar embedding
 
         EXAMPLES::
 
@@ -934,9 +928,7 @@ class RiemannSurface:
         - ``wvalues`` -- a list (default: ``None``). If specified, saves
           recomputation.
 
-        OUTPUT:
-
-        A real number, which is a step size for moving along a path.
+        OUTPUT: a real number, which is a step size for moving along a path
 
         EXAMPLES:
 
@@ -1802,9 +1794,7 @@ class RiemannSurface:
           represents the differential `g(z,w)/(df/dw) dz` where `f(z,w)=0` is
           the equation defining the Riemann surface.
 
-        OUTPUT:
-
-        A complex number, the value of the line integral.
+        OUTPUT: a complex number, the value of the line integral
 
         EXAMPLES::
 
@@ -2070,9 +2060,7 @@ class RiemannSurface:
           the integrands. This should be in the form of the output from
           :meth:`_bounding_data`.
 
-        OUTPUT:
-
-        A complex number, the value of the line integral.
+        OUTPUT: a complex number, the value of the line integral
 
         EXAMPLES::
 
@@ -2373,9 +2361,7 @@ class RiemannSurface:
         r"""
         Compute the period matrix of the surface.
 
-        OUTPUT:
-
-        A matrix of complex values.
+        OUTPUT: a matrix of complex values
 
         EXAMPLES::
 
@@ -2414,9 +2400,7 @@ class RiemannSurface:
         r"""
         Compute the Riemann matrix.
 
-        OUTPUT:
-
-        A matrix of complex values.
+        OUTPUT: a matrix of complex values
 
         EXAMPLES::
 
@@ -2635,9 +2619,7 @@ class RiemannSurface:
         - ``other`` (default: ``self``) -- the codomain, another Riemann
           surface.
 
-        OUTPUT:
-
-        The numerical tangent representations of the matrices in ``Rs``.
+        OUTPUT: the numerical tangent representations of the matrices in ``Rs``
 
         EXAMPLES::
 
@@ -2691,9 +2673,7 @@ class RiemannSurface:
           determine whether a complex number is close enough to a root of a
           polynomial.
 
-        OUTPUT:
-
-        The algebraic tangent representations of the matrices in ``Rs``.
+        OUTPUT: the algebraic tangent representations of the matrices in ``Rs``
 
         EXAMPLES::
 
@@ -2753,9 +2733,7 @@ class RiemannSurface:
 
         - ``R`` -- integral matrix.
 
-        OUTPUT:
-
-        The result of applying the Rosati involution to ``R``.
+        OUTPUT: the result of applying the Rosati involution to ``R``
 
         EXAMPLES::
 
@@ -3284,7 +3262,7 @@ class RiemannSurface:
           we are using the convention that the `w` value over `\infty` is given by
           the limit as ``z`` tends to `\infty` of ``self.w_values(z)[branch]``.
 
-        OUTPUT: A vector of length ``self.genus``.
+        OUTPUT: a vector of length ``self.genus``
 
         EXAMPLES:
 
@@ -3514,7 +3492,7 @@ class RiemannSurface:
           of the computation, in terms of how many elements of the list ``divisor``
           have been completed.
 
-        OUTPUT: A vector of length ``self.genus``.
+        OUTPUT: a vector of length ``self.genus``
 
         EXAMPLES:
 
@@ -3681,7 +3659,7 @@ class RiemannSurface:
         For others, the curve is constructed and cached, so that an identical curve is
         returned upon subsequent calls.
 
-        OUTPUT: Curve from which Riemann surface is obtained.
+        OUTPUT: curve from which Riemann surface is obtained
 
         EXAMPLES::
 

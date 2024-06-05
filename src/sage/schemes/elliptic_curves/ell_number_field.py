@@ -1343,9 +1343,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             additional factor when the model is not globally minimal,
             as required by the BSD formula.
 
-        OUTPUT:
-
-        A positive integer.
+        OUTPUT: a positive integer
 
         EXAMPLES::
 
@@ -1398,9 +1396,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             of the Tamagawa numbers, so the two definitions only agree
             when the model is global minimal.
 
-        OUTPUT:
-
-        A rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -1461,9 +1457,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           proof module is number_field, not elliptic_curves, since the
           functions that actually need the flag are in number fields.
 
-        OUTPUT:
-
-        The Kodaira Symbol of the curve at ``P``, represented as a string.
+        OUTPUT: the Kodaira Symbol of the curve at ``P``, represented as a string
 
         EXAMPLES::
 
@@ -1922,9 +1916,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         - ``place`` -- a prime ideal in the base field of the curve
 
-        OUTPUT:
-
-        An elliptic curve over a finite field, the residue field of the place.
+        OUTPUT: an elliptic curve over a finite field, the residue field of the place
 
         EXAMPLES::
 
@@ -1971,7 +1963,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         r"""
         Return the torsion subgroup of this elliptic curve.
 
-        OUTPUT: The :class:`EllipticCurveTorsionSubgroup` associated to this elliptic
+        OUTPUT: the :class:`EllipticCurveTorsionSubgroup` associated to this elliptic
         curve.
 
         EXAMPLES::
@@ -3380,7 +3372,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
           computations (default: ``None``, for default RealField
           precision; ignored if ``height_matrix`` is supplied)
 
-        OUTPUT: A tuple (newpoints, U) where U is a unimodular integer
+        OUTPUT: a tuple (newpoints, U) where U is a unimodular integer
         matrix, new_points is the transform of points by U, such that
         new_points has LLL-reduced height pairing matrix
 

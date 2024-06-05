@@ -820,9 +820,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         - ``q`` -- a nonnegative integer, which specifies a state
         - ``r`` -- a real number between 0 and 1
 
-        OUTPUT:
-
-        a nonnegative int
+        OUTPUT: a nonnegative int
 
         EXAMPLES::
 

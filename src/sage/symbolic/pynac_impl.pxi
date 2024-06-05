@@ -929,9 +929,7 @@ def test_binomial(n, k):
 
     - n, k -- integers, with k >= 0.
 
-    OUTPUT:
-
-    integer
+    OUTPUT: integer
 
     EXAMPLES::
 

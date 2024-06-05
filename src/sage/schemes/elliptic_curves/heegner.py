@@ -706,7 +706,7 @@ class GaloisGroup(SageObject):
 
         - `x` -- automorphism or quadratic field element
 
-        OUTPUT: An automorphism (or ``TypeError``)
+        OUTPUT: an automorphism (or ``TypeError``)
 
         EXAMPLES::
 
@@ -4775,7 +4775,7 @@ class HeegnerQuatAlg(SageObject):
 
         - `c` -- positive integer (default: 1)
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4810,7 +4810,7 @@ class HeegnerQuatAlg(SageObject):
 
         - `n` -- positive integer (default: 5)
 
-        OUTPUT: A list.
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -4841,7 +4841,7 @@ class HeegnerQuatAlg(SageObject):
 
         - `n` -- positive integer (default: 5)
 
-        OUTPUT: A list.
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -4969,7 +4969,7 @@ class HeegnerQuatAlg(SageObject):
 
         - `c` -- conductor (positive integer)
 
-        OUTPUT: A Brandt module element.
+        OUTPUT: a Brandt module element
 
         EXAMPLES::
 
@@ -5031,7 +5031,7 @@ class HeegnerQuatAlg(SageObject):
 
         - `p` -- unramified odd prime
 
-        OUTPUT: A 2-tuple of matrices over finite field.
+        OUTPUT: a 2-tuple of matrices over finite field
 
         EXAMPLES::
 
@@ -5253,7 +5253,7 @@ class HeegnerQuatAlg(SageObject):
 
         - `D` -- fundamental discriminant
 
-        OUTPUT: A quadratic number field.
+        OUTPUT: a quadratic number field
 
         EXAMPLES::
 
@@ -5281,7 +5281,7 @@ class HeegnerQuatAlg(SageObject):
         - ``alpha_quaternion`` -- image in the quaternion algebra
           of generator `\alpha` for `(\mathcal{O}_K / c\mathcal{O}_K)^* / (\ZZ/c\ZZ)^*`.
 
-        OUTPUT: A list of 2-tuples.
+        OUTPUT: a list of 2-tuples
 
         EXAMPLES::
 
@@ -5595,7 +5595,7 @@ class HeegnerQuatAlg(SageObject):
 
         - `c` -- conductor (positive integer)
 
-        OUTPUT: Brandt module element (or tuple of them).
+        OUTPUT: Brandt module element (or tuple of them)
 
         EXAMPLES::
 
@@ -6348,7 +6348,7 @@ def make_monic(f):
 
     - `f` -- polynomial over the rational numbers
 
-    OUTPUT: A monic integral polynomial and an integer.
+    OUTPUT: a monic integral polynomial and an integer
 
     EXAMPLES::
 
@@ -6420,7 +6420,7 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
 
     - ``check``  -- bool (default: ``True``)
 
-    OUTPUT: The Heegner point `y_c`.
+    OUTPUT: the Heegner point `y_c`
 
     EXAMPLES::
 
@@ -6479,7 +6479,7 @@ def kolyvagin_point(self, D, c=ZZ(1), check=True):
 
     - ``check``  -- bool (default: ``True``)
 
-    OUTPUT: The Kolyvagin point `P` of conductor `c`.
+    OUTPUT: the Kolyvagin point `P` of conductor `c`
 
     EXAMPLES::
 
@@ -6507,8 +6507,8 @@ def ell_heegner_discriminants(self, bound):
 
     - ``bound (int)`` -- upper bound for -discriminant
 
-    OUTPUT: The list of Heegner discriminants between -1 and -bound for
-    the given elliptic curve.
+    OUTPUT: the list of Heegner discriminants between -1 and -bound for
+    the given elliptic curve
 
     EXAMPLES::
 
@@ -6527,10 +6527,10 @@ def ell_heegner_discriminants_list(self, n):
 
     INPUT:
 
-    - ``n (int)`` -- the number of discriminants to compute
+    - ``n`` -- integer; the number of discriminants to compute
 
-    OUTPUT: The list of the first n Heegner discriminants smaller than
-    -5 for the given elliptic curve.
+    OUTPUT: the list of the first `n` Heegner discriminants smaller than
+    `-5` for the given elliptic curve
 
     EXAMPLES::
 
@@ -6567,7 +6567,7 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
     - ``check_rank`` -- whether to check if the rank is at least 2 by
       computing the Mordell-Weil rank directly.
 
-    OUTPUT: Interval that contains the height of the Heegner point.
+    OUTPUT: interval that contains the height of the Heegner point
 
     EXAMPLES::
 
@@ -6987,7 +6987,7 @@ def _heegner_index_in_EK(self, D):
 
     - `D` -- negative integer; the Heegner discriminant
 
-    OUTPUT: A power of 2 -- the given index.
+    OUTPUT: a power of 2 -- the given index.
 
     EXAMPLES:
 

@@ -456,9 +456,7 @@ def assume(*args):
       The two types can be combined, but a symbolic inequality cannot
       appear in the middle of a list of variables.
 
-    OUTPUT:
-
-    If everything goes as planned, there is no output.
+    OUTPUT: if everything goes as planned, there is no output
 
     If you assume something that is not one of the two forms above, then
     an ``AttributeError`` is raised as we try to call its ``assume``

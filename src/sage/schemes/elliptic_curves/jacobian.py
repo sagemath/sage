@@ -124,7 +124,7 @@ def Jacobian_of_curve(curve, morphism=False):
 
     - ``curve`` -- a one-dimensional algebraic variety of genus one.
 
-    OUTPUT: Its Jacobian elliptic curve.
+    OUTPUT: its Jacobian elliptic curve
 
     EXAMPLES::
 

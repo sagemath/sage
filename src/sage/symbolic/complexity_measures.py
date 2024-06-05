@@ -15,9 +15,7 @@ def string_length(expr):
 
     - ``expr`` -- the expression whose complexity we want to measure.
 
-    OUTPUT:
-
-    A real number representing the complexity of ``expr``.
+    OUTPUT: a real number representing the complexity of ``expr``
 
     RATIONALE:
 

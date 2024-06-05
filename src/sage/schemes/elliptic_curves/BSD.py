@@ -154,7 +154,7 @@ def pari_two_descent_work(E):
 
     - ``E`` -- an elliptic curve
 
-    OUTPUT: A tuple of 5 elements with the first 4 being integers.
+    OUTPUT: a tuple of 5 elements with the first 4 being integers
 
     - a lower bound on the rank
 

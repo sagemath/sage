@@ -828,9 +828,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
           is, parenthesis are not required when *printing* out any of
           `x - y`, `x + y`, `x^y` and `x/y`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

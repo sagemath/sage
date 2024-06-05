@@ -554,9 +554,7 @@ def _subs_make_dict(s):
 
     -  ``s`` -- A representation of a substitution.
 
-    OUTPUT:
-
-    A dictionary of substitutions.
+    OUTPUT: a dictionary of substitutions
 
     EXAMPLES:
 
@@ -631,9 +629,7 @@ def _subs_fun_make_dict(s):
 
     -  ``s`` -- A representation of a substitution.
 
-    OUTPUT:
-
-    A dictionary of substitutions.
+    OUTPUT: a dictionary of substitutions
 
     EXAMPLES:
 
@@ -1069,9 +1065,7 @@ cdef class Expression(Expression_abc):
         - ``use_unicode`` -- boolean. Whether to allow unicode instead
           of 7-bit clean output.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1927,9 +1921,7 @@ cdef class Expression(Expression_abc):
 
         Otherwise, raise a :class:`TypeError`.
 
-        OUTPUT:
-
-        A ``float``. Double precision evaluation of ``self``.
+        OUTPUT: a ``float``. Double precision evaluation of ``self``
 
         EXAMPLES::
 
@@ -3554,9 +3546,7 @@ cdef class Expression(Expression_abc):
           interval field, regard overlapping (potentially equal) intervals as
           equal, and return ``True`` if all tests succeeded.
 
-        OUTPUT:
-
-        Boolean or ``NotImplemented``, meaning
+        OUTPUT: boolean or ``NotImplemented``, meaning
 
         - ``True`` -- this relation holds in the domain and has no variables.
 
@@ -4252,9 +4242,7 @@ cdef class Expression(Expression_abc):
 
         - ``right`` -- A :class:`Expression` instance.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4280,9 +4268,7 @@ cdef class Expression(Expression_abc):
 
         - ``right`` -- A :class:`Expression` instance.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4304,9 +4290,7 @@ cdef class Expression(Expression_abc):
         r"""
         Return ``self`` raised to the power ``other``.
 
-        OUTPUT:
-
-        A symbolic expression
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -4801,9 +4785,7 @@ cdef class Expression(Expression_abc):
           to the global default (``20``), which can be changed
           using :func:`set_series_precision`
 
-        OUTPUT:
-
-        A power series.
+        OUTPUT: a power series
 
         To truncate the power series and obtain a normal expression, use the
         :meth:`truncate` command.
@@ -4938,9 +4920,7 @@ cdef class Expression(Expression_abc):
           around the value on the right hand side of the equality,
           otherwise at ``0``.
 
-        OUTPUT:
-
-        The residue of ``self``.
+        OUTPUT: the residue of ``self``
 
         Say, ``symbol`` is ``x == a``, then this function calculates
         the residue of ``self`` at `x=a`, i.e., the coefficient of
@@ -5086,9 +5066,7 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- a series as output by the :meth:`series` command.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -5269,9 +5247,7 @@ cdef class Expression(Expression_abc):
            rule, expansion of products (e.g. `\sin(2 x)`) will take place only
            if ``times`` is ``True``.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -5339,9 +5315,7 @@ cdef class Expression(Expression_abc):
           these transformations. If not specified, all variables are
           used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -5380,9 +5354,7 @@ cdef class Expression(Expression_abc):
         -  ``pattern`` -- a symbolic expression, possibly containing wildcards
            to match for
 
-        OUTPUT:
-
-        One of
+        OUTPUT: one of
 
         ``None`` if there is no match, or a dictionary mapping the
         wildcards to the matching values if a match was found. Note
@@ -6142,9 +6114,7 @@ cdef class Expression(Expression_abc):
           not replaced. Otherwise, it is replaced by the output of
           ``replacement``.
 
-        OUTPUT:
-
-        An :class:`Expression`.
+        OUTPUT: an :class:`Expression`
 
         EXAMPLES::
 
@@ -6897,9 +6867,7 @@ cdef class Expression(Expression_abc):
 
         - ``n`` -- expression, default 1
 
-        OUTPUT:
-
-        A symbolic expression. The coefficient of `s^n`.
+        OUTPUT: a symbolic expression. The coefficient of `s^n`
 
         Sometimes it may be necessary to expand or factor first, since this
         is not done automatically.
@@ -6998,9 +6966,7 @@ cdef class Expression(Expression_abc):
 
         -  ``x`` -- optional variable.
 
-        OUTPUT:
-
-        Depending on the value of ``sparse``,
+        OUTPUT: depending on the value of ``sparse``,
 
         - A list of pairs ``(expr, n)``, where ``expr`` is a symbolic
           expression and ``n`` is a power (``sparse=True``, default)
@@ -7211,9 +7177,7 @@ cdef class Expression(Expression_abc):
         """
         Return the exponent of the lowest power of ``s`` in ``self``.
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -7244,9 +7208,7 @@ cdef class Expression(Expression_abc):
         """
         Return the exponent of the highest power of ``s`` in ``self``.
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -9689,9 +9651,7 @@ cdef class Expression(Expression_abc):
         """
         Return the factorial of self.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -9733,9 +9693,7 @@ cdef class Expression(Expression_abc):
         """
         Return binomial coefficient "self choose k".
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -9787,9 +9745,7 @@ cdef class Expression(Expression_abc):
         """
         Return the order of the expression, as in big oh notation.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -10341,9 +10297,7 @@ cdef class Expression(Expression_abc):
 
         -  ``var`` -- variable name or string (default: first variable)
 
-        OUTPUT:
-
-        A symbolic expression
+        OUTPUT: a symbolic expression
 
         .. SEEALSO:: :meth:`partial_fraction_decomposition`
 
@@ -10383,9 +10337,7 @@ cdef class Expression(Expression_abc):
 
         -  ``var`` -- variable name or string (default: first variable)
 
-        OUTPUT:
-
-        A list of symbolic expressions
+        OUTPUT: a list of symbolic expressions
 
         .. SEEALSO:: :meth:`partial_fraction`
 
@@ -12063,9 +12015,7 @@ cdef class Expression(Expression_abc):
         - ``target`` -- (default None) the symbolic expression
           converting to
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 

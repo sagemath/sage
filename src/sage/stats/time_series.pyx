@@ -243,9 +243,7 @@ cdef class TimeSeries:
         time series.  This is useful since vectors have standard
         algebraic structure and play well with matrices.
 
-        OUTPUT:
-
-        A real double vector.
+        OUTPUT: a real double vector
 
         EXAMPLES::
 
@@ -292,9 +290,7 @@ cdef class TimeSeries:
           ``None``. If ``None`` use the default
           ``sage.stats.time_series.digits``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -320,9 +316,7 @@ cdef class TimeSeries:
         r"""
         Return the number of entries in this time series.
 
-        OUTPUT:
-
-        Python integer.
+        OUTPUT: python integer
 
         EXAMPLES::
 
@@ -488,9 +482,7 @@ cdef class TimeSeries:
 
         - ``right`` -- a time series.
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -536,9 +528,7 @@ cdef class TimeSeries:
 
         - ``left``, ``right`` -- an integer and a time series.
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -663,9 +653,7 @@ cdef class TimeSeries:
         Return new time series obtain from this time series by
         reversing the order of the entries in this time series.
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -729,9 +717,7 @@ cdef class TimeSeries:
         Return new time series got by taking the logarithms of all the
         terms in the time series.
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES:
 
@@ -761,9 +747,7 @@ cdef class TimeSeries:
         Return new time series got by applying the exponential map to
         all the terms in the time series.
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES::
 
@@ -785,9 +769,7 @@ cdef class TimeSeries:
         Return new time series got by replacing all entries
         of ``self`` by their absolute value.
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES::
 
@@ -816,9 +798,7 @@ cdef class TimeSeries:
 
         - ``k`` -- positive integer (default: 1)
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES::
 
@@ -845,9 +825,7 @@ cdef class TimeSeries:
 
         - ``k`` -- a positive integer.
 
-        OUTPUT:
-
-        A new time series.
+        OUTPUT: a new time series
 
         EXAMPLES::
 
@@ -920,9 +898,7 @@ cdef class TimeSeries:
 
         - ``s`` -- a float.
 
-        OUTPUT:
-
-        A new time series with all values multiplied by ``s``.
+        OUTPUT: a new time series with all values multiplied by ``s``
 
         EXAMPLES::
 
@@ -949,9 +925,7 @@ cdef class TimeSeries:
 
         - ``s`` -- a float.
 
-        OUTPUT:
-
-        A new time series with ``s`` added to all values.
+        OUTPUT: a new time series with ``s`` added to all values
 
         EXAMPLES::
 
@@ -1105,9 +1079,7 @@ cdef class TimeSeries:
 
         - ``k`` -- positive integer.
 
-        OUTPUT:
-
-        A time series with the same number of steps as ``self``.
+        OUTPUT: a time series with the same number of steps as ``self``
 
         EXAMPLES::
 
@@ -1159,9 +1131,7 @@ cdef class TimeSeries:
 
         - ``alpha`` -- float; a smoothing factor with ``0 <= alpha <= 1``.
 
-        OUTPUT:
-
-        A time series with the same number of steps as ``self``.
+        OUTPUT: a time series with the same number of steps as ``self``
 
         EXAMPLES::
 
@@ -1205,9 +1175,7 @@ cdef class TimeSeries:
 
         - ``s`` -- starting value for partial sums.
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -1229,9 +1197,7 @@ cdef class TimeSeries:
 
         If ``self`` has length 0, returns 0.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1252,9 +1218,7 @@ cdef class TimeSeries:
 
         If ``self`` has length 0, returns 1.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1274,9 +1238,7 @@ cdef class TimeSeries:
         r"""
         Return the mean (average) of the elements of ``self``.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1296,9 +1258,7 @@ cdef class TimeSeries:
 
         - ``k`` -- a float.
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -1322,9 +1282,7 @@ cdef class TimeSeries:
 
         - ``k`` -- a positive integer.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1355,9 +1313,7 @@ cdef class TimeSeries:
 
         - ``k`` -- a positive integer.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1434,9 +1390,7 @@ cdef class TimeSeries:
 
         - ``k`` -- a nonnegative integer (default: 0)
 
-        OUTPUT:
-
-        A float.
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -1522,9 +1476,7 @@ cdef class TimeSeries:
 
         - ``k`` -- a nonnegative integer (default: 1)
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -1556,9 +1508,7 @@ cdef class TimeSeries:
           ``self.length() - 1`` instead of ``self.length()`` to give a less
           biased estimator for the variance.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1600,9 +1550,7 @@ cdef class TimeSeries:
           ``self.length() - 1`` instead of ``self.length()`` to give a less
           biased estimator for the variance.
 
-        OUTPUT:
-
-        A double.
+        OUTPUT: double
 
         EXAMPLES::
 
@@ -1651,9 +1599,7 @@ cdef class TimeSeries:
           blocks, compute the `R/S` statistic for each block,
           and return the average of those `R/S` statistics.
 
-        OUTPUT:
-
-        A float.
+        OUTPUT: float
 
         EXAMPLES:
 
@@ -1811,9 +1757,7 @@ cdef class TimeSeries:
 
         - ``max`` -- (default: ``None``) ``None`` or double.
 
-        OUTPUT:
-
-        A time series.
+        OUTPUT: a time series
 
         EXAMPLES::
 
@@ -1957,9 +1901,7 @@ cdef class TimeSeries:
         - ``normalize`` -- (default: ``True``) whether to normalize so the
           total area in the bars of the histogram is 1.
 
-        OUTPUT:
-
-        A histogram plot.
+        OUTPUT: a histogram plot
 
         EXAMPLES::
 
@@ -1999,9 +1941,7 @@ cdef class TimeSeries:
         - ``bins`` -- positive integer (default: 30), the number of bins
           or candles.
 
-        OUTPUT:
-
-        A candlestick plot.
+        OUTPUT: a candlestick plot
 
         EXAMPLES:
 
@@ -2523,9 +2463,7 @@ cdef new_time_series(Py_ssize_t length):
 
     - ``length`` -- integer
 
-    OUTPUT:
-
-    A time series.
+    OUTPUT: a time series
 
     EXAMPLES:
 

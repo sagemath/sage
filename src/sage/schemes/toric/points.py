@@ -82,7 +82,7 @@ class InfinitePointEnumerator:
         """
         Iterate over the points.
 
-        OUTPUT: Iterator over points.
+        OUTPUT: iterator over points
 
         EXAMPLES::
 
@@ -136,7 +136,7 @@ class NaiveFinitePointEnumerator:
         """
         Return all rays (real and virtual).
 
-        OUTPUT: Tuple of rays of the fan.
+        OUTPUT: tuple of rays of the fan
 
         EXAMPLES::
 
@@ -297,9 +297,7 @@ class NaiveFinitePointEnumerator:
         """
         Return the orbit of homogeneous coordinates under rescalings.
 
-        OUTPUT:
-
-        The set of all homogeneous coordinates that are equivalent to ``point``.
+        OUTPUT: the set of all homogeneous coordinates that are equivalent to ``point``
 
         EXAMPLES::
 
@@ -360,7 +358,7 @@ class NaiveFinitePointEnumerator:
         This method does NOT identify homogeneous coordinates that are
         equivalent by a homogeneous rescaling.
 
-        OUTPUT: An iterator over the points.
+        OUTPUT: an iterator over the points
 
         EXAMPLES::
 
@@ -402,7 +400,7 @@ class NaiveFinitePointEnumerator:
         rescalings, and returns precisely one representative per
         orbit.
 
-        OUTPUT: An iterator over points.
+        OUTPUT: an iterator over points
 
         EXAMPLES::
 
@@ -435,7 +433,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         """
         Return the multiplicative generator of the finite field.
 
-        OUTPUT: A finite field element.
+        OUTPUT: a finite field element
 
         EXAMPLES::
 
@@ -459,7 +457,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
         - ``n`` integer.
 
-        OUTPUT: A multiplicative generator for :meth:`roots`.
+        OUTPUT: a multiplicative generator for :meth:`roots`
 
         EXAMPLES::
 
@@ -703,7 +701,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         rescalings, and returns precisely one representative per
         orbit.
 
-        OUTPUT: Iterator over points.
+        OUTPUT: iterator over points
 
         EXAMPLES::
 
@@ -739,7 +737,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         """
         Return the cardinality of the point set.
 
-        OUTPUT: An integer. The number of points.
+        OUTPUT: an integer. The number of points
 
         EXAMPLES::
 
@@ -938,9 +936,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
           all distinct points as a cokernel. See
           :meth:`FiniteFieldPointEnumerator.cone_points_iter`.
 
-        OUTPUT:
-
-        The same point, but as a tuple of homogeneous coordinates.
+        OUTPUT: the same point, but as a tuple of homogeneous coordinates
 
         EXAMPLES::
 
@@ -999,7 +995,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
         """
         Return the cardinality of the point set.
 
-        OUTPUT: An integer. The number of points.
+        OUTPUT: an integer. The number of points
 
         EXAMPLES::
 

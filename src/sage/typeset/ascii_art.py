@@ -212,9 +212,7 @@ def ascii_art(*obj, **kwds):
 
     - ``sep_baseline`` -- (default: 0) the baseline for the separator
 
-    OUTPUT:
-
-    :class:`AsciiArt` instance.
+    OUTPUT: :class:`AsciiArt` instance
 
     EXAMPLES::
 

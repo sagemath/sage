@@ -2214,7 +2214,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           class, append ``*`` to it to indicate a twist.  Otherwise, if
           ``False`` label vertices by the equation of a representative curve.
 
-        OUTPUT: A :class:`Graph` or :class:`DiGraph`.
+        OUTPUT: a :class:`Graph` or :class:`DiGraph`
 
         EXAMPLES:
 
@@ -2473,9 +2473,7 @@ def compute_model(E, name):
         assuming one exists over this field.
         See :meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.montgomery_model`.
 
-    OUTPUT:
-
-    An elliptic curve of the specified type isomorphic to `E`.
+    OUTPUT: an elliptic curve of the specified type isomorphic to `E`
 
     EXAMPLES::
 

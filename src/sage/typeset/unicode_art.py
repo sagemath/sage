@@ -82,9 +82,7 @@ def unicode_art(*obj, **kwds):
 
     - ``sep_baseline`` -- (default: 0) the baseline for the separator
 
-    OUTPUT:
-
-    :class:`UnicodeArt` instance.
+    OUTPUT: :class:`UnicodeArt` instance
 
     EXAMPLES::
 

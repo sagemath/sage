@@ -184,9 +184,7 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
           functions called by this to be more careful about input
           argument type checking
 
-        OUTPUT:
-
-        The morphism of toric varieties determined by ``x``.
+        OUTPUT: the morphism of toric varieties determined by ``x``
 
         EXAMPLES:
 
@@ -271,9 +269,7 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
         """
         Construct a sample morphism.
 
-        OUTPUT:
-
-        An element of the homset.
+        OUTPUT: an element of the homset
 
         EXAMPLES::
 
@@ -298,7 +294,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
 
     - same as for :class:`SchemeHomset_points`.
 
-    OUTPUT: A scheme morphism of type :class:`SchemeHomset_points_toric_base`.
+    OUTPUT: a scheme morphism of type :class:`SchemeHomset_points_toric_base`
 
     EXAMPLES::
 
@@ -318,7 +314,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
         """
         Return whether there are finitely many points.
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -432,7 +428,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
 
     - same as for :class:`~sage.schemes.generic.homset.SchemeHomset_points`.
 
-    OUTPUT: A scheme morphism of type :class:`SchemeHomset_points_toric_field`.
+    OUTPUT: a scheme morphism of type :class:`SchemeHomset_points_toric_field`
 
     EXAMPLES::
 
@@ -493,9 +489,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
         r"""
         Return the number of points of the toric variety.
 
-        OUTPUT:
-
-        An integer or infinity. The cardinality of the set of points.
+        OUTPUT: an integer or infinity. The cardinality of the set of points
 
         EXAMPLES::
 
@@ -568,7 +562,7 @@ class SchemeHomset_points_toric_field(SchemeHomset_points_toric_base):
         """
         Iterate over the points of the variety.
 
-        OUTPUT: Iterator over points.
+        OUTPUT: iterator over points
 
         EXAMPLES::
 
@@ -615,9 +609,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
         """
         Iterate over the points of the variety.
 
-        OUTPUT:
-
-        Iterator over points.
+        OUTPUT: iterator over points
 
         EXAMPLES::
 
@@ -636,9 +628,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
         """
         Return the number of points of the toric variety.
 
-        OUTPUT:
-
-        An integer or infinity. The cardinality of the set of points.
+        OUTPUT: an integer or infinity. The cardinality of the set of points
 
         EXAMPLES::
 

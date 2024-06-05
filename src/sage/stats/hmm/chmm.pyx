@@ -535,9 +535,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         - ``obs`` -- sequence of observations
 
-        OUTPUT:
-
-        float
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -1197,9 +1195,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        a Gaussian mixture distribution object
+        OUTPUT: a Gaussian mixture distribution object
 
         EXAMPLES::
 
@@ -1235,9 +1231,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         r"""
         Returns a list of all the emission distributions.
 
-        OUTPUT:
-
-        list of Gaussian mixtures
+        OUTPUT: list of Gaussian mixtures
 
         EXAMPLES::
 

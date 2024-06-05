@@ -1104,9 +1104,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         - ``P`` -- a sequence of 3 coordinates defining a point on ``self``
 
-        OUTPUT:
-
-        The result of evaluating ``self`` at the given point.
+        OUTPUT: the result of evaluating ``self`` at the given point
 
         EXAMPLES::
 
@@ -3488,9 +3486,7 @@ def compute_isogeny_stark(E1, E2, ell):
 
     - ``ell`` -- the degree of an isogeny from ``E1`` to ``E2``
 
-    OUTPUT:
-
-    The kernel polynomial of an isogeny from ``E1`` to ``E2``.
+    OUTPUT: the kernel polynomial of an isogeny from ``E1`` to ``E2``
 
     .. NOTE::
 
@@ -3613,9 +3609,7 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
                        ``"bmss"`` (:func:`compute_isogeny_bmss`) or
                        ``"stark"`` (:func:`compute_isogeny_stark`)
 
-    OUTPUT:
-
-    The kernel polynomial of an isogeny from ``E1`` to ``E2``.
+    OUTPUT: the kernel polynomial of an isogeny from ``E1`` to ``E2``
 
     .. NOTE::
 

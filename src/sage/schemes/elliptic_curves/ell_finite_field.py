@@ -242,9 +242,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         - ``n`` (int) -- a positive integer
 
-        OUTPUT:
-
-        If `n=1`, returns the cardinality of the curve over its base field.
+        OUTPUT: if `n=1`, returns the cardinality of the curve over its base field
 
         If `n>1`, returns a list `[c_1, c_2, ..., c_n]` where `c_d` is
         the cardinality of the curve over the extension of degree `d`
@@ -823,7 +821,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         the same each time, although they should remain fixed within a
         single run of Sage unless :meth:`abelian_group` is called.)
 
-        OUTPUT: a tuple of points on the curve.
+        OUTPUT: a tuple of points on the curve
 
         - if the group is trivial: an empty tuple.
 
@@ -1363,9 +1361,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
           ``True``, the number of times to check whether ``value``
           times a random point on this curve equals the identity.
 
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         EXAMPLES:
 

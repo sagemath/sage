@@ -63,7 +63,7 @@ def is_KlyachkoBundle(X):
 
     - ``X`` -- anything.
 
-    OUTPUT: A boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -187,7 +187,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the base toric variety.
 
-        OUTPUT: A toric variety.
+        OUTPUT: a toric variety
 
         EXAMPLES::
 
@@ -203,7 +203,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the base field.
 
-        OUTPUT: A field.
+        OUTPUT: a field
 
         EXAMPLES::
 
@@ -217,7 +217,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the generic fiber of the vector bundle.
 
-        OUTPUT: A vector space over :meth:`base_ring`.
+        OUTPUT: a vector space over :meth:`base_ring`
 
         EXAMPLES::
 
@@ -232,7 +232,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return the rank of the vector bundle.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -246,7 +246,7 @@ class KlyachkoBundle_class(SageObject):
         r"""
         Return a string representation.
 
-        OUTPUT: A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -429,7 +429,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUTPUT: The subspace `E^\sigma(m)`.
+        OUTPUT: the subspace `E^\sigma(m)`.
 
         EXAMPLES::
 
@@ -468,7 +468,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUTPUT: The subspace `E_\sigma(m)`.
+        OUTPUT: the subspace `E_\sigma(m)`.
 
         EXAMPLES::
 
@@ -514,9 +514,7 @@ class KlyachkoBundle_class(SageObject):
         - ``m`` -- tuple of integers or `M`-lattice point. A point in
           the dual lattice of the fan. Must be immutable.
 
-        OUTPUT:
-
-        The restriction map
+        OUTPUT: the restriction map
 
         .. MATH::
 
@@ -714,7 +712,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- anything.
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -749,7 +747,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- anything.
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -773,7 +771,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- a Klyachko bundle over the same base.
 
-        OUTPUT: The direct sum as a new Klyachko bundle.
+        OUTPUT: the direct sum as a new Klyachko bundle
 
         EXAMPLES::
 
@@ -803,7 +801,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``other`` -- a Klyachko bundle over the same base.
 
-        OUTPUT: The tensor product as a new Klyachko bundle.
+        OUTPUT: the tensor product as a new Klyachko bundle
 
         EXAMPLES::
 
@@ -857,7 +855,7 @@ class KlyachkoBundle_class(SageObject):
 
         - ``n`` -- integer.
 
-        OUTPUT: The `n`-th symmetric power as a new Klyachko bundle.
+        OUTPUT: the `n`-th symmetric power as a new Klyachko bundle.
 
         EXAMPLES::
 
@@ -876,7 +874,7 @@ class KlyachkoBundle_class(SageObject):
         """
         Return the dual bundle.
 
-        OUTPUT: The dual bundle as a new Klyachko bundle.
+        OUTPUT: the dual bundle as a new Klyachko bundle
 
         EXAMPLES::
 

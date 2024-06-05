@@ -116,9 +116,7 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
         Return the homogeneous rescaling to apply after the coordinate
         substitution.
 
-        OUTPUT:
-
-        A polynomial. See the example below.
+        OUTPUT: a polynomial; see the example below
 
         EXAMPLES::
 

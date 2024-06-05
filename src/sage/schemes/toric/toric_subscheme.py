@@ -44,7 +44,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
     - ``polynomials`` -- single polynomial, list, or ideal of defining
       polynomials in the coordinate ring of ``toric_variety``.
 
-    OUTPUT: An :class:`algebraic subscheme of a toric variety
+    OUTPUT: an :class:`algebraic subscheme of a toric variety
     <AlgebraicScheme_subscheme_toric>`.
 
     TESTS::
@@ -104,7 +104,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
 
-        OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
+        OUTPUT: a :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`
 
         TESTS::
 
@@ -144,7 +144,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.toric.homset.SchemeHomset_points_toric_field`.
 
-        OUTPUT: A :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`.
+        OUTPUT: a :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`
 
         TESTS::
 
@@ -164,7 +164,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         """
         Return the fan of the ambient space.
 
-        OUTPUT: A fan.
+        OUTPUT: a fan
 
         EXAMPLES::
 
@@ -384,9 +384,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         - ``point`` -- a point of the algebraic subscheme.
 
-        OUTPUT:
-
-        Integer. The index of the patch. See :meth:`affine_patch`.
+        OUTPUT: integer. The index of the patch. See :meth:`affine_patch`
 
         EXAMPLES::
 
@@ -494,7 +492,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         """
         Return the dimension of ``self``.
 
-        OUTPUT: An integer. If ``self`` is empty, `-1` is returned.
+        OUTPUT: an integer. If ``self`` is empty, `-1` is returned.
 
         EXAMPLES::
 
@@ -794,7 +792,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
         """
         Return the dimension of ``self``.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

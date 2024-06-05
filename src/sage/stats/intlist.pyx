@@ -379,9 +379,7 @@ cdef class IntList:
         """
         Return the number of entries in this time series.
 
-        OUTPUT:
-
-        Python integer
+        OUTPUT: Python integer
 
         EXAMPLES::
 

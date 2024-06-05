@@ -101,9 +101,7 @@ def is_Divisor(x):
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: ``True`` or ``False``
 
     EXAMPLES::
 
@@ -374,9 +372,7 @@ class Divisor_curve(Divisor_generic):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 

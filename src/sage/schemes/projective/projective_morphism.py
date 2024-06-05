@@ -1526,7 +1526,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         This is the vanishing of the maximal minors of the Jacobian matrix.
         Not implemented for subvarieties.
 
-        OUTPUT: an ideal in the coordinate ring of the domain of this map.
+        OUTPUT: an ideal in the coordinate ring of the domain of this map
 
         EXAMPLES::
 
@@ -2062,7 +2062,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         the base ring is a number field, QQbar, a finite field, or algebraic
         closure of a finite field.
 
-        OUTPUT: A scheme morphism.
+        OUTPUT: a scheme morphism
 
         EXAMPLES::
 

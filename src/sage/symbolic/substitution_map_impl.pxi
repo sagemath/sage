@@ -59,9 +59,7 @@ cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
 
     - ``smap`` --  a Pynac ``exmap``.
 
-    OUTPUT:
-
-    A new Python :class:`SubstitutionMap`
+    OUTPUT: a new Python :class:`SubstitutionMap`
 
     EXAMPLES::
 
@@ -79,9 +77,7 @@ cpdef SubstitutionMap make_map(subs_dict):
     """
     Construct a new substitution map.
 
-    OUTPUT:
-
-    A new :class:`SubstitutionMap` for doctesting
+    OUTPUT: a new :class:`SubstitutionMap` for doctesting
 
     EXAMPLES::
 

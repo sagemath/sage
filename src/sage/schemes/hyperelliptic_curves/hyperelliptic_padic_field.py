@@ -342,9 +342,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - P a point on self
         - Q a point on self (in the same residue disc as P)
 
-        OUTPUT:
-
-        The integrals `\int_P^Q f_i dx/2y`
+        OUTPUT: the integrals `\int_P^Q f_i dx/2y`
 
         EXAMPLES::
 
@@ -710,9 +708,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - Q point on self
         - algorithm (optional) = None (uses Frobenius) or teichmuller (uses Teichmuller points)
 
-        OUTPUT:
-
-        the Coleman integral `\int_P^Q w`
+        OUTPUT: the Coleman integral `\int_P^Q w`
 
         EXAMPLES:
 
@@ -1052,9 +1048,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - curve_over_extn: self over a totally ramified extension
         - P: Weierstrass point
 
-        OUTPUT:
-
-        a point in the disc of `P` near the boundary
+        OUTPUT: a point in the disc of `P` near the boundary
 
         EXAMPLES::
 
@@ -1132,9 +1126,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - S: point in the same disc of P (S is defined over an extension of `\QQ_p`; coordinates
           of S are given in terms of uniformizer `a`)
 
-        OUTPUT:
-
-        Coleman integral `\int_P^S w` in terms of `a`
+        OUTPUT: Coleman integral `\int_P^S w` in terms of `a`
 
         EXAMPLES::
 
@@ -1263,9 +1255,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - S: a point with coordinates in an extension of `\QQ_p`
         - Q: a non-Weierstrass point defined over `\QQ_p`
 
-        OUTPUT:
-
-        the Coleman integral `\int_S^Q w`
+        OUTPUT: the Coleman integral `\int_S^Q w`
 
         EXAMPLES::
 

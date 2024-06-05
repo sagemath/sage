@@ -178,7 +178,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
         -  ``x`` -- A CallableSymbolicExpression
 
-        OUTPUT: A tuple of variables.
+        OUTPUT: a tuple of variables
 
         EXAMPLES::
 
