@@ -468,7 +468,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'sympy'`` -- use SymPy
 
-    - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -851,7 +851,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'mathematica'`` -- (optional) use Mathematica
 
-    - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -2238,7 +2238,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     - ``x`` -- a string
 
-    - ``equals_sub`` -- (default: ``False``) if ``True``, replace
+    - ``equals_sub`` -- boolean (default: ``False``); if ``True``, replace
       '=' by '==' in self
 
     - ``maxima`` -- (default: the calculus package's copy of
@@ -2566,7 +2566,7 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
       strings to be regarded as symbols or functions;
       keys are pairs (string, number of arguments)
 
-    - ``accept_sequence`` -- (default: ``False``) controls whether
+    - ``accept_sequence`` -- boolean (default: ``False``); controls whether
       to allow a (possibly nested) set of lists and tuples
       as input
 

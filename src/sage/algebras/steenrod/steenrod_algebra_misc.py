@@ -187,7 +187,7 @@ def get_basis_name(basis, p, generic=None):
 
 def is_valid_profile(profile, truncation_type, p=2, generic=None):
     r"""
-    True if ``profile``, together with ``truncation_type``, is a valid
+    ``True`` if ``profile``, together with ``truncation_type``, is a valid
     profile at the prime `p`.
 
     INPUT:
@@ -197,11 +197,11 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
 
     - ``truncation_type`` -- either 0 or `\infty`
 
-    - `p` -- prime number, optional, default 2
+    - `p` -- prime number (default: 2)
 
-    - `generic` -- boolean, optional, default None
+    - `generic` -- boolean (default: ``None``)
 
-    OUTPUT: True if the profile function is valid, False otherwise.
+    OUTPUT: ``True`` if the profile function is valid, False otherwise.
 
     See the documentation for :mod:`sage.algebras.steenrod.steenrod_algebra`
     for descriptions of profile functions and how they correspond to

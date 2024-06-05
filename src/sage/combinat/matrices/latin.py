@@ -822,7 +822,7 @@ class LatinSquare:
 
     def is_uniquely_completable(self):
         """
-        Return True if the partial latin square self has exactly one
+        Return ``True`` if the partial latin square self has exactly one
         completion to a latin square. This is just a wrapper for the
         current best-known algorithm, Dancing Links by Knuth. See
         dancing_links.spyx
@@ -850,7 +850,7 @@ class LatinSquare:
 
     def is_completable(self):
         """
-        Return True if the partial latin square can be completed to a
+        Return ``True`` if the partial latin square can be completed to a
         latin square.
 
         EXAMPLES:
@@ -1278,7 +1278,7 @@ class LatinSquare:
 
     def contained_in(self, Q):
         r"""
-        Return True if self is a subset of Q?
+        Return ``True`` if self is a subset of `Q`.
 
         EXAMPLES::
 
@@ -2035,7 +2035,7 @@ def elementary_abelian_2group(s):
 
 def coin():
     """
-    Simulate a fair coin (returns True or False) using
+    Simulate a fair coin (returns ``True`` or ``False``) using
     ZZ.random_element(2).
 
     EXAMPLES::

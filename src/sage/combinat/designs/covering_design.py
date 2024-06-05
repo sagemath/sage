@@ -487,7 +487,7 @@ def best_known_covering_design_www(v, k, t, verbose=False):
 
     - ``t`` -- integer, the size of sets covered by the blocks
 
-    - ``verbose`` -- bool (default: ``False``), print verbose message
+    - ``verbose`` -- boolean (default: ``False``); print verbose message
 
     OUTPUT:
 

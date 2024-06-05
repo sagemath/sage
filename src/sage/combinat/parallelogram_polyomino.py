@@ -3149,7 +3149,7 @@ class ParallelogramPolyomino(ClonableList,
 
     def box_is_node(self, pos) -> bool:
         r"""
-        Return True if the box contains a node in the context of the
+        Return ``True`` if the box contains a node in the context of the
         Aval-Boussicault bijection between parallelogram polyomino and binary
         tree.
 

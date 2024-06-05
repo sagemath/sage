@@ -1205,13 +1205,13 @@ class Patch(SageObject):
           matrix. Its number of lines must be two. Its number of columns
           must equal the dimension of the ambient space of the faces. If
           ``None``, the isometric projection is used by default.
-        - ``print_tikz_env`` -- bool (default: ``True``) if ``True``,
+        - ``print_tikz_env`` -- boolean (default: ``True``) if ``True``,
           the tikzpicture environment are printed
         - ``edgecolor`` -- string (default: ``'black'``) either
           ``'black'`` or ``'facecolor'`` (color of unit face edges)
         - ``scale`` -- real number (default: ``0.25``) scaling
           constant for the whole figure
-        - ``drawzero`` -- bool (default: ``False``) if ``True``,
+        - ``drawzero`` -- boolean (default: ``False``) if ``True``,
           mark the origin by a black dot
         - ``extra_code_before`` -- string (default: ``''``) extra code to
           include in the tikz picture

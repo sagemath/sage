@@ -1055,9 +1055,10 @@ class ClusterAlgebraSeed(SageObject):
           * an iterable of such integers to mutate along a sequence
           * a string "sinks" or "sources" to mutate at all sinks or sources simultaneously
 
-        - ``inplace`` -- bool (default ``True``); whether to mutate in place or to return a new object
+        - ``inplace`` -- boolean (default ``True``); whether to mutate in place
+          or to return a new object
 
-        - ``mutating_F`` -- bool (default ``True``); whether to compute
+        - ``mutating_F`` -- boolean (default ``True``); whether to compute
           F-polynomials while mutating
 
         .. NOTE::
@@ -1234,7 +1235,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
     - ``coefficient_names`` -- a list of strings; each element needs
       to be a valid variable name; supersedes ``cluster_variable_prefix``
 
-    - ``principal_coefficients`` -- bool (default ``False``); supersedes any
+    - ``principal_coefficients`` -- boolean (default ``False``); supersedes any
       coefficient defined by ``data``
 
     ALGORITHM:
@@ -1811,7 +1812,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``mutating_F`` -- bool (default ``True``); whether to compute
+        - ``mutating_F`` -- boolean (default ``True``); whether to compute
           F-polynomials; disable this for speed considerations
 
         ALGORITHM:
@@ -2212,10 +2213,10 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``from_current_seed`` -- bool (default ``False``); whether to start
+        - ``from_current_seed`` -- boolean (default ``False``); whether to start
           the iterator from :meth:`current_seed` or :meth:`initial_seed`
 
-        - ``mutating_F`` -- bool (default ``True``); whether to compute
+        - ``mutating_F`` -- boolean (default ``True``); whether to compute
           F-polynomials also; disable this for speed considerations
 
         - ``allowed_directions`` -- iterable of integers
@@ -2224,7 +2225,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         - ``depth`` -- a positive integer or infinity (default ``infinity``);
           the maximum depth at which to stop searching
 
-        - ``catch_KeyboardInterrupt`` -- bool (default ``False``); whether to
+        - ``catch_KeyboardInterrupt`` -- boolean (default ``False``); whether to
           catch ``KeyboardInterrupt`` and return it rather then raising an
           exception -- this allows the iterator returned by this method to be
           resumed after being interrupted
@@ -2319,7 +2320,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``mutating_F`` -- bool (default ``True``); whether to also compute
+        - ``mutating_F`` -- boolean (default ``True``); whether to also compute
           F-polynomials; disable this for speed considerations
 
         EXAMPLES::
@@ -2401,7 +2402,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
           * an iterable of such integers to mutate along a sequence
           * a string "sinks" or "sources" to mutate at all sinks or sources simultaneously
 
-        - ``mutating_F`` -- bool (default ``True``); whether to compute
+        - ``mutating_F`` -- boolean (default ``True``); whether to compute
           F-polynomials while mutating
 
         .. NOTE::

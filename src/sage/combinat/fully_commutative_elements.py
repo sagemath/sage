@@ -194,8 +194,8 @@ class FullyCommutativeElement(NormalizedClonableList):
         - ``one_index`` -- boolean (default: ``False``). Setting the value to True
           will change the underlying set of the poset to `\{1, 2, \dots, n\}`
 
-        - ``display_labeling`` -- boolean (default: ``False``). Setting the value to
-          True will display the label `s_i` for each element `i` of the poset
+        - ``display_labeling`` -- boolean (default: ``False``); setting the value to
+          ``True`` will display the label `s_i` for each element `i` of the poset
 
         OUTPUT:
 

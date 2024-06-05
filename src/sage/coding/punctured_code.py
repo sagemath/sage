@@ -268,9 +268,10 @@ class PuncturedCode(AbstractLinearCode):
 
         - ``m`` -- a vector of the message space of the code.
 
-        - ``original_encode`` -- (default: ``False``) if this is set to ``True``,
-          ``m`` will be encoded using an Encoder of ``self``'s :meth:`original_code`.
-          This allow to avoid the computation of a generator matrix for ``self``.
+        - ``original_encode`` -- boolean (default: ``False``); if this is set
+          to ``True``, ``m`` will be encoded using an Encoder of ``self``'s
+          :meth:`original_code`. This allow to avoid the computation of a
+          generator matrix for ``self``.
 
         - ``encoder_name`` -- (default: ``None``) Name of the encoder which will be used
           to encode ``word``. The default encoder of ``self`` will be used if

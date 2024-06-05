@@ -678,7 +678,7 @@ class AffinePermutationTypeA(AffinePermutation):
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) chooses
           whether to find maximal sets starting from the left or the right
 
-        - ``verbose`` -- True or False.  If True, outputs information about how
+        - ``verbose`` -- boolean;  If ``True``, outputs information about how
           the cyclically increasing element was found.
 
         EXAMPLES::

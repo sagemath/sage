@@ -279,7 +279,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 :meth:`~ModulesWithBasis.ElementMethods.trailing_support`
                 of the image of the basis vector `x_i` is `i`.
 
-            - ``unitriangular`` -- (default: ``False``) a boolean.
+            - ``unitriangular`` -- boolean (default: ``False``);
               Only meaningful for a triangular morphism.
               As a shorthand, one may use ``unitriangular="lower"``
               for ``triangular="lower", unitriangular=True``.
@@ -683,8 +683,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``elements`` -- a list or finite iterable of elements of ``self``
-            - ``row_reduced`` -- (default: ``False``) whether to compute the
-              basis for the row reduced echelon form
+            - ``row_reduced`` -- boolean (default: ``False``); whether to
+              compute the basis for the row reduced echelon form
             - ``order`` -- (optional) either something that can
               be converted into a tuple or a key function
 
@@ -737,12 +737,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``gens`` -- a list or family of elements of ``self``
-            - ``check`` -- (default: ``True``) whether to verify that the
-               elements of ``gens`` are in ``self``
-            - ``already_echelonized`` -- (default: ``False``) whether
+            - ``check`` -- boolean (default: ``True``); whether to verify that
+              the elements of ``gens`` are in ``self``
+            - ``already_echelonized`` -- boolean (default: ``False``); whether
                the elements of ``gens`` are already in (not necessarily
                reduced) echelon form
-            - ``unitriangular`` -- (default: ``False``) whether
+            - ``unitriangular`` -- boolean (default: ``False``); whether
               the lift morphism is unitriangular
             - ``support_order`` -- (optional) either something that can
               be converted into a tuple or a key function
@@ -1437,9 +1437,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``copy`` -- (default: ``True``) if ``self`` is internally
-              represented by a dictionary ``d``, then make a copy of ``d``;
-              if ``False``, then this can cause undesired behavior by
+            - ``copy`` -- boolean (default: ``True``); if ``self`` is
+              internally represented by a dictionary ``d``, then make a copy of
+              ``d``; if ``False``, then this can cause undesired behavior by
               mutating ``d``
 
             EXAMPLES::
@@ -1741,7 +1741,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``sort`` -- (default: ``True``) to sort the coefficients
+            - ``sort`` -- boolean (default: ``True``); to sort the coefficients
               based upon the default ordering of the indexing set
 
             .. SEEALSO::

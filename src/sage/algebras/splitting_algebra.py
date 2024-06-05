@@ -140,9 +140,9 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     - ``monic_polynomial`` -- the monic polynomial which should be split
     - ``names``  -- names for the indeterminates to be adjoined to the
       base ring of ``monic_polynomial``
-    - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-      to suppress a warning which will be thrown whenever it cannot be
-      checked that the Galois group of ``monic_polynomial`` is maximal
+    - ``warning`` -- boolean (default: ``True``); can be used (by setting to
+      ``False``) to suppress a warning which will be thrown whenever it cannot
+      be checked that the Galois group of ``monic_polynomial`` is maximal
 
     EXAMPLES::
 
@@ -524,7 +524,8 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
     def is_completely_split(self):
         r"""
-        Return True if the defining polynomial of ``self`` splits into linear factors over ``self``.
+        Return ``True`` if the defining polynomial of ``self`` splits into
+        linear factors over ``self``.
 
         EXAMPLES::
 
@@ -641,12 +642,12 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
       splitting algebra of the ``monic_polynomial`` (if necessary and possible)
     - ``var``  -- (default: ``'x'``) for the indeterminate needed to define the
       splitting field of the ``monic_polynomial`` (if necessary and possible)
-    - ``flatten`` -- (default: ``True``) if ``True`` the roots will not be
-      given as a list of pairs ``(root, multiplicity)`` but as a list of
+    - ``flatten`` -- boolean (default: ``True``); if ``True`` the roots will
+      not be given as a list of pairs ``(root, multiplicity)`` but as a list of
       roots repeated according to their multiplicity
-    - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-      to suppress a warning which will be thrown whenever it cannot be checked
-      that the Galois group of ``monic_polynomial`` is maximal
+    - ``warning`` -- boolean (default: ``True``); can be used (by setting to
+      ``False``) to suppress a warning which will be thrown whenever it cannot
+      be checked that the Galois group of ``monic_polynomial`` is maximal
 
     OUTPUT:
 
@@ -682,9 +683,10 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
 
         - ``monic_polynomial`` -- the monic polynomial whose roots should
           be created
-        - ``warning`` -- (default: ``True``) can be used (by setting to ``False``)
-          to suppress a warning which will be thrown whenever it cannot be
-          checked that the Galois group of ``monic_polynomial`` is maximal
+        - ``warning`` -- boolean (default: ``True``); can be used (by setting
+          to ``False``) to suppress a warning which will be thrown whenever it
+          cannot be checked that the Galois group of ``monic_polynomial`` is
+          maximal
         """
         parent = monic_polynomial.parent()
         base_ring = parent.base_ring()

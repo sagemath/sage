@@ -209,7 +209,7 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
 
     def __eq__(self, other):
         """
-        Return True if ``self`` equals ``other`` and False otherwise.
+        Return ``True`` if ``self`` equals ``other`` and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -224,7 +224,8 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
 
     def __lt__(self,other):
         """
-        Return True if ``self`` comes before ``other`` and False otherwise.
+        Return ``True`` if ``self`` comes before ``other`` and ``False``
+        otherwise.
 
         We say that `h_1` comes before `h_2` if either weight of `h_1 <` weight of `h_2`
         lexicographically, or if both weights of `h_1` and `h_2` are equal,
@@ -446,9 +447,11 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
 
     - ``factors`` -- the number of factors in the factorization
 
-    - ``excess`` -- the total number of letters in the factorization minus the length of a reduced word for ``w``
+    - ``excess`` -- the total number of letters in the factorization minus the
+      length of a reduced word for ``w``
 
-    - ``shape`` -- (default: ``False``) indicator for input ``w``, True if ``w`` is entered as a (skew) shape and False otherwise.
+    - ``shape`` -- (default: ``False``) indicator for input ``w``, ``True`` if
+      ``w`` is entered as a (skew) shape and ``False`` otherwise.
 
     EXAMPLES::
 
@@ -847,9 +850,9 @@ def _generate_decreasing_hecke_factorizations(w, factors, ex, weight=None, paren
 
     - ``ex`` -- number of extra letters in each decreasing factorizations
 
-    - ``weight`` -- (default: None) if None, returns all possible decreasing
-                    factorizations, otherwise return all those with the
-                    specified weight
+    - ``weight`` -- (default: ``None``) if ``None``, returns all possible
+      decreasing factorizations, otherwise return all those with the specified
+      weight
 
     EXAMPLES::
 
@@ -962,7 +965,8 @@ def _lowest_weights(w, factors, ex, parent=None):
 
     - ``ex`` -- number of extra letters in each decreasing factorizations
 
-    - ``parent`` -- (default: None) parent of the decreasing factorizations, automatically assigned if it is None
+    - ``parent`` -- (default: ``None``) parent of the decreasing
+      factorizations, automatically assigned if it is None
 
     EXAMPLES::
 

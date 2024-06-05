@@ -597,7 +597,7 @@ class FinitePosets(CategoryWithAxiom):
               field of the labelling, because the latter will have
               indeterminates adjoined!
 
-            - ``reduced`` -- (default: ``False``) if set to
+            - ``reduced`` -- boolean (default: ``False``); if set to
               ``True``, the result will be the *reduced* birational
               free labelling, which differs from the regular one by
               having `0` and `1` both sent to `1` instead of `a` and
@@ -1599,14 +1599,13 @@ class FinitePosets(CategoryWithAxiom):
               ``iter``, etc.) which is to be applied to the antichains
               before they are yielded.
 
-            - ``stop`` -- a Boolean (default: ``True``) determining
-              whether the iterator should stop once it completes its
-              cycle (this happens when it is set to ``True``) or go on
-              forever (this happens when it is set to ``False``).
+            - ``stop`` -- boolean (default: ``True``); whether the iterator
+              should stop once it completes its cycle (this happens when it is
+              set to ``True``) or go on forever (this happens when it is set to
+              ``False``).
 
-            - ``check`` -- a Boolean (default: ``True``) determining
-              whether ``antichain`` should be checked for being an
-              antichain.
+            - ``check`` -- boolean (default: ``True``); whether to check
+              ``antichain`` for being an antichain
 
             OUTPUT:
 
@@ -1689,12 +1688,12 @@ class FinitePosets(CategoryWithAxiom):
               ``iter``, etc.) which is to be applied to the order
               ideals before they are yielded.
 
-            - ``stop`` -- a Boolean (default: ``True``) determining
+            - ``stop`` -- boolean (default: ``True``);
               whether the iterator should stop once it completes its
               cycle (this happens when it is set to ``True``) or go on
               forever (this happens when it is set to ``False``).
 
-            - ``check`` -- a Boolean (default: ``True``) determining
+            - ``check`` -- boolean (default: ``True``);
               whether ``oideal`` should be checked for being an
               order ideal.
 
@@ -1798,12 +1797,12 @@ class FinitePosets(CategoryWithAxiom):
               ``iter``, etc.) which is to be applied to the order
               ideals before they are yielded.
 
-            - ``stop`` -- a Boolean (default: ``True``) determining
+            - ``stop`` -- boolean (default: ``True``);
               whether the iterator should stop once it completes its
               cycle (this happens when it is set to ``True``) or go on
               forever (this happens when it is set to ``False``).
 
-            - ``check`` -- a Boolean (default: ``True``) determining
+            - ``check`` -- boolean (default: ``True``);
               whether ``oideal`` should be checked for being an
               order ideal.
 

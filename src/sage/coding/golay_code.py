@@ -38,11 +38,11 @@ class GolayCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``base_field`` -- The base field over which the code is defined.
-      Can only be ``GF(2)`` or ``GF(3)``.
+    - ``base_field`` -- the base field over which the code is defined;
+      can only be ``GF(2)`` or ``GF(3)``
 
-    - ``extended`` -- (default: ``True``) if set to ``True``, creates an extended Golay
-      code.
+    - ``extended`` -- boolean (default: ``True``); if set to ``True``, creates
+      an extended Golay code
 
     EXAMPLES::
 

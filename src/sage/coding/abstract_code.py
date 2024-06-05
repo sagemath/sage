@@ -836,9 +836,9 @@ class AbstractCode(Parent):
 
         INPUT:
 
-        - ``classes`` -- (default: ``False``) if ``classes`` is set to ``True``,
-          return instead a :class:`dict` mapping available decoder name to the
-          associated decoder class.
+        - ``classes`` -- boolean (default: ``False``); if ``classes`` is set to
+          ``True``, return instead a :class:`dict` mapping available decoder
+          name to the associated decoder class
 
         OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
 
@@ -1015,9 +1015,9 @@ class AbstractCode(Parent):
 
         INPUT:
 
-        - ``classes`` -- (default: ``False``) if ``classes`` is set to ``True``,
-          return instead a :class:`dict` mapping available encoder name to the
-          associated encoder class.
+        - ``classes`` -- boolean (default: ``False``); if ``classes`` is set to
+          ``True``, return instead a :class:`dict` mapping available encoder
+          name to the associated encoder class
 
         OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
 
@@ -1052,10 +1052,11 @@ class AbstractCode(Parent):
           to decode ``word``. The default decoder of ``self`` will be used if
           default value is kept.
 
-        - ``nocheck`` -- (default: ``False``) checks if ``c`` is in ``self``. You might set
-          this to ``True`` to disable the check for saving computation. Note that if ``c`` is
-          not in ``self`` and ``nocheck = True``, then the output of :meth:`unencode` is
-          not defined (except that it will be in the message space of ``self``).
+        - ``nocheck`` -- boolean (default: ``False``); checks if ``c`` is in
+          ``self``. You might set this to ``True`` to disable the check for
+          saving computation. Note that if ``c`` is not in ``self`` and
+          ``nocheck = True``, then the output of :meth:`unencode` is not
+          defined (except that it will be in the message space of ``self``).
 
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
           encoder that is used.

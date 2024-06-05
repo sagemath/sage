@@ -3643,10 +3643,10 @@ class CoordChange(SageObject):
           "new" ones
         - ``kwds`` -- optional arguments; valid keywords are
 
-          - ``check`` (default: ``True``) -- boolean determining whether the
+          - ``check`` -- boolean (default: ``True``); whether the
             provided transformations are checked to be indeed the inverse
             coordinate transformations
-          - ``verbose`` (default: ``False``) -- boolean determining whether
+          - ``verbose`` -- boolean (default: ``False``); whether
             some details of the check are printed out; if ``False``, no
             output is printed if the check is passed (see example below)
 

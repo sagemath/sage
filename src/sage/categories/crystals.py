@@ -634,8 +634,8 @@ class Crystals(Category_singleton):
               default are all scaling factors to be one
             - ``category`` -- (optional) the category for the crystal morphism;
               the default is the category of :class:`Crystals`.
-            - ``check`` -- (default: ``True``) check if the crystal morphism
-              is valid
+            - ``check`` -- boolean (default: ``True``); check if the crystal
+              morphism is valid
 
             .. SEEALSO::
 
@@ -1008,9 +1008,10 @@ class Crystals(Category_singleton):
 
             - ``filename`` -- name of the output file, e.g., ``'filename.mp'``
 
-            - ``thicklines`` -- (default: ``True``) for thicker edges
+            - ``thicklines`` -- boolean (default: ``True``); for thicker edges
 
-            - ``labels`` -- (default: ``False``) to suppress labeling of the vertices
+            - ``labels`` -- boolean (default: ``False``); whether to suppress
+              labeling of the vertices
 
             - ``scaling_factor`` -- (default: ``1.0``) Increasing or decreasing the
               scaling factor changes the size of the image
@@ -2046,7 +2047,8 @@ class CrystalMorphismByGenerators(CrystalMorphism):
       for the weight, `\varepsilon` and `\varphi`
     - ``gens`` -- (optional) a finite list of generators to define the
       morphism; the default is to use the highest weight vectors of the crystal
-    - ``check`` -- (default: ``True``) check if the crystal morphism is valid
+    - ``check`` -- boolean (default: ``True``); check if the crystal morphism
+      is valid
 
     .. SEEALSO::
 

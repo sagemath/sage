@@ -1784,11 +1784,11 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        - ``include_special`` -- (default: ``False``) if set, then
+        - ``include_special`` -- boolean (default: ``False``); if set, then
           including shells containing a smallest element (`\emptyset`)
           and a largest element (`\infty`).
 
-        - ``reverse`` -- (default: ``False``) -- if set, reverses the
+        - ``reverse`` -- boolean (default: ``False``); if set, reverses the
           order, i.e., ``False`` gives smallest elements first,
           ``True`` gives largest first.
 

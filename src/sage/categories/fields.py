@@ -191,7 +191,7 @@ class Fields(CategoryWithAxiom):
 
         def is_field( self, proof=True ):
             r"""
-            Returns True as ``self`` is a field.
+            Returns ``True`` as ``self`` is a field.
 
             EXAMPLES::
 
@@ -584,7 +584,7 @@ class Fields(CategoryWithAxiom):
 
         def is_unit( self ):
             r"""
-            Returns True if ``self`` has a multiplicative inverse.
+            Returns ``True`` if ``self`` has a multiplicative inverse.
 
             EXAMPLES::
 

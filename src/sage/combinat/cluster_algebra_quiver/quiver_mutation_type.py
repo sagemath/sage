@@ -680,10 +680,10 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``circular`` -- (default: ``False``) if ``True``, the
+        - ``circular`` -- boolean (default: ``False``); if ``True``, the
           circular plot is chosen, otherwise >>spring<< is used.
 
-        - ``directed`` -- (default: ``True``) if ``True``, the
+        - ``directed`` -- boolean (default: ``True``); if ``True``, the
           directed version is shown, otherwise the undirected.
 
         EXAMPLES::
@@ -703,7 +703,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
         - ``circular`` -- (default:``False``) if ``True``, the
           circular plot is chosen, otherwise >>spring<< is used.
 
-        - ``directed`` -- (default: ``True``) if ``True``, the
+        - ``directed`` -- boolean (default: ``True``); if ``True``, the
           directed version is shown, otherwise the undirected.
 
         TESTS::

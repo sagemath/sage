@@ -1208,18 +1208,18 @@ def next_probable_prime(n):
 
 def next_prime(n, proof=None):
     """
-    The next prime greater than the integer n. If n is prime, then this
-    function does not return n, but the next prime after n. If the
-    optional argument proof is False, this function only returns a
+    The next prime greater than the integer `n`. If `n` is prime, then this
+    function does not return `n`, but the next prime after `n`. If the
+    optional argument proof is ``False``, this function only returns a
     pseudo-prime, as defined by the PARI nextprime function. If it is
-    None, uses the global default (see :mod:`sage.structure.proof.proof`)
+    ``None``, uses the global default (see :mod:`sage.structure.proof.proof`)
 
     INPUT:
 
 
     -  ``n`` -- integer
 
-    -  ``proof`` -- bool or None (default: None)
+    -  ``proof`` -- boolean or ``None`` (default: ``None``)
 
 
     EXAMPLES::
@@ -2548,9 +2548,9 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     -  ``n`` -- a nonzero integer
 
-    -  ``proof`` -- bool or ``None`` (default: ``None``)
+    -  ``proof`` -- boolean or ``None`` (default: ``None``)
 
-    -  ``int_`` -- bool (default: ``False``) whether to return
+    -  ``int_`` -- boolean (default: ``False``); whether to return
        answers as Python ints
 
     -  ``algorithm`` -- string
@@ -4319,7 +4319,7 @@ def primitive_root(n, check=True):
     INPUT:
 
     - ``n`` -- a non-zero integer
-    - ``check`` -- bool (default: ``True``); if False, then `n` is assumed
+    - ``check`` -- boolean (default: ``True``); if ``False``, then `n` is assumed
       to be a positive integer possessing a primitive root, and behavior
       is undefined otherwise.
 

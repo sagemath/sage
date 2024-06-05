@@ -557,7 +557,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
             - `m` -- a positive integer (default: 1)
 
-            - ``on_roots`` (default: ``False``) -- if
+            - ``on_roots`` -- boolean (default: ``False``); if
               ``on_roots`` is ``True``, the lattice is realized on
               roots rather than on reflections. In order for this to
               work, the ElementMethod ``reflection_to_root`` must be
@@ -637,14 +637,14 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             See :arxiv:`1503.00710` and :arxiv:`math/0611106`.
 
             Delta sequences are certain 2-colored minimal factorizations
-            of ``c`` into reflections.
+            of `c` into reflections.
 
             INPUT:
 
             - ``c`` -- a standard Coxeter element in ``self``
               (as a tuple, or as an element of ``self``)
 
-            - ``on_roots`` (default: ``False``) -- if
+            - ``on_roots`` -- boolean (default: ``False``); if
               ``on_roots`` is ``True``, the lattice is realized on
               roots rather than on reflections. In order for this to
               work, the ElementMethod ``reflection_to_root`` must be

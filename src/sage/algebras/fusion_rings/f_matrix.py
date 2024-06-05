@@ -54,9 +54,9 @@ class FMatrix(SageObject):
       (see :meth:`FusionRing.fusion_labels`)
     - ``var_prefix`` -- (optional) a string indicating the desired prefix
       for variables denoting F-symbols to be solved
-    - ``inject_variables`` -- (default: ``False``) a boolean indicating
-      whether to inject variables (:class:`FusionRing` basis element
-      labels and F-symbols) into the global namespace
+    - ``inject_variables`` -- boolean (default: ``False``); whether to inject
+      variables (:class:`FusionRing` basis element labels and F-symbols) into
+      the global namespace
 
     The :class:`FusionRing` or Verlinde algebra is the
     Grothendieck ring of a modular tensor category [BaKi2001]_.
@@ -1453,7 +1453,7 @@ class FMatrix(SageObject):
           * ``'pentagons'`` -- get equations imposed on the F-matrix by
             the pentagon relations in the definition of a monoidal category
 
-        - ``output`` -- (default: ``True``) a boolean indicating whether
+        - ``output`` -- boolean (default: ``True``); whether
           results should be returned, where the equations will be polynomials.
           Otherwise, the constraints are appended to ``self.ideal_basis``.
           Constraints are stored in the internal tuple representation. The
@@ -1999,7 +1999,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``checkpoint`` -- (default: ``False``) a boolean indicating whether
+        - ``checkpoint`` -- boolean (default: ``False``); whether
           the computation should be checkpointed. Depending on the associated
           ``CartanType``, the computation may take hours to complete. For
           large examples, checkpoints are recommended. This method supports
@@ -2029,12 +2029,12 @@ class FMatrix(SageObject):
 
           If no file name is provided, the calculation begins from scratch.
 
-        - ``use_mp`` -- (default: ``True``) a boolean indicating whether to use
+        - ``use_mp`` -- boolean (default: ``True``); whether to use
           multiprocessing to speed up calculation. The default value
           ``True`` is highly recommended, since parallel processing yields
           results much more quickly.
 
-        - ``verbose`` -- (default: ``True``) a boolean indicating whether the
+        - ``verbose`` -- boolean (default: ``True``); whether the
           solver should print out intermediate progress reports.
 
         OUTPUT:
@@ -2286,7 +2286,7 @@ class FMatrix(SageObject):
         - ``equations`` -- (optional) a set of equations to be
           solved; defaults to the hexagon and pentagon equations
         - ``algorithm`` -- (optional) algorithm to compute Groebner Basis
-        - ``output`` -- (default: ``False``) output a dictionary of
+        - ``output`` -- boolean (default: ``False``); output a dictionary of
           F-matrix values; this may be useful to see but may be omitted
           since this information will be available afterwards via the
           :meth:`fmatrix` and :meth:`fmat` methods.

@@ -700,11 +700,11 @@ def binomial_modp(n,k,p):
 @cached_function
 def adem(a, b, c=0, p=2, generic=None):
     r"""
-    The mod `p` Adem relations
+    The mod `p` Adem relations.
 
     INPUT:
 
-    - `a`, `b`, `c` (optional) -- nonnegative integers, corresponding
+    - `a`, `b`, `c` -- nonnegative integers (optional); corresponding
       to either `P^a P^b` or (if `c` present) to `P^a \beta^b P^c`
     - `p` -- positive prime number (default: 2)
     - `generic` -- whether to use the generic Steenrod algebra, (default: depends on prime)

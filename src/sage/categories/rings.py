@@ -346,8 +346,8 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - ``proof`` -- (default: ``True``) Determines what to do in unknown
-              cases
+            - ``proof`` -- boolean (default: ``True``); Determines what to do
+              in unknown cases
 
             ALGORITHM:
 

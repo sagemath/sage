@@ -84,9 +84,8 @@ class DeltaComplex(GenericCellComplex):
         declared to be the same as the ith face of `T`: `S` and `T`
         are glued along their entire boundary,
 
-      - None or True or False or anything other than the previous two
-        options, in which case the faces are just the ordinary faces
-        of `S`.
+      - ``None`` or ``True`` or False or anything other than the previous two
+        options, in which case the faces are just the ordinary faces of `S`.
 
       For example, consider the following::
 
@@ -573,7 +572,7 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The chain complex associated to this `\Delta`-complex.
 
-        :param dimensions: if None, compute the chain complex in all
+        :param dimensions: if ``None``, compute the chain complex in all
            dimensions.  If a list or tuple of integers, compute the
            chain complex in those dimensions, setting the chain groups
            in all other dimensions to zero.  NOT IMPLEMENTED YET: this
@@ -1333,7 +1332,7 @@ class DeltaComplex(GenericCellComplex):
 
         :param idx: index specifying which simplex to examine
         :type idx: integer; optional, default -1
-        :return: boolean, True if the boundary of the simplex has any
+        :return: boolean, ``True`` if the boundary of the simplex has any
           identifications
         :param dim: dimension of simplex to consider
         :type dim: integer; optional, default = dim of complex
@@ -1412,7 +1411,7 @@ class DeltaComplex(GenericCellComplex):
 
         :param idx: index specifying which simplex to examine
         :type idx: integer; optional, default -1
-        :return: boolean, True if the boundary of the simplex has any
+        :return: boolean, ``True`` if the boundary of the simplex has any
           identifications
         :param dim: dimension of simplex to consider
         :type dim: integer; optional, default = dim of complex

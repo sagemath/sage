@@ -387,14 +387,16 @@ class ClusterSeed(SageObject):
 
     def use_c_vectors(self, use=True, bot_is_c=False, force=False):
         r"""
-        Reconstruct c-vectors from other data or initialize if no usable data exists.
+        Reconstruct `c`-vectors from other data or initialize if no usable data
+        exists.
 
         Warning: Initialization may lead to inconsistent data.
 
         INPUT:
 
-        - ``use`` -- (default: ``True``) If ``True``, will use c-vectors
-        - ``bot_is_c`` -- (default: ``False``) If ``True`` and
+        - ``use`` -- boolean (default: ``True``); if ``True``, will use
+          `c`-vectors
+        - ``bot_is_c`` -- boolean (default: ``False``); If ``True`` and
           :class:`ClusterSeed` ``self`` has ``self._m == self._n``, then will
           assume bottom half of the extended exchange matrix is the c-matrix.
           If ``True``, lets the :class:`ClusterSeed` know c-vectors can be
@@ -470,7 +472,8 @@ class ClusterSeed(SageObject):
 
     def use_g_vectors(self, use=True, force=False):
         r"""
-        Reconstruct g-vectors from other data or initialize if no usable data exists.
+        Reconstruct g-vectors from other data or initialize if no usable data
+        exists.
 
         .. warning::
 
@@ -478,7 +481,8 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``use`` -- (default: ``True``) If ``True``, will use g-vectors
+        - ``use`` -- boolean (default: ``True``); If ``True``, will use
+          g-vectors
 
         EXAMPLES::
 
@@ -554,7 +558,8 @@ class ClusterSeed(SageObject):
 
     def use_d_vectors(self, use=True, force=False):
         r"""
-        Reconstruct d-vectors from other data or initialize if no usable data exists.
+        Reconstruct `d`-vectors from other data or initialize if no usable data
+        exists.
 
         .. warning::
 
@@ -562,7 +567,8 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``use`` -- (default: ``True``) If ``True``, will use d-vectors
+        - ``use`` -- boolean (default: ``True``); If ``True``, will use
+          `d`-vectors
 
         EXAMPLES::
 
@@ -640,17 +646,18 @@ class ClusterSeed(SageObject):
 
     def use_fpolys(self, use=True, user_labels=None, user_labels_prefix=None):
         r"""
-        Use F-polynomials in our Cluster Seed
+        Use `F`-polynomials in our Cluster Seed.
 
         Note: This will automatically try to recompute the cluster variables
         if possible
 
         INPUT:
 
-        - ``use`` -- (default: ``True``) If ``True``, will use F-polynomials
-        - ``user_labels`` -- (default: ``None``) If set, will overwrite the
-          default cluster variable labels
-        - ``user_labels_prefix`` -- (default: ``None``) If set, will overwrite
+        - ``use`` -- boolean (default: ``True``); if ``True``, will use
+          `F`-polynomials
+        - ``user_labels`` -- (default: ``None``) if set, will overwrite the
+          default cluster variable ``labels``
+        - ``user_labels_prefix`` -- (default: ``None``) if set, will overwrite
           the default
 
         EXAMPLES::
@@ -746,7 +753,8 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``use`` -- (default: ``True``) If ``True``, will begin filling the mutation path
+        - ``use`` -- boolean (default: ``True``); If ``True``, will begin
+          filling the mutation path
 
         EXAMPLES::
 
@@ -1026,18 +1034,18 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``circular`` -- (default: ``False``) if ``True``, the circular plot
-          is chosen, otherwise >>spring<< is used.
+        - ``circular`` -- boolean (default: ``False``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
         - ``mark`` -- (default: ``None``) if set to i, the vertex i is
-          highlighted.
-        - ``save_pos`` -- (default: ``False``) if ``True``, the positions
-          of the vertices are saved.
-        - ``force_c`` -- (default: ``False``) if ``True``, will show the frozen
-          vertices even if they were never initialized
-        - ``with_greens`` -- (default: ``False``) if ``True``, will display
-          the green vertices in green
-        - ``add_labels`` -- (default: ``False``) if ``True``, will use the
-          initial variables as labels
+          highlighted
+        - ``save_pos`` -- boolean (default: ``False``); if ``True``, the
+          positions of the vertices are saved
+        - ``force_c`` -- boolean (default: ``False``); if ``True``, will show
+          the frozen vertices even if they were never initialized
+        - ``with_greens`` -- boolean (default: ``False``); if ``True``, will
+          display the green vertices in green
+        - ``add_labels`` -- boolean (default: ``False``); if ``True``, will use
+          the initial variables as labels
 
         EXAMPLES::
 
@@ -1071,19 +1079,19 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``fig_size`` -- (default: 1) factor by which the size of the plot
-          is multiplied.
-        - ``circular`` -- (default: ``False``) if ``True``, the circular plot
-          is chosen, otherwise >>spring<< is used.
+          is multiplied
+        - ``circular`` -- boolean (default: ``False``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
         - ``mark`` -- (default: ``None``) if set to i, the vertex i is
-          highlighted.
-        - ``save_pos`` -- (default: ``False``) if ``True``, the positions
-          of the vertices are saved.
-        - ``force_c`` -- (default: ``False``) if ``True``, will show the frozen
-          vertices even if they were never initialized
-        - ``with_greens`` -- (default: ``False``) if ``True``, will display the
-          green vertices in green
-        - ``add_labels`` -- (default: ``False``) if ``True``, will use the
-          initial variables as labels
+          highlighted
+        - ``save_pos`` -- boolean (default: ``False``); if ``True``, the
+          positions of the vertices are saved
+        - ``force_c`` -- boolean (default: ``False``); if ``True``, will show
+          the frozen vertices even if they were never initialized
+        - ``with_greens`` -- boolean (default: ``False``); if ``True``, will
+          display the green vertices in green
+        - ``add_labels`` -- boolean (default: ``False``); if ``True``, will use
+          the initial variables as labels
 
         TESTS::
 
@@ -1114,10 +1122,10 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``fig_size`` -- (default: 1) factor by which the size of the
-          plot is multiplied.
+          plot is multiplied
 
-        - ``circular`` -- (default: ``True``) if ``True``, the circular plot
-          is chosen, otherwise >>spring<< is used.
+        - ``circular`` -- boolean (default: ``True``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
 
         TESTS::
 
@@ -1133,12 +1141,13 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``filename`` -- the filename the image is saved to.
-        - ``circular`` -- (default: ``False``) if ``True``, the circular plot
-          is chosen, otherwise >>spring<< is used.
-        - ``mark`` -- (default: ``None``) if set to i, the vertex i is highlighted.
-        - ``save_pos`` -- (default: ``False``) if ``True``, the positions
-          of the vertices are saved.
+        - ``filename`` -- the filename the image is saved to
+        - ``circular`` -- boolean (default: ``False``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
+        - ``mark`` -- (default: ``None``) if set to i, the vertex i is
+          highlighted
+        - ``save_pos`` -- boolean (default: ``False``); if ``True``, the
+          positions of the vertices are saved
 
         EXAMPLES::
 
@@ -1953,12 +1962,13 @@ class ClusterSeed(SageObject):
 
     def is_bipartite(self, return_bipartition=False):
         r"""
-        Return ``True`` iff ``self`` is bipartite (i.e., if the underlying quiver is bipartite).
+        Return ``True`` iff ``self`` is bipartite (i.e., if the underlying
+        quiver is bipartite).
 
         INPUT:
 
-        - ``return_bipartition`` -- (default: ``False``) if ``True``, the
-          bipartition is returned in the case of ``self`` being bipartite.
+        - ``return_bipartition`` -- boolean (default: ``False``); if ``True``,
+          the bipartition is returned in the case of ``self`` being bipartite
 
         EXAMPLES::
 
@@ -2090,7 +2100,8 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``return_first`` -- (default: ``False``) if ``True``, will return the first urban renewal
+        - ``return_first`` -- boolean (default: ``False``); if ``True``, will
+          return the first urban renewal
 
         OUTPUT:
 
@@ -2273,8 +2284,8 @@ class ClusterSeed(SageObject):
           ``self``, a function which takes in the :class:`ClusterSeed`
           and returns a vertex or an iterator of vertices,
           or a string representing a type of vertices to mutate
-        - ``inplace`` -- (default: ``True``) if ``False``, the result is
-          returned, otherwise ``self`` is modified
+        - ``inplace`` -- boolean (default: ``True``); if ``False``, the result
+          is returned, otherwise ``self`` is modified
         - ``input_type`` -- (default: ``None``) indicates the type of data
           contained in the sequence
 
@@ -2711,7 +2722,7 @@ class ClusterSeed(SageObject):
 
         - ``sequence`` -- an iterable of vertices of self.
 
-        - ``show_sequence`` -- (default: ``False``) if ``True``, a png
+        - ``show_sequence`` -- boolean (default: ``False``); if ``True``, a png
           containing the associated quivers is shown.
 
         - ``fig_size`` -- (default: 1.2) factor by which the size of
@@ -3420,16 +3431,17 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``depth`` -- (default: infinity) integer or infinity, only seeds with
-          distance at most ``depth`` from ``self`` are returned.
-        - ``show_depth`` -- (default: ``False``) if ``True``, the current depth
-          of the mutation is shown while computing.
-        - ``return_paths`` -- (default: ``False``) if ``True``, a shortest path
-          of mutations from ``self`` to the given quiver is returned as well.
-        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only one
-          seed up to simultaneous permutation of rows and columns of the
-          exchange matrix is recorded.
-        - ``sink_source`` -- (default: ``False``) if ``True``, only mutations
-          at sinks and sources are applied.
+          distance at most ``depth`` from ``self`` are returned
+        - ``show_depth`` -- boolean (default: ``False``); if ``True``, the
+          current depth of the mutation is shown while computing
+        - ``return_paths`` -- boolean (default: ``False``); if ``True``, a
+          shortest path of mutations from ``self`` to the given quiver is
+          returned as well
+        - ``up_to_equivalence`` -- boolean (default: ``True``); if ``True``,
+          only one seed up to simultaneous permutation of rows and columns of
+          the exchange matrix is recorded
+        - ``sink_source`` -- boolean (default: ``False``); if ``True``, only
+          mutations at sinks and sources are applied
 
         EXAMPLES:
 
@@ -3626,15 +3638,15 @@ class ClusterSeed(SageObject):
 
         - ``depth`` -- (default: ``infinity`) integer, only seeds with
           distance at most depth from ``self`` are returned
-        - ``show_depth`` -- (default: ``False``) if ``True``, the actual depth
-          of the mutation is shown
-        - ``return_paths`` -- (default: ``False``) if ``True``, a shortest
-          path of mutation sequences from self to the given quiver is
+        - ``show_depth`` -- boolean (default: ``False``); if ``True``, the
+          actual depth of the mutation is shown
+        - ``return_paths`` -- boolean (default: ``False``); if ``True``, a
+          shortest path of mutation sequences from self to the given quiver is
           returned as well
-        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only
-          seeds up to equivalence are considered
-        - ``sink_source`` -- (default: ``False``) if ``True``, only mutations
-          at sinks and sources are applied
+        - ``up_to_equivalence`` -- boolean (default: ``True``); if ``True``,
+          only seeds up to equivalence are considered
+        - ``sink_source`` -- boolean (default: ``False``); if ``True``, only
+          mutations at sinks and sources are applied
 
         EXAMPLES:
 
@@ -3656,11 +3668,12 @@ class ClusterSeed(SageObject):
 
         - ``depth`` -- (default: infinity) integer or infinity, only seeds with
           distance at most ``depth`` from ``self`` are returned
-        - ``show_depth`` -- (default: ``False``) if ``True``, ignored if
-          ``depth`` is set; returns the depth of the mutation class, i.e., the
-          maximal distance from ``self`` of an element in the mutation class
-        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only
-          clusters up to equivalence are considered.
+        - ``show_depth`` -- boolean (default: ``False``); if ``True``, ignored
+          if ``depth`` is set; returns the depth of the mutation class, i.e.,
+          the maximal distance from ``self`` of an element in the mutation
+          class
+        - ``up_to_equivalence`` -- boolean (default: ``True``); if ``True``,
+          only clusters up to equivalence are considered
 
         EXAMPLES:
 
@@ -3777,14 +3790,15 @@ class ClusterSeed(SageObject):
 
     def b_matrix_class_iter(self, depth=infinity, up_to_equivalence=True):
         r"""
-        Return an iterator through all `B`-matrices in the mutation class of ``self``.
+        Return an iterator through all `B`-matrices in the mutation class of
+        ``self``.
 
         INPUT:
 
         - ``depth`` -- (default:infinity) integer or infinity, only seeds
           with distance at most ``depth`` from ``self`` are returned
-        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only
-          `B`-matrices up to equivalence are considered.
+        - ``up_to_equivalence`` -- boolean (default: ``True``); if ``True``,
+          only `B`-matrices up to equivalence are considered
 
         EXAMPLES:
 
@@ -3888,8 +3902,8 @@ class ClusterSeed(SageObject):
 
         - ``depth`` -- (default: infinity) integer or infinity, only seeds
           with distance at most ``depth`` from ``self`` are returned
-        - ``up_to_equivalence`` -- (default: ``True``) if ``True``, only
-          `B`-matrices up to equivalence are considered.
+        - ``up_to_equivalence`` -- boolean (default: ``True``); if ``True``,
+          only `B`-matrices up to equivalence are considered
 
         EXAMPLES:
 
@@ -3907,14 +3921,15 @@ class ClusterSeed(SageObject):
 
     def variable_class_iter(self, depth=infinity, ignore_bipartite_belt=False):
         r"""
-        Return an iterator for all cluster variables in the mutation class of ``self``.
+        Return an iterator for all cluster variables in the mutation class of
+        ``self``.
 
         INPUT:
 
             - ``depth`` -- (default: infinity) integer, only seeds with distance
               at most ``depth`` from ``self`` are returned
-            - ``ignore_bipartite_belt`` -- (default: ``False``) if ``True``,
-              the algorithm does not use the bipartite belt
+            - ``ignore_bipartite_belt`` -- boolean (default: ``False``); if
+              ``True``, the algorithm does not use the bipartite belt
 
         EXAMPLES:
 
@@ -4044,8 +4059,8 @@ class ClusterSeed(SageObject):
 
         - ``depth`` -- (default: infinity) integer, only seeds with distance
           at most ``depth`` from ``self`` are returned
-        - ``ignore_bipartite_belt`` -- (default: ``False``) if ``True``, the
-          algorithm does not use the bipartite belt
+        - ``ignore_bipartite_belt`` -- boolean (default: ``False``); if
+          ``True``, the algorithm does not use the bipartite belt
 
         EXAMPLES:
 
@@ -4089,15 +4104,15 @@ class ClusterSeed(SageObject):
 
     def is_mutation_finite(self, nr_of_checks=None, return_path=False):
         r"""
-        Return True if ``self`` is of finite mutation type.
+        Return ``True`` if ``self`` is of finite mutation type.
 
         INPUT:
 
-        - ``nr_of_checks`` -- (default: ``None``) number of mutations applied.
-          Standard is 500 times the number of vertices of ``self``.
-        - ``return_path`` -- (default: ``False``) if ``True``, in case of
-          ``self`` not being mutation finite, a path from ``self`` to a quiver
-          with an edge label `(a,-b)` and `a*b > 4` is returned.
+        - ``nr_of_checks`` -- (default: ``None``) number of mutations applied;
+          standard is 500 times the number of vertices of ``self``
+        - ``return_path`` -- boolean (default: ``False``); if ``True``, in case
+          of ``self`` not being mutation finite, a path from ``self`` to a
+          quiver with an edge label `(a,-b)` and `a*b > 4` is returned
 
         ALGORITHM:
 
@@ -4373,8 +4388,8 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) if ``True``, prints output
-          during the computation.
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, prints
+          output during the computation.
 
         EXAMPLES:
 

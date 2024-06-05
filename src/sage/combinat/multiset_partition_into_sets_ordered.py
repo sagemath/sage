@@ -432,7 +432,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
 
         INPUT:
 
-        - ``as_dict`` -- (default: ``False``) whether to return the multiset
+        - ``as_dict`` -- boolean (default: ``False``); whether to return the multiset
           as a tuple of a dict of multiplicities
 
         EXAMPLES::
@@ -3089,7 +3089,7 @@ def _refine_block(S, strong=False):
 
 def _is_initial_segment(lst):
     r"""
-    Return True if ``lst`` is an interval in `\ZZ` of the form `[0, 1, \ldots, n]`.
+    Return ``True`` if ``lst`` is an interval in `\ZZ` of the form `[0, 1, \ldots, n]`.
 
     EXAMPLES::
 

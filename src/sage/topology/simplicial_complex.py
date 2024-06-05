@@ -1247,7 +1247,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def __contains__(self, x):
         """
-        True if ``x`` is a simplex which is contained in this complex.
+        ``True`` if ``x`` is a simplex which is contained in this complex.
 
         EXAMPLES::
 
@@ -1711,7 +1711,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def is_pseudomanifold(self):
         """
-        Return True if ``self`` is a pseudomanifold.
+        Return ``True`` if ``self`` is a pseudomanifold.
 
         A pseudomanifold is a simplicial complex with the following properties:
 
@@ -4096,16 +4096,16 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_point`` (default: None) -- if this complex is
+        - ``base_point`` -- (default: ``None``) if this complex is
           not path-connected, then specify a vertex; the fundamental
           group is computed with that vertex as a base point. If the
           complex is path-connected, then you may specify a vertex or
           leave this as its default setting of ``None``. (If this
           complex is path-connected, then this argument is ignored.)
 
-        - ``simplify`` (bool, optional True) -- if False, then return a
+        - ``simplify`` -- boolean (default: ``True``), then return a
           presentation of the group in terms of generators and
-          relations. If True, the default, simplify as much as GAP is
+          relations. If ``True``, the default, simplify as much as GAP is
           able to.
 
         Algorithm: we compute the edge-path group -- see

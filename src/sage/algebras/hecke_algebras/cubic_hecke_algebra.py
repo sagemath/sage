@@ -3499,7 +3499,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         - ``irr`` -- (optional) instance of :class:`AbsIrreducibeRep`
           selecting the irreducible representation corresponding to the
           character; if not given a list of all characters is returned
-        - ``original`` -- (default: ``True``) see description above
+        - ``original`` -- boolean (default: ``True``); see description above
 
         OUTPUT:
 

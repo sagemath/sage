@@ -634,20 +634,20 @@ class SimplicialSets(Category_singleton):
                   chain complex in those dimensions, setting the chain groups
                   in all other dimensions to zero.
 
-                - ``augmented`` (default: ``False``) -- if ``True``,
+                - ``augmented`` -- boolean (default: ``False``); if ``True``,
                   return the augmented chain complex (that is, include a class
                   in dimension `-1` corresponding to the empty cell).
 
-                - ``cochain`` (default: ``False``) -- if ``True``,
+                - ``cochain`` -- boolean (default: ``False``); if ``True``,
                   return the cochain complex (that is, the dual of the chain
                   complex).
 
-                - ``verbose`` (default: ``False``) -- ignored.
+                - ``verbose`` -- boolean (default: ``False``); ignored.
 
-                - ``subcomplex`` (default: ``None``) -- if present,
+                - ``subcomplex`` -- (default: ``None``) if present,
                   compute the chain complex relative to this subcomplex.
 
-                - ``check`` (default: ``False``) -- If ``True``, make
+                - ``check`` -- boolean (default: ``False``); If ``True``, make
                   sure that the chain complex is actually a chain complex:
                   the differentials are composable and their product is zero.
 
@@ -824,8 +824,8 @@ class SimplicialSets(Category_singleton):
 
                 - ``n`` -- a positive integer.
 
-                - ``reduced`` -- (default: ``False``) if set to True, the presentation matrix
-                  will be reduced.
+                - ``reduced`` -- boolean (default: ``False``); if set to True,
+                  the presentation matrix will be reduced.
 
                 EXAMPLES::
 

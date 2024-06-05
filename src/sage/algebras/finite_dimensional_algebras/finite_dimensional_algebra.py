@@ -38,10 +38,10 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
     - ``table`` -- a list of matrices
 
-    - ``names`` -- (default: ``'e'``) string; names for the basis
+    - ``names`` -- string (default: ``'e'``); names for the basis
       elements
 
-    - ``assume_associative`` -- (default: ``False``) boolean; if
+    - ``assume_associative`` -- boolean (default: ``False``); if
       ``True``, then the category is set to ``category.Associative()``
       and methods requiring associativity assume this
 
@@ -439,11 +439,11 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         - ``A`` -- a :class:`FiniteDimensionalAlgebra`
 
-        - ``gens`` -- (default: None); either an element of ``A`` or a
-          list of elements of ``A``, given as vectors, matrices, or
+        - ``gens`` -- (default: ``None``); either an element of `A` or a
+          list of elements of `A`, given as vectors, matrices, or
           FiniteDimensionalAlgebraElements.  If ``given_by_matrix`` is
           ``True``, then ``gens`` should instead be a matrix whose rows
-          form a basis of an ideal of ``A``.
+          form a basis of an ideal of `A`.
 
         - ``given_by_matrix`` -- boolean (default: ``False``); if
           ``True``, no checking is done

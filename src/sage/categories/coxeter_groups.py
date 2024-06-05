@@ -893,8 +893,8 @@ class CoxeterGroups(Category_singleton):
 
             - ``self`` -- a Coxeter group `W`
             - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``length_increasing`` -- a boolean (default: ``True``) specifying
-              whether the operator increases or decreases length
+            - ``length_increasing`` -- a boolean (default: ``True``); whether
+              the operator increases or decreases length
 
             This returns the simple projections of `W`, as a family.
 
@@ -2325,8 +2325,8 @@ class CoxeterGroups(Category_singleton):
 
             - ``i`` -- an element of the index set of the Coxeter group
             - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``length_increasing`` -- a boolean (default: ``True``) specifying
-              the direction of the projection
+            - ``length_increasing`` -- a boolean (default: ``True``);
+              specifying the direction of the projection
 
             See :meth:`CoxeterGroups.ParentMethods.simple_projections`
             for the definition of the simple projections.
@@ -2884,13 +2884,11 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``c`` -- a Coxeter element.
-            - ``sorting_word`` -- sorting word (default: None) used to
-              not recompute the ``c``-sorting word if already computed.
+            - ``c`` -- a Coxeter element
+            - ``sorting_word`` -- sorting word (default: ``None``) used to
+              not recompute the `c`-sorting word if already computed
 
-            OUTPUT:
-
-            is ``self`` ``c``-sortable
+            OUTPUT: is ``self`` `c`-sortable
 
             EXAMPLES::
 

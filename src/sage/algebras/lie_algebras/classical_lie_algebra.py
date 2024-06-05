@@ -2098,8 +2098,8 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         INPUT:
 
-        - ``str_keys`` -- (default: ``False``) set to ``True`` to have the
-          indices indexed by strings instead of simple (co)roots
+        - ``str_keys`` -- boolean (default: ``False``); set to ``True`` to have
+          the indices indexed by strings instead of simple (co)roots
 
         EXAMPLES::
 
@@ -2197,7 +2197,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         INPUT:
 
-        - ``pos`` -- (default: ``True``) if ``True``, then return
+        - ``pos`` -- boolean (default: ``True``); if ``True``, then return
           `e_{\theta}`, otherwise return `f_{\theta}`
 
         EXAMPLES::

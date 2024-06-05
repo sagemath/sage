@@ -2112,7 +2112,7 @@ def fibonacci_sequence(start, stop=None, algorithm=None) -> Iterator:
     -  ``stop`` -- stopping value
 
     -  ``algorithm`` -- (default: ``None``) passed on to
-       fibonacci function (or not passed on if None, i.e., use the
+       fibonacci function (or not passed on if ``None``, i.e., use the
        default)
 
     EXAMPLES::

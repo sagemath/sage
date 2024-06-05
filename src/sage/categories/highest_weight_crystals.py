@@ -259,8 +259,8 @@ class HighestWeightCrystals(Category_singleton):
               (i.e. the number of terms returned).
               If ``None``, then the result is returned as a lazy power series.
 
-            - ``use_product`` -- (default: ``False``) if we have a finite
-              crystal and ``True``, use the product formula
+            - ``use_product`` -- boolean (default: ``False``); if we have a
+              finite crystal and ``True``, use the product formula
 
             EXAMPLES::
 
@@ -855,7 +855,8 @@ class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
       for the weight, `\varepsilon` and `\varphi`
     - ``gens`` -- (optional) a list of generators to define the morphism;
       the default is to use the highest weight vectors of the crystal
-    - ``check`` -- (default: ``True``) check if the crystal morphism is valid
+    - ``check`` -- boolean (default: ``True``); check if the crystal morphism
+      is valid
     """
     def __init__(self, parent, on_gens, cartan_type=None,
                  virtualization=None, scaling_factors=None,

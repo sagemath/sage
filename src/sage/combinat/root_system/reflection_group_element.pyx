@@ -787,16 +787,16 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
     cpdef bint has_descent(self, i, side="left", positive=False) noexcept:
         r"""
-        Return whether ``i`` is a descent (or ascent) of ``self``.
+        Return whether `i` is a descent (or ascent) of ``self``.
 
-        This is done by testing whether ``i`` is mapped by ``self``
+        This is done by testing whether `i` is mapped by ``self``
         to a negative root.
 
         INPUT:
 
         - ``i`` -- an index of a simple reflection
-        - ``side`` (default: ``'right'``) -- ``'left'`` or ``'right'``
-        - ``positive`` (default: ``False``) -- a boolean
+        - ``side`` -- (default: ``'right'``) ``'left'`` or ``'right'``
+        - ``positive`` -- boolean (default: ``False``)
 
         EXAMPLES::
 

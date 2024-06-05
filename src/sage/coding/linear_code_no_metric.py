@@ -497,7 +497,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def __contains__(self, v):
         r"""
-        Return True if `v` can be coerced into ``self``. Otherwise, returns False.
+        Return ``True`` if `v` can be coerced into ``self``.
+        Otherwise, return ``False``.
 
         EXAMPLES::
 
@@ -560,14 +561,12 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         INPUT:
 
-        - ``return_permutation`` -- (default: ``True``) if ``True``, the column
-          permutation which brings ``self`` into the returned code is also
-          returned.
+        - ``return_permutation`` -- boolean (default: ``True``); if ``True``,
+          the column permutation which brings ``self`` into the returned code
+          is also returned
 
-        OUTPUT:
-
-        - A :class:`LinearCode` whose :meth:`systematic_generator_matrix` is
-          guaranteed to be of the form `[I \vert A]`.
+        OUTPUT: a :class:`LinearCode` whose :meth:`systematic_generator_matrix`
+        is guaranteed to be of the form `[I \vert A]`.
 
         EXAMPLES::
 

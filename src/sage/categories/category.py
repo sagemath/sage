@@ -1763,7 +1763,7 @@ class Category(UniqueRepresentation, SageObject):
     # Operations on the lattice of categories
     def is_subcategory(self, c):
         """
-        Returns True if self is naturally embedded as a subcategory of c.
+        Returns ``True`` if self is naturally embedded as a subcategory of `c`.
 
         EXAMPLES::
 
@@ -2567,7 +2567,7 @@ class Category(UniqueRepresentation, SageObject):
 
 def is_Category(x):
     """
-    Returns True if x is a category.
+    Returns ``True`` if `x` is a category.
 
     EXAMPLES::
 

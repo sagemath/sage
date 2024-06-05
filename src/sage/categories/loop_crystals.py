@@ -822,7 +822,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 - ``q`` -- (default: ``None``) a variable or ``None``;
                   if ``None``, a variable `q` is set in the code
-                - ``group_components`` -- (default: ``True``) boolean; if
+                - ``group_components`` -- boolean (default: ``True``); if
                   ``True``, then the terms are grouped by classical component
 
                 The one-dimensional configuration sum is the sum of the

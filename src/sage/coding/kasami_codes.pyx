@@ -92,8 +92,8 @@ class KasamiCode(AbstractLinearCode):
 
     - ``s``, ``t`` -- (integer) the parameters of the Kasami code
 
-    - ``extended`` -- (default: ``True``) if set to ``True``,
-      creates an extended Kasami code.
+    - ``extended`` -- boolean (default: ``True``); if set to ``True``,
+      creates an extended Kasami code
 
     EXAMPLES::
 

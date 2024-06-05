@@ -950,7 +950,7 @@ def _is_p_power_mod(a, p, N):
 
     OUTPUT:
 
-    - True if ``a`` is a ``p`` th power modulo ``N``; False otherwise.
+    - ``True`` if `a` is a `p`th power modulo `N`; ``False`` otherwise.
 
     EXAMPLES::
 
@@ -1141,7 +1141,7 @@ def _is_p_power(a, p):
 
     OUTPUT:
 
-    - True if ``a`` is a ``p`` th power; else False.
+    - ``True`` if `a` is a `p`th power; else ``False``.
 
     EXAMPLES::
 

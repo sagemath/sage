@@ -1031,8 +1031,8 @@ cdef class dancing_linksWrapper:
             sage: x                                                                     # needs sage.numerical.mip
             MIPVariable with 4 binary components
 
-        In the reduction, the boolean variable x_i is True if and only if
-        the i-th row is in the solution::
+        In the reduction, the boolean variable `x_i` is ``True`` if and only if
+        the `i`-th row is in the solution::
 
             sage: p.show()                                                              # needs sage.numerical.mip
             Maximization:

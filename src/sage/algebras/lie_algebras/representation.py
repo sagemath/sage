@@ -143,10 +143,10 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
     - ``f`` -- the Lie algebra morphism defining the action of the basis
       elements of ``lie_algebra``
     - ``index_set`` -- (optional) the index set of the module basis
-    - ``on_basis`` -- (default: ``False``) the function ``f`` defines a
+    - ``on_basis`` -- boolean (default: ``False``); the function `f` defines a
       map from the basis elements or from a generic element of ``lie_algebra``
 
-    If ``f`` is encoded as a ``dict`` or ``Family``, then the keys must
+    If `f` is encoded as a ``dict`` or ``Family``, then the keys must
     be indices of the basis of ``lie_algebra`` and the values being the
     corresponding matrix defining the action. This sets ``on_basis=True``.
 

@@ -1947,10 +1947,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           homogeneous polynomial. Can be given as a single string of length 2,
           or a single string with a comma, or as a tuple or list of two strings.
 
-        - ``bivariate`` -- (default: ``True``) Whether to return a bivariate,
-          homogeneous polynomial or just a univariate polynomial. If set to
-          ``False``, then ``names`` will be interpreted as a single variable
-          name and default to ``"x"``.
+        - ``bivariate`` -- boolean (default: ``True``); Whether to return a
+          bivariate, homogeneous polynomial or just a univariate polynomial. If
+          set to ``False``, then ``names`` will be interpreted as a single
+          variable name and default to ``"x"``.
 
         OUTPUT:
 

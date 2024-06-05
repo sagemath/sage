@@ -178,7 +178,7 @@ class Cube(SageObject):
 
     def is_face(self, other):
         """
-        Return True iff this cube is a face of other.
+        Return ``True`` iff this cube is a face of other.
 
         EXAMPLES::
 
@@ -337,7 +337,7 @@ class Cube(SageObject):
 
         :param n: an integer between 0 and one less than the dimension
           of this cube
-        :param upper: if True, return the "upper" nth primary face;
+        :param upper: if ``True``, return the "upper" nth primary face;
           otherwise, return the "lower" nth primary face.
         :type upper: boolean; optional, default=True
         :return: the cube obtained by replacing the nth non-degenerate
@@ -615,7 +615,7 @@ class Cube(SageObject):
 
     def __eq__(self, other):
         """
-        Return True iff this cube is the same as ``other``: that is,
+        Return ``True`` iff this cube is the same as ``other``: that is,
         if they are the product of the same intervals in the same
         order.
 
@@ -636,7 +636,7 @@ class Cube(SageObject):
 
     def __ne__(self, other):
         """
-        Return True iff this cube is not equal to ``other``.
+        Return ``True`` iff this cube is not equal to ``other``.
 
         :param other: another cube
 
@@ -655,7 +655,7 @@ class Cube(SageObject):
 
     def __lt__(self, other):
         """
-        Return True iff the tuple for this cube is less than that for
+        Return ``True`` iff the tuple for this cube is less than that for
         ``other``.
 
         :param other: another cube
@@ -938,11 +938,11 @@ class CubicalComplex(GenericCellComplex):
 
     def __eq__(self, other):
         r"""
-        Return True if the set of maximal cells is the same for
+        Return ``True`` if the set of maximal cells is the same for
         ``self`` and ``other``.
 
         :param other: another cubical complex
-        :return: True if the set of maximal cells is the same for ``self`` and ``other``
+        :return: ``True`` if the set of maximal cells is the same for ``self`` and ``other``
         :rtype: bool
 
         EXAMPLES::
@@ -961,10 +961,10 @@ class CubicalComplex(GenericCellComplex):
 
     def __ne__(self, other):
         r"""
-        Return True if ``self`` and ``other`` are not equal.
+        Return ``True`` if ``self`` and ``other`` are not equal.
 
         :param other: another cubical complex
-        :return: True if the complexes are not equal
+        :return: ``True`` if the complexes are not equal
         :rtype: bool
 
         EXAMPLES::
@@ -996,7 +996,7 @@ class CubicalComplex(GenericCellComplex):
 
     def is_subcomplex(self, other):
         r"""
-        Return True if ``self`` is a subcomplex of ``other``.
+        Return ``True`` if ``self`` is a subcomplex of ``other``.
 
         :param other: a cubical complex
 
@@ -1135,7 +1135,7 @@ class CubicalComplex(GenericCellComplex):
         r"""
         The chain complex associated to this cubical complex.
 
-        :param dimensions: if None, compute the chain complex in all
+        :param dimensions: if ``None``, compute the chain complex in all
            dimensions.  If a list or tuple of integers, compute the
            chain complex in those dimensions, setting the chain groups
            in all other dimensions to zero.  NOT IMPLEMENTED YET: this
@@ -1355,7 +1355,7 @@ class CubicalComplex(GenericCellComplex):
 
     def is_pure(self):
         """
-        True iff this cubical complex is pure: that is,
+        ``True`` iff this cubical complex is pure: that is,
         all of its maximal faces have the same dimension.
 
         .. warning::

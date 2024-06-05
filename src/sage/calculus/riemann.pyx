@@ -718,7 +718,7 @@ cdef class Riemann_Map:
 
         The following inputs may be passed in as named parameters:
 
-        - ``plotjoined`` -- boolean (default: ``True``) If ``False``,
+        - ``plotjoined`` -- boolean (default: ``True``); If ``False``,
           discrete points will be drawn; otherwise they will be connected
           by lines. In this case, if ``plotjoined=False``, the points shown
           will be the original collocation points used to generate the
@@ -875,7 +875,7 @@ cdef class Riemann_Map:
         - ``thickness`` -- positive float (default: ``1``) the thickness of
           the lines or points in the spiderweb.
 
-        - ``plotjoined`` -- boolean (default: ``True``) If ``False``,
+        - ``plotjoined`` -- boolean (default: ``True``); If ``False``,
           discrete points will be drawn; otherwise they will be connected
           by lines.
           - only for simply connected domains
@@ -1074,7 +1074,7 @@ cdef comp_pt(clist, loop=True):
 
     - ``clist`` -- a list of complex numbers.
 
-    - ``loop`` -- boolean (default: ``True``) controls whether or not the
+    - ``loop`` -- boolean (default: ``True``); controls whether or not the
       first point will be added as the last to plot a closed circle.
 
     EXAMPLES:

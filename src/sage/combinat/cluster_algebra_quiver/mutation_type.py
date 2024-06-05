@@ -1245,7 +1245,7 @@ def load_data(n, user=True):
 
     INPUT:
 
-    - ``user`` -- boolean (default: ``True``) whether to look at user
+    - ``user`` -- boolean (default: ``True``); whether to look at user
       data. If not, only consider the optional package.
 
     EXAMPLES::
@@ -1339,7 +1339,7 @@ def _mutation_type_test(n):
     Tests all quivers (of the given types) of rank n to check that
     mutation_type() works.
 
-    Affine type D does not return True since this test is not implemented.
+    Affine type D does not return ``True`` since this test is not implemented.
 
     EXAMPLES::
 

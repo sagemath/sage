@@ -366,7 +366,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
 
 def affine_factorizations(w, l, weight=None):
     r"""
-    Return all factorizations of ``w`` into ``l`` factors or of weight ``weight``.
+    Return all factorizations of `w` into `l` factors or of weight ``weight``.
 
     INPUT:
 
@@ -374,7 +374,8 @@ def affine_factorizations(w, l, weight=None):
 
     - ``l`` -- nonnegative integer
 
-    - ``weight`` -- (default: None) tuple of nonnegative integers specifying the length of the factors
+    - ``weight`` -- (default: ``None``) tuple of nonnegative integers
+      specifying the length of the factors
 
     EXAMPLES::
 
@@ -429,6 +430,8 @@ def affine_factorizations(w, l, weight=None):
        [s3, s2, s3, s1, s2, s3]]
        sage: affine_factorizations(w0,6,(0,0,0,1,2,3))
        [[1, 1, 1, s1, s2*s1, s3*s2*s1]]
+
+
     """
     if weight is None:
         if l == 0:

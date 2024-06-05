@@ -224,15 +224,16 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     @cached_method
     def on_basis(self, x, word, signs=None, scalar=None):
         r"""
-        Action of product of `T_i` and `T_i^{-1}` on ``x``.
+        Action of product of `T_i` and `T_i^{-1}` on `x`.
 
         INPUT:
 
         - ``x`` -- the index of a basis element
         - ``word`` -- word of indices of generators
-        - ``signs`` -- (default: None) sequence of signs of same length as ``word``; determines
-          which operators are supposed to be taken as inverses.
-        - ``scalar`` -- (default: None) scalar to multiply the answer by
+        - ``signs`` -- (default: ``None``) sequence of signs of same length as
+          ``word``; determines which operators are supposed to be taken as
+          inverses.
+        - ``scalar`` -- (default: ``None``) scalar to multiply the answer by
 
         EXAMPLES::
 

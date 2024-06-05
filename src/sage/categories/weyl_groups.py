@@ -790,13 +790,13 @@ class WeylGroups(Category_singleton):
               simple reflections used to generate the parabolic subgroup;
               the default value indicates that the subgroup is the identity
 
-            - ``roots`` -- (default: ``False``) if ``True``, returns the
-              list of 2-tuples (``w``, `\alpha`) where ``w`` is a successor
+            - ``roots`` -- boolean (default: ``False``); if ``True``, returns
+              the list of 2-tuples (``w``, `\alpha`) where ``w`` is a successor
               and `\alpha` is the positive root associated with the
               successor relation
 
-            - ``quantum_only`` -- (default: ``False``) if ``True``, returns
-              only the quantum successors
+            - ``quantum_only`` -- boolean (default: ``False``); if ``True``,
+              returns only the quantum successors
 
             EXAMPLES::
 

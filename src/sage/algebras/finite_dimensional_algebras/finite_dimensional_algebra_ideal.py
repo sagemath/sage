@@ -34,8 +34,8 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
 
     - ``A`` -- a finite-dimensional algebra
     - ``gens`` -- the generators of this ideal
-    - ``given_by_matrix`` -- (default: ``False``) whether the basis matrix is
-      given by ``gens``
+    - ``given_by_matrix`` -- boolean (default: ``False``); whether the basis
+      matrix is given by ``gens``
 
     EXAMPLES::
 

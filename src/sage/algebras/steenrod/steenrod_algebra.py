@@ -708,7 +708,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def _has_nontrivial_profile(self):
         r"""
-        True if the profile function for this algebra seems to be that
+        ``True`` if the profile function for this algebra seems to be that
         for a proper sub-Hopf algebra of the Steenrod algebra.
 
         EXAMPLES::
@@ -1993,7 +1993,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def _coerce_map_from_(self, S):
         r"""
-        True if there is a coercion from ``S`` to ``self``, False otherwise.
+        ``True`` if there is a coercion from ``S`` to ``self``, ``False``
+        otherwise.
 
         INPUT:
 
@@ -2136,7 +2137,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def __contains__(self, x):
         r"""
-        True if self contains x.
+        ``True`` if self contains `x`.
 
         EXAMPLES::
 
@@ -2263,12 +2264,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def _check_profile_on_basis(self, t):
         """
-        True if the element specified by the tuple ``t`` is in this
+        ``True`` if the element specified by the tuple ``t`` is in this
         algebra.
 
         INPUT:
 
-        - ``t`` -- tuple of ...
+        - ``t`` -- tuple
 
         EXAMPLES::
 
@@ -2830,7 +2831,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def is_commutative(self):
         r"""
-        True if ``self`` is graded commutative, as determined by the
+        ``True`` if ``self`` is graded commutative, as determined by the
         profile function.  In particular, a sub-Hopf algebra of the
         mod 2 Steenrod algebra is commutative if and only if there is
         an integer `n>0` so that its profile function `e` satisfies
@@ -2882,7 +2883,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def is_finite(self):
         r"""
-        True if this algebra is finite-dimensional.
+        ``True`` if this algebra is finite-dimensional.
 
         Therefore true if the profile function is finite, and in
         particular the ``truncation_type`` must be finite.
@@ -3171,7 +3172,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         def is_homogeneous(self):
             """
-            Return True iff this element is homogeneous.
+            Return ``True`` iff this element is homogeneous.
 
             EXAMPLES::
 
@@ -3517,9 +3518,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return min(excesses)
 
         def is_unit(self):
-            """
-            True if element has a nonzero scalar multiple of P(0) as a summand,
-            False otherwise.
+            r"""
+            ``True`` if element has a nonzero scalar multiple of
+            `\textnormal{P}(0)` as a summand, ``False`` otherwise.
 
             EXAMPLES::
 
@@ -3540,7 +3541,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         def is_nilpotent(self):
             """
-            True if element is not a unit, False otherwise.
+            ``True`` if element is not a unit, ``False`` otherwise.
 
             EXAMPLES::
 
@@ -3635,10 +3636,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         def is_decomposable(self):
             r"""
-            Return True if element is decomposable, False otherwise.
+            Return ``True`` if element is decomposable, ``False`` otherwise.
 
             That is, if element is in the square of the augmentation ideal,
-            return True; otherwise, return False.
+            return ``True``; otherwise, return ``False``.
 
             OUTPUT: boolean
 

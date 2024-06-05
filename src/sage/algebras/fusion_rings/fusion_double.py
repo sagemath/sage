@@ -247,8 +247,8 @@ class FusionDouble(CombinatorialFreeModule):
         INPUT:
 
         - ``i``, ``j``, -- a pair of basis elements
-        - ``unitary`` -- (default: ``False``) set to ``True`` to obtain
-          the unitary S-matrix
+        - ``unitary`` -- boolean (default: ``False``); set to ``True`` to
+          obtain the unitary S-matrix
 
         EXAMPLES::
 
@@ -303,8 +303,8 @@ class FusionDouble(CombinatorialFreeModule):
 
         OPTIONAL:
 
-        - ``unitary`` -- (default: ``False``) set to ``True`` to obtain
-          the unitary S-matrix
+        - ``unitary`` -- boolean (default: ``False``); set to ``True`` to
+          obtain the unitary `S`-matrix
 
         Without the ``unitary`` parameter, this is the matrix denoted
         `\widetilde{s}` in [BaKi2001]_.
@@ -379,7 +379,7 @@ class FusionDouble(CombinatorialFreeModule):
         INPUT:
 
         - ``i``, ``j``, ``k`` -- basis elements
-        - ``use_characters`` -- (default: ``False``) see the algorithm
+        - ``use_characters`` -- boolean (default: ``False``); see the algorithm
           description below
 
         ALGORITHM:

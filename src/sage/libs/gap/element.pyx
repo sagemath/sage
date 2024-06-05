@@ -2695,7 +2695,7 @@ cdef class GapElement_List(GapElement):
 
     def __bool__(self):
         r"""
-        Return True if the list is non-empty, as with Python ``list``s.
+        Return ``True`` if the list is non-empty, as with Python ``list``s.
 
         EXAMPLES::
 

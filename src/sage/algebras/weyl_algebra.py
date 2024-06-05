@@ -47,8 +47,8 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
       and ``c`` is the coefficient
     - ``term_repr`` -- a function which returns a string given an index
       (can be ``repr`` or ``latex``, for example)
-    - ``use_latex`` -- (default: ``False``) if ``True`` then the output is
-      in latex format
+    - ``use_latex`` -- boolean (default: ``False``); if ``True`` then the
+      output is in latex format
 
     EXAMPLES::
 

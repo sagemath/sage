@@ -229,8 +229,8 @@ class RegularCrystals(Category_singleton):
               underlying crystal
             - ``reduced_word`` -- a reduced word of the Weyl group of the
               same type as the underlying crystal
-            - ``only_support`` -- (default: ``True``) only include arrows
-              corresponding to the support of ``reduced_word``
+            - ``only_support`` -- boolean (default: ``True``); only include
+              arrows corresponding to the support of ``reduced_word``
 
             OUTPUT:
 
@@ -375,7 +375,7 @@ class RegularCrystals(Category_singleton):
               (default: the whole index set of ``self``); this has
               to be a subset of the index set of ``self`` (as a list
               or tuple)
-            - ``directed`` -- (default: ``True``) whether to have the
+            - ``directed`` -- boolean (default: ``True``); whether to have the
               dual equivalence graph be directed, where the head of
               an edge `b - b'` is `b` and the tail is
               `b' = f_{i-1} f_i e_{i-1} e_i b`)

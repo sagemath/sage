@@ -78,9 +78,9 @@ class EnumeratedSetFromIterator(Parent):
 
     - ``f`` -- a function that returns an iterable from which the set is built from
 
-    - ``args`` -- tuple -- arguments to be sent to the function ``f``
+    - ``args`` -- tuple; arguments to be sent to the function `f`
 
-    - ``kwds`` -- dictionary -- keywords to be sent to the function ``f``
+    - ``kwds`` -- dictionary; keywords to be sent to the function `f`
 
     - ``name`` -- an optional name for the set
 
@@ -90,8 +90,8 @@ class EnumeratedSetFromIterator(Parent):
       you know that your iterator will run over and over you should set it as
       :class:`InfiniteEnumeratedSets`.
 
-    - ``cache`` -- boolean (default: ``False``) -- Whether or not use a cache
-      mechanism for the iterator. If ``True``, then the function ``f`` is called
+    - ``cache`` -- boolean (default: ``False``); Whether or not use a cache
+      mechanism for the iterator. If ``True``, then the function `f` is called
       only once.
 
 

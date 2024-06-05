@@ -3008,8 +3008,8 @@ class ExteriorAlgebraIdeal(Ideal_nc):
           * ``"degrevlex"`` -- degree reverse lex order
           * ``"deglex"`` -- degree lex order
 
-        - ``reduced`` -- (default: ``True``) whether or not to return the
-          reduced Gröbner basis
+        - ``reduced`` -- boolean (default: ``True``); whether or not to return
+          the reduced Gröbner basis
 
         EXAMPLES:
 

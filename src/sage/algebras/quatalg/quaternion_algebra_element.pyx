@@ -222,11 +222,10 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
     cpdef bint is_constant(self) noexcept:
         """
-        Return True if this quaternion is constant, i.e., has no i, j, or k term.
+        Return ``True`` if this quaternion is constant, i.e., has no `i`, `j`,
+        or `k` term.
 
-        OUTPUT:
-
-        bool
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -955,11 +954,10 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
     cpdef bint is_constant(self) noexcept:
         """
-        Return True if this quaternion is constant, i.e., has no i, j, or k term.
+        Return ``True`` if this quaternion is constant, i.e., has no `i`, `j`,
+        or `k` term.
 
-        OUTPUT:
-
-        bool
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -977,7 +975,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
     def __bool__(self):
         """
-        Return True if this quaternion is nonzero.
+        Return ``True`` if this quaternion is nonzero.
 
         EXAMPLES::
 

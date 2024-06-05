@@ -474,7 +474,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
     - ``cartan_type`` -- a Cartan type
     - ``weight`` -- an element of the weight lattice of type ``cartan_type``
-    - ``dual`` -- (default: ``False``) boolean
+    - ``dual`` -- boolean (default: ``False``)
 
     EXAMPLES:
 

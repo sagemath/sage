@@ -1424,8 +1424,8 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
 
         - ``domain_cone`` -- a cone of the domain fan of ``self``.
 
-        - ``multiplicity`` (default: ``False``) -- whether to return the number
-          of fiber components corresponding to ``domain_cone`` as well.
+        - ``multiplicity`` -- boolean (default: ``False``); whether to return
+          the number of fiber components corresponding to ``domain_cone`` as well.
 
         OUTPUT:
 

@@ -18,8 +18,8 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
     - ``fig_size`` -- (default: 1) factor by which the size of the
       plot is multiplied.
 
-    - ``circular`` -- (default: ``True``) if ``True``, the circular plot
-      is chosen, otherwise >>spring<< is used.
+    - ``circular`` -- boolean (default: ``True``); if ``True``, the circular
+      plot is chosen, otherwise >>spring<< is used.
 
     - ``kind`` -- either ``"seed"`` (default) or ``"quiver"``
 

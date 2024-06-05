@@ -120,7 +120,7 @@ class SymbolicSubringFactory(UniqueFactory):
       expressions in variables distinct to these variables is
       created.
 
-    - ``no_variables`` (default: ``False``) -- a boolean. If set,
+    - ``no_variables`` -- boolean (default: ``False``); If set,
       then a symbolic subring of constant expressions (i.e.,
       expressions without a variable) is created.
 

@@ -706,7 +706,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - ``take_shortcuts`` -- (default: ``True``) if the discriminant is
+        - ``take_shortcuts`` -- boolean (default: ``True``); if the discriminant is
           prime and the invariants of the algebra are of a nice form, use
           Proposition 5.2 of [Piz1980]_.
 
@@ -1320,7 +1320,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         INPUT:
 
         - ``basis`` -- list of 4 elements of ``self``
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -1350,7 +1350,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         - ``gens`` -- a list of elements of this quaternion order
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
         - ``left_order`` -- a quaternion order or ``None``
 
@@ -2082,10 +2082,10 @@ class QuaternionOrder(Parent):
 
         - ``gens`` -- a list of elements of this quaternion order
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``is_basis`` -- bool (default: ``False``); if ``True`` then ``gens``
-          must be a `\ZZ`-basis of the ideal
+        - ``is_basis`` -- boolean (default: ``False``); if ``True`` then
+          ``gens`` must be a `\ZZ`-basis of the ideal
 
         EXAMPLES::
 
@@ -2125,10 +2125,10 @@ class QuaternionOrder(Parent):
 
         - ``gens`` -- a list of elements of this quaternion order
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``is_basis`` -- bool (default: ``False``); if ``True`` then ``gens``
-          must be a `\ZZ`-basis of the ideal
+        - ``is_basis`` -- boolean (default: ``False``); if ``True`` then
+          ``gens`` must be a `\ZZ`-basis of the ideal
 
         EXAMPLES::
 
@@ -2268,7 +2268,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``include_basis`` -- bool (default: ``False``), if True also
+        - ``include_basis`` -- boolean (default: ``False``), if ``True`` also
           return a basis for the dimension 3 subspace `G`
 
         OUTPUT:
@@ -2337,7 +2337,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``conjugator`` -- bool (default: ``False``), if True this
+        - ``conjugator`` -- boolean (default: ``False``), if ``True`` this
           method returns a single quaternion `\gamma \in O \cap O'`
           of minimal norm such that `O' = \gamma^{-1} O \gamma`,
           rather than the ring isomorphism it defines.
@@ -2575,7 +2575,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     - ``basis`` -- tuple of length 4 of elements in of ambient
       quaternion algebra whose `\\ZZ`-span is an ideal
 
-    - ``check`` -- bool (default: ``True``); if ``False``, do no type
+    - ``check`` -- boolean (default: ``True``); if ``False``, do no type
       checking.
     """
     def __init__(self, Q, basis, left_order=None, right_order=None, check=True):
@@ -2622,12 +2622,10 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - `\alpha` -- element of quaternion algebra
 
-        - ``left`` -- bool (default: ``False``); if true multiply
+        - ``left`` -- boolean (default: ``False``); if ``True`` multiply
           `\alpha` on the left, otherwise multiply `\alpha` on the right
 
-        OUTPUT:
-
-        - a new fractional ideal
+        OUTPUT: a new fractional ideal
 
         EXAMPLES::
 

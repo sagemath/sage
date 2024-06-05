@@ -183,7 +183,7 @@ class Semigroups(CategoryWithAxiom):
             - ``side`` -- "left", "right", or "twosided":
               the side on which the generators act (default:"right")
             - ``simple`` -- boolean (default: ``False``):
-              if True, returns a simple graph (no loops, no labels,
+              if ``True``, returns a simple graph (no loops, no labels,
               no multiple edges)
             - ``generators`` -- a list, tuple, or family of elements
               of ``self`` (default: ``self.semigroup_generators()``)

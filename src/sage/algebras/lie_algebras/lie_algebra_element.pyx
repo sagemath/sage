@@ -581,7 +581,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
           represented by a dictionary ``d``, then make a copy of ``d``;
           if ``False``, then this can cause undesired behavior by
           mutating ``d``

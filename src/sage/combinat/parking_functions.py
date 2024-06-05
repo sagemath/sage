@@ -1063,7 +1063,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         - ``underpath`` -- if the length of the parking function is
           less than or equal to 9 then display the labels under the
-          path if ``underpath`` is True otherwise display them to the
+          path if ``underpath`` is ``True`` otherwise display them to the
           right of the path (default: ``True``)
 
         EXAMPLES::

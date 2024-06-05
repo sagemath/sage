@@ -206,10 +206,11 @@ class Encoder(SageObject):
 
         - ``c`` -- a codeword of :meth:`code`.
 
-        - ``nocheck`` -- (default: ``False``) checks if ``c`` is in :meth:`code`. You might set
-          this to ``True`` to disable the check for saving computation. Note that if ``c`` is
-          not in :meth:`self` and ``nocheck = True``, then the output of :meth:`unencode` is
-          not defined (except that it will be in the message space of ``self``).
+        - ``nocheck`` -- boolean (default: ``False``); checks if ``c`` is in
+          :meth:`code`. You might set this to ``True`` to disable the check for
+          saving computation. Note that if ``c`` is not in :meth:`self` and
+          ``nocheck = True``, then the output of :meth:`unencode` is not
+          defined (except that it will be in the message space of ``self``).
 
         OUTPUT:
 

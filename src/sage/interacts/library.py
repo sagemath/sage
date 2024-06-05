@@ -1059,7 +1059,7 @@ def newton_method(title, f, c, d, maxn, interval, list_steps):
     - ``d`` -- slider for the precision (`10^{-d}`)
     - ``maxn`` -- max number of iterations
     - ``interval`` -- range slider for the search interval
-    - ``list_steps`` -- checkbox, if true shows the steps numerically
+    - ``list_steps`` -- checkbox, if ``True`` shows the steps numerically
 
     EXAMPLES:
 

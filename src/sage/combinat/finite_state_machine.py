@@ -2282,7 +2282,7 @@ class FSMTransition(SageObject):
 
     def __lt__(self, other):
         """
-        Return True if ``self`` is less than ``other`` with respect to the
+        Return ``True`` if ``self`` is less than ``other`` with respect to the
         key ``(self.from_state, self.word_in, self.to_state, self.word_out)``.
 
         INPUT:
@@ -3917,12 +3917,10 @@ class FiniteStateMachine(SageObject):
 
     def __bool__(self):
         """
-        Return True if the finite state machine consists of at least
+        Return ``True`` if the finite state machine consists of at least
         one state.
 
-        OUTPUT:
-
-        True or False.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -5601,9 +5599,7 @@ class FiniteStateMachine(SageObject):
 
         - ``state`` can be a :class:`FSMState` or a label of a state.
 
-        OUTPUT:
-
-        True or False.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5625,9 +5621,7 @@ class FiniteStateMachine(SageObject):
 
         - ``transition`` has to be a :class:`FSMTransition`.
 
-        OUTPUT:
-
-        True or False.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5653,9 +5647,7 @@ class FiniteStateMachine(SageObject):
 
         - ``state`` can be a :class:`FSMState` or a label.
 
-        OUTPUT:
-
-        True or False.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5672,9 +5664,7 @@ class FiniteStateMachine(SageObject):
         """
         Return whether the finite state machine has an initial state.
 
-        OUTPUT:
-
-        True or False.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5692,9 +5682,7 @@ class FiniteStateMachine(SageObject):
 
         - ``state`` can be a :class:`FSMState` or a label.
 
-        OUTPUT:
-
-        True or False.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5710,9 +5698,7 @@ class FiniteStateMachine(SageObject):
         """
         Return whether the finite state machine has a final state.
 
-        OUTPUT:
-
-        True or False.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -6691,7 +6677,7 @@ class FiniteStateMachine(SageObject):
         - ``initial_states`` -- If no initial states are given, the
           already existing initial states of self are taken.
 
-        - If ``explore_existing_states`` is True (default), then
+        - If ``explore_existing_states`` is ``True`` (default), then
           already existing states in self (e.g. already given final
           states) will also be processed if they are reachable from
           the initial states.

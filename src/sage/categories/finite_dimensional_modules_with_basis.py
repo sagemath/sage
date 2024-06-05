@@ -311,8 +311,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``elements`` -- a list or finite iterable of elements of ``self``
-            - ``row_reduced`` -- (default: ``False``) whether to compute the
-              basis for the row reduced echelon form
+            - ``row_reduced`` -- boolean (default: ``False``); whether to
+              compute the basis for the row reduced echelon form
             - ``order`` -- (optional) either something that can
               be converted into a tuple or a key function
 

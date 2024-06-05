@@ -117,7 +117,7 @@ cdef bint _linear_extension_right_a(_D, list _le, list _a, list _b, Py_ssize_t i
 @cython.boundscheck(False)
 cdef bint _linear_extension_right_b(_D, list _le, list _a, list _b, Py_ssize_t i) noexcept:
     """
-    Return True if and only if ``_b[i]`` is incomparable with the
+    Return ``True`` if and only if ``_b[i]`` is incomparable with the
     elements to its right in ``_le``.
 
     This is the ``Right`` function described on page 8 of

@@ -865,8 +865,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
               (default: the idempotents returned by
               :meth:`orthogonal_idempotents_central_mod_radical`)
 
-            - ``check`` -- (default: ``True``) whether to check that the
-              idempotents are indeed orthogonal and idempotent and
+            - ``check`` -- boolean (default: ``True``); whether to check that
+              the idempotents are indeed orthogonal and idempotent and
               sum to `1`
 
             OUTPUT:
