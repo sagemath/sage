@@ -153,9 +153,7 @@ cpdef tuple ray_matrix_normal_form(R):
     - ``R`` -- `\ZZ`-matrix whose columns are the rays spanning the
       parallelotope.
 
-    OUTPUT:
-
-    A tuple containing ``e``, ``d``, and ``VDinv``.
+    OUTPUT: a tuple containing ``e``, ``d``, and ``VDinv``
 
     EXAMPLES::
 
@@ -729,9 +727,7 @@ cdef class Inequality_generic:
 
     - ``b`` -- element
 
-    OUTPUT:
-
-    Inequality `A x + b \geq 0`.
+    OUTPUT: inequality `A x + b \geq 0`
 
     EXAMPLES::
 
@@ -771,9 +767,7 @@ cdef class Inequality_generic:
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -937,9 +931,7 @@ cdef class Inequality_int:
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1031,9 +1023,7 @@ cdef class InequalityCollection:
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1343,9 +1333,7 @@ cdef class InequalityCollection:
         - ``inner_loop_variable`` -- Integer. the 0-th coordinate of
           the lattice point.
 
-        OUTPUT:
-
-        Boolean. Whether the lattice point is in the polyhedron.
+        OUTPUT: boolean. Whether the lattice point is in the polyhedron
 
         EXAMPLES::
 

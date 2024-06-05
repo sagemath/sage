@@ -89,9 +89,7 @@ def _class_for_LatticePolytope(dim):
 
     - ``dim`` -- integer. The ambient space dimension.
 
-    OUTPUT:
-
-    The appropriate class for the lattice polytope.
+    OUTPUT: the appropriate class for the lattice polytope
 
     EXAMPLES::
 
@@ -197,9 +195,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return the string representation
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -233,9 +229,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return whether the lattice polytope is compact.
 
-        OUTPUT:
-
-        Always ``True``, since polytopes are by definition compact.
+        OUTPUT: always ``True``, since polytopes are by definition compact
 
         EXAMPLES::
 
@@ -250,9 +244,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return the number of vertices.
 
-        OUTPUT:
-
-        An integer, the number of vertices.
+        OUTPUT: an integer, the number of vertices
 
         EXAMPLES::
 
@@ -716,7 +708,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         - ``point_coordinates`` -- a list/tuple/iterable of rational
           numbers. The coordinates of the point.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -739,7 +731,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Test whether the polytope contains the origin
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -922,7 +914,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         That is, the polytope is full-dimensional and the origin is a
         interior point not on the boundary.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

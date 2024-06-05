@@ -425,7 +425,7 @@ def _bit_rep_to_Vrep_list_wrapper(ListOfFaces faces, index=0):
     - ``faces`` -- a :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
     - ``index`` -- (default: ``0``); the face to obtain
 
-    OUTPUT: The face as tuple of integers.
+    OUTPUT: the face as tuple of integers
 
     EXAMPLES::
 

@@ -271,9 +271,7 @@ def is_Fan(x) -> bool:
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    ``True`` if ``x`` is a fan and ``False`` otherwise
+    OUTPUT: ``True`` if ``x`` is a fan and ``False`` otherwise
 
     EXAMPLES::
 
@@ -376,9 +374,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
       union of the cones in the polyhedral fan equals to the union of the given
       cones, and each given cone is the union of some cones in the polyhedral fan.
 
-    OUTPUT:
-
-    a :class:`fan <RationalPolyhedralFan>`
+    OUTPUT: a :class:`fan <RationalPolyhedralFan>`
 
     .. SEEALSO::
 
@@ -694,9 +690,7 @@ def FaceFan(polytope, lattice=None):
       other object that behaves like these. If not specified, an attempt will
       be made to determine an appropriate toric lattice automatically.
 
-    OUTPUT:
-
-    :class:`rational polyhedral fan <RationalPolyhedralFan>`
+    OUTPUT: :class:`rational polyhedral fan <RationalPolyhedralFan>`
 
     See also :func:`NormalFan`.
 
@@ -802,9 +796,7 @@ def NormalFan(polytope, lattice=None):
       other object that behaves like these. If not specified, an attempt will
       be made to determine an appropriate toric lattice automatically.
 
-    OUTPUT:
-
-    :class:`rational polyhedral fan <RationalPolyhedralFan>`
+    OUTPUT: :class:`rational polyhedral fan <RationalPolyhedralFan>`
 
     See also :func:`FaceFan`.
 
@@ -1026,9 +1018,7 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
     - ``ambient_ray_indices`` -- increasing list or tuple of integers, indices
       of rays of ``ambient`` generating this cone.
 
-    OUTPUT:
-
-    cone of ``ambient``
+    OUTPUT: cone of ``ambient``
 
     EXAMPLES:
 
@@ -1067,9 +1057,7 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
         TESTS::
 
@@ -1089,9 +1077,7 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
         Return indices of generating cones of the "ambient fan" containing
         ``self``.
 
-        OUTPUT:
-
-        increasing :class:`tuple` of integers
+        OUTPUT: increasing :class:`tuple` of integers
 
         EXAMPLES::
 
@@ -1141,9 +1127,7 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
         Return indices of generating cones of the "ambient fan" containing
         ``self``.
 
-        OUTPUT:
-
-        increasing :class:`tuple` of integers
+        OUTPUT: increasing :class:`tuple` of integers
 
         EXAMPLES::
 
@@ -1309,9 +1293,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         - ``right`` -- anything.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         There is equality if ``right`` is also a fan, their rays are
         the same and stored in the same order, and their generating
@@ -1372,9 +1354,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         r"""
         Return an iterator over generating cones of ``self``.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         TESTS::
 
@@ -1735,9 +1715,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         - ``other`` -- a :class:`fan <RationalPolyhedralFan>` in the same
           :meth:`lattice` and with the same support as this fan
 
-        OUTPUT:
-
-        a :class:`fan <RationalPolyhedralFan>`
+        OUTPUT: a :class:`fan <RationalPolyhedralFan>`
 
         EXAMPLES:
 
@@ -1791,9 +1769,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
         TESTS::
 
@@ -1848,9 +1824,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
         TESTS::
 
@@ -1884,9 +1858,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         - ``verbose`` -- if ``True``, some timing information will be printed.
 
-        OUTPUT:
-
-        rational polyhedral fan
+        OUTPUT: rational polyhedral fan
 
         TESTS::
 
@@ -2180,9 +2152,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         r"""
         Return the dictionary that should be pickled.
 
-        OUTPUT:
-
-        :class:`dict`
+        OUTPUT: :class:`dict`
 
         TESTS::
 
@@ -2456,9 +2426,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         r"""
         Return the Gale transform of ``self``.
 
-        OUTPUT:
-
-        A matrix over `ZZ`
+        OUTPUT: a matrix over `ZZ`
 
         EXAMPLES::
 
@@ -2481,9 +2449,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         - ``n`` -- integer, the index of a generating cone.
 
-        OUTPUT:
-
-        :class:`cone of fan<Cone_of_fan>`
+        OUTPUT: :class:`cone of fan<Cone_of_fan>`
 
         EXAMPLES::
 
@@ -2497,9 +2463,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         r"""
         Return generating cones of ``self``.
 
-        OUTPUT:
-
-        :class:`tuple` of :class:`cones of fan<Cone_of_fan>`
+        OUTPUT: :class:`tuple` of :class:`cones of fan<Cone_of_fan>`
 
         EXAMPLES::
 
@@ -2572,9 +2536,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         A rational polyhedral fan is *complete* if its cones fill the whole
         space.
 
-        OUTPUT:
-
-        ``True`` if ``self`` is complete and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is complete and ``False`` otherwise
 
         EXAMPLES::
 
@@ -2755,9 +2717,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         """
         Return all echelon forms of the cyclically ordered rays of a 2-d fan.
 
-        OUTPUT:
-
-        A set of integer matrices
+        OUTPUT: a set of integer matrices
 
         EXAMPLES::
 
@@ -2777,9 +2737,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         """
         Return the echelon form of one particular cyclic order of rays of a 2-d fan.
 
-        OUTPUT:
-
-        An integer matrix whose columns are the rays in the echelon form
+        OUTPUT: an integer matrix whose columns are the rays in the echelon form
 
         EXAMPLES::
 
@@ -2843,9 +2801,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         i.e. primitive vectors along generating rays of every cone form a part
         of a *rational* basis of the ambient space.
 
-        OUTPUT:
-
-        ``True`` if ``self`` is simplicial and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is simplicial and ``False`` otherwise
 
         EXAMPLES::
 
@@ -2962,9 +2918,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         r"""
         Return the number of generating cones of ``self``.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2988,9 +2942,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         - any options for toric plots (see :func:`toric_plotter.options
           <sage.geometry.toric_plotter.options>`), none are mandatory.
 
-        OUTPUT:
-
-        a plot
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -3435,9 +3387,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         same arguments as :func:`~sage.schemes.toric.variety.ToricVariety`
 
-        OUTPUT:
-
-        a toric variety
+        OUTPUT: a toric variety
 
         This is equivalent to the command ``ToricVariety(self)`` and
         is provided only as a convenient alternative method to go from the
@@ -3653,9 +3603,7 @@ def _refine_arrangement_to_fan(cones):
 
     - ``cones`` -- a list of rational cones that are possibly overlapping.
 
-    OUTPUT:
-
-    a list of refined cones
+    OUTPUT: a list of refined cones
 
     EXAMPLES::
 

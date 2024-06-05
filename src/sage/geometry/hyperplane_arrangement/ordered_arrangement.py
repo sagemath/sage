@@ -250,9 +250,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         hyperplane arrangement in `\CC^n` whose equations have
         coefficients in a subfield of `\QQbar`.
 
-        OUTPUT:
-
-        A finitely presented fundamental group.
+        OUTPUT: a finitely presented fundamental group
 
         .. NOTE::
 
@@ -340,9 +338,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         Return the meridians of each hyperplane (including the one at infinity).
 
-        OUTPUT:
-
-        A dictionary
+        OUTPUT: a dictionary
 
         .. NOTE::
 
@@ -479,9 +475,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         Return the meridian of each hyperplane.
 
-        OUTPUT:
-
-        A dictionary
+        OUTPUT: a dictionary
 
         .. NOTE::
 
@@ -637,9 +631,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 

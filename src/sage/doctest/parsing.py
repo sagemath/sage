@@ -338,9 +338,7 @@ def _tag_group(tag):
 
     - ``tag`` -- string
 
-    OUTPUT:
-
-    a string; one of ``'special'``, ``'optional'``, ``'standard'``, ``'sage'``
+    OUTPUT: a string; one of ``'special'``, ``'optional'``, ``'standard'``, ``'sage'``
 
     EXAMPLES::
 
@@ -1597,9 +1595,7 @@ class SageOutputChecker(doctest.OutputChecker):
         - ``want`` -- a string or :class:`MarkedOutput`
         - ``got`` -- a string
 
-        OUTPUT:
-
-        A tuple:
+        OUTPUT: a tuple:
 
         - bool, ``True`` when some fixup were performed and ``False`` otherwise
         - string, edited wanted string

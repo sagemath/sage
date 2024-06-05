@@ -125,9 +125,7 @@ class PALPreader(SageObject):
         """
         Open PALP.
 
-        OUTPUT:
-
-        A PALP subprocess.
+        OUTPUT: a PALP subprocess
 
         EXAMPLES::
 
@@ -144,9 +142,7 @@ class PALPreader(SageObject):
         r"""
         Read vertex data from the PALP output pipe.
 
-        OUTPUT:
-
-        A list of lists.
+        OUTPUT: a list of lists
 
         EXAMPLES::
 
@@ -168,9 +164,7 @@ class PALPreader(SageObject):
         r"""
         Read vertex data from the PALP output pipe.
 
-        OUTPUT:
-
-        A list of lists.
+        OUTPUT: a list of lists
 
         EXAMPLES::
 
@@ -196,9 +190,7 @@ class PALPreader(SageObject):
         - ``start``, ``stop``, ``step`` -- integers specifying the
           range to iterate over.
 
-        OUTPUT:
-
-        A generator for vertex data as a list of lists.
+        OUTPUT: a generator for vertex data as a list of lists
 
         EXAMPLES::
 
@@ -248,9 +240,7 @@ class PALPreader(SageObject):
         - ``start``, ``stop``, ``step`` -- integers specifying the
           range to iterate over.
 
-        OUTPUT:
-
-        A generator for lattice polyhedra.
+        OUTPUT: a generator for lattice polyhedra
 
         EXAMPLES::
 
@@ -328,9 +318,7 @@ class PALPreader(SageObject):
 
         - ``output`` -- as in the :class:`PALPreader` constructor.
 
-        OUTPUT:
-
-        A function generating lattice polytopes in the specified output format.
+        OUTPUT: a function generating lattice polytopes in the specified output format
 
         EXAMPLES::
 
@@ -360,9 +348,7 @@ class PALPreader(SageObject):
         """
         Iterate over all polytopes.
 
-        OUTPUT:
-
-        An iterator for all polytopes.
+        OUTPUT: an iterator for all polytopes
 
         TESTS::
 
@@ -449,9 +435,7 @@ class Reflexive4dHodge(PALPreader):
         """
         Open PALP.
 
-        OUTPUT:
-
-        A PALP subprocess.
+        OUTPUT: a PALP subprocess
 
         EXAMPLES::
 

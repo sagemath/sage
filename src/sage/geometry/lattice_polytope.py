@@ -2710,9 +2710,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return a maximal set of linearly independent vertices.
 
-        OUTPUT:
-
-        A tuple of vertex indices.
+        OUTPUT: a tuple of vertex indices
 
         EXAMPLES::
 
@@ -2893,7 +2891,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
            key "-f" is added automatically.
 
 
-        OUTPUT: the output of nef.x as a string.
+        OUTPUT: the output of nef.x as a string
 
         EXAMPLES: This call is used internally for computing
         nef-partitions::
@@ -3234,9 +3232,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         -   ``permutation`` -- boolean (default: ``False``); whether to return the permutation of
             the order of the vertices that was applied to obtain this matrix.
 
-        OUTPUT:
-
-        A matrix or a tuple of a matrix and a permutation.
+        OUTPUT: a matrix or a tuple of a matrix and a permutation
 
         EXAMPLES::
 
@@ -3286,9 +3282,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             of the order of the vertices that was applied to obtain this
             matrix.
 
-        OUTPUT:
-
-        A matrix or a tuple of a matrix and a permutation.
+        OUTPUT: a matrix or a tuple of a matrix and a permutation
 
 
         EXAMPLES::
@@ -3906,7 +3900,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
            polytope is not full-dimensional, poly.x will be called for the
            vertices of this polytope in some basis of the spanned affine space.
 
-        OUTPUT: the output of poly.x as a string.
+        OUTPUT: the output of poly.x as a string
 
         EXAMPLES: This call is used for determining if a polytope is
         reflexive or not::
@@ -5221,9 +5215,7 @@ def _palp_convert_permutation(permutation):
 
     - ``permutation`` -- A string specifying a PALP style permutation.
 
-    OUTPUT:
-
-    A :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermutationGroupElement>`.
+    OUTPUT: a :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermutationGroupElement>`
 
     EXAMPLES::
 
@@ -5631,7 +5623,7 @@ def minkowski_sum(points1, points2):
        converted into vectors of the same dimension, treated as vertices
        of two polytopes.
 
-    OUTPUT: list of vertices of the Minkowski sum, given as vectors.
+    OUTPUT: list of vertices of the Minkowski sum, given as vectors
 
     EXAMPLES: Let's compute the Minkowski sum of two line segments::
 
@@ -5808,9 +5800,7 @@ def read_palp_matrix(data, permutation=False):
       the permutation output by PALP. This parameter makes sense only
       when PALP computed the normal form of a lattice polytope.
 
-    OUTPUT:
-
-    A matrix or a tuple of a matrix and a permutation.
+    OUTPUT: a matrix or a tuple of a matrix and a permutation
 
     EXAMPLES::
 

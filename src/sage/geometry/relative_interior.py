@@ -218,9 +218,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         r"""
         Return whether ``self`` is the whole ambient space
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -240,9 +238,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         r"""
         Return whether ``self`` is closed.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

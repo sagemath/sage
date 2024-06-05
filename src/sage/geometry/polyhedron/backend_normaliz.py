@@ -428,9 +428,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -450,9 +448,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -472,9 +468,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1647,9 +1641,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A rational function.
+        OUTPUT: a rational function
 
         EXAMPLES::
 
@@ -1737,9 +1729,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A polynomial or tuple of polynomials.
+        OUTPUT: a polynomial or tuple of polynomials
 
         EXAMPLES::
 
@@ -1810,9 +1800,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A rational function.
+        OUTPUT: a rational function
 
         EXAMPLES::
 
@@ -2453,9 +2441,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT:
-
-        Boolean. Whether the ``Hstar`` series is effective.
+        OUTPUT: boolean. Whether the ``Hstar`` series is effective
 
         EXAMPLES:
 

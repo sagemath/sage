@@ -444,9 +444,7 @@ def kneading_sequence(theta):
 
     - ``theta`` -- a rational number with odd denominator
 
-    OUTPUT:
-
-    a string representing the kneading sequence of theta in RR/ZZ
+    OUTPUT: a string representing the kneading sequence of theta in RR/ZZ
 
     REFERENCES:
 

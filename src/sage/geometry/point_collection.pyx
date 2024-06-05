@@ -279,9 +279,7 @@ cdef class PointCollection(SageObject):
 
         - ``right`` -- another PointCollection
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         First compare according to the underlying :meth:`module`
         and then according to the list of points.

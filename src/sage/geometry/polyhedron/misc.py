@@ -21,9 +21,7 @@ def _to_space_separated_string(l, base_ring=None):
 
     - ``base_ring`` -- ring (default: ``None``); convert this ring, if given
 
-    OUTPUT:
-
-    String.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -68,9 +66,7 @@ def _make_listlist(x):
 
     - ``x`` -- ``None`` or an iterable of iterables.
 
-    OUTPUT:
-
-    A list of lists.
+    OUTPUT: a list of lists
 
     EXAMPLES::
 

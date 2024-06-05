@@ -843,9 +843,7 @@ class Polyhedron_base6(Polyhedron_base5):
           projection point close to the facet and a large value further away.
           Default is `1`. If the given value is too large, an error is returned.
 
-        OUTPUT:
-
-        A :class:`~sage.geometry.polyhedron.plot.Projection` object.
+        OUTPUT: a :class:`~sage.geometry.polyhedron.plot.Projection` object
 
         EXAMPLES::
 

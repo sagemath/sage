@@ -282,9 +282,7 @@ class Feature(TrivialUniqueRepresentation):
         Return a suggestion on how to make :meth:`is_present` pass if it did not
         pass.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 

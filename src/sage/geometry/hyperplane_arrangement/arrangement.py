@@ -423,9 +423,7 @@ class HyperplaneArrangementElement(Element):
         """
         Workaround to support the construction with names.
 
-        INPUT/OUTPUT:
-
-        See :meth:`HyperplaneArrangements._first_ngens`.
+        INPUT/OUTPUT: see :meth:`HyperplaneArrangements._first_ngens`
 
         EXAMPLES::
 
@@ -474,9 +472,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the number of hyperplanes in the arrangement.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -495,9 +491,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the hyperplanes in the arrangement as a tuple.
 
-        OUTPUT:
-
-        A tuple
+        OUTPUT: a tuple
 
         EXAMPLES::
 
@@ -517,9 +511,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         String representation for a hyperplane arrangement.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -543,9 +535,7 @@ class HyperplaneArrangementElement(Element):
         """
         Return the ambient space dimension of the arrangement.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -599,9 +589,7 @@ class HyperplaneArrangementElement(Element):
         """
         Return the backend used for polyhedral objects
 
-        OUTPUT:
-
-        A string giving the backend or ``None`` if none is specified.
+        OUTPUT: a string giving the backend or ``None`` if none is specified
 
         EXAMPLES:
 
@@ -648,9 +636,7 @@ class HyperplaneArrangementElement(Element):
         - ``other`` -- a hyperplane arrangement or something that can
           be converted into a hyperplane arrangement
 
-        OUTPUT:
-
-        A new hyperplane arrangement.
+        OUTPUT: a new hyperplane arrangement
 
         EXAMPLES::
 
@@ -689,9 +675,7 @@ class HyperplaneArrangementElement(Element):
         """
         Plot the hyperplane arrangement.
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
@@ -930,9 +914,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the characteristic polynomial of the hyperplane arrangement.
 
-        OUTPUT:
-
-        The characteristic polynomial in `\QQ[x]`.
+        OUTPUT: the characteristic polynomial in `\QQ[x]`
 
         EXAMPLES::
 
@@ -970,9 +952,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the Poincaré polynomial of the hyperplane arrangement.
 
-        OUTPUT:
-
-        The Poincaré polynomial in `\QQ[x]`.
+        OUTPUT: the Poincaré polynomial in `\QQ[x]`
 
         EXAMPLES::
 
@@ -1002,9 +982,7 @@ class HyperplaneArrangementElement(Element):
         element of `L` (here, the `0` dimensional subspace), and
         `\mu` is the Möbius function of `L`.
 
-        OUTPUT:
-
-        The cocharacteristic polynomial in `\ZZ[z]`.
+        OUTPUT: the cocharacteristic polynomial in `\ZZ[z]`
 
         EXAMPLES::
 
@@ -1052,9 +1030,7 @@ class HyperplaneArrangementElement(Element):
         element of `L` (here, the `0` dimensional subspace), and
         `\mu` is the Möbius function of `L`.
 
-        OUTPUT:
-
-        The primitive Eulerian polynomial in `\ZZ[z]`.
+        OUTPUT: the primitive Eulerian polynomial in `\ZZ[z]`
 
         EXAMPLES::
 
@@ -1357,9 +1333,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         The number of regions of the hyperplane arrangement.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1448,9 +1422,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``p`` -- prime number
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1480,9 +1452,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Test whether all hyperplanes pass through the origin.
 
-        OUTPUT:
-
-        A boolean. Whether all the hyperplanes pass through the origin.
+        OUTPUT: a boolean. Whether all the hyperplanes pass through the origin
 
         EXAMPLES::
 
@@ -1513,9 +1483,7 @@ class HyperplaneArrangementElement(Element):
 
             :meth:`essentialization`
 
-        OUTPUT:
-
-        A boolean indicating whether the hyperplane arrangement is essential.
+        OUTPUT: a boolean indicating whether the hyperplane arrangement is essential
 
         EXAMPLES::
 
@@ -1541,9 +1509,7 @@ class HyperplaneArrangementElement(Element):
           to return the center as a polyhedron (possibly empty) as part
           of the output
 
-        OUTPUT:
-
-        If ``certificate`` is ``True``, returns a tuple containing:
+        OUTPUT: if ``certificate`` is ``True``, returns a tuple containing:
 
         1. A boolean
         2. The polyhedron defined to be the intersection of all the hyperplanes
@@ -1612,9 +1578,7 @@ class HyperplaneArrangementElement(Element):
         ambient space of the arrangement that lie on all of the
         hyperplanes.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES:
 
@@ -1650,9 +1614,7 @@ class HyperplaneArrangementElement(Element):
         are linearly independent. A hyperplane arrangement is said to be
         simplicial if every region is simplicial.
 
-        OUTPUT:
-
-        A boolean whether the hyperplane arrangement is simplicial.
+        OUTPUT: a boolean whether the hyperplane arrangement is simplicial
 
         EXAMPLES::
 
@@ -1820,9 +1782,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Return the face vector.
 
-        OUTPUT:
-
-        A vector of integers.
+        OUTPUT: a vector of integers
 
         The `d`-th entry is the number of faces of dimension `d`.  A
         *face* is the intersection of a region with a hyperplane of
@@ -2008,9 +1968,7 @@ class HyperplaneArrangementElement(Element):
 
         The base field must have characteristic zero.
 
-        OUTPUT:
-
-        A tuple containing the regions as polyhedra.
+        OUTPUT: a tuple containing the regions as polyhedra
 
         The regions are the connected components of the complement of
         the union of the hyperplanes as a subset of `\RR^n`.
@@ -2189,9 +2147,7 @@ class HyperplaneArrangementElement(Element):
           then the elements of the poset are numbered. Else they are labelled
           with the regions themselves.
 
-        OUTPUT:
-
-        A Poset object containing the poset of regions.
+        OUTPUT: a Poset object containing the poset of regions
 
         EXAMPLES::
 
@@ -3111,9 +3067,7 @@ class HyperplaneArrangementElement(Element):
         - ``region1``, ``region2`` -- regions of the arrangement or
           representative points of regions
 
-        OUTPUT:
-
-        An integer. The number of hyperplanes separating the two regions.
+        OUTPUT: an integer. The number of hyperplanes separating the two regions
 
         EXAMPLES::
 
@@ -3174,9 +3128,7 @@ class HyperplaneArrangementElement(Element):
         - ``names`` -- string or list/tuple/iterable of strings. The
           variable names for the polynomial ring `S`.
 
-        OUTPUT:
-
-        The Varchenko matrix.
+        OUTPUT: the Varchenko matrix
 
         EXAMPLES::
 
@@ -3683,9 +3635,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         Return the base ring.
 
-        OUTPUT:
-
-        The base ring of the hyperplane arrangement.
+        OUTPUT: the base ring of the hyperplane arrangement
 
         EXAMPLES::
 
@@ -3746,9 +3696,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3864,9 +3812,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         Return the number of linear variables.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3883,9 +3829,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         Return the coordinate hyperplanes.
 
-        OUTPUT:
-
-        A tuple of linear expressions, one for each linear variable.
+        OUTPUT: a tuple of linear expressions, one for each linear variable
 
         EXAMPLES::
 
@@ -3905,9 +3849,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        A linear expression.
+        OUTPUT: a linear expression
 
         EXAMPLES::
 

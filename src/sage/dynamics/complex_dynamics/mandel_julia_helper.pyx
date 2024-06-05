@@ -208,9 +208,7 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
      precision used by the Complex Field when using Newton's method to compute
      points on the external ray.
 
-    OUTPUT:
-
-    List of tuples of Real Interval Field Elements.
+    OUTPUT: list of tuples of Real Interval Field Elements
 
     EXAMPLES::
 
@@ -306,9 +304,7 @@ cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
 
     - ``number_of_pixels`` -- long, width of image in pixels.
 
-    OUTPUT:
-
-    List of tuples of integers representing pixels.
+    OUTPUT: list of tuples of integers representing pixels
 
     EXAMPLES::
 
@@ -349,9 +345,7 @@ cpdef get_line(start, end):
 
     - ``end`` -- tuple, ending point of line.
 
-    OUTPUT:
-
-    List of tuples of integers approximating the line between two pixels.
+    OUTPUT: list of tuples of integers approximating the line between two pixels
 
     EXAMPLES::
 

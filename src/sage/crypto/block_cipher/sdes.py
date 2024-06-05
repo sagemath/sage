@@ -654,9 +654,7 @@ class SimplifiedDES(SageObject):
           valid values for ``n`` are 1 and 2, since only up to 2 positions
           are defined for this circular left shift operation.
 
-        OUTPUT:
-
-        The circular left shift of each half of ``B``.
+        OUTPUT: the circular left shift of each half of ``B``
 
         EXAMPLES:
 
@@ -763,9 +761,7 @@ class SimplifiedDES(SageObject):
 
         - ``B`` -- a non-empty list of bits
 
-        OUTPUT:
-
-        The binary string representation of ``B``.
+        OUTPUT: the binary string representation of ``B``
 
         EXAMPLES:
 
@@ -823,9 +819,7 @@ class SimplifiedDES(SageObject):
 
         - ``B`` -- a block of 4-bit string
 
-        OUTPUT:
-
-        A permutation of ``B``.
+        OUTPUT: a permutation of ``B``
 
         EXAMPLES:
 
@@ -910,9 +904,7 @@ class SimplifiedDES(SageObject):
 
         - ``B`` -- a block of 10-bit string
 
-        OUTPUT:
-
-        Pick out 8 of the 10 bits of ``B`` and permute those 8 bits.
+        OUTPUT: pick out 8 of the 10 bits of ``B`` and permute those 8 bits
 
         EXAMPLES:
 
@@ -1000,9 +992,7 @@ class SimplifiedDES(SageObject):
 
         - ``B`` -- a block of 10-bit string
 
-        OUTPUT:
-
-        A permutation of ``B``.
+        OUTPUT: a permutation of ``B``
 
         EXAMPLES:
 
@@ -1174,9 +1164,7 @@ class SimplifiedDES(SageObject):
 
         - ``key`` -- an 8-bit subkey
 
-        OUTPUT:
-
-        The result of applying the function `\Pi_F` to ``B``.
+        OUTPUT: the result of applying the function `\Pi_F` to ``B``
 
         EXAMPLES:
 
@@ -1316,9 +1304,7 @@ class SimplifiedDES(SageObject):
 
         - ``S`` -- a string of bits
 
-        OUTPUT:
-
-        A list representation of the string ``S``.
+        OUTPUT: a list representation of the string ``S``
 
         EXAMPLES:
 

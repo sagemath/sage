@@ -529,7 +529,7 @@ cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep
     - ``face`` -- face in Vrepresentation or ``NULL``
     - ``dual`` -- boolean
 
-    OUTPUT: A tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
+    OUTPUT: a tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
     """
     cdef ListOfFaces new_facets, new_Vrep
     cdef bint* delete

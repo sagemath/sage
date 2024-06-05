@@ -1270,9 +1270,7 @@ class Projection(SageObject):
           :class:`str`) or a :class:`TikzPicture` object from module
           :mod:`sage.misc.latex_standalone`
 
-        OUTPUT:
-
-        :class:`LatexExpr` object or :class:`TikzPicture` object
+        OUTPUT: :class:`LatexExpr` object or :class:`TikzPicture` object
 
         .. NOTE::
 

@@ -732,9 +732,7 @@ class Sudoku(SageObject):
           simply generate ``None`` for each solution, so the
           calling routine can count these.
 
-        OUTPUT:
-
-        A generator that iterates over all the solutions.
+        OUTPUT: a generator that iterates over all the solutions
 
         This function is intended to be called from the
         :func:`~sage.games.sudoku.Sudoku.solve` method

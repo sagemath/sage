@@ -385,9 +385,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     - ``mutable`` -- boolean (default: ``False``); whether the polyhedron
       is mutable
 
-    OUTPUT:
-
-    The polyhedron defined by the input data.
+    OUTPUT: the polyhedron defined by the input data
 
     EXAMPLES:
 

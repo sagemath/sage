@@ -344,9 +344,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
           Otherwise, use the same defaulting behavior
           as described there.
 
-        OUTPUT:
-
-        The same polyhedron, but over a larger base ring and possibly with a changed backend.
+        OUTPUT: the same polyhedron, but over a larger base ring and possibly with a changed backend
 
         EXAMPLES::
 
@@ -643,9 +641,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         - ``indices`` -- a tuple or other iterable
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -761,9 +757,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         Return the number of objects that make up the
         H-representation of the polyhedron.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -814,9 +808,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         Return the number of objects that make up the
         V-representation of the polyhedron.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -849,9 +841,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         Return  a generator for the defining inequalities of the
         polyhedron.
 
-        OUTPUT:
-
-        A generator of the inequality Hrepresentation objects.
+        OUTPUT: a generator of the inequality Hrepresentation objects
 
         EXAMPLES::
 
@@ -876,9 +866,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         Return all inequalities.
 
-        OUTPUT:
-
-        A tuple of inequalities.
+        OUTPUT: a tuple of inequalities
 
         EXAMPLES::
 
@@ -947,9 +935,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         Return all linear constraints of the polyhedron.
 
-        OUTPUT:
-
-        A tuple of equations.
+        OUTPUT: a tuple of equations
 
         EXAMPLES::
 
@@ -1065,9 +1051,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         Return all vertices of the polyhedron.
 
-        OUTPUT:
-
-        A tuple of vertices.
+        OUTPUT: a tuple of vertices
 
         .. WARNING::
 
@@ -1178,9 +1162,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         Return a list of rays of the polyhedron.
 
-        OUTPUT:
-
-        A tuple of rays.
+        OUTPUT: a tuple of rays
 
         EXAMPLES::
 
@@ -1202,9 +1184,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             :meth:`ray_generator` instead to iterate over the list of
             :class:`~sage.geometry.polyhedron.representation.Ray` objects.
 
-        OUTPUT:
-
-        A list of rays as lists of coordinates.
+        OUTPUT: a list of rays as lists of coordinates
 
         EXAMPLES::
 
@@ -1235,9 +1215,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         Return all lines of the polyhedron.
 
-        OUTPUT:
-
-        A tuple of lines.
+        OUTPUT: a tuple of lines
 
         EXAMPLES::
 
@@ -1336,7 +1314,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             :meth:`write_cdd_Hrepresentation` -- export the polyhedron as a
             H-representation to a file.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1408,7 +1386,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             :meth:`write_cdd_Vrepresentation` -- export the polyhedron as a
             V-representation to a file.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 

@@ -433,9 +433,7 @@ class Triangulation(Element):
         that is, the total volume of all simplices containing `p_i`.
         See also [GKZ1994]_ page 220 equation 1.4.
 
-        OUTPUT:
-
-        The phi vector of self.
+        OUTPUT: the phi vector of self
 
         EXAMPLES::
 
@@ -456,9 +454,7 @@ class Triangulation(Element):
         r"""
         Return the enumerated simplices.
 
-        OUTPUT:
-
-        A tuple of integers that uniquely specifies the triangulation.
+        OUTPUT: a tuple of integers that uniquely specifies the triangulation
 
         EXAMPLES::
 
@@ -558,9 +554,7 @@ class Triangulation(Element):
         r"""
         Return ``self`` as an (abstract) simplicial complex.
 
-        OUTPUT:
-
-        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
+        OUTPUT: a :class:`~sage.topology.simplicial_complex.SimplicialComplex`
 
         EXAMPLES::
 
@@ -660,9 +654,7 @@ class Triangulation(Element):
         r"""
         Return the boundary of ``self`` as an (abstract) simplicial complex.
 
-        OUTPUT:
-
-        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
+        OUTPUT: a :class:`~sage.topology.simplicial_complex.SimplicialComplex`
 
         EXAMPLES::
 

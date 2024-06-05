@@ -78,7 +78,7 @@ class Polyhedron_base7(Polyhedron_base6):
         - ``**kwds`` -- keyword arguments that are passed to the
           triangulation engine (see :meth:`triangulate`).
 
-        OUTPUT: The centroid as vector.
+        OUTPUT: the centroid as vector
 
         ALGORITHM:
 
@@ -314,9 +314,7 @@ class Polyhedron_base7(Polyhedron_base6):
         """
         Computes the volume of a polytope using lrs.
 
-        OUTPUT:
-
-        The exact volume as a rational number.
+        OUTPUT: the exact volume as a rational number
 
         EXAMPLES::
 
@@ -380,9 +378,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
         - For all other options, consult the LattE manual.
 
-        OUTPUT:
-
-        A rational value, or a string if ``raw_output`` if set to ``True``.
+        OUTPUT: a rational value, or a string if ``raw_output`` if set to ``True``
 
         .. NOTE::
 
@@ -492,9 +488,7 @@ class Polyhedron_base7(Polyhedron_base6):
         - ``**kwds`` -- keyword arguments that are passed to the
           triangulation engine
 
-        OUTPUT:
-
-        The volume of the polytope
+        OUTPUT: the volume of the polytope
 
         EXAMPLES::
 
@@ -788,9 +782,7 @@ class Polyhedron_base7(Polyhedron_base6):
         - ``**kwds`` -- additional keyword arguments that
           are passed to the engine
 
-        OUTPUT:
-
-        The integral of the polynomial over the polytope
+        OUTPUT: the integral of the polynomial over the polytope
 
         .. NOTE::
 
@@ -961,9 +953,7 @@ class Polyhedron_base7(Polyhedron_base6):
         - ``**kwds`` -- additional keyword arguments that are passed
           to the engine
 
-        OUTPUT:
-
-        The integral of the polynomial over the polytope.
+        OUTPUT: the integral of the polynomial over the polytope
 
         .. NOTE::
 

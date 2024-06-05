@@ -626,9 +626,7 @@ def compute_gevp_M(gs, hs):
     - ``hs`` -- a linearly independent list of unit-norm generators
       for the cone `Q`
 
-    OUTPUT:
-
-    A tuple containing four elements, in order:
+    OUTPUT: a tuple containing four elements, in order:
 
     - The matrix `M` described in Proposition 6
 

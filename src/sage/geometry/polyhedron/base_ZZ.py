@@ -269,9 +269,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         - ``variable`` -- (string, default='t'); the variable in which the
           Ehrhart polynomial is expressed.
 
-        OUTPUT:
-
-        A univariate polynomial over a rational field.
+        OUTPUT: a univariate polynomial over a rational field
 
         EXAMPLES::
 

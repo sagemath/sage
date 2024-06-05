@@ -465,9 +465,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         This is the vector space or module containing the
         Vrepresentation vectors.
 
-        OUTPUT:
-
-        A free module over the base ring of dimension :meth:`ambient_dim`.
+        OUTPUT: a free module over the base ring of dimension :meth:`ambient_dim`
 
         EXAMPLES::
 
@@ -490,9 +488,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         r"""
         Return the linear space containing the H-representation vectors.
 
-        OUTPUT:
-
-        A free module over the base ring of dimension :meth:`ambient_dim` + 1.
+        OUTPUT: a free module over the base ring of dimension :meth:`ambient_dim` + 1
 
         EXAMPLES::
 
@@ -540,9 +536,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         Return an abbreviated string representation of the ambient
         space.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -562,9 +556,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -920,9 +912,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         - ``X`` -- anything.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -956,9 +946,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         - ``self_is_left`` -- boolean. Whether ``self`` is on the left
           of the operator.
 
-        OUTPUT:
-
-        An action that is used by the coercion model.
+        OUTPUT: an action that is used by the coercion model
 
         EXAMPLES::
 
@@ -1050,9 +1038,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         - ``data`` -- the H-representation data.
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Inequality` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Inequality` object
 
         EXAMPLES::
 
@@ -1077,9 +1063,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         - ``data`` -- the H-representation data.
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Equation` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Equation` object
 
         EXAMPLES::
 
@@ -1104,9 +1088,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         - ``data`` -- the V-representation data.
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Vertex` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Vertex` object
 
         EXAMPLES::
 
@@ -1131,9 +1113,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         - ``data`` -- the V-representation data.
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Ray` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Ray` object
 
         EXAMPLES::
 
@@ -1158,9 +1138,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         - ``data`` -- the V-representation data.
 
-        OUTPUT:
-
-        A new :class:`~sage.geometry.polyhedron.representation.Line` object.
+        OUTPUT: a new :class:`~sage.geometry.polyhedron.representation.Line` object
 
         EXAMPLES::
 

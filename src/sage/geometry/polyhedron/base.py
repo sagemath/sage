@@ -66,9 +66,7 @@ def is_Polyhedron(X):
 
     - ``X`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -462,9 +460,7 @@ class Polyhedron_base(Polyhedron_base7):
         - ``certificate`` -- (default: ``False``) boolean; specifies whether to
           return the circumcenter, if found.
 
-        OUTPUT:
-
-        If ``certificate`` is true, returns a tuple containing:
+        OUTPUT: if ``certificate`` is true, returns a tuple containing:
 
         1. Boolean.
         2. The circumcenter of the polytope or None.
@@ -849,9 +845,7 @@ class Polyhedron_base(Polyhedron_base7):
           the value should be smaller than `\frac{1}{2}`. The subdivision is
           computed on the polar polyhedron.
 
-        OUTPUT:
-
-        A Polyhedron object, subdivided as described above.
+        OUTPUT: a Polyhedron object, subdivided as described above
 
         EXAMPLES::
 

@@ -176,9 +176,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         - ``right`` -- another ToricLatticeElement
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         First compare the ambient toric lattice, then compare the vectors.
 
@@ -424,9 +422,7 @@ def unpickle_v1(parent, entries, degree, is_mutable):
 
     - ``is_mutable`` -- boolean. Whether the lattice element is mutable.
 
-    OUTPUT:
-
-    The :class:`ToricLatticeElement` determined by the input data.
+    OUTPUT: the :class:`ToricLatticeElement` determined by the input data
 
     EXAMPLES::
 

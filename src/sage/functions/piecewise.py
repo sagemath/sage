@@ -168,9 +168,7 @@ class PiecewiseFunction(BuiltinFunction):
         """
         Return a string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -241,9 +239,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         - ``ex`` -- a symbolic expression.
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -416,9 +412,7 @@ class PiecewiseFunction(BuiltinFunction):
             """
             Return the number of "pieces"
 
-            OUTPUT:
-
-            Integer.
+            OUTPUT: integer
 
             EXAMPLES::
 
@@ -435,9 +429,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             See also :meth:`~domains`.
 
-            OUTPUT:
-
-            The collection of expressions of the component functions.
+            OUTPUT: the collection of expressions of the component functions
 
             EXAMPLES::
 
@@ -530,9 +522,7 @@ class PiecewiseFunction(BuiltinFunction):
               :class:`~sage.sets.real_set.RealSet` or something that
               defines one.
 
-            OUTPUT:
-
-            A new piecewise function obtained by restricting the domain.
+            OUTPUT: a new piecewise function obtained by restricting the domain
 
             EXAMPLES::
 

@@ -1034,7 +1034,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         -  ``conductors`` -- list or generator of ints
 
-        OUTPUT: generator that iterates over EllipticCurve objects.
+        OUTPUT: generator that iterates over EllipticCurve objects
 
         EXAMPLES::
 
@@ -1118,9 +1118,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         - ``conductors`` -- list or generator of ints
 
-        OUTPUT:
-
-        generator that iterates over EllipticCurve objects.
+        OUTPUT: generator that iterates over EllipticCurve objects
 
         EXAMPLES:
 
@@ -1179,9 +1177,7 @@ class MiniCremonaDatabase(SQLDatabase):
         -  ``conductors`` -- list or generator of ints
             list of EllipticCurve objects.
 
-        OUTPUT:
-
-        list of EllipticCurve objects.
+        OUTPUT: list of EllipticCurve objects
 
         EXAMPLES::
 

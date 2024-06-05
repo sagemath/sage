@@ -507,9 +507,7 @@ def _Cone_from_PPL(cone, lattice, original_rays=None):
       and ``original_rays`` were given, they will be used as internal rays of
       the constructed cone, in the given order.
 
-    OUTPUT:
-
-    A :class:`ConvexRationalPolyhedralCone`.
+    OUTPUT: a :class:`ConvexRationalPolyhedralCone`
 
     TESTS::
 
@@ -837,9 +835,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
 
         - ``right`` -- anything.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         There is equality if ``right`` is of the same type as
         ``self``, they have the same ambient lattices, and their
@@ -1185,9 +1181,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         difference between the dimension of the ambient space and the
         dimension of the subspace spanned by those rays (of the cone/fan).
 
-        OUTPUT:
-
-        A nonnegative integer representing the codimension of ``self``.
+        OUTPUT: a nonnegative integer representing the codimension of ``self``
 
         .. SEEALSO::
 
@@ -1280,9 +1274,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         - ``base_ring`` -- (default: from lattice) the base ring to use
                            for the generated module.
 
-        OUTPUT:
-
-        A module spanned by the generators of ``self``.
+        OUTPUT: a module spanned by the generators of ``self``
 
         EXAMPLES:
 
@@ -1552,9 +1544,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         r"""
         Returns the Parma Polyhedra Library (PPL) representation of the cone.
 
-        OUTPUT:
-
-        A :class:`~ppl.polyhedron.C_Polyhedron` representing the cone.
+        OUTPUT: a :class:`~ppl.polyhedron.C_Polyhedron` representing the cone
 
         EXAMPLES::
 
@@ -1944,9 +1934,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - ``right`` -- anything.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         There is equality if ``self`` and ``right`` are cones of any
         kind in the same lattice with the same rays listed in the
@@ -4660,9 +4648,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         An alias is :meth:`is_full_dimensional`.
 
-        OUTPUT:
-
-        ``True`` if this cone is solid, and ``False`` otherwise.
+        OUTPUT: ``True`` if this cone is solid, and ``False`` otherwise
 
         .. SEEALSO::
 
@@ -4709,9 +4695,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         convex; therefore it is proper if it is solid and contains no
         lines.
 
-        OUTPUT:
-
-        ``True`` if this cone is proper, and ``False`` otherwise.
+        OUTPUT: ``True`` if this cone is proper, and ``False`` otherwise
 
         .. SEEALSO::
 
@@ -4865,9 +4849,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         r"""
         Return whether ``self`` is relatively open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5131,9 +5113,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         the dimension of the Lie algebra of the automorphism group of
         the cone.
 
-        OUTPUT:
-
-        A nonnegative integer representing the Lyapunov rank of this cone.
+        OUTPUT: a nonnegative integer representing the Lyapunov rank of this cone
 
         If the ambient space is trivial, then the Lyapunov rank will be
         zero. On the other hand, if the dimension of the ambient vector
@@ -6473,9 +6453,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
       cone solid. Specify ``True`` for a solid cone, ``False`` for a
       non-solid cone, or ``None`` if you don't care.
 
-    OUTPUT:
-
-    A new, randomly generated cone.
+    OUTPUT: a new, randomly generated cone
 
     A :class:`ValueError` will be thrown under the following conditions:
 

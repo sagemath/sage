@@ -1099,9 +1099,7 @@ class DocTestController(SageObject):
 
         - ``source`` -- a :class:`DocTestSource` instance
 
-        OUTPUT:
-
-        A dictionary.
+        OUTPUT: a dictionary
 
         EXAMPLES::
 

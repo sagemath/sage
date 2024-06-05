@@ -243,9 +243,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``other`` -- a :class:`Polyhedron`
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -264,9 +262,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         """
         Test whether the polyhedron is the empty polyhedron
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -291,9 +287,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         """
         Test whether the polyhedron is the whole ambient space
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -351,9 +345,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         Return the ambient free module.
 
-        OUTPUT:
-
-        A free module over the base ring of dimension :meth:`ambient_dim`.
+        OUTPUT: a free module over the base ring of dimension :meth:`ambient_dim`
 
         EXAMPLES::
 
@@ -369,9 +361,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         Return the linear space containing the H-representation vectors.
 
-        OUTPUT:
-
-        A free module over the base ring of dimension :meth:`ambient_dim` + 1.
+        OUTPUT: a free module over the base ring of dimension :meth:`ambient_dim` + 1
 
         EXAMPLES::
 
@@ -599,9 +589,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``point`` -- coordinates of a point (an iterable)
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -731,9 +719,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``point`` -- coordinates of a point
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -783,9 +769,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         r"""
         Return whether ``self`` is relatively open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -857,9 +841,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``point`` -- coordinates of a point
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 

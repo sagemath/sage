@@ -660,9 +660,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         r"""
         Read the dictionary for the column names from the according sobj-file
 
-        OUTPUT:
-
-        A python dictionary containing the column names and types
+        OUTPUT: a Python dictionary containing the column names and types
 
         EXAMPLES::
 
@@ -737,9 +735,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         Read the number of knots contained in the database (without
         proper links) from the according sobj-file.
 
-        OUTPUT:
-
-        Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -765,9 +761,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         - ``column`` -- instance of enum :class:`KnotInfoColumns`
           to select the data to be read in
 
-        OUTPUT:
-
-        A python list containing the data corresponding to the column.
+        OUTPUT: a Python list containing the data corresponding to the column
 
         EXAMPLES::
 

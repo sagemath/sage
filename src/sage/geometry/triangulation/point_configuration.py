@@ -1911,9 +1911,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
           will be placed in some arbitrary order that attempts to
           produce a small number of simplices.
 
-        OUTPUT:
-
-        A :class:`~sage.geometry.triangulation.triangulation.Triangulation`.
+        OUTPUT: a :class:`~sage.geometry.triangulation.triangulation.Triangulation`
 
         EXAMPLES::
 
@@ -2053,9 +2051,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
           (default). A subset of points for which to compute the Gale
           transform. By default, all points are used.
 
-        OUTPUT:
-
-        A matrix over :meth:`base_ring`.
+        OUTPUT: a matrix over :meth:`base_ring`
 
         EXAMPLES::
 

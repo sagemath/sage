@@ -922,9 +922,7 @@ def findstat(query=None, values=None, distribution=None, domain=None,
       collection, such as ``Permutations(3)``.  The keyword arguments
       ``depth`` and ``max_values`` are passed to the finder.
 
-    OUTPUT:
-
-    An instance of a :class:`FindStatStatistic`, represented by
+    OUTPUT: an instance of a :class:`FindStatStatistic`, represented by
 
     - the FindStat identifier together with its name, or
 
@@ -1569,9 +1567,7 @@ class FindStatFunction(SageObject):
         r"""
         Return the FindStat identifier of the statistic or map.
 
-        OUTPUT:
-
-        The FindStat identifier of the statistic or map, as an integer.
+        OUTPUT: the FindStat identifier of the statistic or map, as an integer
 
         EXAMPLES::
 
@@ -1584,9 +1580,7 @@ class FindStatFunction(SageObject):
         r"""
         Return the FindStat identifier of the statistic or map.
 
-        OUTPUT:
-
-        The FindStat identifier of the statistic or map, as a string.
+        OUTPUT: the FindStat identifier of the statistic or map, as a string
 
         EXAMPLES::
 
@@ -1618,9 +1612,7 @@ class FindStatFunction(SageObject):
         r"""
         Return the description of the statistic or map.
 
-        OUTPUT:
-
-        A string.  For statistics, the first line is used as name.
+        OUTPUT: a string.  For statistics, the first line is used as name
 
         EXAMPLES::
 
@@ -1755,9 +1747,7 @@ class FindStatFunction(SageObject):
         r"""
         Return the Sage code associated with the statistic or map.
 
-        OUTPUT:
-
-        An empty string or a string of the form::
+        OUTPUT: an empty string or a string of the form::
 
             def statistic(x):
                 ...
@@ -2286,9 +2276,9 @@ class FindStatStatistic(Element,
         r"""
         Return the code associated with the statistic or map.
 
-        OUTPUT:
+        OUTPUT: string
 
-        A string.  Contributors are encouraged to submit Sage code in the form::
+        Contributors are encouraged to submit Sage code in the form::
 
             def statistic(x):
                 ...
@@ -3238,9 +3228,7 @@ class FindStatMap(Element,
         r"""
         Return the FindStat collection which is the codomain of the map.
 
-        OUTPUT:
-
-        The codomain of the map as a :class:`FindStatCollection`.
+        OUTPUT: the codomain of the map as a :class:`FindStatCollection`
 
         EXAMPLES::
 
@@ -3254,9 +3242,7 @@ class FindStatMap(Element,
         r"""
         Return the properties of the map.
 
-        OUTPUT:
-
-        The properties as a string.
+        OUTPUT: the properties as a string
 
         EXAMPLES::
 
@@ -3910,9 +3896,7 @@ def _finite_irreducible_cartan_types_by_rank(n):
 
     - n -- an integer.
 
-    OUTPUT:
-
-    The list of Cartan types of rank n.
+    OUTPUT: the list of Cartan types of rank n
 
     TESTS::
 
@@ -3944,9 +3928,7 @@ def _plane_partitions_by_size_aux(n, outer=None):
 
     - n -- an integer.
 
-    OUTPUT:
-
-    The plane partitions with `n` boxes as lists.
+    OUTPUT: the plane partitions with `n` boxes as lists
 
     TESTS::
 
@@ -3978,9 +3960,7 @@ def _plane_partitions_by_size(n):
 
     - n -- an integer.
 
-    OUTPUT:
-
-    The plane partitions with `n` boxes.
+    OUTPUT: the plane partitions with `n` boxes
 
     TESTS::
 
@@ -4006,9 +3986,7 @@ def _finite_lattices(n):
 
     - n -- an integer.
 
-    OUTPUT:
-
-    The lattices with `n` elements.
+    OUTPUT: the lattices with `n` elements
 
     TESTS::
 
@@ -4371,9 +4349,7 @@ class FindStatCollection(Element,
         r"""
         Return the FindStat identifier of the collection.
 
-        OUTPUT:
-
-        The FindStat identifier of the collection as an integer.
+        OUTPUT: the FindStat identifier of the collection as an integer
 
         EXAMPLES::
 
@@ -4388,9 +4364,7 @@ class FindStatCollection(Element,
         r"""
         Return the FindStat identifier of the collection.
 
-        OUTPUT:
-
-        The FindStat identifier of the collection as a string.
+        OUTPUT: the FindStat identifier of the collection as a string
 
         EXAMPLES::
 
@@ -4465,9 +4439,7 @@ class FindStatCollection(Element,
         r"""
         Return the representation of the FindStat collection.
 
-        OUTPUT:
-
-        The representation, including the identifier and the name.
+        OUTPUT: the representation, including the identifier and the name
 
         EXAMPLES::
 
@@ -4488,9 +4460,7 @@ class FindStatCollection(Element,
         - a string -- (default:"singular") can be
           "singular", or "plural".
 
-        OUTPUT:
-
-        The name of the FindStat collection, in singular or in plural.
+        OUTPUT: the name of the FindStat collection, in singular or in plural
 
         EXAMPLES::
 

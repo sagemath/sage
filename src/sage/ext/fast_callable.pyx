@@ -506,7 +506,7 @@ def _builder_and_stream(vars, domain):
     - ``domain`` -- a Sage parent or Python type or ``None``; if non-``None``,
       all arithmetic is done in that domain
 
-    OUTPUT: A :class:`Wrapper`, an class:`InstructionStream`
+    OUTPUT: a :class:`Wrapper`, an class:`InstructionStream`
 
     EXAMPLES::
 

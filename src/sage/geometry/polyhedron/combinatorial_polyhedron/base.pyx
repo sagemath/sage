@@ -3594,9 +3594,7 @@ cdef class CombinatorialPolyhedron(SageObject):
           * ``'edges'``
           * ``'ridges'``
 
-        OUTPUT:
-
-        Either ``'primal'`` or ``'dual'``.
+        OUTPUT: either ``'primal'`` or ``'dual'``
 
         EXAMPLES::
 

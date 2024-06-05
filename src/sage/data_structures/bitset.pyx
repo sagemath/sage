@@ -2353,9 +2353,7 @@ def test_bitset_unpickle(data):
 
     - ``data`` -- A tuple of data as would be produced by the internal, Cython-only, method ``bitset_pickle``.
 
-    OUTPUT:
-
-    A list form of the bitset corresponding to the pickled data.
+    OUTPUT: a list form of the bitset corresponding to the pickled data
 
     EXAMPLES:
 

@@ -202,9 +202,7 @@ class NewtonPolygon_element(Element):
 
         - ``other`` -- a Newton polygon
 
-        OUTPUT:
-
-        The Newton polygon, which is the convex hull of this Newton polygon and ``other``
+        OUTPUT: the Newton polygon, which is the convex hull of this Newton polygon and ``other``
 
         EXAMPLES::
 
@@ -228,9 +226,7 @@ class NewtonPolygon_element(Element):
 
         - ``other`` -- a Newton polygon
 
-        OUTPUT:
-
-        The Newton polygon, which is the Minkowski sum of this Newton polygon and ``other``.
+        OUTPUT: the Newton polygon, which is the Minkowski sum of this Newton polygon and ``other``
 
         .. NOTE::
 
@@ -269,9 +265,7 @@ class NewtonPolygon_element(Element):
 
         - ``exp`` -- a positive integer
 
-        OUTPUT:
-
-        This Newton polygon scaled by a factor ``exp``.
+        OUTPUT: this Newton polygon scaled by a factor ``exp``
 
         .. NOTE::
 
@@ -346,9 +340,7 @@ class NewtonPolygon_element(Element):
 
         - ``x`` -- a real number
 
-        OUTPUT:
-
-        The value of this Newton polygon at abscissa `x`
+        OUTPUT: the value of this Newton polygon at abscissa `x`
 
         EXAMPLES::
 
@@ -539,9 +531,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
     - ``last_slope`` -- rational or infinity (default:
       ``Infinity``). The last slope of the Newton polygon
 
-    OUTPUT:
-
-    The corresponding Newton polygon.
+    OUTPUT: the corresponding Newton polygon
 
     .. note::
 
@@ -703,9 +693,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
 
         - a list/tuple/iterable of slopes
 
-        OUTPUT:
-
-        The corresponding Newton polygon.
+        OUTPUT: the corresponding Newton polygon
 
         For more informations, see :class:`ParentNewtonPolygon`.
 

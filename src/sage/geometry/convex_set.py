@@ -45,9 +45,7 @@ class ConvexSet_base(SageObject, Set_base):
         r"""
         Test whether ``self`` is the empty set.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -62,9 +60,7 @@ class ConvexSet_base(SageObject, Set_base):
         r"""
         Test whether ``self`` is a finite set.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -87,9 +83,7 @@ class ConvexSet_base(SageObject, Set_base):
         """
         Return the cardinality of this set.
 
-        OUTPUT:
-
-        Either an integer or ``Infinity``.
+        OUTPUT: either an integer or ``Infinity``
 
         EXAMPLES::
 
@@ -116,9 +110,7 @@ class ConvexSet_base(SageObject, Set_base):
         r"""
         Test whether ``self`` is the whole ambient space.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -482,9 +474,7 @@ class ConvexSet_base(SageObject, Set_base):
         The default implementation of this method only knows that the
         empty set and the ambient space are open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -509,9 +499,7 @@ class ConvexSet_base(SageObject, Set_base):
         sets are also relatively open, and in addition singletons are
         relatively open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -535,9 +523,7 @@ class ConvexSet_base(SageObject, Set_base):
         The default implementation of this method only knows that the
         empty set, a singleton set, and the ambient space are closed.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -560,9 +546,7 @@ class ConvexSet_base(SageObject, Set_base):
         non-closed set cannot be compact, and that the empty set and
         a singleton set are compact.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
             sage: from sage.geometry.convex_set import ConvexSet_base
             sage: class ExampleSet(ConvexSet_base):
@@ -627,9 +611,7 @@ class ConvexSet_base(SageObject, Set_base):
         """
         Return a "generic" point of ``self``.
 
-        OUTPUT:
-
-        A point in the relative interior of ``self`` as a coordinate vector.
+        OUTPUT: a point in the relative interior of ``self`` as a coordinate vector
 
         EXAMPLES::
 
@@ -790,9 +772,7 @@ class ConvexSet_base(SageObject, Set_base):
 
         - ``other`` -- another convex set
 
-        OUTPUT:
-
-        The Cartesian product of ``self`` and ``other``.
+        OUTPUT: the Cartesian product of ``self`` and ``other``
 
         TESTS::
 
@@ -908,9 +888,7 @@ class ConvexSet_base(SageObject, Set_base):
 
         - ``other`` -- another convex set
 
-        OUTPUT:
-
-        The intersection.
+        OUTPUT: the intersection
 
         TESTS::
 
@@ -998,9 +976,7 @@ class ConvexSet_closed(ConvexSet_base):
         r"""
         Return whether ``self`` is closed.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1014,9 +990,7 @@ class ConvexSet_closed(ConvexSet_base):
         r"""
         Return whether ``self`` is open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1040,9 +1014,7 @@ class ConvexSet_compact(ConvexSet_closed):
         r"""
         Return whether ``self`` is the whole ambient space
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1060,9 +1032,7 @@ class ConvexSet_compact(ConvexSet_closed):
         r"""
         Return whether ``self`` is compact.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1084,9 +1054,7 @@ class ConvexSet_relatively_open(ConvexSet_base):
         r"""
         Return whether ``self`` is relatively open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1101,9 +1069,7 @@ class ConvexSet_relatively_open(ConvexSet_base):
         r"""
         Return whether ``self`` is open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1124,9 +1090,7 @@ class ConvexSet_open(ConvexSet_relatively_open):
         r"""
         Return whether ``self`` is open.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1141,9 +1105,7 @@ class ConvexSet_open(ConvexSet_relatively_open):
         r"""
         Return whether ``self`` is closed.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

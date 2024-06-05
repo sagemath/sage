@@ -341,7 +341,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
       used internally in case the center is not the origin,
       see :func:`~sage.geometry.polyhedron.constructor.Polyhedron`
 
-    OUTPUT: An ordered point configuration as list of vectors.
+    OUTPUT: an ordered point configuration as list of vectors
 
     .. NOTE::
 
@@ -3363,9 +3363,7 @@ class Polytopes:
 
         - ``backend`` -- the backend to use to create the polytope.
 
-        OUTPUT:
-
-        A cube as a polyhedron object.
+        OUTPUT: a cube as a polyhedron object
 
         EXAMPLES:
 

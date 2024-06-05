@@ -707,9 +707,7 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
       The variables corresponding to ``skip_indices`` are not handled
       (e.g. because they are determined by an equation).
 
-    OUTPUT:
-
-    A pair of
+    OUTPUT: a pair of
 
     - a Laurent polynomial specifying the numerator and
 

@@ -88,7 +88,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         - ``check`` -- Boolean; whether or not to perform the input checks
           on the image point (Default: ``True``)
 
-        OUTPUT: The image point in the codomain
+        OUTPUT: the image point in the codomain
 
         EXAMPLES::
 
@@ -129,7 +129,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``normalize`` -- (default: ``False``) boolean
 
-        OUTPUT: A point in ``self.codomain()``
+        OUTPUT: a point in ``self.codomain()``
 
         EXAMPLES::
 
@@ -257,7 +257,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``n`` -- a positive integer
 
-        OUTPUT: A dynamical system of products of projective spaces
+        OUTPUT: a dynamical system of products of projective spaces
 
         EXAMPLES::
 

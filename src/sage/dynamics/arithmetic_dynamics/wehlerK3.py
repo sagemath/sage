@@ -434,7 +434,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``a`` -- Point in `\mathbb{P}^2`
 
-        OUTPUT: A polynomial representing the fiber
+        OUTPUT: a polynomial representing the fiber
 
         EXAMPLES::
 
@@ -472,7 +472,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT: ``a`` -- Point in `\mathbb{P}^2`
 
-        OUTPUT: A polynomial representing the fiber
+        OUTPUT: a polynomial representing the fiber
 
         EXAMPLES::
 
@@ -511,7 +511,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``a`` -- Point in `\mathbb{P}^2`
 
-        OUTPUT: A subscheme representing the fiber
+        OUTPUT: a subscheme representing the fiber
 
         EXAMPLES::
 
@@ -547,7 +547,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT: ``b`` -- Point in projective space
 
-        OUTPUT: A polynomial representing the fiber
+        OUTPUT: a polynomial representing the fiber
 
         EXAMPLES::
 
@@ -588,7 +588,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``b`` -- Point in projective space
 
-        OUTPUT: A polynomial representing the fiber
+        OUTPUT: a polynomial representing the fiber
 
         EXAMPLES::
 
@@ -626,7 +626,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``b`` -- Point in `\mathbb{P}^2`
 
-        OUTPUT: A subscheme representing the fiber
+        OUTPUT: a subscheme representing the fiber
 
         EXAMPLES::
 
@@ -663,7 +663,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT: ``i`` -- Integer, either 0 (polynomial in y) or 1 (polynomial in x)
 
-        OUTPUT: Polynomial in the coordinate ring of the ambient space
+        OUTPUT: polynomial in the coordinate ring of the ambient space
 
         EXAMPLES::
 
@@ -776,7 +776,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         This function finds the common solution through elimination via Groebner bases
         by using the .variety() function on the three affine charts in each component.
 
-        OUTPUT: The output is a list of lists where the elements of lists are
+        OUTPUT: the output is a list of lists where the elements of lists are
         points in the appropriate projective space.
         The first list is the points whose pullback by the projection to the
         first component (projective space) is dimension greater than 0.
@@ -905,7 +905,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         is what is checked. The lcm of the coefficients of the monomials `x_i` in
         a Groebner basis is computed. This may return extra primes.
 
-        OUTPUT: List of primes.
+        OUTPUT: list of primes
 
         EXAMPLES::
 
@@ -1061,7 +1061,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``normalize`` -- (default: ``True``) boolean normalizes the point
 
-        OUTPUT: A point on the K3 surface
+        OUTPUT: a point on the K3 surface
 
         EXAMPLES::
 
@@ -1308,7 +1308,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``normalize`` -- (default: ``True``) boolean normalizes the point
 
-        OUTPUT: A point on the K3 surface
+        OUTPUT: a point on the K3 surface
 
         EXAMPLES::
 
@@ -1544,7 +1544,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``normalize`` -- (default: ``True``) boolean normalizes the point
 
-        OUTPUT: A point on this surface
+        OUTPUT: a point on this surface
 
         EXAMPLES::
 
@@ -1584,7 +1584,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``normalize`` -- (default: ``True``) boolean normalizes the point
 
-        OUTPUT: A point on this surface
+        OUTPUT: a point on this surface
 
         EXAMPLES::
 
@@ -1628,7 +1628,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``prec`` -- (default: 100) float point or p-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1728,7 +1728,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``prec`` -- (default: 100) float point or p-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1819,7 +1819,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``prec`` -- (default: 100) float point or p-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1883,7 +1883,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``prec`` -- (default: 100) float point or p-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1945,7 +1945,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``prec`` -- (default: 100) float point or p-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1991,7 +1991,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``p`` -- a point in `\mathbb{P}^2`
 
-        OUTPUT: The corresponding fiber (as a list)
+        OUTPUT: the corresponding fiber (as a list)
 
         EXAMPLES::
 
@@ -2173,7 +2173,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``normalize`` -- (default: ``False``) boolean normalizes the point
 
-        OUTPUT: The nth iterate of the point given the phi function (if ``n`` is positive), or the
+        OUTPUT: the nth iterate of the point given the phi function (if ``n`` is positive), or the
         psi function (if ``n`` is negative)
 
         EXAMPLES::
@@ -2238,7 +2238,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``normalize`` -- (default: ``False``) boolean, normalizes the point
 
-        OUTPUT: The nth iterate of the point given the psi function (if ``n`` is positive),
+        OUTPUT: the nth iterate of the point given the psi function (if ``n`` is positive),
         or the phi function (if ``n`` is negative)
 
         EXAMPLES::
@@ -2295,7 +2295,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``normalize`` -- (default: ``False``) boolean, normalizes the point
 
-        OUTPUT: List of points in the orbit
+        OUTPUT: list of points in the orbit
 
         EXAMPLES::
 
@@ -2400,7 +2400,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``right`` -- the K3 surface to compare to the original
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2439,7 +2439,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``orbit`` -- a periodic cycle of either psi or phi
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2493,7 +2493,7 @@ class WehlerK3Surface_finite_field( WehlerK3Surface_field):
         Enumerate points over `\mathbb{P}^2`, and then count the points on the fiber of
         each of those points.
 
-        OUTPUT: Integer -- total number of points on the surface
+        OUTPUT: integer -- total number of points on the surface
 
         EXAMPLES::
 

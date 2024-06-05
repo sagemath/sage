@@ -1227,9 +1227,7 @@ class ParametrizedSurface3D(SageObject):
         When only one component is needed, consider instead the function
         :meth:`second_fundamental_form_coefficient`.
 
-        OUTPUT:
-
-        Dictionary of second fundamental form coefficients.
+        OUTPUT: dictionary of second fundamental form coefficients
 
         EXAMPLES::
 

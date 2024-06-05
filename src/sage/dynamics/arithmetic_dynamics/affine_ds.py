@@ -819,9 +819,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         - ``M`` -- a square invertible matrix
 
-        OUTPUT:
-
-        An affine dynamical system
+        OUTPUT: an affine dynamical system
 
         EXAMPLES::
 
@@ -951,7 +949,7 @@ class DynamicalSystem_affine_field(DynamicalSystem_affine,
         the base ring is a number field, ``QQbar``, a finite field, or algebraic
         closure of a finite field.
 
-        OUTPUT: A dynamical system
+        OUTPUT: a dynamical system
 
         EXAMPLES::
 

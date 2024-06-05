@@ -356,9 +356,7 @@ def _palp_canonical_order(vertices, PM_max, permutations):
 
     - ``permutation`` -- the permutations of the vertices yielding ``PM_max``.
 
-    OUTPUT:
-
-    The PALP normal form as an iterable of integer vectors.
+    OUTPUT: the PALP normal form as an iterable of integer vectors
 
     TESTS::
 

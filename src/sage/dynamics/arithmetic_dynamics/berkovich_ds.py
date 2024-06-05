@@ -345,7 +345,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         """
         Return the domain of this dynamical system.
 
-        OUTPUT: A Berkovich space over ``Cp``.
+        OUTPUT: a Berkovich space over ``Cp``
 
         EXAMPLES::
 
@@ -361,7 +361,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         r"""
         Return this dynamical system as :class:`DynamicalSystem`.
 
-        OUTPUT: An affine or projective :class:`DynamicalSystem`.
+        OUTPUT: an affine or projective :class:`DynamicalSystem`
 
         EXAMPLES::
 
@@ -382,7 +382,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
         - ``i`` -- an integer.
 
-        OUTPUT: An element of polynomial ring or a
+        OUTPUT: an element of polynomial ring or a
         fraction field of a polynomial ring
 
         EXAMPLES::
@@ -399,7 +399,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         """
         Return the defining polynomials.
 
-        OUTPUT: A tuple of polynomials that defines the
+        OUTPUT: a tuple of polynomials that defines the
         dynamical system.
 
         EXAMPLES::
@@ -417,7 +417,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         """
         The base ring of this dynamical system, that is, the field of definition of the coefficients.
 
-        OUTPUT: A field.
+        OUTPUT: a field
 
         EXAMPLES::
 
@@ -442,7 +442,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         r"""
         Return a string representation of this dynamical system.
 
-        OUTPUT: a string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -572,7 +572,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         - ``t`` -- a ring element.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -604,7 +604,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
         r"""
         Normalizes the coordinates of the inducing map.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -657,7 +657,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
           Used to specify an extension in the case where ``M`` is not defined
           over the same number field as this dynamical system.
 
-        OUTPUT: a dynamical system.
+        OUTPUT: a dynamical system
 
         EXAMPLES::
 
@@ -721,7 +721,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         - ``normalize`` -- (default: ``False``) boolean.
 
-        OUTPUT: an element of the base ring of this map.
+        OUTPUT: an element of the base ring of this map
 
         EXAMPLES::
 
@@ -754,7 +754,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
         - ``n`` -- a tuple of nonnegative integers; if ``n`` is an integer,
           then the two values of the tuple are assumed to be the same.
 
-        OUTPUT: A dynamical system on affine Berkovich space.
+        OUTPUT: a dynamical system on affine Berkovich space
 
         EXAMPLES::
 
@@ -787,7 +787,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
           poles of the dynamical system in the disk corresponding
           to the type III point ``x``. See Examples.
 
-        OUTPUT: A point of projective Berkovich space over ``Cp``.
+        OUTPUT: a point of projective Berkovich space over ``Cp``
 
         EXAMPLES::
 

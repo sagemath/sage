@@ -26,9 +26,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         - ``x`` -- a number in the base ring.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -48,9 +46,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         - ``x`` -- a number in the base ring.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -70,9 +66,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         - ``x`` -- a number in the base ring.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -274,9 +268,7 @@ class Polyhedron_QQ(Polyhedron_base):
           * ``triangulation_max_height`` -- integer; use a uniform distribution
             of height from 1 to this number
 
-        OUTPUT:
-
-        A univariate polynomial in ``variable`` over a rational field.
+        OUTPUT: a univariate polynomial in ``variable`` over a rational field
 
         .. SEEALSO::
 
@@ -693,9 +685,7 @@ class Polyhedron_QQ(Polyhedron_base):
             Any additional argument is forwarded to LattE's executable
             ``count``. All occurrences of '_' will be replaced with a '-'.
 
-        OUTPUT:
-
-        A univariate polynomial over a rational field.
+        OUTPUT: a univariate polynomial over a rational field
 
         ALGORITHM:
 
@@ -816,9 +806,7 @@ class Polyhedron_QQ(Polyhedron_base):
         - ``vertex_permutation`` -- permutation; a permutation of the vertices
           of ``self``.
 
-        OUTPUT:
-
-        A subpolytope of ``self``.
+        OUTPUT: a subpolytope of ``self``
 
         .. NOTE::
 
@@ -1167,9 +1155,7 @@ class Polyhedron_QQ(Polyhedron_base):
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT:
-
-        Boolean. Whether the ``Hstar`` series is effective.
+        OUTPUT: boolean. Whether the ``Hstar`` series is effective
 
         .. SEEALSO::
 
@@ -1244,9 +1230,7 @@ class Polyhedron_QQ(Polyhedron_base):
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT:
-
-        Boolean. Whether the ``Hstar`` series is effective.
+        OUTPUT: boolean. Whether the ``Hstar`` series is effective
 
         TESTS::
 

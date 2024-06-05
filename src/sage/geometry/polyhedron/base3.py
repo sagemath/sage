@@ -838,9 +838,7 @@ class Polyhedron_base3(Polyhedron_base2):
         """
         Return the bounded edges (excluding rays and lines).
 
-        OUTPUT:
-
-        A generator for pairs of vertices, one pair per edge.
+        OUTPUT: a generator for pairs of vertices, one pair per edge
 
         EXAMPLES::
 
@@ -1253,9 +1251,7 @@ class Polyhedron_base3(Polyhedron_base2):
           to return a vertex of the polytope which is the apex of a pyramid,
           if found
 
-        OUTPUT:
-
-        If ``certificate`` is ``True``, returns a tuple containing:
+        OUTPUT: if ``certificate`` is ``True``, returns a tuple containing:
 
         1. Boolean.
         2. The apex of the pyramid or ``None``.
@@ -1303,9 +1299,7 @@ class Polyhedron_base3(Polyhedron_base2):
           to return two vertices of the polytope which are the apices of a
           bipyramid, if found
 
-        OUTPUT:
-
-        If ``certificate`` is ``True``, returns a tuple containing:
+        OUTPUT: if ``certificate`` is ``True``, returns a tuple containing:
 
         1. Boolean.
         2. ``None`` or a tuple containing:
@@ -1360,9 +1354,7 @@ class Polyhedron_base3(Polyhedron_base2):
           to return two facets of the polytope which are the bases of a prism,
           if found
 
-        OUTPUT:
-
-        If ``certificate`` is ``True``, returns a tuple containing:
+        OUTPUT: if ``certificate`` is ``True``, returns a tuple containing:
 
         1. Boolean.
         2. ``None`` or a tuple containing:

@@ -113,9 +113,7 @@ cdef class Point(SageObject):
         r"""
         Return the point configuration to which the point belongs.
 
-        OUTPUT:
-
-        A :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+        OUTPUT: a :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`
 
         EXAMPLES::
 
@@ -176,9 +174,7 @@ cdef class Point(SageObject):
         r"""
         Return the projective coordinates of the point in the ambient space.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -202,9 +198,7 @@ cdef class Point(SageObject):
         r"""
         Return the affine coordinates of the point in the ambient space.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -229,9 +223,7 @@ cdef class Point(SageObject):
         Return the affine coordinates of the point on the hyperplane
         spanned by the point configuration.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -256,9 +248,7 @@ cdef class Point(SageObject):
         Return the projective coordinates of the point on the hyperplane
         spanned by the point configuration.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -283,9 +273,7 @@ cdef class Point(SageObject):
         Return the affine coordinates of the point on the hyperplane
         spanned by the point configuration.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -310,9 +298,7 @@ cdef class Point(SageObject):
         Return the affine coordinates of the point on the hyperplane
         spanned by the point configuration.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -338,9 +324,7 @@ cdef class Point(SageObject):
         """
         Return a string representation of the point.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -470,9 +454,7 @@ cdef class PointConfiguration_base(Parent):
         """
         Return the vector space that contains the affine points.
 
-        OUTPUT:
-
-        A vector space over the fraction field of :meth:`base_ring`.
+        OUTPUT: a vector space over the fraction field of :meth:`base_ring`
 
         EXAMPLES::
 
@@ -491,9 +473,7 @@ cdef class PointConfiguration_base(Parent):
         Return the vector space that is spanned by the homogeneous
         coordinates.
 
-        OUTPUT:
-
-        A vector space over the fraction field of :meth:`base_ring`.
+        OUTPUT: a vector space over the fraction field of :meth:`base_ring`
 
         EXAMPLES::
 
@@ -545,9 +525,7 @@ cdef class PointConfiguration_base(Parent):
         Return the base ring, that is, the ring containing the
         coordinates of the points.
 
-        OUTPUT:
-
-        A ring.
+        OUTPUT: a ring
 
         EXAMPLES::
 
@@ -688,9 +666,7 @@ cdef class PointConfiguration_base(Parent):
 
         - ``i`` -- integer.
 
-        OUTPUT:
-
-        A point of the point configuration.
+        OUTPUT: a point of the point configuration
 
         EXAMPLES::
 
@@ -744,9 +720,7 @@ cdef class PointConfiguration_base(Parent):
         - ``simplex`` -- iterable, for example a list. The elements
           are the vertex indices of the simplex.
 
-        OUTPUT:
-
-        An integer that uniquely specifies the simplex.
+        OUTPUT: an integer that uniquely specifies the simplex
 
         EXAMPLES::
 

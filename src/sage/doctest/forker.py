@@ -253,7 +253,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
 
     INPUT: see :func:`warnings.showwarning`.
 
-    OUTPUT: None
+    OUTPUT: none
 
     EXAMPLES::
 

@@ -35,8 +35,6 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT: A string monoid over a binary alphabet.
 
-        OUTPUT:
-
         EXAMPLES::
 
             sage: E = LFSRCryptosystem(FiniteField(2))
@@ -109,8 +107,6 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT: A string monoid over a binary alphabet.
 
-        OUTPUT:
-
         EXAMPLES::
 
             sage: E = ShrinkingGeneratorCryptosystem()
@@ -131,8 +127,8 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT: A list or tuple consisting of two LFSR ciphers (e1,e2).
 
-        OUTPUT: The shrinking generator cipher with key stream generator e1
-        and decimating cipher e2.
+        OUTPUT: the shrinking generator cipher with key stream generator e1
+        and decimating cipher e2
         """
         if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)

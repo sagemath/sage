@@ -2145,7 +2145,7 @@ def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
       is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
       specifies how many points in ``source`` have points in ``points`` as their possible target.
 
-    OUTPUT: a list of elements of PGL which conjugate ``f`` to ``g``.
+    OUTPUT: a list of elements of PGL which conjugate ``f`` to ``g``
 
     EXAMPLES::
 
@@ -2289,7 +2289,7 @@ def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
       is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
       specifies how many points in ``source`` have points in ``points`` as their possible target.
 
-    OUTPUT: ``True`` if ``f`` is conjugate to ``g``, ``False`` otherwise.
+    OUTPUT: ``True`` if ``f`` is conjugate to ``g``, ``False`` otherwise
 
     EXAMPLES::
 

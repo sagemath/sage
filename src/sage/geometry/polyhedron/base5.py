@@ -582,9 +582,7 @@ class Polyhedron_base5(Polyhedron_base4):
         - ``cut_frac`` -- integer, how deeply to cut into the edge.
           Default is `\frac{1}{3}`.
 
-        OUTPUT:
-
-        A Polyhedron object, truncated as described above.
+        OUTPUT: a Polyhedron object, truncated as described above
 
         EXAMPLES::
 
@@ -684,9 +682,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         - ``other`` -- a :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
 
-        OUTPUT:
-
-        The Minkowski sum of ``self`` and ``other``
+        OUTPUT: the Minkowski sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -1292,9 +1288,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         - ``other`` -- a :class:`Polyhedron`
 
-        OUTPUT:
-
-        The convex hull.
+        OUTPUT: the convex hull
 
         EXAMPLES::
 
@@ -1320,9 +1314,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         - ``other`` -- a :class:`Polyhedron`
 
-        OUTPUT:
-
-        The intersection.
+        OUTPUT: the intersection
 
         Note that the intersection of two `\ZZ`-polyhedra might not be
         a `\ZZ`-polyhedron. In this case, a `\QQ`-polyhedron is
@@ -1460,9 +1452,7 @@ class Polyhedron_base5(Polyhedron_base4):
         - ``displacement`` -- a displacement vector or a list/tuple of
           coordinates that determines a displacement vector
 
-        OUTPUT:
-
-        The translated polyhedron.
+        OUTPUT: the translated polyhedron
 
         EXAMPLES::
 
@@ -1503,7 +1493,7 @@ class Polyhedron_base5(Polyhedron_base4):
         - ``displacement`` -- a displacement vector or a list/tuple of
           coordinates that determines a displacement vector
 
-        OUTPUT: Tuple of consisting of new Vrepresentation, Hrepresentation and parent.
+        OUTPUT: tuple of consisting of new Vrepresentation, Hrepresentation and parent
 
         .. SEEALSO::
 
@@ -1933,9 +1923,7 @@ class Polyhedron_base5(Polyhedron_base4):
           vertex (according to the normal vector of the cutting hyperplane).
           Default is `\frac{1}{3}`.
 
-        OUTPUT:
-
-        A Polyhedron object, truncated as described above.
+        OUTPUT: a Polyhedron object, truncated as described above
 
         EXAMPLES::
 
@@ -2089,9 +2077,7 @@ class Polyhedron_base5(Polyhedron_base4):
           new vertex close to the face and a large value further away. Default
           is `1`. If the given value is too large, an error is returned.
 
-        OUTPUT:
-
-        A Polyhedron object
+        OUTPUT: a Polyhedron object
 
         EXAMPLES::
 

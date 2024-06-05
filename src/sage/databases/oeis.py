@@ -1503,7 +1503,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         - ``format`` -- string (default: 'guess'): how to display the links.
 
-        OUTPUT: Tuple of strings (with fancy formatting):
+        OUTPUT: tuple of strings (with fancy formatting):
 
         - if ``format`` is ``url``, returns a tuple of absolute links without description.
         - if ``format`` is ``html``, returns nothing but prints a tuple of clickable absolute links in their context.

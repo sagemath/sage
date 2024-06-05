@@ -124,9 +124,7 @@ class PolyhedronRepresentation(SageObject):
 
         - ``other`` -- anything.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -323,9 +321,7 @@ class PolyhedronRepresentation(SageObject):
 
         - ``coordinate_list`` -- a list.
 
-        OUTPUT:
-
-        The coordinates of ``self`` concatenated with ``coordinate_list``.
+        OUTPUT: the coordinates of ``self`` concatenated with ``coordinate_list``
 
         EXAMPLES::
 
@@ -347,9 +343,7 @@ class PolyhedronRepresentation(SageObject):
 
         - ``coordinate_list`` -- a list.
 
-        OUTPUT:
-
-        ``coordinate_list`` concatenated with the coordinates of ``self``.
+        OUTPUT: ``coordinate_list`` concatenated with the coordinates of ``self``
 
         EXAMPLES::
 
@@ -371,9 +365,7 @@ class PolyhedronRepresentation(SageObject):
 
         - ``i`` -- Anything.
 
-        OUTPUT:
-
-        Integer. The number of occurrences of ``i`` in the coordinates.
+        OUTPUT: integer; the number of occurrences of ``i`` in the coordinates
 
         EXAMPLES::
 
@@ -688,9 +680,7 @@ class Hrepresentation(PolyhedronRepresentation):
 
         - ``latex`` -- a boolean
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -708,9 +698,7 @@ class Hrepresentation(PolyhedronRepresentation):
         r"""
         Return a LaTeX-representation of this equality/inequality.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -988,9 +976,7 @@ class Inequality(Hrepresentation):
         r"""
         Return the outer normal vector of ``self``.
 
-        OUTPUT:
-
-        The normal vector directed away from the interior of the polyhedron.
+        OUTPUT: the normal vector directed away from the interior of the polyhedron
 
         EXAMPLES::
 
@@ -1392,9 +1378,7 @@ class Vertex(Vrepresentation):
         """
         Return a string representation of the vertex.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         TESTS::
 
@@ -1449,9 +1433,7 @@ class Vertex(Vrepresentation):
         r"""
         Return whether the coordinates of the vertex are all integral.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

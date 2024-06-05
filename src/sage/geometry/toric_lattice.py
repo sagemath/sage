@@ -945,9 +945,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
 
         - ``right`` -- anything.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         There is equality if ``right`` is a toric lattice of the same
         dimension as ``self`` and their associated names are the
@@ -1760,9 +1758,7 @@ class ToricLattice_quotient(FGP_Module_class):
         r"""
         Return the rank of ``self``.
 
-        OUTPUT:
-
-        Integer. The dimension of the free part of the quotient.
+        OUTPUT: integer; the dimension of the free part of the quotient
 
         EXAMPLES::
 
@@ -1796,9 +1792,7 @@ class ToricLattice_quotient(FGP_Module_class):
         - ``reduce`` -- (default: ``False``); if ``True``, reduce coefficients
           modulo invariants
 
-        OUTPUT:
-
-        The coordinates as a vector.
+        OUTPUT: the coordinates as a vector
 
         EXAMPLES::
 

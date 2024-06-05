@@ -89,9 +89,7 @@ def random_inequalities(d, n):
 
     - ``n``  -- integer. The number of random inequalities to generate.
 
-    OUTPUT:
-
-    A random set of inequalities as a :class:`StandardAlgorithm` instance.
+    OUTPUT: a random set of inequalities as a :class:`StandardAlgorithm` instance
 
     EXAMPLES::
 
@@ -192,9 +190,7 @@ class DoubleDescriptionPair:
         r"""
         Return string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -354,9 +350,7 @@ class DoubleDescriptionPair:
 
         - ``ray`` -- a ray vector.
 
-        OUTPUT:
-
-        A set containing the inequality vectors that are zero on ``ray``.
+        OUTPUT: a set containing the inequality vectors that are zero on ``ray``
 
         EXAMPLES::
 
@@ -429,9 +423,7 @@ class DoubleDescriptionPair:
 
         - ``r1``, ``r2`` -- two rays.
 
-        OUTPUT:
-
-        Boolean. Whether the two rays are adjacent.
+        OUTPUT: boolean; whether the two rays are adjacent
 
         EXAMPLES::
 
@@ -554,9 +546,7 @@ class Problem:
         """
         Return the rows of the defining matrix `A`.
 
-        OUTPUT:
-
-        The matrix `A` whose rows are the inequalities.
+        OUTPUT: the matrix `A` whose rows are the inequalities
 
         EXAMPLES::
 
@@ -574,9 +564,7 @@ class Problem:
         """
         Return the defining matrix `A`.
 
-        OUTPUT:
-
-        Matrix whose rows are the inequalities.
+        OUTPUT: matrix whose rows are the inequalities
 
         EXAMPLES::
 
@@ -592,9 +580,7 @@ class Problem:
         """
         Return the base field.
 
-        OUTPUT:
-
-        A field.
+        OUTPUT: a field
 
         EXAMPLES::
 
@@ -610,9 +596,7 @@ class Problem:
         """
         Return the ambient space dimension.
 
-        OUTPUT:
-
-        Integer. The ambient space dimension of the cone.
+        OUTPUT: integer; the ambient space dimension of the cone
 
         EXAMPLES::
 
@@ -627,9 +611,7 @@ class Problem:
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

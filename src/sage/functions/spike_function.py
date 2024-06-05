@@ -36,9 +36,7 @@ class SpikeFunction:
 
     -  ``eps`` -- parameter that determines approximation to a true spike
 
-    OUTPUT:
-
-    a function with spikes at each point ``x`` in ``v`` with the given height.
+    OUTPUT: a function with spikes at each point ``x`` in ``v`` with the given height
 
     EXAMPLES::
 

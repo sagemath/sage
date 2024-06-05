@@ -1484,9 +1484,7 @@ class FanMorphism(FreeModuleMorphism):
         of toric varieties is dominant in the algebraic-geometric
         sense (that is, surjective onto a dense subset).
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

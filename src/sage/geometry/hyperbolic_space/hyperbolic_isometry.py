@@ -539,9 +539,7 @@ class HyperbolicIsometry(Morphism):
         Return a list containing the fixed point set of
         orientation-preserving isometries.
 
-        OUTPUT:
-
-        list of hyperbolic points or a hyperbolic geodesic
+        OUTPUT: list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -761,9 +759,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         Return a list or geodesic containing the fixed point set of
         orientation-preserving isometries.
 
-        OUTPUT:
-
-        list of hyperbolic points or a hyperbolic geodesic
+        OUTPUT: list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 

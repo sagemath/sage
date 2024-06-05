@@ -144,9 +144,7 @@ class Polyhedron_polymake(Polyhedron_base):
 
         - ``x`` -- a number in the base ring.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -166,9 +164,7 @@ class Polyhedron_polymake(Polyhedron_base):
 
         - ``x`` -- a number in the base ring.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -188,9 +184,7 @@ class Polyhedron_polymake(Polyhedron_base):
 
         - ``x`` -- a number in the base ring.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

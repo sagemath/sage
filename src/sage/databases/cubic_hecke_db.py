@@ -239,9 +239,7 @@ class CubicHeckeDataBase(SageObject):
         - ``section`` -- instance of enum :class:`CubicHeckeDataSection`
           to select the data to be read in
 
-        OUTPUT:
-
-        A dictionary containing the data corresponding to the section.
+        OUTPUT: a dictionary containing the data corresponding to the section
 
         EXAMPLES::
 
@@ -309,8 +307,6 @@ class CubicHeckeDataBase(SageObject):
         - ``representation_type`` -- an element of
           :class:`~sage.algebras.hecke_algebras.cubic_hecke_matrix_rep.RepresentationType`
           specifying the type of the representation
-
-        OUTPUT:
 
         EXAMPLES::
 
@@ -418,9 +414,7 @@ class MarkovTraceModuleBasis(Enum):
         - ``strands_embed`` -- (optional) the number of strands of the braid
           if strands should be added
 
-        OUTPUT:
-
-        A tuple representing the braid in Tietze form.
+        OUTPUT: a tuple representing the braid in Tietze form
 
         EXAMPLES::
 

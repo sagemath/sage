@@ -100,9 +100,7 @@ class PivotedInequalities(SageObject):
 
         - ``A`` -- matrix. The inequalities.
 
-        OUTPUT:
-
-        The matrix of pivot columns.
+        OUTPUT: the matrix of pivot columns
 
         EXAMPLES::
 
@@ -127,9 +125,7 @@ class PivotedInequalities(SageObject):
 
         - ``ray`` -- ray in the pivoted coordinates.
 
-        OUTPUT:
-
-        Ray in the original coordinates.
+        OUTPUT: ray in the original coordinates
 
         EXAMPLES::
 
@@ -219,9 +215,7 @@ class Hrep2Vrep(PivotedInequalities):
 
         - ``inequalities``, ``equations`` -- see :class:`Vrep2Hrep`.
 
-        OUTPUT:
-
-        The pivoted inequalities.
+        OUTPUT: the pivoted inequalities
 
         TESTS::
 
@@ -467,9 +461,7 @@ class Vrep2Hrep(PivotedInequalities):
 
         - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`.
 
-        OUTPUT:
-
-        Matrix of pivoted inequalities for the dual homogenized cone.
+        OUTPUT: matrix of pivoted inequalities for the dual homogenized cone
 
         TESTS::
 
@@ -520,9 +512,7 @@ class Vrep2Hrep(PivotedInequalities):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

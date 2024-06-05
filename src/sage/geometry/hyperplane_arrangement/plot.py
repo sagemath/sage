@@ -138,9 +138,7 @@ def plot(hyperplane_arrangement, **kwds):
     - ``**kwds`` -- plot options: see
       :mod:`sage.geometry.hyperplane_arrangement.plot`.
 
-    OUTPUT:
-
-    A graphics object of the plot.
+    OUTPUT: a graphics object of the plot
 
     EXAMPLES::
 
@@ -292,9 +290,7 @@ def plot_hyperplane(hyperplane, **kwds):
 
     - ``**kwds`` -- plot options: see below
 
-    OUTPUT:
-
-    A graphics object of the plot.
+    OUTPUT: a graphics object of the plot
 
     .. RUBRIC:: Plot Options
 

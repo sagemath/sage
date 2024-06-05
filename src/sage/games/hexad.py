@@ -408,9 +408,7 @@ class Minimog:
           any "points at infinity"
         - ``x0`` -- in ``{MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}``
 
-        OUTPUT:
-
-        hexad containing `S \cup \{x0\}` of type 2
+        OUTPUT: hexad containing `S \cup \{x0\}` of type 2
 
         EXAMPLES::
 
@@ -494,9 +492,7 @@ class Minimog:
 
         - ``pts`` -- a list S of 5 elements of MINIMOG
 
-        OUTPUT:
-
-        hexad containing `S \cup \{x0\}` of some type
+        OUTPUT: hexad containing `S \cup \{x0\}` of some type
 
         .. NOTE::
 

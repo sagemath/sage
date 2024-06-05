@@ -367,9 +367,7 @@ class HyperplaneArrangementLibrary:
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
 
-        OUTPUT:
-
-        The Shi hyperplane arrangement of the given graph ``G``.
+        OUTPUT: the Shi hyperplane arrangement of the given graph ``G``
 
         EXAMPLES::
 
@@ -519,9 +517,7 @@ class HyperplaneArrangementLibrary:
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
 
-        OUTPUT:
-
-        The type `B` Ish arrangement, which is the set of `2n^2` hyperplanes
+        OUTPUT: the type `B` Ish arrangement, which is the set of `2n^2` hyperplanes
 
         .. MATH::
 

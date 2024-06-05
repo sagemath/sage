@@ -161,7 +161,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         1-dimensional projective space over the base ring of
         ``morphism_or_polys`` with coordinate names given by ``names``.
 
-    OUTPUT: :class:`DynamicalSystem_projective`.
+    OUTPUT: :class:`DynamicalSystem_projective`
 
     EXAMPLES::
 
@@ -498,7 +498,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r"""
         Return a dynamical system defined over the number field of its coefficients.
 
-        OUTPUT: dynamical system.
+        OUTPUT: dynamical system
 
         EXAMPLES::
 
@@ -3395,7 +3395,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
            ``(g, phi)`` where ``g`` is a model with affine (n, m) preperiodic points
            and ``phi`` is the matrix that moves ``f`` to ``g``.
 
-        OUTPUT: a dynamical system conjugate to this one.
+        OUTPUT: a dynamical system conjugate to this one
 
         EXAMPLES::
 
@@ -6468,7 +6468,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         - ``check`` -- (default: ``True``) boolean; whether to check
           if this dynamical system is postcritically finite or not.
 
-        OUTPUT: The set of postcritical points.
+        OUTPUT: the set of postcritical points
 
         EXAMPLES::
 
@@ -6535,7 +6535,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r"""
         Check if ``self`` is a Chebyshev polynomial.
 
-        OUTPUT: True if ``self`` is Chebyshev, False otherwise.
+        OUTPUT: true if ``self`` is Chebyshev, False otherwise
 
         EXAMPLES::
 
@@ -7683,9 +7683,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         - ``n`` -- (default: 0) integer; maximum distance from ``P`` to
           branch out; a value of 0 indicates no bound
 
-        OUTPUT:
-
-        A list of points connected to ``P`` up to the specified distance.
+        OUTPUT: a list of points connected to ``P`` up to the specified distance
 
         EXAMPLES::
 
@@ -7805,9 +7803,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         - ``num_cpus`` -- (default: 2) the number of threads to run in parallel.
           Increasing ``num_cpus`` can potentially greatly speed up this function.
 
-        OUTPUT:
-
-        Set of conjugating `n+1` by `n+1` matrices.
+        OUTPUT: set of conjugating `n+1` by `n+1` matrices
 
         AUTHORS:
 
@@ -8583,9 +8579,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         - ``return_conjugation`` -- (default: ``False``) if set to ``True``,
           the `PGL_2` map used to achieve good reduction will be returned
 
-        OUTPUT:
-
-        A tuple:
+        OUTPUT: a tuple:
 
         - The first element is:
           - ``False`` if this dynamical system does not have potential good reduction.
@@ -8773,7 +8767,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         the base ring is a number field, QQbar, a finite field, or algebraic
         closure of a finite field.
 
-        OUTPUT: A dynamical system
+        OUTPUT: a dynamical system
 
         EXAMPLES::
 

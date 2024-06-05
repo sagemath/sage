@@ -339,9 +339,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
         - ``polytope`` -- a lattice polytope.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -399,9 +397,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
         """
         Plot the lattice polygon.
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
@@ -487,9 +483,7 @@ def subpolygons_of_polar_P2():
     """
     The lattice sub-polygons of the polar `P^2` polytope
 
-    OUTPUT:
-
-    A tuple of lattice polytopes.
+    OUTPUT: a tuple of lattice polytopes
 
     EXAMPLES::
 
@@ -505,9 +499,7 @@ def subpolygons_of_polar_P2_112():
     """
     The lattice sub-polygons of the polar `P^2[1,1,2]` polytope
 
-    OUTPUT:
-
-    A tuple of lattice polytopes.
+    OUTPUT: a tuple of lattice polytopes
 
     EXAMPLES::
 
@@ -523,9 +515,7 @@ def subpolygons_of_polar_P1xP1():
     r"""
     The lattice sub-polygons of the polar `P^1 \times P^1` polytope
 
-    OUTPUT:
-
-    A tuple of lattice polytopes.
+    OUTPUT: a tuple of lattice polytopes
 
     EXAMPLES::
 
