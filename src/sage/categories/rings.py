@@ -1469,9 +1469,7 @@ class Rings(CategoryWithAxiom):
             r"""
             Return the inverse of this element if it is a unit.
 
-            OUTPUT:
-
-            An element in the same ring as this element.
+            OUTPUT: an element in the same ring as this element
 
             EXAMPLES::
 

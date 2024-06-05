@@ -214,9 +214,7 @@ class Word_class(SageObject):
             For infinite words or words of unknown length,
             use `length()` method instead.
 
-        OUTPUT:
-
-        positive integer
+        OUTPUT: positive integer
 
         EXAMPLES::
 
@@ -381,9 +379,7 @@ class Word_class(SageObject):
 
         -  ``other`` -- word
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -508,9 +504,7 @@ class Word_class(SageObject):
 
         - ``period`` -- positive integer (default: 1)
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -543,9 +537,7 @@ class Word_class(SageObject):
 
         - ``period`` -- positive integer (default: 1)
 
-        OUTPUT:
-
-        word
+        OUTPUT: word
 
         EXAMPLES::
 
@@ -776,9 +768,7 @@ class Word_class(SageObject):
         This is the word composed of the length of consecutive runs of the
         same letter in a given word.
 
-        OUTPUT:
-
-            generator object
+        OUTPUT: generator object
 
         EXAMPLES::
 
@@ -808,9 +798,7 @@ class Word_class(SageObject):
         This is the word composed of the length of consecutive runs of
         the same letter in a given word.
 
-        OUTPUT:
-
-        Word over integers
+        OUTPUT: Word over integers
 
         EXAMPLES:
 
@@ -1118,9 +1106,7 @@ class Word_class(SageObject):
         - ``max_length`` -- non negative integer or None (optional,
           default: None) the maximum length of the prefixes
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -1172,9 +1158,7 @@ class Word_class(SageObject):
         - ``max_length`` -- non negative integer or None (optional,
           default: None) the maximum length of the prefixes
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -1557,9 +1541,7 @@ class Word_class(SageObject):
         - ``other`` -- a finite word
         - ``start`` -- integer (default:``0``), where the search starts
 
-        OUTPUT:
-
-        integer or ``None``
+        OUTPUT: integer or ``None``
 
         EXAMPLES::
 
@@ -1623,9 +1605,7 @@ class Word_class(SageObject):
 
         - ``fact`` -- a non empty finite word
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -1664,9 +1644,7 @@ class Word_class(SageObject):
 
         - ``fact`` -- a non empty finite word
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -1716,9 +1694,7 @@ class Word_class(SageObject):
 
         - ``fact`` -- a non empty finite word
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 

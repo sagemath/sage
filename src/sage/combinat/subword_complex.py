@@ -1205,9 +1205,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         - ``facet_test`` -- boolean (default: ``True``) tells whether or
           not the facet ``F`` should be tested before creation.
 
-        OUTPUT:
-
-        the facet of ``self`` at positions given by ``F``.
+        OUTPUT: the facet of ``self`` at positions given by ``F``
 
         EXAMPLES::
 
@@ -1830,9 +1828,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         - label -- boolean (default ``False``) whether or not to label
           the cover relations by the position of flip
 
-        OUTPUT:
-
-        a list of pairs of facets
+        OUTPUT: a list of pairs of facets
 
         EXAMPLES::
 
@@ -1878,9 +1874,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         Return the increasing flip graph of the subword complex.
 
-        OUTPUT:
-
-        a directed graph
+        OUTPUT: a directed graph
 
         EXAMPLES::
 
@@ -1905,9 +1899,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         - I, J -- two facets
 
-        OUTPUT:
-
-        a set of facets
+        OUTPUT: a set of facets
 
         EXAMPLES::
 
@@ -1932,9 +1924,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         Return the increasing flip poset of the subword complex.
 
-        OUTPUT:
-
-        a poset
+        OUTPUT: a poset
 
         EXAMPLES::
 
@@ -2038,9 +2028,7 @@ def _extended_root_configuration_indices(W, Q, F):
     - ``Q`` -- a word representing an element of `W`
     - ``F`` -- a facet of the subword complex
 
-    OUTPUT:
-
-    a list of root indices
+    OUTPUT: a list of root indices
 
     EXAMPLES::
 
@@ -2080,9 +2068,7 @@ def _greedy_flip_algorithm(Q, w):
     - ``Q`` -- a word in a Coxeter group `W`
     - ``w`` -- an element of `W`
 
-    OUTPUT:
-
-    a pair: the list of facets and the list of extended root conf. indices
+    OUTPUT: a pair: the list of facets and the list of extended root conf. indices
 
     EXAMPLES::
 

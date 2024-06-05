@@ -284,7 +284,7 @@ class ShiftedPrimedTableau(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -311,7 +311,7 @@ class ShiftedPrimedTableau(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -938,9 +938,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
 
         - ``ind`` -- element in the index set of the crystal
 
-        OUTPUT:
-
-        Primed tableau or ``None``.
+        OUTPUT: primed tableau or ``None``
 
         EXAMPLES::
 
@@ -1133,9 +1131,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
 
         - ``ind`` -- an element in the index set of the crystal
 
-        OUTPUT:
-
-        Primed tableau or ``None``.
+        OUTPUT: primed tableau or ``None``
 
         EXAMPLES::
 

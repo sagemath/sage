@@ -1020,9 +1020,7 @@ class WordMorphism(SageObject):
 
         -  ``other`` -- a WordMorphism.
 
-        OUTPUT:
-
-        WordMorphism
+        OUTPUT: WordMorphism
 
         EXAMPLES::
 
@@ -1065,9 +1063,7 @@ class WordMorphism(SageObject):
 
         - ``alphabet`` -- an iterable
 
-        OUTPUT:
-
-        WordMorphism
+        OUTPUT: WordMorphism
 
         EXAMPLES::
 
@@ -1241,9 +1237,7 @@ class WordMorphism(SageObject):
 
         - ``letter`` -- a letter in the domain alphabet
 
-        OUTPUT:
-
-        word
+        OUTPUT: word
 
         .. NOTE::
 
@@ -1398,9 +1392,7 @@ class WordMorphism(SageObject):
 
         - ``self`` -- An involution.
 
-        OUTPUT:
-
-        A tuple of three sets
+        OUTPUT: a tuple of three sets
 
         EXAMPLES::
 
@@ -1648,9 +1640,7 @@ class WordMorphism(SageObject):
         - ``self`` -- its codomain must be an instance of Words
         - ``letter`` -- a letter in the domain alphabet
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2614,9 +2604,7 @@ class WordMorphism(SageObject):
             See the method :meth:`rauzy_fractal_plot` for a description
             of the options and more examples.
 
-        OUTPUT:
-
-            dictionary of list of points
+        OUTPUT: dictionary of list of points
 
         EXAMPLES:
 
@@ -2736,9 +2724,7 @@ class WordMorphism(SageObject):
         can be found in :meth:`sage.combinat.words.paths.FiniteWordPath_all.plot_projection`
         or in :meth:`sage.combinat.e_one_star`.
 
-        OUTPUT:
-
-        A Graphics object.
+        OUTPUT: a Graphics object
 
         INPUT:
 

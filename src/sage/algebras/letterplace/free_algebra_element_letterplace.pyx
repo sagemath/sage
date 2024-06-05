@@ -644,9 +644,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         the commutative polynomial ring that is currently used to
         implement the multiplication in the free algebra.
 
-        OUTPUT:
-
-        The twosided reduction of this element by the argument.
+        OUTPUT: the twosided reduction of this element by the argument
 
         .. NOTE::
 
@@ -716,9 +714,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         A twosided homogeneous ideal `I` of the parent `F` of
         this element, `x`.
 
-        OUTPUT:
-
-        The normal form of `x` wrt. `I`.
+        OUTPUT: the normal form of `x` wrt. `I`
 
         .. NOTE::
 

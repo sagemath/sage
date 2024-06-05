@@ -32,9 +32,7 @@ def best_linear_code_in_guava(n, k, F):
 
     - ``F`` -- the base field of the code to look up
 
-    OUTPUT:
-
-    A :class:`LinearCode` which is a best linear code of the given parameters known to GUAVA.
+    OUTPUT: a :class:`LinearCode` which is a best linear code of the given parameters known to GUAVA
 
     EXAMPLES::
 

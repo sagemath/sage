@@ -442,7 +442,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         - `r` -- a received word, i.e. a vector in the ambient space of
           :meth:`decoder.Decoder.code`.
 
-        OUTPUT: A codeword whose distance to `r` satisfies ``self.decoding_interval()``.
+        OUTPUT: a codeword whose distance to `r` satisfies ``self.decoding_interval()``.
 
         EXAMPLES::
 
@@ -518,7 +518,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         computations similar to those done by the decoding algorithm.
         We don't explicitly estimate `\rho`.
 
-        OUTPUT: Does not output anything but sets private fields used by
+        OUTPUT: does not output anything but sets private fields used by
         :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.parameters()`
         and
         :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.time_estimate()``.
@@ -609,7 +609,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         - `estimates` -- list of time estimates, for the search size set to the
                         index of the list entry.
 
-        OUTPUT: None, but sets the private fields `self._parameters` and
+        OUTPUT: none, but sets the private fields `self._parameters` and
         `self._time_estimate`.
 
         TESTS::
@@ -881,7 +881,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         - ``dictionary`` -- optional. If set to ``True``, return a ``dict``
           mapping decoding algorithm name to its class.
 
-        OUTPUT: a list of strings or a ``dict`` from string to ISD algorithm class.
+        OUTPUT: a list of strings or a ``dict`` from string to ISD algorithm class
 
         EXAMPLES::
 
@@ -923,7 +923,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         - ``r`` -- a vector in the ambient space of :meth:`decoder.Decoder.code`.
 
-        OUTPUT: a codeword of :meth:`decoder.Decoder.code`.
+        OUTPUT: a codeword of :meth:`decoder.Decoder.code`
 
         EXAMPLES::
 

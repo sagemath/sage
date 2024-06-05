@@ -750,7 +750,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``side`` -- 'left' or 'right' (default: 'left')
 
-            OUTPUT: a list of subspaces of ``self``.
+            OUTPUT: a list of subspaces of ``self``
 
             EXAMPLES::
 
@@ -792,7 +792,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``ei``, ``ej`` -- two idempotents of `A`
 
-            OUTPUT: `e_i A e_j`, as a subspace of `A`.
+            OUTPUT: `e_i A e_j`, as a subspace of `A`
 
             .. SEEALSO::
 

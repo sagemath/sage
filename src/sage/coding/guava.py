@@ -54,9 +54,7 @@ def QuasiQuadraticResidueCode(p):
 
     - ``p`` -- a prime `>2`.
 
-    OUTPUT:
-
-    Returns a QQR code of length `2p`.
+    OUTPUT: returns a QQR code of length `2p`
 
     EXAMPLES::
 
@@ -87,9 +85,7 @@ def RandomLinearCodeGuava(n, k, F):
 
     - ``n``, ``k`` -- integers with `n>k>1`.
 
-    OUTPUT:
-
-    Returns a "random" linear code with length `n`, dimension `k` over field `F`.
+    OUTPUT: returns a "random" linear code with length `n`, dimension `k` over field `F`
 
     EXAMPLES::
 

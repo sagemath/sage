@@ -640,9 +640,7 @@ def IdentityFunctor(C):
 
     A category, ``C``.
 
-    OUTPUT:
-
-    The identity functor in ``C``.
+    OUTPUT: the identity functor in ``C``
 
     EXAMPLES::
 

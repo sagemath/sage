@@ -307,9 +307,7 @@ def ncube_isometry_group(n, orientation_preserving=True):
     - ``orientation_preserving`` -- bool (default: ``True``),
       whether the orientation is preserved
 
-    OUTPUT:
-
-    list of matrices
+    OUTPUT: list of matrices
 
     EXAMPLES::
 
@@ -375,9 +373,7 @@ def ncube_isometry_group_cosets(n, orientation_preserving=True):
     - ``orientation_preserving`` -- bool (default: ``True``),
       whether the orientation is preserved
 
-    OUTPUT:
-
-    list of cosets, each coset being a sorted list of matrices
+    OUTPUT: list of cosets, each coset being a sorted list of matrices
 
     EXAMPLES::
 
@@ -666,9 +662,7 @@ class Polyomino(SageObject):
 
         - ``other`` -- a polyomino
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -691,9 +685,7 @@ class Polyomino(SageObject):
 
         - ``other`` -- a polyomino
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -716,9 +708,7 @@ class Polyomino(SageObject):
 
         - ``other`` -- a polyomino
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -740,9 +730,7 @@ class Polyomino(SageObject):
 
         - ``other`` -- a polyomino
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -764,9 +752,7 @@ class Polyomino(SageObject):
 
         - ``other`` -- a polyomino
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -788,9 +774,7 @@ class Polyomino(SageObject):
 
         - ``other`` -- a polyomino
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -812,9 +796,7 @@ class Polyomino(SageObject):
 
         - ``other`` -- a polyomino
 
-        OUTPUT:
-
-        polyomino
+        OUTPUT: polyomino
 
         EXAMPLES::
 
@@ -840,9 +822,7 @@ class Polyomino(SageObject):
 
         - ``v`` -- tuple
 
-        OUTPUT:
-
-        polyomino
+        OUTPUT: polyomino
 
         EXAMPLES::
 
@@ -862,9 +842,7 @@ class Polyomino(SageObject):
 
         - ``v`` -- tuple
 
-        OUTPUT:
-
-        polyomino
+        OUTPUT: polyomino
 
         EXAMPLES::
 
@@ -885,9 +863,7 @@ class Polyomino(SageObject):
 
         - ``m`` -- square matrix, matching the dimension of ``self``.
 
-        OUTPUT:
-
-        Polyomino
+        OUTPUT: polyomino
 
         EXAMPLES::
 
@@ -956,9 +932,7 @@ class Polyomino(SageObject):
           subgroup of isometries of the `a_1\times a_2\cdots \times a_n`
           rectangular box where are the `a_i` are assumed to be distinct.
 
-        OUTPUT:
-
-        set of Polyomino
+        OUTPUT: set of Polyomino
 
         EXAMPLES::
 
@@ -1008,9 +982,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        OUTPUT:
-
-        iterator of 3d polyominoes
+        OUTPUT: iterator of 3d polyominoes
 
         EXAMPLES::
 
@@ -1113,9 +1085,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        OUTPUT:
-
-        set of 3d polyominoes
+        OUTPUT: set of 3d polyominoes
 
         EXAMPLES::
 
@@ -1474,9 +1444,7 @@ class Polyomino(SageObject):
           :func:`sage.parallel.ncpus.ncpus()`.
           If ``ncpus=1``, the first solution is searched serially.
 
-        OUTPUT:
-
-        list of polyominoes
+        OUTPUT: list of polyominoes
 
         EXAMPLES::
 
@@ -1699,9 +1667,7 @@ class TilingSolver(SageObject):
         r"""
         Return the list of pieces.
 
-        OUTPUT:
-
-        list of 3d polyominoes
+        OUTPUT: list of 3d polyominoes
 
         EXAMPLES::
 
@@ -1739,9 +1705,7 @@ class TilingSolver(SageObject):
         r"""
         Return a dictionary mapping coordinates to integers.
 
-        OUTPUT:
-
-        dict
+        OUTPUT: dict
 
         EXAMPLES::
 
@@ -2008,9 +1972,7 @@ class TilingSolver(SageObject):
         r"""
         Return the number of rows necessary by each piece.
 
-        OUTPUT:
-
-        list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -2051,9 +2013,7 @@ class TilingSolver(SageObject):
 
         - ``row_number`` -- integer, the `i`-th row
 
-        OUTPUT:
-
-        polyomino
+        OUTPUT: polyomino
 
         EXAMPLES::
 
@@ -2110,9 +2070,7 @@ class TilingSolver(SageObject):
         r"""
         Return the sage DLX solver of that tiling problem.
 
-        OUTPUT:
-
-        DLX Solver
+        OUTPUT: dLX Solver
 
         EXAMPLES::
 
@@ -2131,9 +2089,7 @@ class TilingSolver(SageObject):
         r"""
         Return an iterator over the row indices of the solutions.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -2160,9 +2116,7 @@ class TilingSolver(SageObject):
         The purpose is to illustrate the backtracking and construct an
         animation of the evolution of solutions.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -2229,9 +2183,7 @@ class TilingSolver(SageObject):
         The purpose is to illustrate the backtracking and construct an
         animation of the evolution of solutions.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -2297,9 +2249,7 @@ class TilingSolver(SageObject):
           - ``'common_prefix'`` -- common prefix between two consecutive solutions
           - ``'incremental'`` -- one piece change at a time
 
-        OUTPUT:
-
-        iterator of list of polyominoes
+        OUTPUT: iterator of list of polyominoes
 
         EXAMPLES::
 
@@ -2382,9 +2332,7 @@ class TilingSolver(SageObject):
         r"""
         Return the number of distinct solutions.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 

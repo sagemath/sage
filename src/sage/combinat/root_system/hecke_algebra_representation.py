@@ -333,9 +333,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         - ``scalar`` -- an element `c` of the base ring or ``None``
           for `1` (default: ``None``)
 
-        OUTPUT:
-
-        a module morphism implementing
+        OUTPUT: a module morphism implementing
 
         .. MATH::
 

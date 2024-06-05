@@ -985,9 +985,7 @@ def _generator_key(t):
 
     a tuple (index, exponent)
 
-    OUTPUT:
-
-    a tuple made from the index only
+    OUTPUT: a tuple made from the index only
 
     EXAMPLES::
 

@@ -203,9 +203,7 @@ class SetsWithGrading(Category):
             """
             Default implementation for generating series.
 
-            OUTPUT:
-
-            A series, indexed by the grading set.
+            OUTPUT: a series, indexed by the grading set
 
             EXAMPLES::
 

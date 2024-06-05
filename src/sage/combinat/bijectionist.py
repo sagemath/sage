@@ -2207,7 +2207,7 @@ class Bijectionist(SageObject):
         r"""
         An iterator over all solutions of the problem.
 
-        OUTPUT: An iterator over all possible mappings `s: A\to Z`
+        OUTPUT: an iterator over all possible mappings `s: A\to Z`
 
         ALGORITHM:
 

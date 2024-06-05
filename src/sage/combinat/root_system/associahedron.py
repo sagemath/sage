@@ -393,9 +393,7 @@ class Associahedra_base:
 
         - ``X`` -- anything.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

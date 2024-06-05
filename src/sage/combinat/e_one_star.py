@@ -450,9 +450,7 @@ class Face(SageObject):
           the new color to assign to the face. If ``None``, it returns the
           color of the face.
 
-        OUTPUT:
-
-        color or None
+        OUTPUT: color or None
 
         EXAMPLES::
 
@@ -480,9 +478,7 @@ class Face(SageObject):
           the contour of unit faces (used only for faces in three dimensions)
         - ``opacity`` -- the alpha value for the color of the face
 
-        OUTPUT:
-
-        2D graphic object
+        OUTPUT: 2D graphic object
 
         EXAMPLES::
 
@@ -701,9 +697,7 @@ class Patch(SageObject):
         r"""
         Return the number of faces contained in the patch.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -719,9 +713,7 @@ class Patch(SageObject):
         r"""
         Return an iterator over the faces of the patch.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -967,9 +959,7 @@ class Patch(SageObject):
 
         - ``other`` -- a Patch
 
-        OUTPUT:
-
-        a list of vectors
+        OUTPUT: a list of vectors
 
         EXAMPLES::
 
@@ -1480,9 +1470,7 @@ class E1Star(SageObject):
         - ``patch`` -- a patch
         - ``iterations`` -- integer (default: 1) number of iterations
 
-        OUTPUT:
-
-        a patch
+        OUTPUT: a patch
 
         EXAMPLES::
 
@@ -1529,9 +1517,7 @@ class E1Star(SageObject):
 
         - ``other`` -- an instance of E1Star
 
-        OUTPUT:
-
-        an instance of E1Star
+        OUTPUT: an instance of E1Star
 
         EXAMPLES::
 
@@ -1571,9 +1557,7 @@ class E1Star(SageObject):
         - ``color`` -- string, RGB tuple or color, (default: None)
           RGB color
 
-        OUTPUT:
-
-        iterator of faces
+        OUTPUT: iterator of faces
 
         EXAMPLES::
 

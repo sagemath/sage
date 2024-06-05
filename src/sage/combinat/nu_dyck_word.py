@@ -1050,9 +1050,7 @@ class NuDyckWord(CombinatorialElement):
         Can only mutate if an east step is followed by a north step at height
         `i`.
 
-        OUTPUT:
-
-        Whether we can mutate at height of `i`.
+        OUTPUT: whether we can mutate at height of `i`
 
         EXAMPLES::
 
@@ -1453,9 +1451,7 @@ def path_weakly_above_other(path, other) -> bool:
 
     - ``other`` -- The other path to verify is weakly below the path.
 
-    OUTPUT:
-
-    bool
+    OUTPUT: bool
 
     EXAMPLES::
 

@@ -269,7 +269,7 @@ class FSymBases(Category_realization_of_parent):
             r"""
             The basis elements (optionally: of the specified degree).
 
-            OUTPUT: Family
+            OUTPUT: family
 
             EXAMPLES::
 

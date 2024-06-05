@@ -219,9 +219,7 @@ def fq(n, q=None):
 
     - ``q`` -- an integer or an indeterminate
 
-    OUTPUT:
-
-    A rational function in ``q``.
+    OUTPUT: a rational function in ``q``
 
     EXAMPLES::
 
@@ -340,9 +338,7 @@ def centralizer_group_cardinality(la, q=None):
 
     - ``q`` -- an integer or an indeterminate
 
-    OUTPUT:
-
-    A polynomial function of ``q``.
+    OUTPUT: a polynomial function of ``q``
 
     EXAMPLES::
 
@@ -367,9 +363,7 @@ def invariant_subspace_generating_function(la, q=None, t=None):
     - ``q`` -- (optional) an integer or an inderminate
     - ``t`` -- (optional) an indeterminate
 
-    OUTPUT:
-
-    A polynomial in ``t`` whose coefficients are polynomials in ``q``.
+    OUTPUT: a polynomial in ``t`` whose coefficients are polynomials in ``q``
 
     EXAMPLES::
 
@@ -1274,9 +1268,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
 
         - ``q`` -- an integer or an indeterminate
 
-        OUTPUT:
-
-        A function of ``q``.
+        OUTPUT: a function of ``q``
 
         EXAMPLES::
 

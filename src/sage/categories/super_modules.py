@@ -38,9 +38,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
         - ``category`` -- a category `Cat`
         - ``*args`` -- further arguments for the functor
 
-        OUTPUT:
-
-        A join category.
+        OUTPUT: a join category
 
         This implements the property that subcategories constructed by
         the set of whitelisted axioms is a subcategory.

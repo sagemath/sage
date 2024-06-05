@@ -534,9 +534,7 @@ class CommutativeRings(CategoryWithAxiom):
                   provided, the function only return the list of cosets that
                   contain some element from ``cosets``.
 
-                OUTPUT:
-
-                A list of lists.
+                OUTPUT: a list of lists
 
                 EXAMPLES::
 

@@ -2130,9 +2130,7 @@ class Permutation(CombinatorialElement):
         - ``as_tuple`` -- boolean (default: ``False``) choice of
           output format
 
-        OUTPUT:
-
-        a list of lists or a tuple of tuples
+        OUTPUT: a list of lists or a tuple of tuples
 
         REFERENCES:
 
@@ -2191,9 +2189,7 @@ class Permutation(CombinatorialElement):
         - ``as_tuple`` -- boolean (default: ``False``) choice of output
           format
 
-        OUTPUT:
-
-        a list of lists or a tuple of tuples
+        OUTPUT: a list of lists or a tuple of tuples
 
         .. SEEALSO::
 

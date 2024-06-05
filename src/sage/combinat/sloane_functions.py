@@ -7050,9 +7050,7 @@ class A001694(SloaneSequence):
 
         - `n` -- integer
 
-        OUTPUT:
-
-        ``True`` if `n` is a powerful number, else ``False``
+        OUTPUT: ``True`` if `n` is a powerful number, else ``False``
 
         EXAMPLES::
 
@@ -8689,9 +8687,7 @@ class A111774(SloaneSequence):
 
         - `n` -- positive integer
 
-        OUTPUT:
-
-        ``True`` if `n` is not prime and not a power of 2
+        OUTPUT: ``True`` if `n` is not prime and not a power of 2
 
         EXAMPLES::
 

@@ -150,9 +150,7 @@ cdef class WordDatatype_list(WordDatatype):
         - ``other`` -- a word
         - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
-        OUTPUT:
-
-            boolean or NotImplemented
+        OUTPUT: boolean or NotImplemented
 
         EXAMPLES::
 
@@ -248,9 +246,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         - ``other`` -- word represented by a list
 
-        OUTPUT:
-
-        word
+        OUTPUT: word
 
         EXAMPLES::
 
@@ -357,9 +353,7 @@ cdef class WordDatatype_str(WordDatatype):
         - ``other`` -- a word
         - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
-        OUTPUT:
-
-            boolean or NotImplemented
+        OUTPUT: boolean or NotImplemented
 
         EXAMPLES::
 
@@ -585,9 +579,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         - ``other`` -- word represented by a str
 
-        OUTPUT:
-
-        word
+        OUTPUT: word
 
         EXAMPLES::
 
@@ -970,9 +962,7 @@ cdef class WordDatatype_tuple(WordDatatype):
         - ``other`` -- a word
         - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
-        OUTPUT:
-
-            boolean or NotImplemented
+        OUTPUT: boolean or NotImplemented
 
         EXAMPLES::
 
@@ -1093,9 +1083,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         - ``other`` -- word represented by a tuple
 
-        OUTPUT:
-
-        word
+        OUTPUT: word
 
         EXAMPLES::
 

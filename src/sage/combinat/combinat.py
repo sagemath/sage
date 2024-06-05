@@ -466,9 +466,7 @@ def catalan_number(n):
 
     - ``n`` -- integer
 
-    OUTPUT:
-
-    integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -509,9 +507,7 @@ def narayana_number(n: Integer, k: Integer) -> Integer:
 
     - ``k`` -- an integer between ``0`` and ``n - 1``
 
-    OUTPUT:
-
-    an integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -595,9 +591,7 @@ def eulerian_number(n, k, algorithm='recursive') -> Integer:
 
     - ``algorithm`` -- ``"recursive"`` (default) or ``"formula"``
 
-    OUTPUT:
-
-    an integer
+    OUTPUT: integer
 
     .. SEEALSO:: :func:`eulerian_polynomial`
 
@@ -641,9 +635,7 @@ def eulerian_polynomial(n, algorithm='derivative'):
 
     - ``algorithm`` -- ``"derivative"`` (default) or ``"coeffs"``
 
-    OUTPUT:
-
-    polynomial in one variable ``t``
+    OUTPUT: polynomial in one variable ``t``
 
     .. SEEALSO:: :func:`eulerian_number`
 
@@ -1060,7 +1052,7 @@ def polygonal_number(s, n):
 
     - ``n`` -- integer; the index of the returned `s`-gonal number
 
-    OUTPUT: an integer
+    OUTPUT: integer
 
     EXAMPLES:
 

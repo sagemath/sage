@@ -2219,9 +2219,7 @@ class Category(UniqueRepresentation, SageObject):
 
         - ``categories`` -- a list (or iterable) of non-join categories
 
-        OUTPUT:
-
-        A sorted tuple of categories, possibly with repeats.
+        OUTPUT: a sorted tuple of categories, possibly with repeats
 
         .. NOTE::
 

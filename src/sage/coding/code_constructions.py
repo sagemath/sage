@@ -445,7 +445,7 @@ def ExtendedQuadraticResidueCode(n,F):
        quadratic residue modulo `n`.
 
 
-    OUTPUT: Returns an extended quadratic residue code.
+    OUTPUT: returns an extended quadratic residue code
 
     EXAMPLES::
 
@@ -514,7 +514,7 @@ def QuadraticResidueCode(n,F):
        quadratic residue modulo `n`.
 
 
-    OUTPUT: Returns a quadratic residue code.
+    OUTPUT: returns a quadratic residue code
 
     EXAMPLES::
 
@@ -721,7 +721,7 @@ def ToricCode(P,F):
     -  ``F`` -- a finite field.
 
 
-    OUTPUT: Returns toric code with length n = , dimension k over field
+    OUTPUT: returns toric code with length n = , dimension k over field
     F.
 
     EXAMPLES::

@@ -1127,9 +1127,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         r"""
         Return a string representation
 
-        OUTPUT:
-
-        String describing ``self``
+        OUTPUT: string describing ``self``
 
         TESTS::
 
@@ -1982,9 +1980,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         - ``braid`` -- :class:`~sage.groups.braid.Braid` whose image
           in ``self`` should be calculated
 
-        OUTPUT:
-
-        An instance of the element class of ``self``.
+        OUTPUT: an instance of the element class of ``self``
 
         EXAMPLES::
 
@@ -2026,9 +2022,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
           repetitions occur among the entries (i.e. ``(1, 1)`` is not allowed
           but ``(1, -2, 1)`` is)
 
-        OUTPUT:
-
-        The image of the braid as an element of ``self``.
+        OUTPUT: the image of the braid as an element of ``self``
 
         EXAMPLES::
 
@@ -2216,9 +2210,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
           ``self`` should be computed; he generator exponents in the braid
           word are assumed to be ``1`` or ``-1``
 
-        OUTPUT:
-
-        An instance of the element class of ``self``.
+        OUTPUT: an instance of the element class of ``self``
 
         EXAMPLES::
 
@@ -2521,9 +2513,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         - ``cubic_braid`` -- :class:`~sage.groups.cubic_braid.CubicBraid`
           whose image in ``self`` should be appended
 
-        OUTPUT:
-
-        The new monomial of ``self``.
+        OUTPUT: the new monomial of ``self``
 
         EXAMPLES::
 
@@ -2573,9 +2563,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         - ``cubic_braid`` -- :class:`~sage.groups.cubic_braid.CubicBraid`
 
-        OUTPUT:
-
-        A tuple from the basis representing the cubic braid.
+        OUTPUT: a tuple from the basis representing the cubic braid
 
         EXAMPLES::
 
@@ -2690,9 +2678,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
           generic extension ring of ``self``. The keyword is meaningless if
           ``extended=False``.
 
-        OUTPUT:
-
-        A :class:`~sage.combinat.free_module.CombinatorialFreeModule`.
+        OUTPUT: a :class:`~sage.combinat.free_module.CombinatorialFreeModule`
 
         EXAMPLES::
 
@@ -3033,9 +3019,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         - ``generic`` -- boolean (default: ``False``);  if set to ``True`` the
           roots are returned as elements of the generic extension ring
 
-        OUTPUT:
-
-        A triple consisting of the roots.
+        OUTPUT: a triple consisting of the roots
 
         EXAMPLES::
 
@@ -3064,9 +3048,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         - ``generic`` -- boolean (default: ``False``);  if set to ``True`` the
           coefficients are returned as elements of the generic base ring
 
-        OUTPUT:
-
-        A tripple consisting of the coefficients.
+        OUTPUT: a tripple consisting of the coefficients
 
         EXAMPLES::
 

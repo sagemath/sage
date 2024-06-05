@@ -122,9 +122,7 @@ class CartesianProductPoset(CartesianProduct):
 
         - ``right`` -- an element.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -160,9 +158,7 @@ class CartesianProductPoset(CartesianProduct):
 
         - ``right`` -- an element.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -224,9 +220,7 @@ class CartesianProductPoset(CartesianProduct):
 
         - ``right`` -- an element.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         The comparison is ``True`` if the result of the
         comparison in each component is ``True``.
@@ -273,9 +267,7 @@ class CartesianProductPoset(CartesianProduct):
 
         - ``right`` -- an element.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -315,9 +307,7 @@ class CartesianProductPoset(CartesianProduct):
 
             - ``other`` -- an element.
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 
@@ -350,9 +340,7 @@ class CartesianProductPoset(CartesianProduct):
 
             - ``other`` -- an element.
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 
@@ -413,9 +401,7 @@ class CartesianProductPoset(CartesianProduct):
 
             - ``other`` -- an element.
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 
@@ -448,9 +434,7 @@ class CartesianProductPoset(CartesianProduct):
 
             - ``other`` -- an element.
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 
@@ -483,9 +467,7 @@ class CartesianProductPoset(CartesianProduct):
 
             - ``other`` -- an element.
 
-            OUTPUT:
-
-            A boolean.
+            OUTPUT: boolean
 
             .. NOTE::
 

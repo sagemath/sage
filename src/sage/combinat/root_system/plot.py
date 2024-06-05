@@ -1124,9 +1124,7 @@ class PlotOptions:
 
         - ``x`` -- an element of the root lattice realization
 
-        OUTPUT:
-
-        An immutable vector with integer or rational coefficients.
+        OUTPUT: an immutable vector with integer or rational coefficients
 
         EXAMPLES::
 
@@ -1363,9 +1361,7 @@ class PlotOptions:
           clipping it to the bounding box, and without making a plot
           out of it (for testing purposes)
 
-        OUTPUT:
-
-        A graphic object, a polyhedron, or ``0``.
+        OUTPUT: a graphic object, a polyhedron, or ``0``
 
         EXAMPLES::
 

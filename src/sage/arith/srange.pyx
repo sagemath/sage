@@ -205,7 +205,7 @@ def srange(*args, **kwds):
     ` ``endpoint_tolerance`` -- used to determine whether or not the
       endpoint is hit for inexact rings (default 1e-5)
 
-    OUTPUT: a list
+    OUTPUT: list
 
     .. NOTE::
 

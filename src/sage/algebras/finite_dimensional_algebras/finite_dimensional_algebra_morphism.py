@@ -174,9 +174,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
         - ``I`` -- ``FiniteDimensionalAlgebraIdeal``, an ideal of ``self.codomain()``
 
-        OUTPUT:
-
-        :class:`FiniteDimensionalAlgebraIdeal`, the inverse image of `I` under ``self``.
+        OUTPUT: :class:`FiniteDimensionalAlgebraIdeal`, the inverse image of `I` under ``self``
 
         EXAMPLES::
 

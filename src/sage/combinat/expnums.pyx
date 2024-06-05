@@ -26,7 +26,7 @@ def expnums(int n, int aa):
     -  ``aa`` -- C machine int
 
 
-    OUTPUT: A list of length `n`.
+    OUTPUT: a list of length `n`
 
     ALGORITHM: We use the same integer addition algorithm as GAP. This
     is an extension of Bell's triangle to the general case of

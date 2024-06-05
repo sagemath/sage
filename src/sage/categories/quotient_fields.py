@@ -380,9 +380,7 @@ class QuotientFields(Category_singleton):
               whether to decompose prime power denominators as opposed to having
               a single term for each irreducible factor of the denominator
 
-            OUTPUT:
-
-            Partial fraction decomposition of ``self`` over the base ring.
+            OUTPUT: partial fraction decomposition of ``self`` over the base ring
 
             AUTHORS:
 

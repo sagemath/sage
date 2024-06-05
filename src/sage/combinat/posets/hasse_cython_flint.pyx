@@ -31,9 +31,7 @@ cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
     a list of sets of integers describing the poset, as given by the
     lazy attribute ``_leq_storage`` of Hasse diagrams.
 
-    OUTPUT:
-
-    a dense matrix
+    OUTPUT: a dense matrix
 
     EXAMPLES::
 
@@ -90,9 +88,7 @@ cpdef Matrix_integer_dense coxeter_matrix_fast(list positions):
     a list of sets of integers describing the poset, as given by the
     lazy attribute ``_leq_storage`` of Hasse diagrams.
 
-    OUTPUT:
-
-    a dense matrix
+    OUTPUT: a dense matrix
 
     EXAMPLES::
 

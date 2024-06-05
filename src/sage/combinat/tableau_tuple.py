@@ -1361,9 +1361,7 @@ class TableauTuple(CombinatorialElement):
         Here `l` is the :meth:`~TableauTuple.level` and `n` is the
         :meth:`~TableauTuple.size` of ``self``.
 
-        OUTPUT:
-
-        The residue of ``k`` in a standard tableau. That is,
+        OUTPUT: the residue of ``k`` in a standard tableau. That is,
 
         EXAMPLES::
 
@@ -1668,9 +1666,7 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
         - ``e`` -- the *quantum characteristic* ``e``
         - ``multicharge`` -- (default: ``[0]``) the multicharge
 
-        OUTPUT:
-
-        The degree of the tableau ``self``, which is an integer.
+        OUTPUT: the degree of the tableau ``self``, which is an integer
 
         EXAMPLES::
 
@@ -1723,9 +1719,7 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
         - ``e`` -- the *quantum characteristic*
         - ``multicharge`` -- the multicharge
 
-        OUTPUT:
-
-        The codegree of the tableau ``self``, which is an integer.
+        OUTPUT: the codegree of the tableau ``self``, which is an integer
 
         EXAMPLES::
 
@@ -2694,9 +2688,7 @@ class RowStandardTableauTuples(TableauTuples):
     first integer argument specifies the :meth:`~TableauTuples.level` and
     the second the :meth:`~TableauTuples.size` of the tableau tuples.
 
-    OUTPUT:
-
-    The appropriate subclass of :class:`RowStandardTableauTuples`.
+    OUTPUT: the appropriate subclass of :class:`RowStandardTableauTuples`
 
     A tuple of row standard tableau is a tableau whose entries are positive
     integers which increase from left to right along the rows in each component.
@@ -3990,9 +3982,7 @@ class StandardTableauTuples(RowStandardTableauTuples):
     integer argument specifies the :meth:`~TableauTuples.level` and the second
     the :meth:`~TableauTuples.size` of the tableau tuples.
 
-    OUTPUT:
-
-    The appropriate subclass of :class:`StandardTableauTuples`.
+    OUTPUT: the appropriate subclass of :class:`StandardTableauTuples`
 
     A tuple of standard tableau is a tableau whose entries are positive
     integers which increase from left to right along the rows, and from top to

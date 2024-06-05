@@ -473,9 +473,7 @@ class PerfectMatching(SetPartition):
         r"""
         Return the graph corresponding to the perfect matching.
 
-        OUTPUT:
-
-        The realization of ``self`` as a graph.
+        OUTPUT: the realization of ``self`` as a graph
 
         EXAMPLES::
 
@@ -497,9 +495,7 @@ class PerfectMatching(SetPartition):
         corresponding to the perfect matching if the perfect matching is
         noncrossing, and otherwise gives an error.
 
-        OUTPUT:
-
-        The realization of ``self`` as a noncrossing set partition.
+        OUTPUT: the realization of ``self`` as a noncrossing set partition
 
         EXAMPLES::
 

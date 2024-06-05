@@ -412,9 +412,7 @@ cdef class dancing_linksWrapper:
 
         - ``indices`` -- list, row indices to be found in the solution
 
-        OUTPUT:
-
-            dancing links solver
+        OUTPUT: dancing links solver
 
         EXAMPLES::
 
@@ -491,9 +489,7 @@ cdef class dancing_linksWrapper:
         - ``column`` -- integer, the column used to split the problem into
           independent subproblems
 
-        OUTPUT:
-
-            dict where keys are row numbers and values are dlx solvers
+        OUTPUT: dict where keys are row numbers and values are dlx solvers
 
         EXAMPLES::
 
@@ -591,9 +587,7 @@ cdef class dancing_linksWrapper:
           the problem (see :meth:`restrict`). If ``None``, a random column
           is chosen. This argument is ignored if ``ncpus=1``.
 
-        OUTPUT:
-
-        list of rows or ``None`` if no solution is found
+        OUTPUT: list of rows or ``None`` if no solution is found
 
         .. NOTE::
 
@@ -692,9 +686,7 @@ cdef class dancing_linksWrapper:
         - ``column`` -- integer (default: ``None``), the column used to split
           the problem, if ``None`` a random column is chosen
 
-        OUTPUT:
-
-            list of solutions
+        OUTPUT: list of solutions
 
         EXAMPLES::
 
@@ -812,9 +804,7 @@ cdef class dancing_linksWrapper:
           the problem, if ``None`` a random column is chosen (this argument
           is ignored if ``ncpus`` is ``1``)
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -910,9 +900,7 @@ cdef class dancing_linksWrapper:
           possible values include ``'picosat'``, ``'cryptominisat'``,
           ``'LP'``, ``'glucose'``, ``'glucose-syrup'``.
 
-        OUTPUT:
-
-        SAT solver instance
+        OUTPUT: SAT solver instance
 
         EXAMPLES::
 
@@ -960,9 +948,7 @@ cdef class dancing_linksWrapper:
           possible values include ``'picosat'``, ``'cryptominisat'``,
           ``'LP'``, ``'glucose'``, ``'glucose-syrup'``.
 
-        OUTPUT:
-
-        list of rows or ``None`` if no solution is found
+        OUTPUT: list of rows or ``None`` if no solution is found
 
         .. NOTE::
 
@@ -1087,9 +1073,7 @@ cdef class dancing_linksWrapper:
           ``'CPLEX'``, ``'Gurobi'``, ``'CVXOPT'``, ``'PPL'``,
           ``'InteractiveLP'``.
 
-        OUTPUT:
-
-        list of rows or ``None`` if no solution is found
+        OUTPUT: list of rows or ``None`` if no solution is found
 
         .. NOTE::
 

@@ -326,9 +326,7 @@ def multinomial(list):
 
     - list -- list of integers
 
-    OUTPUT:
-
-    None if the multinomial coefficient is 0, or sum of list if it is 1
+    OUTPUT: none if the multinomial coefficient is 0, or sum of list if it is 1
 
     Given the input `[n_1, n_2, n_3, ...]`, this computes the
     multinomial coefficient `(n_1 + n_2 + n_3 + ...)! / (n_1! n_2!
@@ -579,9 +577,7 @@ def multinomial_odd(list,p):
     - list -- list of integers
     - p -- a prime number
 
-    OUTPUT:
-
-    Associated multinomial coefficient, mod p
+    OUTPUT: associated multinomial coefficient, mod p
 
     Given the input `[n_1, n_2, n_3, ...]`, this computes the
     multinomial coefficient `(n_1 + n_2 + n_3 + ...)! / (n_1! n_2!
@@ -647,9 +643,7 @@ def binomial_mod2(n,k):
 
     - `n`, `k` -- integers
 
-    OUTPUT:
-
-    `n` choose `k`, mod 2
+    OUTPUT: `n` choose `k`, mod 2
 
     EXAMPLES::
 
@@ -680,9 +674,7 @@ def binomial_modp(n,k,p):
     - `n`, `k` -- integers
     - `p` -- prime number
 
-    OUTPUT:
-
-    `n` choose `k`, mod `p`
+    OUTPUT: `n` choose `k`, mod `p`
 
     EXAMPLES::
 

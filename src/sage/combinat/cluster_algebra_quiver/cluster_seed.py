@@ -1987,9 +1987,7 @@ class ClusterSeed(SageObject):
         A vertex is defined to be green if its c-vector has all non-positive
         entries. More information on green vertices can be found at [BDP2013]_
 
-        OUTPUT:
-
-        The green vertices as a list of integers.
+        OUTPUT: the green vertices as a list of integers
 
         EXAMPLES::
 
@@ -2038,9 +2036,7 @@ class ClusterSeed(SageObject):
         A vertex is defined to be red if its c-vector has all non-negative entries.
         More information on red vertices can be found at [BDP2013]_.
 
-        OUTPUT:
-
-        The red vertices as a list of integers.
+        OUTPUT: the red vertices as a list of integers
 
         EXAMPLES::
 
@@ -2145,9 +2141,7 @@ class ClusterSeed(SageObject):
 
         - ``filter`` -- a list or iterable
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2192,7 +2186,7 @@ class ClusterSeed(SageObject):
         r"""
         Return the vertex with the smallest c-vector.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2688,9 +2682,7 @@ class ClusterSeed(SageObject):
 
         - ``cluster_str`` -- the string to look for in the cluster
 
-        OUTPUT:
-
-        An integer or ``None`` if the string is not a cluster variable
+        OUTPUT: an integer or ``None`` if the string is not a cluster variable
 
         EXAMPLES::
 
@@ -4488,9 +4480,7 @@ class ClusterSeed(SageObject):
           as the length of the vectors in `vd`.
         - ``a`` -- a vector in `\ZZ^n` where `n` is the number of columns in `B`.
 
-        OUTPUT:
-
-        Return an element in the upper cluster algebra. Depending on the input it may or may not be irreducible.
+        OUTPUT: return an element in the upper cluster algebra. Depending on the input it may or may not be irreducible
 
         EXAMPLES::
 
@@ -4538,9 +4528,7 @@ class ClusterSeed(SageObject):
         - ``size_limit`` -- a limit on how many vectors you want
           the function to return.
 
-        OUTPUT:
-
-        An array of elements in the upper cluster algebra.
+        OUTPUT: an array of elements in the upper cluster algebra
 
         EXAMPLES::
 

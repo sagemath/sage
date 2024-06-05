@@ -412,7 +412,7 @@ def factorial(n, algorithm='gmp'):
 
        -  ``'pari'`` -- use PARI's factorial function
 
-    OUTPUT: an integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -1877,7 +1877,7 @@ def __GCD_sequence(v, **kwargs):
     -  ``v`` -- A sequence (possibly empty)
 
 
-    OUTPUT: The gcd of the elements of the sequence as an element of
+    OUTPUT: the gcd of the elements of the sequence as an element of
     the sequence's universe, or the integer 0 if the sequence is
     empty.
 
@@ -2855,7 +2855,7 @@ def prime_to_m_part(n, m):
 
     - ``m`` -- Integer
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -3933,9 +3933,7 @@ def multinomial(*ks):
     - either an arbitrary number of integer arguments `k_1,\dots,k_n`
     - or an iterable (e.g. a list) of integers `[k_1,\dots,k_n]`
 
-    OUTPUT:
-
-    Return the integer:
+    OUTPUT: return the integer:
 
     .. MATH::
 
@@ -4940,9 +4938,7 @@ def hilbert_conductor(a, b):
 
     - ``a``, ``b`` -- integers
 
-    OUTPUT:
-
-    squarefree positive integer
+    OUTPUT: squarefree positive integer
 
     EXAMPLES::
 
@@ -5307,7 +5303,7 @@ def integer_floor(x):
     -  ``x`` -- an object that has a floor method or is
        coercible to int
 
-    OUTPUT: an Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -5860,9 +5856,7 @@ def is_power_of_two(n):
 
     -  ``n`` -- integer
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -6363,9 +6357,7 @@ def dedekind_psi(N):
 
     - ``N`` -- a positive integer
 
-    OUTPUT:
-
-    an integer
+    OUTPUT: integer
 
     The Dedekind psi function is the multiplicative function defined by
 

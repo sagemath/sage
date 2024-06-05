@@ -78,9 +78,7 @@ def NuTamariLattice(nu):
 
     - `\nu` -- a list of 0s and 1s or a string of 0s and 1s.
 
-    OUTPUT:
-
-    a finite lattice
+    OUTPUT: a finite lattice
 
     The elements of the lattice are
     :func:`\nu-Dyck paths<sage.combinat.nu_dyck_word.NuDyckWord>` weakly above

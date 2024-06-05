@@ -1526,9 +1526,7 @@ class MatrixLieAlgebraFromAssociative(LieAlgebraFromAssociative):
             r"""
             Return ``self`` as element of the underlying matrix algebra.
 
-            OUTPUT:
-
-            An instance of the element class of MatrixSpace.
+            OUTPUT: an instance of the element class of MatrixSpace
 
             EXAMPLES::
 

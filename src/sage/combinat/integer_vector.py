@@ -155,9 +155,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
     - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
       inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
 
-    OUTPUT:
-
-    A binary matrix if it exists, ``None`` otherwise.
+    OUTPUT: a binary matrix if it exists, ``None`` otherwise
 
     Gale's Algorithm:
 

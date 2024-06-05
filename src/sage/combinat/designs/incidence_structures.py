@@ -866,9 +866,7 @@ class IncidenceStructure:
               ``size=1`` it is indexed by tuples of size 1. This is the same
               information, stored slightly differently.
 
-        OUTPUT:
-
-        A dictionary whose values are degrees and keys are either:
+        OUTPUT: a dictionary whose values are degrees and keys are either:
 
         - the points of the incidence structure if ``size=None`` (default)
 
@@ -2130,9 +2128,7 @@ class IncidenceStructure:
         receive different colors. The coloring returned minimizes the number of
         colors.
 
-        OUTPUT:
-
-        A partition of the sets into color classes.
+        OUTPUT: a partition of the sets into color classes
 
         EXAMPLES::
 

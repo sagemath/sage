@@ -279,9 +279,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -2476,9 +2474,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
           topmost row and the leftmost column are the `0`-th row
           and the `0`-th column.
 
-        OUTPUT:
-
-        An ordered pair consisting of:
+        OUTPUT: an ordered pair consisting of:
 
         1. The resulting (smaller) tableau;
         2. The entry bumped out at the end of the process.
@@ -3955,9 +3951,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         all of the contents. It is included mainly for compatibility with
         :meth:`~sage.combinat.tableau_tuples.TableauTuple.residue`.
 
-        OUTPUT:
-
-        The residue in `\ZZ / e\ZZ`.
+        OUTPUT: the residue in `\ZZ / e\ZZ`
 
         EXAMPLES::
 
@@ -4037,9 +4031,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         - ``e`` -- the *quantum characteristic*
         - ``multicharge`` -- (default: ``[0]``) the multicharge
 
-        OUTPUT:
-
-        The degree of the tableau ``self``, which is an integer.
+        OUTPUT: the degree of the tableau ``self``, which is an integer
 
         EXAMPLES::
 
@@ -4082,9 +4074,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         - ``e`` -- the *quantum characteristic*
         - ``multicharge`` -- (default: ``[0]``) the multicharge
 
-        OUTPUT:
-
-        The codegree of the tableau ``self``, which is an integer.
+        OUTPUT: the codegree of the tableau ``self``, which is an integer
 
         EXAMPLES::
 

@@ -290,7 +290,7 @@ class DrinfeldModules(Category_over_base_ring):
         r"""
         Return a latex representation of the category.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -310,7 +310,7 @@ class DrinfeldModules(Category_over_base_ring):
         r"""
         Return a string representation of the category.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 

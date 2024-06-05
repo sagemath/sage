@@ -1110,7 +1110,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
     - ``dim`` -- non-negative integer
     - ``p`` -- positive prime number
 
-    OUTPUT: None
+    OUTPUT: none
 
     This checks to see if the different bases have the same length, and
     if the change-of-basis matrices are invertible. If something goes

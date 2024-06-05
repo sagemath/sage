@@ -122,9 +122,7 @@ class AutomatonGenerators:
 
         - ``input_alphabet`` -- a list, the input alphabet
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -157,9 +155,7 @@ class AutomatonGenerators:
 
         - ``input_alphabet`` -- a list, the input alphabet
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -200,9 +196,7 @@ class AutomatonGenerators:
         - ``input_alphabet`` -- (default: ``None``) an iterable
           or ``None``.
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -233,9 +227,7 @@ class AutomatonGenerators:
         - ``input_alphabet`` -- a list or ``None``. If ``None``,
           then the letters occurring in the word are used.
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -294,9 +286,7 @@ class AutomatonGenerators:
         - ``input_alphabet`` -- a list or other iterable, the input
           alphabet.
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -1000,9 +990,7 @@ class TransducerGenerators:
 
         Nothing.
 
-        OUTPUT:
-
-        A transducer.
+        OUTPUT: a transducer
 
         Cf. the :wikipedia:`Gray_code` for a description of the Gray code.
 
@@ -1416,9 +1404,7 @@ class TransducerGenerators:
           contained in any ring, they remain in whatever ring they are
           after parsing the recursions, typically the symbolic ring.
 
-        OUTPUT:
-
-        A transducer ``T``.
+        OUTPUT: a transducer ``T``
 
         The transducer is constructed such that ``T(expansion) == f(n)``
         if ``expansion`` is the digit expansion of ``n`` to the base

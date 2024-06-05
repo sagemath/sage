@@ -477,9 +477,7 @@ class IndexedSequence(SageObject):
         - ``other`` --  a collection of elements of a ring with
           index set a finite abelian group (under `+`)
 
-        OUTPUT:
-
-        The Dirichlet convolution of ``self`` and ``other``.
+        OUTPUT: the Dirichlet convolution of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -535,9 +533,7 @@ class IndexedSequence(SageObject):
 
         - ``other`` --  a sequence of elements of `\CC`, `\RR` or `\GF{q}`
 
-        OUTPUT:
-
-        The Dirichlet convolution of ``self`` and ``other``.
+        OUTPUT: the Dirichlet convolution of ``self`` and ``other``
 
         EXAMPLES::
 

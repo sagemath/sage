@@ -574,7 +574,7 @@ def base_sequences_construction(turyn_type_seqs, check=True):
     - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences
       before returning them.
 
-    OUTPUT: A list containing the four base sequences.
+    OUTPUT: a list containing the four base sequences
 
     EXAMPLES::
 

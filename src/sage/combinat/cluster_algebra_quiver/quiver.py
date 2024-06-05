@@ -1973,9 +1973,7 @@ class ClusterQuiver(SageObject):
         Note: This only works with non-valued quivers. If used on a
         non-valued quiver then the positive value is taken to be the number of edges added
 
-        OUTPUT:
-
-        An integer of the number of edges.
+        OUTPUT: an integer of the number of edges
 
         EXAMPLES::
 

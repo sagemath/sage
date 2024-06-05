@@ -167,9 +167,7 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        list
+        OUTPUT: list
 
         EXAMPLES::
 

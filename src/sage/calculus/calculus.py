@@ -961,7 +961,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
       parameters.
 
 
-    OUTPUT: The minimal polynomial of ``self``. If the numerical algorithm
+    OUTPUT: the minimal polynomial of ``self``. If the numerical algorithm
     is used, then it is proved symbolically when ``epsilon=0`` (default).
 
     If the minimal polynomial could not be found, two distinct kinds of
@@ -2429,7 +2429,7 @@ def mapped_opts(v):
 
     - ``v`` -- an object
 
-    OUTPUT: a string.
+    OUTPUT: string
 
     The main use of this is to turn Python bools into lower case
     strings.

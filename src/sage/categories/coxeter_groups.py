@@ -1805,9 +1805,7 @@ class CoxeterGroups(Category_singleton):
             Return the support of ``self``, that is the simple reflections that
             appear in the reduced expressions of ``self``.
 
-            OUTPUT:
-
-            The support of ``self`` as a set of integers
+            OUTPUT: the support of ``self`` as a set of integers
 
             EXAMPLES::
 
@@ -2651,7 +2649,7 @@ class CoxeterGroups(Category_singleton):
 
             - other -- an element of the same Coxeter group
 
-            OUTPUT: a boolean
+            OUTPUT: boolean
 
             EXAMPLES::
 
@@ -2724,7 +2722,7 @@ class CoxeterGroups(Category_singleton):
             - other -- an element of the same Coxeter group
             - side -- 'left' or 'right'  (default: 'right')
 
-            OUTPUT: a boolean
+            OUTPUT: boolean
 
             This returns whether ``self`` <= ``other`` in left
             (resp. right) weak order, that is if 'v' can be obtained
@@ -2796,7 +2794,7 @@ class CoxeterGroups(Category_singleton):
             - positive -- a boolean (default: ``False``)
             - index_set -- a list of indices or None
 
-            OUTPUT: a list
+            OUTPUT: list
 
             EXAMPLES::
 
@@ -3209,7 +3207,7 @@ class CoxeterGroups(Category_singleton):
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
             - ``index_set`` -- a list of indices or ``None``
 
-            OUTPUT: a list
+            OUTPUT: list
 
             EXAMPLES::
 
@@ -3245,7 +3243,7 @@ class CoxeterGroups(Category_singleton):
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
             - ``index_set`` -- a list of indices or ``None``
 
-            OUTPUT: a list
+            OUTPUT: list
 
             EXAMPLES::
 

@@ -109,9 +109,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
           When ``k=None`` and ``existence=True`` the function returns an
           integer, i.e. the largest `k` such that we can build a `TD(k,n)`.
 
-    OUTPUT:
-
-    The kind of output depends on the input:
+    OUTPUT: the kind of output depends on the input:
 
     - if ``existence=False`` (the default) then the output is a list of lists
       that represent a `TD(k,n)` with
@@ -785,9 +783,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
     - ``explain_construction`` (boolean) -- return a string describing
       the construction.
 
-    OUTPUT:
-
-    The kind of output depends on the input:
+    OUTPUT: the kind of output depends on the input:
 
     - if ``existence=False`` (the default) then the output is a list of lists
       that represent an orthogonal array with parameters ``k`` and ``n``

@@ -188,9 +188,7 @@ cpdef bint next_perm(array l) noexcept:
 
         This method mutates the array ``l``.
 
-    OUTPUT:
-
-    boolean; whether another permutation was obtained
+    OUTPUT: boolean; whether another permutation was obtained
 
     EXAMPLES::
 
@@ -269,9 +267,7 @@ cpdef map_to_list(array l, tuple values, int n):
     - ``values`` -- tuple; the values of the permutation
     - ``n`` -- int; the length of the array ``l``
 
-    OUTPUT:
-
-    A list representing the permutation.
+    OUTPUT: a list representing the permutation
 
     EXAMPLES::
 

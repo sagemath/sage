@@ -675,9 +675,7 @@ def LatticePoset(data=None, *args, **options):
       be passed down to :func:`Poset` to construct a poset that is
       also a lattice.
 
-    OUTPUT:
-
-    An instance of :class:`FiniteLatticePoset`.
+    OUTPUT: an instance of :class:`FiniteLatticePoset`
 
     .. SEEALSO::
 
@@ -3467,9 +3465,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         Return the Möbius algebra of ``self`` over ``R``.
 
-        OUTPUT:
-
-        An instance of :class:`sage.combinat.posets.moebius_algebra.MoebiusAlgebra`.
+        OUTPUT: an instance of :class:`sage.combinat.posets.moebius_algebra.MoebiusAlgebra`
 
         EXAMPLES::
 
@@ -3488,9 +3484,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``q`` -- (optional) the deformation parameter `q`
 
-        OUTPUT:
-
-        An instance of :class:`sage.combinat.posets.moebius_algebra.QuantumMoebiusAlgebra`.
+        OUTPUT: an instance of :class:`sage.combinat.posets.moebius_algebra.QuantumMoebiusAlgebra`
 
         EXAMPLES::
 
@@ -4892,9 +4886,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``labels`` -- a string; the type of elements in the resulting lattice
 
-        OUTPUT:
-
-        A distributive lattice.
+        OUTPUT: a distributive lattice
 
         - If ``labels='congruence'``, then elements of the
           result will be congruences given as

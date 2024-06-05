@@ -631,9 +631,7 @@ class WordGenerator:
 
         -  ``first_letter`` -- the first letter of the fixed point
 
-        OUTPUT:
-
-        The fixed point of the morphism beginning with ``first_letter``
+        OUTPUT: the fixed point of the morphism beginning with ``first_letter``
 
         EXAMPLES::
 
@@ -760,9 +758,7 @@ class WordGenerator:
            a real number) the number of bits to consider when computing the
            continued fraction.
 
-        OUTPUT:
-
-        word
+        OUTPUT: word
 
         ALGORITHM:
 
@@ -916,9 +912,7 @@ class WordGenerator:
         - ``alphabet`` -- the alphabet (default: ``(0,1)``) of
           the output
 
-        OUTPUT:
-
-        iterator of letters
+        OUTPUT: iterator of letters
 
         ALGORITHM:
 
@@ -996,9 +990,7 @@ class WordGenerator:
         -  ``alphabet`` -- (default: (1,2)) an iterable of two positive
            integers
 
-        OUTPUT:
-
-        infinite word
+        OUTPUT: infinite word
 
         EXAMPLES:
 
@@ -1076,9 +1068,7 @@ class WordGenerator:
         -  ``b`` -- positive integer (default: 2), the second and last letter
            occurring in the returned Kolakoski word.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES:
 
@@ -1130,9 +1120,7 @@ class WordGenerator:
         - ``alphabet`` -- iterable of two elements or ``None``
           (default: ``None``)
 
-        OUTPUT:
-
-        infinite word
+        OUTPUT: infinite word
 
         EXAMPLES::
 
@@ -1190,9 +1178,7 @@ class WordGenerator:
         - ``alphabet`` -- iterable of two elements or ``None``
           (default: ``None``)
 
-        OUTPUT:
-
-        infinite word
+        OUTPUT: infinite word
 
         EXAMPLES::
 
@@ -1583,9 +1569,7 @@ class WordGenerator:
           (i+1)-th letter under the (i+1)-th morphism must start with the i-th
           letter.
 
-        OUTPUT:
-
-        iterator of letters
+        OUTPUT: iterator of letters
 
         EXAMPLES:
 
@@ -1691,9 +1675,7 @@ class WordGenerator:
           ``None``) an object that maps indices to morphisms. If ``None``, then
           ``sequence`` must consist of morphisms.
 
-        OUTPUT:
-
-        A word.
+        OUTPUT: a word
 
         EXAMPLES:
 
@@ -1934,9 +1916,7 @@ class WordGenerator:
 
         - ``alphabet`` -- iterable (default: ``'ab'``) of size two
 
-        OUTPUT:
-
-        finite word
+        OUTPUT: finite word
 
         EXAMPLES::
 

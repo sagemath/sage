@@ -141,9 +141,7 @@ class HallLittlewood(UniqueRepresentation):
 
         - ``self`` -- a class of Hall-Littlewood symmetric function bases
 
-        OUTPUT:
-
-        The base ring of the symmetric functions.
+        OUTPUT: the base ring of the symmetric functions
 
         EXAMPLES::
 
@@ -543,9 +541,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         - ``left`` -- an element of the basis ``self``
         - ``right`` -- another symmetric function
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 

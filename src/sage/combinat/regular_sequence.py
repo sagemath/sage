@@ -104,9 +104,7 @@ def pad_right(T, length, zero=0):
 
     - ``zero`` -- (default: ``0``) the elements to pad with
 
-    OUTPUT:
-
-    An object of the same type as ``T``
+    OUTPUT: an object of the same type as ``T``
 
     EXAMPLES::
 
@@ -243,7 +241,7 @@ class RegularSequence(RecognizableSeries):
         r"""
         Return a representation string of this `k`-regular sequence.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         TESTS::
 
@@ -408,9 +406,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         ALGORITHM:
 
@@ -500,9 +496,7 @@ class RegularSequence(RecognizableSeries):
           Otherwise the transposed sequence is checked and a :class:`DegeneratedSequenceError`
           is raised if such a sequence is detected.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         Each of the matrices in :meth:`mu <mu>` is transposed. Additionally
         the vectors :meth:`left <left>` and :meth:`right <right>` are switched.
@@ -551,9 +545,7 @@ class RegularSequence(RecognizableSeries):
         Return a regular sequence equivalent to this series, but
         with a right minimized linear representation.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. SEEALSO::
 
@@ -589,9 +581,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. NOTE::
 
@@ -870,9 +860,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. NOTE::
 
@@ -916,9 +904,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. NOTE::
 
@@ -964,9 +950,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. NOTE::
 
@@ -1005,9 +989,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         EXAMPLES::
 
@@ -1047,9 +1029,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         ALGORITHM:
 
@@ -1157,9 +1137,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         EXAMPLES::
 
@@ -1422,7 +1400,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         r"""
         Return a representation string of this `k`-regular sequence space.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         TESTS::
 
@@ -1499,9 +1477,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         See :class:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -1572,9 +1548,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
           for bootstrapping the guessing by adding information of the
           linear representation of ``sequence`` to the guessed representation
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         ALGORITHM:
 

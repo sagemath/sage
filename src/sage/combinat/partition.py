@@ -3224,9 +3224,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT:
-
-        An integer or a :class:`ValueError`
+        OUTPUT: an integer or a :class:`ValueError`
 
         EXAMPLES::
 
@@ -3285,9 +3283,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT:
-
-        A list of pairs of integers
+        OUTPUT: a list of pairs of integers
 
         EXAMPLES::
 
@@ -3318,9 +3314,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT:
-
-        An integer or a :class:`ValueError`
+        OUTPUT: an integer or a :class:`ValueError`
 
         EXAMPLES::
 
@@ -3380,9 +3374,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT:
-
-        A list of pairs of integers
+        OUTPUT: a list of pairs of integers
 
         EXAMPLES::
 
@@ -5367,9 +5359,7 @@ class Partition(CombinatorialElement):
 
         - `k` -- a positive integer (default: 1)
 
-        OUTPUT:
-
-        The number of such paths
+        OUTPUT: the number of such paths
 
         EXAMPLES:
 

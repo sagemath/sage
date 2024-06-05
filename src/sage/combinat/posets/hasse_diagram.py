@@ -1041,9 +1041,7 @@ class HasseDiagram(DiGraph):
         This uses either the recursive formula, a generic matrix inversion
         or a specific matrix inversion coded in Cython.
 
-        OUTPUT:
-
-        a dense matrix for the algorithm ``cython``, a sparse matrix otherwise
+        OUTPUT: a dense matrix for the algorithm ``cython``, a sparse matrix otherwise
 
         .. NOTE::
 
@@ -1989,9 +1987,7 @@ class HasseDiagram(DiGraph):
         r"""
         Return an iterator over orthocomplementations of the lattice.
 
-        OUTPUT:
-
-        An iterator that gives plain list of integers.
+        OUTPUT: an iterator that gives plain list of integers
 
         EXAMPLES::
 
@@ -2490,9 +2486,7 @@ class HasseDiagram(DiGraph):
         Thus each edge represents a cover relation in the Hasse diagram.
         We represent his as the tuple `(w, x, y, z)`.
 
-        OUTPUT:
-
-        A tuple with
+        OUTPUT: a tuple with
 
         - a list of all diamonds in the Hasse Diagram,
         - a boolean checking that every `w,x,y` that form a ``V``, there is a
@@ -2622,9 +2616,7 @@ class HasseDiagram(DiGraph):
         - ``elms`` -- elements already in sublattice; use set() at start
         - ``min_e`` -- smallest new element to add for new sublattices
 
-        OUTPUT:
-
-        List of sublattices as sets of integers.
+        OUTPUT: list of sublattices as sets of integers
 
         EXAMPLES::
 

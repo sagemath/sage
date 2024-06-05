@@ -151,9 +151,7 @@ class SkewTableau(ClonableList,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -188,9 +186,7 @@ class SkewTableau(ClonableList,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 

@@ -150,9 +150,7 @@ class BaxterPermutations_size(BaxterPermutations):
         r"""
         Efficient generation of Baxter permutations.
 
-        OUTPUT:
-
-        An iterator over the Baxter permutations of size ``self._n``.
+        OUTPUT: an iterator over the Baxter permutations of size ``self._n``
 
         EXAMPLES::
 

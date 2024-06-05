@@ -920,9 +920,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         - ``left`` -- an element of the basis ``self``
         - ``right`` -- another symmetric function
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -1786,9 +1784,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
         - ``self`` -- a Macdonald `S` basis
         - ``left``, ``right`` -- a symmetric functions
 
-        OUTPUT:
-
-        the product of ``left`` and ``right``
+        OUTPUT: the product of ``left`` and ``right``
 
         EXAMPLES::
 

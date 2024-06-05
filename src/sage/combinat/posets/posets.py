@@ -2305,9 +2305,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         Thus each edge represents a cover relation in the Hasse diagram.
         We represent this as the tuple `(w, x, y, z)`.
 
-        OUTPUT:
-
-        A tuple with
+        OUTPUT: a tuple with
 
         - a list of all diamonds in the Hasse Diagram,
         - a boolean checking that every `w,x,y` that form a ``V``, there is a
@@ -2545,9 +2543,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         r"""
         Return the natural partial order on the set of intervals of the poset.
 
-        OUTPUT:
-
-        a finite poset
+        OUTPUT: a finite poset
 
         The poset of intervals of a poset `P` has the set of intervals `[x,y]`
         in `P` as elements, endowed with the order relation defined by
@@ -4313,9 +4309,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         r"""
         Return the Coxeter transformation of the poset.
 
-        OUTPUT:
-
-        a square matrix with integer coefficients
+        OUTPUT: a square matrix with integer coefficients
 
         The output is the matrix of the Auslander-Reiten translation
         acting on the Grothendieck group of the derived category of
@@ -4348,9 +4342,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         Return the Coxeter polynomial of the poset.
 
-        OUTPUT:
-
-        a polynomial in one variable
+        OUTPUT: a polynomial in one variable
 
         The output is the characteristic polynomial of the Coxeter
         transformation. This polynomial only depends on the derived
@@ -5258,9 +5250,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         Cartesian products) is unique up to reordering and
         isomorphism.
 
-        OUTPUT:
-
-        a list of posets
+        OUTPUT: a list of posets
 
         EXAMPLES::
 
@@ -7107,9 +7097,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``on_ints`` -- a boolean (default: ``False``)
 
-        OUTPUT:
-
-        an order complex of type :class:`SimplicialComplex`
+        OUTPUT: an order complex of type :class:`SimplicialComplex`
 
         EXAMPLES::
 
@@ -7306,9 +7294,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         The poset is expected to be graded.
 
-        OUTPUT:
-
-        an :class:`~sage.combinat.triangles_FHM.M_triangle`
+        OUTPUT: an :class:`~sage.combinat.triangles_FHM.M_triangle`
 
         The M-triangle is the generating polynomial of the Möbius numbers
 
@@ -8660,9 +8646,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         r"""
         Return the incidence algebra of ``self`` over ``R``.
 
-        OUTPUT:
-
-        An instance of :class:`sage.combinat.posets.incidence_algebras.IncidenceAlgebra`.
+        OUTPUT: an instance of :class:`sage.combinat.posets.incidence_algebras.IncidenceAlgebra`
 
         EXAMPLES::
 

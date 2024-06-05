@@ -645,9 +645,7 @@ class _drawing_tool:
 
         - ``v`` -- The vector to transform.
 
-        OUTPUT:
-
-        A list of 2 floats encoding a vector.
+        OUTPUT: a list of 2 floats encoding a vector
 
         EXAMPLES::
 
@@ -759,9 +757,7 @@ class _drawing_tool:
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        OUTPUT:
-
-        The code of a line in TIKZ.
+        OUTPUT: the code of a line in TIKZ
 
         EXAMPLES::
 
@@ -800,9 +796,7 @@ class _drawing_tool:
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        OUTPUT:
-
-        The code of a polyline in TIKZ.
+        OUTPUT: the code of a polyline in TIKZ
 
         EXAMPLES::
 
@@ -839,9 +833,7 @@ class _drawing_tool:
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        OUTPUT:
-
-        The code of a point in TIKZ.
+        OUTPUT: the code of a point in TIKZ
 
         EXAMPLES::
 
@@ -1311,9 +1303,7 @@ class ParallelogramPolyomino(ClonableList,
           bijection is used.
           Expected values are ``None``, ``'Delest-Viennot'``, or ``'Delest-Viennot-beta'``.
 
-        OUTPUT:
-
-        a Dyck word
+        OUTPUT: a Dyck word
 
         EXAMPLES::
 
@@ -1346,9 +1336,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``dyck`` -- a Dyck word
 
-        OUTPUT:
-
-        A parallelogram polyomino.
+        OUTPUT: a parallelogram polyomino
 
         EXAMPLES::
 
@@ -1384,9 +1372,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``dyck`` -- a Dyck word
 
-        OUTPUT:
-
-        A parallelogram polyomino.
+        OUTPUT: a parallelogram polyomino
 
         EXAMPLES::
 
@@ -1439,9 +1425,7 @@ class ParallelogramPolyomino(ClonableList,
         - ``bijection`` -- string or ``None`` (default:``None``) the bijection
           to use. See :meth:`to_dyck_word` for more details.
 
-        OUTPUT:
-
-        A parallelogram polyomino.
+        OUTPUT: a parallelogram polyomino
 
         EXAMPLES::
 
@@ -1875,9 +1859,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``up`` -- 0 or 1 (a letter of the word)
 
-        OUTPUT:
-
-        A list of integers
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -1904,9 +1886,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of heights associated to each vertical step of the
         parallelogram polyomino's upper path.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -1924,9 +1904,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of heights associated to each vertical step of the
         parallelogram polyomino's lower path.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -1944,9 +1922,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of widths associated to each horizontal step of the
         parallelogram polyomino's upper path.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -1964,9 +1940,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of widths associated to each horizontal step of the
         parallelogram polyomino's lower path.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -2984,9 +2958,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``row`` -- the index of the row
 
-        OUTPUT:
-
-        A [row,column] position of the cell.
+        OUTPUT: a [row,column] position of the cell
 
         EXAMPLES::
 
@@ -3031,9 +3003,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``column`` -- the index of the column
 
-        OUTPUT:
-
-        A [row,column] position of the cell.
+        OUTPUT: a [row,column] position of the cell
 
         EXAMPLES::
 
@@ -3089,9 +3059,7 @@ class ParallelogramPolyomino(ClonableList,
         - ``nb_crossed_nodes`` -- ``[0]`` (default) a list containing just one
           integer.
 
-        OUTPUT:
-
-        A [row,column] position of the cell.
+        OUTPUT: a [row,column] position of the cell
 
         EXAMPLES::
 
@@ -3160,9 +3128,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``pos`` -- the [x,y] coordinate of the box.
 
-        OUTPUT:
-
-        A boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3316,9 +3282,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``line`` -- the x coordinate of the line.
 
-        OUTPUT:
-
-        A list of integers
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -3377,9 +3341,7 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``column`` -- the y coordinate of the column.
 
-        OUTPUT:
-
-        A list of integers
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -3496,9 +3458,7 @@ class ParallelogramPolyomino(ClonableList,
         the Boussicault-Socci bijection between parallelogram polyominoes
         and pair of ordered trees.
 
-        OUTPUT:
-
-        A list of [row,column] position of cells.
+        OUTPUT: a list of [row,column] position of cells
 
         EXAMPLES::
 

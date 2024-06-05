@@ -142,7 +142,7 @@ class NumberFields(Category_singleton):
 
             - ``algorithm`` -- optional (default "pari") either "gp" or "pari"
 
-            OUTPUT: The zeta function of this number field.
+            OUTPUT: the zeta function of this number field
 
             If algorithm is "gp", this returns an interface to Tim
             Dokchitser's gp script for computing with L-functions.

@@ -504,9 +504,7 @@ def End(X, category=None):
 
     -  ``category`` -- (optional) category in which to coerce ``X``
 
-    OUTPUT:
-
-    A set of endomorphisms in category
+    OUTPUT: a set of endomorphisms in category
 
     EXAMPLES::
 

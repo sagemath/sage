@@ -545,9 +545,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
            considered as `\ZZ`-algebra. The base ring elements are transformed
            by this automorphism.
 
-        OUTPUT:
-
-        The involution as automorphism of ``self``.
+        OUTPUT: the involution as automorphism of ``self``
 
         EXAMPLES::
 
@@ -1133,9 +1131,7 @@ class CubicHeckeRingOfDefinition(Localization):
            considered as `\ZZ`-algebra. The base ring elements are transformed
            by this automorphism.
 
-        OUTPUT:
-
-        The involution as automorphism of ``self``.
+        OUTPUT: the involution as automorphism of ``self``
 
         EXAMPLES::
 

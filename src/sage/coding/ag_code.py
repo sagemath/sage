@@ -611,7 +611,7 @@ class CartierCode(AGCode):
 
     - ``name`` -- string; name of the generator of the subfield `\GF{p^r}`
 
-    OUTPUT: Cartier code over `\GF{p^r}` where `p` is the characteristic of the
+    OUTPUT: cartier code over `\GF{p^r}` where `p` is the characteristic of the
     base constant field of the function field
 
     Note that if ``r`` is 1 the default, then ``name`` can be omitted.

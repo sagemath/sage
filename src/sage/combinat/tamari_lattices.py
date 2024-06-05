@@ -243,9 +243,7 @@ def TamariLattice(n, m=1):
 
     - `m` -- an optional nonnegative integer (the slope, default to 1)
 
-    OUTPUT:
-
-    a finite lattice
+    OUTPUT: a finite lattice
 
     In the usual case, the elements of the lattice are :func:`Dyck
     paths<sage.combinat.dyck_word.DyckWord>` in the `(n+1 \times

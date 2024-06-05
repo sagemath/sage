@@ -751,9 +751,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         - ``self`` -- a Jack basis of the symmetric functions
         - ``left``, ``right`` -- symmetric function elements
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -997,9 +995,7 @@ class JackPolynomials_p(JackPolynomials_generic):
         - ``self`` -- a Jack basis of the symmetric functions
         - ``left``, ``right`` -- symmetric function elements
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -1201,9 +1197,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
         - ``self`` -- an instance of the Jack `Qp` basis of the symmetric functions
         - ``left``, ``right`` -- symmetric function elements
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -1405,9 +1399,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
         - ``self`` -- a zonal basis of the symmetric functions
         - ``left``, ``right`` -- symmetric function elements
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 

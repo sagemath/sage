@@ -327,9 +327,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         - ``display_steps`` -- (default: ``False``) Boolean which indicates
           if we want to output each step in the algorithm.
 
-        OUTPUT:
-
-        The rigged configuration corresponding to ``self``.
+        OUTPUT: the rigged configuration corresponding to ``self``
 
         EXAMPLES:
 

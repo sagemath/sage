@@ -2194,9 +2194,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             A rational approximation of the matrix for the barycentric
             projection.
 
-            OUTPUT:
-
-            a matrix with rational coefficients whose column sum is zero
+            OUTPUT: a matrix with rational coefficients whose column sum is zero
 
             .. SEEALSO::
 

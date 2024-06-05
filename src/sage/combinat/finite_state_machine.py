@@ -1029,9 +1029,7 @@ def equal(iterator):
 
     - ``iterator`` -- an iterator of the elements to check
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: ``True`` or ``False``
 
     This implements `<https://stackoverflow.com/a/3844832/1052778>`_.
 
@@ -1073,9 +1071,7 @@ def startswith(list_, prefix):
     - ``list_`` -- list
     - ``prefix`` -- list representing the prefix
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: ``True`` or ``False``
 
     Similar to :meth:`str.startswith`.
 
@@ -1140,9 +1136,7 @@ def FSMWordSymbol(word):
 
     - ``word`` -- the input word.
 
-    OUTPUT:
-
-    A string of ``word``.
+    OUTPUT: a string of ``word``
 
     EXAMPLES::
 
@@ -1223,9 +1217,7 @@ class FSMState(SageObject):
       ``None`` as label. Note that a state with label ``None`` is used in
       :class:`FSMProcessIterator`.
 
-    OUTPUT:
-
-    A state of a finite state machine.
+    OUTPUT: a state of a finite state machine
 
     EXAMPLES::
 
@@ -1439,9 +1431,7 @@ class FSMState(SageObject):
 
         - `other` -- a state.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -1499,9 +1489,7 @@ class FSMState(SageObject):
 
         - ``final_word_out`` -- a list, any element or ``None``.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         TESTS::
 
@@ -1583,9 +1571,7 @@ class FSMState(SageObject):
         - ``is_final`` -- ``True`` if the state should be final and
           ``False`` otherwise.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         TESTS::
 
@@ -1648,9 +1634,7 @@ class FSMState(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        The label of the state.
+        OUTPUT: the label of the state
 
         EXAMPLES::
 
@@ -1669,9 +1653,7 @@ class FSMState(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        A new state.
+        OUTPUT: a new state
 
         EXAMPLES::
 
@@ -1717,9 +1699,7 @@ class FSMState(SageObject):
 
         - ``memo`` -- a dictionary storing already processed elements.
 
-        OUTPUT:
-
-        A new state.
+        OUTPUT: a new state
 
         EXAMPLES::
 
@@ -1750,9 +1730,7 @@ class FSMState(SageObject):
         - ``memo`` -- (default: ``None``) a dictionary storing already
           processed elements.
 
-        OUTPUT:
-
-        A new state.
+        OUTPUT: a new state
 
         EXAMPLES::
 
@@ -1795,9 +1773,7 @@ class FSMState(SageObject):
         - ``memo`` -- (default: ``None``) a dictionary storing already
           processed elements.
 
-        OUTPUT:
-
-        A new state.
+        OUTPUT: a new state
 
         EXAMPLES::
 
@@ -1819,9 +1795,7 @@ class FSMState(SageObject):
 
         None
 
-        OUTPUT:
-
-        A dictionary.
+        OUTPUT: a dictionary
 
         Outgoing transitions are in fact stored in states,
         but must be pickled by the finite state machine
@@ -1862,9 +1836,7 @@ class FSMState(SageObject):
         """
         Return a hash value for the object.
 
-        OUTPUT:
-
-        The hash of this state.
+        OUTPUT: the hash of this state
 
         TESTS::
 
@@ -1883,9 +1855,7 @@ class FSMState(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -1906,9 +1876,7 @@ class FSMState(SageObject):
 
         - ``other`` -- a state.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         Note that the hooks and whether the states are initial or
         final are not checked. To fully compare two states (including
@@ -1942,9 +1910,7 @@ class FSMState(SageObject):
 
         - ``other`` -- a state.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -1970,9 +1936,7 @@ class FSMState(SageObject):
         - ``compare_color`` -- If ``True`` (default) colors are
           compared as well, otherwise not.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         Note that usual comparison by ``==`` does only compare the labels.
 
@@ -2023,9 +1987,7 @@ class FSMState(SageObject):
         - ``fsm`` -- the finite state machine to which ``self``
           belongs.
 
-        OUTPUT:
-
-        A dictionary mapping states to a list of output words.
+        OUTPUT: a dictionary mapping states to a list of output words
 
         The states in the output are the epsilon successors of
         ``self``. Each word of the list of words is an output word
@@ -2089,9 +2051,7 @@ class FSMState(SageObject):
         - ``fsm`` -- the finite state machine to which ``self``
           belongs.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         TESTS::
 
@@ -2120,9 +2080,7 @@ class FSMState(SageObject):
         - ``fsm`` -- the finite state machine to which ``self``
           belongs.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         A :class:`ValueError` is raised when ``self`` is not in an epsilon
         cycle.
@@ -2208,9 +2166,7 @@ class FSMTransition(SageObject):
     - ``word_out`` -- the output word of the transitions (when the
       finite state machine is used as transducer)
 
-    OUTPUT:
-
-    A transition of a finite state machine.
+    OUTPUT: a transition of a finite state machine
 
     EXAMPLES::
 
@@ -2289,9 +2245,7 @@ class FSMTransition(SageObject):
 
         - ``other`` -- a transition.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -2306,9 +2260,7 @@ class FSMTransition(SageObject):
         """
         Return a (shallow) copy of the transition.
 
-        OUTPUT:
-
-        A new transition.
+        OUTPUT: a new transition
 
         EXAMPLES::
 
@@ -2333,9 +2285,7 @@ class FSMTransition(SageObject):
 
         - ``memo`` -- a dictionary storing already processed elements.
 
-        OUTPUT:
-
-        A new transition.
+        OUTPUT: a new transition
 
         EXAMPLES::
 
@@ -2361,9 +2311,7 @@ class FSMTransition(SageObject):
         - ``memo`` -- (default: ``None``) a dictionary storing already
           processed elements.
 
-        OUTPUT:
-
-        A new transition.
+        OUTPUT: a new transition
 
         EXAMPLES::
 
@@ -2385,9 +2333,7 @@ class FSMTransition(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -2408,9 +2354,7 @@ class FSMTransition(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        A string of the input and output labels.
+        OUTPUT: a string of the input and output labels
 
         EXAMPLES::
 
@@ -2435,9 +2379,7 @@ class FSMTransition(SageObject):
 
         - ``other`` -- a transition.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -2465,9 +2407,7 @@ class FSMTransition(SageObject):
 
         - ``other`` -- a transition.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -2533,9 +2473,7 @@ def duplicate_transition_ignore(old_transition, new_transition):
     - ``new_transition`` -- A transition, identical to ``old_transition``,
       which is to be inserted into the finite state machine.
 
-    OUTPUT:
-
-    The same transition, unchanged.
+    OUTPUT: the same transition, unchanged
 
     EXAMPLES::
 
@@ -2565,9 +2503,7 @@ def duplicate_transition_raise_error(old_transition, new_transition):
     - ``new_transition`` -- A transition, identical to ``old_transition``,
       which is to be inserted into the finite state machine.
 
-    OUTPUT:
-
-    Nothing. A :class:`ValueError` is raised.
+    OUTPUT: nothing. A :class:`ValueError` is raised
 
     EXAMPLES::
 
@@ -2696,9 +2632,7 @@ class FiniteStateMachine(SageObject):
       ``duplicate_transition_raise_error`` and
       ``duplicate_transition_add_input``.
 
-    OUTPUT:
-
-    A finite state machine.
+    OUTPUT: a finite state machine
 
     The object creation of :class:`Automaton` and :class:`Transducer`
     is the same as the one described here (i.e. just replace the word
@@ -3234,9 +3168,7 @@ class FiniteStateMachine(SageObject):
         """
         Return a (shallow) copy of the finite state machine.
 
-        OUTPUT:
-
-        A new finite state machine.
+        OUTPUT: a new finite state machine
 
         TESTS::
 
@@ -3262,9 +3194,7 @@ class FiniteStateMachine(SageObject):
         - ``new_class`` -- a class for the copy. By default
           (``None``), the class of ``self`` is used.
 
-        OUTPUT:
-
-        A new finite state machine.
+        OUTPUT: a new finite state machine
 
         EXAMPLES::
 
@@ -3305,9 +3235,7 @@ class FiniteStateMachine(SageObject):
 
         - ``memo`` -- a dictionary storing already processed elements.
 
-        OUTPUT:
-
-        A new finite state machine.
+        OUTPUT: a new finite state machine
 
         EXAMPLES::
 
@@ -3328,9 +3256,7 @@ class FiniteStateMachine(SageObject):
         - ``memo`` -- (default: ``None``) a dictionary storing already
           processed elements.
 
-        OUTPUT:
-
-        A new finite state machine.
+        OUTPUT: a new finite state machine
 
         EXAMPLES::
 
@@ -3359,9 +3285,7 @@ class FiniteStateMachine(SageObject):
 
         - ``other`` -- a :class:`FiniteStateMachine`.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         EXAMPLES::
 
@@ -3406,9 +3330,7 @@ class FiniteStateMachine(SageObject):
         """
         Return state for pickling excluding outgoing transitions.
 
-        OUTPUT:
-
-        A dictionary.
+        OUTPUT: a dictionary
 
         Outgoing transitions are in fact stored in states,
         but must be pickled by the finite state machine
@@ -3432,9 +3354,7 @@ class FiniteStateMachine(SageObject):
 
         - `d` -- a dictionary
 
-        OUTPUT:
-
-        None.
+        OUTPUT: none
 
         As transitions are in fact stored in states but not saved
         by states in order to avoid deep recursion, transitions
@@ -3467,9 +3387,7 @@ class FiniteStateMachine(SageObject):
           mapping old labels to new labels. If ``None``, then the new
           labels are integers starting with 0.
 
-        OUTPUT:
-
-        A new finite state machine.
+        OUTPUT: a new finite state machine
 
         EXAMPLES::
 
@@ -3566,9 +3484,7 @@ class FiniteStateMachine(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        The hash of this finite state machine.
+        OUTPUT: the hash of this finite state machine
 
         EXAMPLES::
 
@@ -3594,9 +3510,7 @@ class FiniteStateMachine(SageObject):
 
         - ``other`` -- a finite state machine.
 
-        OUTPUT:
-
-        A new finite state machine.
+        OUTPUT: a new finite state machine
 
         .. SEEALSO::
 
@@ -3940,9 +3854,7 @@ class FiniteStateMachine(SageObject):
 
         - ``other`` -- a finite state machine.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         Note that this function compares all attributes of a state (by
         using :meth:`FSMState.fully_equal`) except for colors. Colors
@@ -4022,9 +3934,7 @@ class FiniteStateMachine(SageObject):
 
         - ``other`` -- a finite state machine.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -4050,9 +3960,7 @@ class FiniteStateMachine(SageObject):
 
         - ``item`` -- a state or a transition.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -4085,9 +3993,7 @@ class FiniteStateMachine(SageObject):
           for zero, e.g. in the case of symbolic probabilities, see
           the examples below.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         :attr:`on_duplicate_transition` must be
         :func:`duplicate_transition_add_input`, the sum of the input weights
@@ -4202,9 +4108,7 @@ class FiniteStateMachine(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4470,9 +4374,7 @@ class FiniteStateMachine(SageObject):
           implicitly implies ``accepting_style='accepting by
           arrow'``. If not given, the default ``False`` is used.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         As TikZ (cf. the :wikipedia:`PGF/TikZ`) is used to typeset
         the graphics, the syntax is oriented on TikZ' syntax.
@@ -4765,9 +4667,7 @@ class FiniteStateMachine(SageObject):
         r"""
         Return a LaTeX code for the graph of the finite state machine.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4971,9 +4871,7 @@ class FiniteStateMachine(SageObject):
 
         - ``format_function`` -- a function formatting the labels
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -4998,9 +4896,7 @@ class FiniteStateMachine(SageObject):
           ``coordinates`` get a default position on a circle of
           radius 3.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         EXAMPLES::
 
@@ -5083,9 +4979,7 @@ class FiniteStateMachine(SageObject):
           value (``None``) of entry takes the variable ``x`` to the
           power of the sum of the output word of the transition.
 
-        OUTPUT:
-
-        A matrix.
+        OUTPUT: a matrix
 
         If any label of a state is not an integer, the finite state
         machine is relabeled at the beginning.  If there are more than
@@ -5188,9 +5082,7 @@ class FiniteStateMachine(SageObject):
           the existing input alphabet is erased, otherwise new letters are
           appended to the existing alphabet.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         After this operation the input alphabet of this finite state machine
         is a list of letters.
@@ -5237,9 +5129,7 @@ class FiniteStateMachine(SageObject):
           the existing output alphabet is erased, otherwise new letters are
           appended to the existing alphabet.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         After this operation the output alphabet of this finite state machine
         is a list of letters.
@@ -5290,9 +5180,7 @@ class FiniteStateMachine(SageObject):
           and output alphabets are erased, otherwise new letters are
           appended to the existing alphabets.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         After this operation the input alphabet and the output
         alphabet of this finite state machine are a list of letters.
@@ -5330,9 +5218,7 @@ class FiniteStateMachine(SageObject):
         """
         Return the states of the finite state machine.
 
-        OUTPUT:
-
-        The states of the finite state machine as list.
+        OUTPUT: the states of the finite state machine as list
 
         EXAMPLES::
 
@@ -5346,9 +5232,7 @@ class FiniteStateMachine(SageObject):
         """
         Return an iterator of the states.
 
-        OUTPUT:
-
-        An iterator of the states of the finite state machine.
+        OUTPUT: an iterator of the states of the finite state machine
 
         EXAMPLES::
 
@@ -5367,9 +5251,7 @@ class FiniteStateMachine(SageObject):
         - ``from_state`` -- (default: ``None``) If ``from_state`` is
           given, then a list of transitions starting there is given.
 
-        OUTPUT:
-
-        A list of all transitions.
+        OUTPUT: a list of all transitions
 
         EXAMPLES::
 
@@ -5389,9 +5271,7 @@ class FiniteStateMachine(SageObject):
         - ``from_state`` -- (default: ``None``) If ``from_state`` is
           given, then a list of transitions starting there is given.
 
-        OUTPUT:
-
-        An iterator of all transitions.
+        OUTPUT: an iterator of all transitions
 
         EXAMPLES::
 
@@ -5415,9 +5295,7 @@ class FiniteStateMachine(SageObject):
         """
         Return an iterator over all transitions.
 
-        OUTPUT:
-
-        An iterator over all transitions.
+        OUTPUT: an iterator over all transitions
 
         EXAMPLES::
 
@@ -5433,9 +5311,7 @@ class FiniteStateMachine(SageObject):
         """
         Return a list of all initial states.
 
-        OUTPUT:
-
-        A list of all initial states.
+        OUTPUT: a list of all initial states
 
         EXAMPLES::
 
@@ -5452,9 +5328,7 @@ class FiniteStateMachine(SageObject):
         """
         Return an iterator of the initial states.
 
-        OUTPUT:
-
-        An iterator over all initial states.
+        OUTPUT: an iterator over all initial states
 
         EXAMPLES::
 
@@ -5471,9 +5345,7 @@ class FiniteStateMachine(SageObject):
         """
         Return a list of all final states.
 
-        OUTPUT:
-
-        A list of all final states.
+        OUTPUT: a list of all final states
 
         EXAMPLES::
 
@@ -5491,9 +5363,7 @@ class FiniteStateMachine(SageObject):
         """
         Return an iterator of the final states.
 
-        OUTPUT:
-
-        An iterator over all initial states.
+        OUTPUT: an iterator over all initial states
 
         EXAMPLES::
 
@@ -5517,9 +5387,7 @@ class FiniteStateMachine(SageObject):
           :class:`FSMState`, then it is assumed that it is the label
           of a state.
 
-        OUTPUT:
-
-        The state of the finite state machine corresponding to ``state``.
+        OUTPUT: the state of the finite state machine corresponding to ``state``
 
         If no state is found, then a :class:`LookupError` is thrown.
 
@@ -5715,9 +5583,7 @@ class FiniteStateMachine(SageObject):
         """
         Return whether the finite finite state machine is deterministic.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         A finite state machine is considered to be deterministic if
         each transition has input label of length one and for each
@@ -5771,9 +5637,7 @@ class FiniteStateMachine(SageObject):
         """
         Return whether the finite state machine is complete.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         A finite state machine is considered to be complete if
         each transition has an input label of length one and for each
@@ -6206,9 +6070,7 @@ class FiniteStateMachine(SageObject):
 
         - ``full_output`` -- a boolean.
 
-        OUTPUT:
-
-        The converted output.
+        OUTPUT: the converted output
 
         This function is overridden in :class:`Automaton` and
         :class:`Transducer`.
@@ -6246,9 +6108,7 @@ class FiniteStateMachine(SageObject):
 
         See :meth:`process` for a description of the other parameters.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES:
 
@@ -6399,9 +6259,7 @@ class FiniteStateMachine(SageObject):
 
         - ``iterator`` -- in instance of :class:`FSMProcessIterator`.
 
-        OUTPUT:
-
-        A generator.
+        OUTPUT: a generator
 
         An exception is raised if the process branches.
 
@@ -6494,9 +6352,7 @@ class FiniteStateMachine(SageObject):
           :class:`FSMState` or,
           otherwise, a label of a state.
 
-        OUTPUT:
-
-        The new or existing state.
+        OUTPUT: the new or existing state
 
         EXAMPLES::
 
@@ -6531,9 +6387,7 @@ class FiniteStateMachine(SageObject):
 
         - ``states`` -- a list of states or iterator over states.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         EXAMPLES::
 
@@ -6642,9 +6496,7 @@ class FiniteStateMachine(SageObject):
 
         - ``t`` -- an instance of :class:`FSMTransition`.
 
-        OUTPUT:
-
-        The new transition.
+        OUTPUT: the new transition
 
         TESTS::
 
@@ -6682,9 +6534,7 @@ class FiniteStateMachine(SageObject):
           states) will also be processed if they are reachable from
           the initial states.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         EXAMPLES::
 
@@ -6837,9 +6687,7 @@ class FiniteStateMachine(SageObject):
 
         - ``label_as_input`` -- (default: ``True``)
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         EXAMPLES::
 
@@ -6926,9 +6774,7 @@ class FiniteStateMachine(SageObject):
 
         - ``t`` -- a transition.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         EXAMPLES::
 
@@ -6948,9 +6794,7 @@ class FiniteStateMachine(SageObject):
 
         - ``s`` -- a label of a state or an :class:`FSMState`.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         EXAMPLES::
 
@@ -7003,9 +6847,7 @@ class FiniteStateMachine(SageObject):
         - ``state`` -- the state whose epsilon successors should be
           determined.
 
-        OUTPUT:
-
-        A dictionary mapping states to a list of output words.
+        OUTPUT: a dictionary mapping states to a list of output words
 
         The states in the output are the epsilon successors of
         ``state``. Each word of the list of output words is a word
@@ -7909,9 +7751,7 @@ class FiniteStateMachine(SageObject):
           there are output words of ``other`` or input words of ``self``
           of length greater than `1`).
 
-        OUTPUT:
-
-        A new transducer.
+        OUTPUT: a new transducer
 
         The labels of the new finite state machine are pairs of states
         of the original finite state machines. The color of a new
@@ -8337,9 +8177,7 @@ class FiniteStateMachine(SageObject):
         Return an automaton where the output of each transition of
         self is deleted.
 
-        OUTPUT:
-
-        An automaton.
+        OUTPUT: an automaton
 
         EXAMPLES::
 
@@ -8358,9 +8196,7 @@ class FiniteStateMachine(SageObject):
         Return a automaton where the input of each transition of self
         is deleted and the new input is the original output.
 
-        OUTPUT:
-
-        An automaton.
+        OUTPUT: an automaton
 
         EXAMPLES::
 
@@ -8401,9 +8237,7 @@ class FiniteStateMachine(SageObject):
 
         - ``what`` -- (default: ``input``) either ``input`` or ``output``.
 
-        OUTPUT:
-
-        An automaton.
+        OUTPUT: an automaton
 
         EXAMPLES::
 
@@ -8469,9 +8303,7 @@ class FiniteStateMachine(SageObject):
         - ``reverse_output_labels`` -- a boolean (default: ``True``): whether to reverse
           output labels.
 
-        OUTPUT:
-
-        A new finite state machine.
+        OUTPUT: a new finite state machine
 
         EXAMPLES::
 
@@ -8566,9 +8398,7 @@ class FiniteStateMachine(SageObject):
         labels consisting of more than one letter
         are replaced by a path of the corresponding length.
 
-        OUTPUT:
-
-        A new transducer.
+        OUTPUT: a new transducer
 
         EXAMPLES::
 
@@ -8807,9 +8637,7 @@ class FiniteStateMachine(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         Apply the following to each state `s` (except initial states) of the
         finite state machine as often as possible:
@@ -8969,9 +8797,7 @@ class FiniteStateMachine(SageObject):
         r"""
         Return a list of equivalence classes of states.
 
-        OUTPUT:
-
-        A list of equivalence classes of states.
+        OUTPUT: a list of equivalence classes of states
 
         Two states `a` and `b` are equivalent if and only if there is
         a bijection `\varphi` between paths starting at `a` and paths
@@ -9073,9 +8899,7 @@ class FiniteStateMachine(SageObject):
 
         - ``classes`` is a list of equivalence classes of states.
 
-        OUTPUT:
-
-        A finite state machine.
+        OUTPUT: a finite state machine
 
         The labels of the new states are tuples of states of the
         ``self``, corresponding to ``classes``.
@@ -9263,9 +9087,7 @@ class FiniteStateMachine(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        Simplified version of ``self``.
+        OUTPUT: simplified version of ``self``
 
         EXAMPLES::
 
@@ -9312,9 +9134,7 @@ class FiniteStateMachine(SageObject):
           each state has to have a path to a final state with input
           label matching ``letters``.
 
-        OUTPUT:
-
-        A finite state machine.
+        OUTPUT: a finite state machine
 
         The inplace version of this function is
         :meth:`.construct_final_word_out`.
@@ -9655,9 +9475,7 @@ class FiniteStateMachine(SageObject):
              - a function with which takes as input a transition
                and outputs (returns) the label
 
-        OUTPUT:
-
-        A :class:`directed graph <DiGraph>`.
+        OUTPUT: a :class:`directed graph <DiGraph>`
 
         EXAMPLES::
 
@@ -9711,9 +9529,7 @@ class FiniteStateMachine(SageObject):
 
         Nothing.
 
-        OUTPUT:
-
-        A plot of the graph of the finite state machine.
+        OUTPUT: a plot of the graph of the finite state machine
 
         TESTS::
 
@@ -9738,9 +9554,7 @@ class FiniteStateMachine(SageObject):
           than `1` are used, then ``valid_input`` has to be a list of
           lists.
 
-        OUTPUT:
-
-        A list of states.
+        OUTPUT: a list of states
 
         EXAMPLES::
 
@@ -9792,9 +9606,7 @@ class FiniteStateMachine(SageObject):
         - ``base_ring`` -- Ring (default: ``QQbar``) in which to
           compute the eigenvalues.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -9933,9 +9745,7 @@ class FiniteStateMachine(SageObject):
         - ``variable`` -- a symbol denoting the length of the input,
           by default `n`.
 
-        OUTPUT:
-
-        A dictionary consisting of
+        OUTPUT: a dictionary consisting of
 
         - ``expectation`` -- `e n + \operatorname{Order}(1)`,
         - ``variance`` -- `v n + \operatorname{Order}(1)`,
@@ -10805,9 +10615,7 @@ class FiniteStateMachine(SageObject):
         """
         Check whether the colors of all states are equal.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         EXAMPLES::
 
@@ -10837,9 +10645,7 @@ class FiniteStateMachine(SageObject):
           iterator <FSMProcessIterator>`. See :meth:`process` for a
           description.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -11007,9 +10813,7 @@ class Automaton(FiniteStateMachine):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -11050,9 +10854,7 @@ class Automaton(FiniteStateMachine):
 
         - ``format_function`` -- a function formatting the labels
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -11179,9 +10981,7 @@ class Automaton(FiniteStateMachine):
         Return a deterministic automaton which accepts the same input
         words as the original one.
 
-        OUTPUT:
-
-        A new automaton, which is deterministic.
+        OUTPUT: a new automaton, which is deterministic
 
         The labels of the states of the new automaton are frozensets
         of states of ``self``. The color of a new state is the
@@ -11365,9 +11165,7 @@ class Automaton(FiniteStateMachine):
           ``algorithm='Brzozowski'`` or when the automaton is not
           deterministic) is used.
 
-        OUTPUT:
-
-        A new automaton.
+        OUTPUT: a new automaton
 
         The resulting automaton is deterministic and has a minimal
         number of states.
@@ -11473,9 +11271,7 @@ class Automaton(FiniteStateMachine):
         r"""
         Return the complement of this automaton.
 
-        OUTPUT:
-
-        An :class:`Automaton`.
+        OUTPUT: an :class:`Automaton`
 
         If this automaton recognizes language `\mathcal{L}` over an
         input alphabet `\mathcal{A}`, then the complement recognizes
@@ -11820,9 +11616,7 @@ class Automaton(FiniteStateMachine):
           return a triple containing the (non-existing) output. This
           is for compatibility with transducers.
 
-        OUTPUT:
-
-        The converted output.
+        OUTPUT: the converted output
 
         TESTS::
 
@@ -11996,9 +11790,7 @@ class Automaton(FiniteStateMachine):
           If this is ``None``, then the output word will be equal to
           the input word of each transition.
 
-        OUTPUT:
-
-        A transducer.
+        OUTPUT: a transducer
 
         EXAMPLES::
 
@@ -12093,9 +11885,7 @@ class Automaton(FiniteStateMachine):
           iterator <FSMProcessIterator>`. See :meth:`process` for a
           description.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -12203,9 +11993,7 @@ class Transducer(FiniteStateMachine):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -12245,9 +12033,7 @@ class Transducer(FiniteStateMachine):
 
         - ``format_function`` -- a function formatting the labels
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -12579,9 +12365,7 @@ class Transducer(FiniteStateMachine):
         """
         Return a simplified transducer.
 
-        OUTPUT:
-
-        A new transducer.
+        OUTPUT: a new transducer
 
         This function simplifies a transducer by Moore's algorithm,
         first moving common output labels of transitions leaving a
@@ -12996,9 +12780,7 @@ class Transducer(FiniteStateMachine):
 
         - ``full_output`` -- a boolean.
 
-        OUTPUT:
-
-        The converted output.
+        OUTPUT: the converted output
 
         TESTS::
 
@@ -13126,9 +12908,7 @@ class _FSMTapeCache_(SageObject):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         Note that this representation depends on the parameter
         ``is_multitape`` of ``self``.
@@ -13186,9 +12966,7 @@ class _FSMTapeCache_(SageObject):
 
         - ``memo`` -- a dictionary.
 
-        OUTPUT:
-
-        An instance of ``_FSMCacheTape_``.
+        OUTPUT: an instance of ``_FSMCacheTape_``
 
         TESTS::
 
@@ -13275,9 +13053,7 @@ class _FSMTapeCache_(SageObject):
         - ``track_number`` -- an integer or ``None``. If ``None``,
           then ``True`` is returned if all tracks are finished.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         TESTS::
 
@@ -13344,9 +13120,7 @@ class _FSMTapeCache_(SageObject):
           then a word is returned, otherwise a single letter (in which
           case ``length`` has to be ``1``).
 
-        OUTPUT:
-
-        A single letter or a word.
+        OUTPUT: a single letter or a word
 
         A :python:`RuntimeError<library/exceptions.html#exceptions.RuntimeError>`
         is thrown if the tape (at least one track) has reached its end.
@@ -13440,9 +13214,7 @@ class _FSMTapeCache_(SageObject):
 
         - ``word`` -- a tuple or list of letters.
 
-        OUTPUT:
-
-        ``True`` or ``False``
+        OUTPUT: ``True`` or ``False``
 
         TESTS::
 
@@ -13487,9 +13259,7 @@ class _FSMTapeCache_(SageObject):
 
         - ``transition`` -- a transition of a finite state machine.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         If ``self.is_multitape`` is ``False``, then this function
         forwards ``self`` (track `0`) by the number of entries of
@@ -13566,9 +13336,7 @@ class _FSMTapeCache_(SageObject):
 
         - ``transition`` -- a transition of a finite state machine.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         TESTS::
 
@@ -13610,9 +13378,7 @@ class _FSMTapeCache_(SageObject):
 
         - ``word_in`` -- an input word of a transition.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         TESTS::
 
@@ -13642,9 +13408,7 @@ class _FSMTapeCache_(SageObject):
 
         - ``word_in`` -- an input word of a transition.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         This method is usually overridden in inherited classes,
         cf. :class:`_FSMTapeCacheDetectEpsilon_` and
@@ -13738,9 +13502,7 @@ class _FSMTapeCacheDetectEpsilon_(_FSMTapeCache_):
 
         - ``word_in`` -- an input word of a transition.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         TESTS::
 
@@ -13781,9 +13543,7 @@ class _FSMTapeCacheDetectAll_(_FSMTapeCache_):
 
         - ``word`` -- a tuple or list of letters. Only its length is used.
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         Note that this method usually returns ``True``. ``False`` can
         only be returned at the end of the input tape.
@@ -13831,9 +13591,7 @@ def tupleofwords_to_wordoftuples(tupleofwords):
 
     - ``tupleofwords`` -- a tuple of a list of letters.
 
-    OUTPUT:
-
-    A list of tuples.
+    OUTPUT: a list of tuples
 
     Missing letters in the words are padded with the letter ``None``
     (from the empty word).
@@ -13857,9 +13615,7 @@ def wordoftuples_to_tupleofwords(wordoftuples):
 
     - ``wordoftuples`` -- a list of tuples of letters.
 
-    OUTPUT:
-
-    A tuple of lists.
+    OUTPUT: a tuple of lists
 
     Letters ``None`` (empty word) are removed from each word in the output.
 
@@ -13953,9 +13709,7 @@ class FSMProcessIterator(SageObject, Iterator):
       once). Consequently, there is an output generated for each
       of these prefixes.
 
-    OUTPUT:
-
-    An iterator.
+    OUTPUT: an iterator
 
     In its simplest form, it behaves like an iterator which, in
     each step, goes from one state to another. To decide which way
@@ -14159,9 +13913,7 @@ class FSMProcessIterator(SageObject, Iterator):
             """
             Return a nice representation of ``self``.
 
-            OUTPUT:
-
-            A string.
+            OUTPUT: string
 
             TESTS::
 
@@ -14307,9 +14059,7 @@ class FSMProcessIterator(SageObject, Iterator):
         - ``outputs`` -- a list of output tapes on each of which words
           were written until reaching ``state``.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         .. NOTE::
 
@@ -14401,9 +14151,7 @@ class FSMProcessIterator(SageObject, Iterator):
         - ``outputs`` -- a list of output tapes on each of which words
           were written until reaching ``state``.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         When this function is called, a branch is updated, which
         means, stored for further processing. If the state has epsilon
@@ -14715,9 +14463,7 @@ class FSMProcessIterator(SageObject, Iterator):
           then a word is returned, otherwise a single letter (in which
           case ``length`` has to be ``1``).
 
-        OUTPUT:
-
-        A single letter or a word.
+        OUTPUT: a single letter or a word
 
         An exception ``StopIteration`` is thrown if the tape (at least
         one track) has reached its end.
@@ -15095,9 +14841,7 @@ class _FSMProcessIteratorEpsilon_(FSMProcessIterator):
         - ``outputs`` -- a list of output tapes on each of which words
           were written until reaching ``state``.
 
-        OUTPUT:
-
-        Nothing.
+        OUTPUT: nothing
 
         TESTS::
 

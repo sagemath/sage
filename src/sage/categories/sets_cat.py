@@ -1556,9 +1556,7 @@ class Sets(Category_singleton):
               for this Cartesian product (see also
               :class:`~sage.sets.cartesian_product.CartesianProduct`).
 
-            OUTPUT:
-
-            The Cartesian product.
+            OUTPUT: the Cartesian product
 
             EXAMPLES::
 

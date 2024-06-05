@@ -237,9 +237,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         Recover the class of the base category.
 
-        OUTPUT:
-
-        A *tuple* whose single entry is the base category class.
+        OUTPUT: a *tuple* whose single entry is the base category class
 
         .. WARNING::
 
@@ -677,9 +675,7 @@ class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):
         - ``category`` -- a category `Cat`
         - ``*args`` -- further arguments for the functor
 
-        OUTPUT:
-
-        A join category.
+        OUTPUT: a join category
 
         This implements the property that an induced subcategory is a
         subcategory.

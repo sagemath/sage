@@ -176,9 +176,7 @@ def shard_preorder_graph(runs):
 
     - a tuple of pairs `(i,j)`, each one standing for a run from `i` to `j`.
 
-    OUTPUT:
-
-    a directed graph, with vertices labelled by integers
+    OUTPUT: a directed graph, with vertices labelled by integers
 
     EXAMPLES::
 

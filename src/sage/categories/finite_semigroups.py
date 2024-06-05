@@ -99,9 +99,7 @@ class FiniteSemigroups(CategoryWithAxiom):
             r"""
             Returns all the idempotents of self, grouped by J-class.
 
-            OUTPUT:
-
-             a list of lists.
+            OUTPUT: a list of lists
 
             EXAMPLES::
 

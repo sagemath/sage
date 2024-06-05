@@ -924,7 +924,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                   factors are perfect of the same level and otherwise
                   this uses ``'definition'``
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 
@@ -1021,7 +1021,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 :meth:`e_string_to_ground_state`) and counting the number
                 of affine Kashiwara operators `e_0` applied on the way.
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 

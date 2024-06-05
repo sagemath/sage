@@ -1026,9 +1026,7 @@ class Posets(metaclass=ClasscallMetaclass):
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
 
-        OUTPUT:
-
-        The standard example of a poset of dimension `n`.
+        OUTPUT: the standard example of a poset of dimension `n`
 
         EXAMPLES::
 

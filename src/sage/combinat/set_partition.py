@@ -489,9 +489,7 @@ class AbstractSetPartition(ClonableArray,
 
         - ``self`` -- a set partition of an ordered set
 
-        OUTPUT:
-
-        a set partition
+        OUTPUT: a set partition
 
         EXAMPLES::
 
@@ -961,9 +959,7 @@ class SetPartition(AbstractSetPartition,
 
           - ``intertwining``: :meth:`to_restricted_growth_word_intertwining`.
 
-        OUTPUT:
-
-        A restricted growth word.
+        OUTPUT: a restricted growth word
 
         .. SEEALSO::
 
@@ -1016,9 +1012,7 @@ class SetPartition(AbstractSetPartition,
         element and setting the letters at the positions of the
         elements in the `i`-th block to `i`.
 
-        OUTPUT:
-
-        a restricted growth word.
+        OUTPUT: a restricted growth word
 
         .. SEEALSO::
 
@@ -1049,9 +1043,7 @@ class SetPartition(AbstractSetPartition,
         `i`, with arcs (or half-arcs) beginning at a smaller element
         and ending at a larger element.
 
-        OUTPUT:
-
-        a restricted growth word.
+        OUTPUT: a restricted growth word
 
         .. SEEALSO::
 
@@ -1160,9 +1152,7 @@ class SetPartition(AbstractSetPartition,
         rook, which are not yet attacked by another rook, equals the
         index of the block to which `n+1-i` belongs.
 
-        OUTPUT:
-
-        A list of coordinates.
+        OUTPUT: a list of coordinates
 
         .. SEEALSO::
 
@@ -1236,9 +1226,7 @@ class SetPartition(AbstractSetPartition,
         One can show that the precisely those rows which correspond
         to openers of the set partition remain empty.
 
-        OUTPUT:
-
-        A list of coordinates.
+        OUTPUT: a list of coordinates
 
         .. SEEALSO::
 
@@ -1297,9 +1285,7 @@ class SetPartition(AbstractSetPartition,
         Return the rook diagram obtained by placing rooks according to
         Yip's bijection psi.
 
-        OUTPUT:
-
-        A list of coordinates.
+        OUTPUT: a list of coordinates
 
         .. SEEALSO::
 
@@ -2157,9 +2143,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
           - ``intertwining``: :meth:`from_restricted_growth_word_intertwining`.
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2195,9 +2179,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         - ``w`` -- a restricted growth word.
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2232,9 +2214,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         - ``w`` -- a restricted growth word.
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2382,9 +2362,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j < n+1`.
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2438,9 +2416,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j < n+1`.
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 
@@ -2505,9 +2481,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j <
           n+1`.
 
-        OUTPUT:
-
-        A set partition.
+        OUTPUT: a set partition
 
         .. SEEALSO::
 

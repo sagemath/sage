@@ -47,7 +47,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
 
             - ``keywords`` -- for compatibility; ignored.
 
-            OUTPUT: the empty list since this algebra is semisimple.
+            OUTPUT: the empty list since this algebra is semisimple
 
             EXAMPLES::
 
@@ -217,9 +217,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 of the identity into primitive orthogonal
                 idempotents.
 
-                OUTPUT:
-
-                A list of orthogonal idempotents of ``self``.
+                OUTPUT: a list of orthogonal idempotents of ``self``
 
                 EXAMPLES::
 

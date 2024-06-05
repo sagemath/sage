@@ -45,9 +45,7 @@ def LyndonWords(e=None, k=None):
 
     - ``e`` -- a composition
 
-    OUTPUT:
-
-    A combinatorial class of Lyndon words.
+    OUTPUT: a combinatorial class of Lyndon words
 
     EXAMPLES::
 
@@ -103,9 +101,7 @@ def LyndonWord(data, check=True):
     - ``check`` -- bool (default: ``True``) if ``True``,
       check that the input data represents a Lyndon word.
 
-    OUTPUT:
-
-    A Lyndon word.
+    OUTPUT: a Lyndon word
 
     EXAMPLES::
 

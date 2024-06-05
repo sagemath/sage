@@ -713,9 +713,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         - ``order_basis`` -- (default: ``None``) a basis of an
           order of this quaternion algebra
 
-        OUTPUT:
-
-        A maximal order in this quaternion algebra.
+        OUTPUT: a maximal order in this quaternion algebra
 
         EXAMPLES::
 
@@ -2013,9 +2011,7 @@ class QuaternionOrder(Parent):
 
         - ``gens`` -- list of elements of ``self``
 
-        OUTPUT:
-
-        A list of four elements of ``self``.
+        OUTPUT: a list of four elements of ``self``
 
         EXAMPLES::
 
@@ -2701,9 +2697,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - ``side`` -- 'left' or 'right'
 
-        OUTPUT:
-
-        The left order if side='left'; the right order if side='right'.
+        OUTPUT: the left order if side='left'; the right order if side='right'
 
         EXAMPLES::
 
@@ -3001,9 +2995,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - ``B`` -- positive integer
 
-        OUTPUT:
-
-        Vector over `\ZZ` with ``B`` entries.
+        OUTPUT: vector over `\ZZ` with ``B`` entries
 
         EXAMPLES::
 
@@ -3139,7 +3131,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         r"""
         Return the Gram matrix of this fractional ideal.
 
-        OUTPUT: `4 \times 4` matrix over `\QQ`.
+        OUTPUT: `4 \times 4` matrix over `\QQ`
 
         EXAMPLES::
 
@@ -3371,7 +3363,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - ``J`` -- a quaternion ideal.
 
-        OUTPUT: a quaternionic fractional ideal.
+        OUTPUT: a quaternionic fractional ideal
 
         EXAMPLES::
 

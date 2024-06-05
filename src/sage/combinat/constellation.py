@@ -447,9 +447,7 @@ class Constellation_class(Element):
         """
         Return the connected components.
 
-        OUTPUT:
-
-        A list of connected constellations.
+        OUTPUT: a list of connected constellations
 
         EXAMPLES::
 
@@ -1562,9 +1560,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
 
     - ``j0`` -- an index in [0, ..., n]
 
-    OUTPUT:
-
-    mapping: a permutation that specify the new labels
+    OUTPUT: mapping: a permutation that specify the new labels
 
     EXAMPLES::
 

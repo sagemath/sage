@@ -462,9 +462,7 @@ class RiggedConfigurationElement(ClonableArray):
         Return the list `\nu` of rigged partitions of this rigged
         configuration element.
 
-        OUTPUT:
-
-        The `\nu` array as a list.
+        OUTPUT: the `\nu` array as a list
 
         EXAMPLES::
 
@@ -503,9 +501,7 @@ class RiggedConfigurationElement(ClonableArray):
 
         - ``a`` -- the index of the partition to remove a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -625,9 +621,7 @@ class RiggedConfigurationElement(ClonableArray):
         - ``k`` -- the length of the string with the smallest negative
           rigging of smallest length
 
-        OUTPUT:
-
-        The constructed rigged partition.
+        OUTPUT: the constructed rigged partition
 
         TESTS::
 
@@ -677,9 +671,7 @@ class RiggedConfigurationElement(ClonableArray):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -784,9 +776,7 @@ class RiggedConfigurationElement(ClonableArray):
         - ``k`` -- the length of the string with smallest nonpositive rigging
           of largest length
 
-        OUTPUT:
-
-        The constructed rigged partition.
+        OUTPUT: the constructed rigged partition
 
         TESTS::
 
@@ -1097,9 +1087,7 @@ class RCHighestWeightElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -1354,9 +1342,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to remove a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -1408,9 +1394,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 

@@ -677,9 +677,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     - ``ics`` -- a list of numbers representing initial conditions, (e.g.
       ``f(0)=1``, ``f'(0)=2`` corresponds to ``ics = [0,1,2]``)
 
-    OUTPUT:
-
-    Solution of the ODE as symbolic expression
+    OUTPUT: solution of the ODE as symbolic expression
 
     EXAMPLES::
 
@@ -1416,9 +1414,7 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
     - ``step`` -- (default: 0.1) the length of the step
 
-    OUTPUT:
-
-    Return a list of points.
+    OUTPUT: return a list of points
 
     .. SEEALSO::
 
@@ -1564,9 +1560,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     - ``mxords`` : integer, (0: solver-determined)
       Maximum order to be allowed for the stiff (BDF) method.
 
-    OUTPUT:
-
-    Return a list with the solution of the system at each time in ``times``.
+    OUTPUT: return a list with the solution of the system at each time in ``times``
 
     EXAMPLES:
 

@@ -44,9 +44,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             Return the generators of ``self``.
 
-            OUTPUT:
-
-            A tuple containing the basis elements of ``self``.
+            OUTPUT: a tuple containing the basis elements of ``self``
 
             EXAMPLES::
 

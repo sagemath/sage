@@ -645,9 +645,7 @@ class FiniteWord_class(Word_class):
         - ``self`` -- a word
         - ``n`` -- an integer specifying the maximal letter in the alphabet (optional)
 
-        OUTPUT:
-
-        a word, the Schützenberger involution of ``self``
+        OUTPUT: a word, the Schützenberger involution of ``self``
 
         EXAMPLES::
 
@@ -955,9 +953,7 @@ class FiniteWord_class(Word_class):
 
         - ``other`` -- a word, or data describing a word
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1034,9 +1030,7 @@ class FiniteWord_class(Word_class):
 
         - ``other`` -- a word, or data describing a word
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1758,9 +1752,7 @@ class FiniteWord_class(Word_class):
         - ``n`` -- integer (default: ``None``). If ``None``, it
           returns all left special factors.
 
-        OUTPUT:
-
-        a list of words
+        OUTPUT: a list of words
 
         EXAMPLES::
 
@@ -1825,9 +1817,7 @@ class FiniteWord_class(Word_class):
         - ``n`` -- integer (default: ``None``). If ``None``, it returns
           all right special factors.
 
-        OUTPUT:
-
-        a list of words
+        OUTPUT: a list of words
 
         EXAMPLES::
 
@@ -1917,9 +1907,7 @@ class FiniteWord_class(Word_class):
         - ``n`` -- integer (default: ``None``). If ``None``, it returns
           all bispecial factors.
 
-        OUTPUT:
-
-        a list of words
+        OUTPUT: a list of words
 
         EXAMPLES::
 
@@ -2153,9 +2141,7 @@ class FiniteWord_class(Word_class):
 
         - ``other`` -- a finite word
 
-        OUTPUT:
-
-        bool
+        OUTPUT: bool
 
         EXAMPLES::
 
@@ -3653,9 +3639,7 @@ class FiniteWord_class(Word_class):
           When set to ``True``, then only periods that divide
           the length of ``self`` are considered.
 
-        OUTPUT:
-
-        a list of positive integers
+        OUTPUT: a list of positive integers
 
         EXAMPLES::
 
@@ -3949,9 +3933,7 @@ class FiniteWord_class(Word_class):
         i.e., `w = l_1\cdots l_n` where each `l_i` is a Lyndon word and
         `l_1\geq \cdots \geq l_n`. See for instance [Duv1983]_.
 
-        OUTPUT:
-
-        the list `[l_1, \ldots, l_n]` of factors obtained
+        OUTPUT: the list `[l_1, \ldots, l_n]` of factors obtained
 
         EXAMPLES::
 
@@ -4767,9 +4749,7 @@ class FiniteWord_class(Word_class):
 
         - ``fact`` -- a non-empty finite word
 
-        OUTPUT:
-
-        a Python list of finite words
+        OUTPUT: a Python list of finite words
 
         TESTS::
 
@@ -4790,9 +4770,7 @@ class FiniteWord_class(Word_class):
 
         - ``fact`` -- a non-empty finite word
 
-        OUTPUT:
-
-        a Python set of finite words
+        OUTPUT: a Python set of finite words
 
         EXAMPLES::
 
@@ -4823,9 +4801,7 @@ class FiniteWord_class(Word_class):
 
         - ``fact`` -- a non-empty finite word
 
-        OUTPUT:
-
-        a Python set of finite words
+        OUTPUT: a Python set of finite words
 
         EXAMPLES::
 
@@ -5044,9 +5020,7 @@ class FiniteWord_class(Word_class):
            involution on the alphabet. If ``involution`` is not ``None``, the relation
            `R_{u,v,d} \cup R_{involution(u),involution(v),d}` is considered.
 
-        OUTPUT:
-
-        a disjoint set data structure
+        OUTPUT: a disjoint set data structure
 
 
         EXAMPLES::
@@ -5564,9 +5538,7 @@ class FiniteWord_class(Word_class):
         for all letters `x` in the alphabet of `w`. A `1`-balanced word is
         simply said to be balanced. See Chapter 2 of [Lot2002]_.
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -5697,9 +5669,7 @@ class FiniteWord_class(Word_class):
         The vectors are defined w.r.t. the order of the alphabet of the
         parent.
 
-        OUTPUT:
-
-        a set of tuples
+        OUTPUT: a set of tuples
 
         EXAMPLES::
 
@@ -6167,9 +6137,7 @@ class FiniteWord_class(Word_class):
 
         - ``self`` -- word having a parent on a finite alphabet
 
-        OUTPUT:
-
-        a list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -6260,9 +6228,7 @@ class FiniteWord_class(Word_class):
         -  ``other`` -- finite word
         -  ``overlap`` -- (default: ``0``) integer or ``True``
 
-        OUTPUT:
-
-        combinatorial class of shuffle product of ``self`` and ``other``
+        OUTPUT: combinatorial class of shuffle product of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -6313,9 +6279,7 @@ class FiniteWord_class(Word_class):
         - ``shift`` -- integer or ``None`` (default: ``None``) added to each letter of
           ``other``. When ``shift`` is ``None``, it is replaced by ``self.length()``
 
-        OUTPUT:
-
-        combinatorial class of shifted shuffle products of ``self`` and ``other``
+        OUTPUT: combinatorial class of shifted shuffle products of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -6814,9 +6778,7 @@ class FiniteWord_class(Word_class):
           type: ``import matplotlib.cm; list(matplotlib.cm.datad)``
         - ``label`` -- string (default: ``None``) a label to add on the colored vector
 
-        OUTPUT:
-
-        Graphics
+        OUTPUT: Graphics
 
         EXAMPLES::
 

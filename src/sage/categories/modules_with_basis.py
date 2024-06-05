@@ -1167,9 +1167,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``index`` -- the index of a basis element
             - ``coeff`` -- an element of the coefficient ring (default: one)
 
-            OUTPUT:
-
-            ``coeff * B[index]``, where ``B`` is the basis of ``self``.
+            OUTPUT: ``coeff * B[index]``, where ``B`` is the basis of ``self``
 
             EXAMPLES::
 

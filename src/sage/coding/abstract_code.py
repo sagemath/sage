@@ -840,7 +840,7 @@ class AbstractCode(Parent):
           ``True``, return instead a :class:`dict` mapping available decoder
           name to the associated decoder class
 
-        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
+        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes
 
         EXAMPLES::
 
@@ -1019,7 +1019,7 @@ class AbstractCode(Parent):
           ``True``, return instead a :class:`dict` mapping available encoder
           name to the associated encoder class
 
-        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
+        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes
 
         EXAMPLES::
 

@@ -594,9 +594,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         - ``self`` -- an instance of the LLT hspin or hcospin basis
         - ``left``, ``right`` -- elements of the symmetric functions
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 

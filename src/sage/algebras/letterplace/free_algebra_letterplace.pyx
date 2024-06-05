@@ -234,9 +234,7 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         A multivariate polynomial ring of type :class:`~sage.rings.polynomial.multipolynomial_libsingular.MPolynomialRing_libsingular`.
 
-        OUTPUT:
-
-        The free associative version of the given commutative ring.
+        OUTPUT: the free associative version of the given commutative ring
 
         .. NOTE::
 
@@ -330,9 +328,7 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         - `i` -- an integer
 
-        OUTPUT:
-
-        The generator with index `i`
+        OUTPUT: the generator with index `i`
 
         EXAMPLES::
 

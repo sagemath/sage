@@ -1040,9 +1040,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         - `n` -- integer
 
-        OUTPUT:
-
-        a vector space spanned by the basis for this algebra in dimension `n`
+        OUTPUT: a vector space spanned by the basis for this algebra in dimension `n`
 
         EXAMPLES::
 
@@ -1749,7 +1747,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         - ``basis`` -- string, the basis to which to convert, optional
           (default 'milnor')
 
-        OUTPUT: an element of the Steenrod algebra with basis ``basis``.
+        OUTPUT: an element of the Steenrod algebra with basis ``basis``
 
         ALGORITHM: it's straightforward to convert to the Milnor basis
         (using :meth:`milnor` or :meth:`_milnor_on_basis`), so it's
@@ -1831,7 +1829,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         - ``basis`` -- string, the basis to which to convert, optional
           (default 'milnor')
 
-        OUTPUT: an element of the Steenrod algebra with basis ``basis``.
+        OUTPUT: an element of the Steenrod algebra with basis ``basis``
 
         ALGORITHM: use :meth:`_change_basis_on_basis` and linearity
 
@@ -1864,7 +1862,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         - ``t`` -- tuple, representing basis element in the current basis.
 
-        OUTPUT: integer, the degree of the corresponding element.
+        OUTPUT: integer, the degree of the corresponding element
 
         The degree of `\text{Sq}(i_1,i_2,i_3,...)` is
 
@@ -2091,7 +2089,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         - ``x`` -- an element of some Steenrod algebra or an element of
           `\ZZ` or `\GF{p}` or a dict
 
-        OUTPUT: ``x`` as a member of ``self``.
+        OUTPUT: ``x`` as a member of ``self``
 
         If ``x`` is a dict, then call :meth:`_from_dict` on it,
         coercing the coefficients into the base field.  That is, treat
@@ -2375,7 +2373,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         - ``e0``, ``e1``, ... -- sequence of 0s and 1s
 
-        OUTPUT: The element `Q_0^{e_0} Q_1^{e_1} ...`
+        OUTPUT: the element `Q_0^{e_0} Q_1^{e_1} ...`
 
         Note that at the prime 2, `Q_n` is the element
         `\text{Sq}(0,0,...,1)` , where the 1 is in the
@@ -2429,7 +2427,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         - ``n0``, ``n1``, ... -- non-negative integers
 
-        OUTPUT: The element `Q_{n0} Q_{n1} ...`
+        OUTPUT: the element `Q_{n0} Q_{n1} ...`
 
         Note that at the prime 2, `Q_n` is the element
         `\text{Sq}(0,0,...,1)` , where the 1 is in the

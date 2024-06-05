@@ -1023,9 +1023,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         - ``col`` -- The column of the cell being modified
         - ``direction`` -- The direction to change the cell 1 = increase, 0 = decrease
 
-        OUTPUT:
-
-        ``chain_state`` is possibly modified.
+        OUTPUT: ``chain_state`` is possibly modified
 
         TESTS:
 

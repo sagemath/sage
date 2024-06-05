@@ -1906,9 +1906,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         - ``function`` -- a function which takes in a partition
           and returns a scalar
 
-        OUTPUT:
-
-        A symmetric function in ``self`` which is a scaled version of ``x``.
+        OUTPUT: a symmetric function in ``self`` which is a scaled version of ``x``
 
         EXAMPLES::
 
@@ -1939,9 +1937,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
           elements when encountered in ``x``; they will be taken to the
           appropriate powers when computing the plethysm)
 
-        OUTPUT:
-
-        The plethysm of ``x`` by ``expr``.
+        OUTPUT: the plethysm of ``x`` by ``expr``
 
         EXAMPLES::
 

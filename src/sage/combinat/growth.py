@@ -3212,9 +3212,7 @@ class RuleSylvester(Rule):
 
         - ``content`` -- `0` or `1`; the content of the cell
 
-        OUTPUT:
-
-        The fourth binary tree ``z``.
+        OUTPUT: the fourth binary tree ``z``
 
         EXAMPLES::
 
@@ -3528,9 +3526,7 @@ class RuleYoungFibonacci(Rule):
 
         - ``content`` -- `0` or `1`; the content of the cell
 
-        OUTPUT:
-
-        The fourth Fibonacci word.
+        OUTPUT: the fourth Fibonacci word
 
         EXAMPLES::
 
@@ -3924,9 +3920,7 @@ class RuleBurge(RulePartitions):
 
         - ``content`` -- a non-negative integer; the content of the cell
 
-        OUTPUT:
-
-        The fourth partition according to the Burge correspondence.
+        OUTPUT: the fourth partition according to the Burge correspondence
 
         EXAMPLES::
 
@@ -4217,9 +4211,7 @@ class RuleDomino(Rule):
 
         - ``content`` -- `-1`, `0` or `1`; the content of the cell
 
-        OUTPUT:
-
-        The fourth partition according to domino insertion.
+        OUTPUT: the fourth partition according to domino insertion
 
         EXAMPLES::
 

@@ -766,9 +766,7 @@ class MultivariateConstructionFunctor(ConstructionFunctor):
         - ``other_bases`` -- the arguments passed to the functor
           ``other_functor``.
 
-        OUTPUT:
-
-        A parent.
+        OUTPUT: a parent
 
         If no common base is found a :class:`sage.structure.coerce_exceptions.CoercionException`
         is raised.
@@ -4842,9 +4840,7 @@ def expand_tower(tower):
 
     A construction tower as returned by :func:`construction_tower`.
 
-    OUTPUT:
-
-    A new construction tower with all the construction functors expanded.
+    OUTPUT: a new construction tower with all the construction functors expanded
 
     EXAMPLES::
 
@@ -4882,9 +4878,7 @@ def type_to_parent(P):
 
     A type
 
-    OUTPUT:
-
-    A Sage parent structure corresponding to the given type
+    OUTPUT: a Sage parent structure corresponding to the given type
 
     TESTS::
 

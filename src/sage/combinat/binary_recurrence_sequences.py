@@ -788,9 +788,7 @@ def _largest_ppower_divisor(N):
 
     - ``N`` -- an integer
 
-    OUTPUT:
-
-    The largest prime power dividing ``N``.
+    OUTPUT: the largest prime power dividing ``N``
 
     EXAMPLES::
 

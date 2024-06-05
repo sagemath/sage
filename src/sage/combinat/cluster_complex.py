@@ -238,9 +238,7 @@ class ClusterComplex(SubwordComplex):
         - ``facet_test`` -- boolean (default: ``True``); tells whether
           or not the facet ``F`` should be tested before creation
 
-        OUTPUT:
-
-        The facet of ``self`` at positions given by ``F``.
+        OUTPUT: the facet of ``self`` at positions given by ``F``
 
         EXAMPLES::
 

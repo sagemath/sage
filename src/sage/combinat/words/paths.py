@@ -245,9 +245,7 @@ def WordPaths(alphabet, steps=None):
 
       - 'dyck':
 
-    OUTPUT:
-
-    The combinatorial class of all paths of the given type.
+    OUTPUT: the combinatorial class of all paths of the given type
 
     EXAMPLES:
 
@@ -1092,9 +1090,7 @@ class FiniteWordPath_all(SageObject):
         r"""
         Return the starting point of ``self``.
 
-        OUTPUT:
-
-        vector
+        OUTPUT: vector
 
         EXAMPLES::
 
@@ -1246,9 +1242,7 @@ class FiniteWordPath_all(SageObject):
         - ``ring`` -- ring (default: None) where to do the
           computations. If None, RealField(53) is used.
 
-        OUTPUT:
-
-        iterator of points
+        OUTPUT: iterator of points
 
         EXAMPLES:
 
@@ -1320,9 +1314,7 @@ class FiniteWordPath_all(SageObject):
           ``'right'`` or ``'left'``. The color of a letter is given to the
           projected prefix to the right or the left of the letter.
 
-        OUTPUT:
-
-        2d or 3d Graphic object.
+        OUTPUT: 2d or 3d Graphic object
 
         EXAMPLES:
 
@@ -1429,9 +1421,7 @@ class FiniteWordPath_all(SageObject):
         - ``ring`` -- ring (default: None) where to do the
           computations. If None, RealField(53) is used.
 
-        OUTPUT:
-
-            word path
+        OUTPUT: word path
 
         EXAMPLES:
 
@@ -1766,9 +1756,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         between the highest and the lowest `y`-coordinate of each
         points traced by it.
 
-        OUTPUT:
-
-            non negative real number
+        OUTPUT: non negative real number
 
         EXAMPLES::
 
@@ -1833,9 +1821,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         between the rightmost and the leftmost `x`-coordinate of each
         points traced by it.
 
-        OUTPUT:
-
-        non negative real number
+        OUTPUT: non negative real number
 
         EXAMPLES::
 

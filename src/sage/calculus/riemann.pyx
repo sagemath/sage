@@ -670,9 +670,7 @@ cdef class Riemann_Map:
         - ``pt`` -- A complex number (usually with absolute value <= 1)
           representing the point to be inverse mapped.
 
-        OUTPUT:
-
-        The point on the region that Riemann maps to the input point.
+        OUTPUT: the point on the region that Riemann maps to the input point
 
         EXAMPLES:
 

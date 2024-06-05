@@ -35,9 +35,7 @@ def _principal_part(mat):
 
     - ``mat`` -- a matrix with at least as many rows as columns
 
-    OUTPUT:
-
-    The top square part of the matrix ``mat``.
+    OUTPUT: the top square part of the matrix ``mat``
 
     EXAMPLES::
 

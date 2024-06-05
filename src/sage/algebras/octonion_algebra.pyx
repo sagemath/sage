@@ -451,9 +451,7 @@ cdef class Octonion_generic(AlgebraElement):
         r"""
         Return the real part of ``self``.
 
-        OUTPUT:
-
-        The real part of ``self`` as an element in the base ring.
+        OUTPUT: the real part of ``self`` as an element in the base ring
 
         EXAMPLES::
 
@@ -471,9 +469,7 @@ cdef class Octonion_generic(AlgebraElement):
         r"""
         Return the imginary part of ``self``.
 
-        OUTPUT:
-
-        The imaginary part of ``self`` as an element in the octonion algebra.
+        OUTPUT: the imaginary part of ``self`` as an element in the octonion algebra
 
         EXAMPLES::
 

@@ -89,9 +89,7 @@ def q_bernoulli_polynomial(m):
 
     - `m` -- a nonnegative integer
 
-    OUTPUT:
-
-    A polynomial in one variable `x`.
+    OUTPUT: a polynomial in one variable `x`
 
     EXAMPLES::
 

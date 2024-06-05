@@ -2224,9 +2224,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
         Return a generator ``mg`` and a path of `e_i` and `f_i` operations
         to ``mg``.
 
-        OUTPUT:
-
-        A tuple consisting of:
+        OUTPUT: a tuple consisting of:
 
         - a module generator,
         - a list of ``'e'`` and ``'f'`` to denote which operation, and

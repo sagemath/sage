@@ -199,7 +199,7 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
                 r"""
                 Return an iterable containing some elements of the semigroup.
 
-                OUTPUT: the ten first elements of the semigroup, if they exist.
+                OUTPUT: the ten first elements of the semigroup, if they exist
 
                 EXAMPLES::
 

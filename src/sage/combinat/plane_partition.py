@@ -62,9 +62,7 @@ class PlanePartition(ClonableArray,
       `y`-axis, `z`-axis, respectively; if this is not given, it is
       determined by the smallest box bounding ``PP``
 
-    OUTPUT:
-
-    The plane partition whose tableau representation is ``PP``.
+    OUTPUT: the plane partition whose tableau representation is ``PP``
 
     EXAMPLES::
 
@@ -162,9 +160,7 @@ class PlanePartition(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -355,9 +351,7 @@ class PlanePartition(ClonableArray,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
         - ``use_unicode`` -- boolean (default: ``False``); use unicode
 
-        OUTPUT:
-
-        A string of the 3D diagram of the plane partition.
+        OUTPUT: a string of the 3D diagram of the plane partition
 
         EXAMPLES::
 
@@ -508,9 +502,7 @@ class PlanePartition(ClonableArray,
         - ``show_box`` -- boolean (default: ``False``); if ``True``,
           also shows the visible tiles on the `xy`-, `yz`-, `zx`-planes
 
-        OUTPUT:
-
-        A pretty print of the plane partition.
+        OUTPUT: a pretty print of the plane partition
 
         EXAMPLES::
 
@@ -616,9 +608,7 @@ class PlanePartition(ClonableArray,
         - ``colors`` -- (default: ``["white", "lightgray", "darkgray"]``)
           list ``[A, B, C]`` of 3 strings representing colors
 
-        OUTPUT:
-
-        Latex code for drawing the plane partition.
+        OUTPUT: latex code for drawing the plane partition
 
         EXAMPLES::
 

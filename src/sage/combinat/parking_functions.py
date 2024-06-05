@@ -135,9 +135,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
     - ``labelled_dyck_word`` -- (default: ``None``) a Dyck word with 1's
       replaced by labelling
 
-    OUTPUT:
-
-    A parking function
+    OUTPUT: a parking function
 
     EXAMPLES::
 

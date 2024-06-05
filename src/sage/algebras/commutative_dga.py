@@ -116,9 +116,7 @@ def sorting_keys(element):
 
     - ``element`` -- A CohomologyClass
 
-    OUTPUT:
-
-    Its coordinates in the corresponding ``cohomology_raw`` quotient vector space
+    OUTPUT: its coordinates in the corresponding ``cohomology_raw`` quotient vector space
 
     EXAMPLES::
 
@@ -1096,9 +1094,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         - ``n`` -- integer
 
-        OUTPUT:
-
-        Tuple of basis elements in degree `n`, as tuples of exponents.
+        OUTPUT: tuple of basis elements in degree `n`, as tuples of exponents
 
         EXAMPLES::
 
@@ -1593,9 +1589,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             - ``values`` -- (optional) either the values in which the variables
               will be evaluated or a dictionary
 
-            OUTPUT:
-
-            this element evaluated at the given values
+            OUTPUT: this element evaluated at the given values
 
             EXAMPLES::
 
@@ -1675,9 +1669,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
               ``True``, it returns the coefficients with respect to
               the basis for the total degree of this element
 
-            OUTPUT:
-
-            A list of elements of the base field.
+            OUTPUT: a list of elements of the base field
 
             EXAMPLES::
 

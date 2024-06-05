@@ -1051,9 +1051,7 @@ class FiniteWords(AbstractLanguage):
           length of the images of each letter in the alphabet is at least
           ``min_length``. This is ignored if ``arg`` is a list.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES:
 

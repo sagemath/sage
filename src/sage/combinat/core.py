@@ -425,7 +425,7 @@ class Core(CombinatorialElement):
 
         - ``other`` -- another `k`-core
 
-        OUTPUT: a boolean
+        OUTPUT: boolean
 
         This returns whether ``self`` <= ``other`` in weak order.
 
@@ -484,7 +484,7 @@ class Core(CombinatorialElement):
 
         - ``other`` -- another `k`-core
 
-        OUTPUT: a boolean
+        OUTPUT: boolean
 
         This returns whether ``self`` <= ``other`` in Bruhat (or strong) order.
 
@@ -518,7 +518,7 @@ class Core(CombinatorialElement):
 
         - ``other`` -- another `k`-core or a list
 
-        OUTPUT: a boolean
+        OUTPUT: boolean
 
         This returns ``True`` if the Ferrers diagram of ``self`` contains the
         Ferrers diagram of ``other``.

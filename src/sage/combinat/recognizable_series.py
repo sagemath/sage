@@ -123,9 +123,7 @@ class PrefixClosedSet:
         r"""
         A representation string of this prefix-closed set
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -179,9 +177,7 @@ class PrefixClosedSet:
         r"""
         Return an iterator over all elements including possible new elements.
 
-        OUTPUT:
-
-        An iterator
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -261,9 +257,7 @@ class PrefixClosedSet:
 
         See also Proposition 2.3.1 of [BR2010a]_.
 
-        OUTPUT:
-
-        A list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -294,9 +288,7 @@ def minimize_result(operation):
 
     - ``operation`` -- a method
 
-    OUTPUT:
-
-    A method with the following additional argument:
+    OUTPUT: a method with the following additional argument:
 
     - ``minimize`` -- (default: ``None``) a boolean or ``None``.
       If ``True``, then :meth:`minimized` is called after the operation,
@@ -569,9 +561,7 @@ class RecognizableSeries(ModuleElement):
         - ``latex`` -- (default: ``False``) a boolean. If set, then
           LaTeX-output is returned.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -638,9 +628,7 @@ class RecognizableSeries(ModuleElement):
         r"""
         A LaTeX-representation string for this recognizable series.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         TESTS::
 
@@ -710,9 +698,7 @@ class RecognizableSeries(ModuleElement):
         r"""
         Return :meth:`mu <mu>` applied on the empty word.
 
-        OUTPUT:
-
-        A matrix
+        OUTPUT: a matrix
 
         TESTS::
 
@@ -748,9 +734,7 @@ class RecognizableSeries(ModuleElement):
         - ``w`` -- a word over the parent's
           :meth:`~RecognizableSeriesSpace.alphabet`
 
-        OUTPUT:
-
-        A matrix
+        OUTPUT: a matrix
 
         TESTS::
 
@@ -941,9 +925,7 @@ class RecognizableSeries(ModuleElement):
 
         - ``other`` -- an object
 
-        OUTPUT:
-
-        A boolean
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -995,9 +977,7 @@ class RecognizableSeries(ModuleElement):
 
         - ``other`` -- an object
 
-        OUTPUT:
-
-        A boolean
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1022,9 +1002,7 @@ class RecognizableSeries(ModuleElement):
         r"""
         Return the transposed series.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         Each of the matrices in :meth:`mu <mu>` is transposed. Additionally
         the vectors :meth:`left <left>` and :meth:`right <right>` are switched.
@@ -1077,9 +1055,7 @@ class RecognizableSeries(ModuleElement):
         If this is not the case, then the coefficients are
         automatically coerced to their fraction field.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         ALGORITHM:
 
@@ -1139,9 +1115,7 @@ class RecognizableSeries(ModuleElement):
         Return a recognizable series equivalent to this series, but
         with a right minimized linear representation.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         See :meth:`minimized` for details.
 
@@ -1161,9 +1135,7 @@ class RecognizableSeries(ModuleElement):
         Return a recognizable series equivalent to this series, but
         with a left minimized linear representation.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         See :meth:`minimized` for details.
 
@@ -1276,9 +1248,7 @@ class RecognizableSeries(ModuleElement):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`.
+        OUTPUT: a :class:`RecognizableSeries`
 
         EXAMPLES::
 
@@ -1315,9 +1285,7 @@ class RecognizableSeries(ModuleElement):
         r"""
         Return the additive inverse of this recognizable series.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         EXAMPLES::
 
@@ -1342,9 +1310,7 @@ class RecognizableSeries(ModuleElement):
 
         - ``other`` -- an element of the coefficient (semi-)ring
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         EXAMPLES::
 
@@ -1406,9 +1372,7 @@ class RecognizableSeries(ModuleElement):
 
         - ``other`` -- an element of the coefficient (semi-)ring
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         EXAMPLES::
 
@@ -1476,9 +1440,7 @@ class RecognizableSeries(ModuleElement):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         EXAMPLES::
 
@@ -1802,9 +1764,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         r"""
         Return the alphabet of this recognizable series space.
 
-        OUTPUT:
-
-        A totally ordered set
+        OUTPUT: a totally ordered set
 
         EXAMPLES::
 
@@ -1822,9 +1782,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         r"""
         Return the indices of the recognizable series.
 
-        OUTPUT:
-
-        The set of finite words over the alphabet
+        OUTPUT: the set of finite words over the alphabet
 
         EXAMPLES::
 
@@ -1871,9 +1829,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         Return a representation string of this recognizable sequence
         space.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         TESTS::
 
@@ -1888,9 +1844,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         r"""
         Return an element of this recognizable series space.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         EXAMPLES::
 
@@ -1917,9 +1871,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         - ``kwds`` are passed on to the element constructor
 
-        OUTPUT:
-
-        An iterator
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -2015,9 +1967,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         :meth:`~RecognizableSeries.hadamard_product`, i.e. the
         coefficient-wise multiplication.
 
-        OUTPUT:
-
-        A :class:`RecognizableSeries`
+        OUTPUT: a :class:`RecognizableSeries`
 
         EXAMPLES::
 

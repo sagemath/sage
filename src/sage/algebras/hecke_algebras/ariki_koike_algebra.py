@@ -899,9 +899,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             - ``w`` -- the permutation ``w``
             - ``v`` -- the permutation ``v``
 
-            OUTPUT:
-
-            The corresponding element represented as a ``dict``.
+            OUTPUT: the corresponding element represented as a ``dict``
 
             EXAMPLES::
 
@@ -1564,9 +1562,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             r"""
             Return `p` such that `T0^{r-1} - p = \prod_{i=0}^{r-1} (T_0 - u_i)`.
 
-            OUTPUT:
-
-            A ``dict`` representing the polynomial `p`.
+            OUTPUT: a ``dict`` representing the polynomial `p`
 
             EXAMPLES::
 

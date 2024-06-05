@@ -94,7 +94,7 @@ class SemisimpleAlgebras(Category_over_base_ring):
 
             - ``keywords`` -- for compatibility; ignored.
 
-            OUTPUT: the empty list since this algebra is semisimple.
+            OUTPUT: the empty list since this algebra is semisimple
 
             EXAMPLES::
 

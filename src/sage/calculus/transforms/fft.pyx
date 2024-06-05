@@ -126,7 +126,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         """
         Return the size of the array.
 
-        OUTPUT: The size of the array.
+        OUTPUT: the size of the array
 
         EXAMPLES::
 

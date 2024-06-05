@@ -13,9 +13,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     - ``i`` -- the position where to flip
     - ``side`` -- optional, can be ``'positive'``, ``'negative'`` or ``'both'`` (default)
 
-    OUTPUT:
-
-    the new position `j` that has replaced `i`
+    OUTPUT: the new position `j` that has replaced `i`
 
     EXAMPLES::
 
