@@ -198,7 +198,9 @@ jobs:
             TARGETS=${{ steps.build-targets.outputs.build_targets }}
 
       - name: Start container
-        if: steps.changed-files.outputs.doctests_all_changed_files
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure()) && steps.changed-files.outputs.doctests_all_changed_files
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -208,7 +210,7 @@ jobs:
       # Testing
 
       - name: Check that all modules can be imported
-        if: steps.changed-files.outputs.doctests_all_changed_files
+        if: (success() || failure()) && steps.container.outcome == 'success' && steps.changed-files.outputs.doctests_all_changed_files
         run: |
           # Increase the length of the lines in the "short summary"
           export COLUMNS=120
@@ -220,7 +222,7 @@ jobs:
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Test changed files (sage -t --new)
-        if: steps.changed-files.outputs.doctests_all_changed_files
+        if: (success() || failure()) && steps.container.outcome == 'success' && steps.changed-files.outputs.doctests_all_changed_files
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
           # https://github.com/tj-actions/changed-files?tab=readme-ov-file#outputs-
@@ -305,6 +307,8 @@ jobs:
             TARGETS=${{ needs.test-new.outputs.build_targets }}
 
       - name: Start container
+        id: container
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -314,6 +318,7 @@ jobs:
       # Testing
 
       - name: Test modularized distributions
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
           make V=0 tox-ensure && make ${{ matrix.targets }}
@@ -401,6 +406,7 @@ jobs:
 
       - name: Start container
         id: container
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -410,6 +416,7 @@ jobs:
       # Testing
 
       - name: Test all files (sage -t --long ${{ matrix.tests }})
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           mkdir .coverage
           rm -rf /sage/.coverage
@@ -513,6 +520,7 @@ jobs:
 
       - name: Start container
         id: container
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -526,8 +534,10 @@ jobs:
         with:
           path: .coverage
           pattern: coverage-*
+        if: (success() || failure()) && steps.container.outcome == 'success'
 
       - name: Coverage report
+        if: (success() || failure()) && steps.container.outcome == 'success'
         # Using --omit to avoid "CoverageWarning: Couldn't parse '/tmp/tmp06qizzie/tmp_ldpu46ob.py': No source for code"
         run: |
           rm -rf /sage/.coverage
@@ -541,6 +551,7 @@ jobs:
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Upload coverage to codecov
+        if: (success() || failure()) && steps.container.outcome == 'success'
         uses: codecov/codecov-action@v4
         with:
           directory: .coverage/coverage-report
