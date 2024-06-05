@@ -709,9 +709,7 @@ def get_test_shell():
     Return a IPython shell that can be used in testing the functions
     in this module.
 
-    OUTPUT:
-
-    An IPython shell
+    OUTPUT: an IPython shell
 
     EXAMPLES::
 

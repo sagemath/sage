@@ -151,9 +151,7 @@ class Property(property):
         """
         Return a string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -173,9 +171,7 @@ class Property(property):
         - ``prefs`` -- the :class:`PreferencesABC` instance that the
           property is bound to.
 
-        OUTPUT:
-
-        One of the allowed values or ``None`` if not set.
+        OUTPUT: one of the allowed values or ``None`` if not set
 
         EXAMPLES::
 
@@ -377,9 +373,7 @@ class PreferencesABC(SageObject):
         r"""
         Return a string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

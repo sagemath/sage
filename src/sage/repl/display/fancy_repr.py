@@ -35,9 +35,7 @@ class ObjectReprABC():
         """
         Return string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -81,9 +79,7 @@ class ObjectReprABC():
 
         - ``obj`` -- anything. Object to format.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

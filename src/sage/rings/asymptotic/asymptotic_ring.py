@@ -739,9 +739,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         r"""
         Return whether this asymptotic expansion is not identically zero.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -763,9 +761,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an object.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -805,9 +801,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an object.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -838,9 +832,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an asymptotic expansion.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -886,9 +878,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an :class:`AsymptoticExpansion`.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -913,9 +903,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         r"""
         Simplify this asymptotic expansion.
 
-        OUTPUT:
-
-        Nothing, but modifies this asymptotic expansion.
+        OUTPUT: nothing, but modifies this asymptotic expansion
 
         .. NOTE::
 
@@ -954,9 +942,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``latex`` -- (default: ``False``) a boolean. If set, then
           LaTeX-output is returned.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -983,9 +969,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         r"""
         A LaTeX-representation string for this asymptotic expansion.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -1031,9 +1015,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``monomial`` -- a monomial element which can be converted
           into the asymptotic ring of this element
 
-        OUTPUT:
-
-        An element of the coefficient ring.
+        OUTPUT: an element of the coefficient ring
 
         EXAMPLES::
 
@@ -1114,9 +1096,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an :class:`AsymptoticExpansion`.
 
-        OUTPUT:
-
-        The sum as an :class:`AsymptoticExpansion`.
+        OUTPUT: the sum as an :class:`AsymptoticExpansion`
 
         EXAMPLES::
 
@@ -1151,9 +1131,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an :class:`AsymptoticExpansion`.
 
-        OUTPUT:
-
-        The difference as an :class:`AsymptoticExpansion`.
+        OUTPUT: the difference as an :class:`AsymptoticExpansion`
 
         .. NOTE::
 
@@ -1181,9 +1159,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``term`` -- an asymptotic term (see
           :doc:`term_monoid`).
 
-        OUTPUT:
-
-        The product as an :class:`AsymptoticExpansion`.
+        OUTPUT: the product as an :class:`AsymptoticExpansion`
 
         TESTS::
 
@@ -1209,9 +1185,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an :class:`AsymptoticExpansion`.
 
-        OUTPUT:
-
-        The product as an :class:`AsymptoticExpansion`.
+        OUTPUT: the product as an :class:`AsymptoticExpansion`
 
         EXAMPLES::
 
@@ -1249,9 +1223,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an element of the coefficient ring.
 
-        OUTPUT:
-
-        An :class:`AsymptoticExpansion`.
+        OUTPUT: an :class:`AsymptoticExpansion`
 
         TESTS::
 
@@ -1274,9 +1246,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``other`` -- an asymptotic expansion.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -1310,9 +1280,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           expansion. If ``None`` (default value) is used, the
           default precision of the parent is used.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         .. WARNING::
 
@@ -1397,9 +1365,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           summands that are kept. If ``None`` (default value) is
           given, then ``default_prec`` from the parent is used.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         .. NOTE::
 
@@ -1444,9 +1410,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         Return the expansion consisting of all exact terms of this
         expansion.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -1476,9 +1440,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         Return the expansion consisting of all error terms of this
         expansion.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -1504,9 +1466,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           expansion. If ``None`` (default value) is used, the
           default precision of the parent is used.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -1727,9 +1687,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           then an additional check on the input is performed to ensure
           that the calculated sum converges.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         .. SEEALSO::
 
@@ -1861,9 +1819,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           expansion. If ``None`` (default value) is used, the
           default precision of the parent is used.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -1892,9 +1848,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         r"""
         Convert all terms in this asymptotic expansion to `O`-terms.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -1947,9 +1901,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         .. NOTE::
 
@@ -2066,9 +2018,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         r"""
         Return whether all terms of this expansion are exact.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2091,9 +2041,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         r"""
         Return whether this expansion is of order `o(1)`.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2140,9 +2088,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -2343,9 +2289,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``precision`` -- a non-negative integer. All intermediate
           results are truncated to this precision.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         TESTS::
 
@@ -2394,9 +2338,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           expansion. If ``None`` (default value) is used, the
           default precision of the parent is used.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         .. NOTE::
 
@@ -2469,9 +2411,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           ``'_one_'``, see note box below) are taken out of this
           domain. If ``None``, then this is determined automatically.
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         .. NOTE::
 
@@ -2687,9 +2627,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           The neutral element of the asymptotic ring is replaced by the value
           to key ``'_zero_'``.
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -2913,9 +2851,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         Other keyword arguments are passed to :func:`list_plot`.
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         .. NOTE::
 
@@ -2991,9 +2927,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -3048,9 +2982,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         - ``new_coefficient_ring`` -- (default: ``None``) a ring.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -3095,9 +3027,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         r"""
         Return the factorial of this asymptotic expansion.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -3196,9 +3126,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         r"""
         Return the names of the variables of this asymptotic expansion.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -3241,9 +3169,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``precision`` -- (default: ``None``) an integer. If ``None``, then
           the default precision of the parent of this expansion is used.
 
-        OUTPUT:
-
-        An asymptotic expansion in ``var``.
+        OUTPUT: an asymptotic expansion in ``var``
 
         EXAMPLES::
 
@@ -3316,9 +3242,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         """
         Compute the limit of this asymptotic expansion.
 
-        OUTPUT:
-
-        An element of the coefficient ring.
+        OUTPUT: an element of the coefficient ring
 
         EXAMPLES::
 
@@ -3369,9 +3293,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
           is passed to ``valid_from``, then the lower bounds for all variables of
           the asymptotic expansion are set to this number
 
-        OUTPUT:
-
-        An asymptotic expansion
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -3815,9 +3737,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
 
         - ``default_prec`` -- (default: ``None``) the new default precision.
 
-        OUTPUT:
-
-        An asymptotic ring.
+        OUTPUT: an asymptotic ring
 
         EXAMPLES::
 
@@ -3858,9 +3778,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         Create an empty data structure suitable for storing and working
         with summands.
 
-        OUTPUT:
-
-        A :class:`~sage.data_structures.mutable_poset.MutablePoset`.
+        OUTPUT: a :class:`~sage.data_structures.mutable_poset.MutablePoset`
 
         TESTS::
 
@@ -3886,9 +3804,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
           parent. If both are the same or ``old_parent`` is ``None``,
           then the result is an expansion in this (``self``) asymptotic ring.
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -3938,9 +3854,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
           caller must ensure that the parent of the terms is set
           correctly.
 
-        OUTPUT:
-
-        An element of this asymptotic ring.
+        OUTPUT: an element of this asymptotic ring
 
         TESTS::
 
@@ -4151,9 +4065,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
 
         - ``R`` -- a parent.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -4200,9 +4112,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         r"""
         A representation string of this asymptotic ring.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4221,9 +4131,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         r"""
         Return an element of this asymptotic ring.
 
-        OUTPUT:
-
-        An :class:`AsymptoticExpansion`.
+        OUTPUT: an :class:`AsymptoticExpansion`
 
         EXAMPLES::
 
@@ -4245,9 +4153,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
 
         See :class:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -4277,9 +4183,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         r"""
         Return a tuple with generators of this asymptotic ring.
 
-        OUTPUT:
-
-        A tuple of asymptotic expansions.
+        OUTPUT: a tuple of asymptotic expansions
 
         .. NOTE::
 
@@ -4311,9 +4215,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
 
         - ``n`` -- (default: `0`) a non-negative integer.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -4327,9 +4229,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         r"""
         Return the number of generators of this asymptotic ring.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4504,9 +4404,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             Either ``growth`` and ``coefficient`` or ``data`` have to
             be specified.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         .. NOTE::
 
@@ -4581,9 +4479,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         r"""
         Return the names of the variables.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -4739,9 +4635,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
         r"""
         Return a representation string of this functor.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -4768,9 +4662,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
 
         - ``base`` -- anything :class:`~sage.rings.asymptotic.growth_group.MonomialGrowthGroup` accepts.
 
-        OUTPUT:
-
-        An :class:`AsymptoticRing`.
+        OUTPUT: an :class:`AsymptoticRing`
 
         EXAMPLES::
 
@@ -4820,9 +4712,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
 
         - ``other`` -- a functor.
 
-        OUTPUT:
-
-        A functor or ``None``.
+        OUTPUT: a functor or ``None``
 
         EXAMPLES::
 
@@ -4916,9 +4806,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
 
         - ``other`` -- a functor.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4945,9 +4833,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
 
         - ``other`` -- a functor.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

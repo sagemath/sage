@@ -200,9 +200,7 @@ def ColorCube(size, colors, opacity=1, **kwds):
     - ``opacity`` -- (default: 1) opacity of cube sides
     - ``**kwds`` -- passed to the face constructor
 
-    OUTPUT:
-
-    a 3d graphics object
+    OUTPUT: a 3d graphics object
 
     EXAMPLES:
 
@@ -987,9 +985,7 @@ cdef class Torus(ParametricSurface):
     - ``R`` -- (default: ``1``) outer radius
     - ``r`` -- (default: ``.3``) inner radius
 
-    OUTPUT:
-
-    a 3d torus
+    OUTPUT: a 3d torus
 
     EXAMPLES::
 

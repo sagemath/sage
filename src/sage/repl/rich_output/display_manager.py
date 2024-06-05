@@ -213,9 +213,7 @@ class DisplayManager(SageObject):
         This class method is equivalent to
         :func:`get_display_manager`.
 
-        OUTPUT:
-
-        The display manager singleton.
+        OUTPUT: the display manager singleton
 
         EXAMPLES::
 
@@ -232,9 +230,7 @@ class DisplayManager(SageObject):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -282,9 +278,7 @@ class DisplayManager(SageObject):
           :meth:`~sage.repl.rich_output.backend_base.BackendBase.install`
           method.
 
-        OUTPUT:
-
-        The previous backend.
+        OUTPUT: the previous backend
 
         EXAMPLES::
 
@@ -409,9 +403,7 @@ class DisplayManager(SageObject):
         - ``output_class`` -- a possibly derived class from one of the
           output container classes in :meth:`types`.
 
-        OUTPUT:
-
-        The underlying container class that it was derived from.
+        OUTPUT: the underlying container class that it was derived from
 
         EXAMPLES::
 
@@ -686,9 +678,7 @@ class DisplayManager(SageObject):
         - ``dpi`` -- integer (optional). The desired resolution in dots
           per inch. Suggested, but need not be respected by the output.
 
-        OUTPUT:
-
-        Return an instance of ``output_container``.
+        OUTPUT: return an instance of ``output_container``
 
         EXAMPLES::
 
@@ -731,9 +721,7 @@ class DisplayManager(SageObject):
 
         - ``online`` -- Boolean determining script usage context
 
-        OUTPUT:
-
-        String containing script tag
+        OUTPUT: string containing script tag
 
         .. NOTE::
 
@@ -799,9 +787,7 @@ class DisplayManager(SageObject):
 
         - ``obj`` -- anything. The object to be shown.
 
-        OUTPUT:
-
-        Returns whatever the backend's displayhook method returned.
+        OUTPUT: returns whatever the backend's displayhook method returned
 
         EXAMPLES::
 

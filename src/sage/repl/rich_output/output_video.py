@@ -51,9 +51,7 @@ class OutputVideoBase(OutputBase):
         :class:`OutputVideoBase` class, but should get invoked on a
         concrete subclass for which an actual example can exist.
 
-        OUTPUT:
-
-        An instance of the class on which this method is called.
+        OUTPUT: an instance of the class on which this method is called
 
         EXAMPLES::
 

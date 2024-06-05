@@ -1038,9 +1038,7 @@ class Module_free_ambient(Module):
 
         See :class:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -2532,9 +2530,7 @@ class FreeModule_generic(Module_free_ambient):
         r"""
         Return the cardinality of the free module.
 
-        OUTPUT:
-
-        Either an integer or ``+Infinity``.
+        OUTPUT: either an integer or ``+Infinity``
 
         EXAMPLES::
 

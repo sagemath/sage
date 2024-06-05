@@ -769,9 +769,7 @@ cdef class GLPKGraphBackend():
         """
         Returns a ``list`` of all edges in the graph
 
-        OUTPUT:
-
-        A ``list`` of ``triples`` representing the edges of the graph.
+        OUTPUT: a ``list`` of ``triples`` representing the edges of the graph
 
         EXAMPLES::
 
@@ -1041,9 +1039,7 @@ cdef class GLPKGraphBackend():
 
         - ``fname`` -- full name of the file
 
-        OUTPUT:
-
-        Zero if the operations was successful otherwise nonzero
+        OUTPUT: zero if the operations was successful otherwise nonzero
 
         EXAMPLES::
 
@@ -1073,9 +1069,7 @@ cdef class GLPKGraphBackend():
 
         - ``fname`` -- full name of the file
 
-        OUTPUT:
-
-        Zero if the operations was successful otherwise nonzero
+        OUTPUT: zero if the operations was successful otherwise nonzero
 
         EXAMPLES::
 
@@ -1101,9 +1095,7 @@ cdef class GLPKGraphBackend():
 
         - ``fname`` -- Full name of file
 
-        OUTPUT:
-
-        Zero if successful, otherwise nonzero
+        OUTPUT: zero if successful, otherwise nonzero
 
         EXAMPLES::
 
@@ -1249,9 +1241,7 @@ cdef class GLPKGraphBackend():
         ``u`` and ``v``, the head and tail vertex are stored for
         later use.
 
-        OUTPUT:
-
-        The solution to the maxflow problem, i.e. the maximum flow.
+        OUTPUT: the solution to the maxflow problem, i.e. the maximum flow
 
         .. NOTE::
 
@@ -1326,9 +1316,7 @@ cdef class GLPKGraphBackend():
         r"""
         Solves the critical path problem of a project network.
 
-        OUTPUT:
-
-        The length of the critical path of the network
+        OUTPUT: the length of the critical path of the network
 
         EXAMPLES::
 

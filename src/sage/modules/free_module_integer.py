@@ -484,9 +484,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         r"""
         Return `vol(L)` which is `\sqrt{\det(B \cdot B^T)}` for any basis `B`.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -505,9 +503,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         Return `|\det(G)|`, i.e. the absolute value of the determinant of the
         Gram matrix `B \cdot B^T` for any basis `B`.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -522,9 +518,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         Return ``True`` if this lattice is unimodular.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -611,9 +605,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``w`` -- a vector
 
-        OUTPUT:
-
-        Nothing is returned but the internal state is modified.
+        OUTPUT: nothing is returned but the internal state is modified
 
         EXAMPLES::
 
@@ -641,9 +633,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         - ``radius`` -- (default: automatic determination) radius of ball
           containing considered vertices
 
-        OUTPUT:
-
-        The Voronoi cell as a Polyhedron instance.
+        OUTPUT: the Voronoi cell as a Polyhedron instance
 
         The result is cached so that subsequent calls to this function
         return instantly.
@@ -702,9 +692,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         Compute the embedded vectors inducing the Voronoi cell.
 
-        OUTPUT:
-
-        The list of Voronoi relevant vectors.
+        OUTPUT: the list of Voronoi relevant vectors
 
         EXAMPLES::
 
@@ -744,9 +732,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``t`` -- the target vector to compute the closest vector to
 
-        OUTPUT:
-
-        The vector in the lattice closest to ``t``.
+        OUTPUT: the vector in the lattice closest to ``t``
 
         EXAMPLES::
 
@@ -831,9 +817,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``**kwds`` -- passed through to :meth:`LLL`
 
-        OUTPUT:
-
-        The vector `w` described above.
+        OUTPUT: the vector `w` described above
 
         EXAMPLES::
 

@@ -406,9 +406,7 @@ class Variable(CachedRepresentation, SageObject):
 
         - ``other`` -- another variable.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -428,9 +426,7 @@ class Variable(CachedRepresentation, SageObject):
 
         - ``other`` -- another variable.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -446,9 +442,7 @@ class Variable(CachedRepresentation, SageObject):
         r"""
         Return a representation string of this variable.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -462,9 +456,7 @@ class Variable(CachedRepresentation, SageObject):
         r"""
         Return a LaTeX-representation string of this variable.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -482,9 +474,7 @@ class Variable(CachedRepresentation, SageObject):
         r"""
         Return the names of the variables.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -500,9 +490,7 @@ class Variable(CachedRepresentation, SageObject):
         r"""
         Return whether this is a monomial variable.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -523,9 +511,7 @@ class Variable(CachedRepresentation, SageObject):
 
         - ``s`` -- a string.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -603,9 +589,7 @@ class Variable(CachedRepresentation, SageObject):
 
         - ``rules`` -- a dictionary.
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -781,9 +765,7 @@ def _is_lt_one_(self):
 
     Nothing.
 
-    OUTPUT:
-
-    A boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -809,9 +791,7 @@ def _log_(self, base=None):
     - ``base`` -- the base of the logarithm. If ``None``
       (default value) is used, the natural logarithm is taken.
 
-    OUTPUT:
-
-    A growth element.
+    OUTPUT: a growth element
 
     EXAMPLES::
 
@@ -1002,9 +982,7 @@ def _rpow_(self, base):
 
     - ``base`` -- an element.
 
-    OUTPUT:
-
-    A growth element.
+    OUTPUT: a growth element
 
     EXAMPLES::
 
@@ -1211,9 +1189,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1238,9 +1214,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         Nothing.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1284,9 +1258,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         r"""
         Return the inverse of this growth element.
 
-        OUTPUT:
-
-        An instance of :class:`GenericGrowthElement`.
+        OUTPUT: an instance of :class:`GenericGrowthElement`
 
         TESTS::
 
@@ -1319,9 +1291,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         - ``other`` -- a :class:`GenericGrowthElement`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1390,9 +1360,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         - ``other`` -- a :class:`GenericGrowthElement`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1469,9 +1437,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         - ``base`` -- an element.
 
-        OUTPUT:
-
-        Nothing since a ``ValueError`` is raised in this generic method.
+        OUTPUT: nothing since a ``ValueError`` is raised in this generic method
 
         TESTS::
 
@@ -1495,9 +1461,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         Nothing.
 
-        OUTPUT:
-
-        A tuple of growth elements.
+        OUTPUT: a tuple of growth elements
 
         EXAMPLES::
 
@@ -1518,9 +1482,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
 
         - ``rules`` -- a dictionary.
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -1543,9 +1505,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         r"""
         Return the names of the variables of this growth element.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -1622,9 +1582,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
           the ranges where the absolute value of the variable designated by the
           key is at least the corresponding value
 
-        OUTPUT:
-
-        A number
+        OUTPUT: a number
 
         TESTS::
 
@@ -1787,9 +1745,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         - ``base`` -- a SageMath parent
 
-        OUTPUT:
-
-        A category or ``None``.
+        OUTPUT: a category or ``None``
 
         TESTS::
 
@@ -1895,9 +1851,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1925,9 +1879,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
           output is returned, e.g. the prefix-string ``Growth Group``
           is not show in this case.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1953,9 +1905,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2009,9 +1959,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -2037,9 +1985,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         - ``raw_element`` -- the element data.
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -2068,9 +2014,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         - ``right`` -- an element.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -2104,9 +2048,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
           directly passed to the element constructor (i.e., no conversion
           is performed).
 
-        OUTPUT:
-
-        An element of this growth group.
+        OUTPUT: an element of this growth group
 
         .. NOTE::
 
@@ -2313,9 +2255,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         - ``raw_element`` -- an object
 
-        OUTPUT:
-
-        A pair of objects.
+        OUTPUT: a pair of objects
 
         .. NOTE::
 
@@ -2341,9 +2281,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         - ``S`` -- a parent.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -2471,9 +2409,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        An empty tuple.
+        OUTPUT: an empty tuple
 
         .. NOTE::
 
@@ -2507,9 +2443,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        A tuple whose entries are growth elements.
+        OUTPUT: a tuple whose entries are growth elements
 
         EXAMPLES::
 
@@ -2530,9 +2464,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         - ``n`` -- default: `0`.
 
-        OUTPUT:
-
-        A :class:`MonomialGrowthElement`.
+        OUTPUT: a :class:`MonomialGrowthElement`
 
         EXAMPLES::
 
@@ -2559,9 +2491,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        A Python integer.
+        OUTPUT: a Python integer
 
         EXAMPLES::
 
@@ -2584,9 +2514,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         r"""
         Return the names of the variables of this growth group.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -2618,9 +2546,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         Extend to a cartesian product of this growth group
         and a suitable non growth group.
 
-        OUTPUT:
-
-        A group group.
+        OUTPUT: a group group
 
         EXAMPLES::
 
@@ -2647,9 +2573,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         r"""
         Return a non-growth group compatible with this growth group.
 
-        OUTPUT:
-
-        A group group.
+        OUTPUT: a group group
 
         EXAMPLES::
 
@@ -2716,9 +2640,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
         r"""
         Return a representation string of this functor.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -2736,9 +2658,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
         - ``other`` -- a functor.
 
-        OUTPUT:
-
-        A functor or ``None``.
+        OUTPUT: a functor or ``None``
 
         EXAMPLES::
 
@@ -2761,9 +2681,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
         - ``other`` -- a functor.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2785,9 +2703,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
         - ``other`` -- a functor.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2887,9 +2803,7 @@ class MonomialGrowthElement(GenericGrowthElement):
         - ``latex`` -- (default: ``False``) a boolean. If set, then
           LaTeX-output is returned.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -2945,9 +2859,7 @@ class MonomialGrowthElement(GenericGrowthElement):
         r"""
         A LaTeX-representation string for this monomial growth element.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -2977,9 +2889,7 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         - ``other`` -- a :class:`MonomialGrowthElement`
 
-        OUTPUT:
-
-        The product as a :class:`MonomialGrowthElement`.
+        OUTPUT: the product as a :class:`MonomialGrowthElement`
 
         .. NOTE::
 
@@ -3009,9 +2919,7 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         Nothing.
 
-        OUTPUT:
-
-        The multiplicative inverse as a :class:`MonomialGrowthElement`.
+        OUTPUT: the multiplicative inverse as a :class:`MonomialGrowthElement`
 
         EXAMPLES::
 
@@ -3041,9 +2949,7 @@ class MonomialGrowthElement(GenericGrowthElement):
           valid right hand side of ``*`` with elements of the
           parent's base.
 
-        OUTPUT:
-
-        The result of this exponentiation, a :class:`MonomialGrowthElement`.
+        OUTPUT: the result of this exponentiation, a :class:`MonomialGrowthElement`
 
         EXAMPLES::
 
@@ -3161,9 +3067,7 @@ class MonomialGrowthElement(GenericGrowthElement):
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        A growth element.
+        OUTPUT: a growth element
 
         .. NOTE::
 
@@ -3229,9 +3133,7 @@ class MonomialGrowthElement(GenericGrowthElement):
 
         - ``other`` -- a :class:`MonomialGrowthElement`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -3258,9 +3160,7 @@ class MonomialGrowthElement(GenericGrowthElement):
           The neutral element of the group is replaced by the value
           to key ``'_one_'``.
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -3371,9 +3271,7 @@ class MonomialGrowthElement(GenericGrowthElement):
           the ranges where the absolute value of the variable designated by the
           key is at least the corresponding value
 
-        OUTPUT:
-
-        A number
+        OUTPUT: a number
 
         TESTS::
 
@@ -3487,9 +3385,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3657,9 +3553,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         - ``raw_element`` -- an object
 
-        OUTPUT:
-
-        A pair of objects.
+        OUTPUT: a pair of objects
 
         .. NOTE::
 
@@ -3685,9 +3579,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         Nothing.
 
-        OUTPUT:
-
-        A tuple containing elements of this growth group.
+        OUTPUT: a tuple containing elements of this growth group
 
         .. NOTE::
 
@@ -3718,9 +3610,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
 
         Nothing.
 
-        OUTPUT:
-
-        A tuple containing elements of this growth group.
+        OUTPUT: a tuple containing elements of this growth group
 
         .. NOTE::
 
@@ -3785,9 +3675,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
           then a tuple of the (cartesian) factors of this growth group
           is returned.
 
-        OUTPUT:
-
-        A growth group or tuple of growth groups.
+        OUTPUT: a growth group or tuple of growth groups
 
         EXAMPLES::
 
@@ -3830,9 +3718,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         (with an imaginary group as base)
         compatible with this monomial growth group.
 
-        OUTPUT:
-
-        A group group.
+        OUTPUT: a group group
 
         EXAMPLES::
 
@@ -3901,9 +3787,7 @@ class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
         - ``base`` -- anything :class:`MonomialGrowthGroup` accepts.
 
-        OUTPUT:
-
-        A monomial growth group.
+        OUTPUT: a monomial growth group
 
         EXAMPLES::
 
@@ -3995,9 +3879,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
         - ``latex`` -- (default: ``False``) a boolean. If set, then
           LaTeX-output is returned.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4049,9 +3931,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
         r"""
         A LaTeX-representation string for this exponential growth element.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -4092,9 +3972,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
         - ``other`` -- a :class:`ExponentialGrowthElement`
 
-        OUTPUT:
-
-        The product as a :class:`ExponentialGrowthElement`.
+        OUTPUT: the product as a :class:`ExponentialGrowthElement`
 
         .. NOTE::
 
@@ -4124,9 +4002,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
         Nothing.
 
-        OUTPUT:
-
-        The multiplicative inverse as a :class:`ExponentialGrowthElement`.
+        OUTPUT: the multiplicative inverse as a :class:`ExponentialGrowthElement`
 
         EXAMPLES::
 
@@ -4165,9 +4041,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
           on the right hand side of ``*`` with an elements of the
           parent's base.
 
-        OUTPUT:
-
-        The result of this exponentiation as an :class:`ExponentialGrowthElement`.
+        OUTPUT: the result of this exponentiation as an :class:`ExponentialGrowthElement`
 
         EXAMPLES::
 
@@ -4264,9 +4138,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
 
         - ``other`` -- a :class:`ExponentialGrowthElement`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -4301,9 +4173,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
           The neutral element of the group is replaced by the value
           to key ``'_one_'``.
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -4430,9 +4300,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4578,9 +4446,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
         - ``raw_element`` -- an object
 
-        OUTPUT:
-
-        A pair of objects.
+        OUTPUT: a pair of objects
 
         .. NOTE::
 
@@ -4723,9 +4589,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
         Nothing.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -4745,9 +4609,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
 
         Nothing.
 
-        OUTPUT:
-
-        An empty tuple.
+        OUTPUT: an empty tuple
 
         EXAMPLES::
 
@@ -4802,9 +4664,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
           then a tuple of the (cartesian) factors of this growth group
           is returned.
 
-        OUTPUT:
-
-        A growth group or tuple of growth groups.
+        OUTPUT: a growth group or tuple of growth groups
 
         EXAMPLES::
 
@@ -4866,9 +4726,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         (with an argument group, e.g. roots of unity, as base)
         compatible with this exponential growth group.
 
-        OUTPUT:
-
-        A group group.
+        OUTPUT: a group group
 
         EXAMPLES::
 
@@ -4950,9 +4808,7 @@ class ExponentialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
         - ``base`` -- anything :class:`ExponentialGrowthGroup` accepts.
 
-        OUTPUT:
-
-        An exponential growth group.
+        OUTPUT: an exponential growth group
 
         EXAMPLES::
 
@@ -5011,9 +4867,7 @@ class GenericNonGrowthGroup(GenericGrowthGroup):
 
         - ``base`` -- a SageMath parent
 
-        OUTPUT:
-
-        Always the category of posets.
+        OUTPUT: always the category of posets
 
         TESTS::
 
@@ -5131,9 +4985,7 @@ class ExponentialNonGrowthGroupFunctor(ExponentialGrowthGroupFunctor):
 
         - ``base`` -- anything :class:`ExponentialNonGrowthGroup` accepts.
 
-        OUTPUT:
-
-        An exponential argument growth group.
+        OUTPUT: an exponential argument growth group
 
         EXAMPLES::
 
@@ -5213,9 +5065,7 @@ class MonomialNonGrowthGroupFunctor(MonomialGrowthGroupFunctor):
 
         - ``base`` -- anything :class:`MonomialNonGrowthGroup` accepts.
 
-        OUTPUT:
-
-        An exponential argument growth group.
+        OUTPUT: an exponential argument growth group
 
         EXAMPLES::
 
@@ -5246,9 +5096,7 @@ class GrowthGroupFactory(UniqueFactory):
       ``ignore_variables=('e',)`` (to ignore ``e`` as a variable name)
       is used.
 
-    OUTPUT:
-
-    An asymptotic growth group.
+    OUTPUT: an asymptotic growth group
 
     .. NOTE::
 

@@ -529,9 +529,7 @@ class MultiGraphics(WithEqualityById, SageObject):
 
         All keyword arguments will be passed to the plotter.
 
-        OUTPUT:
-
-        A string of PGF commands to plot ``self``
+        OUTPUT: a string of PGF commands to plot ``self``
 
         EXAMPLES::
 

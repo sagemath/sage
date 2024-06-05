@@ -146,9 +146,7 @@ class TallListFormatter():
 
         - ``the_list`` -- list or tuple.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

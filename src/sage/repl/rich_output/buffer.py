@@ -90,9 +90,7 @@ class OutputBuffer(SageObject):
         - ``filename`` -- string. The filename under which the data is
           stored.
 
-        OUTPUT:
-
-        String containing the buffer data.
+        OUTPUT: string containing the buffer data
 
         EXAMPLES::
 
@@ -153,9 +151,7 @@ class OutputBuffer(SageObject):
         """
         Return a string representation
 
-        OUTPUT:
-
-        String
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -169,9 +165,7 @@ class OutputBuffer(SageObject):
         """
         Return the buffer content
 
-        OUTPUT:
-
-        Bytes. A string in Python 2.x.
+        OUTPUT: Bytes; string in Python 2.x
 
         EXAMPLES::
 
@@ -219,9 +213,7 @@ class OutputBuffer(SageObject):
         ``OutputBuffer.get`` on Python 2 and ``OutputBuffer.get_unicode`` on
         Python 3.  This is useful in some cases for cross-compatible code.
 
-        OUTPUT:
-
-        A ``str`` object.
+        OUTPUT: a ``str`` object
 
         EXAMPLES::
 

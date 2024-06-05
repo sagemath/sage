@@ -707,7 +707,7 @@ def canonical_2_adic_reduction(genus_symbol_quintuple_list):
 
     - ``compartments`` -- a list of lists of distinct integers (optional)
 
-    OUTPUT: a list of lists of distinct integers.
+    OUTPUT: a list of lists of distinct integers
 
     EXAMPLES::
 
@@ -1075,7 +1075,7 @@ def trace_diag_mod_8(A):
     - ``A`` -- symmetric matrix with coefficients in `\ZZ` which is odd in
       `\ZZ/2\ZZ` and has determinant not divisible by `8`.
 
-    OUTPUT: an integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -1299,7 +1299,7 @@ class Genus_Symbol_p_adic_ring:
         r"""
         String representation for the `p`-adic genus symbol
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1673,9 +1673,7 @@ class Genus_Symbol_p_adic_ring:
         only really affects the `2`-adic symbol, since when `p > 2` the
         symbol is already canonical.
 
-        OUTPUT:
-
-        a list of lists of integers
+        OUTPUT: a list of lists of integers
 
         EXAMPLES::
 
@@ -1907,7 +1905,7 @@ class Genus_Symbol_p_adic_ring:
         r"""
         Return the prime number `p` of this `p`-adic local symbol.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2014,7 +2012,7 @@ class Genus_Symbol_p_adic_ring:
         integral symmetric matrix which generated this genus symbol as
         the Gram matrix of `Q`) associated to this local genus symbol.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2143,7 +2141,7 @@ class Genus_Symbol_p_adic_ring:
 
         [CS1999]_ Conway and Sloane Book, 3rd edition, pp 370-371.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2209,7 +2207,7 @@ class Genus_Symbol_p_adic_ring:
         The scale of `(L,b)` is defined as the ideal
         `b(L,L)`.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2394,7 +2392,7 @@ class GenusSymbol_global_ring:
         r"""
         Return a string representing the global genus symbol.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -2760,7 +2758,7 @@ class GenusSymbol_global_ring:
         form whose Gram matrix is the Gram matrix giving rise to this
         global genus symbol.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3293,7 +3291,7 @@ class GenusSymbol_global_ring:
         The scale of `(L,b)` is defined as the ideal
         `b(L,L)`.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 

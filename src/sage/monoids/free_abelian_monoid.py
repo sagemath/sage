@@ -128,9 +128,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
 
     -  ``names`` -- names of generators
 
-    OUTPUT:
-
-    A free abelian monoid.
+    OUTPUT: a free abelian monoid
 
     EXAMPLES::
 

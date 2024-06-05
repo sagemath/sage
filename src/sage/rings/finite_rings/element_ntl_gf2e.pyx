@@ -480,9 +480,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``parent`` -- base field
 
-        OUTPUT:
-
-        A finite field element.
+        OUTPUT: a finite field element
 
         EXAMPLES::
 
@@ -999,9 +997,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``var`` -- string (default: ``'x'``)
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
@@ -1031,9 +1027,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``var`` -- string (default: ``'x'``)
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 

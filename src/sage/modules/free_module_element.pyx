@@ -609,9 +609,7 @@ def prepare(v, R, degree=None):
     - ``degree`` --  a requested size for the list when the input is a dictionary,
       otherwise ignored
 
-    OUTPUT:
-
-    A pair.
+    OUTPUT: a pair
 
     The first item is a list of the values specified in the object ``v``.
     If the object is a dictionary , entries are placed in the list
@@ -1020,9 +1018,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         Convert ``self`` to a PARI vector.
 
-        OUTPUT:
-
-        A PARI ``gen`` of type ``t_VEC``.
+        OUTPUT: a PARI ``gen`` of type ``t_VEC``
 
         EXAMPLES::
 
@@ -1046,9 +1042,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Give a string which, when evaluated in GP, gives a PARI
         representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -2807,9 +2801,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         and also `w \cdot \hat{v} = w \times v` for all vectors `w`.
         The basis vectors are assumed to be orthonormal.
 
-        OUTPUT:
-
-        The cross product matrix of this vector.
+        OUTPUT: the cross product matrix of this vector
 
         EXAMPLES::
 

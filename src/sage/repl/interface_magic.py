@@ -153,9 +153,7 @@ class InterfaceMagic():
         - ``name`` -- string. The name of the interface magic to
           search for.
 
-        OUTPUT:
-
-        The corresponding :class:`InterfaceMagic` instance.
+        OUTPUT: the corresponding :class:`InterfaceMagic` instance
 
         EXAMPLES::
 
@@ -194,9 +192,7 @@ class InterfaceMagic():
         """
         Factory for line magic
 
-        OUTPUT:
-
-        A function suitable to be used as line magic.
+        OUTPUT: a function suitable to be used as line magic
 
         EXAMPLES::
 
@@ -239,9 +235,7 @@ class InterfaceMagic():
         r"""
         Factory for cell magic
 
-        OUTPUT:
-
-        A function suitable to be used as cell magic.
+        OUTPUT: a function suitable to be used as cell magic
 
         EXAMPLES::
 
@@ -288,9 +282,7 @@ class InterfaceMagic():
 
             - ``cell`` -- string. The lines of the cell magic.
 
-            OUTPUT:
-
-            Prints the interface output.
+            OUTPUT: prints the interface output
 
             RAISES:
 

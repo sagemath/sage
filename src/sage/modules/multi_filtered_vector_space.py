@@ -142,9 +142,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return the allowed indices for the different filtrations.
 
-        OUTPUT:
-
-        Set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -199,9 +197,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return the ambient (unfiltered) vector space.
 
-        OUTPUT:
-
-        A vector space.
+        OUTPUT: a vector space
 
         EXAMPLES::
 
@@ -355,9 +351,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return the filtration indexed by ``key``.
 
-        OUTPUT:
-
-        A filtered vector space.
+        OUTPUT: a filtered vector space
 
         EXAMPLES::
 
@@ -434,9 +428,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         r"""
         Return as string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 

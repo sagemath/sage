@@ -256,9 +256,7 @@ def absorption(left, right):
 
     - ``right`` -- an asymptotic term.
 
-    OUTPUT:
-
-    An asymptotic term or ``None``.
+    OUTPUT: an asymptotic term or ``None``
 
     EXAMPLES::
 
@@ -302,9 +300,7 @@ def can_absorb(left, right):
 
     - ``right`` -- an asymptotic term.
 
-    OUTPUT:
-
-    A boolean.
+    OUTPUT: boolean
 
     .. NOTE::
 
@@ -434,9 +430,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         - ``other`` -- an asymptotic term.
 
-        OUTPUT:
-
-        A :class:`GenericTerm`.
+        OUTPUT: a :class:`GenericTerm`
 
         .. NOTE::
 
@@ -464,9 +458,7 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         Invert this term.
 
-        OUTPUT:
-
-        A :class:`GenericTerm`.
+        OUTPUT: a :class:`GenericTerm`
 
         TESTS::
 
@@ -534,9 +526,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         - ``exponent`` -- an element.
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         TESTS::
 
@@ -591,9 +581,7 @@ class GenericTerm(MultiplicativeGroupElement):
         - ``new_coefficient`` -- if not ``None`` this is passed on to the
           construction of the element (in particular, not taken to any power).
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         TESTS::
 
@@ -637,9 +625,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         - ``other`` -- an asymptotic term.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -771,9 +757,7 @@ class GenericTerm(MultiplicativeGroupElement):
         - ``other`` -- an asymptotic term from the same parent as
           this element.
 
-        OUTPUT:
-
-        An asymptotic term or ``None``.
+        OUTPUT: an asymptotic term or ``None``
 
         .. NOTE::
 
@@ -828,9 +812,7 @@ class GenericTerm(MultiplicativeGroupElement):
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        A tuple of terms.
+        OUTPUT: a tuple of terms
 
         .. NOTE::
 
@@ -884,9 +866,7 @@ class GenericTerm(MultiplicativeGroupElement):
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        A tuple of terms.
+        OUTPUT: a tuple of terms
 
         EXAMPLES::
 
@@ -918,9 +898,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         - ``other`` -- an asymptotic term
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1024,9 +1002,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         - ``other`` -- an asymptotic term.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1081,9 +1057,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         Nothing.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1115,9 +1089,7 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         Return whether this term is an exact term.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1138,9 +1110,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         Nothing.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1175,9 +1145,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         - ``base`` -- an element or ``'e'``.
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         EXAMPLES::
 
@@ -1204,9 +1172,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1227,9 +1193,7 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         A LaTeX-representation string for this generic term.
 
-        OUTPUT:
-
-        A NotImplementedError is raised.
+        OUTPUT: a NotImplementedError is raised
 
         TESTS::
 
@@ -1284,9 +1248,7 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         Return the names of the variables of this term.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -1309,9 +1271,7 @@ class GenericTerm(MultiplicativeGroupElement):
         r"""
         Return the factorial of this generic term.
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         TESTS::
 
@@ -1613,9 +1573,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``coefficient_ring`` -- (default: ``None``) the new coefficient ring.
 
-        OUTPUT:
-
-        A term monoid.
+        OUTPUT: a term monoid
 
         EXAMPLES::
 
@@ -1655,9 +1613,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1681,9 +1637,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``S`` -- a parent.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -1745,9 +1699,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``**kwds`` -- keyword arguments passed on to the term.
 
-        OUTPUT:
-
-        An element of this term monoid.
+        OUTPUT: an element of this term monoid
 
         EXAMPLES::
 
@@ -2039,9 +1991,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        A dictionary.
+        OUTPUT: a dictionary
 
         TESTS::
 
@@ -2070,9 +2020,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
 
-        OUTPUT:
-
-        Nothing, but ``kwds_construction`` might be changed.
+        OUTPUT: nothing, but ``kwds_construction`` might be changed
 
         TESTS::
 
@@ -2117,9 +2065,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``kwds_overrides`` -- a dictionary
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         EXAMPLES::
 
@@ -2195,9 +2141,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``growth`` and ``coefficient`` -- the element data.
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -2311,9 +2255,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``data`` -- an object.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: a tuple
 
         TESTS::
 
@@ -2349,9 +2291,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        An element of this term monoid.
+        OUTPUT: an element of this term monoid
 
         EXAMPLES::
 
@@ -2376,9 +2316,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         Nothing.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -2401,9 +2339,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``right`` -- an element.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2474,9 +2410,7 @@ class OTerm(GenericTerm):
         - ``latex`` -- (default: ``False``) a boolean. If set, then
           LaTeX-output is returned.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -2507,9 +2441,7 @@ class OTerm(GenericTerm):
         r"""
         A LaTeX-representation string for this `O`-term.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -2555,9 +2487,7 @@ class OTerm(GenericTerm):
 
         - ``exponent`` -- an element.
 
-        OUTPUT:
-
-        An :class:`OTerm`.
+        OUTPUT: an :class:`OTerm`
 
         TESTS::
 
@@ -2587,9 +2517,7 @@ class OTerm(GenericTerm):
 
         - ``other`` -- an asymptotic term.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -2669,9 +2597,7 @@ class OTerm(GenericTerm):
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        A tuple of terms.
+        OUTPUT: a tuple of terms
 
         .. NOTE::
 
@@ -2709,9 +2635,7 @@ class OTerm(GenericTerm):
 
         Nothing.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2757,9 +2681,7 @@ class OTerm(GenericTerm):
 
         - ``base`` -- an element or ``'e'``.
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         .. NOTE::
 
@@ -2814,9 +2736,7 @@ class OTerm(GenericTerm):
 
         - ``rules`` -- a dictionary.
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -2886,9 +2806,7 @@ class OTerm(GenericTerm):
         Return the factorial of this O-term if it is constant
         (i.e., has growth `1`).
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         TESTS::
 
@@ -2993,9 +2911,7 @@ class OTermMonoid(GenericTermMonoid):
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
 
-        OUTPUT:
-
-        Nothing, but ``kwds_construction`` might be changed.
+        OUTPUT: nothing, but ``kwds_construction`` might be changed
 
         TESTS::
 
@@ -3044,9 +2960,7 @@ class OTermMonoid(GenericTermMonoid):
 
         - ``S`` -- a parent.
 
-        OUTPUT:
-
-        ``True`` or ``None``.
+        OUTPUT: ``True`` or ``None``
 
         .. NOTE::
 
@@ -3102,9 +3016,7 @@ class OTermMonoid(GenericTermMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3249,9 +3161,7 @@ class TermWithCoefficient(GenericTerm):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3276,9 +3186,7 @@ class TermWithCoefficient(GenericTerm):
         - ``latex`` -- (default: ``False``) a boolean. If set, then
           LaTeX-output is returned.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3375,9 +3283,7 @@ class TermWithCoefficient(GenericTerm):
 
         - ``exponent`` -- an element.
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         TESTS::
 
@@ -3432,9 +3338,7 @@ class TermWithCoefficient(GenericTerm):
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        A tuple of terms.
+        OUTPUT: a tuple of terms
 
         EXAMPLES::
 
@@ -3481,9 +3385,7 @@ class TermWithCoefficient(GenericTerm):
 
         - ``other`` -- an :class:`TermWithCoefficient`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -3560,9 +3462,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3644,9 +3544,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        A dictionary.
+        OUTPUT: a dictionary
 
         TESTS::
 
@@ -3678,9 +3576,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
 
-        OUTPUT:
-
-        Nothing, but ``kwds_construction`` might be changed.
+        OUTPUT: nothing, but ``kwds_construction`` might be changed
 
         TESTS::
 
@@ -3714,9 +3610,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        An element of this term monoid.
+        OUTPUT: an element of this term monoid
 
         EXAMPLES::
 
@@ -3744,9 +3638,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -3839,9 +3731,7 @@ class ExactTerm(TermWithCoefficient):
         - ``latex`` -- (default: ``False``) a boolean. If set, then
           LaTeX-output is returned.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3877,9 +3767,7 @@ class ExactTerm(TermWithCoefficient):
         r"""
         A LaTeX-representation string for this exact term.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -3921,9 +3809,7 @@ class ExactTerm(TermWithCoefficient):
         r"""
         Invert this term.
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         TESTS::
 
@@ -3952,9 +3838,7 @@ class ExactTerm(TermWithCoefficient):
 
         - ``exponent`` -- an element.
 
-        OUTPUT:
-
-        An :class:`ExactTerm`.
+        OUTPUT: an :class:`ExactTerm`
 
         TESTS::
 
@@ -3980,9 +3864,7 @@ class ExactTerm(TermWithCoefficient):
 
         - ``other`` -- an asymptotic term.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -4016,9 +3898,7 @@ class ExactTerm(TermWithCoefficient):
 
         - ``other`` -- an exact term.
 
-        OUTPUT:
-
-        An exact term or ``None``.
+        OUTPUT: an exact term or ``None``
 
         .. NOTE::
 
@@ -4073,9 +3953,7 @@ class ExactTerm(TermWithCoefficient):
           - ``'log'`` -- value: a function. If not used, then the usual
             :class:`log <sage.functions.log.Function_log>` is taken.
 
-        OUTPUT:
-
-        A tuple of terms.
+        OUTPUT: a tuple of terms
 
         .. NOTE::
 
@@ -4117,9 +3995,7 @@ class ExactTerm(TermWithCoefficient):
 
         Nothing.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -4150,9 +4026,7 @@ class ExactTerm(TermWithCoefficient):
 
         Nothing.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4194,9 +4068,7 @@ class ExactTerm(TermWithCoefficient):
         r"""
         Return whether this term is an exact term.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4224,9 +4096,7 @@ class ExactTerm(TermWithCoefficient):
 
         - ``base`` -- an element or ``'e'``.
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         EXAMPLES::
 
@@ -4282,9 +4152,7 @@ class ExactTerm(TermWithCoefficient):
 
         - ``rules`` -- a dictionary.
 
-        OUTPUT:
-
-        An object.
+        OUTPUT: an object
 
         TESTS::
 
@@ -4330,9 +4198,7 @@ class ExactTerm(TermWithCoefficient):
         Return the factorial of this exact term if it is constant
         (i.e., has growth `1`).
 
-        OUTPUT:
-
-        A term.
+        OUTPUT: a term
 
         TESTS::
 
@@ -4455,9 +4321,7 @@ class ExactTermMonoid(TermWithCoefficientMonoid):
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
 
-        OUTPUT:
-
-        Nothing, but ``kwds_construction`` might be changed.
+        OUTPUT: nothing, but ``kwds_construction`` might be changed
 
         TESTS::
 
@@ -4501,9 +4365,7 @@ class ExactTermMonoid(TermWithCoefficientMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4688,9 +4550,7 @@ class BTerm(TermWithCoefficient):
 
         Nothing
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4720,9 +4580,7 @@ class BTerm(TermWithCoefficient):
         r"""
         A LaTeX-representation string for this B-term.
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         TESTS::
 
@@ -4788,9 +4646,7 @@ class BTerm(TermWithCoefficient):
 
         - ``other`` -- an asymptotic term
 
-        OUTPUT:
-
-        A boolean
+        OUTPUT: boolean
 
         .. NOTE::
 
@@ -4931,9 +4787,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
 
         Nothing
 
-        OUTPUT:
-
-        A string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4954,9 +4808,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        A dictionary.
+        OUTPUT: a dictionary
 
         TESTS::
 
@@ -4996,9 +4848,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
           (see also :meth:`GenericTerm.construction` and
           :meth:`TermWithCoefficient.construction`)
 
-        OUTPUT:
-
-        Nothing, but ``kwds_construction`` might be changed.
+        OUTPUT: nothing, but ``kwds_construction`` might be changed
 
         TESTS::
 
@@ -5058,9 +4908,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
 
         - ``S`` -- a parent
 
-        OUTPUT:
-
-        ``True`` or ``None``
+        OUTPUT: ``True`` or ``None``
 
         .. NOTE::
 
@@ -5118,9 +4966,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        An element of this term monoid.
+        OUTPUT: an element of this term monoid
 
         EXAMPLES::
 
@@ -5147,9 +4993,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
 
         Nothing.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -5213,9 +5057,7 @@ class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
     - ``asymptotic_ring`` -- if specified, then ``growth_group`` and
       ``coefficient_ring`` are taken from this asymptotic ring.
 
-    OUTPUT:
-
-    An asymptotic term monoid.
+    OUTPUT: an asymptotic term monoid
 
     EXAMPLES::
 

@@ -477,9 +477,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         - :class:`ModuleMorphismFromFunction` and
           :class:`TriangularModuleMorphism`.
 
-    OUTPUT:
-
-    A morphism from `X` to `Y`.
+    OUTPUT: a morphism from `X` to `Y`
 
     .. WARNING::
 

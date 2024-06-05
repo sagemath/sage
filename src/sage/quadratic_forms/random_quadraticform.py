@@ -28,7 +28,7 @@ def random_quadraticform(R, n, rand_arg_list=None):
     - ``rand_arg_list`` -- a list of at most 3 arguments which can be taken by
       ``R.random_element()``.
 
-    OUTPUT: A quadratic form over the ring `R`.
+    OUTPUT: a quadratic form over the ring `R`
 
     EXAMPLES::
 
@@ -137,7 +137,7 @@ def random_ternaryqf(rand_arg_list=None):
     - ``rand_arg_list`` -- a list of at most 3 arguments which can be taken by
       ``R.random_element()``.
 
-    OUTPUT: A ternary quadratic form.
+    OUTPUT: a ternary quadratic form
 
     EXAMPLES::
 

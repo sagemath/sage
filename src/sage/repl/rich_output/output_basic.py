@@ -55,9 +55,7 @@ class OutputBase(SageObject):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -76,9 +74,7 @@ class OutputBase(SageObject):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of the :class:`OutputBase` subclass.
+        OUTPUT: an instance of the :class:`OutputBase` subclass
 
         EXAMPLES::
 
@@ -127,9 +123,7 @@ class OutputPlainText(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputPlainText`.
+        OUTPUT: an instance of :class:`OutputPlainText`
 
         EXAMPLES::
 
@@ -188,9 +182,7 @@ class OutputAsciiArt(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputAsciiArt`.
+        OUTPUT: an instance of :class:`OutputAsciiArt`
 
         EXAMPLES::
 
@@ -260,9 +252,7 @@ class OutputUnicodeArt(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputUnicodeArt`.
+        OUTPUT: an instance of :class:`OutputUnicodeArt`
 
         EXAMPLES::
 
@@ -329,9 +319,7 @@ class OutputLatex(OutputBase):
         r"""
         Return the LaTeX code for a display equation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -351,9 +339,7 @@ class OutputLatex(OutputBase):
         r"""
         Return the LaTeX code for an inline equation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -376,9 +362,7 @@ class OutputLatex(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputLatex`.
+        OUTPUT: an instance of :class:`OutputLatex`
 
         EXAMPLES::
 

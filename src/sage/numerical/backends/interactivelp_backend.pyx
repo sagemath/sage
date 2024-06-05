@@ -108,9 +108,7 @@ cdef class InteractiveLPBackend:
         """
         Return the base ring.
 
-        OUTPUT:
-
-        A ring. The coefficients that the chosen solver supports.
+        OUTPUT: a ring; the coefficients that the chosen solver supports
 
         EXAMPLES::
 
@@ -203,7 +201,7 @@ cdef class InteractiveLPBackend:
           pair, ``i`` is a variable index (integer) and ``v`` is a
           value (element of :meth:`base_ring`).
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 

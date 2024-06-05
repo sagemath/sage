@@ -33,9 +33,7 @@ def parity(self, allow_rescaling_flag=True):
     - ``self`` -- a quadratic form with base ring `\ZZ`, which we may
       require to have integer Gram matrix.
 
-    OUTPUT:
-
-    One of the strings: "even" or "odd"
+    OUTPUT: one of the strings: "even" or "odd"
 
     EXAMPLES::
 

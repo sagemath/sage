@@ -135,9 +135,7 @@ cdef class Cache_givaro(Cache_base):
           elements are needed during a calculation this cache reduces the
           memory requirement as at most :meth:`order()` elements are created.
 
-        OUTPUT:
-
-        Givaro finite field with characteristic `p` and cardinality `p^n`.
+        OUTPUT: Givaro finite field with characteristic `p` and cardinality `p^n`
 
         EXAMPLES:
 
@@ -497,9 +495,7 @@ cdef class Cache_givaro(Cache_base):
 
         - ``n`` -- log representation of a finite field element
 
-        OUTPUT:
-
-        integer representation of a finite field element.
+        OUTPUT: integer representation of a finite field element
 
         EXAMPLES::
 
@@ -530,9 +526,7 @@ cdef class Cache_givaro(Cache_base):
 
         - ``n`` -- integer representation of a finite field element
 
-        OUTPUT:
-
-        log representation of ``n``
+        OUTPUT: log representation of ``n``
 
         EXAMPLES::
 
@@ -860,9 +854,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         - ``parent`` -- base field
 
-        OUTPUT:
-
-        A finite field element.
+        OUTPUT: a finite field element
 
         EXAMPLES::
 
@@ -1350,7 +1342,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         `e = a_0 + a_1 x + a_2 x^2 + \cdots`, the integer representation
         is `a_0 + a_1 p + a_2 p^2 + \cdots`.
 
-        OUTPUT: A Python ``int``.
+        OUTPUT: a Python ``int``
 
         .. SEEALSO::
 

@@ -325,9 +325,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         See :class:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -359,9 +357,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         - ``element`` -- a tuple.
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -525,9 +521,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         Nothing.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -549,9 +543,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         - ``factors`` -- a tuple or other iterable.
 
-        OUTPUT:
-
-        An element of this Cartesian product.
+        OUTPUT: an element of this Cartesian product
 
         EXAMPLES::
 
@@ -618,9 +610,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         - ``element`` -- an element of ``factor``.
 
-        OUTPUT:
-
-        An element of this Cartesian product.
+        OUTPUT: an element of this Cartesian product
 
         TESTS::
 
@@ -640,9 +630,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         - ``S`` -- a parent.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -859,9 +847,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
         Nothing.
 
-        OUTPUT:
-
-        A tuple containing elements of this growth group.
+        OUTPUT: a tuple containing elements of this growth group
 
         .. NOTE::
 
@@ -890,9 +876,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         r"""
         Return the names of the variables.
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -920,9 +904,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             - ``latex`` -- (default: ``False``) a boolean. If set, then
               LaTeX-output is returned.
 
-            OUTPUT:
-
-            A string.
+            OUTPUT: string
 
             EXAMPLES::
 
@@ -948,9 +930,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             r"""
             A representation string for this Cartesian product element.
 
-            OUTPUT:
-
-            A string.
+            OUTPUT: string
 
             TESTS::
 
@@ -973,9 +953,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             - ``exponent`` -- a number.
 
-            OUTPUT:
-
-            A growth element.
+            OUTPUT: a growth element
 
             EXAMPLES::
 
@@ -1003,9 +981,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             Nothing.
 
-            OUTPUT:
-
-            A tuple of growth elements.
+            OUTPUT: a tuple of growth elements
 
             EXAMPLES::
 
@@ -1110,9 +1086,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             - ``base`` -- an element.
 
-            OUTPUT:
-
-            A growth element.
+            OUTPUT: a growth element
 
             .. NOTE::
 
@@ -1150,9 +1124,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             Nothing.
 
-            OUTPUT:
-
-            A growth element.
+            OUTPUT: a growth element
 
             EXAMPLES::
 
@@ -1190,9 +1162,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             r"""
             Return the multiplicative inverse of this Cartesian product.
 
-            OUTPUT:
-
-            A growth element.
+            OUTPUT: a growth element
 
             .. NOTE::
 
@@ -1220,9 +1190,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
               The neutral element of the group is replaced by the value
               to key ``'_one_'``.
 
-            OUTPUT:
-
-            An object.
+            OUTPUT: an object
 
             TESTS::
 
@@ -1355,9 +1323,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             r"""
             Return the names of the variables of this growth element.
 
-            OUTPUT:
-
-            A tuple of strings.
+            OUTPUT: a tuple of strings
 
             EXAMPLES::
 

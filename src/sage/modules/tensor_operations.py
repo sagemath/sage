@@ -209,9 +209,7 @@ class VectorCollection(FreeModule_ambient_field):
         """
         Return the number of vectors
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -552,9 +550,7 @@ class TensorOperation(VectorCollection):
         """
         The codomain of the index map.
 
-        OUTPUT:
-
-        A list of integers. The image of :meth:`index_map`.
+        OUTPUT: a list of integers. The image of :meth:`index_map`
 
         EXAMPLES::
 

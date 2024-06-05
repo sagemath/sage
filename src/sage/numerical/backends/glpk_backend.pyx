@@ -88,7 +88,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -168,7 +168,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``names`` -- optional list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
@@ -2456,9 +2456,7 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``filename`` -- (optional) name of the file
 
-        OUTPUT:
-
-        Zero if the operations was successful otherwise nonzero.
+        OUTPUT: zero if the operations was successful otherwise nonzero
 
         .. NOTE::
 

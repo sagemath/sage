@@ -109,9 +109,7 @@ cdef class Graphics3d(SageObject):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1974,9 +1972,7 @@ end_scene""".format(
             This only works for surfaces, transforms and unions of surfaces,
             but not for general plot objects!
 
-        OUTPUT:
-
-        A binary string that represents the surface in the binary STL format.
+        OUTPUT: a binary string that represents the surface in the binary STL format
 
         See :wikipedia:`STL_(file_format)`
 
@@ -2023,9 +2019,7 @@ end_scene""".format(
 
         - ``name`` (string, default: "surface") -- name of the surface.
 
-        OUTPUT:
-
-        A string that represents the surface in the STL format.
+        OUTPUT: a string that represents the surface in the STL format
 
         See :wikipedia:`STL_(file_format)`
 
@@ -2122,9 +2116,7 @@ end_scene""".format(
 
         - ``name`` (string, default: "surface") -- name of the surface.
 
-        OUTPUT:
-
-        A string that represents the surface in the PLY format.
+        OUTPUT: a string that represents the surface in the PLY format
 
         See :wikipedia:`PLY_(file_format)`
 
@@ -2193,9 +2185,7 @@ end_scene""".format(
 
         - ``name`` (string, default: "surface") -- name of the surface.
 
-        OUTPUT:
-
-        A string that represents the surface in the AMF format.
+        OUTPUT: a string that represents the surface in the AMF format
 
         See :wikipedia:`Additive_Manufacturing_File_Format`
 

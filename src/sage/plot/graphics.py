@@ -932,9 +932,7 @@ class Graphics(WithEqualityById, SageObject):
         r"""
         Return a string representation of the graphics objects.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES:
 
@@ -1008,9 +1006,7 @@ class Graphics(WithEqualityById, SageObject):
         r"""
         Return string representation of this plot.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3426,9 +3422,7 @@ class Graphics(WithEqualityById, SageObject):
 
         All keyword arguments will be passed to the plotter.
 
-        OUTPUT:
-
-        A string of PGF commands to plot ``self``
+        OUTPUT: a string of PGF commands to plot ``self``
 
         EXAMPLES::
 

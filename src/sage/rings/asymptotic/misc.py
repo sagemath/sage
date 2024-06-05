@@ -40,9 +40,7 @@ def repr_short_to_parent(s):
 
     - ``s`` -- a string, short representation of a parent.
 
-    OUTPUT:
-
-    A parent.
+    OUTPUT: a parent
 
     The possible short representations are shown in the examples below.
 
@@ -110,9 +108,7 @@ def parent_to_repr_short(P):
 
     - ``P`` -- a parent.
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -207,9 +203,7 @@ def split_str_by_op(string, op, strip_parentheses=True):
 
     - ``strip_parentheses`` -- (default: ``True``) a boolean.
 
-    OUTPUT:
-
-    A tuple of strings.
+    OUTPUT: a tuple of strings
 
     TESTS::
 
@@ -318,9 +312,7 @@ def repr_op(left, op, right=None, latex=False):
     - ``latex`` -- (default: ``False``) a boolean. If set, then
       LaTeX-output is returned.
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -372,9 +364,7 @@ def combine_exceptions(e, *f):
 
     - ``*f`` -- exceptions.
 
-    OUTPUT:
-
-    An exception.
+    OUTPUT: an exception
 
     EXAMPLES::
 
@@ -421,9 +411,7 @@ def substitute_raise_exception(element, e):
     - ``e`` -- an exception which is included in the raised error
       message.
 
-    OUTPUT:
-
-    Raise an exception of the same type as ``e``.
+    OUTPUT: raise an exception of the same type as ``e``
 
     TESTS::
 
@@ -719,9 +707,7 @@ def log_string(element, base=None):
 
     - ``base`` -- an object or ``None``.
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -746,9 +732,7 @@ def strip_symbolic(expression):
 
     - ``expression`` -- an object
 
-    OUTPUT:
-
-    An object.
+    OUTPUT: an object
 
     EXAMPLES::
 
@@ -944,9 +928,7 @@ def transform_category(category,
       :class:`category of objects <sage.categories.objects.Objects>`
       is used.
 
-    OUTPUT:
-
-    A category.
+    OUTPUT: a category
 
     .. NOTE::
 
@@ -1136,9 +1118,7 @@ class Locals(dict):
         Return the default locals used in
         the :class:`~sage.rings.asymptotic.asymptotic_ring.AsymptoticRing`.
 
-        OUTPUT:
-
-        A dictionary.
+        OUTPUT: a dictionary
 
         EXAMPLES::
 
@@ -1202,9 +1182,7 @@ class WithLocals(SageObject):
           the default values)
           :class:`Locals` object is created and returned.
 
-        OUTPUT:
-
-        A :class:`Locals` object.
+        OUTPUT: a :class:`Locals` object
 
         TESTS::
 

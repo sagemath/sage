@@ -1301,7 +1301,7 @@ class QuadraticForm(SageObject):
 
         - ``names`` -- specification of the names of the variables; see :func:`PolynomialRing`
 
-        OUTPUT: The polynomial form of the quadratic form.
+        OUTPUT: the polynomial form of the quadratic form
 
         EXAMPLES::
 
@@ -1691,7 +1691,7 @@ class QuadraticForm(SageObject):
 
         - ``v``, ``w`` -- two vectors
 
-        OUTPUT: an element of the base ring `R`.
+        OUTPUT: an element of the base ring `R`
 
         EXAMPLES:
 

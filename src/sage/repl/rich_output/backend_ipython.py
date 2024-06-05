@@ -94,9 +94,7 @@ class BackendIPython(BackendBase):
 
         Same as :meth:`displayhook`.
 
-        OUTPUT:
-
-        This method does not return anything.
+        OUTPUT: this method does not return anything
 
         EXAMPLES::
 
@@ -155,9 +153,7 @@ class BackendIPythonCommandline(BackendIPython):
         """
         Return a string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -291,9 +287,7 @@ class BackendIPythonCommandline(BackendIPython):
 
         Same as :meth:`displayhook`.
 
-        OUTPUT:
-
-        This method does not return anything.
+        OUTPUT: this method does not return anything
 
         EXAMPLES::
 
@@ -386,9 +380,7 @@ class BackendIPythonCommandline(BackendIPython):
         :meth:`sage.repl.rich_output.display_manager.DisplayManager.is_in_terminal`
         for details.
 
-        OUTPUT:
-
-        ``True`` for the IPython commandline.
+        OUTPUT: ``True`` for the IPython commandline
 
         EXAMPLES::
 
@@ -403,9 +395,7 @@ class BackendIPythonCommandline(BackendIPython):
         """
         Three.js script for the IPython command line
 
-        OUTPUT:
-
-        String containing script tag
+        OUTPUT: string containing script tag
 
         EXAMPLES::
 
@@ -449,9 +439,7 @@ class BackendIPythonNotebook(BackendIPython):
         """
         Return string representation of the backend
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -587,9 +575,7 @@ class BackendIPythonNotebook(BackendIPython):
         """
         Three.js script for the IPython notebook
 
-        OUTPUT:
-
-        String containing script tag
+        OUTPUT: string containing script tag
 
         EXAMPLES::
 

@@ -57,9 +57,7 @@ class OutputHtml(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputHtml`.
+        OUTPUT: an instance of :class:`OutputHtml`
 
         EXAMPLES::
 

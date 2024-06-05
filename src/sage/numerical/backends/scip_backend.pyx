@@ -119,7 +119,7 @@ cdef class SCIPBackend(GenericBackend):
 
         - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 

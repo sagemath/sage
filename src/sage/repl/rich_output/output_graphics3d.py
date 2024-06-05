@@ -53,9 +53,7 @@ class OutputSceneJmol(OutputBase):
         file. The launch script is often necessary to make jmol
         render the 3d scene.
 
-        OUTPUT:
-
-        String. The file name of a suitable launch script.
+        OUTPUT: string; the file name of a suitable launch script
 
         EXAMPLES::
 
@@ -87,9 +85,7 @@ class OutputSceneJmol(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputSceneJmol`.
+        OUTPUT: an instance of :class:`OutputSceneJmol`
 
         EXAMPLES::
 
@@ -138,9 +134,7 @@ class OutputSceneCanvas3d(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputSceneCanvas3d`.
+        OUTPUT: an instance of :class:`OutputSceneCanvas3d`
 
         EXAMPLES::
 
@@ -326,9 +320,7 @@ class OutputSceneWavefront(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputSceneCanvas3d`.
+        OUTPUT: an instance of :class:`OutputSceneCanvas3d`
 
         EXAMPLES::
 

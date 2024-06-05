@@ -57,9 +57,7 @@ class FiniteField_givaro(FiniteField):
       calculation this cache reduces the memory requirement as at most
       :meth:`order` elements are created.
 
-    OUTPUT:
-
-    Givaro finite field with characteristic `p` and cardinality `p^n`.
+    OUTPUT: Givaro finite field with characteristic `p` and cardinality `p^n`
 
     EXAMPLES:
 
@@ -440,9 +438,7 @@ class FiniteField_givaro(FiniteField):
 
         - ``n`` -- log representation of a finite field element
 
-        OUTPUT:
-
-        integer representation of a finite field element.
+        OUTPUT: integer representation of a finite field element
 
         EXAMPLES::
 
@@ -464,9 +460,7 @@ class FiniteField_givaro(FiniteField):
 
         - ``n`` -- integer representation of a finite field element
 
-        OUTPUT:
-
-        log representation of ``n``
+        OUTPUT: log representation of ``n``
 
         EXAMPLES::
 

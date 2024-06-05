@@ -678,9 +678,7 @@ cdef class QuiverPath(MonoidElement):
 
         ``subpath``, a path in the same path semigroup as this path.
 
-        OUTPUT:
-
-        ``0`` or ``1``, which stands for ``False`` resp. ``True``.
+        OUTPUT: ``0`` or ``1``, which stands for ``False`` resp. ``True``
 
         EXAMPLES::
 

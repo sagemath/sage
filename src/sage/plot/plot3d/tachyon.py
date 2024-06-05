@@ -198,7 +198,7 @@ class Tachyon(WithEqualityById, SageObject):
     - ``aperture`` -- (default ''), otherwise a number.  Only used
       with ``projection='perspective_dof'``.
 
-    OUTPUT: A Tachyon 3d scene.
+    OUTPUT: a Tachyon 3d scene
 
     Note that the coordinates are by default such that `z` is
     up, positive `y` is to the {left} and `x` is toward

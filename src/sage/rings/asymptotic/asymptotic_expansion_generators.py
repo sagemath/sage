@@ -124,9 +124,7 @@ class AsymptoticExpansionGenerators(SageObject):
           from ``Symbolic Constants Subring`` (if ``False``) to
           ``Rational Field`` (if ``True``).
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -216,9 +214,7 @@ class AsymptoticExpansionGenerators(SageObject):
           from ``Symbolic Constants Subring`` (if ``False``) to
           ``Rational Field`` (if ``True``).
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -334,9 +330,7 @@ class AsymptoticExpansionGenerators(SageObject):
         - ``precision`` -- an integer specifying the number of exact summands.
           If this is negative, then the result is `0`.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         TESTS::
 
@@ -387,9 +381,7 @@ class AsymptoticExpansionGenerators(SageObject):
           from ``Symbolic Constants Subring`` (if ``False``) to
           ``Rational Field`` (if ``True``).
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -496,9 +488,7 @@ class AsymptoticExpansionGenerators(SageObject):
           from ``Symbolic Constants Subring`` (if ``False``) to
           ``Rational Field`` (if ``True``).
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -644,9 +634,7 @@ class AsymptoticExpansionGenerators(SageObject):
 
         - ``normalized`` -- (default: ``True``) a boolean, see above.
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
         EXAMPLES::
 
@@ -1065,9 +1053,7 @@ class AsymptoticExpansionGenerators(SageObject):
           the default precision of the asymptotic ring is used.
 
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
 
         .. NOTE::
@@ -1238,9 +1224,7 @@ class AsymptoticExpansionGenerators(SageObject):
           the default precision of the asymptotic ring is used.
 
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
 
         .. NOTE::
@@ -1323,9 +1307,7 @@ class AsymptoticExpansionGenerators(SageObject):
           the default precision of the asymptotic ring is used.
 
 
-        OUTPUT:
-
-        An asymptotic expansion.
+        OUTPUT: an asymptotic expansion
 
 
         .. NOTE::
@@ -1456,9 +1438,7 @@ def _sa_coefficients_lambda_(K, beta=0):
     - ``beta`` -- (default: `0`) the order of the logarithmic
       singularity.
 
-    OUTPUT:
-
-    A dictionary mapping pairs of indices to rationals.
+    OUTPUT: a dictionary mapping pairs of indices to rationals
 
     .. SEEALSO::
 

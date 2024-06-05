@@ -213,9 +213,7 @@ class ResidueFieldFactory(UniqueFactory):
 
     - ``check`` -- whether or not to check if `p` is prime.
 
-    OUTPUT:
-
-    The residue field at the prime `p`.
+    OUTPUT: the residue field at the prime `p`
 
     EXAMPLES::
 

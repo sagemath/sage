@@ -345,9 +345,7 @@ class SageMagics(Magics):
 
         - ``cell`` -- string. The Cython source code to process.
 
-        OUTPUT:
-
-        None. The Cython code is compiled and loaded.
+        OUTPUT: none; the Cython code is compiled and loaded
 
         EXAMPLES::
 
@@ -379,9 +377,7 @@ class SageMagics(Magics):
 
         - ``cell`` -- string. The Cython source code to process.
 
-        OUTPUT:
-
-        None. The Fortran code is compiled and loaded.
+        OUTPUT: none; the Fortran code is compiled and loaded
 
         EXAMPLES::
 

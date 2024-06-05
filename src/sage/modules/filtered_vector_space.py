@@ -135,9 +135,7 @@ def is_FilteredVectorSpace(X):
 
     - ``X`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -225,9 +223,7 @@ def normalize_degree(deg):
     - ``deg`` -- something that defines the degree (either integer or
       infinity).
 
-    OUTPUT:
-
-    Plus/minus infinity or a Sage integer.
+    OUTPUT: plus/minus infinity or a Sage integer
 
     EXAMPLES::
 
@@ -511,9 +507,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return the ambient (unfiltered) vector space.
 
-        OUTPUT:
-
-        A vector space.
+        OUTPUT: a vector space
 
         EXAMPLES::
 
@@ -560,9 +554,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         A filtration `\{F_d\}` in an ambient vector space `V` is
         exhaustive if `\cup F_d = V`. See also :meth:`is_separating`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -585,9 +577,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         A filtration `\{F_d\}` in an ambient vector space `V` is
         exhaustive if `\cap F_d = 0`. See also :meth:`is_exhaustive`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -729,9 +719,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         - ``d`` -- integer. The degree.
 
-        OUTPUT:
-
-        The quotient `G_d = F_d / F_{d+1}`.
+        OUTPUT: the quotient `G_d = F_d / F_{d+1}`
 
         EXAMPLES::
 
@@ -824,9 +812,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         - ``dim`` -- integer.
 
-        OUTPUT:
-
-        String representation of the vector space of dimension ``dim``.
+        OUTPUT: string representation of the vector space of dimension ``dim``
 
         EXAMPLES::
 
@@ -876,9 +862,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         r"""
         Return as string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -984,9 +968,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         - ``other`` -- a filtered vector space.
 
-        OUTPUT:
-
-        The direct sum as a filtered vector space.
+        OUTPUT: the direct sum as a filtered vector space
 
         EXAMPLES::
 

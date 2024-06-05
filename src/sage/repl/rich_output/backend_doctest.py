@@ -34,9 +34,7 @@ class BackendDoctest(BackendBase):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -221,9 +219,7 @@ class BackendDoctest(BackendBase):
         - ``rich_output`` -- instance of a subclass of
           :class:`~sage.repl.rich_output.output_basic.OutputBase`.
 
-        OUTPUT:
-
-        An assertion is triggered if ``rich_output`` is invalid.
+        OUTPUT: an assertion is triggered if ``rich_output`` is invalid
 
         EXAMPLES::
 

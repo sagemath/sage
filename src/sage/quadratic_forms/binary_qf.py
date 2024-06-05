@@ -80,9 +80,7 @@ class BinaryQF(SageObject):
 
     - ``a``, ``b``, ``c`` -- three integers
 
-    OUTPUT:
-
-    The binary quadratic form `a x^2 + b xy + c y^2`.
+    OUTPUT: the binary quadratic form `a x^2 + b xy + c y^2`
 
     EXAMPLES::
 
@@ -611,9 +609,7 @@ class BinaryQF(SageObject):
         whom an integral quadratic form has coefficients `(a, 2b, c)`
         with `a`, `b`, `c` integers.
 
-        OUTPUT:
-
-        The determinant of the matrix::
+        OUTPUT: the determinant of the matrix::
 
             [  a  b/2]
             [b/2    c]

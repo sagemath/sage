@@ -307,7 +307,7 @@ def load_wrap(filename, attach=False):
     - ``attach`` -- a boolean (default: ``False``); whether to attach
       ``filename``, instead of loading it
 
-    OUTPUT: a string
+    OUTPUT: string
 
     EXAMPLES::
 

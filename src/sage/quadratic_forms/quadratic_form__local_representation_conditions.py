@@ -105,9 +105,7 @@ class QuadraticFormLocalRepresentationConditions:
 
         - ``Q`` -- Quadratic form over `\ZZ`
 
-        OUTPUT:
-
-        a :class:`QuadraticFormLocalRepresentationConditions` object
+        OUTPUT: a :class:`QuadraticFormLocalRepresentationConditions` object
 
         EXAMPLES::
 

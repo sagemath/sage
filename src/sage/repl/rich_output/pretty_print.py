@@ -110,9 +110,7 @@ class SequencePrettyPrinter(SageObject):
         """
         Plot multiple graphs into a single plot
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
@@ -130,9 +128,7 @@ class SequencePrettyPrinter(SageObject):
         """
         Combine multiple graphics objects into one graphics array
 
-        OUTPUT:
-
-        A graphics array.
+        OUTPUT: a graphics array
 
         EXAMPLES::
 

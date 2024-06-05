@@ -58,9 +58,7 @@ class OutputImagePng(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImagePng`.
+        OUTPUT: an instance of :class:`OutputImagePng`
 
         EXAMPLES::
 
@@ -106,9 +104,7 @@ class OutputImageGif(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImageGif`.
+        OUTPUT: an instance of :class:`OutputImageGif`
 
         EXAMPLES::
 
@@ -128,9 +124,7 @@ class OutputImageGif(OutputBase):
 
         This is a workaround for the Jupyter notebook which doesn't support GIF directly.
 
-        OUTPUT:
-
-        String. HTML fragment for displaying the GIF image.
+        OUTPUT: string. HTML fragment for displaying the GIF image
 
         EXAMPLES::
 
@@ -173,9 +167,7 @@ class OutputImageJpg(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImageJpg`.
+        OUTPUT: an instance of :class:`OutputImageJpg`
 
         EXAMPLES::
 
@@ -221,9 +213,7 @@ class OutputImageSvg(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImageSvg`.
+        OUTPUT: an instance of :class:`OutputImageSvg`
 
         EXAMPLES::
 
@@ -269,9 +259,7 @@ class OutputImagePdf(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImagePdf`.
+        OUTPUT: an instance of :class:`OutputImagePdf`
 
         EXAMPLES::
 
@@ -317,9 +305,7 @@ class OutputImageDvi(OutputBase):
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputImageDvi`.
+        OUTPUT: an instance of :class:`OutputImageDvi`
 
         EXAMPLES::
 

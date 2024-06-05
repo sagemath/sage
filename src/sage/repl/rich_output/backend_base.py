@@ -61,9 +61,7 @@ class BackendBase(SageObject):
 
         Every backend must implement this method.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -197,9 +195,7 @@ class BackendBase(SageObject):
         :meth:`sage.repl.rich_output.display_manager.DisplayManager.is_in_terminal`
         for details.
 
-        OUTPUT:
-
-        Defaults to ``False``.
+        OUTPUT: defaults to ``False``
 
         EXAMPLES::
 
@@ -214,9 +210,7 @@ class BackendBase(SageObject):
         """
         Return the number of characters that fit into one output line
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -231,9 +225,7 @@ class BackendBase(SageObject):
         r"""
         Return the newline string.
 
-        OUTPUT:
-
-        String for starting a new line of output.
+        OUTPUT: string for starting a new line of output
 
         EXAMPLES::
 
@@ -255,9 +247,7 @@ class BackendBase(SageObject):
 
         - ``obj`` -- anything.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -605,9 +595,7 @@ class BackendSimple(BackendBase):
         r"""
         Return string representation of the backend
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -646,9 +634,7 @@ class BackendSimple(BackendBase):
 
         Same as :meth:`~BackendBase.displayhook`.
 
-        OUTPUT:
-
-        This backend returns nothing, it just prints to stdout.
+        OUTPUT: this backend returns nothing, it just prints to stdout
 
         EXAMPLES::
 

@@ -273,9 +273,7 @@ def theta_series_degree_2(Q, prec):
 
     - ``prec`` -- an integer
 
-    OUTPUT:
-
-    dictionary, where:
+    OUTPUT: dictionary, where:
 
     - keys are `{\rm GL}_2(\ZZ)`-reduced binary quadratic forms (given as triples of
       coefficients)

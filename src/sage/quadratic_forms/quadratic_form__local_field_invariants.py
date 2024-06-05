@@ -343,7 +343,7 @@ def signature(self):
 
     of the matrix of the quadratic form.
 
-    OUTPUT: an integer
+    OUTPUT: integer
 
     EXAMPLES::
 

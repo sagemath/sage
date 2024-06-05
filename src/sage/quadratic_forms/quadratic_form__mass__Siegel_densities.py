@@ -126,7 +126,7 @@ def Pall_mass_density_at_odd_prime(self, p):
 
     - ``p`` -- a prime number > 2
 
-    OUTPUT: a rational number.
+    OUTPUT: a rational number
 
     EXAMPLES::
 

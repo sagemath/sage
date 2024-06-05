@@ -139,9 +139,7 @@ def diamond_cut(V, GM, C, verbose=False):
 
     - ``verbose`` -- (default: ``False``) whether to print debug information
 
-    OUTPUT:
-
-    A :class:`Polyhedron` instance.
+    OUTPUT: a :class:`Polyhedron` instance
 
     EXAMPLES::
 
@@ -244,9 +242,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
 
     - ``verbose`` -- whether to print debug information
 
-    OUTPUT:
-
-    A :class:`Polyhedron` instance.
+    OUTPUT: a :class:`Polyhedron` instance
 
     EXAMPLES::
 

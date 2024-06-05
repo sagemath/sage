@@ -122,9 +122,7 @@ cpdef is_LinearFunction(x):
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -147,9 +145,7 @@ def is_LinearConstraint(x):
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -184,9 +180,7 @@ def LinearFunctionsParent(base_ring):
     - ``base_ring`` -- a ring. The coefficient ring for the linear
       functions.
 
-    OUTPUT:
-
-    The parent of the linear functions over ``base_ring``.
+    OUTPUT: the parent of the linear functions over ``base_ring``
 
     EXAMPLES::
 
@@ -211,9 +205,7 @@ def LinearConstraintsParent(linear_functions_parent):
        :class:`LinearFunctionsParent_class`. The type of linear
        functions that the constraints are made out of.
 
-    OUTPUT:
-
-    The parent of the linear constraints with the given linear functions.
+    OUTPUT: the parent of the linear constraints with the given linear functions
 
     EXAMPLES::
 
@@ -523,9 +515,7 @@ cdef class LinearFunctionsParent_class(Parent):
         You should use :func:`LinearFunctionsParent` to construct
         instances of this class.
 
-    INPUT/OUTPUT:
-
-    See :func:`LinearFunctionsParent`
+    INPUT/OUTPUT: see :func:`LinearFunctionsParent`
 
     EXAMPLES::
 
@@ -593,9 +583,7 @@ cdef class LinearFunctionsParent_class(Parent):
         """
         Return the multiplication symbol.
 
-        OUTPUT:
-
-        String. By default, this is ``'*'``.
+        OUTPUT: string. By default, this is ``'*'``
 
         EXAMPLES::
 
@@ -641,9 +629,7 @@ cdef class LinearFunctionsParent_class(Parent):
 
         - ``i`` -- non-negative integer.
 
-        OUTPUT:
-
-        The linear function `x_i`.
+        OUTPUT: the linear function `x_i`
 
         EXAMPLES::
 
@@ -702,9 +688,7 @@ cdef class LinearFunctionsParent_class(Parent):
 
         - ``R`` -- a ring.
 
-        OUTPUT:
-
-        Boolean. Whether there is a coercion map.
+        OUTPUT: boolean. Whether there is a coercion map
 
         EXAMPLES::
 
@@ -724,9 +708,7 @@ cdef class LinearFunctionsParent_class(Parent):
         """
         Returns an element
 
-        OUTPUT:
-
-        A linear function.
+        OUTPUT: a linear function
 
         EXAMPLES::
 
@@ -1135,9 +1117,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         """
         Test whether ``self`` is zero.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1155,9 +1135,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         """
         Logically compare ``left`` and ``right``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1186,9 +1164,7 @@ cdef class LinearConstraintsParent_class(Parent):
         :class:`MixedIntegerLinearProgram`. Also, use the
         :func:`LinearConstraintsParent` factory function.
 
-    INPUT/OUTPUT:
-
-        See :func:`LinearFunctionsParent`
+    INPUT/OUTPUT: see :func:`LinearFunctionsParent`
 
     EXAMPLES::
 
@@ -1223,9 +1199,7 @@ cdef class LinearConstraintsParent_class(Parent):
         """
         The Python constructor
 
-        INPUT/OUTPUT:
-
-        See :func:`LinearFunctionsParent`
+        INPUT/OUTPUT: see :func:`LinearFunctionsParent`
 
         TESTS::
 
@@ -1257,9 +1231,7 @@ cdef class LinearConstraintsParent_class(Parent):
         """
         Return a string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1285,9 +1257,7 @@ cdef class LinearConstraintsParent_class(Parent):
         - ``equality`` -- boolean (default: ``True``). Whether to
           construct an equation or an inequality.
 
-        OUTPUT:
-
-        The :class:`LinearConstraint` constructed from the input data.
+        OUTPUT: the :class:`LinearConstraint` constructed from the input data
 
         EXAMPLES::
 
@@ -1468,9 +1438,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         """
         Whether the constraint is a chained equation
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1487,9 +1455,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         """
         Whether the constraint is a chained less-or_equal inequality
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1625,9 +1591,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         r"""
         Returns a string representation of the constraint.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

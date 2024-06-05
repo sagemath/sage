@@ -480,9 +480,7 @@ class Animation(WithEqualityById, SageObject):
           ``None``; in this case, a temporary directory will be
           created for storing the frames.
 
-        OUTPUT:
-
-        Absolute path to the directory containing the PNG images
+        OUTPUT: absolute path to the directory containing the PNG images
 
         EXAMPLES::
 
@@ -1217,9 +1215,7 @@ class Animation(WithEqualityById, SageObject):
           viewer are: ``animate``, ``animation_controls``, ``auto_play``,
           ``delay``, and ``loop``.
 
-        OUTPUT:
-
-        A 3D graphics object which, by default, will use the Three.js viewer.
+        OUTPUT: a 3D graphics object which, by default, will use the Three.js viewer
 
         EXAMPLES::
 

@@ -81,7 +81,7 @@ class SageKernelSpec():
         """
         Internal identifier for the SageMath kernel
 
-        OUTPUT: the string ``"sagemath"``.
+        OUTPUT: the string ``"sagemath"``
 
         EXAMPLES::
 
@@ -141,9 +141,7 @@ class SageKernelSpec():
         """
         Helper to construct the SageMath kernel command.
 
-        OUTPUT:
-
-        List of strings. The command to start a new SageMath kernel.
+        OUTPUT: list of strings; the command to start a new SageMath kernel
 
         EXAMPLES::
 
@@ -168,9 +166,7 @@ class SageKernelSpec():
         """
         Return the kernel spec as Python dictionary
 
-        OUTPUT:
-
-        A dictionary. See the Jupyter documentation for details.
+        OUTPUT: a dictionary; see the Jupyter documentation for details
 
         EXAMPLES::
 
@@ -290,9 +286,7 @@ def have_prerequisites(debug=True):
     - ``debug`` -- boolean (default: ``True``). Whether to print debug
       information in case that prerequisites are missing.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 

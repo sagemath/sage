@@ -157,9 +157,7 @@ def load_attach_path(path=None, replace=False):
       ``None``, whether to *replace* the search path instead of
       *appending* to it.
 
-    OUTPUT:
-
-    ``None`` or a *reference* to the current search paths.
+    OUTPUT: ``None`` or a *reference* to the current search paths
 
     EXAMPLES:
 
@@ -405,9 +403,7 @@ def attached_files() -> list:
     Return a list of all files attached to the current session with
     :meth:`attach`.
 
-    OUTPUT:
-
-    The filenames in a sorted list of strings.
+    OUTPUT: the filenames in a sorted list of strings
 
     EXAMPLES::
 

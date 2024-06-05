@@ -210,7 +210,7 @@ cdef class CVXPYBackend:
           pair, ``i`` is a row index (integer) and ``v`` is a
           value (element of :meth:`base_ring`).
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 

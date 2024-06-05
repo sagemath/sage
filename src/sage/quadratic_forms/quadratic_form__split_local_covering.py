@@ -38,7 +38,7 @@ def cholesky_decomposition(self, bit_prec=53):
 
     - ``bit_prec`` -- a natural number (default 53)
 
-    OUTPUT: an upper triangular real matrix of precision ``bit_prec``.
+    OUTPUT: an upper triangular real matrix of precision ``bit_prec``
 
 
     .. TODO::

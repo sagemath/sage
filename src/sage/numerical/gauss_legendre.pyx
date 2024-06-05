@@ -236,9 +236,7 @@ def estimate_error(results, prec, epsilon):
 
      - ``epsilon`` -- multiprecision float. Default error estimate in case of insufficient data.
 
-    OUTPUT:
-
-    An estimate of the error.
+    OUTPUT: an estimate of the error
 
     EXAMPLES::
 
@@ -289,9 +287,7 @@ def integrate_vector_N(f, prec, N=3):
 
      - ``N`` -- integer (default: 3). Number of nodes to use.
 
-     OUTPUT:
-
-     Vector approximating value of the integral.
+     OUTPUT: vector approximating value of the integral
 
      EXAMPLES::
 
@@ -335,9 +331,7 @@ def integrate_vector(f, prec, epsilon=None):
 
      - ``epsilon`` -- multiprecision float (default: `2^{(-\text{prec}+3)}`). Target error bound.
 
-    OUTPUT:
-
-    Vector approximating value of the integral.
+    OUTPUT: vector approximating value of the integral
 
     EXAMPLES::
 

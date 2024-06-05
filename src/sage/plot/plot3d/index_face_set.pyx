@@ -1003,9 +1003,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         - ``eps`` -- target accuracy in the intersection (default: 1.0e-6)
 
-        OUTPUT:
-
-        an ``IndexFaceSet``
+        OUTPUT: an ``IndexFaceSet``
 
         This will contain both triangular and quadrilateral faces.
 
@@ -1711,9 +1709,7 @@ cdef class IndexFaceSet(PrimitiveObject):
           the original surface so it shows, typically this value is very
           small compared to the actual object
 
-        OUTPUT:
-
-        Graphics3dGroup of stickers
+        OUTPUT: Graphics3dGroup of stickers
 
         EXAMPLES::
 

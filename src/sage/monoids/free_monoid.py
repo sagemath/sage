@@ -88,9 +88,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
     - ``commutative`` -- (default: ``False``) whether the free
       monoid is commutative or not
 
-    OUTPUT:
-
-    A free monoid.
+    OUTPUT: a free monoid
 
     EXAMPLES::
 

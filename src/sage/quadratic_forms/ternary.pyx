@@ -27,7 +27,7 @@ def red_mfact(a, b):
 
     - ``a``, ``b`` -- integers
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 

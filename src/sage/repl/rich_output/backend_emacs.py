@@ -37,9 +37,7 @@ class BackendEmacs(BackendIPythonCommandline):
         r"""
         Return string representation of the backend
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

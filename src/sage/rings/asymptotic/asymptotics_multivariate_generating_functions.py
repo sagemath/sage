@@ -369,9 +369,7 @@ class FractionWithFactoredDenominator(RingElement):
         r"""
         Return the numerator of ``self``.
 
-        OUTPUT:
-
-        The numerator.
+        OUTPUT: the numerator
 
         EXAMPLES::
 
@@ -439,9 +437,7 @@ class FractionWithFactoredDenominator(RingElement):
         r"""
         Return the ring of the denominator.
 
-        OUTPUT:
-
-        A ring.
+        OUTPUT: a ring
 
         EXAMPLES::
 
@@ -467,9 +463,7 @@ class FractionWithFactoredDenominator(RingElement):
         r"""
         Return the ring of the numerator.
 
-        OUTPUT:
-
-        A ring.
+        OUTPUT: a ring
 
         EXAMPLES::
 
@@ -494,9 +488,7 @@ class FractionWithFactoredDenominator(RingElement):
         r"""
         Return the number of indeterminates of ``self.denominator_ring``.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -521,9 +513,7 @@ class FractionWithFactoredDenominator(RingElement):
         r"""
         Convert ``self`` into a quotient.
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -546,9 +536,7 @@ class FractionWithFactoredDenominator(RingElement):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -575,9 +563,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         - ``other`` -- an instance of :class:`FractionWithFactoredDenominator`
 
-        OUTPUT:
-
-        ``True`` or ``False``.
+        OUTPUT: ``True`` or ``False``
 
         It can be assumed that ``self`` and ``other`` have the same parent.
 
@@ -660,9 +646,7 @@ class FractionWithFactoredDenominator(RingElement):
         denominators are equal and the numerator of ``A`` is less than that
         of ``B`` in their ring).
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: a tuple
 
         EXAMPLES::
 
@@ -720,9 +704,7 @@ class FractionWithFactoredDenominator(RingElement):
             factorization of the denominator. This gives a speed up for
             non-small instances.
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominatorSum`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominatorSum`
 
         EXAMPLES::
 
@@ -910,9 +892,7 @@ class FractionWithFactoredDenominator(RingElement):
 
             Recursive. Only works for multivariate ``self``.
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominatorSum`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominatorSum`
 
         EXAMPLES::
 
@@ -976,9 +956,7 @@ class FractionWithFactoredDenominator(RingElement):
         ``self.denominator_ring.base_ring()`` that has
         ``m = len(self.denominator_factored())`` indeterminates.
 
-        OUTPUT:
-
-        An ideal.
+        OUTPUT: an ideal
 
         EXAMPLES::
 
@@ -1088,9 +1066,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         The algorithm used comes from [Rai2012]_.
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominatorSum`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominatorSum`
 
         EXAMPLES::
 
@@ -1211,9 +1187,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         The algorithm used comes from [Rai2012]_.
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominatorSum`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominatorSum`
 
         EXAMPLES::
 
@@ -1317,9 +1291,7 @@ class FractionWithFactoredDenominator(RingElement):
         The algorithm used here comes from the proof of Theorem 17.4 of
         [AY1983]_.
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominatorSum`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominatorSum`
 
         EXAMPLES::
 
@@ -1444,9 +1416,7 @@ class FractionWithFactoredDenominator(RingElement):
           respect to which to compute asymptotics;
           if ``None`` is given, we set ``asy_var = var('r')``
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominatorSum`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominatorSum`
 
         The output results from a Leinartas decomposition followed by a
         cohomology decomposition.
@@ -1697,9 +1667,7 @@ class FractionWithFactoredDenominator(RingElement):
         - ``verbose`` -- (default: ``False``) print the current state of
           the algorithm
 
-        OUTPUT:
-
-        The asymptotic expansion.
+        OUTPUT: the asymptotic expansion
 
         EXAMPLES::
 
@@ -2075,9 +2043,7 @@ class FractionWithFactoredDenominator(RingElement):
         - ``verbose`` -- (default: ``False``) print the current state of
           the algorithm
 
-        OUTPUT:
-
-        The asymptotic expansion.
+        OUTPUT: the asymptotic expansion
 
         EXAMPLES::
 
@@ -2429,9 +2395,7 @@ class FractionWithFactoredDenominator(RingElement):
         - ``p`` -- (optional; default: ``None``) a dictionary whose keys are
           the generators of ``self.denominator_ring``
 
-        OUTPUT:
-
-        A list.
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -2479,9 +2443,7 @@ class FractionWithFactoredDenominator(RingElement):
         - ``p`` -- (optional; default: ``None``) a dictionary whose keys
           are the generators of ``self.denominator_ring``
 
-        OUTPUT:
-
-        A list.
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -2525,9 +2487,7 @@ class FractionWithFactoredDenominator(RingElement):
           ``self.denominator_ring.gens()`` and values in a field
         - ``coordinate`` -- (optional; default: ``None``) a natural number
 
-        OUTPUT:
-
-        A list of vectors.
+        OUTPUT: a list of vectors
 
         This list of vectors generate the critical cone of ``p`` and
         the cone itself, which is ``None`` if the values of ``p`` don't lie in
@@ -2671,9 +2631,7 @@ class FractionWithFactoredDenominator(RingElement):
         then the output is the ideal of the singular locus (which
         is a variety) of the variety of `H`.
 
-        OUTPUT:
-
-        An ideal.
+        OUTPUT: an ideal
 
         EXAMPLES::
 
@@ -2711,9 +2669,7 @@ class FractionWithFactoredDenominator(RingElement):
         - ``alpha`` -- a tuple of positive integers and/or symbolic entries
           of length ``self.denominator_ring.ngens()``
 
-        OUTPUT:
-
-        An ideal.
+        OUTPUT: an ideal
 
         EXAMPLES::
 
@@ -2881,9 +2837,7 @@ class FractionWithFactoredDenominator(RingElement):
         - ``interval`` -- a list of positive integers
         - ``exp_scale`` -- (optional; default: 1) a number
 
-        OUTPUT:
-
-        A list of tuples with properties described below.
+        OUTPUT: a list of tuples with properties described below
 
         This outputs a list whose entries are a tuple
         ``(r*alpha, a_r, b_r, err_r)`` for ``r`` in ``interval``.
@@ -2961,9 +2915,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         - ``right`` -- the right summand
 
-        OUTPUT:
-
-        The sum as a new element.
+        OUTPUT: the sum as a new element
 
         EXAMPLES::
 
@@ -2988,9 +2940,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         - ``right`` -- the right factor
 
-        OUTPUT:
-
-        The product as a new element.
+        OUTPUT: the product as a new element
 
         EXAMPLES::
 
@@ -3085,9 +3035,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         r"""
         Return a representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         TESTS::
 
@@ -3104,9 +3052,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         r"""
         Returns the base ring.
 
-        OUTPUT:
-
-        A ring.
+        OUTPUT: a ring
 
         EXAMPLES::
 
@@ -3253,9 +3199,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
 
         - ``P`` -- a parent
 
-        OUTPUT:
-
-        ``True`` if there is a coercion, otherwise ``False`` or ``None``.
+        OUTPUT: ``True`` if there is a coercion, otherwise ``False`` or ``None``
 
         TESTS::
 
@@ -3305,9 +3249,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         r"""
         Returns an element.
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -3339,9 +3281,7 @@ class FractionWithFactoredDenominatorSum(list):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -3359,9 +3299,7 @@ class FractionWithFactoredDenominatorSum(list):
         r"""
         Return ``True`` if ``self`` is equal to ``other``.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3385,9 +3323,7 @@ class FractionWithFactoredDenominatorSum(list):
         r"""
         Return ``True`` if ``self`` is not equal to ``other``.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3410,9 +3346,7 @@ class FractionWithFactoredDenominatorSum(list):
         r"""
         Return the polynomial ring of the denominators of ``self``.
 
-        OUTPUT:
-
-        A ring or ``None`` if the list is empty.
+        OUTPUT: a ring or ``None`` if the list is empty
 
         EXAMPLES::
 
@@ -3437,9 +3371,7 @@ class FractionWithFactoredDenominatorSum(list):
         Rewrite ``self`` as a sum of a (possibly zero) polynomial
         followed by reduced rational expressions.
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominatorSum`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominatorSum`
 
         Only useful for multivariate decompositions.
 
@@ -3494,9 +3426,7 @@ class FractionWithFactoredDenominatorSum(list):
         Combine terms in ``self`` with the same denominator.
         Only useful for multivariate decompositions.
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominatorSum`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominatorSum`
 
         EXAMPLES::
 
@@ -3549,9 +3479,7 @@ class FractionWithFactoredDenominatorSum(list):
         r"""
         Return the sum of the elements in ``self``.
 
-        OUTPUT:
-
-        An instance of :class:`FractionWithFactoredDenominator`.
+        OUTPUT: an instance of :class:`FractionWithFactoredDenominator`
 
         EXAMPLES::
 
@@ -3847,9 +3775,7 @@ def diff_all(f, V, n, ending=[], sub=None, sub_final=None,
     - ``rekey`` -- a callable symbolic function in `V` or list thereof
     - ``zero_order`` -- a natural number
 
-    OUTPUT:
-
-    The dictionary ``{s_1:deriv_1, ..., sr:deriv_r}``.
+    OUTPUT: the dictionary ``{s_1:deriv_1, ..., sr:deriv_r}``
 
     Here ``s_1, ..., s_r`` is a listing of
     all nondecreasing sequences of length 1 up to length `n` over the
@@ -3998,9 +3924,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
       length of ``V``
     - ``r``, ``N`` -- natural numbers
 
-    OUTPUT:
-
-    A dictionary.
+    OUTPUT: a dictionary
 
     The output is
     a dictionary whose keys are natural number tuples of the form
@@ -4135,9 +4059,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
     - ``a`` -- a complex number
     - ``v``, ``N`` -- natural numbers
 
-    OUTPUT:
-
-    A dictionary.
+    OUTPUT: a dictionary
 
     The output is
     a dictionary whose keys are natural number pairs of the form `(k, l)`,

@@ -86,9 +86,7 @@ class SageDisplayFormatter(DisplayFormatter):
         """
         This is where the Sage rich objects are translated to IPython
 
-        INPUT/OUTPUT:
-
-        See the IPython documentation.
+        INPUT/OUTPUT: see the IPython documentation
 
         EXAMPLES:
 
@@ -115,9 +113,7 @@ class SageDisplayFormatter(DisplayFormatter):
         r"""
         Use the Sage rich output instead of IPython
 
-        INPUT/OUTPUT:
-
-        See the IPython documentation.
+        INPUT/OUTPUT: see the IPython documentation
 
         EXAMPLES::
 
@@ -268,9 +264,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
             rich output system that is more flexible and supports
             different backends.
 
-        INPUT/OUTPUT:
-
-        See the IPython documentation.
+        INPUT/OUTPUT: see the IPython documentation
 
         EXAMPLES::
 
@@ -292,9 +286,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
 
         - ``obj`` -- anything.
 
-        OUTPUT:
-
-        String. The plain text representation.
+        OUTPUT: string; the plain text representation
 
         EXAMPLES::
 

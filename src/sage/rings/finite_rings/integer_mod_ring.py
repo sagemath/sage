@@ -293,9 +293,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
     - ``category`` -- a subcategory of ``CommutativeRings()`` (the default)
 
-    OUTPUT:
-
-    The ring of integers modulo `N`.
+    OUTPUT: the ring of integers modulo `N`
 
     EXAMPLES:
 
@@ -926,9 +924,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         Return all square roots of 1 in self, i.e., all solutions to
         `x^2 - 1 = 0`.
 
-        OUTPUT:
-
-        The square roots of 1 in ``self`` as a tuple.
+        OUTPUT: the square roots of 1 in ``self`` as a tuple
 
         EXAMPLES::
 
@@ -1341,9 +1337,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         even there will be 0, 1 or 2 generators according to whether 2 divides
         `N` to order 1, 2 or `\geq 3`.
 
-        OUTPUT:
-
-        A tuple containing the units of ``self``.
+        OUTPUT: a tuple containing the units of ``self``
 
         EXAMPLES::
 

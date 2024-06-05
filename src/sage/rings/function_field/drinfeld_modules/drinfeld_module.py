@@ -536,9 +536,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
           ring gen
 
-        OUTPUT:
-
-        A DrinfeldModule or DrinfeldModule_finite.
+        OUTPUT: a DrinfeldModule or DrinfeldModule_finite
 
         TESTS::
 
@@ -1832,7 +1830,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         In our case, the rank is the degree of the generator.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 

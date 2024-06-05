@@ -47,9 +47,7 @@ def is_LinearTensorConstraint(x):
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -84,9 +82,7 @@ def LinearTensorConstraintsParent(linear_functions_parent):
       :class:`~sage.numerical.linear_functions.LinearFunctionsParent_class`. The
       type of linear functions that the constraints are made out of.
 
-    OUTPUT:
-
-    The parent of the linear constraints with the given linear functions.
+    OUTPUT: the parent of the linear constraints with the given linear functions
 
     EXAMPLES::
 
@@ -169,9 +165,7 @@ class LinearTensorConstraint(Element):
         """
         Whether the constraint is a chained equation
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -187,9 +181,7 @@ class LinearTensorConstraint(Element):
         """
         Whether the constraint is a chained less-or_equal inequality
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -266,9 +258,7 @@ class LinearTensorConstraint(Element):
         r"""
         Returns a string representation of the constraint.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -305,9 +295,7 @@ class LinearTensorConstraintsParent_class(Parent):
         :class:`MixedIntegerLinearProgram`. Also, use the
         :func:`LinearTensorConstraintsParent` factory function.
 
-    INPUT/OUTPUT:
-
-        See :func:`LinearTensorConstraintsParent`
+    INPUT/OUTPUT: see :func:`LinearTensorConstraintsParent`
 
     EXAMPLES::
 
@@ -354,9 +342,7 @@ class LinearTensorConstraintsParent_class(Parent):
         """
         Return the parent for the linear functions
 
-        OUTPUT:
-
-        Instance of :class:`sage.numerical.linear_tensor.LinearTensorParent_class`.
+        OUTPUT: instance of :class:`sage.numerical.linear_tensor.LinearTensorParent_class`
 
         EXAMPLES::
 
@@ -372,9 +358,7 @@ class LinearTensorConstraintsParent_class(Parent):
         """
         Return the parent for the linear functions
 
-        OUTPUT:
-
-        Instance of :class:`sage.numerical.linear_functions.LinearFunctionsParent_class`.
+        OUTPUT: instance of :class:`sage.numerical.linear_functions.LinearFunctionsParent_class`
 
         EXAMPLES::
 
@@ -389,9 +373,7 @@ class LinearTensorConstraintsParent_class(Parent):
         """
         Return a string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -422,9 +404,7 @@ class LinearTensorConstraintsParent_class(Parent):
         - ``equality`` -- boolean. Whether to
           construct an equation or a less-or-equal inequality.
 
-        OUTPUT:
-
-        The :class:`LinearTensorConstraint` constructed from the input data.
+        OUTPUT: the :class:`LinearTensorConstraint` constructed from the input data
 
         EXAMPLES::
 

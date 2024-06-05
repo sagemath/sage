@@ -97,9 +97,7 @@ class TestObject(SageObject):
         """
         Return string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -137,9 +135,7 @@ class BackendTest(BackendBase):
         """
         Return the string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

@@ -84,9 +84,7 @@ class Image(SageObject):
           ImageColor module.  If the colour is None, the image is not
           initialised.
 
-        OUTPUT:
-
-        A new :class:`Image` object.
+        OUTPUT: a new :class:`Image` object
 
         EXAMPLES::
 
@@ -107,9 +105,7 @@ class Image(SageObject):
         """
         Access the wrapped PIL(low) Image
 
-        OUTPUT:
-
-        The underlying ``PIL.Image.Image object``.
+        OUTPUT: the underlying ``PIL.Image.Image object``
 
         EXAMPLES::
 
@@ -142,9 +138,7 @@ class Image(SageObject):
         """
         Return string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -176,9 +170,7 @@ class Image(SageObject):
         """
         Return the color mode
 
-        OUTPUT:
-
-        String. As given when constructing the image.
+        OUTPUT: string. As given when constructing the image
 
         EXAMPLES::
 
@@ -193,9 +185,7 @@ class Image(SageObject):
         """
         Return the horizontal dimension in pixels
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -212,9 +202,7 @@ class Image(SageObject):
         """
         Return the vertical dimension in pixels
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

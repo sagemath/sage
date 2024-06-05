@@ -188,9 +188,7 @@ cdef class LinearTensor(ModuleElement):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -226,9 +224,7 @@ cdef class LinearTensor(ModuleElement):
         """
         Return a matrix-like string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -269,9 +265,7 @@ cdef class LinearTensor(ModuleElement):
 
         - ``b`` -- a :class:`LinearTensor`.
 
-        OUTPUT:
-
-        A :class:`LinearTensor`.
+        OUTPUT: a :class:`LinearTensor`
 
         EXAMPLES::
 
@@ -289,9 +283,7 @@ cdef class LinearTensor(ModuleElement):
         r"""
         Return the negative.
 
-        OUTPUT:
-
-        A :class:`LinearTensor`.
+        OUTPUT: a :class:`LinearTensor`
 
         EXAMPLES::
 
@@ -313,9 +305,7 @@ cdef class LinearTensor(ModuleElement):
 
         - ``b`` -- a :class:`LinearTensor`.
 
-        OUTPUT:
-
-        A :class:`LinearTensor`.
+        OUTPUT: a :class:`LinearTensor`
 
         EXAMPLES::
 
@@ -339,9 +329,7 @@ cdef class LinearTensor(ModuleElement):
 
         - ``b`` -- base ring element. The scalar to multiply by.
 
-        OUTPUT:
-
-        A :class:`LinearTensor`.
+        OUTPUT: a :class:`LinearTensor`
 
         EXAMPLES::
 

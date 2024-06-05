@@ -263,9 +263,7 @@ def implicit_multiplication(level=None):
       -  3 -- Spaces between alphanumeric
       - 10 -- Adjacent parentheses (may mangle call statements)
 
-    OUTPUT:
-
-    The current ``level`` if no argument is given.
+    OUTPUT: the current ``level`` if no argument is given
 
     EXAMPLES::
 

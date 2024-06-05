@@ -450,9 +450,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         Return the base ring.
 
-        OUTPUT:
-
-        A ring. The coefficients that the chosen solver supports.
+        OUTPUT: a ring. The coefficients that the chosen solver supports
 
         EXAMPLES::
 
@@ -925,9 +923,7 @@ cdef class SemidefiniteProgram(SageObject):
           - When set to ``False`` (default), the optimal numerical values
             are stored (takes computational time).
 
-        OUTPUT:
-
-        The optimal value taken by the objective function.
+        OUTPUT: the optimal value taken by the objective function
 
         TESTS:
 
@@ -1391,9 +1387,7 @@ cdef class SDPVariableParent(Parent):
         r"""
         Return representation of self.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1430,9 +1424,7 @@ cdef class SDPVariableParent(Parent):
         """
         The Element constructor
 
-        INPUT/OUTPUT:
-
-        See :meth:`SDPVariable.__init__`.
+        INPUT/OUTPUT: see :meth:`SDPVariable.__init__`
 
         EXAMPLES::
 

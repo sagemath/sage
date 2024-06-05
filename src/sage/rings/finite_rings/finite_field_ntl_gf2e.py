@@ -60,9 +60,7 @@ class FiniteField_ntl_gf2e(FiniteField):
 
       - ``'poly'``: polynomial representation
 
-    OUTPUT:
-
-    Finite field with characteristic 2 and cardinality `2^n`.
+    OUTPUT: finite field with characteristic 2 and cardinality `2^n`
 
     EXAMPLES::
 

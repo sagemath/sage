@@ -985,9 +985,7 @@ class RESetMapReduce():
         r"""
         Return the roots of ``self``.
 
-        OUTPUT:
-
-        An iterable of nodes.
+        OUTPUT: an iterable of nodes
 
         .. note:: This should be overloaded in applications.
 
@@ -1008,9 +1006,7 @@ class RESetMapReduce():
 
         - ``o`` -- a node
 
-        OUTPUT:
-
-        By default ``1``.
+        OUTPUT: by default ``1``
 
         .. note:: This should be overloaded in applications.
 
@@ -1034,9 +1030,7 @@ class RESetMapReduce():
 
         - ``a``, ``b`` -- two values to be reduced
 
-        OUTPUT:
-
-        By default the sum of ``a`` and ``b``.
+        OUTPUT: by default the sum of ``a`` and ``b``
 
         .. note:: This should be overloaded in applications.
 
@@ -1397,9 +1391,7 @@ class RESetMapReduce():
         r"""
         Return a random worker.
 
-        OUTPUT:
-
-        A worker for ``self`` chosen at random.
+        OUTPUT: a worker for ``self`` chosen at random
 
         EXAMPLES::
 
@@ -1645,9 +1637,7 @@ class RESetMapReduceWorker(mp.Process):
         r"""
         Steal some node from another worker.
 
-        OUTPUT:
-
-        A node stolen from another worker chosen at random.
+        OUTPUT: a node stolen from another worker chosen at random
 
         EXAMPLES::
 
@@ -1812,9 +1802,7 @@ class RESetMapReduceWorker(mp.Process):
 
         - ``node`` -- the root of the subtree explored.
 
-        OUTPUT:
-
-        Nothing, the result are stored in ``self._res``.
+        OUTPUT: nothing, the result are stored in ``self._res``
 
         This is where the actual work is performed.
 

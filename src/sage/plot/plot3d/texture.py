@@ -91,9 +91,7 @@ def parse_color(info, base=None):
     - ``info`` -- color, valid color str or number
     - ``base`` -- tuple of length 3 (default: ``None``)
 
-    OUTPUT:
-
-    A tuple or color.
+    OUTPUT: a tuple or color
 
     EXAMPLES:
 
@@ -196,9 +194,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
         - ``name`` -- str (default: None)
         - ``**kwds`` -- other valid keywords
 
-        OUTPUT:
-
-        A texture object.
+        OUTPUT: a texture object
 
         EXAMPLES:
 

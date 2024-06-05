@@ -71,9 +71,7 @@ class SageKernel(IPythonKernel):
         The value of this property is displayed in the Jupyter
         notebook.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -90,9 +88,7 @@ class SageKernel(IPythonKernel):
         r"""
         Help in the Jupyter Notebook
 
-        OUTPUT:
-
-        See the Jupyter documentation.
+        OUTPUT: see the Jupyter documentation
 
         EXAMPLES::
 

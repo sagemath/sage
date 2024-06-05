@@ -118,8 +118,6 @@ class p_iter_fork():
           arguments to ``f``, where ``args`` is a tuple and ``kwds`` is
           a dictionary.
 
-        OUTPUT:
-
         EXAMPLES::
 
             sage: F = sage.parallel.use_fork.p_iter_fork(2,3)

@@ -136,9 +136,7 @@ class JSMolHtml(SageObject):
         This method extracts the Jmol script from the Jmol spt file (a
         zip archive) and inlines meshes.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -202,9 +200,7 @@ class JSMolHtml(SageObject):
         """
         Return as string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -245,9 +241,7 @@ class JSMolHtml(SageObject):
         """
         Return HTML iframe
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -268,9 +262,7 @@ class JSMolHtml(SageObject):
         """
         Return a HTML document containing an iframe with a JSmol applet
 
-        OUTPUT:
-
-        String
+        OUTPUT: string
 
         EXAMPLES::
 

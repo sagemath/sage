@@ -119,9 +119,7 @@ class SagePrettyPrinter(PrettyPrinter):
 
         - ``obj`` -- anything.
 
-        OUTPUT:
-
-        String representation for object.
+        OUTPUT: string representation for object
 
         EXAMPLES::
 

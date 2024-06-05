@@ -160,9 +160,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
         - ``name`` (string, default: ``'z'``) -- the name of the
           generator of the lazy power series ring.
 
-        OUTPUT:
-
-        A lazy power series over the base field.
+        OUTPUT: a lazy power series over the base field
 
         EXAMPLES::
 
@@ -279,9 +277,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
         - ``name`` (string, default: ``'z'``) -- the name of the
           generator of the lazy power series ring.
 
-        OUTPUT:
-
-        A lazy power series over the base field.
+        OUTPUT: a lazy power series over the base field
 
         EXAMPLES::
 

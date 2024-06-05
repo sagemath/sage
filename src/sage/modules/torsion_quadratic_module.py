@@ -333,9 +333,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
           * if ``False``, then the value modulus is inherited from ``self``
           * if ``True``, it figures it out on its own. But that is expensive
 
-        OUTPUT:
-
-        The quotient ``V / W`` as a :class:`TorsionQuadraticModule`.
+        OUTPUT: the quotient ``V / W`` as a :class:`TorsionQuadraticModule`
 
         EXAMPLES::
 

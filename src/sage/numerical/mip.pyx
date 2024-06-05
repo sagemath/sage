@@ -648,9 +648,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         Return the base ring.
 
-        OUTPUT:
-
-        A ring. The coefficients that the chosen solver supports.
+        OUTPUT: a ring. The coefficients that the chosen solver supports
 
         EXAMPLES::
 
@@ -1412,9 +1410,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``tolerance`` -- a nonnegative real number
 
-        OUTPUT:
-
-        An element of ``ZZ``.
+        OUTPUT: an element of ``ZZ``
 
         EXAMPLES::
 
@@ -1460,9 +1456,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``tolerance`` -- a nonnegative real number
 
-        OUTPUT:
-
-        A ``bool``.
+        OUTPUT: a ``bool``
 
         EXAMPLES::
 
@@ -2427,9 +2421,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``e`` -- A variable (not a ``MIPVariable``, but one of its elements.)
 
-        OUTPUT:
-
-        ``True`` if the variable ``e`` is binary; ``False`` otherwise.
+        OUTPUT: ``True`` if the variable ``e`` is binary; ``False`` otherwise
 
         EXAMPLES::
 
@@ -2491,9 +2483,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``e`` -- A variable (not a ``MIPVariable``, but one of its elements.)
 
-        OUTPUT:
-
-        ``True`` if the variable ``e`` is an integer; ``False`` otherwise.
+        OUTPUT: ``True`` if the variable ``e`` is an integer; ``False`` otherwise
 
         EXAMPLES::
 
@@ -2557,9 +2547,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``e`` -- A variable (not a ``MIPVariable``, but one of its elements.)
 
-        OUTPUT:
-
-        ``True`` if the variable is real; ``False`` otherwise.
+        OUTPUT: ``True`` if the variable is real; ``False`` otherwise
 
         EXAMPLES::
 
@@ -2593,9 +2581,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
           - When set to ``False`` (default), the optimal numerical values
             are stored (takes computational time).
 
-        OUTPUT:
-
-        The optimal value taken by the objective function.
+        OUTPUT: the optimal value taken by the objective function
 
         .. WARNING::
 

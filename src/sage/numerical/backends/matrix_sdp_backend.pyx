@@ -100,7 +100,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -145,7 +145,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         - ``names`` -- optional list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
