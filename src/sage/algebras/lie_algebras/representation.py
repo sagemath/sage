@@ -16,6 +16,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family, AbstractFamily
 from sage.matrix.constructor import matrix
 from sage.combinat.free_module import CombinatorialFreeModule
