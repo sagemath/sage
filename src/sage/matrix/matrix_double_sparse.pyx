@@ -36,9 +36,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
           tolerate between entries of the given matrix and its conjugate-
           transpose.
 
-        OUTPUT:
-
-        A boolean, either ``True`` or ``False``.
+        OUTPUT: a boolean, either ``True`` or ``False``
 
         EXAMPLES::
 
@@ -78,9 +76,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
           tolerate between entries of the given matrix and the
           negation of its conjugate-transpose.
 
-        OUTPUT:
-
-        A boolean, either ``True`` or ``False``.
+        OUTPUT: a boolean, either ``True`` or ``False``
 
         EXAMPLES::
 

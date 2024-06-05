@@ -373,9 +373,7 @@ class Braid(FiniteTypeArtinGroupElement):
         - ``normalized`` -- boolean (default: ``True``); whether to
           return the normalized Alexander polynomial
 
-        OUTPUT:
-
-        The Alexander polynomial of the braid closure of the braid.
+        OUTPUT: the Alexander polynomial of the braid closure of the braid
 
         This is computed using the reduced Burau representation. The
         unnormalized Alexander polynomial is a Laurent polynomial,
@@ -726,9 +724,7 @@ class Braid(FiniteTypeArtinGroupElement):
         - ``sparse`` -- boolean (default: ``True``); whether or not the
           result should be given as a sparse matrix
 
-        OUTPUT:
-
-        The matrix of the TL representation of the braid.
+        OUTPUT: the matrix of the TL representation of the braid
 
         The parameter ``sparse`` can be set to ``False`` if it is
         expected that the resulting matrix will not be sparse. We

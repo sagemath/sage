@@ -412,7 +412,7 @@ cpdef __matrix_from_rows_of_matrices(X):
         sage: all(list(Y[i]) == X[i].list() for i in range(10))
         True
 
-    OUTPUT: A single matrix mod ``p`` whose ``i``-th row is ``X[i].list()``.
+    OUTPUT: a single matrix mod ``p`` whose ``i``-th row is ``X[i].list()``.
 
     .. note::
 

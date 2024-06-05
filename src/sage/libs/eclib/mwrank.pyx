@@ -932,9 +932,7 @@ cdef class _mw:
             will always contain a `\ZZ`-span of the saturation of the
             points found, modulo torsion.
 
-        OUTPUT:
-
-        None. The effect of the search is to update the list of generators.
+        OUTPUT: none; the effect of the search is to update the list of generators
 
         EXAMPLES::
 
@@ -1034,9 +1032,7 @@ cdef class _two_descent:
           2-torsion.  Recommended left as the default except for
           experts interested in details of Selmer groups.
 
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1236,9 +1232,7 @@ cdef class _two_descent:
           less than this.  The default is 3 since the points found
           during 2-descent will be 2-saturated.
 
-        OUTPUT:
-
-        None.
+        OUTPUT: none
 
         EXAMPLES::
 

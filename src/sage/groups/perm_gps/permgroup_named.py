@@ -2252,9 +2252,7 @@ class PrimitiveGroup(PermutationGroup_unique):
         """
         The Python constructor.
 
-        INPUT/OUTPUT:
-
-        See :class:`PrimitiveGroup`.
+        INPUT/OUTPUT: see :class:`PrimitiveGroup`
 
         TESTS::
 
@@ -2619,7 +2617,7 @@ class PGL(PermutationGroup_plg):
         - ``q`` -- prime power; the size of the ground field
         - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
-        OUTPUT: PGL(`n`, `q`)
+        OUTPUT: pGL(`n`, `q`)
 
         .. NOTE::
 
@@ -2859,7 +2857,7 @@ class PSp(PermutationGroup_plg):
         - ``q`` -- prime power; the size of the ground field
         - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
-        OUTPUT: PSp(`n`, `q`)
+        OUTPUT: pSp(`n`, `q`)
 
         .. NOTE::
 
@@ -2935,7 +2933,7 @@ class PSU(PermutationGroup_pug):
         - q -- prime power; the size of the ground field
         - name -- (default: 'a') variable name of indeterminate of finite field GF(q)
 
-        OUTPUT: PSU(n,q)
+        OUTPUT: pSU(n,q)
 
         .. NOTE::
 
@@ -2984,7 +2982,7 @@ class PGU(PermutationGroup_pug):
         - ``q`` -- prime power; the size of the ground field
         - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
-        OUTPUT: PGU(`n`, `q`)
+        OUTPUT: pGU(`n`, `q`)
 
         .. NOTE::
 

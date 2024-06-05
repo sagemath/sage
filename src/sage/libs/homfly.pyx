@@ -59,9 +59,7 @@ def homfly_polynomial_string(link):
 
     - ``link`` -- a string of space-separated integers representing the link
 
-    OUTPUT:
-
-    A string with the HOMFLY polynomial in the variables `M` and `L`
+    OUTPUT: a string with the HOMFLY polynomial in the variables `M` and `L`
 
     EXAMPLES::
 
@@ -85,9 +83,7 @@ def homfly_polynomial_dict(link):
 
     - ``link`` -- a string of space-separated integers representing the link
 
-    OUTPUT:
-
-    A dictionary representing the HOMFLY polynomial.
+    OUTPUT: a dictionary representing the HOMFLY polynomial
 
     EXAMPLES::
 

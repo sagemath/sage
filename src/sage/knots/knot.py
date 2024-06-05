@@ -401,9 +401,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         - ``other`` -- a knot
 
-        OUTPUT:
-
-        A knot equivalent to the connected sum of ``self`` and ``other``.
+        OUTPUT: a knot equivalent to the connected sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -580,9 +578,7 @@ class Knots(Singleton, Parent):
 
         a list of signed even numbers, the Dowker-Thistlethwaite code of a knot
 
-        OUTPUT:
-
-        a knot
+        OUTPUT: a knot
 
         .. WARNING::
 
@@ -632,9 +628,7 @@ class Knots(Singleton, Parent):
         - ``n`` -- the crossing number
         - ``k`` -- a positive integer
 
-        OUTPUT:
-
-        the knot `K_{n,k}` in the Rolfsen table
+        OUTPUT: the knot `K_{n,k}` in the Rolfsen table
 
         EXAMPLES::
 

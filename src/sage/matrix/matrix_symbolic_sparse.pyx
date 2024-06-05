@@ -788,9 +788,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         - ``self`` -- the matrix whose entries we should simplify.
 
-        OUTPUT:
-
-        A copy of ``self`` with all of its entries simplified.
+        OUTPUT: a copy of ``self`` with all of its entries simplified
 
         EXAMPLES:
 

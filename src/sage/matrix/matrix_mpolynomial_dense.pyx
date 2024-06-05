@@ -131,9 +131,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         This returns a list, of the position of the first nonzero entry in each
         row of the echelon form.
 
-        OUTPUT:
-
-        A list of Python ints.
+        OUTPUT: a list of Python ints
 
         EXAMPLES::
 
@@ -463,9 +461,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         - ``i`` -- an integer
 
-        OUTPUT:
-
-        An ideal on the base ring.
+        OUTPUT: an ideal on the base ring
 
         EXAMPLES::
 

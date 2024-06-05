@@ -545,9 +545,7 @@ cdef class ring_wrapper_Py():
         """
         Return a hash value so that instances can be used as dictionary keys.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -562,9 +560,7 @@ cdef class ring_wrapper_Py():
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -588,9 +584,7 @@ cdef class ring_wrapper_Py():
 
         - ``right`` -- a :class:`ring_wrapper_Py`
 
-        OUTPUT:
-
-        True if both ``ring_wrapper_Py`` wrap the same pointer.
+        OUTPUT: ``True`` if both ``ring_wrapper_Py`` wrap the same pointer
 
         EXAMPLES::
 

@@ -258,7 +258,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
     -  ``cutoff`` -- size at which algorithm reverts to
        naive Gaussian elimination and multiplication must be at least 1.
 
-    OUTPUT: The list of pivot columns
+    OUTPUT: the list of pivot columns
 
     EXAMPLES::
 
@@ -591,9 +591,7 @@ class int_range:
         r"""
         Return the list of intervals.
 
-        OUTPUT:
-
-        A list of pairs of integers.
+        OUTPUT: a list of pairs of integers
 
         EXAMPLES::
 
@@ -610,9 +608,7 @@ class int_range:
         r"""
         Return the (sorted) list of integers represented by this object.
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -643,9 +639,7 @@ class int_range:
         r"""
         Return an iterator over the intervals.
 
-        OUTPUT:
-
-        iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -667,9 +661,7 @@ class int_range:
         r"""
         Return the number of integers represented by this object.
 
-        OUTPUT:
-
-        Python integer
+        OUTPUT: Python integer
 
         EXAMPLES::
 
@@ -697,9 +689,7 @@ class int_range:
 
         - ``right`` -- an instance of ``int_range``
 
-        OUTPUT:
-
-        An instance of ``int_range``
+        OUTPUT: an instance of ``int_range``
 
         .. NOTE::
 
@@ -727,9 +717,7 @@ class int_range:
 
         - ``right`` -- an instance of ``int_range``.
 
-        OUTPUT:
-
-        An instance of ``int_range``.
+        OUTPUT: an instance of ``int_range``
 
         .. NOTE::
 
@@ -759,9 +747,7 @@ class int_range:
 
         - ``right`` -- an instance of ``int_range``.
 
-        OUTPUT:
-
-        An instance of ``int_range``.
+        OUTPUT: an instance of ``int_range``
 
         EXAMPLES::
 

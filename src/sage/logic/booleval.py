@@ -50,9 +50,7 @@ def eval_formula(tree, vdict):
 
     - ``vdict`` -- a dictionary containing variable keys and boolean values
 
-    OUTPUT:
-
-    The result of the evaluation as a boolean value.
+    OUTPUT: the result of the evaluation as a boolean value
 
     EXAMPLES:
 
@@ -84,9 +82,7 @@ def eval_f(tree):
     - ``tree`` -- a list of three elements corresponding to a branch of a
       parse tree
 
-    OUTPUT:
-
-    The result of the evaluation as a boolean value.
+    OUTPUT: the result of the evaluation as a boolean value
 
     EXAMPLES:
 
@@ -117,9 +113,7 @@ def eval_op(op, lv, rv):
 
     - ``rv`` -- a boolean or variable
 
-    OUTPUT:
-
-    The evaluation of ``lv op rv`` as a boolean value.
+    OUTPUT: the evaluation of ``lv op rv`` as a boolean value
 
     EXAMPLES:
 

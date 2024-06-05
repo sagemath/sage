@@ -1107,9 +1107,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         """
         Test whether the mathics expression is graphics.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

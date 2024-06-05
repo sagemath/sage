@@ -422,9 +422,7 @@ cdef class simple_connected_genus_backtracker:
           to remember the best embedding seen. This embedding can be retrieved
           with ``self.get_embedding()``.
 
-        OUTPUT:
-
-            the minimal or maximal genus for self's graph.
+        OUTPUT: the minimal or maximal genus for self's graph
 
         EXAMPLES::
 

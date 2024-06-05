@@ -391,7 +391,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``A`` -- anything that determines a matrix
 
-        OUTPUT: The affine group element `x \mapsto A x`
+        OUTPUT: the affine group element `x \mapsto A x`
 
         EXAMPLES::
 
@@ -412,7 +412,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``b`` -- anything that determines a vector
 
-        OUTPUT: The affine group element `x \mapsto x + b`
+        OUTPUT: the affine group element `x \mapsto x + b`
 
         EXAMPLES::
 

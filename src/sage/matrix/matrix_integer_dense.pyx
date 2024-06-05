@@ -1058,7 +1058,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``v`` -- a free module element.
 
-        OUTPUT: The vector times matrix product ``v*A``.
+        OUTPUT: the vector times matrix product ``v*A``
 
         EXAMPLES::
 
@@ -1471,7 +1471,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         Return the height of this matrix, i.e., the max absolute value of
         the entries of the matrix.
 
-        OUTPUT: A nonnegative integer.
+        OUTPUT: a nonnegative integer
 
         EXAMPLES::
 
@@ -3034,9 +3034,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``'pari'`` -- pari's qflll.
 
-        OUTPUT:
-
-        A matrix over the integers.
+        OUTPUT: a matrix over the integers
 
         EXAMPLES::
 
@@ -3369,7 +3367,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``cols`` -- a list (or set) of integers representing columns
           of ``self``
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4012,7 +4010,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
            check that the matrix is invertible.
 
 
-        OUTPUT: A, d such that ``A*self == d``
+        OUTPUT: a, d such that ``A*self == d``
 
 
         -  ``A`` -- a matrix over ZZ
@@ -4068,7 +4066,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``self`` -- an invertible matrix
 
-        OUTPUT: A, d such that ``A*self == d``
+        OUTPUT: a, d such that ``A*self == d``
 
 
         -  ``A`` -- a matrix over ZZ
@@ -5935,9 +5933,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``b`` -- an element of `\ZZ` (default: 0)
 
-        OUTPUT:
-
-        An ideal in `\ZZ[X]`.
+        OUTPUT: an ideal in `\ZZ[X]`
 
         EXAMPLES::
 

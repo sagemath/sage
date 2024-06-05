@@ -62,9 +62,7 @@ class CellComplexReference():
         """
         Return the underlying cell complex
 
-        OUTPUT:
-
-        A cell complex.
+        OUTPUT: a cell complex
 
         EXAMPLES::
 
@@ -78,9 +76,7 @@ class CellComplexReference():
         """
         Return the dimension of the cells
 
-        OUTPUT:
-
-        Integer. The dimension of the cells.
+        OUTPUT: integer; the dimension of the cells
 
         EXAMPLES::
 
@@ -175,9 +171,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
         """
         Return the cochains.
 
-        OUTPUT:
-
-        The cochains of the same cells with the same base ring.
+        OUTPUT: the cochains of the same cells with the same base ring
 
         EXAMPLES::
 
@@ -200,9 +194,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
         """
         Return the chain complex.
 
-        OUTPUT:
-
-        Chain complex, see :mod:`sage.homology.chain_complex`.
+        OUTPUT: chain complex, see :mod:`sage.homology.chain_complex`
 
         EXAMPLES::
 
@@ -227,9 +219,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
             """
             Return the corresponding chain complex element
 
-            OUTPUT:
-
-            An element of the chain complex, see :mod:`sage.homology.chain_complex`.
+            OUTPUT: an element of the chain complex, see :mod:`sage.homology.chain_complex`
 
             EXAMPLES::
 
@@ -253,9 +243,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
             """
             Return the boundary of the chain
 
-            OUTPUT:
-
-            The boundary as a chain in one degree lower.
+            OUTPUT: the boundary as a chain in one degree lower
 
             EXAMPLES::
 
@@ -280,9 +268,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
             """
             Test whether the chain is a cycle
 
-            OUTPUT:
-
-            Boolean. Whether the :meth:`boundary` vanishes.
+            OUTPUT: boolean; whether the :meth:`boundary` vanishes
 
             EXAMPLES::
 
@@ -415,9 +401,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
         """
         Return the chains
 
-        OUTPUT:
-
-        The chains of the same cells with the same base ring.
+        OUTPUT: the chains of the same cells with the same base ring
 
         EXAMPLES::
 
@@ -440,9 +424,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
         """
         Return the cochain complex.
 
-        OUTPUT:
-
-        Cochain complex, see :mod:`sage.homology.chain_complex`.
+        OUTPUT: cochain complex, see :mod:`sage.homology.chain_complex`
 
         EXAMPLES::
 
@@ -468,9 +450,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
             """
             Return the corresponding cochain complex element
 
-            OUTPUT:
-
-            An element of the cochain complex, see :mod:`sage.homology.chain_complex`.
+            OUTPUT: an element of the cochain complex, see :mod:`sage.homology.chain_complex`
 
             EXAMPLES::
 
@@ -494,9 +474,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
             r"""
             Return the coboundary of this cochain
 
-            OUTPUT:
-
-            The coboundary as a cochain in one degree higher.
+            OUTPUT: the coboundary as a cochain in one degree higher
 
             EXAMPLES::
 
@@ -521,9 +499,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
             """
             Test whether the cochain is a cocycle
 
-            OUTPUT:
-
-            Boolean. Whether the :meth:`coboundary` vanishes.
+            OUTPUT: boolean; whether the :meth:`coboundary` vanishes
 
             EXAMPLES::
 

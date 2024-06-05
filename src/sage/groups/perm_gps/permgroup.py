@@ -5275,7 +5275,7 @@ class PermutationGroup_action(PermutationGroup_generic):
         - ``canonicalize`` -- bool (default: ``True``); if ``True``,
           sort generators and remove duplicates
 
-        OUTPUT: a finite group action given as a permutation group.
+        OUTPUT: a finite group action given as a permutation group
 
         EXAMPLES::
 

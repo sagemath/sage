@@ -208,9 +208,7 @@ class ECM(SageObject):
         - ``n`` -- integer suitable for ECM. No argument checking is
           performed.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -235,9 +233,7 @@ class ECM(SageObject):
 
         - ``n`` -- integer.
 
-        OUTPUT:
-
-        String. The ECM output.
+        OUTPUT: string; the ECM output
 
         EXAMPLES::
 
@@ -287,9 +283,7 @@ class ECM(SageObject):
 
         - ``min``, ``max`` -- integer. Min and max values.
 
-        OUTPUT:
-
-        Integer. A key in _recommended_B1_list.
+        OUTPUT: integer; a key in ``_recommended_B1_list``
 
         EXAMPLES::
 
@@ -601,9 +595,7 @@ class ECM(SageObject):
         - ``kwds`` -- keyword arguments to pass to ecm-gmp. See help
           for :class:`ECM` for more details.
 
-        OUTPUT:
-
-        A list of integers whose product is n.
+        OUTPUT: a list of integers whose product is `n`
 
         .. NOTE::
 

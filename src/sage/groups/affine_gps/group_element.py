@@ -73,7 +73,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
     that case, the group element defining that matrix is
     reconstructed.
 
-    OUTPUT: The affine group element `x \mapsto Ax + b`
+    OUTPUT: the affine group element `x \mapsto Ax + b`
 
     EXAMPLES::
 
@@ -145,7 +145,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the general linear part of an affine group element.
 
-        OUTPUT: The matrix `A` of the affine group element `Ax + b`
+        OUTPUT: the matrix `A` of the affine group element `Ax + b`
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the translation part of an affine group element.
 
-        OUTPUT: The vector `b` of the affine group element `Ax + b`
+        OUTPUT: the vector `b` of the affine group element `Ax + b`
 
         EXAMPLES::
 

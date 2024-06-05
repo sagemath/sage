@@ -304,7 +304,7 @@ for hints on how to do that).
 
         INPUT: A Sage matrix with entries in the rationals or reals.
 
-        OUTPUT: A string that evaluates to a Matlab matrix.
+        OUTPUT: a string that evaluates to a Matlab matrix
 
         EXAMPLES::
 

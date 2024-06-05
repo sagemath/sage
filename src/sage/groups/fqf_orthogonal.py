@@ -495,9 +495,7 @@ def _isom_fqf(A, B=None):
     - ``A`` -- a torsion quadratic module
     - ``B`` -- (default: ``None``) a torsion quadratic module
 
-    OUTPUT:
-
-    A list of generators of the orthogonal group of A.
+    OUTPUT: a list of generators of the orthogonal group of A
 
     If ``B`` is given, this returns instead a single isometry of `A` and `B`
     or raises a :class:`ValueError` if `A` and `B` are not isometric.

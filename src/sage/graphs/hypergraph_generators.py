@@ -95,9 +95,7 @@ class HypergraphGenerators:
               For genbgL the *first class* elements are vertices, and *second
               class* elements are the hypergraph's sets.
 
-        OUTPUT:
-
-        A tuple of tuples.
+        OUTPUT: a tuple of tuples
 
         EXAMPLES:
 

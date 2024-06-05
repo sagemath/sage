@@ -189,9 +189,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``s`` -- string
 
-        OUTPUT:
-
-        Maxima's help for ``s``
+        OUTPUT: maxima's help for ``s``
 
         EXAMPLES::
 
@@ -211,9 +209,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``s`` -- string
 
-        OUTPUT:
-
-        Maxima's examples for ``s``
+        OUTPUT: maxima's examples for ``s``
 
         EXAMPLES::
 
@@ -610,7 +606,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         - ``rep`` -- an optional string; if given, this is how
            the function will print.
 
-        OUTPUT: Maxima function
+        OUTPUT: maxima function
 
         EXAMPLES::
 
@@ -1210,7 +1206,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT: none
 
-        OUTPUT: Sage object
+        OUTPUT: sage object
 
         EXAMPLES::
 
@@ -1385,7 +1381,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT: none
 
-        OUTPUT: Maxima real
+        OUTPUT: maxima real
 
         EXAMPLES::
 
@@ -1400,7 +1396,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT: none
 
-        OUTPUT: Maxima real
+        OUTPUT: maxima real
 
         EXAMPLES::
 
@@ -1415,7 +1411,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT: none
 
-        OUTPUT: Maxima object
+        OUTPUT: maxima object
 
         EXAMPLES::
 
@@ -1642,7 +1638,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - ``other`` -- matrix; argument to dot.
 
-        OUTPUT: Maxima matrix
+        OUTPUT: maxima matrix
 
         EXAMPLES::
 
@@ -1663,7 +1659,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - ``n`` -- integer
 
-        OUTPUT: Maxima object
+        OUTPUT: maxima object
 
         .. note::
 
@@ -1715,7 +1711,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - ``val`` -- string representing substitution(s) to perform
 
-        OUTPUT: Maxima object
+        OUTPUT: maxima object
 
         EXAMPLES::
 
@@ -1736,7 +1732,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - ``args`` -- string
 
-        OUTPUT: Maxima object
+        OUTPUT: maxima object
 
         EXAMPLES::
 
@@ -1873,7 +1869,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - ``var`` -- string
 
-        OUTPUT: Maxima object
+        OUTPUT: maxima object
 
         EXAMPLES::
 
@@ -1905,7 +1901,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         - ``other`` -- the other operand. If ``other`` is ``None``,
           then the operation is assumed to be unary rather than binary.
 
-        OUTPUT: Maxima object
+        OUTPUT: maxima object
 
         Note that other's parent should already be Maxima since this should
         be called after coercion has been performed.
@@ -1959,7 +1955,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
     - ``latex`` -- string
 
-    OUTPUT: Maxima function
+    OUTPUT: maxima function
 
     EXAMPLES::
 
@@ -1992,9 +1988,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         INPUT: none
 
-        OUTPUT:
-
-        A couple consisting of:
+        OUTPUT: a couple consisting of:
 
         - the function to call for unpickling
 
@@ -2019,7 +2013,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         - ``args`` -- a variable number of arguments
 
-        OUTPUT: Maxima object
+        OUTPUT: maxima object
 
         EXAMPLES::
 
@@ -2122,7 +2116,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         - ``var`` -- a variable
 
-        OUTPUT: Maxima function
+        OUTPUT: maxima function
 
         Note that integrate is an alias of integral.
 

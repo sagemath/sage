@@ -540,7 +540,7 @@ class P(PQ):
 
         OUTPUT:
 
-        According to the cases :
+        According to the cases:
 
             * ``(EMPTY, ALIGNED)`` if no set of the tree contains
               an occurrence of ``v``
@@ -819,7 +819,7 @@ class Q(PQ):
 
         OUTPUT:
 
-        According to the cases :
+        According to the cases:
 
             * ``(EMPTY, ALIGNED)`` if no set of the tree contains
               an occurrence of ``v``

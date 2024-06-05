@@ -345,7 +345,7 @@ class MaximaLib(MaximaAbstract):
 
     INPUT: none
 
-    OUTPUT: Maxima interface as a Library
+    OUTPUT: maxima interface as a Library
 
     EXAMPLES::
 
@@ -398,7 +398,7 @@ class MaximaLib(MaximaAbstract):
 
         - ``x`` -- object to coerce into self
 
-        OUTPUT: Maxima element equivalent to ``x``
+        OUTPUT: maxima element equivalent to ``x``
 
         EXAMPLES::
 
@@ -417,9 +417,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT: none
 
-        OUTPUT:
-
-        A couple consisting of:
+        OUTPUT: a couple consisting of:
 
         - the function to call for unpickling
 
@@ -1141,7 +1139,7 @@ class MaximaLibElement(MaximaAbstractElement):
 
         - ``options`` -- string (default="")
 
-        OUTPUT: Maxima object
+        OUTPUT: maxima object
 
         EXAMPLES:
 
@@ -1414,7 +1412,7 @@ def mlist_to_sage(expr):
 
     - ``expr`` -- ECL object; a Maxima MLIST expression (i.e., a list)
 
-    OUTPUT: a Python list of converted expressions.
+    OUTPUT: a Python list of converted expressions
 
     EXAMPLES::
 

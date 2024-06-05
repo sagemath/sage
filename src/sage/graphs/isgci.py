@@ -719,9 +719,7 @@ class GraphClasses(UniqueRepresentation):
         r"""
         Return the graph class inclusions.
 
-        OUTPUT:
-
-        a list of dictionaries
+        OUTPUT: a list of dictionaries
 
         Upon the first call, this loads the database from the local XML file.
         Subsequent calls are cached.
@@ -976,9 +974,7 @@ def _XML_to_dict(root):
 
     - ``root`` -- an ``xml.etree.cElementTree.ElementTree`` object.
 
-    OUTPUT:
-
-    A dictionary representing the XML data.
+    OUTPUT: a dictionary representing the XML data
 
     EXAMPLES::
 

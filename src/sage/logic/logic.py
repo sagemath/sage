@@ -73,9 +73,7 @@ class SymbolicLogic:
         - ``global vars_order`` -- a list of the variables in the order
           that they are found
 
-        OUTPUT:
-
-        A list of length three containing the following in this order:
+        OUTPUT: a list of length three containing the following in this order:
 
         1. a list of tokens
         2. a dictionary of variable/value pairs
@@ -206,9 +204,7 @@ class SymbolicLogic:
         - ``table`` -- object created by :meth:`truthtable()` method; it
           contains the variable values and the evaluation of the statement
 
-        OUTPUT:
-
-        A formatted version of the truth table.
+        OUTPUT: a formatted version of the truth table
 
         EXAMPLES:
 
@@ -292,9 +288,7 @@ class SymbolicLogic:
         - ``statement1`` -- the first statement
         - ``statement2`` -- the second statement
 
-        OUTPUT:
-
-        A new statement which or'd the given statements together.
+        OUTPUT: a new statement which or'd the given statements together
 
         EXAMPLES::
 
@@ -379,9 +373,7 @@ def get_bit(x, c):
 
     - ``c`` -- an integer; this is the bit number to be taken
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if bit ``c`` of ``x`` is 1.
 
@@ -418,9 +410,7 @@ def eval(toks):
 
     - ``toks`` -- a list of tokens; this represents a boolean expression
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if expression evaluates to ``True``.
 
@@ -462,9 +452,7 @@ def eval_ltor_toks(lrtoks):
     - ``lrtoks`` -- a list of tokens; this represents a part of a boolean
       formula that contains no inner parentheses
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if expression evaluates to ``True``.
 
@@ -576,9 +564,7 @@ def eval_mon_op(args):
     - ``args`` -- a list of length 2; this contains the token 'NOT' and
       then a variable name
 
-    OUTPUT:
-
-    A boolean value to be determined as follows:
+    OUTPUT: a boolean value to be determined as follows:
 
     - ``True`` if the variable in ``args`` is ``False``.
 
@@ -669,9 +655,7 @@ def eval_and_op(lval, rval):
     - ``rval`` -- a string; this represents the value of the variable
       appearing to the right of the 'and' operator
 
-    OUTPUT:
-
-    The result of applying 'and' to ``lval`` and ``rval`` as a string.
+    OUTPUT: the result of applying 'and' to ``lval`` and ``rval`` as a string
 
     .. NOTE::
 
@@ -703,9 +687,7 @@ def eval_or_op(lval, rval):
     - ``rval`` -- a string; this represents the value of the variable
       appearing to the right of the 'or' operator
 
-    OUTPUT:
-
-    A string representing the result of applying 'or' to ``lval`` and ``rval``.
+    OUTPUT: a string representing the result of applying 'or' to ``lval`` and ``rval``
 
     .. NOTE::
 
@@ -805,9 +787,7 @@ def tokenize(s, toks):
 
     - ``toks`` -- a list; this will be populated with the tokens of ``s``
 
-    OUTPUT:
-
-    ``None``; the tokens of ``s`` are placed in ``toks``.
+    OUTPUT: ``None``; the tokens of ``s`` are placed in ``toks``
 
     .. NOTE::
 

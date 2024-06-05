@@ -431,9 +431,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         self -- a matrix
 
-        OUTPUT:
-
-        D*self, D
+        OUTPUT: D*self, D
 
         The product D*self is a matrix over ZZ
 
@@ -533,9 +531,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
         algorithm; ignored by the p-adic algorithm.
 
-        OUTPUT:
-
-            self is no in reduced row echelon form.
+        OUTPUT: self is no in reduced row echelon form
 
         EXAMPLES::
 

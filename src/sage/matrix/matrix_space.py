@@ -2523,9 +2523,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         See :class:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 

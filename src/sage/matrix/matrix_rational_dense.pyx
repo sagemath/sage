@@ -510,7 +510,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         - ``v`` -- a free module element
 
-        OUTPUT: The vector times matrix product v\*A
+        OUTPUT: the vector times matrix product v\*A
 
         EXAMPLES::
 
@@ -990,7 +990,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
            - ``'generic'``: uses Sage generic implementation
 
-        OUTPUT: a polynomial over the rational numbers.
+        OUTPUT: a polynomial over the rational numbers
 
         EXAMPLES::
 
@@ -1247,7 +1247,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         absolute values of all numerators and denominators of entries in
         this matrix.
 
-        OUTPUT: an Integer
+        OUTPUT: integer
 
         EXAMPLES::
 

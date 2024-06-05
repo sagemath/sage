@@ -1464,9 +1464,7 @@ class Gap(Gap_generic):
         """
         Return additional tab completion entries
 
-        OUTPUT:
-
-        List of strings
+        OUTPUT: list of strings
 
         EXAMPLES::
 
@@ -1571,9 +1569,7 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
         """
         Return additional tab completion entries.
 
-        OUTPUT:
-
-        List of strings
+        OUTPUT: list of strings
 
         EXAMPLES::
 

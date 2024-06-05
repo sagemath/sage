@@ -365,9 +365,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         - `modulus` -- a number
 
-        OUTPUT:
-
-        This matrix, over `ZZ/nZZ`.
+        OUTPUT: this matrix, over `ZZ/nZZ`
 
         TESTS::
 
@@ -545,9 +543,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
           * 'pari': works robustly, but is slower.
           * 'linbox' -- use linbox (currently off, broken)
 
-        OUTPUT:
-
-        list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 

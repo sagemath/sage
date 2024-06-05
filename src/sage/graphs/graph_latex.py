@@ -870,9 +870,7 @@ class GraphLatex(SageObject):
           same cluster subgraph are drawn together, with the entire drawing of
           the cluster contained within a bounding rectangle.
 
-        OUTPUT:
-
-        There are none. Success happens silently.
+        OUTPUT: none; success happens silently
 
         EXAMPLES:
 

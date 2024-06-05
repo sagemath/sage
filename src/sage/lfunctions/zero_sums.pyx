@@ -68,9 +68,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         - ``n`` -- (default: ``None``) If not ``None``, a nonnegative integer
 
-        OUTPUT:
-
-        If n is not ``None``, returns a positive integer
+        OUTPUT: if n is not ``None``, returns a positive integer
 
         EXAMPLES::
 
@@ -176,9 +174,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
         - ``python_floats`` -- bool (default: ``False``); if ``True`` return a list of
           Python floats instead of Sage Real Double Field elements.
 
-        OUTPUT:
-
-        A list of real numbers
+        OUTPUT: a list of real numbers
 
         .. SEEALSO::
 
@@ -1822,9 +1818,7 @@ def LFunctionZeroSum(X, *args, **kwds):
     - ``X`` -- A motivic object. Currently only implemented for X = an elliptic curve
       over the rational numbers.
 
-    OUTPUT:
-
-    An LFunctionZeroSum object.
+    OUTPUT: an LFunctionZeroSum object
 
     EXAMPLES::
 

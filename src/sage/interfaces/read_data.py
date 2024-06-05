@@ -20,9 +20,7 @@ def read_data(f, t):
     - 'f' -- a file name
     - 't' -- a class (objects will be coerced to that class)
 
-    OUTPUT:
-
-    a list of elements of class 't'
+    OUTPUT: a list of elements of class 't'
 
     EXAMPLES::
 

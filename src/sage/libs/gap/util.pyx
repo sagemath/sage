@@ -59,9 +59,7 @@ cdef class ObjWrapper():
 
         - ``op`` -- integer. The comparison operation to be performed.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

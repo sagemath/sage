@@ -106,9 +106,7 @@ class Frobby:
 
         - monomial_ideal -- The monomial ideal to decompose.
 
-        OUTPUT:
-
-        The monomial corresponding to the Alexander dual.
+        OUTPUT: the monomial corresponding to the Alexander dual
 
         EXAMPLES:
 
@@ -226,9 +224,7 @@ class Frobby:
 
         - monomial_ideal -- The monomial ideal to decompose.
 
-        OUTPUT:
-
-        The dimension of the zero set of the ideal.
+        OUTPUT: the dimension of the zero set of the ideal
 
         EXAMPLES::
 
@@ -414,9 +410,7 @@ class Frobby:
 
         - monomial_ideal -- The monomial ideal to be formatted as a string.
 
-        OUTPUT:
-
-        A string in 4ti2 format representing the ideal.
+        OUTPUT: a string in ``4ti2`` format representing the ideal
 
         EXAMPLES::
 
@@ -448,9 +442,7 @@ class Frobby:
 
         - monomial -- The monomial whose exponent vector is to be formatted.
 
-        OUTPUT:
-
-        A string representing the exponent vector of monomial.
+        OUTPUT: a string representing the exponent vector of monomial
 
         EXAMPLES::
 

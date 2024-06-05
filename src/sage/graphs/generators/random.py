@@ -2188,9 +2188,7 @@ def blossoming_contour(t, shift=0, seed=None):
 
     - ``shift`` -- an integer (default `0`), used as a starting index
 
-    OUTPUT:
-
-    contour word of a random blossoming of `t`
+    OUTPUT: contour word of a random blossoming of `t`
 
     EXAMPLES::
 

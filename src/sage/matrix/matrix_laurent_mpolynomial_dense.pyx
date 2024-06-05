@@ -76,9 +76,7 @@ cdef class Matrix_laurent_mpolynomial_dense(Matrix_generic_dense):
 
         - ``i`` -- an integer
 
-        OUTPUT:
-
-        An ideal on the base ring.
+        OUTPUT: an ideal on the base ring
 
         EXAMPLES::
 

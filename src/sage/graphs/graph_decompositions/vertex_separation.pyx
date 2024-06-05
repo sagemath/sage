@@ -377,9 +377,7 @@ def linear_ordering_to_path_decomposition(G, L):
 
     - ``L`` -- a linear ordering for G
 
-    OUTPUT:
-
-    A path graph whose vertices are the bags of the path decomposition.
+    OUTPUT: a path graph whose vertices are the bags of the path decomposition
 
     EXAMPLES:
 

@@ -1848,7 +1848,7 @@ def strong_articulation_points(G):
     algorithm described in [ILS2012]_. The time complexity is dominated by
     the time complexity of the immediate dominators finding algorithm.
 
-    OUTPUT: The list of strong articulation points.
+    OUTPUT: the list of strong articulation points
 
     EXAMPLES:
 
@@ -2101,7 +2101,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
       over an inexact base ring; see
       :meth:`MixedIntegerLinearProgram.get_values`.
 
-    OUTPUT: A triple `(S, C, f)`, where
+    OUTPUT: a triple `(S, C, f)`, where
 
     - `S` is a list of the graphs that are sides of the vertex cut.
 

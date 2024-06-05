@@ -2958,9 +2958,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     A matrix not in reduced row-echelon form with the desired dimensions and properties.
 
-    OUTPUT:
-
-    An invertible matrix with the desired properties and determinant 1.
+    OUTPUT: an invertible matrix with the desired properties and determinant 1
 
     .. warning::
 
@@ -3284,9 +3282,7 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
     - ``i`` -- integer
     - ``ring`` -- ring (default: ``None``) of the resulting matrix
 
-    OUTPUT:
-
-    A matrix
+    OUTPUT: a matrix
 
     EXAMPLES::
 
@@ -3355,9 +3351,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
     - ``i`` -- integer
     - ``ring`` -- ring (default: ``None``) of the resulting matrix
 
-    OUTPUT:
-
-    A matrix
+    OUTPUT: a matrix
 
     EXAMPLES::
 

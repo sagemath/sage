@@ -310,9 +310,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         - `right` -- a ring element which must already be in the basering
           of ``self`` (no coercion done here).
 
-        OUTPUT:
-
-        the matrix ``self * right``
+        OUTPUT: the matrix ``self * right``
 
         EXAMPLES::
 

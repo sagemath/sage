@@ -250,9 +250,7 @@ class ClassFunction_gap(SageObject):
         r"""
         Return the domain of the ``self``.
 
-        OUTPUT:
-
-        The underlying group of the class function.
+        OUTPUT: the underlying group of the class function
 
         EXAMPLES::
 

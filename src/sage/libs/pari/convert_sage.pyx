@@ -63,9 +63,7 @@ cpdef gen_to_sage(Gen z, locals=None):
     - ``locals`` -- optional dictionary used in fallback cases that
       involve :func:`sage_eval`
 
-    OUTPUT:
-
-    One of the following depending on the PARI type of ``z``
+    OUTPUT: one of the following depending on the PARI type of ``z``
 
     - a :class:`~sage.rings.integer.Integer` if ``z`` is an integer (type ``t_INT``)
 

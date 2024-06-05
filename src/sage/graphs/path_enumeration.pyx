@@ -1432,9 +1432,7 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
       pass information about edge multiplicities of the graph, if ``None``
       edge multiplicity values are computed inside the method.
 
-    OUTPUT:
-
-        iterator
+    OUTPUT: iterator
 
     EXAMPLES::
 
@@ -1695,9 +1693,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
       is simply a pair ``(u, v)`` of vertices. Otherwise a list of edges
       along with its edge labels are used to represent the path.
 
-    OUTPUT:
-
-        iterator
+    OUTPUT: iterator
 
     AUTHOR:
 
@@ -1932,9 +1928,7 @@ def all_simple_paths(self, starting_vertices=None, ending_vertices=None,
       is simply a pair ``(u, v)`` of vertices. Otherwise a list of edges
       along with its edge labels are used to represent the path.
 
-    OUTPUT:
-
-        list
+    OUTPUT: list
 
     .. NOTE::
 

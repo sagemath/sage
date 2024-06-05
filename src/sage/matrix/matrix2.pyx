@@ -8555,9 +8555,7 @@ cdef class Matrix(Matrix1):
           to the maximal matrix.
           If ``False``, return only the maximal matrix.
 
-        OUTPUT:
-
-        The maximal matrix.
+        OUTPUT: the maximal matrix
 
         EXAMPLES::
 
@@ -8736,9 +8734,7 @@ cdef class Matrix(Matrix1):
             ``self`` to ``N`` if such a permutation exists, and
             (``False``, ``None``) if it does not.
 
-        OUTPUT:
-
-        A Boolean or a tuple of a Boolean and a permutation.
+        OUTPUT: a Boolean or a tuple of a Boolean and a permutation
 
         EXAMPLES::
 
@@ -9609,9 +9605,7 @@ cdef class Matrix(Matrix1):
         """
         Return ``True`` if this matrix is a diagonal matrix.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -9647,9 +9641,7 @@ cdef class Matrix(Matrix1):
 
         - ``side`` -- either ``"lower"`` (default) or ``"upper"``
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -10700,9 +10692,7 @@ cdef class Matrix(Matrix1):
           The base ring of the matrix needs to have its fraction field
           implemented.
 
-        OUTPUT:
-
-        Two matrices, ``Q`` and ``R`` such that if ``A`` represents ``self``:
+        OUTPUT: two matrices, ``Q`` and ``R`` such that if ``A`` represents ``self``:
 
         - ``A = Q*R``
         - The columns of ``Q`` are an orthogonal set which spans the
@@ -15318,7 +15308,7 @@ cdef class Matrix(Matrix1):
            and elements of this matrix that satisfy the function.
 
 
-        OUTPUT: If ``indices`` is not specified, return a
+        OUTPUT: if ``indices`` is not specified, return a
         matrix with 1 where `f` is satisfied and 0 where it is not.
         If ``indices`` is specified, return a dictionary
         containing the elements of this matrix satisfying `f`.
@@ -15658,7 +15648,7 @@ cdef class Matrix(Matrix1):
 
         - ``algorithm`` -- ignored for matrices
 
-        OUTPUT: A matrix converted to a real or complex field
+        OUTPUT: a matrix converted to a real or complex field
 
         EXAMPLES::
 
@@ -16140,9 +16130,7 @@ cdef class Matrix(Matrix1):
 
         - ``i`` -- an integer
 
-        OUTPUT:
-
-        An ideal on the base ring.
+        OUTPUT: an ideal on the base ring
 
         EXAMPLES::
 

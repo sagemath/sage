@@ -822,9 +822,7 @@ def make_nice_tree_decomposition(graph, tree_decomp):
 
     - ``tree_decomp`` -- a tree decomposition
 
-    OUTPUT:
-
-    A nice tree decomposition.
+    OUTPUT: a nice tree decomposition
 
     .. WARNING::
 
@@ -1077,9 +1075,7 @@ def label_nice_tree_decomposition(nice_TD, root, directed=False):
       tree decomposition as a directed graph rooted at vertex ``root`` or as an
       undirected graph
 
-    OUTPUT:
-
-    A nice tree decomposition with nodes labelled.
+    OUTPUT: a nice tree decomposition with nodes labelled
 
     EXAMPLES::
 

@@ -127,9 +127,7 @@ def solve_system_with_difficult_last_row(B, A):
     - B -- a square n x n nonsingular matrix with painful big bottom row.
     - A -- an n x k matrix.
 
-    OUTPUT:
-
-    the unique solution to B*Z = A.
+    OUTPUT: the unique solution to B*Z = A
 
     EXAMPLES::
 
@@ -299,9 +297,7 @@ def index_in_saturation(A, proof=True):
 
     - ``proof`` -- boolean (``True`` or ``False``)
 
-    OUTPUT:
-
-    An integer
+    OUTPUT: integer
 
     EXAMPLES::
 

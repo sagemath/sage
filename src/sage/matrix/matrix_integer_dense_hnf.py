@@ -26,9 +26,7 @@ def max_det_prime(n):
 
     - ``n`` -- a positive integer
 
-    OUTPUT:
-
-    a prime number
+    OUTPUT: a prime number
 
     EXAMPLES::
 
@@ -677,9 +675,7 @@ def probable_pivot_rows(A):
 
     - A -- a matrix
 
-    OUTPUT:
-
-    a tuple of integers
+    OUTPUT: a tuple of integers
 
     EXAMPLES::
 
@@ -701,9 +697,7 @@ def probable_pivot_columns(A):
 
     - A -- a matrix
 
-    OUTPUT:
-
-    a tuple of integers
+    OUTPUT: a tuple of integers
 
     EXAMPLES::
 
@@ -833,9 +827,7 @@ def is_in_hnf_form(H, pivots):
     - ``H`` -- matrix
     - ``pivots`` -- sorted list of integers
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -1015,9 +1007,7 @@ def pad_zeros(A, nrows):
     - A -- a matrix
     - nrows -- an integer that is at least as big as the number of rows of A.
 
-    OUTPUT:
-
-    a matrix with nrows rows.
+    OUTPUT: a matrix with nrows rows
 
     EXAMPLES::
 

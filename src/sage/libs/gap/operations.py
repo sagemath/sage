@@ -50,9 +50,7 @@ class OperationInspector(SageObject):
         """
         Return the string representation
 
-        OUTPUT:
-
-        String
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -68,9 +66,7 @@ class OperationInspector(SageObject):
         """
         The first argument for the operations
 
-        OUTPUT:
-
-        A Libgap object.
+        OUTPUT: a Libgap object
 
         EXAMPLES::
 
@@ -85,9 +81,7 @@ class OperationInspector(SageObject):
         """
         Return the GAP operations for :meth:`obj`
 
-        OUTPUT:
-
-        List of GAP operations
+        OUTPUT: list of GAP operations
 
         EXAMPLES::
 
@@ -108,9 +102,7 @@ class OperationInspector(SageObject):
         """
         Return the names of the operations
 
-        OUTPUT:
-
-        List of strings
+        OUTPUT: list of strings
 
         EXAMPLES::
 

@@ -191,9 +191,7 @@ class FourTi2():
 
         - ``filename`` -- The name of the file to read from.
 
-        OUTPUT:
-
-        The data from the file as a matrix over `\ZZ`.
+        OUTPUT: the data from the file as a matrix over `\ZZ`
 
         EXAMPLES::
 
@@ -238,9 +236,7 @@ class FourTi2():
 
         - ``kwds`` -- A dict controlling what data is written to what files.
 
-        OUTPUT:
-
-        The value of the key ``project``.
+        OUTPUT: the value of the key ``project``
 
         EXAMPLES::
 

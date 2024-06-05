@@ -852,9 +852,7 @@ def centrality_closeness_random_k(G, int k=1):
 
     - ``k`` -- integer (default: 1); number of random nodes to choose
 
-    OUTPUT:
-
-    A dictionary associating to each vertex its estimated closeness centrality.
+    OUTPUT: a dictionary associating to each vertex its estimated closeness centrality
 
     EXAMPLES:
 

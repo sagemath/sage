@@ -453,9 +453,7 @@ cdef class ntl_GF2E():
 
         - `k` -- (optional) a field `\GF{2^d}`
 
-        OUTPUT:
-
-        :class:`FiniteFieldElement` over `k`
+        OUTPUT: :class:`FiniteFieldElement` over `k`
 
         EXAMPLES::
 

@@ -284,9 +284,7 @@ def create_prime_node():
     """
     Return a prime node with no children
 
-    OUTPUT:
-
-    A node object with node_type set as NodeType.PRIME
+    OUTPUT: a node object with node_type set as NodeType.PRIME
 
     EXAMPLES::
 
@@ -302,9 +300,7 @@ def create_parallel_node():
     """
     Return a parallel node with no children
 
-    OUTPUT:
-
-    A node object with node_type set as NodeType.PARALLEL
+    OUTPUT: a node object with node_type set as NodeType.PARALLEL
 
     EXAMPLES::
 
@@ -320,9 +316,7 @@ def create_series_node():
     """
     Return a series node with no children
 
-    OUTPUT:
-
-    A node object with node_type set as NodeType.SERIES
+    OUTPUT: a node object with node_type set as NodeType.SERIES
 
     EXAMPLES::
 
@@ -342,9 +336,7 @@ def create_normal_node(vertex):
 
     - ``vertex`` -- vertex number
 
-    OUTPUT:
-
-    A node object representing the vertex with node_type set as NodeType.NORMAL
+    OUTPUT: a node object representing the vertex with node_type set as NodeType.NORMAL
 
     EXAMPLES::
 
@@ -483,9 +475,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
       are the gamma classes of the graph, and whose keys are a frozenset of the
       vertices corresponding to the class. Used internally.
 
-    OUTPUT:
-
-    The modular decomposition tree of the graph.
+    OUTPUT: the modular decomposition tree of the graph
 
     EXAMPLES:
 
@@ -671,9 +661,7 @@ def test_modular_decomposition(tree_root, graph):
 
     - ``graph`` -- graph whose modular decomposition tree needs to be tested
 
-    OUTPUT:
-
-    ``True`` if input tree is a modular decomposition else ``False``
+    OUTPUT: ``True`` if input tree is a modular decomposition else ``False``
 
     EXAMPLES::
 
@@ -914,9 +902,7 @@ def test_module(module, graph):
 
     - ``graph`` -- input sage graph which contains the module
 
-    OUTPUT:
-
-    ``True`` if input module is a module by definition else ``False``
+    OUTPUT: ``True`` if input module is a module by definition else ``False``
 
     EXAMPLES::
 
@@ -1073,9 +1059,7 @@ def nested_tuple_to_tree(nest):
     - ``nest`` -- a nested tuple of the form returned by
       :meth:`tree_to_nested_tuple`
 
-    OUTPUT:
-
-    The root node of a modular decomposition tree.
+    OUTPUT: the root node of a modular decomposition tree
 
     EXAMPLES::
 

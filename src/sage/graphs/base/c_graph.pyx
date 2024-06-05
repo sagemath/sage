@@ -5025,7 +5025,7 @@ cdef inline bint _reorganize_edge(object v, object u, const int modus) noexcept:
       - ``3`` -- unsorted edges of an undirected graph
       - ``4`` -- sorted edges of an undirected graph
 
-    OUTPUT: Boolean according the modus:
+    OUTPUT: boolean according the modus:
 
     - ``modus == 0`` -- ``False``
     - ``modus == 1`` -- ``True``

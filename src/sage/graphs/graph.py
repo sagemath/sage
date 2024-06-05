@@ -3040,9 +3040,7 @@ class Graph(GenericGraph):
         the orientation returned will ensure that each 2-connected component
         has a strongly connected orientation.
 
-        OUTPUT:
-
-        A digraph representing an orientation of the current graph.
+        OUTPUT: a digraph representing an orientation of the current graph
 
         .. NOTE::
 
@@ -8626,9 +8624,7 @@ class Graph(GenericGraph):
           method. Refer to its documentation for allowed values and default
           behaviour.
 
-        OUTPUT:
-
-        A graph with labeled edges
+        OUTPUT: a graph with labeled edges
 
         EXAMPLES:
 
@@ -9182,9 +9178,7 @@ class Graph(GenericGraph):
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -9982,9 +9976,7 @@ class Graph(GenericGraph):
           graph is antipodal. If ``check`` is ``True`` and the graph is not
           antipodal, then return ``False``.
 
-        OUTPUT:
-
-        This function returns a new graph and ``self`` is not touched.
+        OUTPUT: this function returns a new graph and ``self`` is not touched
 
         .. NOTE::
 
@@ -10072,9 +10064,7 @@ class Graph(GenericGraph):
         two vertices are adjacent if their distance in `G` is equal to the
         diameter of `G`.
 
-        OUTPUT:
-
-        A new graph. ``self`` is not touched.
+        OUTPUT: a new graph. ``self`` is not touched
 
         EXAMPLES::
 
@@ -10131,9 +10121,7 @@ class Graph(GenericGraph):
         - ``extended`` -- boolean (default: ``False``); Whether to return the
           extended bipartite double, or only the bipartite double (default)
 
-        OUTPUT:
-
-        A graph; ``self`` is left untouched.
+        OUTPUT: a graph; ``self`` is left untouched
 
         EXAMPLES::
 

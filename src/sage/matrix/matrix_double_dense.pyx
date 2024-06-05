@@ -3718,9 +3718,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         - ``eps`` -- Cutoff value
 
-        OUTPUT:
-
-        A modified copy of the matrix.
+        OUTPUT: a modified copy of the matrix
 
         EXAMPLES::
 
@@ -3760,9 +3758,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         - ``ndigits`` -- The precision in number of decimal digits
 
-        OUTPUT:
-
-        A modified copy of the matrix
+        OUTPUT: a modified copy of the matrix
 
         EXAMPLES::
 
@@ -3794,9 +3790,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         the columns, for example an algorithm which should produce an
         orthogonal matrix.
 
-        OUTPUT:
-
-        A modified copy of the matrix.
+        OUTPUT: a modified copy of the matrix
 
         EXAMPLES::
 
@@ -3833,9 +3827,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         the rows, for example an algorithm which should produce an
         upper triangular matrix.
 
-        OUTPUT:
-
-        A modified copy of the matrix.
+        OUTPUT: a modified copy of the matrix
 
         EXAMPLES::
 

@@ -519,9 +519,7 @@ http://fricas.sourceforge.net.
 
         - ``output``, a string returned by FriCAS
 
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         TESTS::
 
@@ -659,7 +657,7 @@ http://fricas.sourceforge.net.
         - ``var``, ``value``: strings, the first representing a valid
           FriCAS variable identifier, the second a FriCAS expression.
 
-        OUTPUT: None
+        OUTPUT: none
 
         EXAMPLES::
 

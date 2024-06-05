@@ -1349,7 +1349,7 @@ class R(ExtraTabCompletion, Interface):
 
         - s -- a string
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 

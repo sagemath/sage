@@ -162,9 +162,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
           elimination ideal with respect to a ``degrevlex`` term order is
           computed, regardless of the term order of the polynomial ring.
 
-    OUTPUT:
-
-    Polynomial sequence of the reduced Groebner basis.
+    OUTPUT: polynomial sequence of the reduced Groebner basis
 
     EXAMPLES::
 

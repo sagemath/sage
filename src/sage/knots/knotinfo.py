@@ -630,9 +630,7 @@ class KnotInfoBase(Enum):
         - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
-        OUTPUT:
-
-        Python list of
+        OUTPUT: Python list of
 
         EXAMPLES::
 
@@ -1019,9 +1017,7 @@ class KnotInfoBase(Enum):
           if ``self`` is positive or negative amphicheiral (see documentation
           of :meth:`symmetry_type`)
 
-        OUTPUT:
-
-        Boolean or ``None`` if this cannot be determined.
+        OUTPUT: boolean or ``None`` if this cannot be determined
 
         ``True`` if ``self`` is fully or negative amphicheiral per default. If
         ``positive`` is set to ``True`` than fully and positive amphicheiral
@@ -2096,9 +2092,7 @@ class KnotInfoBase(Enum):
         r"""
         Return whether there is no other isotopic link in the database or not.
 
-        OUTPUT:
-
-        Boolean or ``None`` if this cannot be determined.
+        OUTPUT: boolean or ``None`` if this cannot be determined
 
         EXAMPLES::
 

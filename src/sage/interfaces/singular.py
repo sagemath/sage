@@ -1490,7 +1490,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
            object if it is not one already)
 
 
-        OUTPUT: Changes elements of self.
+        OUTPUT: changes elements of self
 
         EXAMPLES::
 

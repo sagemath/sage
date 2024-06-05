@@ -716,9 +716,7 @@ def _cand_ext_enum(G, to_dom, u_next):
 
     - ``u_next`` -- a vertex of ``G`` that dominates ``to_dom``
 
-    OUTPUT:
-
-    An iterator over the minimal dominating sets of ``to_dom``.
+    OUTPUT: an iterator over the minimal dominating sets of ``to_dom``
 
     TESTS::
 

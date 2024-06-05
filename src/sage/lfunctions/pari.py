@@ -210,9 +210,7 @@ def lfun_character(chi):
     If the given character is not primitive, it is replaced by its
     associated primitive character.
 
-    OUTPUT:
-
-    one :pari:`lfun` object
+    OUTPUT: one :pari:`lfun` object
 
     EXAMPLES::
 
@@ -258,9 +256,7 @@ def lfun_hgm(motif, t):
     """
     Create the L-function of an hypergeometric motive.
 
-    OUTPUT:
-
-    one :pari:`lfun` object
+    OUTPUT: one :pari:`lfun` object
 
     EXAMPLES::
 
@@ -280,9 +276,7 @@ def lfun_elliptic_curve(E):
     """
     Create the L-function of an elliptic curve.
 
-    OUTPUT:
-
-    one :pari:`lfun` object
+    OUTPUT: one :pari:`lfun` object
 
     EXAMPLES::
 
@@ -309,9 +303,7 @@ def lfun_number_field(K):
     """
     Create the Dedekind zeta function of a number field.
 
-    OUTPUT:
-
-    one :pari:`lfun` object
+    OUTPUT: one :pari:`lfun` object
 
     EXAMPLES::
 

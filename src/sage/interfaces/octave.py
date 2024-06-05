@@ -494,7 +494,7 @@ class Octave(Expect):
 
         - ``b`` -- m-vector b entries in `\QQ` or `\RR` (resp)
 
-        OUTPUT: A list x (if it exists) which solves M\*x = b
+        OUTPUT: a list x (if it exists) which solves M\*x = b
 
         EXAMPLES::
 
@@ -533,7 +533,7 @@ class Octave(Expect):
 
         INPUT: A Sage matrix with entries in the rationals or reals.
 
-        OUTPUT: A string that evaluates to an Octave matrix.
+        OUTPUT: a string that evaluates to an Octave matrix
 
         EXAMPLES::
 

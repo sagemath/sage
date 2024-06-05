@@ -628,9 +628,7 @@ class Gap3(Gap_generic):
 
         Currently this is empty
 
-        OUTPUT:
-
-        List of strings
+        OUTPUT: list of strings
 
         EXAMPLES::
 

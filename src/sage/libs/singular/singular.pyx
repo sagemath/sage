@@ -1839,9 +1839,7 @@ def get_resource(id):
     - ``id`` -- a single-character string; see
       https://github.com/Singular/Singular/blob/spielwiese/resources/feResource.cc
 
-    OUTPUT:
-
-    A string, or ``None``.
+    OUTPUT: a string, or ``None``
 
     EXAMPLES::
 

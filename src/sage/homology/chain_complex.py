@@ -122,9 +122,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
       check that each consecutive pair of differentials are
       composable and have composite equal to zero.
 
-    OUTPUT:
-
-    A chain complex.
+    OUTPUT: a chain complex
 
     .. WARNING::
 
@@ -863,9 +861,7 @@ class ChainComplex_class(Parent):
           handy way to just get the degrees of the non-zero modules,
           as the domain of the first differential is zero.
 
-        OUTPUT:
-
-        If ``start`` has been specified, the longest tuple of degrees
+        OUTPUT: if ``start`` has been specified, the longest tuple of degrees
 
         * containing ``start`` (unless ``start`` would be the first
           and ``exclude_first=True``),
@@ -928,9 +924,7 @@ class ChainComplex_class(Parent):
         """
         Return the degree of the differentials of the complex
 
-        OUTPUT:
-
-        An element of the grading group.
+        OUTPUT: an element of the grading group
 
         EXAMPLES::
 

@@ -1236,9 +1236,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         - proof -- bool (default: None) proof flag determined by global linalg
           proof.
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 

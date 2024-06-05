@@ -128,9 +128,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``name`` -- vertex label
 
-        OUTPUT:
-
-        If ``name=None``, the new vertex name is returned, ``None`` otherwise.
+        OUTPUT: if ``name=None``, the new vertex name is returned, ``None`` otherwise
 
         TESTS::
 
@@ -176,9 +174,7 @@ cdef class GenericGraphBackend(SageObject):
         - ``v`` -- a vertex label
         - ``directed`` -- boolean
 
-        OUTPUT:
-
-        degree of `v`
+        OUTPUT: degree of `v`
 
         TESTS::
 
@@ -313,9 +309,7 @@ cdef class GenericGraphBackend(SageObject):
         - ``u``, ``v`` -- vertex labels
         - ``l`` -- label
 
-        OUTPUT:
-
-            boolean
+        OUTPUT: boolean
 
         TESTS::
 
@@ -442,9 +436,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``v`` -- vertex label
 
-        OUTPUT:
-
-            a generator which yields vertex labels
+        OUTPUT: a generator which yields vertex labels
 
         TESTS::
 
@@ -467,9 +459,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``v`` -- vertex label
 
-        OUTPUT:
-
-            a generator which yields vertex labels
+        OUTPUT: a generator which yields vertex labels
 
         TESTS::
 
@@ -492,9 +482,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``v`` -- vertex label
 
-        OUTPUT:
-
-            a generator which yields vertex labels
+        OUTPUT: a generator which yields vertex labels
 
         TESTS::
 
@@ -514,9 +502,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``verts`` -- vertex labels
 
-        OUTPUT:
-
-            a generator which yields vertices
+        OUTPUT: a generator which yields vertices
 
         TESTS::
 

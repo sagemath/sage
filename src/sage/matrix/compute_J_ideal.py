@@ -813,9 +813,7 @@ class ComputeMinimalPolynomials(SageObject):
 
         - ``b`` -- an element of `D` (default: 0)
 
-        OUTPUT:
-
-        An ideal in `D[X]`.
+        OUTPUT: an ideal in `D[X]`
 
         EXAMPLES::
 
@@ -874,9 +872,7 @@ class ComputeMinimalPolynomials(SageObject):
         Determine those primes `p` where `\mu_B` might not be a
         `(p)`-minimal polynomial.
 
-        OUTPUT:
-
-        A list of primes.
+        OUTPUT: a list of primes
 
         EXAMPLES::
 

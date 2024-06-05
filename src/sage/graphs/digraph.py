@@ -935,9 +935,7 @@ class DiGraph(GenericGraph):
         - ``certificate`` -- boolean (default: ``False``); whether to return a
           certificate
 
-        OUTPUT:
-
-        * When ``certificate=False``, returns a boolean value.
+        OUTPUT: * When ``certificate=False``, returns a boolean value
 
         * When ``certificate=True``:
 
@@ -2778,9 +2776,7 @@ class DiGraph(GenericGraph):
           acyclic edges must be removed from the graph.  Used to avoid
           recomputing it for each vertex
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         EXAMPLES::
 
@@ -2894,9 +2890,7 @@ class DiGraph(GenericGraph):
         - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
           the empty paths are also enumerated.
 
-        OUTPUT:
-
-            iterator
+        OUTPUT: iterator
 
         .. SEEALSO::
 
@@ -3041,9 +3035,7 @@ class DiGraph(GenericGraph):
         - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
           the empty paths are also enumerated.
 
-        OUTPUT:
-
-            list
+        OUTPUT: list
 
         .. NOTE::
 
@@ -3954,9 +3946,7 @@ class DiGraph(GenericGraph):
           maximum out branching from ``source``. Otherwise, return spanning out
           branching if exists.
 
-        OUTPUT:
-
-        An iterator over the out branchings rooted in the given source.
+        OUTPUT: an iterator over the out branchings rooted in the given source
 
         .. SEEALSO::
 
@@ -4172,9 +4162,7 @@ class DiGraph(GenericGraph):
           maximum in branching to ``source``. Otherwise, return spanning in
           branching if exists.
 
-        OUTPUT:
-
-        An iterator over the in branchings rooted in the given source.
+        OUTPUT: an iterator over the in branchings rooted in the given source
 
         .. SEEALSO::
 

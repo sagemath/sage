@@ -188,9 +188,7 @@ cdef Obj make_gap_record(sage_dict) except NULL:
 
     - ``a`` -- list of :class:`GapElement`.
 
-    OUTPUT:
-
-    The list of the elements in ``a`` as a Gap ``Obj``.
+    OUTPUT: the list of the elements in ``a`` as a Gap ``Obj``
 
     TESTS::
 
@@ -223,9 +221,7 @@ cdef Obj make_gap_integer(sage_int) except NULL:
 
     - ``sage_int`` -- a Sage integer.
 
-    OUTPUT:
-
-    The integer as a GAP ``Obj``.
+    OUTPUT: the integer as a GAP ``Obj``
 
     TESTS::
 
@@ -243,9 +239,7 @@ cdef Obj make_gap_string(sage_string) except NULL:
 
     - ``sage_string`` -- a Python str.
 
-    OUTPUT:
-
-    The string as a GAP ``Obj``.
+    OUTPUT: the string as a GAP ``Obj``
 
     TESTS::
 
@@ -653,9 +647,7 @@ cdef class GapElement(RingElement):
 
         This is only useful for libgap development purposes.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1182,9 +1174,7 @@ cdef class GapElement(RingElement):
         """
         Return whether the wrapped GAP object is a function.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1201,9 +1191,7 @@ cdef class GapElement(RingElement):
         r"""
         Return whether the wrapped GAP object is a GAP List.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1218,9 +1206,7 @@ cdef class GapElement(RingElement):
         r"""
         Return whether the wrapped GAP object is a GAP record.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1235,9 +1221,7 @@ cdef class GapElement(RingElement):
         r"""
         Return whether the wrapped GAP object is a GAP boolean.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1253,9 +1237,7 @@ cdef class GapElement(RingElement):
         r"""
         Return whether the wrapped GAP object is a GAP string.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1268,9 +1250,7 @@ cdef class GapElement(RingElement):
         r"""
         Return whether the wrapped GAP object is a GAP permutation.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1437,9 +1417,7 @@ cdef class GapElement_Integer(GapElement):
         is subject to the usual size limits. Larger integers are
         stored in GAP as GMP integers.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1479,9 +1457,7 @@ cdef class GapElement_Integer(GapElement):
         - ``ring`` -- Integer ring or ``None`` (default). If not
           specified, a the default Sage integer ring is used.
 
-        OUTPUT:
-
-        A Sage integer
+        OUTPUT: a Sage integer
 
         EXAMPLES::
 
@@ -1596,9 +1572,7 @@ cdef class GapElement_Float(GapElement):
         - ``ring`` -- a floating point field or ``None`` (default). If not
           specified, the default Sage ``RDF`` is used.
 
-        OUTPUT:
-
-        A Sage double precision floating point number
+        OUTPUT: a Sage double precision floating point number
 
         EXAMPLES::
 
@@ -1683,9 +1657,7 @@ cdef class GapElement_IntegerMod(GapElement):
           not specified, a suitable integer mod ringa is used
           automatically.
 
-        OUTPUT:
-
-        A Sage integer modulo another integer.
+        OUTPUT: a Sage integer modulo another integer
 
         EXAMPLES::
 
@@ -1911,9 +1883,7 @@ cdef class GapElement_Cyclotomic(GapElement):
           (default). If not specified, a suitable minimal cyclotomic
           field will be constructed.
 
-        OUTPUT:
-
-        A Sage cyclotomic field element.
+        OUTPUT: a Sage cyclotomic field element
 
         EXAMPLES::
 
@@ -2007,9 +1977,7 @@ cdef class GapElement_Rational(GapElement):
         - ``ring`` -- the Sage rational ring or ``None`` (default). If
           not specified, the rational ring is used automatically.
 
-        OUTPUT:
-
-        A Sage rational number.
+        OUTPUT: a Sage rational number
 
         EXAMPLES::
 
@@ -2149,9 +2117,7 @@ cdef class GapElement_Ring(GapElement):
         - ``**kwds`` -- keywords that are passed on to the ``ring_``
           method.
 
-        OUTPUT:
-
-        A Sage ring.
+        OUTPUT: a Sage ring
 
         EXAMPLES::
 
@@ -2261,9 +2227,7 @@ cdef class GapElement_Boolean(GapElement):
 
         This is syntactic sugar for using libgap. See the examples below.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2320,9 +2284,7 @@ cdef class GapElement_String(GapElement):
         r"""
         Convert this :class:`GapElement_String` to a Python string.
 
-        OUTPUT:
-
-        A Python string.
+        OUTPUT: a Python string
 
         EXAMPLES::
 
@@ -2356,9 +2318,7 @@ cdef GapElement_Function make_GapElement_Function(parent, Obj obj):
 
     - ``obj`` -- a GAP function object.
 
-    OUTPUT:
-
-    A :class:`GapElement_Function` instance.
+    OUTPUT: a :class:`GapElement_Function` instance
 
     EXAMPLES::
 
@@ -2387,9 +2347,7 @@ cdef class GapElement_Function(GapElement):
         r"""
         Return a string representation
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -2568,9 +2526,7 @@ cdef GapElement_MethodProxy make_GapElement_MethodProxy(parent, Obj function, Ga
 
     - ``base_object`` -- The first argument to be inserted into the function.
 
-    OUTPUT:
-
-    A :class:`GapElement_MethodProxy` instance.
+    OUTPUT: a :class:`GapElement_MethodProxy` instance
 
     EXAMPLES::
 
@@ -2712,9 +2668,7 @@ cdef class GapElement_List(GapElement):
         r"""
         Return the length of the list.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2867,9 +2821,7 @@ cdef class GapElement_List(GapElement):
         r"""
         Return the Sage equivalent of the :class:`GapElement`
 
-        OUTPUT:
-
-        A Python list.
+        OUTPUT: a Python list
 
         EXAMPLES::
 
@@ -2888,9 +2840,7 @@ cdef class GapElement_List(GapElement):
         lists of lists. This function converts a GAP list of lists to
         a Sage matrix.
 
-        OUTPUT:
-
-        A Sage matrix.
+        OUTPUT: a Sage matrix
 
         EXAMPLES::
 
@@ -2941,9 +2891,7 @@ cdef class GapElement_List(GapElement):
         GAP does not have a special vector data type, they are just
         lists. This function converts a GAP list to a Sage vector.
 
-        OUTPUT:
-
-        A Sage vector.
+        OUTPUT: a Sage vector
 
         EXAMPLES::
 
@@ -3091,9 +3039,7 @@ cdef class GapElement_Record(GapElement):
         r"""
         Return the length of the record.
 
-        OUTPUT:
-
-        Integer. The number of entries in the record.
+        OUTPUT: integer; the number of entries in the record
 
         EXAMPLES::
 
@@ -3107,9 +3053,7 @@ cdef class GapElement_Record(GapElement):
         r"""
         Iterate over the elements of the record.
 
-        OUTPUT:
-
-        A :class:`GapElement_RecordIterator`.
+        OUTPUT: a :class:`GapElement_RecordIterator`
 
         EXAMPLES::
 
@@ -3155,9 +3099,7 @@ cdef class GapElement_Record(GapElement):
 
         - ``name`` -- string.
 
-        OUTPUT:
-
-        The record element labelled by ``name`` as a :class:`GapElement`.
+        OUTPUT: the record element labelled by ``name`` as a :class:`GapElement`
 
         EXAMPLES::
 

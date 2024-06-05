@@ -513,9 +513,7 @@ cdef class ntl_GF2X():
         representing this element afterwards. However it should be faster and
         preserves the HexOutput state as opposed to the above code.
 
-        OUTPUT:
-
-        string representing this element in hexadecimal
+        OUTPUT: string representing this element in hexadecimal
 
         EXAMPLES::
 
@@ -544,9 +542,7 @@ cdef class ntl_GF2X():
         - self  -- GF2X element
         - R     -- PolynomialRing over GF(2)
 
-        OUTPUT:
-
-        polynomial in R
+        OUTPUT: polynomial in R
 
         EXAMPLES::
 

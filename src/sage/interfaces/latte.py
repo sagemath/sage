@@ -427,9 +427,7 @@ def to_latte_polynomial(polynomial):
 
     - ``polynomial`` -- a multivariate polynomial.
 
-    OUTPUT:
-
-    A string that describes the monomials list and exponent vectors.
+    OUTPUT: a string that describes the monomials list and exponent vectors
 
     TESTS:
 

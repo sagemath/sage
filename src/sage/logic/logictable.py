@@ -163,9 +163,7 @@ class Truthtable:
         r"""
         Return a latex representation of the calling table object.
 
-        OUTPUT:
-
-        The latex representation of the table.
+        OUTPUT: the latex representation of the table
 
         EXAMPLES:
 
@@ -260,9 +258,7 @@ class Truthtable:
         r"""
         Return a list representation of the calling table object.
 
-        OUTPUT:
-
-        A list representation of the table.
+        OUTPUT: a list representation of the table
 
         EXAMPLES:
 

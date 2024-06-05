@@ -428,7 +428,7 @@ def Matrix_sparse_from_rows(X):
     -  ``X`` -- nonempty list of SparseVector rows
 
 
-    OUTPUT: Sparse_matrix with those rows.
+    OUTPUT: Sparse_matrix with those rows
 
     EXAMPLES::
 

@@ -55,9 +55,7 @@ def get_solution_dicts(output_file_contents, input_ring, get_failures=True):
     - output_file_contents -- phc solution output as a string
     - input_ring -- a PolynomialRing that variable names can be coerced into
 
-    OUTPUT:
-
-    a list of dictionaries of solutions
+    OUTPUT: a list of dictionaries of solutions
 
     EXAMPLES::
 

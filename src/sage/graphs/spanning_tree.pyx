@@ -294,9 +294,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
       it directly instead of using it indirectly via
       :meth:`sage.graphs.generic_graph.GenericGraph.min_spanning_tree`.
 
-    OUTPUT:
-
-    The edges of a minimum spanning tree of ``G``, one by one.
+    OUTPUT: the edges of a minimum spanning tree of ``G``, one by one
 
     .. SEEALSO:: :func:`kruskal`
 
@@ -379,9 +377,7 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
     - ``check_weight`` -- boolean (default: ``False``); whether to check that
       the ``weight_function`` outputs a number for each edge
 
-    OUTPUT:
-
-    The edges of a minimum spanning tree of ``G``, one by one.
+    OUTPUT: the edges of a minimum spanning tree of ``G``, one by one
 
     .. SEEALSO::
 
@@ -545,9 +541,7 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
       - Does ``G`` have self-loops?
       - Does ``G`` have multiple edges?
 
-    OUTPUT:
-
-    The edges of a minimum spanning tree of ``G``, one by one.
+    OUTPUT: the edges of a minimum spanning tree of ``G``, one by one
 
     .. SEEALSO::
 

@@ -148,9 +148,7 @@ def greatestcommondivisor(braid1, braid2):
     - ``braid1`` -- a braid
     - ``braid2`` -- a braid
 
-    OUTPUT:
-
-    A list of lists representing the gcd of ``braid1`` and ``braid2``.
+    OUTPUT: a list of lists representing the gcd of ``braid1`` and ``braid2``
 
     EXAMPLES::
 
@@ -180,9 +178,7 @@ def leastcommonmultiple(braid1, braid2):
     - ``braid1`` -- a braid
     - ``braid2`` -- a braid
 
-    OUTPUT:
-
-    A list of lists representing the lcm of ``braid1`` and ``braid2``.
+    OUTPUT: a list of lists representing the lcm of ``braid1`` and ``braid2``
 
     EXAMPLES::
 
@@ -248,9 +244,7 @@ def supersummitset(braid):
 
     - ``braid`` -- a braid
 
-    OUTPUT:
-
-    A list of lists representing the super summit set of ``braid``.
+    OUTPUT: a list of lists representing the super summit set of ``braid``
 
     EXAMPLES::
 
@@ -345,9 +339,7 @@ def rigidity(braid):
 
     - ``braid`` -- a braid
 
-    OUTPUT:
-
-    The rigidity of the braid.
+    OUTPUT: the rigidity of the braid
 
     EXAMPLES::
 

@@ -885,9 +885,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
           this can also be an iterable for the points to include
         - ``lower_bound`` -- (default: ``None``) only include supersets of this
 
-        OUTPUT:
-
-        A digraph. Each vertex of the digraph is either:
+        OUTPUT: a digraph; each vertex of the digraph is either:
 
         - a :class:`ManifoldSubsetFiniteFamily` containing one instance of :class:`ManifoldSubset`.
         - (if ``open_covers`` is ``True``) a tuple of :class:`ManifoldSubsetFiniteFamily` instances,

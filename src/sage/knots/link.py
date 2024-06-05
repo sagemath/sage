@@ -405,9 +405,7 @@ class Link(SageObject):
             following negative one; of there exist a closed arc,
             it is returned as a list of positive numbers only
 
-        OUTPUT:
-
-        A list of lists representing the arcs based upon ``presentation``.
+        OUTPUT: a list of lists representing the arcs based upon ``presentation``
 
         EXAMPLES::
 
@@ -2931,9 +2929,7 @@ class Link(SageObject):
           polynomials of three links that vary only in one crossing;
           that is the positive, negative, or smoothed links respectively
 
-        OUTPUT:
-
-        A Laurent polynomial over the integers.
+        OUTPUT: a Laurent polynomial over the integers
 
         .. NOTE::
 
@@ -3103,9 +3099,7 @@ class Link(SageObject):
 
         - ``varnames`` -- string (default ``t0, t1``)
 
-        OUTPUT:
-
-        A Laurent polynomial in the given variable names.
+        OUTPUT: a Laurent polynomial in the given variable names
 
         EXAMPLES::
 
@@ -3127,9 +3121,7 @@ class Link(SageObject):
         - ``n`` -- the number of colors to consider (if ommitted the
           value of the determinant of ``self`` will be taken)
 
-        OUTPUT:
-
-        a matrix over the residue class ring of integers modulo ``n``.
+        OUTPUT: a matrix over the residue class ring of integers modulo ``n``
 
         EXAMPLES::
 

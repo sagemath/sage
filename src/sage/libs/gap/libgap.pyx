@@ -257,9 +257,7 @@ class Gap(Parent):
         """
         Whether a coercion from `S` exists.
 
-        INPUT / OUTPUT:
-
-        See :mod:`sage.structure.parent`.
+        INPUT / OUTPUT: see :mod:`sage.structure.parent`
 
         EXAMPLES::
 
@@ -278,9 +276,7 @@ class Gap(Parent):
 
         - ``x`` -- anything that defines a GAP object.
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -386,9 +382,7 @@ class Gap(Parent):
         - ``gap_command`` -- a string containing a valid gap command
           without the trailing semicolon.
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -547,9 +541,7 @@ class Gap(Parent):
 
         - ``value`` -- anything that defines a GAP object.
 
-        OUTPUT:
-
-        A context manager that sets/reverts the given global variable.
+        OUTPUT: a context manager that sets/reverts the given global variable
 
         EXAMPLES::
 
@@ -590,9 +582,7 @@ class Gap(Parent):
         r"""
         Return a :class:`GapElement`.
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -605,9 +595,7 @@ class Gap(Parent):
         """
         Return (integer) zero in GAP.
 
-        OUTPUT:
-
-        A :class:`GapElement`.
+        OUTPUT: a :class:`GapElement`
 
         EXAMPLES::
 
@@ -646,9 +634,7 @@ class Gap(Parent):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -755,9 +741,7 @@ class Gap(Parent):
         Return the number of GAP objects that are being tracked by
         GAP.
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 

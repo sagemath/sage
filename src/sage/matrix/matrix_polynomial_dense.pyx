@@ -140,7 +140,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         of all its entries. If the matrix is nonzero, this is a nonnegative
         integer; here, the degree of the zero matrix is -1.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -194,7 +194,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           then shifts apply to the columns of the matrix and otherwise to its
           rows (see the class description for more details).
 
-        OUTPUT: an integer matrix.
+        OUTPUT: an integer matrix
 
         EXAMPLES::
 
@@ -242,7 +242,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return the constant coefficient of this matrix seen as a polynomial
         with matrix coefficients; this is also this matrix evaluated at zero.
 
-        OUTPUT: a matrix over the base field.
+        OUTPUT: a matrix over the base field
 
         EXAMPLES::
 
@@ -267,7 +267,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         Return whether this polynomial matrix is constant,
         that is, all its entries are constant.
 
-        OUTPUT: a boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -313,7 +313,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           (resp. ``False``) then `d` should be a list of length equal to the
           row (resp. column) dimension of this matrix.
 
-        OUTPUT: a matrix over the base field.
+        OUTPUT: a matrix over the base field
 
         EXAMPLES::
 
@@ -409,7 +409,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           (resp. ``False``) then `d` should be a list of length equal to the
           row (resp. column) dimension of this matrix.
 
-        OUTPUT: a polynomial matrix.
+        OUTPUT: a polynomial matrix
 
         EXAMPLES::
 
@@ -500,7 +500,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           (resp. ``False``) then `d` should be a list of length equal to the
           row (resp. column) dimension of this matrix.
 
-        OUTPUT: a polynomial matrix.
+        OUTPUT: a polynomial matrix
 
         EXAMPLES::
 
@@ -608,7 +608,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``entry_wise`` -- (default: ``False``) boolean, if ``True``
           then the input ``degree`` and ``row_wise`` are ignored.
 
-        OUTPUT: a polynomial matrix.
+        OUTPUT: a polynomial matrix
 
         EXAMPLES::
 
@@ -1087,7 +1087,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``shifts`` -- (default: ``None``) list of integers;
           ``None`` is interpreted as ``shifts=[0,...,0]``.
 
-        OUTPUT: a list of integers.
+        OUTPUT: a list of integers
 
         REFERENCES:
 
@@ -1162,7 +1162,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``shifts`` -- (default: ``None``) list of integers;
           ``None`` is interpreted as ``shifts=[0,...,0]``.
 
-        OUTPUT: a list of integers.
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
@@ -1239,7 +1239,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
           working row-wise (see the class description).
 
-        OUTPUT: a matrix over the base field.
+        OUTPUT: a matrix over the base field
 
         REFERENCES:
 
@@ -1318,7 +1318,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           ``False`` if one does not allow zero rows in row reduced forms (resp.
           zero columns in column reduced forms).
 
-        OUTPUT: a boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1385,7 +1385,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           ``False`` if one does not allow zero rows in row reduced forms (resp.
           zero columns in column reduced forms).
 
-        OUTPUT: a boolean value.
+        OUTPUT: a boolean value
 
         REFERENCES:
 
@@ -1596,7 +1596,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           ``False`` if one does not allow zero rows (resp. zero columns) in
           (ordered) weak Popov forms.
 
-        OUTPUT: a boolean.
+        OUTPUT: boolean
 
         REFERENCES:
 
@@ -1736,7 +1736,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           ``False`` if one does not allow zero rows (resp. zero columns) in
           Popov forms.
 
-        OUTPUT: a boolean.
+        OUTPUT: boolean
 
         REFERENCES:
 
@@ -1879,7 +1879,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           ``False`` if one does not allow zero rows (resp. zero columns) in
           Hermite forms.
 
-        OUTPUT: a boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3289,7 +3289,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``normal_form`` -- (default: ``False``) boolean, if
           ``True`` then checks for a basis in ``shifts``-Popov form.
 
-        OUTPUT: a boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -3503,7 +3503,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``normal_form`` -- (default: ``False``) boolean, if
           ``True`` then the output basis is in ``shifts``-Popov form.
 
-        OUTPUT: a polynomial matrix.
+        OUTPUT: a polynomial matrix
 
         ALGORITHM:
 
@@ -3806,7 +3806,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``normal_form`` -- (default: ``False``) boolean, if
           ``True`` then checks for a basis in ``shifts``-Popov form.
 
-        OUTPUT: a boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -3933,7 +3933,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``normal_form`` -- (default: ``False``) boolean, if
           ``True`` then the output basis is in ``shifts``-Popov form.
 
-        OUTPUT: a polynomial matrix.
+        OUTPUT: a polynomial matrix
 
         ALGORITHM: uses minimal approximant basis computation at a
         sufficiently large order so that the approximant basis contains

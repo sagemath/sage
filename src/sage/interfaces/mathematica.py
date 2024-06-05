@@ -927,9 +927,7 @@ class MathematicaElement(ExpectElement):
         """
         Test whether the mathematica expression is graphics
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1132,9 +1130,7 @@ def request_wolfram_alpha(input, verbose=False):
     - ``input`` -- string
     - ``verbose`` -- bool (default: ``False``)
 
-    OUTPUT:
-
-    json
+    OUTPUT: json
 
     EXAMPLES::
 
@@ -1238,9 +1234,7 @@ def parse_moutput_from_json(page_data, verbose=False):
     - ``page_data`` -- json obtained from Wolfram Alpha
     - ``verbose`` -- bool (default: ``False``)
 
-    OUTPUT:
-
-    list of unicode strings
+    OUTPUT: list of unicode strings
 
     EXAMPLES::
 
@@ -1302,9 +1296,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
 
     - ``mexpr`` -- string
 
-    OUTPUT:
-
-    symbolic expression
+    OUTPUT: symbolic expression
 
     EXAMPLES::
 

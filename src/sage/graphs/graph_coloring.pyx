@@ -1542,9 +1542,7 @@ def _vizing_edge_coloring(g):
 
     - ``g`` -- a graph
 
-    OUTPUT:
-
-    a partition of the edge set into at most `\Delta + 1` matchings
+    OUTPUT: a partition of the edge set into at most `\Delta + 1` matchings
 
     .. SEEALSO::
 

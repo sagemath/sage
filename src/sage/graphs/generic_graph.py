@@ -1054,9 +1054,7 @@ class GenericGraph(GenericGraph_pyx):
             and the ``_immutable`` flag, then ``self`` is returned rather than a
             copy (unless one of the optional arguments is used).
 
-        OUTPUT:
-
-        A Graph object.
+        OUTPUT: a Graph object
 
         .. WARNING::
 
@@ -1752,9 +1750,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``multiple_edges`` -- boolean (default: ``False``); whether to include
           multiple edges in the output
 
-        OUTPUT:
-
-        The output depends on the input:
+        OUTPUT: the output depends on the input:
 
         * If ``edge_labels == False`` and ``multiple_edges == False``, the
           output is a dictionary associating to each vertex the list of its
@@ -11291,9 +11287,7 @@ class GenericGraph(GenericGraph_pyx):
         with numeric labels, then ``G.add_vertex()`` could potentially be slow,
         if ``name=None``.
 
-        OUTPUT:
-
-        If ``name=None``, the new vertex name is returned. ``None`` otherwise.
+        OUTPUT: if ``name=None``, the new vertex name is returned. ``None`` otherwise
 
         EXAMPLES::
 
@@ -13055,7 +13049,7 @@ class GenericGraph(GenericGraph_pyx):
           Not sorting the ends is faster.
 
 
-        OUTPUT: A :class:`~EdgesView`.
+        OUTPUT: a :class:`~EdgesView`
 
         .. WARNING::
 
@@ -16231,9 +16225,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``check_weight`` -- boolean (default: ``True``); whether to check that
           the ``weight_function`` outputs a number for each edge.
 
-        OUTPUT:
-
-        A doubly indexed dictionary
+        OUTPUT: a doubly indexed dictionary
 
         .. NOTE::
 
@@ -20178,7 +20170,7 @@ class GenericGraph(GenericGraph_pyx):
           coloring as a function assigning a color to each label, or as a
           dictionary mapping colors to list of edges
 
-        OUTPUT: A coloring of the edges of this graph.
+        OUTPUT: a coloring of the edges of this graph
 
         If ``as_function`` is ``True``, then the coloring is returned as a
         function assigning a color to each label. Otherwise (the default, for
@@ -23702,7 +23694,7 @@ class GenericGraph(GenericGraph_pyx):
           ``"sage"`` uses Sage's implementation. If set to ``None`` (default), bliss
           is used when available.
 
-        OUTPUT: The order of the output is group, order, orbits. However, there
+        OUTPUT: the order of the output is group, order, orbits. However, there
         are options to turn each of these on or off.
 
         EXAMPLES:

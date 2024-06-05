@@ -46,9 +46,7 @@ cdef inline bint creduce(celement out, celement a, long prec, PowComputer_ prime
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
-    OUTPUT:
-
-    ``True`` if the reduction is zero, ``False`` otherwise
+    OUTPUT: ``True`` if the reduction is zero, ``False`` otherwise
 
     """
     cdef celement ared = a % prime_pow.modulus
@@ -83,9 +81,7 @@ cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
-    OUTPUT:
-
-    ``True`` if the reduction is zero, ``False`` otherwise
+    OUTPUT: ``True`` if the reduction is zero, ``False`` otherwise
 
     """
     return creduce(out, a, prec, prime_pow)

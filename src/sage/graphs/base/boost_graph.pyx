@@ -1426,9 +1426,7 @@ cpdef johnson_closeness_centrality(g, weight_function=None):
       ``g`` are used, if ``g.weighted()==True``, otherwise all edges have
       weight 1.
 
-    OUTPUT:
-
-    A dictionary associating each vertex ``v`` to its closeness centrality.
+    OUTPUT: a dictionary associating each vertex ``v`` to its closeness centrality
 
     EXAMPLES:
 

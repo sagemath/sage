@@ -2425,7 +2425,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         -  ``f`` -- a polynomial in n variables x=(x1,...,xn)
 
-        OUTPUT: The polynomial f(self\*x).
+        OUTPUT: the polynomial f(self\*x).
 
         EXAMPLES::
 
@@ -5144,7 +5144,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         -  ``v`` -- a free module element.
 
-        OUTPUT: The vector times matrix product v\*A.
+        OUTPUT: the vector times matrix product v\*A
 
         EXAMPLES::
 

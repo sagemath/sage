@@ -288,9 +288,7 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
         n          -- number of vertices in the graph
         height     -- if True, do not update the last coordinate ever
 
-    OUTPUT:
-
-    Modifies contents of pos.
+    OUTPUT: modifies contents of pos
 
     AUTHOR:
 
