@@ -105,6 +105,9 @@ jobs:
             TARGETS=ci-build-with-fallback
 
       - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -115,6 +118,7 @@ jobs:
 
       - name: Store old docs
         id: worktree
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
@@ -140,6 +144,7 @@ jobs:
 
       - name: Build docs
         id: docbuild
+        if: (success() || failure()) && steps.worktree.outcome == 'success'
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
