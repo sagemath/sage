@@ -21,6 +21,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
 
+
 class SuperCrystals(Category_singleton):
     def super_categories(self):
         r"""

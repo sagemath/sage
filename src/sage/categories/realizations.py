@@ -21,6 +21,7 @@ from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
     An abstract base class for all categories of realizations category
@@ -46,6 +47,7 @@ class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
 
     _functor_category = "Realizations"
+
 
 def Realizations(self):
     """
@@ -104,6 +106,7 @@ def Realizations(self):
 
 
 Category.Realizations = Realizations
+
 
 class Category_realization_of_parent(Category_over_base, BindableClass):
     """

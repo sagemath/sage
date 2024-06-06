@@ -139,8 +139,8 @@ class Schemes(Category):
                       To:   Rational Field
 
         """
-        from sage.schemes.generic.scheme import is_Scheme
-        if is_Scheme(x):
+        from sage.schemes.generic.scheme import Scheme
+        if isinstance(x, Scheme):
             return x
         from sage.schemes.generic.morphism import is_SchemeMorphism
         if is_SchemeMorphism(x):
@@ -197,9 +197,9 @@ class Schemes_over_base(Category_over_base):
             sage: Schemes(Spec(ZZ)) # indirect doctest
             Category of schemes over Integer Ring
         """
-        from sage.schemes.generic.scheme import is_AffineScheme
+        from sage.schemes.generic.scheme import AffineScheme
         base = self.base()
-        if is_AffineScheme(base):
+        if isinstance(base, AffineScheme):
             base = base.coordinate_ring()
         return f"schemes over {base}"
 
@@ -228,8 +228,8 @@ class AbelianVarieties(Schemes_over_base):
             sage: AbelianVarieties(Spec(QQ))
             Category of abelian varieties over Rational Field
         """
-        from sage.schemes.generic.scheme import is_AffineScheme
-        if is_AffineScheme(base):
+        from sage.schemes.generic.scheme import AffineScheme
+        if isinstance(base, AffineScheme):
             base = base.coordinate_ring()
         if base not in Fields():
             raise ValueError('category of abelian varieties is only defined over fields')
@@ -331,8 +331,8 @@ class Jacobians(Schemes_over_base):
             sage: Jacobians(Spec(QQ))
             Category of Jacobians over Rational Field
         """
-        from sage.schemes.generic.scheme import is_AffineScheme
-        if is_AffineScheme(base):
+        from sage.schemes.generic.scheme import AffineScheme
+        if isinstance(base, AffineScheme):
             base = base.coordinate_ring()
         if base not in Fields():
             raise ValueError('category of Jacobians is only defined over fields')

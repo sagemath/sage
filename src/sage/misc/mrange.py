@@ -186,9 +186,9 @@ def mrange_iter(iter_list, typ=list):
 
     INPUT:
 
-    -  ``iter_list`` - a finite iterable of finite iterables
+    -  ``iter_list`` -- a finite iterable of finite iterables
 
-    -  ``typ`` - (default: list) a type or class; more
+    -  ``typ`` -- (default: list) a type or class; more
        generally, something that can be called with a list as input.
 
     OUTPUT: a list
@@ -241,10 +241,10 @@ class xmrange_iter:
 
     INPUT:
 
-    - ``iter_list`` - a list of objects usable as iterators (possibly
+    - ``iter_list`` -- a list of objects usable as iterators (possibly
        lists)
 
-    - ``typ`` - (default: list) a type or class; more generally,
+    - ``typ`` -- (default: list) a type or class; more generally,
        something that can be called with a list as input.
 
     OUTPUT: a generator
@@ -437,9 +437,9 @@ def mrange(sizes, typ=list):
 
     INPUT:
 
-    -  ``sizes`` - a list of nonnegative integers
+    -  ``sizes`` -- a list of nonnegative integers
 
-    -  ``typ`` - (default: list) a type or class; more
+    -  ``typ`` -- (default: list) a type or class; more
        generally, something that can be called with a list as input.
 
     OUTPUT: a list
@@ -490,9 +490,9 @@ class xmrange:
     INPUT:
 
 
-    -  ``sizes`` - a list of nonnegative integers
+    -  ``sizes`` -- a list of nonnegative integers
 
-    -  ``typ`` - (default: list) a type or class; more
+    -  ``typ`` -- (default: list) a type or class; more
        generally, something that can be called with a list as input.
 
 
@@ -604,7 +604,7 @@ def cartesian_product_iterator(X):
 
     INPUT:
 
-    -  ``X`` - list or tuple of lists
+    -  ``X`` -- list or tuple of lists
 
     OUTPUT: iterator over the Cartesian product of the elements of X
 

@@ -15,6 +15,7 @@ from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.tensor import tensor
 
+
 class MyGroupAlgebra(CombinatorialFreeModule):
     r"""
     An example of a Hopf algebra with basis: the group algebra of a group

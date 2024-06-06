@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 The symbolic ring
 """
@@ -385,12 +384,12 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         INPUT:
 
-        - ``x`` - a Python object.
+        - ``x`` -- a Python object.
 
-        - ``force`` - bool, default ``False``, if True, the Python object
+        - ``force`` -- bool, default ``False``, if True, the Python object
           is taken as is without attempting coercion or list traversal.
 
-        - ``recursive`` - bool, default ``True``, disables recursive
+        - ``recursive`` -- bool, default ``True``, disables recursive
           traversal of lists.
 
         EXAMPLES::
@@ -443,7 +442,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         INPUT:
 
-        - ``n`` - a nonnegative integer
+        - ``n`` -- a nonnegative integer
 
         OUTPUT:
 
@@ -1191,7 +1190,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         INPUT:
 
-        - ``numpy_type`` - a numpy number type
+        - ``numpy_type`` -- a numpy number type
 
         EXAMPLES::
 

@@ -287,7 +287,6 @@ cdef binop(int op, x, y, MPopts opts):
                 MPF_add(&rc.im, &rc.im, &tmp1, opts)
             return rc
 
-
     elif op == OP_DIV:
         if typx == 1 and typy == 1:
             # Real result
@@ -1487,7 +1486,6 @@ cdef class wrapped_libmp_function:
         raise NotImplementedError("%s of a %s" % (self.name, type(x)))
 
 
-
 cdef class wrapped_specfun:
     cdef public f, name, __name__, __doc__
 
@@ -2150,7 +2148,6 @@ cdef class mpf(mpf_base):
             False
         """
         return binop(OP_RICHCMP+op, self, other, global_opts)
-
 
 
 cdef class constant(mpf_base):

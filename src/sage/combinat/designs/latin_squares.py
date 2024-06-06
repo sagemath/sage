@@ -135,7 +135,7 @@ def are_mutually_orthogonal_latin_squares(l, verbose=False):
 
     INPUT:
 
-    - ``verbose`` - if ``True`` then print why the list of matrices provided are
+    - ``verbose`` -- if ``True`` then print why the list of matrices provided are
       not mutually orthogonal latin squares
 
     EXAMPLES::

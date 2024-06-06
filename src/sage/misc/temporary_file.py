@@ -152,7 +152,7 @@ class atomic_write:
     - ``target_filename`` -- the name of the file to be written.
       Normally, the contents of this file will be overwritten.
 
-    - ``append`` -- (boolean, default: False) if True and
+    - ``append`` -- (boolean, default: ``False``) if True and
       ``target_filename`` is an existing file, then copy the current
       contents of ``target_filename`` to the temporary file when
       entering the ``with`` statement. Otherwise, the temporary file is
@@ -164,7 +164,7 @@ class atomic_write:
       mode bits of the file were changed manually). (Not to be confused with
       the file opening mode.)
 
-    - ``binary`` -- (boolean, default: True on Python 2, False on Python 3) the
+    - ``binary`` -- (boolean, default: ``True`` on Python 2, False on Python 3) the
       underlying file is opened in binary mode.  If False then it is opened in
       text mode and an encoding with which to write the file may be supplied.
 

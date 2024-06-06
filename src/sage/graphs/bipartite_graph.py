@@ -1104,7 +1104,8 @@ class BipartiteGraph(Graph):
             sage: bg.add_edges([[0, 2]])
             Traceback (most recent call last):
             ...
-            ValueError: the specified set of edges cannot be added while still preserving the bipartition property
+            ValueError: the specified set of edges cannot be added
+            while still preserving the bipartition property
             sage: G = BipartiteGraph()
             sage: G.add_edges([(0, 1), (3, 2), (1, 2)])
             sage: G.bipartition()
@@ -1116,7 +1117,8 @@ class BipartiteGraph(Graph):
             sage: bg.add_edges([[0, 3], [3, 3]])
             Traceback (most recent call last):
             ...
-            ValueError: the specified set of edges cannot be added while still preserving the bipartition property
+            ValueError: the specified set of edges cannot be added
+            while still preserving the bipartition property
 
         Adding edges is fine as long as there exists a valid bipartition.
         Otherwise an error is raised without modifyiong the graph::
@@ -1128,7 +1130,8 @@ class BipartiteGraph(Graph):
             sage: G.add_edges([(0,2), (0,3)])
             Traceback (most recent call last):
             ...
-            ValueError: the specified set of edges cannot be added while still preserving the bipartition property
+            ValueError: the specified set of edges cannot be added
+            while still preserving the bipartition property
             sage: G.bipartition()
             ({0, 2}, {1, 3})
             sage: G.edges(labels=False, sort=True)
@@ -1580,7 +1583,8 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: B = BipartiteGraph({0: [5, 7], 1: [4, 6, 7], 2: [4, 5, 8], 3: [4, 5, 6], 6: [9], 8: [9]})
+            sage: B = BipartiteGraph({0: [5, 7], 1: [4, 6, 7], 2: [4, 5, 8],
+            ....:                     3: [4, 5, 6], 6: [9], 8: [9]})
             sage: len(list(B.perfect_matchings()))
             6
             sage: G = Graph(B.edges(sort=False))
@@ -1591,7 +1595,8 @@ class BipartiteGraph(Graph):
         vertex is on the left set of vertices and the second vertex in the right
         set::
 
-            sage: B = BipartiteGraph({0: [5, 7], 1: [4, 6, 7], 2: [4, 5, 8], 3: [4, 5, 6], 6: [9], 8: [9]})
+            sage: B = BipartiteGraph({0: [5, 7], 1: [4, 6, 7], 2: [4, 5, 8],
+            ....:                     3: [4, 5, 6], 6: [9], 8: [9]})
             sage: m = next(B.perfect_matchings(labels=False))
             sage: B.left
             {0, 1, 2, 3, 9}
@@ -1604,7 +1609,8 @@ class BipartiteGraph(Graph):
 
         Multiple edges are taken into account::
 
-            sage: B = BipartiteGraph({0: [5, 7], 1: [4, 6, 7], 2: [4, 5, 8], 3: [4, 5, 6], 6: [9], 8: [9]})
+            sage: B = BipartiteGraph({0: [5, 7], 1: [4, 6, 7], 2: [4, 5, 8],
+            ....:                     3: [4, 5, 6], 6: [9], 8: [9]})
             sage: B.allow_multiple_edges(True)
             sage: B.add_edge(0, 7)
             sage: len(list(B.perfect_matchings()))
@@ -2606,7 +2612,8 @@ class BipartiteGraph(Graph):
             ....:                      (1, 7), (1, 8), (2, 6), (2, 7), (2, 8),
             ....:                      (3, 4), (3, 7), (3, 8), (4, 9), (5, 9),
             ....:                      (6, 9), (7, 9)] )
-            sage: C, cert = B.canonical_label(partition=(B.left,B.right), certificate=True, algorithm='sage')
+            sage: C, cert = B.canonical_label(partition=(B.left, B.right),
+            ....:                             certificate=True, algorithm='sage')
             sage: C
             Bipartite graph on 10 vertices
             sage: C.left
@@ -2620,7 +2627,8 @@ class BipartiteGraph(Graph):
 
             sage: G = Graph({0: [5, 6], 1: [4, 5], 2: [4, 6], 3: [4, 5, 6]})
             sage: B = BipartiteGraph(G)
-            sage: C = B.canonical_label(partition=(B.left,B.right), edge_labels=True, algorithm='sage')
+            sage: C = B.canonical_label(partition=(B.left, B.right),
+            ....:                       edge_labels=True, algorithm='sage')
             sage: C.left
             {0, 1, 2, 3}
             sage: C.right

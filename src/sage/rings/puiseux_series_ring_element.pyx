@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Puiseux Series Ring Element
 

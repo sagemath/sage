@@ -341,7 +341,7 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
 
     return data_files
 
-
+  
 def installed_files_by_module(site_packages, modules=('sage',)):
     """
     Find all currently installed files

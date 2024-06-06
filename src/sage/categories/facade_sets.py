@@ -12,6 +12,7 @@ For background, see :ref:`What is a facade set? <facade-sets>`.
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 
+
 class FacadeSets(CategoryWithAxiom):
     def example(self, choice='subset'):
         r"""

@@ -225,8 +225,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             other_codomain = None
 
         if self_domain is not None and other_codomain is not None:
-            from sage.structure.parent import is_Parent
-            if is_Parent(self_domain) and is_Parent(other_codomain):
+            from sage.structure.parent import Parent
+            if isinstance(self_domain, Parent) and isinstance(other_codomain, Parent):
                 if not self_domain.has_coerce_map_from(other_codomain):
                     raise ValueError("the codomain %r does not coerce into the domain %r" % (other_codomain, self_domain))
 
