@@ -1339,8 +1339,7 @@ class Partition(CombinatorialElement):
                 stop_x = bdy[-1][0]
                 y = start_y  # y never changes
                 h_piece = [(x, y) for x in range(start_x, stop_x)]
-            h_piece = list(reversed(h_piece))
-            return h_piece
+            return list(reversed(h_piece))
         bdy = []
         for i, part in enumerate(self):
             (cell_x, cell_y) = (part - 1, i)
@@ -2149,9 +2148,9 @@ class Partition(CombinatorialElement):
             length = true_length
         elif length < true_length:
             raise ValueError("length must be at least the length of the partition")
-        beta = [l + length - i - 1 for (i, l) in enumerate(self)]
+        beta = [l + length - i for i, l in enumerate(self, start=1)]
         if length > true_length:
-            beta.extend(list(range(length-true_length-1, -1, -1)))
+            beta.extend(range(length - true_length - 1, -1, -1))
         return beta
 
     def crank(self):
@@ -3097,7 +3096,7 @@ class Partition(CombinatorialElement):
         gens = []
         m = 0
         for row in self:
-            gens.extend(list(range(m + 1, m + row)))
+            gens.extend(range(m + 1, m + row))
             m += row
         return gens
 
@@ -5450,9 +5449,9 @@ class Partition(CombinatorialElement):
                     def inv_factorial(i):
                         if i < 0:
                             return 0
-                        else:
-                            return 1/factorial(i)
-                    len_range = list(range(larger.length()))
+                        return 1/factorial(i)
+
+                    len_range = range(larger.length())
                     from sage.matrix.constructor import matrix
                     M = matrix(QQ, [[inv_factorial(larger.get_part(i)-smaller.get_part(j)-i+j) for i in len_range] for j in len_range])
                     return factorial(larger.size()-smaller.size())*M.determinant()
