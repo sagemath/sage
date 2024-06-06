@@ -8440,7 +8440,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
               To:   Finite Field in z2 of size 3^2
               Defn: 1 |--> 1
 
-        Fixes issue 38012 by not forcing univariate polynomial to be univariate::
+        Fixes :issue:`38012` by not forcing univariate polynomial to be univariate::
 
             sage: R.<z> = PolynomialRing(QQ)
             sage: f = DynamicalSystem_affine(z^2 + z + 1).homogenize(1)
