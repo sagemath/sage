@@ -212,7 +212,8 @@ def is_long_hole_free(g, certificate=False):
     cdef int n = g.order()
     cdef list id_label = list(g)
     cdef short_digraph sd
-    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
+    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label,
+                       sort_neighbors=False)
 
     # Make a dense copy of the graph for quick adjacency tests
     cdef bitset_t dense_graph

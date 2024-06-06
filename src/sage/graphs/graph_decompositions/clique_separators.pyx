@@ -458,7 +458,8 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=True)
 
     # variables for the manipulation of the short digraph
     cdef uint32_t** p_vertices = sd.neighbors

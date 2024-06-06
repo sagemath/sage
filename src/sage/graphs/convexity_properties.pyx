@@ -755,7 +755,7 @@ def is_geodetic(G):
     # Copy the graph as a short digraph
     cdef int n = G.order()
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=False)
 
     # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()

@@ -73,7 +73,9 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
         14
         sage: G = OS.algebra_generators()
         sage: M.broken_circuits()
-        frozenset({frozenset({1, 2, 3})})
+        SetSystem of 1 sets over 4 elements
+        sage: M.broken_circuits()[0]
+        frozenset({1, 2, 3})
         sage: G[1] * G[2] * G[3]
         OS{0, 1, 2} - OS{0, 1, 3} + OS{0, 2, 3}
 
