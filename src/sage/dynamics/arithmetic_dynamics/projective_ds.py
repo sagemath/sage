@@ -8477,7 +8477,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         i = 0
         if G.degree() != 0:
             if is_MPolynomialRing(G.parent()):
-              G = G.polynomial(G.variable(0))
+                G = G.polynomial(G.variable(0))
         else:
             #no other fixed points
             raise NotImplementedError("map is not a polynomial")
