@@ -33,6 +33,7 @@ from sage.rings.ring_extension_morphism cimport MapRelativeRingToFreeModule, are
 from sage.rings.ring_extension_conversion cimport backend_parent, backend_element
 from sage.rings.ring_extension_conversion cimport to_backend, from_backend
 
+from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
 
 # Classes
 #########
@@ -342,6 +343,30 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: x.in_base()
             u
 
+        We test the case where the ring is a quotient ring over its base::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(4, 'z2')
+            sage: A.<T> = F[]
+            sage: ip = A(T^2 + T + F.gen() + 1)
+            sage: K.<z> = F.extension(ip)
+            sage: L = K.over(F)
+            sage: f = L(F.gen() + 1)
+            sage: f.in_base()
+            z2 + 1
+
+        ::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: z2 = Fq.gen()
+            sage: ip = A(T^6 + (z2 + 2)*T^5 + (2*z2 + 1)*T^4 + (4*z2 + 3)*T^3 + (z2 + 1)*T^2 + z2*T + 2)
+            sage: K.<z12> = Fq.extension(ip)
+            sage: gen = [K.random_element() for _ in range(3)]
+            sage: phi = DrinfeldModule(A, gen)
+            sage: a = A(3*T^2 + 4*z2*T)
+            sage: phi.invert(phi(a)) == a
+            True
         """
         cdef RingExtension_generic parent = <RingExtension_generic>self._parent
         if isinstance(parent, RingExtensionWithGen):
@@ -354,7 +379,12 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             f = parent._backend_defining_morphism
             base = f.domain()
             ring = f.codomain()
+            parent_ring = self._backend.parent()
             if ring.has_coerce_map_from(base) and are_equal_morphisms(f, None):
+                if is_PolynomialQuotientRing(parent_ring):
+                    if base.has_coerce_map_from(parent_ring.base_ring()):
+                        if self._backend.lift().degree() <= 0:
+                            return parent.base()(self._backend.list()[0])
                 return parent.base()(base(self._backend))
         raise NotImplementedError("cannot cast %s to the base" % self)
 
