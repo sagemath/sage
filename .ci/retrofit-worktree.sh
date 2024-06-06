@@ -23,9 +23,10 @@ set -x
 # If actions/checkout downloaded our source tree using the GitHub REST API
 # instead of with git (because do not have git installed in our image),
 # we first make the source tree a repo.
-if [ ! -d .git ]; then git init && git add -A && git commit --quiet -m "new"; fi
+if [ ! -d .git ]; then git init; fi
 
-# Tag this state of the source tree "new". This is what we want to build and test.
+# Commit and tag this state of the source tree "new". This is what we want to build and test.
+git add -A && git commit --quiet --allow-empty -m "new"
 git tag -f new
 
 # Our container image contains a source tree in $WORKTREE_DIRECTORY with a full build of Sage.
