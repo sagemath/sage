@@ -107,7 +107,7 @@ from sage.rings.rational_field import QQ, RationalField
 from sage.rings.integer_ring import ZZ, IntegerRing_class
 from sage.rings.integer cimport Integer, smallInteger
 from sage.libs.gmp.mpz cimport *
-from sage.rings.fraction_field import FractionField, is_FractionField
+from sage.rings.fraction_field import FractionField
 from sage.rings.padics.padic_generic import pAdicGeneric
 
 from sage.structure.category_object cimport normalize_names
