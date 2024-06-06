@@ -1444,18 +1444,18 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             i - a
 
         """
-        from sage.categories.map import is_Map
+        from sage.categories.map import Map
         if self._structure is not None:
             structure = self.structure()
             if len(structure) >= 2:
                 to_self = structure[1]
-                if is_Map(to_self) and to_self.domain() is other:
+                if isinstance(to_self, Map) and to_self.domain() is other:
                     return to_self
         if isinstance(other, NumberField_generic) and other._structure is not None:
             structure = other.structure()
             if len(structure) >= 1:
                 from_other = structure[0]
-                if is_Map(from_other) and from_other.codomain() is self:
+                if isinstance(from_other, Map) and from_other.codomain() is self:
                     return from_other
 
     @cached_method
@@ -9960,8 +9960,8 @@ class NumberField_absolute(NumberField_generic):
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector
 
-        from sage.categories.map import is_Map
-        if is_Map(alpha):
+        from sage.categories.map import Map
+        if isinstance(alpha, Map):
             # alpha better be a morphism with codomain self
             if alpha.codomain() != self:
                 raise ValueError("Co-domain of morphism must be self")

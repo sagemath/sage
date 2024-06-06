@@ -1257,7 +1257,7 @@ cdef class FiniteField(Field):
             return self.__vector_space
 
         from sage.modules.free_module import VectorSpace
-        from sage.categories.morphism import is_Morphism
+        from sage.categories.morphism import Morphism
 
         if base is None:
             base = self.prime_subfield()
@@ -1266,7 +1266,7 @@ cdef class FiniteField(Field):
                 self.__vector_space = VectorSpace(base, s)
             V = self.__vector_space
             inclusion_map = None
-        elif is_Morphism(base):
+        elif isinstance(base, Morphism):
             inclusion_map = base
             base = inclusion_map.domain()
             s = self.degree() // base.degree()
