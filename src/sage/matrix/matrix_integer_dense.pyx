@@ -3324,7 +3324,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``delta`` -- (default: `0.99`) parameter `\delta` as described above
 
-        - ``eta`` -- (default: `0.501`) parameter `\eta` as described above¨
+        - ``eta`` -- (default: `0.501`) parameter `\eta` as described above
 
         - ``algorithm`` -- either ``'fpLLL'`` (default) or ``'sage'``
 
