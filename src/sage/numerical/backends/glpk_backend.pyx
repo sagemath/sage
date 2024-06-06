@@ -74,19 +74,19 @@ cdef class GLPKBackend(GenericBackend):
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         OUTPUT: The index of the newly created variable
 
@@ -152,21 +152,21 @@ cdef class GLPKBackend(GenericBackend):
 
         INPUT:
 
-        - ``n`` - the number of new variables (must be > 0)
+        - ``n`` -- the number of new variables (must be > 0)
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` - optional list of names (default: ``None``)
+        - ``names`` -- optional list of names (default: ``None``)
 
         OUTPUT: The index of the variable created last.
 
@@ -385,7 +385,7 @@ cdef class GLPKBackend(GenericBackend):
 
         INPUT:
 
-        - ``coeff`` - a list of real values, whose ith element is the
+        - ``coeff`` -- a list of real values, whose ith element is the
           coefficient of the ith variable in the objective function.
 
         - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
@@ -572,11 +572,11 @@ cdef class GLPKBackend(GenericBackend):
           is a variable index (integer) and ``v`` is a value (real
           value).
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 
@@ -657,11 +657,11 @@ cdef class GLPKBackend(GenericBackend):
 
         - ``number`` (integer) -- the number of constraints to add.
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``names`` - an optional list of names (default: ``None``)
+        - ``names`` -- an optional list of names (default: ``None``)
 
         EXAMPLES::
 

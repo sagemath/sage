@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Compute Hilbert series of monomial ideals
 

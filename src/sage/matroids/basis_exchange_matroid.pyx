@@ -193,13 +193,13 @@ cdef class BasisExchangeMatroid(Matroid):
 
     cdef _relabel(self, mapping):
         """
-        Relabel each element ``e`` as ``mapping[e]``, where ``mapping`` is a
+        Relabel each element `e` as ``mapping[e]``, where ``mapping`` is a
         given injective map.
 
         INPUT:
 
-        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
-          label of ``e``
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
 
         OUTPUT: ``None``
 
@@ -1923,7 +1923,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: M = matroids.catalog.N1()
             sage: M._characteristic_setsystem()
-            Iterator over a system of subsets
+            SetSystem of 23 sets over 10 elements
             sage: len(M._characteristic_setsystem())
             23
         """

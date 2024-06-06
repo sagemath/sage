@@ -1899,7 +1899,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``name`` -- A name for the constraint.
 
-        - ``return_indices`` -- boolean (optional, default False),
+        - ``return_indices`` -- boolean (default: ``False``),
           whether to return the indices of the added constraints.
 
         OUTPUT:
@@ -2852,7 +2852,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
               The command ::
 
-                  sage: p = MixedIntegerLinearProgram(solver="CPLEX") # optional - CPLEX
+                  sage: p = MixedIntegerLinearProgram(solver="CPLEX")   # optional - CPLEX
                   sage: p.solver_parameter("CPX_PARAM_TILIM", 60)       # optional - CPLEX
 
               works as intended.

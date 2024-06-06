@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -1405,7 +1404,7 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
       maximum length of the enumerated paths. If set to ``None``, then all
       lengths are allowed.
 
-    - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+    - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
       the empty paths are also enumerated.
 
     - ``use_multiedges`` -- boolean (default: ``False``); this parameter is
@@ -1672,7 +1671,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
       maximum length of the enumerated paths. If set to ``None``, then all
       lengths are allowed.
 
-    - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+    - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
       the empty paths are also enumerated.
 
     - ``use_multiedges`` -- boolean (default: ``False``); this parameter is
@@ -1909,7 +1908,7 @@ def all_simple_paths(self, starting_vertices=None, ending_vertices=None,
       maximum length of the enumerated paths. If set to ``None``, then all
       lengths are allowed.
 
-    - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+    - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
       the empty paths are also enumerated.
 
     - ``use_multiedges`` -- boolean (default: ``False``); this parameter is

@@ -185,7 +185,7 @@ from sage.rings.rational_field import QQ
 from sage.schemes.generic.divisor import Divisor_generic
 from sage.schemes.generic.divisor_group import DivisorGroup_generic
 from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
-from sage.schemes.toric.variety import CohomologyRing, is_ToricVariety
+from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import is_Vector
 
@@ -244,11 +244,11 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
       divisor group. If ``ring`` is not specified, a coefficient ring
       suitable for ``arg`` is derived.
 
-    - ``check`` -- bool (default: True). Whether to coerce
+    - ``check`` -- bool (default: ``True``). Whether to coerce
       coefficients into base ring. Setting it to ``False`` can speed
       up construction.
 
-    - ``reduce`` -- reduce (default: True). Whether to combine common
+    - ``reduce`` -- reduce (default: ``True``). Whether to combine common
       terms. Setting it to ``False`` can speed up construction.
 
     .. WARNING::
@@ -302,7 +302,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         ...
         TypeError: cannot deduce coefficient ring for [(u, u)]
     """
-    assert is_ToricVariety(toric_variety)
+    assert isinstance(toric_variety, ToricVariety_field)
 
     # First convert special arguments into lists
     # of multiplicities or (multiplicity,coordinate)
@@ -346,7 +346,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
     except (AssertionError, TypeError):
         n_rays = toric_variety.fan().nrays()
         assert len(arg) == n_rays, \
-            'Argument list {0} is not of the required length {1}!' \
+            'Argument list {} is not of the required length {}!' \
             .format(arg, n_rays)
         arg = list(zip(arg, toric_variety.gens()))
         reduce = False
@@ -1687,7 +1687,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: DivisorGroup(P2, ZZ) is ToricDivisorGroup(P2, ZZ)
             False
         """
-        assert is_ToricVariety(toric_variety), str(toric_variety) + ' is not a toric variety!'
+        assert isinstance(toric_variety, ToricVariety_field), str(toric_variety) + ' is not a toric variety!'
         super().__init__(toric_variety, base_ring)
 
     def _latex_(self):

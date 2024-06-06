@@ -1373,7 +1373,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (optional, default ``True``) if ``True``, return
+        - ``increasing`` -- (default: ``True``) if ``True``, return
           faces in increasing order of dimension, thus starting with
           the empty face. Otherwise it returns faces in decreasing order of
           dimension.
@@ -2007,7 +2007,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
            this will cause problems if the two factors have any
            vertices with names in common.
 
-        :type rename_vertices: boolean; optional, default True
+        :type rename_vertices: boolean; optional, default: ``True``
 
         EXAMPLES::
 
@@ -2472,7 +2472,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this simplicial
@@ -4096,7 +4096,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_point`` (optional, default None) -- if this complex is
+        - ``base_point`` (default: None) -- if this complex is
           not path-connected, then specify a vertex; the fundamental
           group is computed with that vertex as a base point. If the
           complex is path-connected, then you may specify a vertex or
@@ -4495,42 +4495,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         d = self._vertex_to_index
         return {idx: v for v, idx in d.items()}
-
-    def _chomp_repr_(self):
-        r"""
-        String representation of ``self`` suitable for use by the CHomP
-        program.  This lists each facet on its own line, and makes
-        sure vertices are listed as numbers.
-
-        This function is deprecated.
-
-        EXAMPLES::
-
-            sage: S = SimplicialComplex([(0,1,2), (2,3,5)])
-            sage: print(S._chomp_repr_())
-            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://github.com/sagemath/sage/issues/33777 for details.
-            (2, 3, 5)
-            (0, 1, 2)
-
-        A simplicial complex whose vertices are tuples, not integers::
-
-            sage: S = SimplicialComplex([[(0,1), (1,2), (3,4)]])
-            sage: S._chomp_repr_()
-            '(0, 1, 2)\n'
-        """
-        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
-        s = ""
-        numeric = self._is_numeric()
-        if not numeric:
-            d = self._translation_to_numeric()
-        for f in self.facets():
-            if numeric:
-                s += str(f)
-            else:
-                s += '(' + ', '.join(str(d[a]) for a in f) + ')'
-            s += '\n'
-        return s
 
     # this function overrides the standard one for GenericCellComplex,
     # because it lists the maximal faces, not the total number of faces.

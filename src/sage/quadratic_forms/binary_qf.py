@@ -843,7 +843,7 @@ class BinaryQF(SageObject):
 
         - ``self`` -- binary quadratic form of non-square discriminant
 
-        - ``transformation`` -- boolean (default: False): if ``True``, return
+        - ``transformation`` -- boolean (default: ``False``): if ``True``, return
           both the reduced form and a matrix whose :meth:`matrix_action_right`
           transforms ``self`` into the reduced form.
 
@@ -1806,7 +1806,7 @@ class BinaryQF(SageObject):
         sol = self.__pari__().qfbsolve(n, _flag)
         if _flag == 2:
             return tuple(map(ZZ, sol)) if sol else None
-        return list(map(lambda tup: tuple(map(ZZ, tup)), sol))
+        return [tuple(map(ZZ, tup)) for tup in sol]
 
     def form_class(self):
         r"""

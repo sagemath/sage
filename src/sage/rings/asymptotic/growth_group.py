@@ -3899,7 +3899,7 @@ class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`MonomialGrowthGroup` accepts.
+        - ``base`` -- anything :class:`MonomialGrowthGroup` accepts.
 
         OUTPUT:
 
@@ -4948,7 +4948,7 @@ class ExponentialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`ExponentialGrowthGroup` accepts.
+        - ``base`` -- anything :class:`ExponentialGrowthGroup` accepts.
 
         OUTPUT:
 
@@ -5129,7 +5129,7 @@ class ExponentialNonGrowthGroupFunctor(ExponentialGrowthGroupFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`ExponentialNonGrowthGroup` accepts.
+        - ``base`` -- anything :class:`ExponentialNonGrowthGroup` accepts.
 
         OUTPUT:
 
@@ -5211,7 +5211,7 @@ class MonomialNonGrowthGroupFunctor(MonomialGrowthGroupFunctor):
 
         INPUT:
 
-        - ``base`` - anything :class:`MonomialNonGrowthGroup` accepts.
+        - ``base`` -- anything :class:`MonomialNonGrowthGroup` accepts.
 
         OUTPUT:
 

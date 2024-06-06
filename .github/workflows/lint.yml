@@ -1,11 +1,11 @@
 name: Lint
 
-on: 
+on:
   push:
     branches:
       - master
       - develop
-  pull_request: 
+  pull_request:
   merge_group:
 
 concurrency:
@@ -29,7 +29,7 @@ jobs:
         SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.9
 
@@ -37,7 +37,14 @@ jobs:
       id: deps
       run: pip install tox
 
-    - name: Code style check with pycodestyle
+    - name: Code style check with ruff-minimal
+      if: (success() || failure()) && steps.deps.outcome == 'success'
+      run: tox -e ruff-minimal
+      env:
+        # https://github.com/ChartBoost/ruff-action/issues/7#issuecomment-1887780308
+        RUFF_OUTPUT_FORMAT: github
+
+    - name: Code style check with pycodestyle-minimal
       if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e pycodestyle-minimal
 

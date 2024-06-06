@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Factory for Character-Based Art
 """

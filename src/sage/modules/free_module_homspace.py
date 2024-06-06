@@ -28,6 +28,7 @@ We create `\mathrm{Hom}(\ZZ^3, \ZZ^2)` and compute a basis. ::
        to Ambient free module of rank 2 over the principal ideal domain Integer Ring
        in Category of finite dimensional modules with basis over
           (Dedekind domains and euclidean domains
+           and noetherian rings
            and infinite enumerated sets and metric spaces)
     sage: B = H.basis()
     sage: len(B)
@@ -96,6 +97,10 @@ def is_FreeModuleHomspace(x):
         sage: type(H)
         <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace(H)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeModuleHomspace is deprecated;
+        use 'isinstance(..., FreeModuleHomspace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
 
         sage: K = Hom(QQ^3, ZZ^2)
@@ -119,6 +124,8 @@ def is_FreeModuleHomspace(x):
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FreeModuleHomspace is deprecated; use 'isinstance(..., FreeModuleHomspace)' instead")
     return isinstance(x, FreeModuleHomspace)
 
 

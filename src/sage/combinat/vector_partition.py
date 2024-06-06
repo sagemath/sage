@@ -174,11 +174,11 @@ class VectorPartitions(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``vec`` - Integer vector
-    - ``min`` - Integer vector dominated elementwise by ``vec``
-    - ``parts`` - Finite list of possible parts
-    - ``distinct`` - Boolean, set to ``True`` if only vector partitions with distinct parts are enumerated
-    - ``is_repeatable`` - Boolean function on ``parts`` which gives ``True`` in parts that can be repeated
+    - ``vec`` -- Integer vector
+    - ``min`` -- Integer vector dominated elementwise by ``vec``
+    - ``parts`` -- Finite list of possible parts
+    - ``distinct`` -- Boolean, set to ``True`` if only vector partitions with distinct parts are enumerated
+    - ``is_repeatable`` -- Boolean function on ``parts`` which gives ``True`` in parts that can be repeated
 
     EXAMPLES:
 

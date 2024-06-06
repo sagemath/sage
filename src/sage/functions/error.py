@@ -265,7 +265,7 @@ class Function_erf(BuiltinFunction):
 
             sage: gp.set_real_precision(59)  # random                                   # needs sage.libs.pari
             38
-            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))                   # needs sage.libs.pari
+            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))                   # needs mpmath sage.libs.pari
             0.84270079294971486934122063508260925929606699796630290845994
             0.84270079294971486934122063508260925929606699796630290845994
 

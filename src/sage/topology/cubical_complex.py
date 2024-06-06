@@ -743,7 +743,7 @@ class CubicalComplex(GenericCellComplex):
 
     :param maximal_faces: set of maximal faces
     :param maximality_check: see below
-    :type maximality_check: boolean; optional, default True
+    :type maximality_check: boolean; optional, default: ``True``
     :return: a cubical complex
 
     ``maximal_faces`` should be a list or tuple or set (or anything
@@ -1149,17 +1149,17 @@ class CubicalComplex(GenericCellComplex):
            (that is, include a class in dimension `-1` corresponding
            to the empty cell).  This is ignored if ``dimensions`` is
            specified.
-        :type augmented: boolean; optional, default False
+        :type augmented: boolean; optional, default: ``False``
         :param cochain: If True, return the cochain complex (that is,
            the dual of the chain complex).
-        :type cochain: boolean; optional, default False
+        :type cochain: boolean; optional, default: ``False``
         :param verbose: If True, print some messages as the chain
            complex is computed.
-        :type verbose: boolean; optional, default False
+        :type verbose: boolean; optional, default: ``False``
         :param check: If True, make sure that the chain complex
            is actually a chain complex: the differentials are
            composable and their product is zero.
-        :type check: boolean; optional, default False
+        :type check: boolean; optional, default: ``False``
 
         .. note::
 
@@ -1640,7 +1640,7 @@ class CubicalComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this cubical
@@ -1688,30 +1688,6 @@ class CubicalComplex(GenericCellComplex):
         if base_ring is None:
             base_ring = QQ
         return algebraic_topological_model(self, base_ring)
-
-    def _chomp_repr_(self):
-        r"""
-        String representation of self suitable for use by the CHomP
-        program.  This lists each maximal cube on its own line.
-
-        This function is deprecated.
-
-        EXAMPLES::
-
-            sage: C = cubical_complexes.Cube(0).product(cubical_complexes.Cube(2))
-            sage: C.maximal_cells()
-            {[0,0] x [0,1] x [0,1]}
-            sage: C._chomp_repr_()
-            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://github.com/sagemath/sage/issues/33777 for details.
-            '[0,0] x [0,1] x [0,1]\n'
-        """
-        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
-        s = ""
-        for c in self.maximal_cells():
-            s += str(c)
-            s += "\n"
-        return s
 
     def _simplicial_(self):
         r"""
@@ -1895,7 +1871,7 @@ class CubicalComplexExamples:
         :param g: the genus
         :type g: non-negative integer
         :param orientable: whether the surface should be orientable
-        :type orientable: bool, optional, default True
+        :type orientable: bool, optional, default: ``True``
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with

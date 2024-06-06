@@ -62,11 +62,11 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular rational number
+    - ``n`` -- a (pointer to) a singular rational number
 
-    - ``*n`` - a pointer to a pointer like before
+    - ``*n`` -- a pointer to a pointer like before
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     OUTPUT:
@@ -134,9 +134,9 @@ cdef Integer si2sa_ZZ(number *n, ring *_ring):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular integer number
+    - ``n`` -- a (pointer to) a singular integer number
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
     OUTPUT:
@@ -169,12 +169,12 @@ cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a finite field
+    - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``cache`` - A Givaro number field
+    - ``cache`` -- A Givaro number field
 
     OUTPUT:
 
@@ -225,12 +225,12 @@ cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a finite field
+    - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``cache`` - A ntl_gf2e number field
+    - ``cache`` -- A ntl_gf2e number field
 
     OUTPUT:
 
@@ -276,12 +276,12 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a finite field
+    - ``n`` -- a (pointer to) a singular number in a finite field
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage finite field
+    - ``base`` -- A sage finite field
 
     OUTPUT:
 
@@ -339,13 +339,13 @@ cdef object si2sa_transext_QQ(number *n, ring *_ring, object base):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a transcendental extension
+    - ``n`` -- a (pointer to) a singular number in a transcendental extension
         of the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage FractionField
+    - ``base`` -- A sage FractionField
 
     OUTPUT:
 
@@ -428,13 +428,13 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a transcendental extension
+    - ``n`` -- a (pointer to) a singular number in a transcendental extension
       of the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage FractionField
+    - ``base`` -- A sage FractionField
 
     OUTPUT:
 
@@ -476,8 +476,6 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
 
     while numer:
 
-
-
         c = p_GetCoeff(numer, cfRing)
         coeff = base(cfRing.cf.cfInt(c, cfRing.cf))
         numer.coef = c
@@ -510,13 +508,13 @@ cdef object si2sa_NF(number *n, ring *_ring, object base):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in an algebraic extension of
+    - ``n`` -- a (pointer to) a singular number in an algebraic extension of
       the rationals
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage NumberField
+    - ``base`` -- A sage NumberField
 
     OUTPUT:
 
@@ -576,12 +574,12 @@ cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number in a ring of integers modulo n
+    - ``n`` -- a (pointer to) a singular number in a ring of integers modulo n
 
-    - ``_ ring`` - a (pointer to) a singular ring, in whose coefficient field
+    - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` - A sage IntegerModRing
+    - ``base`` -- A sage IntegerModRing
 
     OUTPUT:
 
@@ -1506,9 +1504,9 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     INPUT:
 
-    - ``elem`` - a sage IntegerMod
+    - ``elem`` -- a sage IntegerMod
 
-    - ``_ ring`` - a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
     TESTS::
 
@@ -1544,7 +1542,6 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         sage: P(3)
         3
     """
-    nr2mModul = d.parent().characteristic()
     if _ring != currRing: rChangeCurrRing(_ring)
 
     cdef number *nn
@@ -1588,11 +1585,11 @@ cdef object si2sa(number *n, ring *_ring, object base):
 
     INPUT:
 
-    - ``n`` - a (pointer to) a singular number
+    - ``n`` -- a (pointer to) a singular number
 
-    - ``_ring`` - a (pointer to) the singular ring where ``n`` lives
+    - ``_ring`` -- a (pointer to) the singular ring where ``n`` lives
 
-    - ``object`` - the sage parent where the result will live
+    - ``object`` -- the sage parent where the result will live
 
     OUTPUT:
 
@@ -1639,10 +1636,10 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
 
     INPUT:
 
-    - ``elem`` - a sage element from a parent. The parent must have a
+    - ``elem`` -- a sage element from a parent. The parent must have a
       corresponding singular coefficient type.
 
-    - ``_ring`` - a (pointer to) the singular ring where the result will live.
+    - ``_ring`` -- a (pointer to) the singular ring where the result will live.
 
     OUTPUT:
 
@@ -1697,6 +1694,25 @@ cdef object si2sa_intvec(intvec *v):
     cdef list l = list()
     for r in range(v.length()):
         l.append(v.get(r))
+    return tuple(l)
+
+cdef object si2sa_bigintvec(bigintmat *v):
+    r"""
+    create a sage tuple from a singular vector of big integers
+
+    INPUT:
+
+    - ``v`` -- a (pointer to) singular bigintmat
+
+    OUTPUT:
+
+    a sage tuple
+    """
+    cdef int r
+    cdef list l = list()
+    for r in range(v.length()):
+        n = v.get(r)
+        l.append(si2sa_QQ(n, &n, currRing))
     return tuple(l)
 
 # ==============
@@ -1761,7 +1777,6 @@ cdef init_libsingular():
     global error_messages
 
     cdef void *handle = NULL
-
 
     # This is a workaround for https://github.com/Singular/Singular/issues/1113
     # and can be removed once that fix makes it into release of Singular that

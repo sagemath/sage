@@ -188,7 +188,7 @@ def is_PolynomialSequence(F):
 
     INPUT:
 
-    - ``F`` - anything
+    - ``F`` -- anything
 
     EXAMPLES::
 
@@ -210,16 +210,16 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     INPUT:
 
-    - ``arg1`` - a multivariate polynomial ring, an ideal or a matrix
+    - ``arg1`` -- a multivariate polynomial ring, an ideal or a matrix
 
-    - ``arg2`` - an iterable object of parts or polynomials
+    - ``arg2`` -- an iterable object of parts or polynomials
       (default:``None``)
 
-      - ``immutable`` - if ``True`` the sequence is immutable (default: ``False``)
+      - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
-      - ``cr`` - print a line break after each element (default: ``False``)
+      - ``cr`` -- print a line break after each element (default: ``False``)
 
-      - ``cr_str`` - print a line break after each element if 'str' is
+      - ``cr_str`` -- print a line break after each element if 'str' is
         called (default: ``None``)
 
     EXAMPLES::
@@ -380,15 +380,15 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``part`` - a list of lists with polynomials
+        - ``part`` -- a list of lists with polynomials
 
-        -  ``ring`` - a multivariate polynomial ring
+        -  ``ring`` -- a multivariate polynomial ring
 
-        - ``immutable`` - if ``True`` the sequence is immutable (default: ``False``)
+        - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
-        - ``cr`` - print a line break after each element (default: ``False``)
+        - ``cr`` -- print a line break after each element (default: ``False``)
 
-        - ``cr_str`` - print a line break after each element if 'str'
+        - ``cr_str`` -- print a line break after each element if 'str'
           is called (default: ``None``)
 
         EXAMPLES::
@@ -525,10 +525,10 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``args`` - list of arguments passed to
+        - ``args`` -- list of arguments passed to
           ``MPolynomialIdeal.groebner_basis`` call
 
-        - ``kwargs`` - dictionary of arguments passed to
+        - ``kwargs`` -- dictionary of arguments passed to
           ``MPolynomialIdeal.groebner_basis`` call
 
         EXAMPLES::
@@ -721,8 +721,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``sparse`` - construct a sparse matrix (default: ``True``)
-        - ``order`` - a list or tuple specifying the order of monomials (default: ``None``)
+        - ``sparse`` -- construct a sparse matrix (default: ``True``)
+        - ``order`` -- a list or tuple specifying the order of monomials (default: ``None``)
 
         EXAMPLES::
 
@@ -782,7 +782,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        - ``sparse`` - construct a sparse matrix (default: ``True``)
+        - ``sparse`` -- construct a sparse matrix (default: ``True``)
 
         EXAMPLES::
 
@@ -841,8 +841,8 @@ class PolynomialSequence_generic(Sequence_generic):
 
         INPUT:
 
-        -  ``args`` - arguments to be passed to :meth:`MPolynomial.subs`
-        -  ``kwargs`` - keyword arguments to be passed to :meth:`MPolynomial.subs`
+        -  ``args`` -- arguments to be passed to :meth:`MPolynomial.subs`
+        -  ``kwargs`` -- keyword arguments to be passed to :meth:`MPolynomial.subs`
 
         EXAMPLES::
 
@@ -1270,21 +1270,21 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         INPUT:
 
-        - ``maxlength`` - an optional upper bound on the number of
+        - ``maxlength`` -- an optional upper bound on the number of
           monomials by which a variable is replaced. If
           ``maxlength==+Infinity`` then no condition is checked.
           (default: +Infinity).
 
-        - ``skip`` - an optional callable to skip eliminations. It
+        - ``skip`` -- an optional callable to skip eliminations. It
           must accept two parameters and return either ``True`` or
           ``False``. The two parameters are the leading term and the
           tail of a polynomial (default: ``None``).
 
-        - ``return_reductors`` - if ``True`` the list of polynomials
+        - ``return_reductors`` -- if ``True`` the list of polynomials
           with linear leading terms which were used for reduction is
           also returned (default: ``False``).
 
-        - ``use_polybori`` - if ``True`` then ``polybori.ll.eliminate`` is
+        - ``use_polybori`` -- if ``True`` then ``polybori.ll.eliminate`` is
           called. While this is typically faster than what is implemented here, it
           is less flexible (``skip`` is not supported) and may increase the
           degree (default: ``False``)
@@ -1496,25 +1496,25 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         INPUT:
 
-        * ``self`` - a sequence of boolean polynomials
+        * ``self`` -- a sequence of boolean polynomials
 
-        * ``algorithm`` - the method to use. Possible values are
+        * ``algorithm`` -- the method to use. Possible values are
           ``polybori``, ``sat`` and ``exhaustive_search``. (default:
           ``polybori``, since it is always available)
 
-        * ``n`` - number of solutions to return. If ``n == +Infinity``
+        * ``n`` -- number of solutions to return. If ``n == +Infinity``
           then all solutions are returned. If `n < \infty` then `n`
           solutions are returned if the equations have at least `n`
           solutions. Otherwise, all the solutions are
           returned. (default: ``1``)
 
-        * ``eliminate_linear_variables`` - whether to eliminate
+        * ``eliminate_linear_variables`` -- whether to eliminate
           variables that appear linearly. This reduces the number of
           variables (makes solving faster a priori), but is likely to
           make the equations denser (may make solving slower depending
           on the method).
 
-        * ``verbose`` - whether to display progress and (potentially)
+        * ``verbose`` -- whether to display progress and (potentially)
           useful information while the computation runs. (default:
           ``False``)
 
@@ -1708,8 +1708,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         INPUT:
 
-        - ``sparse`` - construct a sparse matrix (default: ``True``)
-        - ``order`` - a list or tuple specifying the order of monomials (default: ``None``)
+        - ``sparse`` -- construct a sparse matrix (default: ``True``)
+        - ``order`` -- a list or tuple specifying the order of monomials (default: ``None``)
 
         EXAMPLES::
 
@@ -1724,9 +1724,24 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             (x*y, y, z, 1)
             sage: A*v
             (x*y + y + 1, z + 1)
+
+        TESTS:
+
+        Check that :issue:`37837` has been fixed::
+
+            sage: R.<a,b,c> = PolynomialRing(GF(2), ['a', 'b', 'c'])
+            sage: A, v = Sequence([a+b+c]).coefficients_monomials()
+            sage: A
+            [1 1 1]
+            sage: v
+            (a, b, c)
+            sage: A*v
+            (a + b + c)
         """
         from sage.modules.free_module_element import vector
         from sage.matrix.constructor import Matrix
+        from sage.rings.polynomial.multi_polynomial_ring_base import \
+            BooleanPolynomialRing_base
 
         if order is None:
             v = sorted(self.monomials(), reverse=True)
@@ -1736,16 +1751,27 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             else:
                 raise ValueError("order argument can only accept list or tuple")
 
-        R = self.ring().base_ring()
-        one = R.one()
+        R = self.ring()
+        K = R.base_ring()
         y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
-        A = Matrix(R, len(self), len(v), sparse=sparse)
-        for x, poly in enumerate(self):
-            for m in poly:
-                try:
-                    A[x, y[m]] = one
-                except KeyError:
-                    raise ValueError("order argument does not contain all monomials")
+        A = Matrix(K, len(self), len(v), sparse=sparse)
+
+        if isinstance(R, BooleanPolynomialRing_base):
+            one = K.one()
+            for x, poly in enumerate(self):
+                for m in poly:
+                    try:
+                        A[x, y[m]] = one
+                    except KeyError:
+                        raise ValueError("order argument does not contain all monomials")
+        else:
+            for x, poly in enumerate(self):
+                for c, m in poly:
+                    try:
+                        A[x, y[m]] = c
+                    except KeyError:
+                        raise ValueError("order argument does not contain all monomials")
+
         return A, vector(v)
 
 

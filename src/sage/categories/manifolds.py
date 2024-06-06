@@ -15,6 +15,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.sets_cat import Sets
 from sage.categories.fields import Fields
 
+
 class Manifolds(Category_over_base_ring):
     r"""
     The category of manifolds over any topological field.
@@ -329,6 +330,7 @@ class Manifolds(Category_over_base_ring):
             sage: C = Manifolds(RR).Connected()
             sage: TestSuite(C).run(skip="_test_category_over_bases")
         """
+
 
 class ComplexManifolds(Category_over_base_ring):
     r"""

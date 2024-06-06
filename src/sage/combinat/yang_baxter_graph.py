@@ -19,8 +19,10 @@ Yang-Baxter Graphs
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.combinat.partition import Partition
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.permutation import Permutation
+
+lazy_import('sage.combinat.partition', 'Partition')
 
 
 def YangBaxterGraph(partition=None, root=None, operators=None):
@@ -37,7 +39,7 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
 
     - ``root`` -- the root vertex
 
-    - ``operator`` - a function that maps vertices `u` to a list of
+    - ``operator`` -- a function that maps vertices `u` to a list of
       tuples of the form `(v, l)` where `v` is a successor of `u` and `l` is
       the label of the edge from `u` to `v`.
 
@@ -166,7 +168,7 @@ class YangBaxterGraph_generic(SageObject):
             if v != u:
                 yield (v, op)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         EXAMPLES::
 
@@ -176,7 +178,7 @@ class YangBaxterGraph_generic(SageObject):
             sage: Y.__repr__()
             'Yang-Baxter graph with root vertex (1, 2, 3)'
         """
-        return "Yang-Baxter graph with root vertex %s" % (self._root,)
+        return f"Yang-Baxter graph with root vertex {self._root}"
 
     @lazy_attribute
     def _digraph(self):
@@ -216,7 +218,7 @@ class YangBaxterGraph_generic(SageObject):
         # used in containers but are mutable.
         return hash(self._digraph.copy(immutable=True))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         EXAMPLES::
 
@@ -238,7 +240,7 @@ class YangBaxterGraph_generic(SageObject):
         """
         return type(self) is type(other) and self._digraph == other._digraph
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test non-equality.
 
@@ -369,7 +371,7 @@ class YangBaxterGraph_generic(SageObject):
         """
         return self._root
 
-    def successors(self, v):
+    def successors(self, v) -> list:
         r"""
         Return the successors of the vertex ``v``.
 
@@ -405,7 +407,7 @@ class YangBaxterGraph_generic(SageObject):
             kwds["vertex_labels"] = True
         return self._digraph.plot(*args, **kwds)
 
-    def vertices(self, sort=False):
+    def vertices(self, sort=False) -> list:
         r"""
         Return the vertices of ``self``.
 
@@ -439,7 +441,7 @@ class YangBaxterGraph_generic(SageObject):
         """
         return self._digraph.edges(sort=True)
 
-    def vertex_relabelling_dict(self, v, relabel_operator):
+    def vertex_relabelling_dict(self, v, relabel_operator) -> dict:
         r"""
         Return a dictionary pairing vertices ``u`` of ``self`` with
         the object obtained from ``v`` by applying the
@@ -590,7 +592,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
                      for i in range(sum(partition) - 1)]
         super().__init__(root, operators)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         EXAMPLES::
 
@@ -598,7 +600,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
             sage: Y.__repr__()                                                          # needs sage.combinat
             'Yang-Baxter graph of [3, 2], with top vertex (1, 0, 2, 1, 0)'
         """
-        return "Yang-Baxter graph of %s, with top vertex %s" % (self._partition, self._root)
+        return f"Yang-Baxter graph of {self._partition}, with top vertex {self._root}"
 
     def __copy__(self):
         r"""
@@ -695,7 +697,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
         """
         return operator(u)
 
-    def vertex_relabelling_dict(self, v):
+    def vertex_relabelling_dict(self, v) -> dict:
         r"""
         Return a dictionary pairing vertices ``u`` of ``self`` with the object
         obtained from ``v`` by applying transpositions corresponding to the
@@ -792,7 +794,7 @@ class SwapOperator(SageObject):
         """
         return hash(self._position)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Compare two swap operators.
 
@@ -811,7 +813,7 @@ class SwapOperator(SageObject):
             return False
         return self._position == other._position
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -826,7 +828,7 @@ class SwapOperator(SageObject):
         """
         return not (self == other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Representation string.
 
@@ -840,7 +842,7 @@ class SwapOperator(SageObject):
         pos = self._position
         return f"Swap positions {pos} and {pos + 1}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         A short str representation (used, for example, in labelling edges of
         graphs).
@@ -889,7 +891,7 @@ class SwapOperator(SageObject):
 
 
 class SwapIncreasingOperator(SwapOperator):
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Representation string.
 

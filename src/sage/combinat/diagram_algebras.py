@@ -25,6 +25,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+import itertools
+
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.arith.power import generic_power
@@ -37,19 +39,19 @@ from sage.combinat.combinat_cython import (perfect_matchings_iterator,
                                            set_partition_composition)
 from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
 from sage.combinat.set_partition_iterator import set_partition_iterator
-from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra_n
 from sage.combinat.permutation import Permutations
-from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.flatten import flatten
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import integer_floor as floor
 from sage.arith.misc import integer_ceil as ceil
 
-import itertools
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.combinat.symmetric_group_algebra', 'SymmetricGroupAlgebra_n')
 
 
 def partition_diagrams(k):
@@ -1069,7 +1071,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: elm2.bijection_on_free_nodes(two_line=True)
             [[1, 2, 3], [-2, -3, -1]]
         """
-        terms = sorted(sorted(list(v), reverse=True) for v in self.diagram()
+        terms = sorted(sorted(v, reverse=True) for v in self.diagram()
                        if max(v) > 0 and min(v) < 0)
         if two_line:
             terms = [[t[i] for t in terms] for i in range(2)]
@@ -1587,7 +1589,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
         INPUT:
 
-        - ``D1_D2_pi``-- a list or tuple where the first entry is a list of
+        - ``D1_D2_pi`` -- a list or tuple where the first entry is a list of
           arcs on the top of the diagram, the second entry is a list of arcs
           on the bottom of the diagram, and the third entry is a permutation
           on the free nodes.
@@ -5796,8 +5798,8 @@ def to_set_partition(l, k=None):
 
     INPUT:
 
-    - ``l`` - a list of lists of integers
-    - ``k`` - integer (optional, default ``None``)
+    - ``l`` -- a list of lists of integers
+    - ``k`` -- integer (default: ``None``)
 
     OUTPUT:
 

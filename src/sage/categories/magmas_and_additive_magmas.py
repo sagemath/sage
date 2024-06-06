@@ -15,6 +15,7 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.magmas import Magmas
 
+
 class MagmasAndAdditiveMagmas(Category_singleton):
     """
     The category of sets `(S,+,*)` with an additive operation '+' and

@@ -21,7 +21,7 @@ cdef class MatroidUnion(Matroid):
         {}
         Matroid of rank 1 on 2 elements with 2 bases
         sage: M.bases()
-        Iterator over a system of subsets
+        SetSystem of 2 sets over 5 elements
         sage: list(M.circuits())
         [frozenset({3, 4})]
 

@@ -86,6 +86,10 @@ def is_DualAbelianGroup(x):
         sage: F = AbelianGroup(5,[3,5,7,8,9], names=list("abcde"))
         sage: Fd = F.dual_group()
         sage: is_DualAbelianGroup(Fd)
+        doctest:warning...
+        DeprecationWarning: the function is_DualAbelianGroup is deprecated;
+        use 'isinstance(..., DualAbelianGroup_class)' instead
+        See https://github.com/sagemath/sage/issues/37898 for details.
         True
         sage: F = AbelianGroup(3,[1,2,3], names='a')
         sage: Fd = F.dual_group()
@@ -94,6 +98,8 @@ def is_DualAbelianGroup(x):
         sage: F.gens()
         (1, a1, a2)
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37898, "the function is_DualAbelianGroup is deprecated; use 'isinstance(..., DualAbelianGroup_class)' instead")
     return isinstance(x, DualAbelianGroup_class)
 
 

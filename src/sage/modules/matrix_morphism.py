@@ -97,9 +97,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         INPUT:
 
-        -  ``parent`` - a homspace
+        -  ``parent`` -- a homspace
 
-        -  ``A`` - matrix
+        -  ``A`` -- matrix
 
 
         EXAMPLES::
@@ -112,7 +112,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: loads(A.dumps()) == A
             True
         """
-        if not sage.categories.homset.is_Homset(parent):
+        if not isinstance(parent, sage.categories.homset.Homset):
             raise TypeError("parent must be a Hom space")
         if side not in ["left", "right"]:
             raise ValueError("the argument side must be either 'left' or 'right'")
@@ -1242,7 +1242,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         INPUT:
 
-        - ``other`` - a morphism to compare with ``self``
+        - ``other`` -- a morphism to compare with ``self``
 
         OUTPUT:
 
@@ -1607,7 +1607,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
         INPUT:
 
-        - ``side`` -- (default: ``'None'``) the side of the matrix
+        - ``side`` -- (default: ``None``) the side of the matrix
           where a vector is placed to effect the morphism (function)
 
         OUTPUT:

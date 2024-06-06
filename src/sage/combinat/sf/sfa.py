@@ -246,6 +246,10 @@ def is_SymmetricFunctionAlgebra(x):
 
         sage: from sage.combinat.sf.sfa import is_SymmetricFunctionAlgebra
         sage: is_SymmetricFunctionAlgebra(5)
+        doctest:warning...
+        DeprecationWarning: the function is_SymmetricFunctionAlgebra is deprecated;
+        use 'isinstance(..., SymmetricFunctionAlgebra_generic)' instead
+        See https://github.com/sagemath/sage/issues/37896 for details.
         False
         sage: is_SymmetricFunctionAlgebra(ZZ)
         False
@@ -258,6 +262,8 @@ def is_SymmetricFunctionAlgebra(x):
         sage: is_SymmetricFunctionAlgebra(SymmetricFunctions(FractionField(QQ['q','t'])).macdonald().P())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37896, "the function is_SymmetricFunctionAlgebra is deprecated; use 'isinstance(..., SymmetricFunctionAlgebra_generic)' instead")
     return isinstance(x, SymmetricFunctionAlgebra_generic)
 
 
@@ -3151,7 +3157,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``right`` - something coercible to a symmetric function in
+        - ``right`` -- something coercible to a symmetric function in
           ``self.parent()``
 
         EXAMPLES::

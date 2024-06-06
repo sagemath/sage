@@ -74,6 +74,7 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.misc_c import prod, running_total
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.sets.set import Set_object
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
@@ -85,10 +86,11 @@ from sage.combinat.composition import Composition, Compositions, composition_ite
 from sage.combinat.permutation import Permutations_mset
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.sf.sf import SymmetricFunctions
 from sage.combinat.shuffle import ShuffleProduct, ShuffleProduct_overlapping
-from sage.combinat.crystals.letters import CrystalOfLetters as Letters
-from sage.combinat.root_system.cartan_type import CartanType
+
+lazy_import('sage.combinat.crystals.letters', 'CrystalOfLetters', as_='Letters')
+lazy_import('sage.combinat.root_system.cartan_type', 'CartanType')
+lazy_import('sage.combinat.sf.sf', 'SymmetricFunctions')
 
 
 class OrderedMultisetPartitionIntoSets(ClonableArray,
@@ -246,9 +248,9 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         """
         # TODO: simplify if/once ``_repr_`` method for ``Set`` sorts its elements.
         if self._n:
-            string_parts = map(lambda k: str(sorted(k)), self)
+            string_parts = (str(sorted(k)) for k in self)
         else:
-            string_parts = map(lambda k: str(sorted(k, key=str)), self)
+            string_parts = (str(sorted(k, key=str)) for k in self)
         string_parts = ", ".join(string_parts).replace("[","{").replace("]","}")
         return "[" + string_parts + "]"
 

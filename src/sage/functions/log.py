@@ -63,7 +63,7 @@ class Function_exp(GinacFunction):
 
         sage: exp(float(2.5))
         12.182493960703473
-        sage: exp(RDF('2.5'))
+        sage: exp(RDF('2.5'))                                                           # needs sage.symbolic
         12.182493960703473
 
     To prevent automatic evaluation, use the ``hold`` parameter::
