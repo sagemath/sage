@@ -30,6 +30,7 @@ AUTHOR:
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebra_functor import AlgebrasCategory
 
+
 class GroupAlgebras(AlgebrasCategory):
     r"""
     The category of group algebras over a given base ring.

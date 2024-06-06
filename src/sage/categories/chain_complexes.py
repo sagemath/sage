@@ -162,6 +162,7 @@ class ChainComplexes(Category_module):
                 # if not, this methods needs to be overwritten by parent
                 raise NotImplementedError
 
+
 class HomologyFunctor(Functor):
     r"""
     Homology functor.

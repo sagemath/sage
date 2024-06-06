@@ -409,6 +409,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs sage.modules
                     sage: S2 = simplicial_complexes.Sphere(2)
                     sage: H = S2.cohomology_ring(QQ)
                     sage: C = cartesian_product([H, H])

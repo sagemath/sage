@@ -128,9 +128,9 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable
+        - ``lower_bound`` -- the lower bound of the variable
 
-        - ``upper_bound`` - the upper bound of the variable
+        - ``upper_bound`` -- the upper bound of the variable
 
         OUTPUT:
 
@@ -186,19 +186,19 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         - ``coefficients`` -- (optional) an iterable of pairs ``(i, v)``. In each
           pair, ``i`` is a variable index (integer) and ``v`` is a

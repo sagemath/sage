@@ -377,7 +377,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``p`` - default: 'frob' - controls which norm is used
+        - ``p`` -- (default: 'frob'); controls which norm is used
           to compute the condition number, allowable values are
           'frob' (for the Frobenius norm), integers -2, -1, 1, 2,
           positive and negative infinity. See output discussion
@@ -564,7 +564,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``p`` - default: 2 - controls which norm is computed,
+        - ``p`` -- (default: 2); controls which norm is computed,
           allowable values are 'frob' (for the Frobenius norm),
           integers -2, -1, 1, 2, positive and negative infinity.  See
           output discussion for specifics.
@@ -701,7 +701,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``eps`` - default: ``None`` - the largest number which
+        - ``eps`` -- (default: ``None``); the largest number which
           will be considered to be zero.  May also be set to the
           string 'auto'.  See the discussion below.
 
@@ -1062,26 +1062,26 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``self`` - a square matrix
+        - ``self`` -- a square matrix
 
         - ``other`` -- a square matrix `B` (default: ``None``) in a generalized
           eigenvalue problem; if ``None``, an ordinary eigenvalue problem is
           solved; if ``algorithm`` is ``'symmetric'`` or ``'hermitian'``, `B`
           must be real symmetric or hermitian positive definite, respectively
 
-        - ``algorithm`` - default: ``'default'``
+        - ``algorithm`` -- default: ``'default'``
 
-          - ``'default'`` - applicable to any matrix
+          - ``'default'`` -- applicable to any matrix
             with double-precision floating point entries.
             Uses the :func:`~scipy:scipy.linalg.eigvals` function from SciPy.
 
-          - ``'symmetric'`` - converts the matrix into a real matrix
+          - ``'symmetric'`` -- converts the matrix into a real matrix
             (i.e. with entries from :class:`~sage.rings.real_double.RDF`),
             then applies the algorithm for Hermitian matrices.  This
             algorithm can be significantly faster than the
             ``'default'`` algorithm.
 
-          - ``'hermitian'`` - uses the :func:`~scipy:scipy.linalg.eigh`
+          - ``'hermitian'`` -- uses the :func:`~scipy:scipy.linalg.eigh`
             function from SciPy, which applies only to real symmetric or
             complex Hermitian matrices.  Since Hermitian is defined as a matrix
             equaling its conjugate-transpose, for a matrix with real
@@ -2220,11 +2220,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` - default: ``1e-12`` - the largest value of the
+        - ``tol`` -- (default: ``1e-12``); the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` - default: 'orthonormal' - set to 'orthonormal'
+        - ``algorithm`` -- (default: 'orthonormal'); set to 'orthonormal'
           for a stable procedure and set to 'naive' for a fast
           procedure.
 
@@ -2410,11 +2410,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` - default: ``1e-12`` - the largest value of the
+        - ``tol`` -- (default: ``1e-12``); the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``skew`` - default: ``False`` - Specifies the type of the
+        - ``skew`` -- (default: ``False``); Specifies the type of the
           test. Set to ``True`` to check whether the matrix is
           skew-Hermitian.
 
@@ -2529,7 +2529,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` - default: ``1e-12`` - the largest value of the
+        - ``tol`` -- (default: ``1e-12``); the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
@@ -2657,11 +2657,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` - default: ``1e-12`` - the largest value of the
+        - ``tol`` -- (default: ``1e-12``); the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` - default: 'orthonormal' - set to 'orthonormal'
+        - ``algorithm`` -- (default: 'orthonormal'); set to 'orthonormal'
           for a stable procedure and set to 'naive' for a fast
           procedure.
 
@@ -2779,11 +2779,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` - default: ``1e-12`` - the largest value of the
+        - ``tol`` -- (default: ``1e-12``); the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` - default: 'orthonormal' - set to 'orthonormal'
+        - ``algorithm`` -- (default: 'orthonormal'); set to 'orthonormal'
           for a stable procedure and set to 'naive' for a fast
           procedure.
 
@@ -2975,7 +2975,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``base_ring`` - optional, defaults to the base ring of ``self``.
+        - ``base_ring`` -- optional, defaults to the base ring of ``self``.
           Use this to request the base ring of the returned matrices, which
           will affect the format of the results.
 
@@ -3721,7 +3721,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``eps`` - Cutoff value
+        - ``eps`` -- Cutoff value
 
         OUTPUT:
 
@@ -3763,7 +3763,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``ndigits`` - The precision in number of decimal digits
+        - ``ndigits`` -- The precision in number of decimal digits
 
         OUTPUT:
 

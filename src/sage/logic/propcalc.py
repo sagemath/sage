@@ -275,9 +275,9 @@ def consistent(*formulas):
 
     A boolean value to be determined as follows:
 
-    - ``True`` - if the formulas are logically consistent
+    - ``True`` -- if the formulas are logically consistent
 
-    - ``False`` - if the formulas are not logically consistent
+    - ``False`` -- if the formulas are not logically consistent
 
     EXAMPLES:
 

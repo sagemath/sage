@@ -175,11 +175,20 @@ jobs:
           ./sage -python -m pytest -c tox.ini -qq --doctest --collect-only || true
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          # File extensions per sage.doctest.control.skipfile
+          files: src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}
+          files_ignore: src/{setup,conftest*}.py
+
       - name: Test changed files (sage -t --new)
+        if: steps.changed-files.outputs.all_changed_files
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
-          # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./sage -t --new -p4
+          # https://github.com/tj-actions/changed-files?tab=readme-ov-file#outputs-
+          ./sage -t --long --format github -p4 ${{ steps.changed-files.outputs.all_changed_files }}
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
   test-mod:
@@ -283,6 +292,14 @@ jobs:
         image: registry:2
         ports:
           - 5000:5000
+    strategy:
+      fail-fast: false
+      matrix:
+        tests:
+          - "src/sage/[a-f]*"
+          - "src/sage/[g-o]*"
+          - "src/sage/[p-z]*"
+          - "src/doc src/sage_docbuild src/sage_setup"
     steps:
       - name: Maximize build disk space
         uses: easimon/maximize-build-space@v10
@@ -356,23 +373,138 @@ jobs:
 
       # Testing
 
-      - name: Test all files (sage -t --all --long)
+      - name: Test all files (sage -t --long ${{ matrix.tests }})
         run: |
+          mkdir .coverage
+          rm -rf /sage/.coverage
+          ln -s $(pwd)/.coverage /sage/
+          cd /sage
           ./sage -python -m pip install coverage
-          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --all --long -p4 --format github --random-seed=286735480429121101562228604801325644303
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --force-lib --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
-      - name: Copy coverage results
+      - name: Combine coverage results
         if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           ./sage -python -m coverage combine --rcfile=src/tox.ini
-          ./sage -python -m coverage xml --rcfile=src/tox.ini
-          mkdir -p coverage-report
-          mv coverage.xml coverage-report/
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Upload coverage to codecov
+      - name: Prepare upload
+        id: copy-coverage
         if: (success() || failure()) && steps.container.outcome == 'success'
+        run: |
+          echo tests_id=$(echo "${{ matrix.tests }}" | sed -E 's, +,--,g;s,/,_,g;s/[^-_A-Za-z]//g;') >> "$GITHUB_OUTPUT"
+
+      - name: Upload coverage results
+        if: (success() || failure()) && steps.container.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ steps.copy-coverage.outputs.tests_id }}
+          path: .coverage
+
+  coverage-report:
+    runs-on: ubuntu-latest
+    needs: [test-long]
+    if: (success() || failure())
+    services:
+      # https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
+        with:
+          # need space in /var for Docker images
+          root-reserve-mb:      30000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
+      - name: Merge CI fixes from sagemath/sage
+        # From docker.yml
+        # This step needs to happen after the commit sha is put in DOCKER_TAG
+        # so that multi-stage builds can work correctly.
+        run: |
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
+        run: |
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Build Docker image
+        id: image
+        uses: docker/build-push-action@v5
+        with:
+          push:       true
+          load:       false
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=ci-build-with-fallback
+
+      - name: Start container
+        id: container
+        run: |
+          docker run --name BUILD -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ env.BUILD_IMAGE }} /bin/sh
+
+      # Combining
+
+      - name: Download coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: .coverage
+          pattern: coverage-*
+
+      - name: Coverage report
+        # Using --omit to avoid "CoverageWarning: Couldn't parse '/tmp/tmp06qizzie/tmp_ldpu46ob.py': No source for code"
+        run: |
+          rm -rf /sage/.coverage
+          ln -s $(pwd)/.coverage /sage/
+          cd /sage
+          ./sage -python -m pip install coverage
+          ./sage -python -m coverage combine --rcfile=src/tox.ini .coverage/coverage-*/.coverage
+          ./sage -python -m coverage xml --rcfile=src/tox.ini --omit="/tmp/*"
+          mkdir -p .coverage/coverage-report
+          mv coverage.xml .coverage/coverage-report/
+        shell: sh .ci/docker-exec-script.sh BUILD . {0}
+
+      - name: Upload coverage to codecov
         uses: codecov/codecov-action@v4
         with:
-          directory: ./coverage-report
+          directory: .coverage/coverage-report

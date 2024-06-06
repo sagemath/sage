@@ -254,7 +254,7 @@ class Homology_abvar(Homology):
         INPUT:
 
 
-        -  ``n`` - a positive integer
+        -  ``n`` -- a positive integer
 
 
         OUTPUT: a matrix over the coefficient ring of this homology group
@@ -300,10 +300,10 @@ class Homology_abvar(Homology):
         INPUT:
 
 
-        -  ``U`` - submodule of ambient free module (or
+        -  ``U`` -- submodule of ambient free module (or
            something that defines one)
 
-        -  ``check`` - currently ignored.
+        -  ``check`` -- currently ignored.
 
 
         .. note::
@@ -348,7 +348,7 @@ class IntegralHomology(Homology_abvar):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
 
         EXAMPLES::
@@ -426,7 +426,7 @@ class RationalHomology(Homology_abvar):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
 
         EXAMPLES::
@@ -507,9 +507,9 @@ class Homology_over_base(Homology_abvar):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
-        -  ``base_ring`` - a commutative ring
+        -  ``base_ring`` -- a commutative ring
 
 
         EXAMPLES::
@@ -568,10 +568,10 @@ class Homology_submodule(Homology):
         INPUT:
 
 
-        -  ``ambient`` - the homology of some modular abelian
+        -  ``ambient`` -- the homology of some modular abelian
            variety with ring coefficients
 
-        -  ``submodule`` - a submodule of the free module
+        -  ``submodule`` -- a submodule of the free module
            underlying ambient
 
 

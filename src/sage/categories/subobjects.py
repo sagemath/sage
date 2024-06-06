@@ -15,6 +15,7 @@ AUTHORS:
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 class SubobjectsCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "Subobjects"

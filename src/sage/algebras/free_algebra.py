@@ -136,6 +136,15 @@ Note that the letterplace implementation can only be used if the corresponding
     ...
     NotImplementedError: polynomials over Free Algebra on 2 generators (a, b)
     over Integer Ring are not supported in Singular
+
+Some tests for the category::
+
+    sage: R.<x> = FreeAlgebra(QQ,1)
+    sage: R.is_commutative()
+    True
+    sage: R.<x,y> = FreeAlgebra(QQ,2)
+    sage: R.is_commutative()
+    False
 """
 
 # ***************************************************************************
@@ -162,7 +171,6 @@ from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.ring import Algebra
 from sage.rings.integer_ring import ZZ
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -370,7 +378,7 @@ FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
 
 def is_FreeAlgebra(x) -> bool:
     """
-    Return True if x is a free algebra; otherwise, return False.
+    Return ``True`` if x is a free algebra; otherwise, return ``False``.
 
     EXAMPLES::
 
@@ -396,7 +404,7 @@ def is_FreeAlgebra(x) -> bool:
     return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
 
 
-class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
+class FreeAlgebra_generic(CombinatorialFreeModule):
     """
     The free algebra on `n` generators over a base ring.
 
@@ -485,6 +493,8 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         self.__ngens = n
         indices = FreeMonoid(n, names=names)
         cat = AlgebrasWithBasis(R)
+        if self.__ngens <= 1 and R.is_commutative():
+            cat = cat.Commutative()
         if degrees is not None:
             if len(degrees) != len(names) or not all(d in ZZ for d in degrees):
                 raise ValueError("argument degrees must specify an integer for each generator")
@@ -531,21 +541,6 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         if self.__ngens == 0:
             return self.base_ring().is_field(proof)
         return False
-
-    def is_commutative(self) -> bool:
-        """
-        Return ``True`` if this free algebra is commutative.
-
-        EXAMPLES::
-
-            sage: R.<x> = FreeAlgebra(QQ,1)
-            sage: R.is_commutative()
-            True
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
-            sage: R.is_commutative()
-            False
-        """
-        return self.__ngens <= 1 and self.base_ring().is_commutative()
 
     def _repr_(self) -> str:
         """

@@ -35,10 +35,9 @@ class Mcqd(JoinFeature):
             sage: isinstance(Mcqd(), Mcqd)
             True
         """
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_mcqd' later
         JoinFeature.__init__(self, 'mcqd',
-                             [PythonModule('sage.graphs.mcqd', spkg='mcqd')])
+                             [PythonModule('sage.graphs.mcqd',
+                                           spkg='sagemath_mcqd')])
 
 
 def all_features():

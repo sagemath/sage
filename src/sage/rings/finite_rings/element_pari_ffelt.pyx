@@ -1035,7 +1035,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
                This option is not implemented.
 
-        - ``all`` - bool (default: ``False``)
+        - ``all`` -- bool (default: ``False``)
 
         OUTPUT:
 
@@ -1109,7 +1109,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         - ``base`` -- non-zero field element
         - ``order`` -- integer (optional), the order of the base
-        - ``check`` -- boolean (optional, default ``False``): If set,
+        - ``check`` -- boolean (default: ``False``): If set,
           test whether the given ``order`` is correct.
 
         OUTPUT:

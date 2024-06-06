@@ -78,7 +78,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT: A point of the subscheme.
@@ -791,9 +791,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``f`` - a map whose codomain contains this scheme
+        - ``f`` -- a map whose codomain contains this scheme
 
-        - ``k`` - a positive integer
+        - ``k`` -- a positive integer
 
         - ``check`` -- Boolean, if ``False`` no input checking is done
 

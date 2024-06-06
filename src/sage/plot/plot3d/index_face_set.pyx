@@ -513,9 +513,9 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         INPUT:
 
-        ``threshold`` -- the minimum cosine of the angle between adjacent
-        faces a higher threshold separates more, all faces if >= 1, no
-        faces if <= -1
+        - ``threshold`` -- the minimum cosine of the angle between adjacent
+          faces a higher threshold separates more, all faces if >= 1, no
+          faces if <= -1
         """
         cdef Py_ssize_t i, j, k
         cdef face_c *face
