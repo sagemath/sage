@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 r"""
 Access to the KnotInfo database
 
