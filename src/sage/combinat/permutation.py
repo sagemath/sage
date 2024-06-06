@@ -548,11 +548,11 @@ class Permutation(CombinatorialElement):
           generate the permutations. Supported algorithms are:
 
           - ``lex``: lexicographic order generation, this is the default
-          algorithm.
+            algorithm.
 
           - ``sjt``: Steinhaus-Johnson-Trotter algorithm to generate
-          permutations using only transposition of two elements in the list.
-          It is highly recommended to set ``check=True`` (default value).
+            permutations using only transposition of two elements in the list.
+            It is highly recommended to set ``check=True`` (default value).
 
         - ``sjt`` -- SJT (default: ``None``); the ``SJT`` object holding the
           permutation internal state. This should only be specified when
