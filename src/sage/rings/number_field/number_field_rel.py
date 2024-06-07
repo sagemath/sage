@@ -77,7 +77,7 @@ AUTHORS:
 
 import sage.libs.ntl.all as ntl
 
-from sage.categories.map import is_Map
+from sage.categories.map import Map
 from sage.structure.sequence import Sequence
 
 import sage.structure.parent_gens
@@ -2678,7 +2678,7 @@ class NumberField_relative(NumberField_generic):
         K = self.absolute_field('a')
         from_K, to_K = K.structure()
 
-        if is_Map(alpha):
+        if isinstance(alpha, Map):
             # alpha is an embedding of a subfield into self; compose to get an
             # embedding of a subfield into the absolute field
             beta = to_K * alpha

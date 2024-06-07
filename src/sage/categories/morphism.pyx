@@ -48,6 +48,8 @@ from sage.structure.parent cimport Parent
 
 
 def is_Morphism(x):
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38103, "The function is_Morphism is deprecated; use 'isinstance(..., Morphism)' instead.")
     return isinstance(x, Morphism)
 
 
