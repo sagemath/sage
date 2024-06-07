@@ -1500,3 +1500,209 @@ cdef class SparseGraphBackend(CGraphBackend):
         if not directed and self._directed and v_int != u_int:
             self._cg.del_arc_label(v_int, u_int, ll_int)
             self._cg.add_arc_label(v_int, u_int, l_int)
+
+    def _iterator_edges(self, object vertices, const bint labels, const int modus=0):
+        """
+        Iterate over the edges incident to a sequence of vertices.
+
+        INPUT:
+
+        - ``vertices`` -- a list of vertex labels
+
+        - ``labels`` -- boolean, whether to return labels as well
+
+        - ``modus`` -- integer representing the modus of the iterator:
+          - ``0`` -- outgoing edges
+          - ``1`` -- ingoing edges
+          - ``2`` -- unsorted edges of an undirected graph
+          - ``3`` -- sorted edges of an undirected graph
+
+        EXAMPLES::
+
+            sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: G.add_edge(1, 2, None, False)
+            sage: list(G._iterator_edges(range(9), False, 3))
+            [(1, 2)]
+            sage: list(G._iterator_edges(range(9), True, 3))
+            [(1, 2, None)]
+
+        ::
+
+            sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: G.add_edge(1, 2, None, True)
+            sage: list(G.iterator_in_edges([1], False))
+            []
+            sage: list(G.iterator_in_edges([2], False))
+            [(1, 2)]
+            sage: list(G.iterator_in_edges([2], True))
+            [(1, 2, None)]
+
+        ::
+
+            sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: G.add_edge(1, 2, None, True)
+            sage: list(G.iterator_out_edges([2], False))
+            []
+            sage: list(G.iterator_out_edges([1], False))
+            [(1, 2)]
+            sage: list(G.iterator_out_edges([1], True))
+            [(1, 2, None)]
+        """
+        cdef object u, v, l, v_copy
+        cdef int u_int, v_int, l_int, foo
+        cdef CGraph cg = self.cg()
+        cdef list b_vertices_2, all_arc_labels
+        cdef FrozenBitset b_vertices
+        cdef bint out = modus == 0
+
+        cdef int vertices_case
+        cdef object it
+
+        cdef int r
+        cdef int maxdegree = 0
+        cdef int *degrees = NULL
+        if out:
+            degrees = cg.out_degrees
+        else:
+            degrees = cg.in_degrees
+        for v_int in range(cg.num_verts):
+            maxdegree = max(degrees[v_int], maxdegree)
+        cdef SparseGraphBTNode **neighbors = <SparseGraphBTNode **>check_allocarray(maxdegree, sizeof(SparseGraphBTNode *))
+
+        if not isinstance(vertices, list):
+            # ALL edges
+            it = self.iterator_verts(None)
+            vertices_case = 0
+
+        elif not vertices:
+            return
+
+        elif len(vertices) == 1:
+            # One vertex
+            vertices_case = 1
+            v_int = -1
+
+        else:
+            # Several vertices (nonempty list)
+            vertices_case = 2
+            b_vertices_2 = [self.get_vertex_checked(v) for v in vertices]
+            try:
+                b_vertices = FrozenBitset(foo for foo in b_vertices_2 if foo >= 0)
+            except ValueError:
+                # Avoiding "Bitset must not be empty"
+                # in case none of the vertices is active.
+                return
+            it = iter(b_vertices)
+
+        while True:
+            # Think of this as a loop through ``vertices``.
+            # We pick the next vertex according to three cases.
+
+            if vertices_case == 0:
+                # ALL edges
+                try:
+                    v = next(it)
+                    v_int = self.get_vertex(v)
+                except StopIteration:
+                    return
+
+            elif vertices_case == 1:
+                # One vertex
+                if v_int != -1:
+                    # Only visit one vertex once.
+                    return
+                v = vertices[0]
+                v_int = self.get_vertex_checked(v)
+                if v_int == -1:
+                    return
+
+            else:
+                # Several vertices (nonempty list)
+                try:
+                    v_int = -1
+                    while v_int == -1:
+                        v_int = next(it)
+                    v = self.vertex_label(v_int)
+                except StopIteration:
+                    return
+
+            # WARNING
+            # If you modify this, you must keep in mind the documentation in the
+            # corresponding method in `generic_graph.py` in the method `edge_iterator`.
+            # E.g. code assumes that you can use an iterator to relabel or delete arcs.
+
+            r = self._cg._neighbors_BTNode_unsafe (v_int, out, neighbors, maxdegree)
+            for i in range(r):
+                u_int = neighbors[i].vertex
+                if (modus < 2 or                                            # Do not delete duplicates.
+                        vertices_case == 1 or                               # Only one vertex, so no duplicates.
+                        u_int >= v_int or                                   # We visit if u_int >= v_int ...
+                        (vertices_case == 2 and
+                            u_int < b_vertices.capacity() and
+                            not bitset_in(b_vertices._bitset, u_int))):     # ... or if u_int is not in ``vertices``.
+                    u = self.vertex_label(u_int)
+                    if labels:
+                        l = self.edge_labels[l_int] if l_int else None
+
+                    # Yield the arc/arcs.
+                    v_copy = v
+                    if _reorganize_edge(v, u, modus):
+                        u, v = v, u
+
+                    if not self._multiple_edges:
+                        if labels:
+                            yield (v, u, l)
+                        else:
+                            yield (v, u)
+                    else:
+                        if out:
+                            all_arc_labels = cg.all_arcs(v_int, u_int)
+                        else:
+                            all_arc_labels = cg.all_arcs(u_int, v_int)
+
+                        for l_int in all_arc_labels:
+                            if labels:
+                                l = self.edge_labels[l_int] if l_int else None
+                                yield (v, u, l)
+                            else:
+                                yield (v, u)
+                    v = v_copy
+
+##############################
+# Functions to simplify edge iterator.
+##############################
+
+cdef inline bint _reorganize_edge(object v, object u, const int modus) noexcept:
+    """
+    Return ``True`` if ``v`` and ``u`` should be exchanged according to the modus.
+
+    INPUT:
+
+    - ``v`` -- vertex
+
+    - ``u`` -- vertex
+
+    - ``modus`` -- integer representing the modus of the iterator:
+      - ``0`` -- outgoing edges
+      - ``1`` -- ingoing edges
+      - ``2`` -- unsorted edges of an undirected graph
+      - ``3`` -- sorted edges of an undirected graph
+
+    OUTPUT: Boolean according the modus:
+
+    - ``modus == 0`` -- ``False``
+    - ``modus == 1`` -- ``True``
+    - ``modus == 2`` -- ``True
+    - ``modus == 3`` -- ``False if v <= u else True``
+    """
+    if modus == 0:
+        return False
+    if modus == 1 or modus == 2:
+        return True
+
+    try:
+        if v <= u:
+            return False
+    except TypeError:
+        pass
+    return True
