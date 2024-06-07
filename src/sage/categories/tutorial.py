@@ -55,5 +55,4 @@ cardinality.
 
    The tutorial should explain there how to reuse the enumerated
    set of subsets, and endow it with more structure.
-
 """

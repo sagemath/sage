@@ -6,7 +6,6 @@ CVXOPT Backend
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-05): initial implementation
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>

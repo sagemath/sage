@@ -10,7 +10,6 @@ AUTHORS:
   NumberFieldFractionalIdeal now used for all except the 0 ideal
 - Radoslav Kirov and Alyson Deines (2010-06-22):
   prime_to_S_part, is_S_unit, is_S_integral
-
 """
 
 # ****************************************************************************

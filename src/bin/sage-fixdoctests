@@ -1,5 +1,4 @@
 #!/usr/bin/env sage-python
-
 """
 Given the output of doctest and a file, adjust the doctests so they won't fail.
 

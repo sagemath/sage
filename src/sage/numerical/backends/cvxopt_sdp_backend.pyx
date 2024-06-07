@@ -8,7 +8,6 @@ AUTHORS:
 - Ingolfur Edvardsson (2014-05): initial implementation
 
 - Dima Pasechnik      (2015-12): minor fixes
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>

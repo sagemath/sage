@@ -20,7 +20,6 @@ AUTHORS:
   moved to new module :mod:`~sage.plot.multigraphics`; various improvements and
   fixes in :meth:`Graphics.matplotlib` and ``Graphics._set_scale``; new method
   :meth:`Graphics.inset`
-
 """
 
 # ****************************************************************************

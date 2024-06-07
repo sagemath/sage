@@ -48,7 +48,7 @@ def krawtchouk(n, q, l, x, check=True):
 
     INPUT:
 
-    - ``n, q, x`` -- arbitrary numbers
+    - ``n``, ``q``, ``x`` -- arbitrary numbers
 
     - ``l`` -- a nonnegative integer
 
@@ -133,7 +133,7 @@ def eberlein(n, w, k, u, check=True):
 
     INPUT:
 
-    - ``w, k, x`` -- arbitrary numbers
+    - ``w``, ``k``, ``x`` -- arbitrary numbers
 
     - ``n`` -- a nonnegative integer
 

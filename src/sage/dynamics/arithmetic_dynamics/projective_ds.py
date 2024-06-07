@@ -36,7 +36,6 @@ AUTHORS:
 - Ben Hutz (2015-11): iteration of subschemes
 
 - Ben Hutz (2017-7): relocate code and create class
-
 """
 
 # ****************************************************************************

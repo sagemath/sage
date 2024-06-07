@@ -43,7 +43,6 @@ AUTHORS:
 
 - Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
   cases of proper integral domains (see :issue:`26421`)
-
 """
 
 # ****************************************************************************

@@ -48,7 +48,6 @@ AUTHORS:
 
 - Sebastian Oehms (2020-05): initial version
 - Sebastian Oehms (2022-03): PyPi version and Markov trace functionality
-
 """
 
 ##############################################################################
@@ -1177,7 +1176,6 @@ template = """def %s(%snum_strands=3):
     data[2] = %s
     data[3] = %s
     return data[num_strands]
-
 """
 
 

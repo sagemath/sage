@@ -23,7 +23,6 @@ AUTHORS:
 - David Loeffler (2009-05): added more documentation and tests
 - Vincent Delecroix (2012-07): added comparisons for quadratic number fields
   (:issue:`13213`), abs, floor and ceil functions (:issue:`13256`)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>

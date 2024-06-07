@@ -1773,7 +1773,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         INPUT:
 
         - ``F`` -- A flat of codimension 2
-        - ``a, b, c, d`` -- elements of the groundset
+        - ``a``, ``b``, ``c``, ``d`` -- elements of the groundset
 
         OUTPUT:
 

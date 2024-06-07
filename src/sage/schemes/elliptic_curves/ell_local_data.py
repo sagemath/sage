@@ -76,7 +76,6 @@ AUTHORS:
   ``ell_number_field.py`` and ``ell_rational_field.py``)
 
 - Chris Wuthrich: more documentation 2010-01
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>

@@ -8,7 +8,6 @@ AUTHORS:
 - John Voight (2007-09-19): various optimization tweaks
 - John Voight (2007-10-09): improvements: Smyth bound, Lagrange multipliers for b
 - Craig Citro and John Voight (2007-11-04): type checking and other polishing
-
 """
 
 #*****************************************************************************

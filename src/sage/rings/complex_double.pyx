@@ -56,7 +56,6 @@ AUTHORS:
 
 - Vincent Klein (2017-11-15) : add __mpc__() to class ComplexDoubleElement.
   ComplexDoubleElement constructor support and gmpy2.mpc parameter.
-
 """
 
 # ****************************************************************************

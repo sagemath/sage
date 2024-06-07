@@ -407,7 +407,6 @@ This thus requires passwordless authentication to be setup, which can be done wi
 
 In many cases, the server that can actually run "slave" is not accessible from the internet directly, but you have to hop through an intermediate trusted server, say "gate".
 If that is your case, get help with _install_hints_ssh_through_gate().
-
 """
 
     def _install_hints_ssh_through_gate(self):
@@ -450,7 +449,6 @@ their own way.
 
 If this all works, you can then make calls like:
          math = Mathematica(server="remote_for_sage")
-
 """
 
     def _do_cleaner(self):

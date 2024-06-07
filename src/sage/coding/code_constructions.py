@@ -29,7 +29,6 @@ AUTHORS:
 - David Joyner (2008-09) fix for bug in BCHCode reported by F. Voloch
 
 - David Joyner (2008-10) small docstring changes to WalshCode and walsh_matrix
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 David Joyner <wdjoyner@gmail.com>
@@ -72,12 +71,12 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
 
     INPUT:
 
-    - ``S1, S2`` -- disjoint sublists partitioning ``[1, 2, ..., n-1]``
+    - ``S1``, ``S2`` -- disjoint sublists partitioning ``[1, 2, ..., n-1]``
 
-    - ``n`` (integer)
+    - ``n`` -- integer
 
-    - ``return_automorphism`` (boolean) -- whether to return the automorphism
-      exchanging `S_1` and `S_2`.
+    - ``return_automorphism`` -- boolean (default: ``False``); whether to
+      return the automorphism exchanging `S_1` and `S_2`
 
     OUTPUT:
 

@@ -5,7 +5,6 @@ Hecke triangle group elements
 AUTHORS:
 
 - Jonas Jermann (2014): initial version
-
 """
 
 # ****************************************************************************

@@ -181,7 +181,6 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
     Element b of the Rank-3 free module M over the Integer Ring
     sage: t(a,b)
     -2
-
 """
 # *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

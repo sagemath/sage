@@ -16,7 +16,6 @@ Note that because they are called by the constructors of :class:`Graph` and
 
 Functions
 ---------
-
 """
 from sage.cpython.string import bytes_to_str
 from sage.misc.rest_index_of_methods import gen_rest_table_index

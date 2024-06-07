@@ -71,7 +71,6 @@ AUTHORS:
   recomputations; separated DSage component
 - Craig Citro and John Voight (2007-11-04): additional doctests and type checking
 - Craig Citro and John Voight (2008-02-10): final modifications for submission
-
 """
 
 # ****************************************************************************

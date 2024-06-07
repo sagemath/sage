@@ -12,7 +12,6 @@ Representations of the Symmetric Group
 
     This code uses a different convention than in Sagan's book "The Symmetric
     Group"
-
 """
 # ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>

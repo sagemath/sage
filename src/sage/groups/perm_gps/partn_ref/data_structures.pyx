@@ -13,7 +13,6 @@ REFERENCES:
         Theory of Computing, pp. 345–354. May 1989.
     [3] Seress, Akos. Permutation Group Algorithms. Cambridge University Press,
         2003.
-
 """
 
 #*****************************************************************************

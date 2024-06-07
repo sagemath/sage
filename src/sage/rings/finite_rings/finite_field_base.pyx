@@ -14,7 +14,6 @@ AUTHORS:
 
 - Adrien Brochard, David Roe, Jeroen Demeyer, Julian Rueth, Niles Johnson,
   Peter Bruin, Travis Scrimshaw, Xavier Caruso: initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2009 David Roe <roed@math.harvard.edu>

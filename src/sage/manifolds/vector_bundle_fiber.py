@@ -6,7 +6,6 @@ The class :class:`VectorBundleFiber` implements fibers over a vector bundle.
 AUTHORS:
 
 - Michael Jung (2019): initial version
-
 """
 
 #******************************************************************************

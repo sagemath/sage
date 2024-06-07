@@ -109,7 +109,6 @@ cdef class EvenlyDistributedSetsBacktracker:
         [0, 1, 11, 5]
 
 
-
     Or only count them::
 
         sage: for k in range(13, 200, 12):

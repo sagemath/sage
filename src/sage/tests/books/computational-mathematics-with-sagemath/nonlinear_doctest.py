@@ -486,5 +486,4 @@ Sage example in ./nonlinear.tex, line 2183::
   sage: next(generator); next(generator)
   1/2*pi
   1/2*pi - (e^(1/2*pi) - 10)*e^(-1/2*pi)
-
 """

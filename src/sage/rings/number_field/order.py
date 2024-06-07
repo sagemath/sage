@@ -39,7 +39,6 @@ We compute a suborder, which has index a power of 17 in the maximal order::
 AUTHORS:
 
 - William Stein and Robert Bradshaw (2007-09): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C)      2007 Robert Bradshaw <robertwb@gmail.com>

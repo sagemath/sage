@@ -44,7 +44,6 @@ AUTHORS:
    Dirichlet characters, miscellaneous fixes
 
 -  Julian Rueth (2014-03-06): use UniqueFactory to cache DirichletGroups
-
 """
 
 # ****************************************************************************

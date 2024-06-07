@@ -3580,7 +3580,7 @@ def graphics_array(array, nrows=None, ncols=None):
       :class:`~sage.plot.graphics.Graphics` elements or a
       single list of :class:`~sage.plot.graphics.Graphics` elements
 
-    - ``nrows, ncols`` -- (optional) integers. If both are given then
+    - ``nrows``, ``ncols`` -- (optional) integers. If both are given then
       the input array is flattened and turned into an ``nrows`` x
       ``ncols`` array, with blank graphics objects padded at the end,
       if necessary. If only one is specified, the other is chosen
@@ -3861,7 +3861,7 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
 
     - ``f`` -- a function of one variable
 
-    - ``p1, p2`` -- two points to refine between
+    - ``p1``, ``p2`` -- two points to refine between
 
     - ``adaptive_recursion`` -- (default: `5`); how many
       levels of recursion to go before giving up when doing adaptive
@@ -3975,7 +3975,7 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
 
     - ``f`` -- a function of one variable
 
-    - ``p1, p2`` -- two points to refine between
+    - ``p1``, ``p2`` -- two points to refine between
 
     - ``plot_points`` -- (default: `5`); the minimal number of plot points. (Note
       however that in any actual plot a number is passed to this, with default

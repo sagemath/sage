@@ -18,7 +18,6 @@ written by Peter Dobcsanyi [Do2009]_ peter@designtheory.org.
 
 Functions
 ---------
-
 """
 
 ###########################################################################

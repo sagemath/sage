@@ -4,7 +4,6 @@ Partition backtrack functions for lists -- a simple example of using partn_ref
 EXAMPLES::
 
     sage: import sage.groups.perm_gps.partn_ref.refinement_lists
-
 """
 
 #*****************************************************************************
