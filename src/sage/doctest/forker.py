@@ -889,10 +889,6 @@ class SageDocTestRunner(doctest.DocTestRunner):
         warnings.showwarning = showwarning_with_traceback
         self.running_doctest_digest = hashlib.md5()
         self.test = test
-        # Because test is a copy, we need to
-        # relink imported lazy_import objects to point to the appropriate namespace
-        from sage.misc.lazy_import import clean_namespace
-        clean_namespace(test.globs)
         # We use this slightly modified version of Pdb because it
         # interacts better with the doctesting framework (like allowing
         # doctests for sys.settrace()). Since we already have output
