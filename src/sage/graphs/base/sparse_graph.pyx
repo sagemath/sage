@@ -135,6 +135,8 @@ It also contains the following variables::
         cdef int hash_length
         cdef int hash_mask
         cdef SparseGraphBTNode **vertices
+        cdef SparseGraphBTNode **vertices_rev
+        cdef bint _directed
 
 For each vertex ``u``, a hash table of length ``hash_length`` is instantiated.
 An arc ``(u, v)`` is stored at ``u * hash_length + hash(v)`` of the array
