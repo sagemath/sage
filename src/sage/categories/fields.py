@@ -27,7 +27,7 @@ from sage.structure.element import coerce_binop
 class Fields(CategoryWithAxiom):
     """
     The category of (commutative) fields, i.e. commutative rings where
-    all non-zero elements have multiplicative inverses
+    all nonzero elements have multiplicative inverses
 
     EXAMPLES::
 
@@ -464,7 +464,7 @@ class Fields(CategoryWithAxiom):
 
             INPUT:
 
-            - ``f`` -- a univariate non-zero polynomial over this field
+            - ``f`` -- a univariate nonzero polynomial over this field
 
             ALGORITHM: For rings of characteristic zero, we use the algorithm
             described in [Yun1976]_. Other fields may provide their own
@@ -743,7 +743,7 @@ class Fields(CategoryWithAxiom):
                 sage: GF(5)(0).xgcd(GF(5)(0))
                 (0, 0, 0)
 
-            The xgcd of non-zero floating point numbers will be a triple of
+            The xgcd of nonzero floating point numbers will be a triple of
             floating points. But if the input are two integral floating points
             the result is a floating point version of the standard gcd on
             `\ZZ`::

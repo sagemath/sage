@@ -376,9 +376,9 @@ class ode_solver():
 
         INPUT:
 
-        - ``i`` -- (non-negative integer) composant of the projection
+        - ``i`` -- nonnegative integer; composant of the projection
 
-        - ``filename`` -- (string or ``None``) whether to plot the picture or
+        - ``filename`` -- string or ``None``; whether to plot the picture or
           save it in a file
 
         - ``interpolate`` -- whether to interpolate between the points of the

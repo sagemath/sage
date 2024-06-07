@@ -135,9 +135,7 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
     - ``reverse`` -- whether order of the coordinates as well as the
       order of the list ``v`` should be reversed
 
-    OUTPUT:
-
-    - a matrix over `\QQ`
+    OUTPUT: a matrix over `\QQ`
 
     EXAMPLES::
 

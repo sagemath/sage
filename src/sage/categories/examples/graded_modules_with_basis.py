@@ -38,7 +38,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
           sage: A = GradedModulesWithBasis(QQ).example()                                # needs sage.modules
 
-    - A basis function - this module is graded by the non-negative
+    - A basis function - this module is graded by the nonnegative
       integers, so there is a function defined in this module,
       creatively called :func:`basis`, which takes an integer
       `d` as input and returns a family of partitions representing a basis

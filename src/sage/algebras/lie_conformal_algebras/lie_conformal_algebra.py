@@ -63,7 +63,7 @@ coefficients in `L`), `a \otimes b \mapsto [a_\lambda b]` satisfying
 .. NOTE::
 
     In the literature arbitrary gradings are allowed. In this
-    implementation we only support non-negative rational gradings.
+    implementation we only support nonnegative rational gradings.
 
 
 EXAMPLES:
@@ -228,7 +228,7 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       indexing set for the generators of this Lie conformal algebra.
       Do not include central elements in this list.
 
-    - ``weights`` -- tuple of non-negative rational numbers
+    - ``weights`` -- tuple of nonnegative rational numbers
       (default: ``None``); a list of degrees for this Lie
       conformal algebra.
       The returned Lie conformal algebra is H-Graded. This tuple

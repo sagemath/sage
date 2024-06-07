@@ -623,10 +623,10 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``singletons`` -- (default: ``False``) whether or not to
+        - ``singletons`` -- boolean (default: ``False``); whether or not to
           include singleton blocks in the output
 
-        - ``optimal`` -- (default: ``False``) whether or not to
+        - ``optimal`` -- boolean (default: ``False``); whether or not to
           compute the coarsest possible partition
 
         .. NOTE::
@@ -827,7 +827,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``header`` -- (default: ``True``) whether to include a
+        - ``header`` -- boolean (default: ``True``); whether to include a
           header with the standard Greek letters
 
         OUTPUT:
@@ -1709,7 +1709,7 @@ class Bijectionist(SageObject):
         - ``p`` -- (optional) a block of `P`, or an element of a
           block of `P`, or a list of these
 
-        - ``optimal`` -- (default: ``False``) whether or not to
+        - ``optimal`` -- boolean (default: ``False``); whether or not to
           compute the minimal possible set of statistic values
 
         .. NOTE::

@@ -630,7 +630,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     - ``base_ring`` -- a commutative ring `K` in which 2 is invertible
     - ``a``, ``b`` -- units of `K`
-    - ``names`` -- string (default: ``'i,j,k'``) names of the generators
+    - ``names`` -- string (default: ``'i,j,k'``); names of the generators
 
     OUTPUT:
 
@@ -1386,9 +1386,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         - `p` -- unramified odd prime
 
-        OUTPUT:
-
-        - 2-tuple of matrices over finite field
+        OUTPUT: 2-tuple of matrices over finite field
 
         EXAMPLES::
 
@@ -1924,9 +1922,7 @@ class QuaternionOrder(Parent):
         inside the vector space corresponding to the ambient
         quaternion algebra.
 
-        OUTPUT:
-
-        A free `\ZZ`-module of rank 4.
+        OUTPUT: a free `\ZZ`-module of rank 4
 
         EXAMPLES::
 
@@ -2264,12 +2260,10 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``include_basis`` -- boolean (default: ``False``), if ``True`` also
+        - ``include_basis`` -- boolean (default: ``False``); if ``True`` also
           return a basis for the dimension 3 subspace `G`
 
-        OUTPUT:
-
-        - QuadraticForm
+        OUTPUT: QuadraticForm
 
         - optional basis for dimension 3 subspace
 
@@ -2333,13 +2327,13 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``conjugator`` -- boolean (default: ``False``), if ``True`` this
+        - ``conjugator`` -- boolean (default: ``False``); if ``True`` this
           method returns a single quaternion `\gamma \in O \cap O'`
           of minimal norm such that `O' = \gamma^{-1} O \gamma`,
-          rather than the ring isomorphism it defines.
+          rather than the ring isomorphism it defines
 
-        - ``B`` -- postive integer, bound on theta series
-          coefficients to rule out non isomorphic orders.
+        - ``B`` -- positive integer; bound on theta series
+          coefficients to rule out non isomorphic orders
 
         .. NOTE::
 
@@ -2955,12 +2949,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def reduced_basis(self):
         r"""
-        Let `I` = ``self`` be a fractional ideal in a (rational) definite quaternion algebra.
-        This function returns an LLL reduced basis of I.
+        Let `I` = ``self`` be a fractional ideal in a (rational) definite
+        quaternion algebra. This function returns an LLL reduced basis of `I`.
 
-        OUTPUT:
-
-        - A tuple of four elements in I forming an LLL reduced basis of I as a lattice
+        OUTPUT: a tuple of four elements in `I` forming an LLL reduced basis of
+        `I` as a lattice
 
         EXAMPLES::
 
@@ -2989,13 +2982,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     def theta_series_vector(self, B):
         r"""
         Return theta series coefficients of ``self``, as a vector
-        of ``B`` integers.
+        of `B` integers.
 
         INPUT:
 
         - ``B`` -- positive integer
 
-        OUTPUT: vector over `\ZZ` with ``B`` entries
+        OUTPUT: vector over `\ZZ` with `B` entries
 
         EXAMPLES::
 
@@ -3280,9 +3273,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         r"""
         Return the underlying free `\ZZ`-module corresponding to this ideal.
 
-        OUTPUT:
-
-        Free `\ZZ`-module of rank 4 embedded in an ambient `\QQ^4`.
+        OUTPUT: free `\ZZ`-module of rank 4 embedded in an ambient `\QQ^4`
 
         EXAMPLES::
 
@@ -3390,7 +3381,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``J`` -- a fractional quaternion ideal with norm coprime to ``self`` and either
           the same left order or right order as ``self``
 
-        - ``side`` -- string (default: ``None``) set to ``"left"`` or ``"right"`` to
+        - ``side`` -- string (default: ``None``); set to ``"left"`` or ``"right"`` to
           perform pushforward of left or right ideals respectively. If ``None`` the side
           is determined by the matching left or right orders
 
@@ -3484,7 +3475,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``J`` -- a fractional quaternion ideal with norm coprime to ``self`` and either
           left order equal to the right order of ``self``, or vice versa
 
-        - ``side`` -- string (default: ``None``) set to ``"left"`` or ``"right"`` to
+        - ``side`` -- string (default: ``None``); set to ``"left"`` or ``"right"`` to
           perform pullback of left or right ideals respectively. If ``None`` the side
           is determined by the matching left and right orders
 
@@ -3783,9 +3774,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
           ideals `J`.  More precisely the `J`'s are the right annihilators
           of `(1,0) \alpha^i` for `i=0,1,2,...,p`
 
-        OUTPUT:
-
-        - list of right ideals
+        OUTPUT: list of right ideals
 
         .. NOTE::
 
@@ -4263,9 +4252,7 @@ def maxord_solve_aux_eq(a, b, p):
 
     - ``p`` -- even prime ideal (actually only ``p=ZZ(2)`` is implemented)
 
-    OUTPUT:
-
-    - A tuple `(y, z, w)`
+    OUTPUT: a tuple `(y, z, w)`
 
     EXAMPLES::
 

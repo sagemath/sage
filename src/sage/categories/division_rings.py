@@ -19,7 +19,7 @@ class DivisionRings(CategoryWithAxiom):
     The category of division rings
 
     A division ring (or skew field) is a not necessarily commutative
-    ring where all non-zero elements have multiplicative inverses
+    ring where all nonzero elements have multiplicative inverses
 
     EXAMPLES::
 

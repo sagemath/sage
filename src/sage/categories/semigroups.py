@@ -190,9 +190,7 @@ class Semigroups(CategoryWithAxiom):
             - ``connecting_set`` -- alias for ``generators``; deprecated
             - ``elements`` -- a list (or iterable) of elements of ``self``
 
-            OUTPUT:
-
-            - :class:`DiGraph`
+            OUTPUT: :class:`DiGraph`
 
             EXAMPLES:
 

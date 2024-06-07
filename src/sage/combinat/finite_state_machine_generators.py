@@ -193,8 +193,7 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- (default: ``None``) an iterable
-          or ``None``.
+        - ``input_alphabet`` -- iterable or ``None`` (default: ``None``)
 
         OUTPUT: an :class:`~Automaton`
 

@@ -568,7 +568,7 @@ cdef class MultiModularBasis_base():
             s = 1
             mpz_init_set_si(z, b[0])
             if b[0] == 0:
-                while s < len and b[s] == 0:  # fast forward to first non-zero
+                while s < len and b[s] == 0:  # fast forward to first nonzero
                     s += 1
         else:
             s = 0
@@ -619,7 +619,7 @@ cdef class MultiModularBasis_base():
             if offset == 0:
                 mpz_set_si(z[j], b[0][j])
                 if b[0][j] == 0:
-                    while i < len and b[i][j] == 0:  # fast forward to first non-zero
+                    while i < len and b[i][j] == 0:  # fast forward to first nonzero
                         i += 1
             while i < len:
                 mpz_set_si(u, ((b[i][j] + m[i] - mpz_fdiv_ui(z[j], m[i])) * self.C[i]) % m[i])  # u = ((b_i - z) * C_i) % m_i

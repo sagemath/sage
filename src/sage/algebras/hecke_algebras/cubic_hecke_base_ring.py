@@ -194,7 +194,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
       realized as splitting ring via the ``as_splitting_algebra`` method
     - ``third_unity_root_name`` -- string (default: ``'e3'``); for setting the
       name of the third root if unity of ``self``
-    - ``markov_trace_version`` -- boolean (default: ``False``) if this is
+    - ``markov_trace_version`` -- boolean (default: ``False``); if this is
       set to ``True`` then ``self`` contains one invertible indeterminate in
       addition which is meant to represent the writhe factor of a Markov trace
       on the cubic Hecke algebra and which default name is ``s``
@@ -939,7 +939,7 @@ class CubicHeckeRingOfDefinition(Localization):
     - ``ring_of_definition`` -- (optional) a :class:`CubicHeckeRingOfDefinition`
       to specify the generic cubic Hecke base ring over which ``self`` may be
       realized as splitting ring via the ``as_splitting_algebra`` method
-    - ``markov_trace_version`` -- boolean (default: ``False``) if this is
+    - ``markov_trace_version`` -- boolean (default: ``False``); if this is
       set to ``True`` then ``self`` contains one invertible indeterminate in
       addition which is meant to represent the writhe factor of a Markov trace
       on the cubic Hecke algebra and which default name is ``s``

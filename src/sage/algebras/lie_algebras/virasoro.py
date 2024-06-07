@@ -1017,7 +1017,7 @@ class VermaModule(CombinatorialFreeModule):
         """
         if index in ZZ:
             if index >= 0:
-                raise ValueError("sequence must have non-positive entries")
+                raise ValueError("sequence must have nonpositive entries")
             index = (index,)
         return super()._monomial(index)
 

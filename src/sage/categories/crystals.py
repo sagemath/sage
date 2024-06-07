@@ -2203,7 +2203,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
 
     def __bool__(self) -> bool:
         """
-        Return if ``self`` is a non-zero morphism.
+        Return if ``self`` is a nonzero morphism.
 
         EXAMPLES::
 

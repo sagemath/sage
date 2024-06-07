@@ -1278,8 +1278,8 @@ class Constellations_p(UniqueRepresentation, Parent):
 
         - ``profile`` -- a list of integer partitions of the same integer
 
-        - ``connected`` -- a boolean (default: ``True``) that specify
-          if we consider only connected constellations.
+        - ``connected`` -- boolean (default: ``True``); whether we consider
+          only connected constellations
 
         TESTS::
 

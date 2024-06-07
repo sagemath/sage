@@ -122,7 +122,7 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
 
     INPUT:
 
-    - ``n`` -- non-negative integer, the dimension
+    - ``n`` -- nonnegative integer, the dimension
     - ``basis`` -- string, the basis from which to convert
     - ``p`` -- positive prime number (default: 2)
 
@@ -190,7 +190,7 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
 
     INPUT:
 
-    - ``n`` -- non-negative integer, the dimension
+    - ``n`` -- nonnegative integer, the dimension
 
     - ``basis`` -- string, the basis to which to convert
 
@@ -263,7 +263,7 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
 
     INPUT:
 
-    - ``n`` -- non-negative integer
+    - ``n`` -- nonnegative integer
     - ``basis`` -- string, which basis to use (default: ``'milnor'``)
     - ``p`` -- positive prime number (default: 2)
     - ``profile`` -- profile function (default: ``None``).  This
@@ -385,9 +385,9 @@ def restricted_partitions(n, l, no_repeats=False):
 
     INPUT:
 
-    - ``n`` -- non-negative integer
+    - ``n`` -- nonnegative integer
     - ``l`` -- list of positive integers
-    - ``no_repeats`` -- boolean (default: ``False``), if ``True``,
+    - ``no_repeats`` -- boolean (default: ``False``); if ``True``,
       only return partitions with no repeated parts
 
     OUTPUT: iterator of lists
@@ -513,7 +513,7 @@ def milnor_basis(n, p=2, **kwds):
 
     INPUT:
 
-    - ``n`` -- non-negative integer
+    - ``n`` -- nonnegative integer
 
     - ``p`` -- positive prime number (default: 2)
 
@@ -533,11 +533,11 @@ def milnor_basis(n, p=2, **kwds):
 
     At the prime 2, the Milnor basis consists of symbols of the form
     `\text{Sq}(m_1, m_2, ..., m_t)`, where each
-    `m_i` is a non-negative integer and if `t>1`, then
+    `m_i` is a nonnegative integer and if `t>1`, then
     `m_t \neq 0`. At odd primes, it consists of symbols of the
     form `Q_{e_1} Q_{e_2} ... P(m_1, m_2, ..., m_t)`,
     where `0 \leq e_1 < e_2 < ...`, each `m_i` is a
-    non-negative integer, and if `t>1`, then
+    nonnegative integer, and if `t>1`, then
     `m_t \neq 0`.
 
     EXAMPLES::
@@ -678,7 +678,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
 
     INPUT:
 
-    - ``n`` -- non-negative integer
+    - ``n`` -- nonnegative integer
     - ``bound`` -- positive integer (optional)
     - ``prime`` -- positive prime number (default: 2)
 
@@ -763,7 +763,7 @@ def atomic_basis(n, basis, **kwds):
 
     INPUT:
 
-    - ``n`` -- non-negative integer
+    - ``n`` -- nonnegative integer
 
     - ``basis`` -- string, the name of the basis
 
@@ -943,7 +943,7 @@ def arnonC_basis(n, bound=1):
 
     INPUT:
 
-    - ``n`` -- non-negative integer
+    - ``n`` -- nonnegative integer
 
     - ``bound`` -- positive integer (optional)
 
@@ -992,7 +992,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
 
     INPUT:
 
-    - ``n`` -- non-negative integer
+    - ``n`` -- nonnegative integer
 
     - ``basis`` -- string, the name of the basis
 
@@ -1107,7 +1107,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     INPUT:
 
-    - ``dim`` -- non-negative integer
+    - ``dim`` -- nonnegative integer
     - ``p`` -- positive prime number
 
     OUTPUT: none

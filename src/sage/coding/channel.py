@@ -62,7 +62,7 @@ from sage.arith.misc import binomial
 
 def random_error_vector(n, F, error_positions):
     r"""
-    Return a vector of length ``n`` over ``F`` filled with random non-zero coefficients
+    Return a vector of length ``n`` over ``F`` filled with random nonzero coefficients
     at the positions given by ``error_positions``.
 
     .. NOTE::
@@ -75,11 +75,9 @@ def random_error_vector(n, F, error_positions):
 
     - ``F`` -- the field over which the vector is defined
 
-    - ``error_positions`` -- the non-zero positions of the vector
+    - ``error_positions`` -- the nonzero positions of the vector
 
-    OUTPUT:
-
-    - a vector of ``F``
+    OUTPUT: a vector of ``F``
 
     AUTHORS:
 
@@ -111,9 +109,7 @@ def format_interval(t):
 
     - ``t`` -- a list or a tuple
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: a string
 
     TESTS::
 
@@ -204,9 +200,7 @@ class Channel(SageObject):
 
         - ``message`` -- a vector
 
-        OUTPUT:
-
-        - a vector of the output space of ``self``
+        OUTPUT: a vector of the output space of ``self``
 
         EXAMPLES::
 
@@ -395,9 +389,7 @@ class StaticErrorRateChannel(Channel):
 
         - ``message`` -- a vector
 
-        OUTPUT:
-
-        - a vector of the output space
+        OUTPUT: a vector of the output space
 
         EXAMPLES::
 
@@ -579,9 +571,7 @@ class ErrorErasureChannel(Channel):
 
         - ``message`` -- a vector
 
-        OUTPUT:
-
-        - a couple of vectors, namely:
+        OUTPUT: a couple of vectors, namely:
 
           - the transmitted message, which is ``message`` with erroneous and
             erased positions

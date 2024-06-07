@@ -711,7 +711,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 i = ZZ(i)
                 if i < 0:
-                    raise IndexError("i (={}) must be a non-negative integer")
+                    raise IndexError("i (={}) must be a nonnegative integer")
                 elt = []
                 for c in reversed(self.cartesian_factors()):
                     card = c.cardinality()

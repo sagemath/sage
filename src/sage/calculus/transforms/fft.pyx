@@ -183,9 +183,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         - ``i``: An integer.
 
-        OUTPUT:
-
-        - The `i`-th element of the array ``self[i]``.
+        OUTPUT: the `i`-th element of the array ``self[i]``
 
         EXAMPLES::
 
@@ -234,9 +232,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         - ``xmax`` -- The upper bound of the slice to plot.
         - ``**args`` -- passed on to the line plotting function.
 
-        OUTPUT:
-
-        - A plot of the array interpreting each element as polar coordinates.
+        OUTPUT: a plot of the array interpreting each element as polar coordinates
 
         This method should not be called directly. See :meth:`plot` for the details.
 
@@ -274,9 +270,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         - ``xmax`` -- The upper bound of the slice to plot.
         - ``**args`` -- passed on to the line plotting function.
 
-        OUTPUT:
-
-        - A plot of the array.
+        OUTPUT: a plot of the array
 
         This method should not be called directly. See :meth:`plot` for the details.
 
@@ -313,9 +307,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         - ``xmax`` -- The upper bound of the slice to plot. ``len(self)`` by default.
         - ``**args`` -- passed on to the line plotting function.
 
-        OUTPUT:
-
-        - A plot of the array.
+        OUTPUT: a plot of the array
 
         EXAMPLES::
 
@@ -358,9 +350,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         Compute the in-place forward Fourier transform of this data
         using the Cooley-Tukey algorithm.
 
-        OUTPUT:
-
-        - None, the transformation is done in-place.
+        OUTPUT: none, the transformation is done in-place
 
         If the number of sample points in the input is a power of 2 then the
         gsl function ``gsl_fft_complex_radix2_forward`` is automatically called.
@@ -393,9 +383,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         Compute the in-place inverse Fourier transform of this data
         using the Cooley-Tukey algorithm.
 
-        OUTPUT:
-
-        - None, the transformation is done in-place.
+        OUTPUT: none, the transformation is done in-place
 
         If the number of sample points in the input is a power of 2 then the
         function ``gsl_fft_complex_radix2_inverse`` is automatically called.
@@ -447,9 +435,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         Compute the in-place backwards Fourier transform of this data
         using the Cooley-Tukey algorithm.
 
-        OUTPUT:
-
-        - None, the transformation is done in-place.
+        OUTPUT: none, the transformation is done in-place
 
         This is the same as :meth:`inverse_transform` but lacks normalization
         so that ``f.forward_transform().backward_transform() == n*f``. Where

@@ -398,7 +398,7 @@ class VermaModule(CombinatorialFreeModule):
 
         - there is a coercion from ``R`` into the base ring;
         - ``R`` is a Verma module over the same Lie algebra and
-          there is a non-zero Verma module morphism from ``R``
+          there is a nonzero Verma module morphism from ``R``
           into ``self``.
 
         EXAMPLES::

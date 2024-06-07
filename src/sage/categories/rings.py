@@ -289,7 +289,7 @@ class Rings(CategoryWithAxiom):
             """
             Return the full subcategory of the division objects of ``self``.
 
-            A ring satisfies the *division axiom* if all non-zero
+            A ring satisfies the *division axiom* if all nonzero
             elements have multiplicative inverses.
 
             EXAMPLES::
@@ -997,9 +997,7 @@ class Rings(CategoryWithAxiom):
             - further named arguments that may be passed to the quotient ring
               constructor.
 
-            OUTPUT:
-
-            - ``R/I`` -- the quotient ring of `R` by the ideal `I`
+            OUTPUT: ``R/I`` -- the quotient ring of `R` by the ideal `I`
 
             EXAMPLES::
 
@@ -1356,9 +1354,7 @@ class Rings(CategoryWithAxiom):
             - ``map`` -- boolean (default ``True``), whether to return
               `R`-linear maps to and from `V`
 
-            OUTPUT:
-
-            - A finite-rank free `R`-module `V`
+            OUTPUT: a finite-rank free `R`-module `V`
 
             - An `R`-module isomorphism from `V` to this ring
               (only included if ``map`` is ``True``)
@@ -1410,10 +1406,10 @@ class Rings(CategoryWithAxiom):
 
         def _random_nonzero_element(self, *args, **kwds):
             """
-            Return a random non-zero element in this ring.
+            Return a random nonzero element in this ring.
 
             The default behaviour of this method is to repeatedly call the
-            ``random_element`` method until a non-zero element is obtained.
+            ``random_element`` method until a nonzero element is obtained.
 
             In this implementation, all parameters are simply pushed forward
             to the ``random_element`` method.

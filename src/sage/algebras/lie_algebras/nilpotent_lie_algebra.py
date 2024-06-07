@@ -35,7 +35,7 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
       coefficients
     - ``index_set`` -- (default:``None``) list of hashable and comparable
       elements to use for indexing
-    - ``step`` -- (optional) an integer; the nilpotency step of the
+    - ``step`` -- integer (optional); the nilpotency step of the
       Lie algebra if known; otherwise it will be computed when needed
     - ``category`` -- (optional) a subcategory of finite dimensional
       nilpotent Lie algebras with basis

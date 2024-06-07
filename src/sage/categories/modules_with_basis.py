@@ -264,11 +264,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               can be used (with care) to define affine maps.
               Only meaningful with ``on_basis``.
 
-            - ``position`` -- a non-negative integer specifying which
+            - ``position`` -- a nonnegative integer specifying which
               positional argument is used as the input of the function `f`
               (default: 0); this is currently only used with ``on_basis``.
 
-            - ``triangular`` --  (default: ``None``) ``"upper"`` or
+            - ``triangular`` -- (default: ``None``) ``"upper"`` or
               ``"lower"`` or ``None``:
 
               * ``"upper"`` -- if the
@@ -1655,7 +1655,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             Return an iterable of the objects indexing the basis of
             ``self.parent()`` whose corresponding coefficients of
-            ``self`` are non-zero.
+            ``self`` are nonzero.
 
             This method returns these objects in an arbitrary order.
 
@@ -1696,7 +1696,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             The monomials of an element `a` are defined to be the basis
             elements whose corresponding coefficients of `a` are
-            non-zero.
+            nonzero.
 
             EXAMPLES::
 
@@ -1715,7 +1715,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         def terms(self):
             """
-            Return a list of the (non-zero) terms of ``self`` (in an
+            Return a list of the (nonzero) terms of ``self`` (in an
             arbitrary order).
 
             .. SEEALSO:: :meth:`monomials`
@@ -1737,7 +1737,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         def coefficients(self, sort=True):
             """
-            Return a list of the (non-zero) coefficients appearing on
+            Return a list of the (nonzero) coefficients appearing on
             the basis elements in ``self`` (in an arbitrary order).
 
             INPUT:
@@ -2101,7 +2101,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         def map_coefficients(self, f, new_base_ring=None):
             """
-            Return the element obtained by applying ``f`` to the non-zero
+            Return the element obtained by applying ``f`` to the nonzero
             coefficients of ``self``.
 
             If ``f`` is a :class:`sage.categories.map.Map`, then the resulting

@@ -31,7 +31,7 @@ class SimplicialSets(Category_singleton):
     The category of simplicial sets.
 
     A simplicial set `X` is a collection of sets `X_i`, indexed by
-    the non-negative integers, together with maps
+    the nonnegative integers, together with maps
 
     .. math::
 

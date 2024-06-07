@@ -700,9 +700,7 @@ def nintegral(ex, x, a, b,
     - ``maximum_num_subintervals`` -- (default: 200)
       maximal number of subintervals
 
-    OUTPUT:
-
-    - float: approximation to the integral
+    OUTPUT: float -- approximation to the integral
 
     - float: estimated absolute error of the
       approximation
@@ -988,7 +986,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     minpoly `f`. If `f(\mathtt{self})`,
     evaluated to a higher precision, is close enough to 0 then evaluate
     `f(\mathtt{self})` symbolically, attempting to prove
-    vanishing. If this fails, and ``epsilon`` is non-zero,
+    vanishing. If this fails, and ``epsilon`` is nonzero,
     return `f` if and only if
     `f(\mathtt{self}) < \mathtt{epsilon}`.
     Otherwise raise a :class:`ValueError` (if no suitable

@@ -839,7 +839,7 @@ class OrderedTrees(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``size`` -- (optional) an integer
+    - ``size`` -- integer (optional)
 
     OUTPUT:
 

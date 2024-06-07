@@ -35,7 +35,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         EXAMPLES::
@@ -263,7 +263,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     """
     def __bool__(self):
         """
-        Return if ``self`` is non-zero.
+        Return if ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -305,7 +305,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         .. TODO::

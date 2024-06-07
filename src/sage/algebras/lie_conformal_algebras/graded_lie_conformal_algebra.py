@@ -74,7 +74,7 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     - ``index_set`` -- enumerated set (default: ``None``); as in the
       input of :class:`LieConformalAlgebra`
 
-    - ``weights`` -- tuple of non-negative rational numbers
+    - ``weights`` -- tuple of nonnegative rational numbers
       (default: tuple of ``1``); a list of degrees for this Lie
       conformal algebra.
       This tuple needs to have the same cardinality as

@@ -248,7 +248,7 @@ class Face(SageObject):
     - ``v`` -- tuple of integers
     - ``t`` -- integer in ``[1, ..., len(v)]``, type of the face. The face of type `i`
       is orthogonal to the canonical vector `e_i`.
-    - ``color`` -- color (default: ``None``) color of the face,
+    - ``color`` -- color (default: ``None``); color of the face,
       used for plotting only. If ``None``, its value is guessed from the
       face type.
 
@@ -1079,7 +1079,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``projmat`` -- matrix (default: ``None``) the projection
+        - ``projmat`` -- matrix (default: ``None``); the projection
           matrix. Its number of lines must be two. Its number of columns
           must equal the dimension of the ambient space of the faces. If
           ``None``, the isometric projection is used by default.
@@ -1191,21 +1191,21 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``projmat`` -- matrix (default: ``None``) the projection
+        - ``projmat`` -- matrix (default: ``None``); the projection
           matrix. Its number of lines must be two. Its number of columns
           must equal the dimension of the ambient space of the faces. If
           ``None``, the isometric projection is used by default.
-        - ``print_tikz_env`` -- boolean (default: ``True``) if ``True``,
+        - ``print_tikz_env`` -- boolean (default: ``True``); if ``True``,
           the tikzpicture environment are printed
-        - ``edgecolor`` -- string (default: ``'black'``) either
+        - ``edgecolor`` -- string (default: ``'black'``); either
           ``'black'`` or ``'facecolor'`` (color of unit face edges)
         - ``scale`` -- real number (default: ``0.25``) scaling
           constant for the whole figure
-        - ``drawzero`` -- boolean (default: ``False``) if ``True``,
+        - ``drawzero`` -- boolean (default: ``False``); if ``True``,
           mark the origin by a black dot
-        - ``extra_code_before`` -- string (default: ``''``) extra code to
+        - ``extra_code_before`` -- string (default: ``''``); extra code to
           include in the tikz picture
-        - ``extra_code_after`` -- string (default: ``''``) extra code to
+        - ``extra_code_after`` -- string (default: ``''``); extra code to
           include in the tikz picture
 
         EXAMPLES::
@@ -1554,8 +1554,7 @@ class E1Star(SageObject):
         INPUT:
 
         - ``face`` -- a face
-        - ``color`` -- string, RGB tuple or color, (default: None)
-          RGB color
+        - ``color`` -- string (default: ``None``); RGB tuple or color
 
         OUTPUT: iterator of faces
 

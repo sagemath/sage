@@ -89,7 +89,7 @@ cdef class Octonion_generic(AlgebraElement):
 
     def __bool__(self):
         r"""
-        Return if ``self`` is non-zero or not.
+        Return if ``self`` is nonzero or not.
 
         EXAMPLES::
 

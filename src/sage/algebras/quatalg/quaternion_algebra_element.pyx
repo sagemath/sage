@@ -594,9 +594,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
         - ``action`` -- (default: 'right') 'right' or 'left'.
 
-        OUTPUT:
-
-        - a matrix
+        OUTPUT: a matrix
 
         EXAMPLES::
 

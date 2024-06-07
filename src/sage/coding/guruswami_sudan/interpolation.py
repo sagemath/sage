@@ -54,16 +54,14 @@ def _flatten_once(lstlst):
 
 def _monomial_list(maxdeg, l, wy):
     r"""
-    Returns a list of all non-negative integer pairs `(i,j)` such that ``i + wy
+    Returns a list of all nonnegative integer pairs `(i,j)` such that ``i + wy
     * j < maxdeg`` and ``j \geq l``.
 
     INPUT:
 
     - ``maxdeg``, ``l``, ``wy`` -- integers.
 
-    OUTPUT:
-
-    - a list of pairs of integers.
+    OUTPUT: a list of pairs of integers
 
     EXAMPLES::
 
@@ -279,7 +277,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
     """
     M, monomials = _interpolation_matrix_problem(points, tau, parameters, wy)
     Ker = M.right_kernel()
-    # Pick a non-zero element from the right kernel
+    # Pick a nonzero element from the right kernel
     sol = Ker.basis()[0]
     # Construct the Q polynomial
     PF = M.base_ring()['x', 'y'] #make that ring a ring in <x>

@@ -22,7 +22,7 @@ class SetsWithGrading(Category):
 
     A *set with a grading* is a set `S` equipped with a
     grading by some other set `I` (by default the set `\NN` of the
-    non-negative integers):
+    nonnegative integers):
 
     .. MATH::
 
@@ -54,7 +54,7 @@ class SetsWithGrading(Category):
 
     EXAMPLES:
 
-    A typical example of a set with a grading is the set of non-negative
+    A typical example of a set with a grading is the set of nonnegative
     integers graded by themselves::
 
         sage: N = SetsWithGrading().example(); N
@@ -137,7 +137,7 @@ class SetsWithGrading(Category):
         def grading_set(self):
             """
             Return the set ``self`` is graded by. By default, this is
-            the set of non-negative integers.
+            the set of nonnegative integers.
 
             EXAMPLES::
 

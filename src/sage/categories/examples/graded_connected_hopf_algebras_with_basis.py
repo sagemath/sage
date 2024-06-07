@@ -21,7 +21,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
     r"""
     This class illustrates an implementation of a graded Hopf algebra
     with basis that has one primitive generator of degree 1 and basis
-    elements indexed by non-negative integers.
+    elements indexed by nonnegative integers.
 
     This Hopf algebra example differs from what topologists refer to as
     a graded Hopf algebra because the twist operation in the tensor rule
@@ -51,9 +51,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
         """
         Returns 0, which index the unit of the Hopf algebra.
 
-        OUTPUT:
-
-        - the non-negative integer 0
+        OUTPUT: the nonnegative integer 0
 
         EXAMPLES::
 
@@ -68,15 +66,13 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
     def degree_on_basis(self, i):
         """
-        The degree of a non-negative integer is itself
+        The degree of a nonnegative integer is itself
 
         INPUT:
 
-        - ``i`` -- a non-negative integer
+        - ``i`` -- a nonnegative integer
 
-        OUTPUT:
-
-        - a non-negative integer
+        OUTPUT: a nonnegative integer
 
         TESTS::
 
@@ -121,11 +117,9 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
         INPUT:
 
-        - ``i``, ``j`` -- non-negative integers
+        - ``i``, ``j`` -- nonnegative integers
 
-        OUTPUT:
-
-        - a basis element indexed by ``i+j``
+        OUTPUT: a basis element indexed by ``i+j``
 
         TESTS::
 
@@ -146,11 +140,9 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
         INPUT:
 
-        - ``i`` -- a non-negative integer
+        - ``i`` -- a nonnegative integer
 
-        OUTPUT:
-
-        - an element of the tensor square of ``self``
+        OUTPUT: an element of the tensor square of ``self``
 
         TESTS::
 

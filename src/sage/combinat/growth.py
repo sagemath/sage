@@ -1625,9 +1625,9 @@ class Rule(UniqueRepresentation):
 
     - ``r`` -- (default: 1) the parameter in the equation `DU - UD = rI`
 
-    - ``has_multiple_edges`` -- (default: ``False``) if the dual
+    - ``has_multiple_edges`` -- boolean (default: ``False``); if the dual
       graded graph has multiple edges and therefore edges are
-      triples consisting of two vertices and a label.
+      triples consisting of two vertices and a label
 
     - ``zero_edge`` -- (default: 0) the zero label of the
       edges of the graphs used for degenerate edges.  It is

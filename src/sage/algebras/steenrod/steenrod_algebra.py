@@ -55,10 +55,10 @@ paper by Monks [Mon1998]_ is a good reference.  Here is a quick summary:
 
 - The *Milnor basis*. When `p=2`, the Milnor basis consists of symbols
   of the form `\text{Sq}(m_1, m_2, ..., m_t)`, where each `m_i` is a
-  non-negative integer and if `t>1`, then the last entry `m_t > 0`.
+  nonnegative integer and if `t>1`, then the last entry `m_t > 0`.
   When `p` is odd, the Milnor basis consists of symbols of the form
   `Q_{e_1} Q_{e_2} ... \mathcal{P}(m_1, m_2, ..., m_t)`, where `0 \leq
-  e_1 < e_2 < ...`, each `m_i` is a non-negative integer, and if
+  e_1 < e_2 < ...`, each `m_i` is a nonnegative integer, and if
   `t>1`, then the last entry `m_t > 0`.
 
   When `p=2`, it can be convenient to use the notation
@@ -78,12 +78,12 @@ Most of the rest of the bases are only defined when `p=2`.  The only
 exceptions are the `P^s_t`-bases and the commutator bases, which are
 defined at all primes.
 
-- *Wood's Y basis*.  For pairs of non-negative integers `(m,k)`, let
+- *Wood's Y basis*.  For pairs of nonnegative integers `(m,k)`, let
   `w(m,k) = \text{Sq}^{2^m (2^{k+1}-1)}`. Wood's `Y` basis consists of
   monomials `w(m_0,k_0) ... w(m_t, k_t)` with `(m_i,k_i) >
   (m_{i+1},k_{i+1})`, in left lex order.
 
-- *Wood's Z basis*. For pairs of non-negative integers `(m,k)`, let
+- *Wood's Z basis*. For pairs of nonnegative integers `(m,k)`, let
   `w(m,k) = \text{Sq}^{2^m (2^{k+1}-1)}`. Wood's `Z` basis consists of
   monomials `w(m_0,k_0) ... w(m_t, k_t)` with `(m_i+k_i,m_i) >
   (m_{i+1}+k_{i+1},m_{i+1})`, in left lex order.
@@ -184,8 +184,8 @@ algebra corresponds to a quotient of this of the form
    A_* /(\xi_1^{2^{e_1}}, \xi_2^{2^{e_2}}, \xi_3^{2^{e_3}}, ...).
 
 The list of exponents `(e_1, e_2, ...)` may be considered a function
-`e` from the positive integers to the extended non-negative integers
-(the non-negative integers and `\infty`); this is called the *profile
+`e` from the positive integers to the extended nonnegative integers
+(the nonnegative integers and `\infty`); this is called the *profile
 function* for the sub-Hopf algebra.  The profile function must satisfy
 the condition
 
@@ -205,7 +205,7 @@ and any sub-Hopf algebra corresponds to a quotient of this of the form
    A_* / (\xi_1^{p^{e_1}}, \xi_2^{p^{e_2}}, ...; \tau_0^{k_0}, \tau_1^{k_1}, ...).
 
 Here the profile function has two pieces, `e` as at the prime 2, and
-`k`, which maps the non-negative integers to the set `\{1, 2\}`.
+`k`, which maps the nonnegative integers to the set `\{1, 2\}`.
 These must satisfy the following conditions:
 
 - `e(r) \geq \min( e(r-i) - i, e(i))` for all `0 < i < r`.
@@ -232,7 +232,7 @@ algebra, use the function ``Sq``::
     Sq(1,2) + Sq(4,1)
     sage: Sq(4) * Sq(1,2)
     Sq(1,1,1) + Sq(2,3) + Sq(5,2)
-    sage: z**2          # non-negative exponents work as they should
+    sage: z**2          # nonnegative exponents work as they should
     Sq(1,2,1) + Sq(4,1,1)
     sage: z**0
     1
@@ -972,7 +972,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         of the aforementioned documentation), corresponding,
         respectively to ``component=0`` and ``component=1``.  So when
         `p` is odd and ``component`` is 0, `i` must be positive, while
-        when ``component`` is 1, `i` must be non-negative.
+        when ``component`` is 1, `i` must be nonnegative.
 
         EXAMPLES::
 
@@ -2313,7 +2313,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``a``, ``b``, ``c``, ... -- non-negative integers
+        -  ``a``, ``b``, ``c``, ... -- nonnegative integers
 
         OUTPUT:
 
@@ -2334,7 +2334,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: B.P(1,1,-12,1)
             Traceback (most recent call last):
             ...
-            TypeError: entries must be non-negative integers
+            TypeError: entries must be nonnegative integers
 
             sage: SteenrodAlgebra(basis='serre-cartan').P(0,1)
             Sq^2 Sq^1 + Sq^3
@@ -2352,7 +2352,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             try:
                 assert Integer(i) >= 0
             except (TypeError, AssertionError):
-                raise TypeError("entries must be non-negative integers")
+                raise TypeError("entries must be nonnegative integers")
 
         if not self._generic:
             t = nums
@@ -2425,7 +2425,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n0``, ``n1``, ... -- non-negative integers
+        - ``n0``, ``n1``, ... -- nonnegative integers
 
         OUTPUT: the element `Q_{n0} Q_{n1} ...`
 
@@ -2539,7 +2539,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``s`` -- non-negative integer
+        -  ``s`` -- nonnegative integer
 
         -  ``t`` -- positive integer
 
@@ -2566,7 +2566,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).pst(s,t))
         if not isinstance(s, (Integer, int)) and s >= 0:
-            raise ValueError("%s is not a non-negative integer" % s)
+            raise ValueError("%s is not a nonnegative integer" % s)
         if not isinstance(t, (Integer, int)) and t > 0:
             raise ValueError("%s is not a positive integer" % t)
         nums = (0,)*(t-1) + (self.prime()**s,)
@@ -2693,7 +2693,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- non-negative integer
+        - ``i`` -- nonnegative integer
 
         OUTPUT: the ith generator of this algebra
 
@@ -2757,7 +2757,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         from sage.rings.integer import Integer
         p = self.prime()
         if not isinstance(i, (Integer, int)) and i >= 0:
-            raise ValueError("%s is not a non-negative integer" % i)
+            raise ValueError("%s is not a nonnegative integer" % i)
         num = self.ngens()
         if num < Infinity:
             if i >= num:
@@ -3459,7 +3459,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             r"""
             Excess of element.
 
-            OUTPUT: ``excess`` -- non-negative integer
+            OUTPUT: ``excess`` -- nonnegative integer
 
             The excess of a Milnor basis element `\text{Sq}(a,b,c,...)` is
             `a + b + c + \cdots`. When `p` is odd, the excess of `Q_{0}^{e_0}
@@ -3558,7 +3558,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             r"""
             May's 'weight' of element.
 
-            OUTPUT: ``weight`` -- non-negative integer
+            OUTPUT: ``weight`` -- nonnegative integer
 
             If we let `F_* (A)` be the May filtration of the Steenrod
             algebra, the weight of an element `x` is the integer `k` so
@@ -3684,10 +3684,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             r"""
             Wall's 'height' of element.
 
-            OUTPUT: list of non-negative integers
+            OUTPUT: list of nonnegative integers
 
             The height of an element of the mod 2 Steenrod algebra is a
-            list of non-negative integers, defined as follows: if the
+            list of nonnegative integers, defined as follows: if the
             element is a monomial in the generators `\text{Sq}(2^i)`, then
             the `i^{th}` entry in the list is the number of times
             `\text{Sq}(2^i)` appears. For an arbitrary element, write it
@@ -3776,7 +3776,7 @@ class SteenrodAlgebra_mod_two(SteenrodAlgebra_generic):
 
         INPUT:
 
-        - ``a``, ``b``, ``c``, ... -- non-negative integers
+        - ``a``, ``b``, ``c``, ... -- nonnegative integers
 
         OUTPUT: element of the Steenrod algebra
 
@@ -3791,7 +3791,7 @@ class SteenrodAlgebra_mod_two(SteenrodAlgebra_generic):
             sage: A.Sq(5,0,2)
             Sq(5,0,2)
 
-        Entries must be non-negative integers; otherwise, an error
+        Entries must be nonnegative integers; otherwise, an error
         results.
         """
         if self.prime() == 2:
@@ -3982,7 +3982,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
     ``profile`` argument specifies the profile function for this
     algebra.  Any sub-Hopf algebra of the Steenrod algebra is
     determined by its *profile function*.  When `p=2`, this is a map `e`
-    from the positive integers to the set of non-negative integers,
+    from the positive integers to the set of nonnegative integers,
     plus `\infty`, corresponding to the sub-Hopf algebra dual to this
     quotient of the dual Steenrod algebra:
 
@@ -4001,7 +4001,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
     - a list or tuple, e.g., ``[3,2,1]``, corresponding to the
       function sending 1 to 3, 2 to 2, 3 to 1, and all other integers
       to the value of ``truncation_type``.
-    - a function from positive integers to non-negative integers (and
+    - a function from positive integers to nonnegative integers (and
       `\infty`), e.g., ``lambda n: n+2``.
     - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.
@@ -4077,7 +4077,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
       the set `\{1,2\}`, e.g., ``([3,2,1,1], [1,1,2,2,1])``.
 
     - a pair of functions, one from the positive integers to
-      non-negative integers (and `\infty`), one from the non-negative
+      nonnegative integers (and `\infty`), one from the nonnegative
       integers to the set `\{1,2\}`, e.g., ``(lambda n: n+2, lambda n:
       1 if n<3 else 2)``.
 
@@ -4185,7 +4185,7 @@ def AA(n=None, p=2):
 
     INPUT:
 
-    - `n` -- non-negative integer, optional (default ``None``)
+    - `n` -- nonnegative integer, optional (default ``None``)
     - `p` -- prime number, optional (default 2)
 
     OUTPUT:
@@ -4225,7 +4225,7 @@ def Sq(*nums):
 
     INPUT:
 
-    -  ``a``, ``b``, ``c``, ... -- non-negative integers
+    -  ``a``, ``b``, ``c``, ... -- nonnegative integers
 
     OUTPUT: element of the Steenrod algebra
 
@@ -4241,7 +4241,7 @@ def Sq(*nums):
         sage: (Sq(4,3) + Sq(7,2)).degree()
         13
 
-    Entries must be non-negative integers; otherwise, an error
+    Entries must be nonnegative integers; otherwise, an error
     results.
 
     This function is a good way to define elements of the Steenrod

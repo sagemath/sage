@@ -991,9 +991,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         - ``names`` -- (default: ``'e'``) the names of the generators of the
           Clifford algebra of the domain of (the map represented by) ``m``
 
-        OUTPUT:
-
-        The algebra morphism `Cl(m)` from `Cl(W, m(Q))` to ``self``.
+        OUTPUT: the algebra morphism `Cl(m)` from `Cl(W, m(Q))` to ``self``
 
         EXAMPLES::
 
@@ -1142,9 +1140,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
           the Clifford algebra of the codomain of (the map represented by)
           ``m``
 
-        OUTPUT:
-
-        The algebra morphism `Cl(m)` from ``self`` to `Cl(W, m^{-1}(Q))`.
+        OUTPUT: the algebra morphism `Cl(m)` from ``self`` to `Cl(W, m^{-1}(Q))`
 
         EXAMPLES::
 
@@ -1599,9 +1595,8 @@ class ExteriorAlgebra(CliffordAlgebra):
           the Clifford algebra of the domain of (the map represented by)
           ``phi``
 
-        OUTPUT:
-
-        The algebra morphism `\Lambda(\phi)` from ``self`` to `\Lambda(W)`.
+        OUTPUT: the algebra morphism `\Lambda(\phi)` from ``self`` to
+        `\Lambda(W)`
 
         EXAMPLES::
 

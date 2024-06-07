@@ -33,7 +33,7 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer (default:``1``); how many
+        - ``n`` -- nonnegative integer (default:``1``); how many
           times to apply `T` to this element.
 
         We use the *divided powers* notation
@@ -97,7 +97,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
         """
         The lambda bracket of these two elements.
 
-        The result is a dictionary with non-negative integer keys.
+        The result is a dictionary with nonnegative integer keys.
         The value corresponding to the entry `j` is ``self_{(j)}right``.
 
         EXAMPLES::

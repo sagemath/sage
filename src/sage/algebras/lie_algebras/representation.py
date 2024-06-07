@@ -59,9 +59,7 @@ class Representation_abstract:
         r"""
         Return that ``self`` is a left representation.
 
-        OUTPUT:
-
-        - the string ``"left"``
+        OUTPUT: the string ``'left'``
 
         EXAMPLES::
 

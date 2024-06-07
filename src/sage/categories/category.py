@@ -807,9 +807,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         Return the *immediate* super categories of ``self``.
 
-        OUTPUT:
-
-        - a duplicate-free list of categories.
+        OUTPUT: a duplicate-free list of categories
 
         Every category should implement this method.
 
@@ -1820,9 +1818,7 @@ class Category(UniqueRepresentation, SageObject):
           or ``None``
         - ``join`` -- a boolean (default: ``False``)
 
-        OUTPUT:
-
-        - a category
+        OUTPUT: a category
 
         EXAMPLES::
 

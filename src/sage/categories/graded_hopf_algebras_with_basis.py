@@ -102,9 +102,7 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
 
                 - ``i`` -- an element of the index set
 
-                OUTPUT:
-
-                - an element of the base ring
+                OUTPUT: an element of the base ring
 
                 .. MATH::
 

@@ -2948,10 +2948,10 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- a nonnegative integer; ``0`` is considered as `\infty`
+        - ``e`` -- a nonnegative integer; `0` is considered as `\infty`
           (analogous to the characteristic of a ring)
-        - ``ladder_sizes`` -- (default: ``False``) if ``True``, also return
-          the sizes of the ladders
+        - ``ladder_sizes`` -- boolean (default: ``False``); if ``True``, also
+          return the sizes of the ladders
 
         .. SEEALSO::
 
@@ -5566,11 +5566,10 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``directed`` -- (default: ``False``) whether to have the dual
-          equivalence graph be directed (where we have a directed edge
-          `S \to T` if `i` appears to the left of `i+1` in the
-          reading word of `T`; otherwise we have the directed edge
-          `T \to S`)
+        - ``directed`` -- boolean (default: ``False``); whether to have the
+          dual equivalence graph be directed (where we have a directed edge
+          `S \to T` if `i` appears to the left of `i+1` in the reading word of
+          `T`; otherwise we have the directed edge `T \to S`)
 
         - ``coloring`` -- (optional) a function which sends each
           integer `i > 1` to a color (as a string, e.g., ``'red'`` or

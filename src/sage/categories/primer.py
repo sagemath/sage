@@ -118,7 +118,7 @@ The hierarchy of categories
 What makes binary powering work in the above examples? In both cases,
 we have *a set* endowed with a *multiplicative binary operation* which
 is *associative* and which has a unit element. Such a set is called a
-*monoid*, and binary powering (to a non-negative power) works generally
+*monoid*, and binary powering (to a nonnegative power) works generally
 for any monoid.
 
 Sage knows about monoids::

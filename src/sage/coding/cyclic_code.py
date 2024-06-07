@@ -238,9 +238,9 @@ class CyclicCode(AbstractLinearCode):
 
     - ``code`` -- (default: ``None``) a linear code.
 
-    - ``check`` -- boolean (default: ``False``); a boolean representing whether
-      the cyclicity of ``self`` must be checked while finding the generator
-      polynomial. See :meth:`find_generator_polynomial` for details.
+    - ``check`` -- boolean (default: ``False``);  whether the cyclicity of
+      ``self`` must be checked while finding the generator polynomial. See
+      :meth:`find_generator_polynomial` for details.
 
     - ``D`` -- (default: ``None``) a list of integers between ``0`` and
       ``length-1``, corresponding to (a subset of) the defining set of the code.

@@ -101,24 +101,24 @@ cdef class Riemann_Map:
 
     The following inputs may be passed in as named parameters:
 
-    - ``N`` -- integer (default: ``500``), the number of collocation points
+    - ``N`` -- integer (default: ``500``); the number of collocation points
       used to compute the map. More points will give more accurate results,
       especially near the boundaries, but will take longer to compute.
 
-    - ``exterior`` -- boolean (default: ``False``), if set to ``True``, the
+    - ``exterior`` -- boolean (default: ``False``); if set to ``True``, the
       exterior map will be computed, mapping the exterior of the region to the
       exterior of the unit circle.
 
     The following inputs may be passed as named parameters in unusual
     circumstances:
 
-    - ``ncorners`` -- integer (default: ``4``), if mapping a figure with
+    - ``ncorners`` -- integer (default: ``4``); if mapping a figure with
       (equally t-spaced) corners -- corners that make a significant change in
       the direction of the boundary -- better results may be sometimes obtained by
       accurately giving this parameter. Used to add the proper constant to
       the theta correspondence function.
 
-    - ``opp`` -- boolean (default: ``False``), set to ``True`` in very rare
+    - ``opp`` -- boolean (default: ``False``); set to ``True`` in very rare
       cases where the theta correspondence function is off by ``pi``, that
       is, if red is mapped left of the origin in the color plot.
 
@@ -385,12 +385,12 @@ cdef class Riemann_Map:
 
         The following inputs may be passed in as named parameters:
 
-        - ``boundary`` -- integer (default: ``-1``) if < 0,
+        - ``boundary`` -- integer (default: ``-1``); if < 0,
           :meth:`get_theta_points` will return the points for all boundaries.
           If >= 0, :meth:`get_theta_points` will return only the points for
           the boundary specified.
 
-        - ``absolute_value`` -- boolean (default: ``False``) if ``True``, will
+        - ``absolute_value`` -- boolean (default: ``False``); if ``True``, will
           return the absolute value of the (complex valued) Szego kernel
           instead of the kernel itself. Useful for plotting.
 
@@ -465,7 +465,7 @@ cdef class Riemann_Map:
 
         The following input must all be passed in as named parameters:
 
-        - ``boundary`` -- integer (default: ``-1``) if < 0,
+        - ``boundary`` -- integer (default: ``-1``); if < 0,
           ``get_theta_points()`` will return the points for all boundaries.
           If >= 0, ``get_theta_points()`` will return only the points for
           the boundary specified.
@@ -851,13 +851,13 @@ cdef class Riemann_Map:
 
         The following inputs may be passed in as named parameters:
 
-        - ``spokes`` -- integer (default: ``16``) the number of equally
+        - ``spokes`` -- integer (default: ``16``); the number of equally
           spaced radial lines to plot.
 
-        - ``circles`` -- integer (default: ``4``) the number of equally
+        - ``circles`` -- integer (default: ``4``); the number of equally
           spaced circles about the center to plot.
 
-        - ``pts`` -- integer (default: ``32``) the number of points to
+        - ``pts`` -- integer (default: ``32``); the number of points to
           plot. Each radial line is made by ``1*pts`` points, each circle
           has ``2*pts`` points. Note that high values may cause erratic
           behavior of the radial lines near the boundaries.
@@ -878,15 +878,16 @@ cdef class Riemann_Map:
           by lines.
           - only for simply connected domains
 
-        - ``withcolor`` -- boolean (default: ``False``) If ``True``,
+        - ``withcolor`` -- boolean (default: ``False``); If ``True``,
           The spiderweb will be overlaid on the basic color plot.
 
-        - ``plot_points`` -- integer (default: ``200``) the size of the grid in the x direction
-          The number of points in the y_direction is scaled accordingly.
-          Note that very large values can cause this function to run slowly.
+        - ``plot_points`` -- integer (default: ``200``); the size of the grid
+          in the x direction. The number of points in the y_direction is scaled
+          accordingly. Note that very large values can cause this function to
+          run slowly.
           - only for multiply connected domains
 
-        - ``min_mag`` -- float (default: ``0.001``) The magnitude cutoff
+        - ``min_mag`` -- float (default: ``0.001``); The magnitude cutoff
           below which spiderweb points are not drawn. This only applies
           to multiply connected domains and is designed to prevent
           "fuzz" at the edge of the domain. Some complicated multiply
@@ -1016,7 +1017,7 @@ cdef class Riemann_Map:
           ``(xmin, xmax, ymin, ymax)``. Declare if you do not want the plot
           to use the default range for the figure.
 
-        - ``plot_points`` -- integer (default: ``100``), number of points to
+        - ``plot_points`` -- integer (default: ``100``); number of points to
           plot in the x direction. Points in the y direction are scaled
           accordingly. Note that very large values can cause this function to
           run slowly.

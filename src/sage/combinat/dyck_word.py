@@ -363,24 +363,24 @@ class DyckWord(CombinatorialElement):
 
         The default values are set in the ``__init__`` function.
 
-        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
+        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package
 
-        - ``diagonal`` -- (default: ``False``) boolean value to draw the
-          diagonal or not.
+        - ``diagonal`` -- boolean (default: ``False``); value to draw the
+          diagonal or not
 
         - ``line width`` -- (default: 2*``tikz_scale``) value representing the
-          line width.
+          line width
 
-        - ``color`` -- (default: black) the line color.
+        - ``color`` -- (default: black) the line color
 
-        - ``bounce path`` -- (default: ``False``) boolean value to indicate
-          if the bounce path should be drawn.
+        - ``bounce path`` -- boolean (default: ``False``); value to indicate
+          if the bounce path should be drawn
 
-        - ``peaks`` -- (default: ``False``) boolean value to indicate if the
-          peaks should be displayed.
+        - ``peaks`` -- boolean (default: ``False``); value to indicate if the
+          peaks should be displayed
 
-        - ``valleys`` -- (default: ``False``) boolean value to indicate if the
-          valleys should be displayed.
+        - ``valleys`` -- boolean (default: ``False``); value to indicate if the
+          valleys should be displayed
 
         INPUT:
 
@@ -406,24 +406,24 @@ class DyckWord(CombinatorialElement):
 
         The default values are set using the options.
 
-        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
+        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package
 
-        - ``diagonal`` -- (default: ``False``) boolean value to draw the
-          diagonal or not.
+        - ``diagonal`` -- boolean (default: ``False``); value to draw the
+          diagonal or not
 
-        - ``line width`` -- (default: 2*``tikz_scale``) value representing the
-          line width.
+        - ``line width`` -- (default: ``2*tikz_scale``) value representing the
+          line width
 
-        - ``color`` -- (default: black) the line color.
+        - ``color`` -- (default: black) the line color
 
-        - ``bounce path`` -- (default: ``False``) boolean value to indicate
-          if the bounce path should be drawn.
+        - ``bounce path`` -- boolean (default: ``False``); value to indicate
+          if the bounce path should be drawn
 
-        - ``peaks`` -- (default: ``False``) boolean value to indicate if the
-          peaks should be displayed.
+        - ``peaks`` -- boolean (default: ``False``); value to indicate if the
+          peaks should be displayed
 
-        - ``valleys`` -- (default: ``False``) boolean value to indicate if the
-          valleys should be displayed.
+        - ``valleys`` -- boolean (default: ``False``); value to indicate if the
+          valleys should be displayed
 
         EXAMPLES::
 

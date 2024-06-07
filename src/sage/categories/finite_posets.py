@@ -452,9 +452,7 @@ class FinitePosets(CategoryWithAxiom):
 
             - ``order_ideal`` -- an order ideal of ``self``, as a set
 
-            OUTPUT:
-
-            - the image of ``order_ideal`` under rowmotion, as a set again
+            OUTPUT: the image of ``order_ideal`` under rowmotion, as a set again
 
             EXAMPLES::
 

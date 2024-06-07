@@ -108,7 +108,7 @@ class Huffman(SageObject):
       - A dictionary that associates to each symbol of an alphabet a numeric
         value. If we consider the frequency of each alphabetic symbol, then
         ``source`` is considered as the frequency table of the alphabet with
-        each numeric (non-negative integer) value being the number of
+        each numeric (nonnegative integer) value being the number of
         occurrences of a symbol. The numeric values can also represent weights
         of the symbols. In that case, the numeric values are not necessarily
         integers, but can be real numbers.
@@ -300,7 +300,7 @@ class Huffman(SageObject):
         - ``dic`` -- a dictionary that associates to each symbol of an alphabet
           a numeric value. If we consider the frequency of each alphabetic
           symbol, then ``dic`` is considered as the frequency table of the
-          alphabet with each numeric (non-negative integer) value being the
+          alphabet with each numeric (nonnegative integer) value being the
           number of occurrences of a symbol. The numeric values can also
           represent weights of the symbols. In that case, the numeric values
           are not necessarily integers, but can be real numbers. In general,
@@ -379,9 +379,7 @@ class Huffman(SageObject):
 
         - ``string`` -- a string of symbols over an alphabet.
 
-        OUTPUT:
-
-        - A Huffman encoding of ``string``.
+        OUTPUT: a Huffman encoding of ``string``
 
         EXAMPLES:
 
@@ -406,9 +404,7 @@ class Huffman(SageObject):
 
         - ``string`` -- a string of Huffman encodings.
 
-        OUTPUT:
-
-        - The Huffman decoding of ``string``.
+        OUTPUT: the Huffman decoding of ``string``
 
         EXAMPLES:
 
@@ -459,9 +455,7 @@ class Huffman(SageObject):
 
         - None.
 
-        OUTPUT:
-
-        - A dictionary associating an alphabetic symbol to a Huffman encoding.
+        OUTPUT: a dictionary associating an alphabetic symbol to a Huffman encoding
 
         EXAMPLES::
 
@@ -502,9 +496,7 @@ class Huffman(SageObject):
 
         - None.
 
-        OUTPUT:
-
-        - The binary tree representing a Huffman code.
+        OUTPUT: the binary tree representing a Huffman code
 
         EXAMPLES::
 
@@ -536,9 +528,7 @@ class Huffman(SageObject):
           left or right branch. The bit "0" denotes the left branch and "1"
           denotes the right branch.
 
-        OUTPUT:
-
-        - An edge list of the Huffman binary tree.
+        OUTPUT: an edge list of the Huffman binary tree
 
         EXAMPLES::
 

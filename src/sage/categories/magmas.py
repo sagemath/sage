@@ -993,9 +993,7 @@ class Magmas(Category_singleton):
 
             - ``self``, ``right`` -- two elements with the same parent
 
-            OUTPUT:
-
-            - an element of the same parent
+            OUTPUT: an element of the same parent
 
             EXAMPLES::
 

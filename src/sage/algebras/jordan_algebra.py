@@ -426,7 +426,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             EXAMPLES::
 
@@ -851,7 +851,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             TESTS::
 
@@ -1571,7 +1571,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             TESTS::
 

@@ -180,9 +180,7 @@ class RegularCrystals(Category_singleton):
             - ``reduced_word`` -- a reduced word of the Weyl group of the
               same type as the underlying crystal
 
-            OUTPUT:
-
-            - an element of the free module indexed by the underlying crystal
+            OUTPUT: an element of the free module indexed by the underlying crystal
 
             EXAMPLES::
 
@@ -232,9 +230,7 @@ class RegularCrystals(Category_singleton):
             - ``only_support`` -- boolean (default: ``True``); only include
               arrows corresponding to the support of ``reduced_word``
 
-            OUTPUT:
-
-            - the Demazure subcrystal
+            OUTPUT: the Demazure subcrystal
 
             EXAMPLES::
 

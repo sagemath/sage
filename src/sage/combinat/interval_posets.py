@@ -102,8 +102,8 @@ class TamariIntervalPoset(Element,
       lists or tuples), each representing a relation of the form
       '`a` precedes `b`' in the poset.
 
-    - ``check`` -- (default: ``True``) whether to check the interval-poset
-      condition or not.
+    - ``check`` -- boolean (default: ``True``); whether to check the
+      interval-poset condition or not
 
     .. WARNING::
 
@@ -2861,7 +2861,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``size`` -- (optional) an integer
+    - ``size`` -- integer (optional)
 
     OUTPUT:
 

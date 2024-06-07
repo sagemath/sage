@@ -154,7 +154,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     - ``code`` -- A code associated to this decoder.
 
-    - ``tau`` -- (default: ``None``) an integer, the number of errors one wants the
+    - ``tau`` -- integer (default: ``None``); the number of errors one wants the
       Guruswami-Sudan algorithm to correct.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
@@ -331,8 +331,9 @@ class GRSGuruswamiSudanDecoder(Decoder):
         - ``C`` -- (default: ``None``) a :class:`GeneralizedReedSolomonCode`
         - ``n_k`` -- (default: ``None``) a pair of integers, respectively the
           length and the dimension of the :class:`GeneralizedReedSolomonCode`
-        - ``s`` -- (default: ``None``) an integer, the multiplicity parameter of Guruswami-Sudan algorithm
-        - ``l`` -- (default: ``None``) an integer, the list size parameter
+        - ``s`` -- integer (default: ``None``); the multiplicity parameter of
+          Guruswami-Sudan algorithm
+        - ``l`` -- integer (default: ``None``); the list size parameter
 
         .. NOTE::
 

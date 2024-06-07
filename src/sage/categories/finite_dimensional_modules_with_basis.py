@@ -413,9 +413,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``action_on_basis`` -- (optional) define the action of ``S``
               on the basis of ``self``
 
-            OUTPUT:
-
-            - :class:`~sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule`
+            OUTPUT: :class:`~sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule`
 
             EXAMPLES:
 
@@ -491,9 +489,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``);
               which side of ``self`` the elements of ``S`` acts
 
-            OUTPUT:
-
-            - :class:`~sage.modules.with_basis.invariant.FiniteDimensionalTwistedInvariantModule`
+            OUTPUT: :class:`~sage.modules.with_basis.invariant.FiniteDimensionalTwistedInvariantModule`
 
             EXAMPLES::
 

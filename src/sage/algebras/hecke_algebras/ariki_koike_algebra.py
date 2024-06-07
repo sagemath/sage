@@ -8,7 +8,7 @@ a natural generalization of the Iwahori-Hecke algebras of types `A` and `B`
 Soon afterwards,  Broué and Malle defined analogues of the Hecke
 algebras for all complex reflection groups
 
-Fix non-negative integers `r` an `n`. The Ariki-Koike algebras are
+Fix nonnegative integers `r` an `n`. The Ariki-Koike algebras are
 deformations of the group algebra of the complex reflection group
 `G(r, 1, n) = \ZZ / r\ZZ \wr \mathfrak{S}_n`. If `R` is a ring containing a
 *Hecke parameter* `q` and *cyclotomic parameters* `u_0, \ldots, u_{r-1}` then

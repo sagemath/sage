@@ -75,7 +75,7 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
                 sage: L._test_nilpotency()
                 Traceback (most recent call last):
                 ...
-                AssertionError: final term of lower central series is non-zero
+                AssertionError: final term of lower central series is nonzero
 
             See the documentation for :class:`TestSuite` for more information.
             """
@@ -83,7 +83,7 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
 
             lcs = self.lower_central_series(submodule=True)
             tester.assertEqual(lcs[-1].dimension(), 0,
-                msg="final term of lower central series is non-zero")
+                msg="final term of lower central series is nonzero")
 
             step = self.step()
             tester.assertEqual(len(lcs) - 1, step,

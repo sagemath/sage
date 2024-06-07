@@ -695,9 +695,9 @@ class SubwordComplexFacet(Simplex, Element):
 
         INPUT:
 
-        - ``i`` -- position in the word `Q` (integer).
-        - ``return_position`` -- boolean (default: ``False``) tells
-          whether the new position should be returned as well.
+        - ``i`` -- integer; position in the word `Q`
+        - ``return_position`` -- boolean (default: ``False``); tells
+          whether the new position should be returned as well
 
         OUTPUT:
 
@@ -751,20 +751,20 @@ class SubwordComplexFacet(Simplex, Element):
 
         INPUT:
 
-        - ``list_colors`` -- list (default: ``[]``) to change the colors
-          of the pseudolines.
-        - ``labels`` -- list (default: ``[]``) to change the labels
-          of the pseudolines.
-        - ``thickness`` -- integer (default: ``3``) for the thickness
-          of the pseudolines.
-        - ``fontsize`` -- integer (default: ``14``) for the size
-          of the font used for labels.
+        - ``list_colors`` -- list (default: ``[]``); to change the colors
+          of the pseudolines
+        - ``labels`` -- list (default: ``[]``); to change the labels
+          of the pseudolines
+        - ``thickness`` -- integer (default: ``3``); for the thickness
+          of the pseudolines
+        - ``fontsize`` -- integer (default: ``14``); for the size
+          of the font used for labels
         - ``shift`` -- couple of coordinates (default: ``(0,0)``)
-          to change the origin.
-        - ``compact`` -- boolean (default: ``False``) to require
-          a more compact representation.
-        - ``roots`` -- boolean (default: ``True``) to print
-          the extended root configuration.
+          to change the origin
+        - ``compact`` -- boolean (default: ``False``); to require
+          a more compact representation
+        - ``roots`` -- boolean (default: ``True``); whether to print
+          the extended root configuration
 
         EXAMPLES::
 
@@ -1201,9 +1201,9 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         INPUT:
 
-        - ``F`` -- an iterable of positions.
-        - ``facet_test`` -- boolean (default: ``True``) tells whether or
-          not the facet ``F`` should be tested before creation.
+        - ``F`` -- an iterable of positions
+        - ``facet_test`` -- boolean (default: ``True``); whether or
+          not the facet ``F`` should be tested before creation
 
         OUTPUT: the facet of ``self`` at positions given by ``F``
 

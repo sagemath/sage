@@ -252,7 +252,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
             if max(abs(a) for a in coeffs) > height_bound:
                 if proof:
                     # Given an LLL reduced basis $b_1, ..., b_n$, we only
-                    # know that $|b_1| <= 2^((n-1)/2) |x|$ for non-zero $x \in L$.
+                    # know that $|b_1| <= 2^((n-1)/2) |x|$ for nonzero $x \in L$.
                     if norm(LLL[0]) <= 2**((n - 1) / 2) * n.sqrt() * height_bound:
                         raise ValueError("insufficient precision for non-existence proof")
                 return None
@@ -936,9 +936,7 @@ def primes_first_n(n, leave_pari=False):
 
     - `n` -- a nonnegative integer
 
-    OUTPUT:
-
-    - a list of the first `n` prime numbers.
+    OUTPUT: a list of the first `n` prime numbers
 
     EXAMPLES::
 
@@ -972,9 +970,7 @@ def eratosthenes(n):
 
     -  ``n`` -- a positive integer
 
-    OUTPUT:
-
-    - a list of primes less than or equal to n.
+    OUTPUT: a list of primes less than or equal to n
 
     EXAMPLES::
 
@@ -1049,9 +1045,7 @@ def primes(start=2, stop=None, proof=None):
       does not provide a proof of primality. If ``None``, uses the global
       default (see :mod:`sage.structure.proof.proof`)
 
-    OUTPUT:
-
-    -  an iterator over primes from ``start`` to ``stop-1``, inclusive
+    OUTPUT:  an iterator over primes from ``start`` to ``stop-1``, inclusive
 
 
     EXAMPLES::
@@ -1973,9 +1967,7 @@ def xgcd(a, b):
     -  ``a, b`` -- integers or more generally, element of a ring for which the
        xgcd make sense (e.g. a field or univariate polynomials).
 
-    OUTPUT:
-
-    -  ``g, s, t`` -- such that `g = s\cdot a + t\cdot b`
+    OUTPUT:  ``g, s, t`` -- such that `g = s\cdot a + t\cdot b`
 
     .. NOTE::
 
@@ -2566,9 +2558,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
        variable is set to this; e.g., set to 4 or 8 to see lots of output
        during factorization.
 
-    OUTPUT:
-
-    -  factorization of `n`
+    OUTPUT:  factorization of `n`
 
     The qsieve and ecm commands give access to highly optimized
     implementations of algorithms for doing certain integer
@@ -2899,9 +2889,7 @@ def is_square(n, root=False):
     - ``root`` -- whether or not to also return a square
       root (default: ``False``)
 
-    OUTPUT:
-
-    - ``bool`` -- whether or not a square
+    OUTPUT: ``bool`` -- whether or not a square
 
     - ``object`` -- (optional) an actual square if found,
       and ``None`` otherwise.
@@ -3189,9 +3177,7 @@ def carmichael_lambda(n):
 
     - ``n`` -- a positive integer.
 
-    OUTPUT:
-
-    - The Carmichael function of ``n``.
+    OUTPUT: the Carmichael function of ``n``
 
     ALGORITHM:
 
@@ -3630,9 +3616,7 @@ def CRT_vectors(X, moduli):
        integers of the same length
     -  ``moduli`` -- list of len(X) moduli
 
-    OUTPUT:
-
-    -  ``list`` -- application of CRT componentwise.
+    OUTPUT:  ``list`` -- application of CRT componentwise
 
     EXAMPLES::
 
@@ -4159,9 +4143,7 @@ def kronecker_symbol(x,y):
 
     - ``y`` -- integer
 
-    OUTPUT:
-
-    - an integer
+    OUTPUT: an integer
 
     EXAMPLES::
 
@@ -4316,7 +4298,7 @@ def primitive_root(n, check=True):
 
     INPUT:
 
-    - ``n`` -- a non-zero integer
+    - ``n`` -- a nonzero integer
     - ``check`` -- boolean (default: ``True``); if ``False``, then `n` is assumed
       to be a positive integer possessing a primitive root, and behavior
       is undefined otherwise.
@@ -4435,9 +4417,7 @@ def nth_prime(n):
 
     - ``n`` -- a positive integer
 
-    OUTPUT:
-
-    -  the n-th prime number
+    OUTPUT:  the n-th prime number
 
     EXAMPLES::
 
@@ -4453,7 +4433,7 @@ def nth_prime(n):
         sage: nth_prime(0)
         Traceback (most recent call last):
         ...
-        ValueError: nth prime meaningless for non-positive n (=0)
+        ValueError: nth prime meaningless for nonpositive n (=0)
 
     TESTS::
 
@@ -4467,7 +4447,7 @@ def nth_prime(n):
         29
     """
     if n <= 0:
-        raise ValueError("nth prime meaningless for non-positive n (=%s)" % n)
+        raise ValueError("nth prime meaningless for nonpositive n (=%s)" % n)
     from sage.libs.pari.all import pari
     return ZZ(pari.prime(n))
 
@@ -4783,9 +4763,7 @@ def number_of_divisors(n):
 
     - ``n`` -- a nonzero integer
 
-    OUTPUT:
-
-    - an integer, the number of divisors of n
+    OUTPUT: an integer, the number of divisors of n
 
     EXAMPLES::
 
@@ -5085,7 +5063,7 @@ def falling_factorial(x, a):
 
     -  ``x`` -- element of a ring
 
-    -  ``a`` -- a non-negative integer or
+    -  ``a`` -- a nonnegative integer or
 
     -  ``x and a`` -- any numbers
 
@@ -5189,7 +5167,7 @@ def rising_factorial(x, a):
 
     -  ``x`` -- element of a ring
 
-    -  ``a`` -- a non-negative integer or
+    -  ``a`` -- a nonnegative integer or
 
     -  ``x and a`` -- any numbers
 
@@ -5367,7 +5345,7 @@ def two_squares(n):
 
     - ``n`` -- an integer
 
-    OUTPUT: a tuple `(a,b)` of non-negative integers such that
+    OUTPUT: a tuple `(a,b)` of nonnegative integers such that
     `n = a^2 + b^2` with `a <= b`.
 
     EXAMPLES::
@@ -5489,7 +5467,7 @@ def three_squares(n):
 
     - ``n`` -- an integer
 
-    OUTPUT: a tuple `(a,b,c)` of non-negative integers such that
+    OUTPUT: a tuple `(a,b,c)` of nonnegative integers such that
     `n = a^2 + b^2 + c^2` with `a <= b <= c`.
 
     EXAMPLES::
@@ -5634,7 +5612,7 @@ def four_squares(n):
 
     - ``n`` -- an integer
 
-    OUTPUT: a tuple `(a,b,c,d)` of non-negative integers such that
+    OUTPUT: a tuple `(a,b,c,d)` of nonnegative integers such that
     `n = a^2 + b^2 + c^2 + d^2` with `a <= b <= c <= d`.
 
     EXAMPLES::
@@ -5708,11 +5686,11 @@ def sum_of_k_squares(k, n):
 
     INPUT:
 
-    - ``k`` -- a non-negative integer
+    - ``k`` -- a nonnegative integer
 
     - ``n`` -- an integer
 
-    OUTPUT: a tuple `(x_1, ..., x_k)` of non-negative integers such that
+    OUTPUT: a tuple `(x_1, ..., x_k)` of nonnegative integers such that
     their squares sum to `n`.
 
     EXAMPLES::
@@ -5758,7 +5736,7 @@ def sum_of_k_squares(k, n):
         sage: sum_of_k_squares(-1, 0)
         Traceback (most recent call last):
         ...
-        ValueError: k = -1 must be non-negative
+        ValueError: k = -1 must be nonnegative
 
     Tests with numpy and gmpy2 numbers::
 
@@ -5789,7 +5767,7 @@ def sum_of_k_squares(k, n):
             if n == 0:
                 return tuple()
             raise ValueError("%s is not a sum of 0 squares" % n)
-        raise ValueError("k = %s must be non-negative" % k)
+        raise ValueError("k = %s must be nonnegative" % k)
 
     if n < 0:
         raise ValueError("%s is not a sum of %s squares" % (n,k))
@@ -6037,9 +6015,7 @@ def fundamental_discriminant(D):
 
     - ``D`` -- an integer
 
-    OUTPUT:
-
-    - an integer, the fundamental discriminant
+    OUTPUT: an integer, the fundamental discriminant
 
     EXAMPLES::
 

@@ -1606,8 +1606,8 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``check_input`` -- (default: ``True``) whether or not to check
-          that ``self`` indeed has ribbon shape
+        - ``check_input`` -- boolean (default: ``True``); whether or not to
+          check that ``self`` indeed has ribbon shape
 
         EXAMPLES::
 

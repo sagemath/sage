@@ -70,7 +70,7 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
 
     - ``ring`` -- the ring over which the representation is defined
 
-    - ``cache_matrices`` -- boolean (default: ``True``) if ``True``, then any
+    - ``cache_matrices`` -- boolean (default: ``True``); if ``True``, then any
       representation matrices that are computed are cached
 
     EXAMPLES:
@@ -196,7 +196,7 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
 
     - ``ring`` -- the ring over which the representation is defined
 
-    - ``cache_matrices`` -- boolean (default: ``True``) if ``True``, then any
+    - ``cache_matrices`` -- boolean (default: ``True``); if ``True``, then any
       representation matrices that are computed are cached
 
     EXAMPLES:

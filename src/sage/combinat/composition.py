@@ -444,8 +444,8 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
         OUTPUT:
 
@@ -556,8 +556,8 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
         OUTPUT:
 
@@ -681,8 +681,8 @@ class Composition(CombinatorialElement):
 
         - ``other`` -- composition of same size as ``self``
 
-        - ``check`` -- (default: ``True``) a Boolean determining whether
-          to check the input compositions for having the same size
+        - ``check`` -- boolean (default: ``True``); whether to check the input
+          compositions for having the same size
 
         OUTPUT:
 
@@ -1051,8 +1051,8 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final`` -- (default: ``True``) whether or not to include the final
-          partial sum, which is always the size of the composition.
+        - ``final`` -- boolean (default: ``True``); whether or not to include
+          the final partial sum, which is always the size of the composition
 
         .. SEEALSO::
 
@@ -1087,8 +1087,8 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final`` -- (default: ``False``) whether or not to include the final
-          partial sum, which is always the size of the composition.
+        - ``final`` -- boolean (default: ``False``); whether or not to include
+          the final partial sum, which is always the size of the composition
 
         .. SEEALSO::
 
@@ -1795,7 +1795,7 @@ class Compositions(UniqueRepresentation, Parent):
 
         - ``descents`` -- an iterable
 
-        - ``nps`` -- (default: ``None``) an integer or ``None``
+        - ``nps`` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
 

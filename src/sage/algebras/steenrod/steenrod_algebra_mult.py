@@ -54,10 +54,10 @@ the sum of the nth diagonal in the matrix; then
   \text{Sq}(r_1, r_2, ...) \text{Sq}(s_1, s_2, ...) = \sum \text{Sq}(t_1, t_2, ...)
 
 The function :func:`milnor_multiplication` takes as input two tuples
-of non-negative integers, `r` and `s`, which represent
+of nonnegative integers, `r` and `s`, which represent
 `\text{Sq}(r)=\text{Sq}(r_1, r_2, ...)` and
 `\text{Sq}(s)=\text{Sq}(s_1, s_2, ...)`; it returns as output a
-dictionary whose keys are tuples `t=(t_1, t_2, ...)` of non-negative
+dictionary whose keys are tuples `t=(t_1, t_2, ...)` of nonnegative
 integers, and for each tuple the associated value is the coefficient
 of `\text{Sq}(t)` in the product formula.  (Since we are working mod 2,
 this coefficient is 1 -- if it is zero, the element is omitted from
@@ -128,10 +128,10 @@ For example when `p=5`, we have
     \mathcal{P}(5) \mathcal{P}(1,1) = \mathcal{P}(6,1) + 2 \mathcal{P}(0,2).
 
 The function :func:`milnor_multiplication` takes as input two pairs of
-tuples of non-negative integers, `(g,q)` and `(f,s)`, which represent
+tuples of nonnegative integers, `(g,q)` and `(f,s)`, which represent
 `Q_{g_1} Q_{g_2} ... \mathcal{P}(q_1, q_2, ...)` and
 `Q_{f_1} Q_{f_2} ... \mathcal{P}(s_1, s_2, ...)`.  It returns as output a
-dictionary whose keys are pairs of tuples `(e,t)` of non-negative
+dictionary whose keys are pairs of tuples `(e,t)` of nonnegative
 integers, and for each tuple the associated value is the coefficient
 in the product formula.
 
@@ -210,13 +210,13 @@ def milnor_multiplication(r,s):
 
     INPUT:
 
-    - r -- tuple of non-negative integers
-    - s -- tuple of non-negative integers
+    - r -- tuple of nonnegative integers
+    - s -- tuple of nonnegative integers
 
     OUTPUT:
 
     Dictionary of terms of the form (tuple: coeff), where
-    'tuple' is a tuple of non-negative integers and 'coeff' is 1.
+    'tuple' is a tuple of nonnegative integers and 'coeff' is 1.
 
     This computes Milnor matrices for the product of `\text{Sq}(r)`
     and `\text{Sq}(s)`, computes their multinomial coefficients, and
@@ -379,7 +379,7 @@ def milnor_multiplication_odd(m1,m2,p):
     INPUT:
 
     - m1 -- pair of tuples (e,r), where e is an increasing tuple of
-      non-negative integers and r is a tuple of non-negative integers
+      nonnegative integers and r is a tuple of nonnegative integers
     - m2 -- pair of tuples (f,s), same format as m1
     - p -- odd prime number
 
@@ -846,14 +846,14 @@ def make_mono_admissible(mono, p=2, generic=None):
 
     INPUT:
 
-    - ``mono`` -- a tuple of non-negative integers
+    - ``mono`` -- a tuple of nonnegative integers
     - `p` -- prime number, optional (default 2)
     - `generic` -- whether to use the generic Steenrod algebra, (default: depends on prime)
 
     OUTPUT:
 
     Dictionary of terms of the form (tuple: coeff), where
-    'tuple' is an admissible tuple of non-negative integers and
+    'tuple' is an admissible tuple of nonnegative integers and
     'coeff' is its coefficient.  This corresponds to a linear
     combination of admissible monomials.  When `p` is odd, each tuple
     must have an odd length: it should be of the form `(e_1, i_1, e_2,

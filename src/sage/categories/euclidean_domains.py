@@ -213,7 +213,7 @@ class EuclideanDomains(Category_singleton):
 
             OUTPUT:
 
-            For non-zero elements, a natural number. For the zero element, this
+            For nonzero elements, a natural number. For the zero element, this
             might raise an exception or produce some other output, depending on
             the implementation.
 
@@ -257,7 +257,7 @@ class EuclideanDomains(Category_singleton):
         def quo_rem(self, other):
             r"""
             Return the quotient and remainder of the division of this element
-            by the non-zero element ``other``.
+            by the nonzero element ``other``.
 
             INPUT:
 

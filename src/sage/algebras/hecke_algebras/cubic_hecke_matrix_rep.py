@@ -594,7 +594,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
     - ``subdivide`` -- boolean (default: ``False``); whether or not to subdivide
       the resulting matrices
 
-    - ``original`` -- boolean (default: ``False``) if ``True``, the matrix
+    - ``original`` -- boolean (default: ``False``); if ``True``, the matrix
       will have coefficients in the generic base / extension ring
 
     EXAMPLES::

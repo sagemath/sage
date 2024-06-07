@@ -1710,9 +1710,7 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
     - ``tolabs`` -- the absolute tolerance for the method.
 
 
-    OUTPUT:
-
-    - A list  with the positions of the IVP.
+    OUTPUT: list with the positions of the IVP
 
 
     EXAMPLES:
@@ -1803,9 +1801,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
     - ``digits`` -- the digits of precision used in the computation.
 
 
-    OUTPUT:
-
-    - A list  with the positions of the IVP.
+    OUTPUT: list with the positions of the IVP
 
 
     EXAMPLES:

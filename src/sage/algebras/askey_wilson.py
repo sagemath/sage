@@ -806,9 +806,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
         - ``position`` -- (default: 0) integer
         - ``category`` -- (optional) category
 
-        OUTPUT:
-
-        - module morphism
+        OUTPUT: module morphism
 
         EXAMPLES::
 
@@ -854,9 +852,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
 
         - ``c`` -- a tuple of length 6
 
-        OUTPUT:
-
-        - element of the codomain
+        OUTPUT: element of the codomain
 
         EXAMPLES::
 

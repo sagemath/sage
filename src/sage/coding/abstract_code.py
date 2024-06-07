@@ -281,19 +281,19 @@ class AbstractCode(Parent):
             ...
             ValueError: length must be a Python int or a Sage Integer
 
-        If the length of the code is not a non-zero positive integer
+        If the length of the code is not a nonzero positive integer
         (See :issue:`21326`), it will raise an exception::
 
             sage: C = MyCodeFamily(0)
             Traceback (most recent call last):
             ...
-            ValueError: length must be a non-zero positive integer
+            ValueError: length must be a nonzero positive integer
         """
 
         if not isinstance(length, (int, Integer)):
             raise ValueError("length must be a Python int or a Sage Integer")
         if length <= 0:
-            raise ValueError("length must be a non-zero positive integer")
+            raise ValueError("length must be a nonzero positive integer")
 
         self._length = length
         self._metric = metric
@@ -678,9 +678,7 @@ class AbstractCode(Parent):
 
         - ``args``, ``kwargs`` -- all additional arguments are forwarded to :meth:`decoder`
 
-        OUTPUT:
-
-        - A vector of ``self``.
+        OUTPUT: a vector of ``self``
 
         EXAMPLES::
 
@@ -716,9 +714,7 @@ class AbstractCode(Parent):
 
         - ``args``, ``kwargs`` -- all additional arguments are forwarded to :meth:`decoder`
 
-        OUTPUT:
-
-        - A vector of the message space of ``self``.
+        OUTPUT: a vector of the message space of ``self``
 
         EXAMPLES::
 
@@ -752,9 +748,7 @@ class AbstractCode(Parent):
         - ``args``, ``kwargs`` -- all additional arguments will be forwarded to the constructor of the decoder
           that will be returned by this method
 
-        OUTPUT:
-
-        - a decoder object
+        OUTPUT: a decoder object
 
         Besides creating the decoder and returning it, this method also stores
         the decoder in a cache. With this behaviour, each decoder will be created
@@ -880,9 +874,7 @@ class AbstractCode(Parent):
 
             C(word)
 
-        OUTPUT:
-
-        - a vector of ``self``.
+        OUTPUT: a vector of ``self``
 
         EXAMPLES::
 
@@ -926,9 +918,7 @@ class AbstractCode(Parent):
         - ``args``, ``kwargs`` -- all additional arguments are forwarded to the constructor of the encoder
           this method will return.
 
-        OUTPUT:
-
-        - an Encoder object.
+        OUTPUT: an Encoder object
 
         .. NOTE::
 
@@ -1061,9 +1051,7 @@ class AbstractCode(Parent):
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
           encoder that is used.
 
-        OUTPUT:
-
-        - an element of the message space of ``encoder_name`` of ``self``.
+        OUTPUT: an element of the message space of ``encoder_name`` of ``self``
 
         EXAMPLES::
 
@@ -1082,9 +1070,7 @@ class AbstractCode(Parent):
         Returns a random codeword; passes other positional and keyword
         arguments to ``random_element()`` method of vector space.
 
-        OUTPUT:
-
-        - Random element of the vector space of this code
+        OUTPUT: random element of the vector space of this code
 
         EXAMPLES::
 

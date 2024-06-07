@@ -1963,7 +1963,7 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
 
     - ``k`` -- (optional) if specified, returns the partial Bell
       polynomial, otherwise returns the complete Bell polynomial
-    - ``ordinary`` -- (default: ``False``) if ``True``, returns the
+    - ``ordinary`` -- boolean (default: ``False``); if ``True``, returns the
       (partial) ordinary Bell polynomial, otherwise returns
       the (partial) exponential Bell polynomial
 

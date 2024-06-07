@@ -501,9 +501,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
         - ``x`` -- an element of the ambient semigroup (``self.ambient()``).
 
-        OUTPUT:
-
-        - an element of ``self``.
+        OUTPUT: an element of ``self``
 
         EXAMPLES::
 

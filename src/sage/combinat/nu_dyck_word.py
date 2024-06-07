@@ -428,28 +428,28 @@ class NuDyckWord(CombinatorialElement):
 
         The default values are set in the ``__init__`` function.
 
-        - ``color`` -- (default: black) the line color.
+        - ``color`` -- (default: black) the line color
 
         - ``line width`` -- (default: `2 \times` ``tikz_scale``) value
-          representing the line width.
+          representing the line width
 
         - ``nu_options`` -- (default: ``'rounded corners=1, color=red, line
-          width=1'``) str to indicate what the tikz options should be for path
-          of `\nu`.
+          width=1'``) string to indicate what the tikz options should be for
+          path of `\nu`
 
         - ``points_color`` -- (default: ``'black'``) str to indicate color
-          points should be drawn with.
+          points should be drawn with
 
-        - ``show_grid`` -- (default: ``True``) boolean value to indicate if
-          grid should be shown.
+        - ``show_grid`` -- boolean (default: ``True``); value to indicate if
+          grid should be shown
 
-        - ``show_nu`` -- (default: ``True``) boolean value to indicate if `\nu`
-          should be shown.
+        - ``show_nu`` -- boolean (default: ``True``); value to indicate if `\nu`
+          should be shown
 
-        - ``show_points`` -- (default: ``False``) boolean value to indicate
-          if points should be shown on path.
+        - ``show_points`` -- boolean (default: ``False``); value to indicate
+          if points should be shown on path
 
-        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
+        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package
 
         INPUT:
 
@@ -475,26 +475,26 @@ class NuDyckWord(CombinatorialElement):
 
         The default values are set using the options.
 
-        - ``color`` -- (default: black) the line color.
+        - ``color`` -- (default: black) the line color
 
         - ``line width`` -- (default: 2*``tikz_scale``) value representing the
-          line width.
+          line width
 
         - ``nu_options`` -- (default: ``'rounded corners=1, color=red, line
-          width=1'``) str to indicate what the tikz options should be for path
-          of `\nu`.
+          width=1'``) string to indicate what the tikz options should be for
+          path of `\nu`
 
         - ``points_color`` -- (default: ``'black'``) str to indicate color
-          points should be drawn with.
+          points should be drawn with
 
-        - ``show_grid`` -- (default: ``True``) boolean value to indicate if
-          grid should be shown.
+        - ``show_grid`` -- boolean (default: ``True``); value to indicate if
+          grid should be shown
 
-        - ``show_nu`` -- (default: ``True``) boolean value to indicate if `\nu`
-          should be shown.
+        - ``show_nu`` -- boolean (default: ``True``); value to indicate if `\nu`
+          should be shown
 
-        - ``show_points`` -- (default: ``False``) boolean value to indicate
-          if points should be shown on path.
+        - ``show_points`` -- boolean (default: ``False``); value to indicate
+          if points should be shown on path
 
         - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
 

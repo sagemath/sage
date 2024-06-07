@@ -56,9 +56,7 @@ def get_basis_name(basis, p, generic=None):
 
     - ``generic`` -- boolean, optional, default to 'None'
 
-    OUTPUT:
-
-    - ``basis_name`` -- string
+    OUTPUT: ``basis_name`` -- string
 
     Specify the names of the implemented bases.  The input is
     converted to lower-case, then processed to return the canonical
@@ -329,7 +327,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     function, and it may be entered in any of the following forms:
 
     - a list or tuple, e.g., ``[3,2,1,1]``
-    - a function from positive integers to non-negative integers (and
+    - a function from positive integers to nonnegative integers (and
       `\infty`), e.g., ``lambda n: n+2``.  This corresponds to the
       list ``[3, 4, 5, ...]``.
     - ``None`` or ``Infinity`` -- use this for the profile function for
@@ -359,8 +357,8 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
       the set `\{1,2\}`, e.g., ``([3,2,1,1], [1,1,2,2,1])``.
 
     - a pair of functions, one (called `e`) from positive integers to
-      non-negative integers (and `\infty`), one (called `k`) from
-      non-negative integers to the set `\{1,2\}`, e.g.,
+      nonnegative integers (and `\infty`), one (called `k`) from
+      nonnegative integers to the set `\{1,2\}`, e.g.,
       ``(lambda n: n+2, lambda n: 1)``.  This corresponds to the
       pair ``([3, 4, 5, ...], [1, 1, 1, ...])``.
 
@@ -576,11 +574,11 @@ def milnor_mono_to_string(mono, latex=False, generic=False):
 
     INPUT:
 
-    - ``mono`` -- if `generic=False`, tuple of non-negative integers (a,b,c,...);
-      if `generic=True`, pair of tuples of non-negative integers ((e0, e1, e2,
+    - ``mono`` -- if `generic=False`, tuple of nonnegative integers (a,b,c,...);
+      if `generic=True`, pair of tuples of nonnegative integers ((e0, e1, e2,
       ...), (r1, r2, ...))
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -654,7 +652,7 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
       or tuple (e0, n1, e1, n2, ...) when `generic=True`, where each ei is 0 or
       1, and each ni is positive
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -730,9 +728,9 @@ def wood_mono_to_string(mono, latex=False):
 
     INPUT:
 
-    - ``mono`` -- tuple of pairs of non-negative integers (s,t)
+    - ``mono`` -- tuple of pairs of nonnegative integers (s,t)
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     OUTPUT:
@@ -775,10 +773,10 @@ def wall_mono_to_string(mono, latex=False):
 
     INPUT:
 
-    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of nonnegative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     OUTPUT:
@@ -816,10 +814,10 @@ def wall_long_mono_to_string(mono, latex=False):
 
     INPUT:
 
-    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of nonnegative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     OUTPUT:
@@ -861,10 +859,10 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    -  ``mono`` -- tuple of pairs of non-negative integers
+    -  ``mono`` -- tuple of pairs of nonnegative integers
        (m,k) with `m >= k`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     OUTPUT:
@@ -903,10 +901,10 @@ def arnonA_long_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    - ``mono`` -- tuple of pairs of non-negative integers (m,k) with `m
+    - ``mono`` -- tuple of pairs of nonnegative integers (m,k) with `m
       >= k`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     OUTPUT:
@@ -951,7 +949,7 @@ def pst_mono_to_string(mono, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -1014,7 +1012,7 @@ def comm_mono_to_string(mono, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -1077,7 +1075,7 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
     - ``mono`` -- tuple of pairs of integers (s,t) with `s >= 0`, `t >
       0`
 
-    - ``latex`` -- boolean (default: ``False``), if true, output
+    - ``latex`` -- boolean (default: ``False``); if true, output
       LaTeX string
 
     - ``generic`` -- whether to format generically, or for the prime 2 (default)
@@ -1140,12 +1138,12 @@ def comm_long_mono_to_string(mono, p, latex=False, generic=False):
 
 def convert_perm(m):
     """
-    Convert tuple m of non-negative integers to a permutation in
+    Convert tuple m of nonnegative integers to a permutation in
     one-line form.
 
     INPUT:
 
-    - ``m`` -- tuple of non-negative integers with no repetitions
+    - ``m`` -- tuple of nonnegative integers with no repetitions
 
     OUTPUT:
 
