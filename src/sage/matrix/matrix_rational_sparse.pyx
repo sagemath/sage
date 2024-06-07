@@ -151,7 +151,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_set_entry(&self._matrix[i], j, z)
         mpq_clear(z)
 
-
     ########################################################################
     # LEVEL 2 functionality
     #   * def _pickle
@@ -590,7 +589,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         E._parent = self._parent
         return E, pivots
 
-
     def set_row_to_multiple_of_row(self, i, j, s):
         """
         Set row i equal to s times row j.
@@ -712,7 +710,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v = &self._matrix[i]
         w = &_A._matrix[r]
 
-
         if cols_index is None:
             cols_index = dict([(cols[i], i) for i in range(len(cols))])
 
@@ -724,7 +721,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         allocate_mpq_vector(v, n)
         v.num_nonzero = n
         v.degree = self._ncols
-
 
         for l from 0 <= l < n:
             v.positions[l] = cols_index[w.positions[pos[l]]]
