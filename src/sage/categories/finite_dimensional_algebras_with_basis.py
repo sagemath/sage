@@ -959,7 +959,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``idempotents`` -- a list of orthogonal idempotents
+            - ``idempotents`` -- list of orthogonal idempotents
               `(e_i)_{i=0,\ldots,n}` of the algebra that sum to `1`
               (default: the idempotents returned by
               :meth:`orthogonal_idempotents_central_mod_radical`)
@@ -1035,7 +1035,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``l`` -- a list or iterable of elements of ``self``
+            - ``l`` -- list or iterable of elements of ``self``
 
             EXAMPLES::
 

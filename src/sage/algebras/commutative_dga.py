@@ -114,7 +114,7 @@ def sorting_keys(element):
 
     INPUT:
 
-    - ``element`` -- A CohomologyClass
+    - ``element`` -- a CohomologyClass
 
     OUTPUT: its coordinates in the corresponding ``cohomology_raw`` quotient vector space
 
@@ -3498,7 +3498,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
 
     - ``ring`` -- a graded commutative algebra
 
-    - ``relations`` -- a list or tuple of elements of ``ring``
+    - ``relations`` -- list or tuple of elements of ``ring``
 
     EXAMPLES:
 
@@ -4222,7 +4222,7 @@ def total_degree(deg):
 
     INPUT:
 
-    - ``deg`` -- an element of a free abelian group.
+    - ``deg`` -- an element of a free abelian group
 
     In fact, ``deg`` could be an integer, a Python int, a list, a
     tuple, a vector, etc. This function returns the sum of the

@@ -81,13 +81,13 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
     - ``dimension`` -- the dimension of the resulting code
 
-    - ``column_multipliers`` -- (default: ``None``) list of non-zero
+    - ``column_multipliers`` -- (default: ``None``) list of nonzero
       elements of `F`; all column multipliers are set to 1 if default
       value is kept
 
     EXAMPLES:
 
-    Often, one constructs a Reed-Solomon code by taking all non-zero elements of
+    Often, one constructs a Reed-Solomon code by taking all nonzero elements of
     the field as evaluation points, and specifying no column multipliers (see
     also :func:`ReedSolomonCode` for constructing classical Reed-Solomon codes
     directly)::
@@ -192,7 +192,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k, F.list()[:n])
             Traceback (most recent call last):
             ...
-            ValueError: All column multipliers must be non-zero
+            ValueError: All column multipliers must be nonzero
 
         And all the evaluation points must be different. Note that they should
         be different after converting into the same field::
@@ -240,7 +240,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         self._dimension = dimension
 
         if F.zero() in self._column_multipliers:
-            raise ValueError("All column multipliers must be non-zero")
+            raise ValueError("All column multipliers must be nonzero")
         if len(self._evaluation_points) != len(set(self._evaluation_points)):
             raise ValueError("All evaluation points must be different")
 
@@ -956,9 +956,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
         - ``p`` -- a polynomial from the message space of ``self`` of degree
           less than ``self.code().dimension()``
 
-        OUTPUT:
-
-        - a codeword in associated code of ``self``
+        OUTPUT: a codeword in associated code of ``self``
 
         EXAMPLES::
 
@@ -1269,9 +1267,7 @@ class GRSBerlekampWelchDecoder(Decoder):
 
         - ``r`` -- a codeword of ``self``
 
-        OUTPUT:
-
-        - a vector of ``self`` message space
+        OUTPUT: a vector of ``self`` message space
 
         EXAMPLES::
 
@@ -1381,9 +1377,7 @@ class GRSBerlekampWelchDecoder(Decoder):
         r"""
         Return maximal number of errors that ``self`` can decode.
 
-        OUTPUT:
-
-        - the number of errors as an integer
+        OUTPUT: the number of errors as an integer
 
         EXAMPLES::
 
@@ -1519,9 +1513,7 @@ class GRSGaoDecoder(Decoder):
 
         - ``PolRing`` -- polynomial ring of the output
 
-        OUTPUT:
-
-        - a polynomial over ``PolRing``
+        OUTPUT: a polynomial over ``PolRing``
 
         EXAMPLES::
 
@@ -1652,9 +1644,7 @@ class GRSGaoDecoder(Decoder):
 
         - ``r`` -- a codeword of ``self``
 
-        OUTPUT:
-
-        - a vector of ``self`` message space
+        OUTPUT: a vector of ``self`` message space
 
         EXAMPLES::
 
@@ -1766,9 +1756,7 @@ class GRSGaoDecoder(Decoder):
         r"""
         Return maximal number of errors that ``self`` can decode
 
-        OUTPUT:
-
-        - the number of errors as an integer
+        OUTPUT: the number of errors as an integer
 
         EXAMPLES::
 
@@ -1914,9 +1902,7 @@ class GRSErrorErasureDecoder(Decoder):
             In either case, if ``r`` is not a codeword,
             the output is unspecified.
 
-        OUTPUT:
-
-        - a vector of ``self`` message space
+        OUTPUT: a vector of ``self`` message space
 
         EXAMPLES::
 
@@ -1993,9 +1979,7 @@ class GRSErrorErasureDecoder(Decoder):
 
         - ``number_erasures`` -- the number of erasures when we try to decode
 
-        OUTPUT:
-
-        - the number of errors as an integer
+        OUTPUT: the number of errors as an integer
 
         EXAMPLES::
 
@@ -2177,9 +2161,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
         - ``r`` -- a vector of the ambient space of ``self.code()``
 
-        OUTPUT:
-
-        - a list
+        OUTPUT: a list
 
         EXAMPLES::
 
@@ -2214,9 +2196,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
         - ``error_evaluator``, ``error_locator`` -- two polynomials
 
-        OUTPUT:
-
-        - a vector
+        OUTPUT: a vector
 
         EXAMPLES::
 
@@ -2334,9 +2314,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
         - ``r`` -- a codeword of ``self``
 
-        OUTPUT:
-
-        - a vector of ``self`` message space
+        OUTPUT: a vector of ``self`` message space
 
         EXAMPLES::
 
@@ -2360,9 +2338,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         r"""
         Return maximal number of errors that ``self`` can decode
 
-        OUTPUT:
-
-        - the number of errors as an integer
+        OUTPUT: the number of errors as an integer
 
         EXAMPLES::
 

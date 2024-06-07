@@ -308,7 +308,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``elements`` -- a list or finite iterable of elements of ``self``
+            - ``elements`` -- list or finite iterable of elements of ``self``
             - ``row_reduced`` -- boolean (default: ``False``); whether to
               compute the basis for the row reduced echelon form
             - ``order`` -- (optional) either something that can
@@ -481,7 +481,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``G`` -- a finitely-generated group
-            - ``chi`` -- a list/tuple of character values or an instance of
+            - ``chi`` -- list/tuple of character values or an instance of
               :class:`~sage.groups.class_function.ClassFunction_gap`
             - ``action`` -- a function (default: :obj:`operator.mul`)
             - ``action_on_basis`` -- (optional) define the action of ``g``

@@ -822,7 +822,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``n`` -- a positive integer.
+                - ``n`` -- positive integer
 
                 - ``reduced`` -- boolean (default: ``False``); if set to True,
                   the presentation matrix will be reduced.

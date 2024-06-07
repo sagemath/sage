@@ -560,7 +560,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``i`` -- an element of the index set of the distinguished reflections.
+            - ``i`` -- an element of the index set of the distinguished reflections
 
             .. SEEALSO::
 
@@ -650,7 +650,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``word`` -- a list (or iterable) of elements of the
+            - ``word`` -- list (or iterable) of elements of the
               index set of ``self`` (resp. of the distinguished
               or of all reflections)
             - ``word_type`` -- (default: ``'simple'``):

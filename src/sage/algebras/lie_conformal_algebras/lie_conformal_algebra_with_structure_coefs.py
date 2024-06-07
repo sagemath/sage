@@ -39,7 +39,7 @@ class LieConformalAlgebraWithStructureCoefficients(
       conformal algebra. Behaviour is undefined if it is not a field
       of characteristic zero.
 
-    - ``s_coeff`` -- Dictionary (Default: ``None``);
+    - ``s_coeff`` -- dictionary (Default: ``None``);
       a dictionary containing the `\lambda` brackets of the
       generators of this Lie conformal algebra. The family encodes a
       dictionary whose keys

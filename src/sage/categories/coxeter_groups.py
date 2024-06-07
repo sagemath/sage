@@ -262,7 +262,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``word`` -- a list (or iterable) of indices in
+            - ``word`` -- list (or iterable) of indices in
               ``self.index_set()``
 
             OUTPUT:
@@ -893,7 +893,7 @@ class CoxeterGroups(Category_singleton):
 
             - ``self`` -- a Coxeter group `W`
             - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``length_increasing`` -- a boolean (default: ``True``); whether
+            - ``length_increasing`` -- boolean (default: ``True``); whether
               the operator increases or decreases length
 
             This returns the simple projections of `W`, as a family.
@@ -1539,7 +1539,7 @@ class CoxeterGroups(Category_singleton):
             - ``index_set`` -- a subset (as a list or iterable) of the nodes of the Dynkin diagram;
               (default: all of them)
             - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``positive`` -- a boolean (default: ``False``)
+            - ``positive`` -- boolean (default: ``False``)
 
             The ``index_set`` option can be used to restrict to the
             parabolic subgroup indexed by ``index_set``.
@@ -2323,7 +2323,7 @@ class CoxeterGroups(Category_singleton):
 
             - ``i`` -- an element of the index set of the Coxeter group
             - ``side`` -- 'left' or 'right' (default: 'right')
-            - ``length_increasing`` -- a boolean (default: ``True``);
+            - ``length_increasing`` -- boolean (default: ``True``);
               specifying the direction of the projection
 
             See :meth:`CoxeterGroups.ParentMethods.simple_projections`
@@ -2791,8 +2791,8 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - side -- 'left' or 'right'  (default: 'right')
-            - positive -- a boolean (default: ``False``)
-            - index_set -- a list of indices or None
+            - positive -- boolean (default: ``False``)
+            - index_set -- list of indices or None
 
             OUTPUT: list
 
@@ -2838,7 +2838,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``c`` -- a Coxeter element.
+            - ``c`` -- a Coxeter element
 
             OUTPUT:
 
@@ -2883,7 +2883,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - ``c`` -- a Coxeter element
-            - ``sorting_word`` -- sorting word (default: ``None``) used to
+            - ``sorting_word`` -- sorting word (default: ``None``); used to
               not recompute the `c`-sorting word if already computed
 
             OUTPUT: is ``self`` `c`-sortable
@@ -2961,7 +2961,7 @@ class CoxeterGroups(Category_singleton):
                 applied. If ``side`` is 'left' then the operation is
                 applied on the left.
 
-            - ``length_increasing`` -- a boolean (default: ``True``)
+            - ``length_increasing`` -- boolean (default: ``True``)
                 whether to act length increasingly or decreasingly
 
             EXAMPLES::
@@ -3205,7 +3205,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
-            - ``index_set`` -- a list of indices or ``None``
+            - ``index_set`` -- list of indices or ``None``
 
             OUTPUT: list
 
@@ -3241,7 +3241,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
-            - ``index_set`` -- a list of indices or ``None``
+            - ``index_set`` -- list of indices or ``None``
 
             OUTPUT: list
 

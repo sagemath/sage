@@ -390,9 +390,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         r"""
         Return a basis of ``self``.
 
-        OUTPUT:
-
-        -  ``Sequence`` -- an immutable sequence whose universe is ambient space of ``self``.
+        OUTPUT: ``Sequence`` -- an immutable sequence whose universe is ambient space of ``self``
 
         EXAMPLES::
 
@@ -463,9 +461,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         - ``r`` -- a vector of the same length as ``self``
 
-        OUTPUT:
-
-        - a column vector
+        OUTPUT: a column vector
 
         EXAMPLES::
 
@@ -655,9 +651,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         is called an information set if the corresponding columns
         form a square matrix of full rank.
 
-        OUTPUT:
-
-        - Information set of a systematic generator matrix of the code.
+        OUTPUT: information set of a systematic generator matrix of the code
 
         EXAMPLES::
 
@@ -681,9 +675,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         - A list of positions, i.e. integers in the range 0 to `n-1` where `n`
           is the length of ``self``.
 
-        OUTPUT:
-
-        - A boolean indicating whether the positions form an information set.
+        OUTPUT: a boolean indicating whether the positions form an information set
 
 
         EXAMPLES::

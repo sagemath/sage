@@ -231,9 +231,7 @@ class Decoder(SageObject):
 
         - ``r`` -- a element of the input space of ``self``.
 
-        OUTPUT:
-
-        - a vector of :meth:`code`.
+        OUTPUT: a vector of :meth:`code`
 
         EXAMPLES::
 
@@ -283,9 +281,7 @@ class Decoder(SageObject):
 
         - ``r`` -- a element of the input space of ``self``.
 
-        OUTPUT:
-
-        - a vector of :meth:`message_space`.
+        OUTPUT: a vector of :meth:`message_space`
 
         EXAMPLES::
 

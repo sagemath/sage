@@ -47,7 +47,7 @@ The following functions require the optional package ``tides``:
 - :func:`desolve_mintides` -- Numerical solution of a system of 1st order ODEs via
   the Taylor series integrator method implemented in TIDES.
 
-- :func:`desolve_tides_mpfr` -- Arbitrary precision Taylor series integrator implemented in TIDES.
+- :func:`desolve_tides_mpfr` -- Arbitrary precision Taylor series integrator implemented in TIDES
 
 AUTHORS:
 
@@ -674,7 +674,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
       `x`), which must be specified if there is more than one
       independent variable in the equation.
 
-    - ``ics`` -- a list of numbers representing initial conditions, (e.g.
+    - ``ics`` -- list of numbers representing initial conditions, (e.g.
       ``f(0)=1``, ``f'(0)=2`` corresponds to ``ics = [0,1,2]``)
 
     OUTPUT: solution of the ODE as symbolic expression
@@ -1508,7 +1508,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     - ``dvars`` -- dependent variables. ATTENTION: the order must be the same as
       in ``des``, that means: ``d(dvars[i])/dt=des[i]``
 
-    - ``ivar`` -- independent variable, optional.
+    - ``ivar`` -- independent variable, optional
 
     - ``compute_jac`` -- boolean. If True, the Jacobian of ``des`` is computed and
       used during the integration of stiff systems. Default value is False.
@@ -1697,17 +1697,17 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
     - ``f`` -- symbolic function. Its first argument will be the independent
       variable. Its output should be de derivatives of the dependent variables.
 
-    - ``ics`` -- a list or tuple with the initial conditions.
+    - ``ics`` -- list or tuple with the initial conditions
 
-    - ``initial`` -- the starting value for the independent variable.
+    - ``initial`` -- the starting value for the independent variable
 
-    - ``final`` -- the final value for the independent value.
+    - ``final`` -- the final value for the independent value
 
-    - ``delta`` -- the size of the steps in the output.
+    - ``delta`` -- the size of the steps in the output
 
-    - ``tolrel`` -- the relative tolerance for the method.
+    - ``tolrel`` -- the relative tolerance for the method
 
-    - ``tolabs`` -- the absolute tolerance for the method.
+    - ``tolabs`` -- the absolute tolerance for the method
 
 
     OUTPUT: list with the positions of the IVP
@@ -1786,19 +1786,19 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
     - ``f`` -- symbolic function. Its first argument will be the independent
       variable. Its output should be de derivatives of the dependent variables.
 
-    - ``ics`` -- a list or tuple with the initial conditions.
+    - ``ics`` -- list or tuple with the initial conditions
 
-    - ``initial`` -- the starting value for the independent variable.
+    - ``initial`` -- the starting value for the independent variable
 
-    - ``final`` -- the final value for the independent value.
+    - ``final`` -- the final value for the independent value
 
-    - ``delta`` -- the size of the steps in the output.
+    - ``delta`` -- the size of the steps in the output
 
-    - ``tolrel`` -- the relative tolerance for the method.
+    - ``tolrel`` -- the relative tolerance for the method
 
-    - ``tolabs`` -- the absolute tolerance for the method.
+    - ``tolabs`` -- the absolute tolerance for the method
 
-    - ``digits`` -- the digits of precision used in the computation.
+    - ``digits`` -- the digits of precision used in the computation
 
 
     OUTPUT: list with the positions of the IVP

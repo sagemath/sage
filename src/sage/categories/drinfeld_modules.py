@@ -527,7 +527,7 @@ class DrinfeldModules(Category_over_base_ring):
 
         INPUT:
 
-        - ``rank`` -- an integer, the rank of the Drinfeld module
+        - ``rank`` -- integer; the rank of the Drinfeld module
 
         EXAMPLES::
 

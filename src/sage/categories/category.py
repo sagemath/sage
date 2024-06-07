@@ -930,7 +930,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - ``proper`` -- a boolean (default: ``False``); whether to exclude this category.
+         - ``proper`` -- boolean (default: ``False``); whether to exclude this category
 
         Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
@@ -1474,9 +1474,9 @@ class Category(UniqueRepresentation, SageObject):
           ``self`` that provides methods for the new class (in
           addition to those coming from the super categories).
           E.g. "ParentMethods"
-        - ``cache`` -- a boolean or ``ignore_reduction`` (default: ``False``)
+        - ``cache`` -- boolean or ``ignore_reduction`` (default: ``False``)
           (passed down to dynamic_class; for internal use only)
-        - ``picklable`` -- a boolean (default: ``True``)
+        - ``picklable`` -- boolean (default: ``True``)
 
         ASSUMPTION:
 
@@ -1816,7 +1816,7 @@ class Category(UniqueRepresentation, SageObject):
 
         - ``category`` -- a sub category of ``self``, tuple/list thereof,
           or ``None``
-        - ``join`` -- a boolean (default: ``False``)
+        - ``join`` -- boolean (default: ``False``)
 
         OUTPUT: a category
 
@@ -2083,7 +2083,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``axioms`` -- a list of strings, the names of the axioms
+        - ``axioms`` -- list of strings; the names of the axioms
 
         EXAMPLES::
 
@@ -2180,7 +2180,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``named`` -- a boolean (default: ``False``)
+        - ``named`` -- boolean (default: ``False``)
 
         .. TODO:: Improve this explanation.
 
@@ -2213,7 +2213,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``categories`` -- a list (or iterable) of non-join categories
+        - ``categories`` -- list (or iterable) of non-join categories
 
         OUTPUT: a sorted tuple of categories, possibly with repeats
 
@@ -2294,8 +2294,8 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``categories`` -- a list (or iterable) of categories
-        - ``as_list`` -- a boolean (default: ``False``);
+        - ``categories`` -- list (or iterable) of categories
+        - ``as_list`` -- boolean (default: ``False``);
           whether the result should be returned as a list
         - ``axioms`` -- a tuple of strings; the names of some
           supplementary axioms
@@ -2622,7 +2622,7 @@ def category_graph(categories=None):
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
     If ``categories`` is specified, then the graph contains the
     mentioned categories together with all their super
@@ -2944,9 +2944,9 @@ class JoinCategory(CategoryWithParameters):
 
         INPUT:
 
-        - ``super_categories`` -- Categories to join. This category will
+        - ``super_categories`` -- categories to join; this category will
           consist of objects and morphisms that lie in all of these
-          categories.
+          categories
 
         - ``name`` -- ignored
 
@@ -3030,7 +3030,7 @@ class JoinCategory(CategoryWithParameters):
 
         INPUT:
 
-        - ``category`` -- a category.
+        - ``category`` -- a category
 
         .. note::
 
@@ -3137,7 +3137,7 @@ class JoinCategory(CategoryWithParameters):
 
         INPUT:
 
-        - ``named`` -- a boolean (default: ``False``)
+        - ``named`` -- boolean (default: ``False``)
 
         See :meth:`Category._without_axioms` for the description
         of the ``named`` parameter.
@@ -3223,7 +3223,7 @@ class JoinCategory(CategoryWithParameters):
 
         INPUT:
 
-        - ``as_join`` -- a boolean (default: ``False``)
+        - ``as_join`` -- boolean (default: ``False``)
 
         EXAMPLES::
 

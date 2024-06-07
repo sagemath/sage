@@ -43,7 +43,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
     INPUT:
 
-    - ``monomials`` -- a list of pairs ``[m, c]`` where ``m`` is the index
+    - ``monomials`` -- list of pairs ``[m, c]`` where ``m`` is the index
       and ``c`` is the coefficient
     - ``term_repr`` -- a function which returns a string given an index
       (can be ``repr`` or ``latex``, for example)

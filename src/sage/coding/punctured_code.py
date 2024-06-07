@@ -277,9 +277,7 @@ class PuncturedCode(AbstractLinearCode):
           to encode ``word``. The default encoder of ``self`` will be used if
           default value is kept
 
-        OUTPUT:
-
-        - an element of ``self``
+        OUTPUT: an element of ``self``
 
         EXAMPLES::
 

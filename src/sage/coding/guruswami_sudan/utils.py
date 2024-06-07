@@ -35,7 +35,7 @@ def polynomial_to_list(p, len):
 
     - ``p`` -- a polynomial
 
-    - ``len`` -- an integer. If ``len`` is smaller than the degree of ``p``, the
+    - ``len`` -- integer; if ``len`` is smaller than the degree of ``p``, the
       returned list will be of size degree of ``p``, else it will be of size ``len``.
 
     EXAMPLES::
@@ -57,8 +57,8 @@ def johnson_radius(n, d):
 
     INPUT:
 
-    - ``n`` -- an integer, the length of the code
-    - ``d`` -- an integer, the minimum distance of the code
+    - ``n`` -- integer; the length of the code
+    - ``d`` -- integer; the minimum distance of the code
 
     EXAMPLES::
 
@@ -149,7 +149,7 @@ def _degree_of_vector(v, shifts=None):
 
     INPUT:
 
-    - ``v`` -- a vector of polynomials.
+    - ``v`` -- a vector of polynomials
 
     - ``shifts`` -- (default: ``None``) a list of integer shifts to consider
       ``v`` under, i.e. compute `\max(\deg v_i + s_i)`, where `s_1,\ldots, s_n`

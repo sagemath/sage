@@ -68,7 +68,7 @@ class Semigroups(CategoryWithAxiom):
 
         INPUT:
 
-        - ``choice`` -- str (default: 'leftzero'). Can be either 'leftzero'
+        - ``choice`` -- string (default: ``'leftzero'``); Can be either 'leftzero'
           for the left zero semigroup, or 'free' for the free semigroup.
         - ``**kwds`` -- keyword arguments passed onto the constructor for the
           chosen semigroup.
@@ -185,10 +185,10 @@ class Semigroups(CategoryWithAxiom):
             - ``simple`` -- boolean (default: ``False``):
               if ``True``, returns a simple graph (no loops, no labels,
               no multiple edges)
-            - ``generators`` -- a list, tuple, or family of elements
+            - ``generators`` -- list, tuple, or family of elements
               of ``self`` (default: ``self.semigroup_generators()``)
             - ``connecting_set`` -- alias for ``generators``; deprecated
-            - ``elements`` -- a list (or iterable) of elements of ``self``
+            - ``elements`` -- list (or iterable) of elements of ``self``
 
             OUTPUT: :class:`DiGraph`
 
@@ -377,7 +377,7 @@ class Semigroups(CategoryWithAxiom):
               ``self``, or a list, iterable, ... that can be converted
               into one (see :class:`Family`).
 
-            - ``one`` -- a unit for the subsemigroup, or ``None``.
+            - ``one`` -- a unit for the subsemigroup, or ``None``
 
             - ``category`` -- a category
 

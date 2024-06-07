@@ -1007,7 +1007,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``gens`` -- a list of generators of the subalgebra
+            - ``gens`` -- list of generators of the subalgebra
             - ``category`` -- (optional) a subcategory of subobjects of finite
               dimensional Lie algebras with basis
 
@@ -1048,7 +1048,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``gens`` -- a list of generators of the ideal
+            - ``gens`` -- list of generators of the ideal
             - ``category`` -- (optional) a subcategory of subobjects of finite
               dimensional Lie algebras with basis
 

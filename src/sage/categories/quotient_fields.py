@@ -343,8 +343,8 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``*args`` -- Arbitrary arguments suitable over the base ring
-            - ``**kwds`` -- Arbitrary keyword arguments suitable over the base ring
+            - ``*args`` -- arbitrary arguments suitable over the base ring
+            - ``**kwds`` -- arbitrary keyword arguments suitable over the base ring
 
             OUTPUT: factorization of ``self`` over the base ring
 
@@ -638,7 +638,7 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``var`` -- Variable with respect to which the derivative is computed
+            - ``var`` -- variable with respect to which the derivative is computed
 
             OUTPUT: derivative of ``self`` with respect to ``var``
 

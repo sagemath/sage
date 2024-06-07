@@ -42,7 +42,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
         INPUT:
 
         - `R` -- a commutative ring
-        - ``check`` -- a boolean (default: ``True``); whether to check
+        - ``check`` -- boolean (default: ``True``); whether to check
           that `R` is a commutative ring
 
         EXAMPLES::

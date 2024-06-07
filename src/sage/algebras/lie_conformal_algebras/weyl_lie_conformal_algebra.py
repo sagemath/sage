@@ -52,7 +52,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
       of non-central generators of this Lie conformal algebra.
     - ``gram_matrix``: a matrix (default: ``None``); A non-singular
       skew-symmetric square matrix with coefficients in `R`.
-    - ``names`` -- a list or tuple of ``str``; alternative names
+    - ``names`` -- list or tuple of ``str``; alternative names
       for the generators
     - ``index_set`` -- an enumerated set; alternative indexing set
       for the generators

@@ -161,7 +161,7 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``gens`` -- a list (or iterable) of elements of ``self``
+            - ``gens`` -- list (or iterable) of elements of ``self``
             - ``side`` -- [default: "twosided"] "left", "right" or "twosided"
 
             EXAMPLES::

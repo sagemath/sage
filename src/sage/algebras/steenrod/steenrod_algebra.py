@@ -818,7 +818,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` -- tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis
 
         OUTPUT: string
 
@@ -909,7 +909,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` -- tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis
 
         OUTPUT: string
 
@@ -1563,7 +1563,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` -- tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis
 
         OUTPUT: element of the Steenrod algebra with the Milnor basis
 
@@ -1742,7 +1742,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` -- tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis
 
         - ``basis`` -- string, the basis to which to convert, optional
           (default 'milnor')
@@ -1824,7 +1824,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` -- an element of this algebra.
+        - ``x`` -- an element of this algebra
 
         - ``basis`` -- string, the basis to which to convert, optional
           (default 'milnor')
@@ -1860,7 +1860,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` -- tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis
 
         OUTPUT: integer, the degree of the corresponding element
 
@@ -3287,7 +3287,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` -- string, basis in which to work.
+            - ``basis`` -- string, basis in which to work
 
             OUTPUT: representation of self in given basis
 

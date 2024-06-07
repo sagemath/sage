@@ -788,7 +788,7 @@ class QarySymmetricChannel(Channel):
 
         INPUT:
 
-        - ``t`` -- an integer
+        - ``t`` -- integer
 
         EXAMPLES::
 
@@ -808,7 +808,7 @@ class QarySymmetricChannel(Channel):
 
         INPUT:
 
-        - ``t`` -- an integer
+        - ``t`` -- integer
 
         EXAMPLES::
 

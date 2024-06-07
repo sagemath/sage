@@ -36,7 +36,7 @@ def _flatten_once(lstlst):
 
     INPUT:
 
-    - ``lstlst`` -- a list of lists.
+    - ``lstlst`` -- list of lists
 
     EXAMPLES::
 
@@ -98,11 +98,11 @@ def _interpolation_matrix_given_monomials(points, s, monomials):
 
     INPUT:
 
-    - ``points`` -- a list of pairs of field elements, the interpolation points.
+    - ``points`` -- list of pairs of field elements, the interpolation points
 
-    - ``s`` -- an integer, the multiplicity parameter from Guruswami-Sudan algorithm.
+    - ``s`` -- integer; the multiplicity parameter from Guruswami-Sudan algorithm
 
-    - ``monomials`` -- a list of monomials, each represented by the powers as an integer pair `(i,j)`.
+    - ``monomials`` -- list of monomials, each represented by the powers as an integer pair `(i,j)`
 
     EXAMPLES::
 
@@ -167,16 +167,16 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of interpolation points, as pairs of field elements.
+    - ``points`` -- list of interpolation points, as pairs of field elements
 
-    - ``tau`` -- an integer, the number of errors one wants to decode.
+    - ``tau`` -- integer; the number of errors one wants to decode
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
         - the first integer is the multiplicity parameter of Guruswami-Sudan algorithm and
         - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer specifying the `y`-weighted degree that is to be
+    - ``wy`` -- integer; specifying the `y`-weighted degree that is to be
       minimised in the interpolation polynomial. In Guruswami-Sudan, this is
       `k-1`, where `k` is the dimension of the GRS code.
 
@@ -233,10 +233,10 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek ``Q`` with
+    - ``points`` -- list of tuples ``(xi, yi)`` such that we seek ``Q`` with
       ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``.
 
-    - ``tau`` -- an integer, the number of errors one wants to decode.
+    - ``tau`` -- integer; the number of errors one wants to decode
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
@@ -244,7 +244,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
         algorithm and
       - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
+    - ``wy`` -- integer; the `y`-weight, where we seek `Q` of low
       ``(1, wy)``-weighted degree.
 
     EXAMPLES:
@@ -308,7 +308,7 @@ def lee_osullivan_module(points, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek `Q` with
+    - ``points`` -- list of tuples ``(xi, yi)`` such that we seek `Q` with
       ``(xi,yi)`` being a root of `Q` with multiplicity `s`.
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
@@ -317,7 +317,7 @@ def lee_osullivan_module(points, parameters, wy):
         algorithm and
       - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek `Q` of low
+    - ``wy`` -- integer; the `y`-weight, where we seek `Q` of low
       ``(1,wy)`` weighted degree.
 
     EXAMPLES::
@@ -362,10 +362,10 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
 
     INPUT:
 
-    - ``points`` -- a list of tuples ``(xi, yi)`` such that we seek ``Q`` with
+    - ``points`` -- list of tuples ``(xi, yi)`` such that we seek ``Q`` with
       ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``.
 
-    - ``tau`` -- an integer, the number of errors one wants to decode.
+    - ``tau`` -- integer; the number of errors one wants to decode
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
@@ -373,7 +373,7 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
         algorithm and
       - the second integer is the list size parameter.
 
-    - ``wy`` -- an integer, the `y`-weight, where we seek ``Q`` of low
+    - ``wy`` -- integer; the `y`-weight, where we seek ``Q`` of low
       ``(1,wy)`` weighted degree.
 
     EXAMPLES::

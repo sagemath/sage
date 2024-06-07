@@ -200,9 +200,9 @@ cdef class Action(Functor):
 
         INPUT:
 
-        - ``g`` -- an object with parent ``self.G``.
+        - ``g`` -- an object with parent ``self.G``
 
-        - ``x`` -- an object with parent ``self.US()``.
+        - ``x`` -- an object with parent ``self.US()``
 
         .. WARNING::
 

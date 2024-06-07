@@ -309,7 +309,7 @@ cdef class Spline:
 
         INPUT:
 
-        - ``x`` -- value at which to evaluate the derivative.
+        - ``x`` -- value at which to evaluate the derivative
 
         - ``order`` (default: 1) -- order of the derivative. Must be 1 or 2.
 
@@ -352,9 +352,9 @@ cdef class Spline:
 
         INPUT:
 
-        - ``a`` -- Lower bound for the integral.
+        - ``a`` -- lower bound for the integral
 
-        - ``b`` -- Upper bound for the integral.
+        - ``b`` -- upper bound for the integral
 
         EXAMPLES:
 

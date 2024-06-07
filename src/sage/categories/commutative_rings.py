@@ -151,12 +151,12 @@ class CommutativeRings(CategoryWithAxiom):
             - ``gen`` -- a generator of this extension (over its base) or ``None``
               (default: ``None``);
 
-            - ``gens`` -- a list of generators of this extension (over its base)
+            - ``gens`` -- list of generators of this extension (over its base)
               or ``None`` (default: ``None``);
 
             - ``name`` -- a variable name or ``None`` (default: ``None``)
 
-            - ``names`` -- a list or a tuple of variable names or ``None``
+            - ``names`` -- list or a tuple of variable names or ``None``
               (default: ``None``)
 
             EXAMPLES:

@@ -351,9 +351,9 @@ class ConstructionFunctor(Functor):
 
         INPUT:
 
-        - ``other_functor`` -- a construction functor.
+        - ``other_functor`` -- a construction functor
 
-        - ``self_bases`` -- the arguments passed to this functor.
+        - ``self_bases`` -- the arguments passed to this functor
 
         - ``other_bases`` -- the arguments passed to the functor
           ``other_functor``.
@@ -389,9 +389,9 @@ class ConstructionFunctor(Functor):
 
         INPUT:
 
-        - ``other_functor`` -- a functor.
+        - ``other_functor`` -- a functor
 
-        - ``self_bases`` -- the arguments passed to this functor.
+        - ``self_bases`` -- the arguments passed to this functor
 
         - ``other_bases`` -- the arguments passed to the functor
           ``other_functor``.
@@ -759,9 +759,9 @@ class MultivariateConstructionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other_functor`` -- a construction functor.
+        - ``other_functor`` -- a construction functor
 
-        - ``self_bases`` -- the arguments passed to this functor.
+        - ``self_bases`` -- the arguments passed to this functor
 
         - ``other_bases`` -- the arguments passed to the functor
           ``other_functor``.
@@ -3464,7 +3464,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- Construction Functor.
+        - ``other`` -- Construction Functor
 
         OUTPUT:
 

@@ -428,7 +428,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- an element of ``self``.
+        - ``x`` -- an element of ``self``
 
         OUTPUT:
 

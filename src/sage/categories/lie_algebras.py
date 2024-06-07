@@ -645,7 +645,7 @@ class LieAlgebras(Category_over_base_ring):
 
             - ``X`` -- an element of ``self``
             - ``Y`` -- an element of ``self``
-            - ``prec`` -- an integer; the maximum length of Lie brackets to be
+            - ``prec`` -- integer; the maximum length of Lie brackets to be
               considered in the formula
 
             EXAMPLES:
@@ -781,7 +781,7 @@ class LieAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
             EXAMPLES:
 
@@ -820,7 +820,7 @@ class LieAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
             EXAMPLES:
 
@@ -852,7 +852,7 @@ class LieAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
             TESTS::
 

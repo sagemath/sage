@@ -80,7 +80,7 @@ class InformationSetAlgorithm(SageObject):
 
     - ``code`` -- A linear code for which to decode.
 
-    - ``number_errors`` -- an integer, the maximal number of errors to accept as
+    - ``number_errors`` -- integer; the maximal number of errors to accept as
       correct decoding. An interval can also be specified by giving a pair of
       integers, where both end values are taken to be in the interval.
 
@@ -670,7 +670,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
     - ``code`` -- A linear code for which to decode.
 
-    - ``number_errors`` -- an integer, the maximal number of errors to accept as
+    - ``number_errors`` -- integer; the maximal number of errors to accept as
       correct decoding. An interval can also be specified by giving a pair of
       integers, where both end values are taken to be in the interval.
 

@@ -1227,14 +1227,11 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``processes`` -- an integer indicating the number of workers
-          in the pool; if left unspecified, the number of workers is
+        - ``processes`` -- integer indicating the number of workers
+          in the pool; if left unspecified, the number of workers
           equals the number of processors available
 
-        OUTPUT:
-
-        This method returns a boolean indicating whether a worker pool
-        was successfully initialized.
+        OUTPUT: boolean; whether a worker pool was successfully initialized
 
         EXAMPLES::
 
@@ -1399,7 +1396,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``output`` -- a boolean
+        - ``output`` -- boolean
 
         OUTPUT:
 
@@ -1621,7 +1618,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``eqns`` -- a list of polynomials
+        - ``eqns`` -- list of polynomials
 
         Each polynomial is either an object in the ring returned by
         :meth:`get_poly_ring` or it is a tuple of pairs representing
@@ -1783,8 +1780,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``var`` -- a list of variable indices
-        - ``eqns`` -- a list of polynomial equations in the internal
+        - ``var`` -- list of variable indices
+        - ``eqns`` -- list of polynomial equations in the internal
           tuple of pairs representation
 
         EXAMPLES::

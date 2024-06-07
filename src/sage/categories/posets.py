@@ -318,9 +318,9 @@ class Posets(Category):
 
             INPUT:
 
-            - elements -- a list of elements.
+            - elements -- list of elements
 
-            - direction -- 'up' or 'down'.
+            - direction -- 'up' or 'down'
 
             EXAMPLES::
 
@@ -456,7 +456,7 @@ class Posets(Category):
 
             INPUT:
 
-            - ``o`` -- a list (or set, or tuple) containing some elements of ``self``
+            - ``o`` -- list (or set, or tuple) containing some elements of ``self``
 
             EXAMPLES::
 
@@ -483,7 +483,7 @@ class Posets(Category):
 
             INPUT:
 
-            - ``o`` -- a list (or set, or tuple) containing some elements of ``self``
+            - ``o`` -- list (or set, or tuple) containing some elements of ``self``
 
             EXAMPLES::
 
@@ -515,9 +515,8 @@ class Posets(Category):
             - ``o`` -- an iterable (e. g., list, set, or tuple)
               containing some elements of ``self``
 
-            - ``ordered`` -- a Boolean (default: ``False``) which
-              decides whether the notion of a chain includes being
-              ordered
+            - ``ordered`` -- a Boolean (default: ``False``); decides
+              whether the notion of a chain includes being ordered
 
             OUTPUT:
 

@@ -32,8 +32,8 @@ def FastFourierTransform(size, base_ring=None):
 
     INPUT:
 
-    - ``size`` -- The size of the array
-    - ``base_ring`` -- Unused (2013-03)
+    - ``size`` -- the size of the array
+    - ``base_ring`` -- unused (2013-03)
 
     EXAMPLES:
 
@@ -95,8 +95,8 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``n`` -- An integer, the size of the array
-        - ``stride`` -- The stride to be applied when manipulating the array.
+        - ``n`` -- integer, the size of the array
+        - ``stride`` -- the stride to be applied when manipulating the array
 
         EXAMPLES::
 
@@ -146,8 +146,8 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``i`` -- An integer, the index.
-        - ``xy`` -- An object to store as `i`-th element of the array ``self[i]``.
+        - ``i`` -- integer; the index
+        - ``xy`` -- an object to store as `i`-th element of the array ``self[i]``
 
         EXAMPLES::
 
@@ -228,9 +228,9 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``xmin`` -- The lower bound of the slice to plot.
-        - ``xmax`` -- The upper bound of the slice to plot.
-        - ``**args`` -- passed on to the line plotting function.
+        - ``xmin`` -- the lower bound of the slice to plot
+        - ``xmax`` -- the upper bound of the slice to plot
+        - ``**args`` -- passed on to the line plotting function
 
         OUTPUT: a plot of the array interpreting each element as polar coordinates
 
@@ -266,9 +266,9 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         INPUT:
 
-        - ``xmin`` -- The lower bound of the slice to plot.
-        - ``xmax`` -- The upper bound of the slice to plot.
-        - ``**args`` -- passed on to the line plotting function.
+        - ``xmin`` -- the lower bound of the slice to plot
+        - ``xmax`` -- the upper bound of the slice to plot
+        - ``**args`` -- passed on to the line plotting function
 
         OUTPUT: a plot of the array
 
@@ -296,16 +296,16 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         """
         Plot a slice of the array.
 
-        - ``style`` -- Style of the plot, options are ``"rect"`` or ``"polar"``
+        - ``style`` -- style of the plot, options are ``"rect"`` or ``"polar"``
 
           - ``"rect"`` -- height represents real part, color represents
             imaginary part.
           - ``"polar"`` -- height represents absolute value, color
             represents argument.
 
-        - ``xmin`` -- The lower bound of the slice to plot. 0 by default.
-        - ``xmax`` -- The upper bound of the slice to plot. ``len(self)`` by default.
-        - ``**args`` -- passed on to the line plotting function.
+        - ``xmin`` -- the lower bound of the slice to plot; 0 by default
+        - ``xmax`` -- the upper bound of the slice to plot; ``len(self)`` by default
+        - ``**args`` -- passed on to the line plotting function
 
         OUTPUT: a plot of the array
 

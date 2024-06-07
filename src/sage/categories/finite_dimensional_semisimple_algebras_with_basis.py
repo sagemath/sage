@@ -45,7 +45,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             r"""
             Return a basis of the Jacobson radical of this algebra.
 
-            - ``keywords`` -- for compatibility; ignored.
+            - ``keywords`` -- for compatibility; ignored
 
             OUTPUT: the empty list since this algebra is semisimple
 
@@ -121,7 +121,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
 
                 INPUT:
 
-                - ``generators`` -- a list of generators of
+                - ``generators`` -- list of generators of
                   ``self`` (default: the basis of ``self``)
 
                 OUTPUT:

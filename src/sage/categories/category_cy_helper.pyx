@@ -47,7 +47,7 @@ cpdef tuple _sort_uniq(categories):
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
     OUTPUT: a sorted tuple of mutually incomparable categories
 
@@ -79,9 +79,9 @@ cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
 
     INPUT:
 
-    - ``categories`` -- a list (or iterable) of categories
+    - ``categories`` -- list (or iterable) of categories
 
-    - ``JoinCategory`` -- A type such that instances of that type will be
+    - ``JoinCategory`` -- a type such that instances of that type will be
       replaced by its super categories. Usually, this type is
       :class:`JoinCategory`.
 

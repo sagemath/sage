@@ -72,10 +72,10 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
     -  ``degree`` -- an integer
 
-    -  ``height_bound`` -- an integer (default: ``None``) specifying the maximum
+    -  ``height_bound`` -- an integer (default: ``None``); specifying the maximum
                           coefficient size for the returned polynomial
 
-    -  ``proof`` -- a boolean (default: ``False``), requires height_bound to be set
+    -  ``proof`` -- boolean (default: ``False``); requires height_bound to be set
 
 
     EXAMPLES::
@@ -284,7 +284,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
     - ``algorithm``:
 
       - ``'default'`` -- use 'flint' for n <= 20000, then 'arb' for n <= 300000
@@ -581,7 +581,7 @@ def is_pseudoprime(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     .. note::
 
@@ -617,7 +617,7 @@ def is_prime_power(n, get_data=False):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     - ``get_data`` -- if set to ``True``, return a pair ``(p,k)`` such that
       this integer equals ``p^k`` instead of ``True`` or ``(self,0)`` instead of
@@ -814,12 +814,12 @@ def prime_powers(start, stop=None):
 
     INPUT:
 
-    - ``start`` -- an integer. If two inputs are given, a lower bound
+    - ``start`` -- integer; if two inputs are given, a lower bound
       for the returned set of prime powers. If this is the only input,
       then it is an upper bound.
 
-    - ``stop`` -- an integer (default: ``None``). An upper bound for the
-      returned set of prime powers.
+    - ``stop`` -- integer (default: ``None``); an upper bound for the
+      returned set of prime powers
 
     OUTPUT:
 
@@ -1034,12 +1034,12 @@ def primes(start=2, stop=None, proof=None):
 
     INPUT:
 
-    - ``start`` -- an integer (default: 2) lower bound for the primes
+    - ``start`` -- integer (default: 2); lower bound for the primes
 
-    - ``stop`` -- an integer (or infinity) upper (open) bound for the
+    - ``stop`` -- integer (or infinity); upper (open) bound for the
       primes
 
-    - ``proof`` -- bool or ``None`` (default: ``None``) If ``True``, the
+    - ``proof`` -- bool or ``None`` (default: ``None``); If ``True``, the
       function yields only proven primes.  If ``False``, the function uses a
       pseudo-primality test, which is much faster for really big numbers but
       does not provide a proof of primality. If ``None``, uses the global
@@ -1389,14 +1389,14 @@ def random_prime(n, proof=None, lbound=2):
 
     INPUT:
 
-    -  ``n`` -- an integer `\geq 2`.
+    - ``n`` -- integer `\geq 2`
 
-    -  ``proof`` -- bool or ``None`` (default: ``None``) If ``False``, the function uses a
-       pseudo-primality test, which is much faster for really big numbers but
-       does not provide a proof of primality. If ``None``, uses the global default
-       (see :mod:`sage.structure.proof.proof`)
+    - ``proof`` -- bool or ``None`` (default: ``None``); if ``False``, the function uses a
+      pseudo-primality test, which is much faster for really big numbers but
+      does not provide a proof of primality. If ``None``, uses the global default
+      (see :mod:`sage.structure.proof.proof`)
 
-    - ``lbound`` -- an integer `\geq 2`, lower bound for the chosen primes
+    - ``lbound`` -- integer; `\geq 2`, lower bound for the chosen primes
 
     EXAMPLES::
 
@@ -1736,7 +1736,7 @@ def gcd(a, b=None, **kwargs):
 
     - ``a``, ``b`` -- two elements of a ring with gcd or
 
-    - ``a`` -- a list or tuple of elements of a ring with gcd
+    - ``a`` -- list or tuple of elements of a ring with gcd
 
     Additional keyword arguments are passed to the respectively called
     methods.
@@ -2090,7 +2090,7 @@ def xkcd(n=""):
 
     INPUT:
 
-    - ``n`` -- an integer (optional)
+    - ``n`` -- integer (optional)
 
     OUTPUT: a fragment of HTML
 
@@ -2319,7 +2319,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
     - ``m`` -- a modulus
 
@@ -2841,9 +2841,9 @@ def prime_to_m_part(n, m):
 
     INPUT:
 
-    - ``n`` -- Integer (nonzero)
+    - ``n`` -- integer (nonzero)
 
-    - ``m`` -- Integer
+    - ``m`` -- integer
 
     OUTPUT: integer
 
@@ -2884,7 +2884,7 @@ def is_square(n, root=False):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     - ``root`` -- whether or not to also return a square
       root (default: ``False``)
@@ -3175,7 +3175,7 @@ def carmichael_lambda(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer.
+    - ``n`` -- a positive integer
 
     OUTPUT: the Carmichael function of ``n``
 
@@ -5343,7 +5343,7 @@ def two_squares(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     OUTPUT: a tuple `(a,b)` of nonnegative integers such that
     `n = a^2 + b^2` with `a <= b`.
@@ -5465,7 +5465,7 @@ def three_squares(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     OUTPUT: a tuple `(a,b,c)` of nonnegative integers such that
     `n = a^2 + b^2 + c^2` with `a <= b <= c`.
@@ -5610,7 +5610,7 @@ def four_squares(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     OUTPUT: a tuple `(a,b,c,d)` of nonnegative integers such that
     `n = a^2 + b^2 + c^2 + d^2` with `a <= b <= c <= d`.
@@ -5688,7 +5688,7 @@ def sum_of_k_squares(k, n):
 
     - ``k`` -- a nonnegative integer
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     OUTPUT: a tuple `(x_1, ..., x_k)` of nonnegative integers such that
     their squares sum to `n`.
@@ -6013,7 +6013,7 @@ def fundamental_discriminant(D):
 
     INPUT:
 
-    - ``D`` -- an integer
+    - ``D`` -- integer
 
     OUTPUT: an integer, the fundamental discriminant
 

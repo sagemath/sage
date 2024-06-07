@@ -48,8 +48,8 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
       root_system.cartan_type>`; the Cartan Type for
       the corresponding finite dimensional Lie algebra. It must
       correspond to a simple finite dimensional Lie algebra.
-    - ``names`` -- a list of ``str`` or ``None`` (default: ``None``)
-      ; alternative names for the generators. If ``None`` the
+    - ``names`` -- list of ``str`` or ``None`` (default: ``None``);
+      alternative names for the generators. If ``None`` the
       generators are labeled by the corresponding root and coroot
       vectors.
     - ``prefix`` -- a ``str``; parameter passed to

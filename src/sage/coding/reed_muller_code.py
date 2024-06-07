@@ -847,9 +847,7 @@ class ReedMullerPolynomialEncoder(Encoder):
         - ``p`` -- A polynomial from the message space of ``self`` of degree
           less than ``self.code().order()``.
 
-        OUTPUT:
-
-        - A codeword in associated code of ``self``
+        OUTPUT: a codeword in associated code of ``self``
 
         EXAMPLES::
 

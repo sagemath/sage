@@ -137,9 +137,7 @@ class Encoder(SageObject):
 
         - ``word`` -- a vector of the message space of the ``self``.
 
-        OUTPUT:
-
-        - a vector of :meth:`code`.
+        OUTPUT: a vector of :meth:`code`
 
         EXAMPLES::
 
@@ -212,9 +210,7 @@ class Encoder(SageObject):
           ``nocheck = True``, then the output of :meth:`unencode` is not
           defined (except that it will be in the message space of ``self``).
 
-        OUTPUT:
-
-        - an element of the message space of ``self``
+        OUTPUT: an element of the message space of ``self``
 
         EXAMPLES::
 
@@ -247,7 +243,7 @@ class Encoder(SageObject):
             sage: C = LinearCode(G)
             Traceback (most recent call last):
             ...
-            ValueError: length must be a non-zero positive integer
+            ValueError: length must be a nonzero positive integer
         """
         if not nocheck and c not in self.code():
             raise EncodingError("Given word is not in the code")
@@ -297,9 +293,7 @@ class Encoder(SageObject):
 
         - ``c`` -- a codeword of :meth:`code`.
 
-        OUTPUT:
-
-        - an element of the message space of ``self``.
+        OUTPUT: an element of the message space of ``self``
 
         EXAMPLES::
 

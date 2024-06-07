@@ -23,7 +23,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             - ``w`` -- an element of the Coxeter group
             - ``i`` -- an element of the index set
             - ``q1``, ``q2`` -- two elements of the ground ring
-            - ``bar`` -- a boolean (default ``False``)
+            - ``bar`` -- boolean (default ``False``)
 
             See :meth:`demazure_lusztig_operators` for details.
 
@@ -79,7 +79,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             - ``q1``, ``q2`` -- two elements of the ground ring `K`
             - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``);
               which side to act upon
-            - ``affine`` -- a boolean (default: ``True``)
+            - ``affine`` -- boolean (default: ``True``)
 
             The Demazure-Lusztig operator `T_i` is the linear map
             `R \to R` obtained by interpolating between the

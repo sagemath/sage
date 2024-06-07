@@ -148,7 +148,7 @@ class Monoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``args`` -- a list (or iterable) of elements of ``self``
+            - ``args`` -- list (or iterable) of elements of ``self``
 
             Returns the product of the elements in ``args``, as an element of
             ``self``.

@@ -111,10 +111,10 @@ cdef class InnerGroup:
 
     Those stabilizers can be stored as triples:
 
-    - ``rank`` -- an integer in `\{0, \ldots, k\}`
+    - ``rank`` -- integer in `\{0, \ldots, k\}`
     - ``row_partition`` -- a partition of `\{0, \ldots, k-1\}` with
       discrete cells for all integers `i` `\geq` ``rank``.
-    - ``frob_pow`` -- an integer `s` in `\{0, \ldots, r-1\}` if `q = p^r`
+    - ``frob_pow`` -- integer `s` in `\{0, \ldots, r-1\}` if `q = p^r`
 
     The group `G_{\Pi^{(I)}(x)}` contains all elements `(A, \varphi, \alpha) \in G`,
     where
@@ -138,7 +138,7 @@ cdef class InnerGroup:
 
         INPUT:
 
-        - ``k`` -- an integer, gives the dimension of the matrix component
+        - ``k`` -- integer; gives the dimension of the matrix component
         - ``algorithm`` -- either
 
             * "semilinear" --  full group
@@ -514,7 +514,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
         - ``generator_matrix`` -- a `k \times n` matrix over `\GF{q}` of full row rank,
           i.e. `k<n` and without zero columns.
         - partition (optional) -- a partition (as list of lists) of the set

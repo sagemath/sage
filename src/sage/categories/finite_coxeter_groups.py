@@ -399,7 +399,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             INPUT:
 
             - ``side`` -- "left", "right", or "twosided" (default: "right")
-            - ``facade`` -- a boolean (default: ``False``)
+            - ``facade`` -- boolean (default: ``False``)
 
             Returns the left (resp. right) poset for weak order.  In
             this poset, `u` is smaller than `v` if some reduced word

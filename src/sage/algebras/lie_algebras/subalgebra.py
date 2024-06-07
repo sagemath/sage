@@ -35,7 +35,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
     INPUT:
 
     - ``ambient`` -- the Lie algebra containing the subalgebra
-    - ``gens`` -- a list of generators of the subalgebra
+    - ``gens`` -- list of generators of the subalgebra
     - ``ideal`` -- boolean (default: ``False``); if ``True``, then ``gens``
       is interpreted as the generating set of an ideal instead of a subalgebra
     - ``order`` -- (optional) the key used to sort the indices of ``ambient``

@@ -759,7 +759,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
                 INPUT:
 
-                - ``*data`` -- a list of indices or pairs `(i, p)`
+                - ``*data`` -- list of indices or pairs `(i, p)`
 
                 EXAMPLES::
 
@@ -855,7 +855,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
                 INPUT:
 
-                - ``*data`` -- a list of indices or pairs `(i, p)`
+                - ``*data`` -- list of indices or pairs `(i, p)`
 
                 EXAMPLES::
 

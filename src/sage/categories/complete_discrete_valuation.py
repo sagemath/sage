@@ -138,7 +138,7 @@ class CompleteDiscreteValuationRings(Category_singleton):
 
             INPUT:
 
-            - ``absprec`` -- an integer or ``None`` (default: ``None``), the
+            - ``absprec`` -- integer or ``None`` (default: ``None``); the
               absolute precision of the result. If ``None``, lifts to the maximum
               precision allowed.
 

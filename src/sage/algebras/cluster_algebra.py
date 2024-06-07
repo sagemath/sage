@@ -902,7 +902,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the c-vector to return
 
         EXAMPLES::
@@ -953,7 +953,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the g-vector to return
 
         EXAMPLES::
@@ -984,7 +984,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the F-polynomial to return
 
         EXAMPLES::
@@ -1015,7 +1015,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the cluster variable to return
 
         EXAMPLES::
@@ -1226,13 +1226,13 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
     - ``cluster_variable_prefix`` -- string (default ``'x'``); it needs to be
       a valid variable name
 
-    - ``cluster_variable_names`` -- a list of strings; each element needs
+    - ``cluster_variable_names`` -- list of strings; each element needs
       to be a valid variable name;  supersedes ``cluster_variable_prefix``
 
     - ``coefficient_prefix`` -- string (default ``'y'``); it needs to be
       a valid variable name.
 
-    - ``coefficient_names`` -- a list of strings; each element needs
+    - ``coefficient_names`` -- list of strings; each element needs
       to be a valid variable name; supersedes ``cluster_variable_prefix``
 
     - ``principal_coefficients`` -- boolean (default ``False``); supersedes any
@@ -2112,7 +2112,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the coefficient to return
 
         EXAMPLES::
@@ -2168,7 +2168,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the cluster variable to return
 
         EXAMPLES::

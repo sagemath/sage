@@ -708,10 +708,10 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
           index of a basis element and each ``coeff`` belongs to the
           coefficient ring ``self.base_ring()``
 
-        - ``coerce`` -- a boolean (default: ``False``), whether to coerce the
+        - ``coerce`` -- boolean (default: ``False``); whether to coerce the
           ``coeff`` to the coefficient ring
 
-        - ``remove_zeros`` -- a boolean (default: ``True``), if some
+        - ``remove_zeros`` -- boolean (default: ``True``); if some
           ``coeff`` may be zero and should therefore be removed
 
         EXAMPLES::

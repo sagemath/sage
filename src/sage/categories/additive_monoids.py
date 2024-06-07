@@ -56,7 +56,7 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
 
             INPUT:
 
-            - ``args`` -- a list (or iterable) of elements of ``self``
+            - ``args`` -- list (or iterable) of elements of ``self``
 
             EXAMPLES::
 

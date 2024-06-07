@@ -54,8 +54,8 @@ cdef class KSHandler:
 
     - ``n_slots`` -- the total number of F-symbols
     - ``field`` -- F-matrix's base cyclotomic field
-    - ``use_mp`` -- a boolean indicating whether to construct a shared
-      memory block to back ``self``.
+    - ``use_mp`` -- boolean indicating whether to construct a shared
+      memory block to back ``self``
     - ``init_data`` -- a dictionary or :class:`KSHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
     - ``name`` -- the name of a shared memory object (used by child processes
@@ -398,7 +398,7 @@ cdef class FvarsHandler:
       of ``FusionRing`` elements
     - ``init_data`` -- a dictionary or :class:`FvarsHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
-    - ``use_mp`` -- an integer indicating the number of child processes
+    - ``use_mp`` -- integer indicating the number of child processes
       used for multiprocessing; if running serially, use 0.
     - ``pids_name`` -- the name of a ``ShareableList`` contaning the
       process ``pid``'s for every process in the pool (including the

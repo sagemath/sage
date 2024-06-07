@@ -453,7 +453,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
     Find the Delsarte LP bound on ``F_{q_base}``-dimension of additive
     codes in Hamming space `H_q^n` of minimal distance ``d`` with
     minimal distance of the dual code at least ``d_star``.  If
-    ``q_base`` is set to non-zero, then ``q`` is a power of
+    ``q_base`` is set to nonzero, then ``q`` is a power of
     ``q_base``, and the code is, formally, linear over
     ``F_{q_base}``. Otherwise it is assumed that ``q_base==q``.
 

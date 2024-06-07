@@ -78,7 +78,7 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
             INPUT:
 
-            - ``gens`` -- a list or family of elements of ``self``
+            - ``gens`` -- list or family of elements of ``self``
             - ``check`` -- boolean (default: ``True``); whether to verify that
               the elements of ``gens`` are in ``self``
             - ``already_echelonized`` -- boolean (default: ``False``); whether

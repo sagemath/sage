@@ -191,15 +191,15 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             return Integer(len(self.tuple()))
 
         def _unrank_from_list(self, r):
-            """
-            The ``r``-th element of ``self``
+            r"""
+            The `r`-th element of ``self``.
 
             INPUT:
 
-              - ``r`` -- an integer between ``0`` and ``n-1``,
-                where ``n`` is the cardinality of ``self``.
+              - ``r`` -- integer between `0` and `n-1`,
+                where `n` is the cardinality of ``self``
 
-            OUTPUT: the ``r``-th element of ``self``
+            OUTPUT: the `r`-th element of ``self``
 
             This implementation of :meth:`unrank` uses the method
             :meth:`list` (which is cached). Reciprocally, calling

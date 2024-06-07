@@ -83,9 +83,7 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
 
     - ``F`` -- the base field of the code to look up
 
-    OUTPUT:
-
-    - A GAP record object. See below for an example.
+    OUTPUT: a GAP record object. See below for an example
 
     EXAMPLES::
 
@@ -124,17 +122,15 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
 
     INPUT:
 
-    -  ``n`` -- Integer, the length of the code
+    -  ``n`` -- integer; the length of the code
 
-    -  ``k`` -- Integer, the dimension of the code
+    -  ``k`` -- integer; the dimension of the code
 
     -  ``F`` -- Finite field, of order 2, 3, 4, 5, 7, 8, or 9
 
     -  ``verbose`` -- Bool (default: ``False``)
 
-    OUTPUT:
-
-    -  An unparsed text explaining the construction of the code.
+    OUTPUT: an unparsed text explaining the construction of the code
 
     EXAMPLES::
 
@@ -193,11 +189,11 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
 
     INPUT:
 
-    -  ``n`` -- Integer, maximal length
+    -  ``n`` -- integer; maximal length
 
-    -  ``k`` -- Integer, maximal dimension
+    -  ``k`` -- integer; maximal dimension
 
-    -  ``b`` -- Integer, requires that the generators all have weight divisible
+    -  ``b`` -- integer; requires that the generators all have weight divisible
        by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
        ``b=4``, all doubly even codes are generated). Must be an even positive
        integer.

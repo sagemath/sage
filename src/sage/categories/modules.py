@@ -45,7 +45,7 @@ class Modules(Category_module):
     INPUT:
 
     - ``base_ring`` -- a ring `R` or subcategory of ``Rings()``
-    - ``dispatch`` -- a boolean (for internal use; default: ``True``)
+    - ``dispatch`` -- boolean (for internal use; default: ``True``)
 
     When the base ring is a field, the category of vector spaces is
     returned instead (unless ``dispatch == False``).

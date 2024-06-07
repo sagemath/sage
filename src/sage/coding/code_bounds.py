@@ -50,7 +50,7 @@ an element (in the Hamming metric) is `d({\bf v},{\bf 0})`,
 where `0` is a distinguished element of `F`;
 in particular it is `0` of the field if `F` is a field.
 The minimum distance of
-a linear code is the smallest non-zero weight of a codeword in `C`.  The
+a linear code is the smallest nonzero weight of a codeword in `C`.  The
 relatively minimum distance is denoted
 
 

@@ -857,7 +857,7 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - ``I`` -- A twosided ideal of this ring.
+            - ``I`` -- a twosided ideal of this ring
             - ``names`` -- (optional) names of the generators of the quotient (if
               there are multiple generators, you can specify a single character
               string and the generators are named in sequence starting with 0).

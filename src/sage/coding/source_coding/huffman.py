@@ -45,7 +45,7 @@ def frequency_table(string):
 
     INPUT:
 
-    - ``string`` -- a string of symbols over some alphabet.
+    - ``string`` -- a string of symbols over some alphabet
 
     OUTPUT:
 
@@ -377,7 +377,7 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``string`` -- a string of symbols over an alphabet.
+        - ``string`` -- a string of symbols over an alphabet
 
         OUTPUT: a Huffman encoding of ``string``
 
@@ -402,7 +402,7 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``string`` -- a string of Huffman encodings.
+        - ``string`` -- a string of Huffman encodings
 
         OUTPUT: the Huffman decoding of ``string``
 
@@ -519,7 +519,7 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``tree`` -- a Huffman binary tree.
+        - ``tree`` -- a Huffman binary tree
 
         - ``parent`` -- (default: empty string) a parent vertex with exactly
           two children.

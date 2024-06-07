@@ -548,7 +548,7 @@ def QuadraticResidueCodeEvenPair(n,F):
     quadratic residue mod `n`.
 
     They are constructed as "even-like" duadic codes associated the
-    splitting `(Q,N)` mod `n`, where `Q` is the set of non-zero quadratic
+    splitting `(Q,N)` mod `n`, where `Q` is the set of nonzero quadratic
     residues and `N` is the non-residues.
 
     EXAMPLES::
@@ -598,8 +598,8 @@ def QuadraticResidueCodeEvenPair(n,F):
     if n <= 2 or not n.is_prime():
         raise ValueError("the argument n must be an odd prime")
     Q = quadratic_residues(n)
-    Q.remove(0)       # non-zero quad residues
-    N = [x for x in srange(1, n) if x not in Q]   # non-zero quad non-residues
+    Q.remove(0)       # nonzero quad residues
+    N = [x for x in srange(1, n) if x not in Q]   # nonzero quad non-residues
     if q not in Q:
         raise ValueError("the order of the finite field must be a quadratic residue modulo n")
     return DuadicCodeEvenPair(F,Q,N)
@@ -614,7 +614,7 @@ def QuadraticResidueCodeOddPair(n,F):
     quadratic residue mod `n`.
 
     They are constructed as "odd-like" duadic codes associated the
-    splitting `(Q,N)` mod `n`, where `Q` is the set of non-zero quadratic
+    splitting `(Q,N)` mod `n`, where `Q` is the set of nonzero quadratic
     residues and `N` is the non-residues.
 
     EXAMPLES::
@@ -658,8 +658,8 @@ def QuadraticResidueCodeOddPair(n,F):
     if n <= 2 or not n.is_prime():
         raise ValueError("the argument n must be an odd prime")
     Q = quadratic_residues(n)
-    Q.remove(0)       # non-zero quad residues
-    N = [x for x in srange(1, n) if x not in Q]   # non-zero quad non-residues
+    Q.remove(0)       # nonzero quad residues
+    N = [x for x in srange(1, n) if x not in Q]   # nonzero quad non-residues
     if q not in Q:
         raise ValueError("the order of the finite field must be a quadratic residue modulo n")
     return DuadicCodeOddPair(F,Q,N)

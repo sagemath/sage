@@ -405,7 +405,7 @@ class LinearCodeAutGroupCanLabel:
 
         - ``normalization_inverse`` -- the inverse of ``normalization``
 
-        - ``col2pos`` -- a list of disjoint indices in ``range(n)``
+        - ``col2pos`` -- list of disjoint indices in ``range(n)``
 
         - ``col2P`` -- an increasing list of integers, with
           ``len(col2P) == len(col2pos)`` with ``col2P[i] == col2P[j]`` if and
@@ -476,7 +476,7 @@ class LinearCodeAutGroupCanLabel:
 
         INPUT:
 
-        - ``gens`` -- a list of semimonomial transformation group elements of length `m`
+        - ``gens`` -- list of semimonomial transformation group elements of length `m`
 
         - ``normalization`` -- a semimonomial transformation of length `n`
 

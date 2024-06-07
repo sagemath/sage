@@ -74,13 +74,13 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
     INPUT:
 
-    - ``key`` -- string.
+    - ``key`` -- string
 
-    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values.
+    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values
 
-    - ``force`` -- boolean (default: ``False``). If
+    - ``force`` -- boolean (default: ``False``); if
       ``True``, skip the environment variable and only use the
-      fallbacks.
+      fallbacks
 
     OUTPUT: the value of the environment variable or its fallbacks
 

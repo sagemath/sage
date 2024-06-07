@@ -134,10 +134,8 @@ cdef class MultiModularBasis_base():
                         (their product will be at least 2*val)
                     as list, tuple or generator
                         a list of prime moduli to start with
-        - ``l_bound`` -- an integer: lower bound for the random primes
-          (default: 2^10)
-        - ``u_bound`` -- an integer: upper bound for the random primes
-          (default: 2^15)
+        - ``l_bound`` -- integer (default: 2^10); lower bound for the random primes
+        - ``u_bound`` -- integer (default: 2^15); upper bound for the random primes
 
         EXAMPLES::
 
@@ -647,7 +645,7 @@ cdef class MultiModularBasis_base():
 
         INPUT:
 
-        - ``b`` -- a list of length at most self.n
+        - ``b`` -- list of length at most self.n
 
         OUTPUT:
 

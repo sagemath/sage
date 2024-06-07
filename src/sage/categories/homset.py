@@ -94,11 +94,11 @@ def Hom(X, Y, category=None, check=True):
 
     - ``Y`` -- an object of a category
 
-    - ``category`` -- a category in which the morphisms must be.
-      (default: the meet of the categories of ``X`` and ``Y``)
-      Both ``X`` and ``Y`` must belong to that category.
+    - ``category`` -- a category in which the morphisms must be
+      (default: the meet of the categories of ``X`` and ``Y``);
+      both ``X`` and ``Y`` must belong to that category
 
-    - ``check`` -- a boolean (default: ``True``): whether to check the
+    - ``check`` -- boolean (default: ``True``); whether to check the
       input, and in particular that ``X`` and ``Y`` belong to
       ``category``.
 

@@ -314,7 +314,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``subdivide``  -- boolean (default: ``False``): this boolean is passed
+        - ``subdivide``  -- boolean (default: ``False``); this boolean is passed
           to the block_matrix function
         - ``representation_type`` -- instance of enum :class:`RepresentationType`;
           this can be obtained by the attribute :attr:`CubicHeckeAlgebra.repr_type`
@@ -327,7 +327,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
           - default:  ``SplitIrredChevie`` taken if GAP3 and CHEVIE are installed
             on the system, otherwise the default will be ``SplitIrredMarin``
 
-        - ``original`` -- boolean (default: ``False``): if set to true the base
+        - ``original`` -- boolean (default: ``False``); if set to ``True`` the base
           ring of the matrix will be the generic base_ring resp. generic extension
           ring (for the split versions) of the parent of ``self``
 

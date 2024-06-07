@@ -800,10 +800,10 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
         INPUT:
 
         - ``domain`` -- an Askey-Wilson algebra
-        - ``on_generators`` -- a list of length 6 corresponding to
+        - ``on_generators`` -- list of length 6 corresponding to
           the images of the generators
         - ``codomain`` -- (optional) the codomain
-        - ``position`` -- (default: 0) integer
+        - ``position`` -- integer (default: 0)
         - ``category`` -- (optional) category
 
         OUTPUT: module morphism

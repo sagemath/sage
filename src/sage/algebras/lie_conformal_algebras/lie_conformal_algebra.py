@@ -249,13 +249,13 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
 
     In addition we accept the following keywords:
 
-    - ``graded`` -- a boolean (default: ``False``);
+    - ``graded`` -- boolean (default: ``False``);
       if ``True``, the returned algebra is H-Graded.
       If ``weights`` is not specified, all non-central generators
       are assigned degree `1`. This keyword is ignored if
       ``weights`` is specified
 
-    - ``super`` -- a boolean (default: ``False``);
+    - ``super`` -- boolean (default: ``False``);
       if ``True``, the returned algebra is a super
       Lie conformal algebra even if all generators are even.
       If ``parity`` is not specified, all generators are

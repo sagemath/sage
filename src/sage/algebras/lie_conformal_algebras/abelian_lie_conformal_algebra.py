@@ -33,11 +33,10 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
 
     - ``R`` -- a commutative ring; the base ring of this Lie
       conformal algebra
-    - ``ngens`` -- a positive integer (default: ``1``); the number
+    - ``ngens`` -- a positive integer (default: `1`); the number
       of generators of this Lie conformal algebra
-    - ``weights`` -- a list of positive rational numbers (default:
-      ``1`` for each
-      generator); the weights of the generators. The resulting
+    - ``weights`` -- list of positive rational numbers (default:
+      `1` for each generator); the weights of the generators. The resulting
       Lie conformal algebra is `H`-graded.
     - ``parity`` -- ``None`` or a list of ``0`` or ``1`` (default:
       ``None``); The parity of the generators. If not ``None`` the

@@ -1346,7 +1346,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - ``gens`` -- a list of elements of this quaternion order
+        - ``gens`` -- list of elements of this quaternion order
 
         - ``check`` -- boolean (default: ``True``)
 
@@ -1725,7 +1725,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``n`` -- an integer between 0 and 3, inclusive.
+        - ``n`` -- integer between 0 and 3, inclusive
 
         EXAMPLES::
 
@@ -2072,7 +2072,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``gens`` -- a list of elements of this quaternion order
+        - ``gens`` -- list of elements of this quaternion order
 
         - ``check`` -- boolean (default: ``True``)
 
@@ -2115,7 +2115,7 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``gens`` -- a list of elements of this quaternion order
+        - ``gens`` -- list of elements of this quaternion order
 
         - ``check`` -- boolean (default: ``True``)
 
@@ -3352,7 +3352,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         INPUT:
 
-        - ``J`` -- a quaternion ideal.
+        - ``J`` -- a quaternion ideal
 
         OUTPUT: a quaternionic fractional ideal
 
@@ -3575,7 +3575,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``certificate`` -- if ``True`` returns an element alpha such that
           alpha*J = I or J*alpha = I for right and left ideals respectively
 
-        - ``side`` -- If ``'left'`` performs left equivalence test. If ``'right'
+        - ``side`` -- if ``'left'`` performs left equivalence test. If ``'right'
           ``or ``None`` performs right ideal equivalence test
 
         OUTPUT: bool, or (bool, alpha) if ``certificate`` is ``True``
@@ -4112,8 +4112,8 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
 
     INPUT:
 
-    - ``e`` -- list; basis of a `\ZZ` module.
-      WARNING: will be modified!
+    - ``e`` -- list; basis of a `\ZZ` module
+      (WARNING: will be modified!)
 
     - ``p`` -- prime for at which the basis should be normalized
 

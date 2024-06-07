@@ -1540,7 +1540,7 @@ class Sets(Category_singleton):
 
             INPUT:
 
-            - ``parents`` -- a list (or other iterable) of parents.
+            - ``parents`` -- list (or other iterable) of parents
 
             - ``category`` -- (default: ``None``) the category the
               Cartesian product belongs to. If ``None`` is passed,
@@ -2821,7 +2821,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 INPUT:
 
-                - ``shorthands`` -- a list (or iterable) of strings (default: ``self._shorthands``)
+                - ``shorthands`` -- list (or iterable) of strings
+                  (default: ``self._shorthands``)
                   or ``"all"`` (for ``self._shorthands_all``)
                 - ``verbose`` -- boolean (default ``True``);
                    whether to print the defined shorthands

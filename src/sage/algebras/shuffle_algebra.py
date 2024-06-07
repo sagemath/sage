@@ -241,7 +241,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``w1``, ``w2`` -- Basis elements
+        - ``w1``, ``w2`` -- basis elements
 
         EXAMPLES::
 
@@ -285,7 +285,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 

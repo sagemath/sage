@@ -86,14 +86,14 @@ cdef class Riemann_Map:
 
     INPUT:
 
-    - ``fs`` -- A list of the boundaries of the region, given as
+    - ``fs`` -- list of the boundaries of the region, given as
       complex-valued functions with domain `0` to `2*pi`. Note that the
       outer boundary must be parameterized counter clockwise
       (i.e. ``e^(I*t)``) while the inner boundaries must be clockwise
       (i.e. ``e^(-I*t)``).
 
-    - ``fprimes`` -- A list of the derivatives of the boundary functions.
-      Must be in the same order as ``fs``.
+    - ``fprimes`` -- list of the derivatives of the boundary functions
+      (Must be in the same order as ``fs``)
 
     - ``a`` -- Complex, the center of the Riemann map. Will be mapped to
       the origin of the unit disc. Note that ``a`` MUST be within
@@ -1071,7 +1071,7 @@ cdef comp_pt(clist, loop=True):
 
     INPUT:
 
-    - ``clist`` -- a list of complex numbers.
+    - ``clist`` -- list of complex numbers
 
     - ``loop`` -- boolean (default: ``True``); controls whether or not the
       first point will be added as the last to plot a closed circle.
@@ -1155,15 +1155,15 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
 
     INPUT:
 
-    - ``z_values`` -- A grid of complex numbers, as a list of lists.
+    - ``z_values`` -- A grid of complex numbers, as a list of lists
 
-    - ``dr`` -- grid of floats, the r derivative of ``z_values``.
+    - ``dr`` -- grid of floats, the r derivative of ``z_values``
       Used to determine precision.
 
-    - ``dtheta`` -- grid of floats, the theta derivative of ``z_values``.
+    - ``dtheta`` -- grid of floats, the theta derivative of ``z_values``
       Used to determine precision.
 
-    - ``spokes`` -- integer; the number of equally spaced radial lines to plot.
+    - ``spokes`` -- integer; the number of equally spaced radial lines to plot
 
     - ``circles`` -- integer; the number of equally spaced circles about the
       center to plot.
@@ -1273,7 +1273,7 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
 
     INPUT:
 
-    - ``z_values`` -- A Numpy array of complex numbers.
+    - ``z_values`` -- Numpy array of complex numbers
 
     OUTPUT:
 
@@ -1381,7 +1381,7 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
 
     - ``t`` -- The boundary parameter, from 0 to 2*pi
 
-    - ``n`` -- integer; the number of terms to include.
+    - ``n`` -- integer; the number of terms to include
       10 is fairly accurate, 20 is very accurate.
 
     - ``epsilon`` -- float; the skew of the ellipse (0 is circular)
@@ -1431,9 +1431,9 @@ cpdef cauchy_kernel(t, args):
 
       - ``epsilon`` -- float; the skew of the ellipse (0 is circular)
 
-      - ``z`` -- complex; the point to be mapped.
+      - ``z`` -- complex; the point to be mapped
 
-      - ``n`` -- integer; the number of terms to include.
+      - ``n`` -- integer; the number of terms to include
         10 is fairly accurate, 20 is very accurate.
 
       - ``part`` -- will return the real ('r'), imaginary ('i') or
@@ -1473,10 +1473,10 @@ cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
 
     INPUT:
 
-    - ``z`` -- complex; the point to be mapped.
+    - ``z`` -- complex; the point to be mapped
 
-    - ``n`` -- integer; the number of terms to include.
-      10 is fairly accurate, 20 is very accurate.
+    - ``n`` -- integer; the number of terms to include
+      (10 is fairly accurate, 20 is very accurate)
 
     TESTS:
 

@@ -288,7 +288,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
         def profile(self, n, using_polya=True):
             r"""
-            Return the value in ``n`` of the profile of the group ``self``.
+            Return the value in `n` of the profile of the group ``self``.
 
             Optional argument ``using_polya`` allows to change the default method.
 
@@ -296,16 +296,17 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             - ``n`` -- a nonnegative integer
 
-            - ``using_polya`` (optional) -- a boolean: if ``True`` (default), the computation
-              uses Pólya enumeration (and all values of the profile are cached, so this
-              should be the method used in case several of them are needed);
-              if ``False``, uses the GAP interface to compute the orbit.
+            - ``using_polya`` -- boolean (default: ``True``); if ``True``, the
+              computation uses Pólya enumeration (and all values of the profile
+              are cached, so this should be the method used in case several of
+              them are needed); if ``False``, uses the GAP interface to compute
+              the orbit.
 
             OUTPUT:
 
-            - A nonnegative integer that is the number of orbits of ``n``-subsets
+            - A nonnegative integer that is the number of orbits of `n`-subsets
               under the action induced by ``self`` on the subsets of its domain
-              (i.e. the value of the profile of ``self`` in ``n``)
+              (i.e. the value of the profile of ``self`` in `n`)
 
             .. SEEALSO::
 

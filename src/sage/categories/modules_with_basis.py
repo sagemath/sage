@@ -682,7 +682,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``elements`` -- a list or finite iterable of elements of ``self``
+            - ``elements`` -- list or finite iterable of elements of ``self``
             - ``row_reduced`` -- boolean (default: ``False``); whether to
               compute the basis for the row reduced echelon form
             - ``order`` -- (optional) either something that can
@@ -736,7 +736,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``gens`` -- a list or family of elements of ``self``
+            - ``gens`` -- list or family of elements of ``self``
             - ``check`` -- boolean (default: ``True``); whether to verify that
               the elements of ``gens`` are in ``self``
             - ``already_echelonized`` -- boolean (default: ``False``); whether
@@ -1127,7 +1127,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``indices`` -- a list (or iterable) of indices of basis
+            - ``indices`` -- list (or iterable) of indices of basis
               elements
 
             EXAMPLES::
@@ -1191,7 +1191,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``terms`` -- a list (or iterable) of pairs ``(index, coeff)``
+            - ``terms`` -- list (or iterable) of pairs ``(index, coeff)``
 
             OUTPUT:
 

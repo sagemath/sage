@@ -36,7 +36,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
     - ``k`` -- a field
 
-    - ``table`` -- a list of matrices
+    - ``table`` -- list of matrices
 
     - ``names`` -- string (default: ``'e'``); names for the basis
       elements

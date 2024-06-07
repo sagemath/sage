@@ -18,7 +18,7 @@ called the dual code of `C`, and any generator matrix for `C^\perp` is called a
 parity check matrix for `C`.
 
 We commonly endow `F^n` with the Hamming metric, i.e. the weight of a vector is
-the number of non-zero elements in it. The central operation of a linear code
+the number of nonzero elements in it. The central operation of a linear code
 is then "decoding": given a linear code `C \subset F^n` and a "received word"
 `r \in F^n` , retrieve the codeword `c \in C` such that the Hamming distance
 between `r` and `c` is minimal.
@@ -253,9 +253,7 @@ def _dump_code_in_leon_format(C):
 
     - ``C`` -- a linear code (over GF(p), p < 11)
 
-    OUTPUT:
-
-    - Absolute path to the file written
+    OUTPUT: absolute path to the file written
 
     EXAMPLES::
 
@@ -636,7 +634,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
     # S. Pancratz, 19 Jan 2010:  In the doctests below, I removed the example
     # ``C.binomial_moment(3)``, which was also marked as ``#long``.  This way,
     # we shorten the doctests time while still maintaining a zero and a
-    # non-zero example.
+    # nonzero example.
     def binomial_moment(self, i):
         r"""
         Return the i-th binomial moment of the `[n,k,d]_q`-code `C`:
@@ -1363,9 +1361,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
            - ``"Guava"``, to use the optional GAP package Guava
 
-        OUTPUT:
-
-        - Integer, minimum distance of this code
+        OUTPUT: integer; minimum distance of this code
 
         EXAMPLES::
 
@@ -1564,9 +1560,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           :meth:`~sage.coding.linear_code.LinearCode.canonical_representative`
           to access it).
 
-        OUTPUT:
-
-        - Permutation automorphism group
+        OUTPUT: permutation automorphism group
 
         EXAMPLES::
 
@@ -1727,9 +1721,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         - ``L`` -- List of positions to puncture
 
-        OUTPUT:
-
-        - an instance of :class:`sage.coding.punctured_code`
+        OUTPUT: an instance of :class:`sage.coding.punctured_code`
 
         EXAMPLES::
 
@@ -1792,9 +1784,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         - ``L`` -- Subset of `\{1,...,n\}`, where `n` is the length of this code
 
-        OUTPUT:
-
-        - Linear code, the shortened code described above
+        OUTPUT: linear code, the shortened code described above
 
         EXAMPLES::
 
@@ -1822,9 +1812,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           ``"binary"``, use an algorithm optimized for binary codes. The default
           is to use ``"binary"`` for binary codes and ``"gap"`` otherwise.
 
-        OUTPUT:
-
-        - A list of non-negative integers: the weight distribution.
+        OUTPUT: a list of nonnegative integers; the weight distribution
 
         .. WARNING::
 
@@ -1916,9 +1904,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         Return the set of indices `j` where `A_j` is nonzero, where
         `A_j` is the number of codewords in ``self`` of Hamming weight `j`.
 
-        OUTPUT:
-
-        - List of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1952,9 +1938,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           set to ``False``, then ``names`` will be interpreted as a single
           variable name and default to ``"x"``.
 
-        OUTPUT:
-
-        - The weight enumerator polynomial over `\ZZ`.
+        OUTPUT: the weight enumerator polynomial over `\ZZ`
 
         EXAMPLES::
 
@@ -2003,9 +1987,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         - ``name`` -- String, variable name (default: ``"T"``)
 
-        OUTPUT:
-
-        - Polynomial over `\QQ`
+        OUTPUT: polynomial over `\QQ`
 
         EXAMPLES::
 
@@ -2344,7 +2326,7 @@ class LinearCode(AbstractLinearCode):
             sage: C = LinearCode(G)
             Traceback (most recent call last):
             ...
-            ValueError: this linear code contains no non-zero vector
+            ValueError: this linear code contains no nonzero vector
         """
 
         base_ring = generator.base_ring()
@@ -2362,7 +2344,7 @@ class LinearCode(AbstractLinearCode):
                 from sage.matrix.constructor import matrix
                 generator = matrix(base_ring, basis)
                 if generator.nrows() == 0:
-                    raise ValueError("this linear code contains no non-zero vector")
+                    raise ValueError("this linear code contains no nonzero vector")
         except AttributeError:
             # Assume input is an AbstractLinearCode, extract its generator matrix
             generator = generator.generator_matrix()
@@ -2889,9 +2871,7 @@ class LinearCodeSyndromeDecoder(Decoder):
 
         - ``r`` -- a codeword of ``self``
 
-        OUTPUT:
-
-        - a vector of ``self``'s message space
+        OUTPUT: a vector of ``self``'s message space
 
         EXAMPLES::
 
@@ -3050,9 +3030,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
 
         - ``r`` -- a codeword of ``self``
 
-        OUTPUT:
-
-        - a vector of ``self``'s message space
+        OUTPUT: a vector of ``self``'s message space
 
         EXAMPLES::
 

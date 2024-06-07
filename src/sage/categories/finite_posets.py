@@ -1895,10 +1895,10 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``as_ideals`` -- Boolean, if ``True`` (default) returns
+            - ``as_ideals`` -- boolean (default: ``True``), if ``True`` returns
               a poset on the set of order ideals, otherwise on the set
               of antichains
-            - ``facade`` -- Boolean or ``None`` (default). Whether to
+            - ``facade`` -- boolean or ``None`` (default); whether to
               return a facade lattice or not. By default return facade
               lattice if the poset is a facade poset.
 

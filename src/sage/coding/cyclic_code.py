@@ -103,11 +103,9 @@ def _to_complete_list(poly, length):
 
     - ``poly`` -- a polynomial
 
-    - ``length`` -- an integer
+    - ``length`` -- integer
 
-    OUTPUT:
-
-    - the list of coefficients
+    OUTPUT: the list of coefficients
 
     EXAMPLES::
 
@@ -148,7 +146,7 @@ def bch_bound(n, D, arithmetic=False):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     - ``D`` -- a list of integers
 
@@ -914,9 +912,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
         - ``p`` -- A polynomial from ``self`` message space
 
-        OUTPUT:
-
-        - A codeword in associated code of ``self``
+        OUTPUT: a codeword in associated code of ``self``
 
         EXAMPLES::
 
@@ -946,9 +942,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
         - ``c`` -- A vector with the same length as the code
 
-        OUTPUT:
-
-        - An element of the message space
+        OUTPUT: an element of the message space
 
         EXAMPLES::
 
@@ -1088,9 +1082,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
         - ``m`` -- an element from ``self``'s message space
 
-        OUTPUT:
-
-        - A codeword in the associated code of ``self``
+        OUTPUT: a codeword in the associated code of ``self``
 
         EXAMPLES::
 
@@ -1125,9 +1117,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
         - ``c`` -- A vector with the same length as the code
 
-        OUTPUT:
-
-        - An element of the message space
+        OUTPUT: an element of the message space
 
         EXAMPLES::
 

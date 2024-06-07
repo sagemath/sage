@@ -906,7 +906,7 @@ class AffinePermutationTypeA(AffinePermutation):
                 if m != -1 and c[i] - (i - m) >= c[m]:
                     return False
                 m = i
-        # now check m (the last non-zero) against first non-zero.
+        # now check m (the last nonzero) against first nonzero.
         d = self.n - (m - firstnonzero)
         return not c[firstnonzero] - d >= c[m]
 
@@ -2167,7 +2167,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         Return a random affine permutation of length ``n``.
 
         If ``n`` is not specified, then ``n`` is chosen as a random
-        non-negative integer in `[0, 1000]`.
+        nonnegative integer in `[0, 1000]`.
 
         Starts at the identity, then chooses an upper cover at random.
         Not very uniform: actually constructs a uniformly random reduced word

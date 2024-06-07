@@ -650,8 +650,8 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         INPUT:
 
-        - ``g`` -- a list of elements of this free algebra.
-        - ``d`` -- an integer.
+        - ``g`` -- list of elements of this free algebra
+        - ``d`` -- integer
 
         OUTPUT:
 

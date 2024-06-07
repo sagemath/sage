@@ -1412,7 +1412,7 @@ class ExteriorAlgebra(CliffordAlgebra):
     - ``R`` -- the base ring, *or* the free module whose exterior algebra
       is to be computed
 
-    - ``names`` -- a list of strings to name the generators of the
+    - ``names`` -- list of strings to name the generators of the
       exterior algebra; this list can either have one entry only (in which
       case the generators will be called ``e + '0'``, ``e + '1'``, ...,
       ``e + 'n-1'``, with ``e`` being said entry), or have ``n`` entries

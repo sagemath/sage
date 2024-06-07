@@ -293,9 +293,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
         - ``message`` -- A ``self.code().dimension()``-vector from the message
           space of ``self``.
 
-        OUTPUT:
-
-        - A codeword in associated code of ``self``.
+        OUTPUT: a codeword in associated code of ``self``
 
         EXAMPLES::
 
