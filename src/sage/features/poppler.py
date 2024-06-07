@@ -4,18 +4,18 @@ Check for poppler features
 poppler-utils is a collection of tools built on Poppler's library API, to
 manage PDF and extract contents:
 
- - ``pdfattach`` - add a new embedded file (attachment) to an existing PDF
- - ``pdfdetach`` - extract embedded documents from a PDF
- - ``pdffonts`` - lists the fonts used in a PDF
- - ``pdfimages`` - extract all embedded images at native resolution from a PDF
- - ``pdfinfo`` - list all information of a PDF
- - ``pdfseparate`` - extract single pages from a PDF
- - ``pdftocairo`` - convert single pages from a PDF to vector or bitmap formats using cairo
- - ``pdftohtml`` - convert PDF to HTML format retaining formatting
- - ``pdftoppm`` - convert a PDF page to a bitmap
- - ``pdftops`` - convert PDF to printable PS format
- - ``pdftotext`` - extract all text from PDF
- - ``pdfunite`` - merges several PDF
+ - ``pdfattach`` -- add a new embedded file (attachment) to an existing PDF
+ - ``pdfdetach`` -- extract embedded documents from a PDF
+ - ``pdffonts`` -- lists the fonts used in a PDF
+ - ``pdfimages`` -- extract all embedded images at native resolution from a PDF
+ - ``pdfinfo`` -- list all information of a PDF
+ - ``pdfseparate`` -- extract single pages from a PDF
+ - ``pdftocairo`` -- convert single pages from a PDF to vector or bitmap formats using cairo
+ - ``pdftohtml`` -- convert PDF to HTML format retaining formatting
+ - ``pdftoppm`` -- convert a PDF page to a bitmap
+ - ``pdftops`` -- convert PDF to printable PS format
+ - ``pdftotext`` -- extract all text from PDF
+ - ``pdfunite`` -- merges several PDF
 
 Currently we only check for the presence of ``pdftocairo``.
 """

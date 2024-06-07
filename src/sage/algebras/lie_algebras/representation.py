@@ -16,13 +16,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family, AbstractFamily
 from sage.matrix.constructor import matrix
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.modules import Modules
-from copy import copy
 
 
 class Representation_abstract:
@@ -590,7 +587,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
             prev = LCS[-1]
             for D in reversed(LCS[:-1]):
                 temp = [L(bred) for b in D.basis() if (bred := prev.reduce(L(b)))]
-                basis_by_deg[self._step-len(basis_by_deg)] = L.echelon_form(temp)
+                basis_by_deg[self._step - len(basis_by_deg)] = L.echelon_form(temp)
                 prev = D
 
         L_basis = sum((basis_by_deg[deg] for deg in sorted(basis_by_deg)), [])
@@ -602,7 +599,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
             self._invcob = cob.inverse()
             scoeffs = {}
             for i, b in enumerate(L_basis):
-                for j, bp in enumerate(L_basis[i+1:], start=i+1):
+                for j, bp in enumerate(L_basis[i+1:], start=i + 1):
                     scoeffs[i, j] = (self._invcob * b.bracket(bp)._vector_()).dict()
             index_set = tuple(range(L.dimension()))
             from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
@@ -617,7 +614,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
                                                for n in range(self._step+1)])
 
         if self._minimal:
-            X = set([tuple(index) for index in indices])
+            X = {tuple(index) for index in indices}
             monoid = self._pbw._indices
             I = monoid._indices
             one = L.base_ring().one()
@@ -642,7 +639,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
                         return False
                 return True
 
-            to_remove = set([None])
+            to_remove = {None}
             while to_remove:
                 X -= to_remove
                 to_remove = set()
@@ -683,7 +680,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         """
         from sage.misc.latex import latex
         g = latex(self._lie_algebra)
-        ret = "U({0}) / U({0})^{{{1}}}".format(g, self._step+1)
+        ret = "U({0}) / U({0})^{{{1}}}".format(g, self._step + 1)
         if self._minimal:
             return "\\min " + ret
         return ret

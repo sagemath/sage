@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Discrete Gaussian Samplers over Lattices
 
@@ -83,10 +82,10 @@ def _iter_vectors(n, lower, upper, step=None):
 
     INPUT:
 
-    - ``n`` - length, integer ``>0``,
-    - ``lower`` - lower bound (inclusive), integer ``< upper``.
-    - ``upper`` - upper bound (exclusive), integer ``> lower``.
-    - ``step`` - used for recursion, ignore.
+    - ``n`` -- length, integer ``>0``,
+    - ``lower`` -- lower bound (inclusive), integer ``< upper``.
+    - ``upper`` -- upper bound (exclusive), integer ``> lower``.
+    - ``step`` -- used for recursion, ignore.
 
     EXAMPLES::
 
@@ -161,8 +160,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         INPUT:
 
-        - ``precision`` - an integer `>= 53` nor ``None``.
-        - ``sigma`` - if ``precision`` is ``None`` then the precision of
+        - ``precision`` -- an integer `>= 53` nor ``None``.
+        - ``sigma`` -- if ``precision`` is ``None`` then the precision of
           ``sigma`` is used.
 
         EXAMPLES::

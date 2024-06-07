@@ -52,7 +52,7 @@ from itertools import product
 
 from . import constructor
 from . import BSD
-from .ell_generic import is_EllipticCurve
+from .ell_generic import EllipticCurve_generic
 from . import ell_modular_symbols
 from .ell_number_field import EllipticCurve_number_field
 from . import ell_point
@@ -816,7 +816,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           general 2-descent when 2-torsion trivial; n_aux=-1 causes default
           to be used (depends on method)
 
-        - ``second_descent`` -- (default: True)
+        - ``second_descent`` -- (default: ``True``)
           second_descent only relevant for descent via 2-isogeny
 
         OUTPUT:
@@ -2267,10 +2267,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'pari'`` -- use ellrank in pari
 
-        - ``only_use_mwrank`` -- bool (default True) if False, first
+        - ``only_use_mwrank`` -- bool (default: ``True``) if False, first
           attempts to use more naive, natively implemented methods
 
-        - ``use_database`` -- bool (default True) if True, attempts to
+        - ``use_database`` -- bool (default: ``True``) if True, attempts to
           find curve and gens in the (optional) database
 
         - ``descent_second_limit`` -- (default: 12) used in 2-descent
@@ -3846,10 +3846,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``algorithm`` -- string:
 
-          * ``'sympow'`` - (default) use Mark Watkin's (newer) C
+          * ``'sympow'`` -- (default) use Mark Watkin's (newer) C
             program sympow
 
-          * ``'magma'`` - requires that MAGMA be installed (also
+          * ``'magma'`` -- requires that MAGMA be installed (also
             implemented by Mark Watkins)
 
         - ``M`` -- non-negative integer; the modular degree at level `MN`
@@ -4985,7 +4985,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.is_isogenous(EE)
             False
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if other.base_field() is not QQ:
             raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")

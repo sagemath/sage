@@ -4466,8 +4466,8 @@ def _findprec(c_1, c_2, c_3, p):
 
     INPUT:
 
-    - `c_1`, `c_2`, `c_3` - positive integers
-    - `p` - prime
+    - `c_1`, `c_2`, `c_3` -- positive integers
+    - `p` -- prime
 
     OUTPUT:
 
@@ -4617,9 +4617,9 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
 
     INPUT:
 
-    - ``p`` - prime
-    - ``f``, ``prec`` - positive integers
-    - ``use_longs`` - boolean; if ``True``, computations are done in C ``long long``
+    - ``p`` -- prime
+    - ``f``, ``prec`` -- positive integers
+    - ``use_longs`` -- boolean; if ``True``, computations are done in C ``long long``
         integers rather than Sage `p`-adics, and the results are returned
         as a Python array rather than a list.
 

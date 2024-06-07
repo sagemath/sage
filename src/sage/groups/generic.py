@@ -302,7 +302,7 @@ class multiples:
 
         - ``P`` -- step value: any Sage object on which a binary operation is defined
         - ``n`` -- number of multiples: non-negative integer
-        - ``P0`` - offset (default 0): Sage object which can be 'added' to P
+        - ``P0`` -- offset (default 0): Sage object which can be 'added' to P
         - ``indexed`` -- boolean (default ``False``)
 
           If ``indexed==False``, then the iterator delivers ``P0+i*P``
@@ -393,7 +393,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the identity element of the group
     - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``op()`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
 
     OUTPUT:
 
@@ -530,7 +530,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
       are in an additive group or a multiplicative one
     - ``identity`` -- the group's identity
     - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
+    - ``op()`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``hash_function`` -- having an efficient hash function is critical
       for this algorithm (see examples)
 

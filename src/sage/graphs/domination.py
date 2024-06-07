@@ -341,12 +341,12 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         sage: next(g.dominating_sets())
         [1]
 
-    Minimum connected dominating sets of the Peterson graph::
+    Minimum connected dominating sets of the Petersen graph::
 
         sage: G = graphs.PetersenGraph()
         sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
         4
-        sage: sorted(G.dominating_sets(k=1, connected=True))
+        sage: sorted(G.dominating_sets(k=1, connected=True))                            # needs sage.numerical.mip
         [[0, 1, 2, 6],
          [0, 1, 4, 5],
          [0, 3, 4, 9],

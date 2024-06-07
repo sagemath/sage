@@ -19,8 +19,6 @@ from sage.rings.rational_field import QQ
 import sage.rings.abc
 from sage.geometry.triangulation.point_configuration import PointConfiguration
 from sage.modules.free_module_element import vector
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.plot.all", ["line", "point", "rainbow", "plot"])
 
 
 class VoronoiDiagram(SageObject):
@@ -61,9 +59,9 @@ class VoronoiDiagram(SageObject):
 
     If the vertices are not converted to ``AA`` before, the method throws an error::
 
-        sage: polytopes.dodecahedron().vertices_list()[0][0].parent()                   # needs sage.rings.number_field
+        sage: polytopes.dodecahedron().vertices_list()[0][0].parent()                   # needs sage.groups sage.rings.number_field
         Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-        sage: VoronoiDiagram(polytopes.dodecahedron().vertices_list())                  # needs sage.rings.number_field
+        sage: VoronoiDiagram(polytopes.dodecahedron().vertices_list())                  # needs sage.groups sage.rings.number_field
         Traceback (most recent call last):
         ...
         NotImplementedError: Base ring of the Voronoi diagram must be
@@ -286,6 +284,7 @@ class VoronoiDiagram(SageObject):
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not
             implemented
         """
+        from sage.plot.all import line, point, rainbow, plot
 
         if self.ambient_dim() == 2:
             S = line([])

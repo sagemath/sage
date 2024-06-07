@@ -411,9 +411,9 @@ def groebner_basis_buchberger(I, prec, py_integral):
 
     INPUT:
 
-    - ``I`` - an ideal in a Tate series algebra
+    - ``I`` -- an ideal in a Tate series algebra
 
-    - ``prec`` - the related precision at which the initial generators
+    - ``prec`` -- the related precision at which the initial generators
       are truncated
 
     - ``integral`` -- a boolean; if ``True``, first compute a

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Testing for features of the environment at runtime
 
@@ -383,6 +382,7 @@ class Feature(TrivialUniqueRepresentation):
 
             sage: Benzene().unhide()            # optional - benzene, needs sage.graphs
             sage: len(list(graphs.fusenes(2)))  # optional - benzene, needs sage.graphs
+            1
         """
         self._hidden = True
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Chain complexes
 
@@ -115,11 +114,11 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
       indexed.
 
     - ``degree_of_differential`` -- element of grading_group
-      (optional, default ``1``). The degree of the differential.
+      (default: ``1``). The degree of the differential.
 
     - ``degree`` -- alias for ``degree_of_differential``.
 
-    - ``check`` -- boolean (optional, default ``True``). If ``True``,
+    - ``check`` -- boolean (default: ``True``). If ``True``,
       check that each consecutive pair of differentials are
       composable and have composite equal to zero.
 
@@ -947,7 +946,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``dim`` -- element of the grading group (optional, default
+        - ``dim`` -- element of the grading group (default:
           ``None``); if this is ``None``, return a dictionary of all
           of the differentials, or if this is a single element, return
           the differential starting in that dimension
@@ -1154,18 +1153,18 @@ class ChainComplex_class(Parent):
           homology in every degree in which the chain complex is
           possibly nonzero.
 
-        - ``base_ring`` -- a commutative ring (optional, default is the
+        - ``base_ring`` -- a commutative ring (default: the
           base ring for the chain complex); must be either the
           integers `\ZZ` or a field
 
-        - ``generators`` -- boolean (optional, default ``False``); if
+        - ``generators`` -- boolean (default: ``False``); if
           ``True``, return generators for the homology groups along with
           the groups. See :issue:`6100`
 
-        - ``verbose`` - boolean (optional, default ``False``); if
+        - ``verbose`` -- boolean (default: ``False``); if
           ``True``, print some messages as the homology is computed
 
-        - ``algorithm`` - string (optional, default ``'pari'``); the
+        - ``algorithm`` -- string (default: ``'pari'``); the
           options are:
 
           * ``'auto'``
@@ -1399,7 +1398,7 @@ class ChainComplex_class(Parent):
           degree, or if an element of the grading group, then return
           the Betti number in that degree
 
-        - ``base_ring`` -- a commutative ring (optional, default is the
+        - ``base_ring`` -- a commutative ring (default: the
           base ring for the chain complex); compute homology with
           these coefficients -- must be either the integers or a
           field
@@ -1446,7 +1445,7 @@ class ChainComplex_class(Parent):
         -  ``max_prime`` -- prime number; search for torsion mod `p` for
            all `p` strictly less than this number
 
-        -  ``min_prime`` -- prime (optional, default 2); search for
+        -  ``min_prime`` -- prime (default: 2); search for
            torsion mod `p` for primes at least as big as this
 
         Return a list of pairs `(p, d)` where `p` is a prime at which
@@ -1566,7 +1565,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``n`` -- an integer (optional, default 1)
+        - ``n`` -- an integer (default: 1)
 
         The *shift* operation is also sometimes called *translation* or
         *suspension*.
