@@ -1496,12 +1496,10 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if basis is None:
             basis = self._fmodule._def_basis
         if basis not in self._components:
-            raise ValueError("the components w.r.t. the {}".format(basis) +
+            raise ValueError(f"the components w.r.t. the {basis}"
                              " have not been defined")
-        to_be_deleted = []
-        for other_basis in self._components:
-            if other_basis != basis:
-                to_be_deleted.append(other_basis)
+        to_be_deleted = [other_basis for other_basis in self._components
+                         if other_basis != basis]
         for other_basis in to_be_deleted:
             del self._components[other_basis]
 
