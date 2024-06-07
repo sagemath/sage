@@ -1733,16 +1733,19 @@ def RandomToleranceGraph(n, seed=None):
     Return a random tolerance graph.
 
     The random tolerance graph is built from a random tolerance representation
-    by using the function `ToleranceGraph`. This representation is a list
-    `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where `k = n-1` and
-    `I_i = (l_i,r_i)` denotes a random interval and `t_i` a random positive
-    value. The width of the representation is limited to `n^2 * 2^n`.
+    by using the function
+    :meth:`sage.graphs.generators.intersection.ToleranceGraph`. This
+    representation is a list `((l_0,r_0,t_0), (l_1,r_1,t_1), ...,
+    (l_k,r_k,t_k))` where `k = n-1` and `I_i = (l_i,r_i)` denotes a random
+    interval and `t_i` a random positive value. The width of the representation
+    is limited to `n^2 * 2^n`.
 
     .. NOTE::
 
         The vertices are named `0, 1, \cdots, n-1`. The tolerance representation
         used to create the graph is saved with the graph and can be recovered
-        using ``get_vertex()`` or ``get_vertices()``.
+        using :meth:`~sage.graphs.generic_graph.GenericGraph.get_vertex` or
+        :meth:`~sage.graphs.generic_graph.GenericGraph.get_vertices`.
 
     INPUT:
 

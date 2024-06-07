@@ -713,7 +713,7 @@ def BarbellGraph(n1, n2):
 
 def LollipopGraph(n1, n2):
     r"""
-    Returns a lollipop graph with n1+n2 nodes.
+    Returns a lollipop graph with ``n1+n2`` nodes.
 
     A lollipop graph is a path graph (order ``n2``) connected to a complete
     graph (order ``n1``). (A barbell graph minus one of the bells).
@@ -1067,7 +1067,7 @@ def chang_graphs():
 
 def CirculantGraph(n, adjacency):
     r"""
-    Returns a circulant graph with n nodes.
+    Returns a circulant graph with `n` nodes.
 
     A circulant graph has the property that the vertex `i` is connected
     with the vertices `i+j` and `i-j` for each `j` in ``adjacency``.
@@ -2224,12 +2224,12 @@ def LCFGraph(n, shift_list, repeats):
     LCF (Lederberg-Coxeter-Fruchte) notation is a concise way of describing
     cubic Hamiltonian graphs. The way a graph is constructed is as
     follows. Since there is a Hamiltonian cycle, we first create a cycle on `n`
-    nodes. The variable `\textrm{shift\_list} = [s_0, s_1, ..., s_k-1]`
+    nodes. The variable `\textrm{shift_list} = [s_0, s_1, ..., s_k-1]`
     describes edges to be created by the following scheme: for each `i`, connect
     vertex `i` to vertex `(i + s_i)`. Then, repeats specifies the number of
     times to repeat this process, where on the `j`-th repeat we connect vertex
-    `(i + j |\textrm{shift\_list}|)` to vertex
-    `( i + j |\textrm{shift\_list}| + s_i)`.
+    `(i + j |\textrm{shift_list}|)` to vertex
+    `( i + j |\textrm{shift_list}| + s_i)`.
 
     INPUT:
 

@@ -593,8 +593,8 @@ def UstimenkoGraph(const int m, const int q):
 
     This is the distance 1 or 2 graph of the dual polar graph `C_{m-1}(q)`.
     The graph is distance-regular with parameters
-    `(d,q^2, \binom(3,1)_q -1, \binom(m+1,1)_q -1)`,
-    where `\binom(n, k)_q` is the `q`-binomial coefficient.
+    `(d,q^2, \binom{3,1}_q -1, \binom{m+1,1}_q -1)`,
+    where `\binom{n, k}_q` is the `q`-binomial coefficient.
 
     INPUT:
 
