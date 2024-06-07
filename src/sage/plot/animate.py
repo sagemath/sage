@@ -707,7 +707,7 @@ class Animation(WithEqualityById, SageObject):
 
         # running the command
         directory = self.png()
-        cmd = [Magick().executablee, '-dispose', 'Background',
+        cmd = [Magick().executable, '-dispose', 'Background',
                 '-delay', '%s' % int(delay), '-loop', '%s' % int(iterations),
                 '*.png', savefile]
         from subprocess import run
