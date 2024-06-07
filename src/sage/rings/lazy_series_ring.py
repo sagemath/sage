@@ -2783,7 +2783,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         try:
             # Try to build stuff using the polynomial ring constructor
             x = R(x)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, AttributeError):
             pass
         if isinstance(constant, (tuple, list)):
             constant, degree = constant
@@ -2792,7 +2792,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
                 raise ValueError("constant must be zero for multivariate Taylor series")
             constant = BR(constant)
 
-        if x in R:
+        if parent(x) == R:
             if not x and not constant:
                 coeff_stream = Stream_zero()
             else:

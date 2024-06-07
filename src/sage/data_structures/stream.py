@@ -1405,6 +1405,15 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
             ((-FESDUMMY_0+1)*a+FESDUMMY_0*b)
             sage: s(g).parent()
             Multivariate Lazy Taylor Series Ring in a, b over CoefficientRing over Integer Ring
+
+            sage: S = SymmetricFunctions(QQ).h().fraction_field()
+            sage: PF = CoefficientRing(S)
+            sage: L.<a, b> = LazyPowerSeriesRing(S)
+            sage: c = PF.gen(0)
+            sage: p = a + c
+            sage: p.parent()
+            Multivariate Lazy Taylor Series Ring in a, b over CoefficientRing over Fraction Field of Symmetric Functions over Rational Field in the homogeneous basis
+
         """
         B = InfinitePolynomialRing(base_ring, names=["FESDUMMY"])
         FractionField_generic.__init__(self, B,
