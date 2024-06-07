@@ -5893,8 +5893,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             base_ring = base_ring.base_ring()
         elif base_ring in FunctionFields():
             base_ring = base_ring.constant_base_field()
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if not (base_ring in NumberFields() or is_NumberFieldOrder(base_ring)
+        if not (base_ring in NumberFields() or base_ring == ZZ or isinstance(base_ring, sage.rings.abc.Order)
                 or (base_ring in FiniteFields())):
             raise NotImplementedError("incompatible base field, see documentation")
 

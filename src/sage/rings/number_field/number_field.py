@@ -81,7 +81,7 @@ from sage.misc.superseded import deprecation
 
 
 import sage.libs.ntl.all as ntl
-
+import sage.rings.abc
 import sage.rings.complex_mpfr
 from sage.rings.polynomial.polynomial_element import Polynomial
 import sage.rings.real_mpfr
@@ -212,7 +212,7 @@ import sage.rings.complex_interval_field
 from sage.structure.factory import UniqueFactory
 from . import number_field_element
 from . import number_field_element_quadratic
-from .number_field_ideal import is_NumberFieldIdeal, NumberFieldFractionalIdeal
+from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
 from sage.libs.pari.all import pari, pari_gen
 
 from sage.rings.rational_field import QQ
@@ -1018,6 +1018,9 @@ def is_AbsoluteNumberField(x):
         sage: from sage.rings.number_field.number_field import is_AbsoluteNumberField
         sage: x = polygen(ZZ, 'x')
         sage: is_AbsoluteNumberField(NumberField(x^2 + 1, 'a'))
+        doctest:warning...
+        DeprecationWarning: The function is_AbsoluteNumberField is deprecated; use 'isinstance(..., NumberField_absolute)' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         True
         sage: is_AbsoluteNumberField(NumberField([x^3 + 17, x^2 + 1], 'a'))
         False
@@ -1030,6 +1033,10 @@ def is_AbsoluteNumberField(x):
         sage: is_AbsoluteNumberField(QQ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_AbsoluteNumberField is deprecated; "
+                "use 'isinstance(..., NumberField_absolute)' instead.")
     return isinstance(x, NumberField_absolute)
 
 
@@ -6953,8 +6960,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             ...
             ValueError: Fractional ideal (5) is not a prime ideal
         """
-        from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
-        if is_NumberFieldIdeal(prime) and prime.number_field() is not self:
+        if isinstance(prime, NumberFieldIdeal) and prime.number_field() is not self:
             raise ValueError("%s is not an ideal of %s" % (prime, self))
         # This allows principal ideals to be specified using a generator:
         try:
@@ -6962,7 +6968,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         except TypeError:
             pass
 
-        if not is_NumberFieldIdeal(prime) or prime.number_field() is not self:
+        if not isinstance(prime, NumberFieldIdeal) or prime.number_field() is not self:
             raise ValueError("%s is not an ideal of %s" % (prime, self))
         if check and not prime.is_prime():
             raise ValueError("%s is not a prime ideal" % prime)
@@ -7088,7 +7094,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: x in (t^2 + 3*t +1, t^2 - 4*t +1)
             True
         """
-        if not is_NumberFieldIdeal(P):
+        if not isinstance(P, NumberFieldIdeal):
             P = self.ideal(P)
         P = P.pari_prime()
         if others == "positive":
@@ -8444,10 +8450,9 @@ class NumberField_absolute(NumberField_generic):
         """
         if R is int:
             return self._generic_coerce_map(R)
-        elif R in (ZZ, QQ, self.base()):
+        if R in (ZZ, QQ, self.base()):
             return self._generic_coerce_map(R)
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if is_NumberFieldOrder(R) and self.has_coerce_map_from(R.number_field()):
+        if isinstance(R, sage.rings.abc.Order) and self.has_coerce_map_from(R.number_field()):
             return self._generic_coerce_map(R)
         # R is not QQ by the above tests
         if isinstance(R, number_field_base.NumberField) and R.coerce_embedding() is not None:
@@ -10348,7 +10353,7 @@ class NumberField_absolute(NumberField_generic):
                 if P(a) > 0 or P(b) > 0:
                     return 1
                 return -1
-        if not is_NumberFieldIdeal(P):
+        if not isinstance(P, NumberFieldIdeal):
             P = self.ideal(P)
         if P.number_field() is not self:
             raise ValueError("P (=%s) should be an ideal of self (=%s) in hilbert_symbol, not of %s" % (P, self, P.number_field()))
