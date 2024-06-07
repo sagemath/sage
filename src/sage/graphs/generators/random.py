@@ -1734,7 +1734,7 @@ def RandomToleranceGraph(n, seed=None):
 
     The random tolerance graph is built from a random tolerance representation
     by using the function
-    :meth:`sage.graphs.generators.intersection.ToleranceGraph`. This
+    :meth:`~sage.graphs.generators.intersection.ToleranceGraph`. This
     representation is a list `((l_0,r_0,t_0), (l_1,r_1,t_1), ...,
     (l_k,r_k,t_k))` where `k = n-1` and `I_i = (l_i,r_i)` denotes a random
     interval and `t_i` a random positive value. The width of the representation

@@ -1090,7 +1090,7 @@ def CirculantGraph(n, adjacency):
 
     .. SEEALSO::
 
-        * :meth:`sage.graphs.generic_graph.GenericGraph.is_circulant`
+        * :meth:`~sage.graphs.generic_graph.GenericGraph.is_circulant`
           -- checks whether a (di)graph is circulant, and/or returns
           all possible sets of parameters.
 
