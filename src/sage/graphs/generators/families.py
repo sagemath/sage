@@ -443,8 +443,7 @@ def HammingGraph(n, q, X=None):
 
     EXAMPLES:
 
-    Every Hamming graph is distance-regular, regular and
-    vertex-transitive.  ::
+    Every Hamming graph is distance-regular, regular and vertex-transitive::
 
         sage: g = graphs.HammingGraph(3, 7)
         sage: g.is_distance_regular()
@@ -454,15 +453,15 @@ def HammingGraph(n, q, X=None):
         sage: g.is_vertex_transitive()                                                  # needs sage.groups
         True
 
-    A Hamming graph with parameters (1,q) is isomorphic to the
-    Complete graph with parameter q.  ::
+    A Hamming graph with parameters ``(1,q)`` is isomorphic to the
+    Complete graph with parameter ``q``::
 
         sage: g = graphs.HammingGraph(1, 23)
         sage: g.is_isomorphic(graphs.CompleteGraph(23))
         True
 
     If a parameter ``q`` is provided which is not equal to ``X``'s
-    cardinality, an exception is raised. ::
+    cardinality, an exception is raised::
 
         sage: X = ['a','b','c','d','e']
         sage: g = graphs.HammingGraph(2, 3, X)
@@ -716,12 +715,12 @@ def LollipopGraph(n1, n2):
     r"""
     Returns a lollipop graph with n1+n2 nodes.
 
-    A lollipop graph is a path graph (order n2) connected to a complete
-    graph (order n1). (A barbell graph minus one of the bells).
+    A lollipop graph is a path graph (order ``n2``) connected to a complete
+    graph (order ``n1``). (A barbell graph minus one of the bells).
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the complete
-    graph will be drawn in the lower-left corner with the (n1)th node
+    graph will be drawn in the lower-left corner with the (``n1``)th node
     at a 45 degree angle above the right horizontal center of the
     complete graph, leading directly into the path graph.
 
@@ -787,14 +786,14 @@ def LollipopGraph(n1, n2):
 
 def TadpoleGraph(n1, n2):
     r"""
-    Return a tadpole graph with n1+n2 nodes.
+    Return a tadpole graph with ``n1+n2`` nodes.
 
-    A tadpole graph is a path graph (order n2) connected to a cycle graph
-    (order n1).
+    A tadpole graph is a path graph (order ``n2``) connected to a cycle graph
+    (order ``n1``).
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the cycle graph will be drawn
-    in the lower-left corner with the (n1)th node at a 45 degree angle above
+    in the lower-left corner with the (``n1``)th node at a 45 degree angle above
     the right horizontal center of the cycle graph, leading directly into the
     path graph.
 
@@ -1071,14 +1070,14 @@ def CirculantGraph(n, adjacency):
     Returns a circulant graph with n nodes.
 
     A circulant graph has the property that the vertex `i` is connected
-    with the vertices `i+j` and `i-j` for each j in ``adjacency``.
+    with the vertices `i+j` and `i-j` for each `j` in ``adjacency``.
 
     INPUT:
 
 
     -  ``n`` -- number of vertices in the graph
 
-    -  ``adjacency`` -- the list of j values
+    -  ``adjacency`` -- the list of `j` values
 
 
     PLOTTING: Upon construction, the position dictionary is filled to
@@ -1086,7 +1085,7 @@ def CirculantGraph(n, adjacency):
     graph will be displayed with the first (0) node at the top, with
     the rest following in a counterclockwise manner.
 
-    Filling the position dictionary in advance adds O(n) to the
+    Filling the position dictionary in advance adds `O(n)` to the
     constructor.
 
     .. SEEALSO::
@@ -1909,12 +1908,12 @@ def RoseWindowGraph(n, a, r):
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the rose window graphs are
-    displayed as an inner and outer cycle pair, with the first n nodes drawn on
-    the outer circle.  The first (0) node is drawn at the top of the
+    displayed as an inner and outer cycle pair, with the first `n` nodes drawn
+    on the outer circle. The first (0) node is drawn at the top of the
     outer-circle, moving counterclockwise after that. The inner circle is drawn
-    with the (n)th node at the top, then counterclockwise as well.  Vertices in
+    with the (`n`)th node at the top, then counterclockwise as well. Vertices in
     the outer circle are connected in the circular manner, vertices in the inner
-    circle are connected when their label have difference `r` (mod n).  Vertices
+    circle are connected when their label have difference `r \pmod{n}`. Vertices
     on the outer rim are connected with the vertices on the inner rim when they
     are at the same position and when they are `a` apart.
 
@@ -2003,12 +2002,12 @@ def TabacjnGraph(n, a, b, r):
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the rose window graphs are
-    displayed as an inner and outer cycle pair, with the first n nodes drawn on
-    the outer circle.  The first (0) node is drawn at the top of the
+    displayed as an inner and outer cycle pair, with the first `n` nodes drawn
+    on the outer circle. The first (0) node is drawn at the top of the
     outer-circle, moving counterclockwise after that. The inner circle is drawn
-    with the (n)th node at the top, then counterclockwise as well. Vertices in
+    with the (`n`)th node at the top, then counterclockwise as well. Vertices in
     the outer circle are connected in the circular manner, vertices in the inner
-    circle are connected when their label have difference `r` (mod n). Vertices
+    circle are connected when their label have difference `r \pmod{n}`. Vertices
     on the outer rim are connected with the vertices on the inner rim when they
     are at the same position and when they are `a` and `b` apart.
 
@@ -2223,18 +2222,17 @@ def LCFGraph(n, shift_list, repeats):
     r"""
     Return the cubic graph specified in LCF notation.
 
-    LCF (Lederberg-Coxeter-Fruchte) notation is a concise way of
-    describing cubic Hamiltonian graphs. The way a graph is constructed
-    is as follows. Since there is a Hamiltonian cycle, we first create
-    a cycle on n nodes. The variable shift_list = [s_0, s_1, ...,
-    s_k-1] describes edges to be created by the following scheme: for
-    each i, connect vertex i to vertex (i + s_i). Then, repeats
-    specifies the number of times to repeat this process, where on the
-    jth repeat we connect vertex (i + j\*len(shift_list)) to vertex (
-    i + j\*len(shift_list) + s_i).
+    LCF (Lederberg-Coxeter-Fruchte) notation is a concise way of describing
+    cubic Hamiltonian graphs. The way a graph is constructed is as
+    follows. Since there is a Hamiltonian cycle, we first create a cycle on `n`
+    nodes. The variable `\textrm{shift\_list} = [s_0, s_1, ..., s_k-1]`
+    describes edges to be created by the following scheme: for each `i`, connect
+    vertex `i` to vertex `(i + s_i)`. Then, repeats specifies the number of
+    times to repeat this process, where on the `j`-th repeat we connect vertex
+    `(i + j |\textrm{shift\_list}|)` to vertex
+    `( i + j |\textrm{shift\_list}| + s_i)`.
 
     INPUT:
-
 
     -  ``n`` -- the number of nodes.
 
@@ -2273,7 +2271,7 @@ def LCFGraph(n, shift_list, repeats):
         3
         sage: G.show()                          # long time                             # needs sage.plot
 
-    PLOTTING: LCF Graphs are plotted as an n-cycle with edges in the
+    PLOTTING: LCF Graphs are plotted as an `n`-cycle with edges in the
     middle, as described above.
 
     REFERENCES:
@@ -2418,21 +2416,21 @@ def MycielskiStep(g):
 
 def NKStarGraph(n, k):
     r"""
-    Returns the (n,k)-star graph.
+    Returns the `(n,k)`-star graph.
 
-    The vertices of the (n,k)-star graph are the set of all arrangements of
-    n symbols into labels of length k. There are two adjacency rules for
-    the (n,k)-star graph. First, two vertices are adjacent if one can be
-    obtained from the other by swapping the first symbol with another
-    symbol. Second, two vertices are adjacent if one can be obtained from
-    the other by swapping the first symbol with an external symbol (a
-    symbol not used in the original label).
+    The vertices of the `(n,k)`-star graph are the set of all arrangements of
+    `n` symbols into labels of length `k`. There are two adjacency rules for the
+    `(n,k)`-star graph. First, two vertices are adjacent if one can be obtained
+    from the other by swapping the first symbol with another symbol. Second, two
+    vertices are adjacent if one can be obtained from the other by swapping the
+    first symbol with an external symbol (a symbol not used in the original
+    label).
 
     INPUT:
 
-    -  ``n``
+    -  ``n`` -- integer; number of symbols
 
-    -  ``k``
+    -  ``k`` -- integer; length of the labels of the vertices
 
     EXAMPLES::
 
@@ -2483,15 +2481,15 @@ def NKStarGraph(n, k):
 
 def NStarGraph(n):
     r"""
-    Returns the n-star graph.
+    Returns the `n`-star graph.
 
-    The vertices of the n-star graph are the set of permutations on n
+    The vertices of the `n`-star graph are the set of permutations on `n`
     symbols. There is an edge between two vertices if their labels differ
     only in the first and one other position.
 
     INPUT:
 
-    -  ``n``
+    -  ``n`` -- integer; number of symbols
 
     EXAMPLES::
 
@@ -2706,7 +2704,7 @@ def SquaredSkewHadamardMatrixGraph(n):
 def SwitchedSquaredSkewHadamardMatrixGraph(n):
     r"""
     A strongly regular graph in Seidel switching class of
-    `SquaredSkewHadamardMatrixGraph`
+    :meth:`~sage.graphs.graph_generators.GraphGenerators.SquaredSkewHadamardMatrixGraph`.
 
     A strongly regular graph in the :meth:`Seidel switching
     <Graph.seidel_switching>` class of the disjoint union of a 1-vertex graph
@@ -3779,7 +3777,7 @@ def RingedTree(k, vertex_labels=True):
 
     More precisely, in each layer of the binary tree (i.e. a layer is the set of
     vertices `[2^i...2^{i+1}-1]`) two vertices `u,v` are adjacent if `u=v+1` or
-    if `u=2^i` and `v=`2^{i+1}-1`.
+    if `u=2^i` and `v=2^{i+1}-1`.
 
     Ringed trees are defined in [CFHM2013]_.
 

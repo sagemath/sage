@@ -162,7 +162,7 @@ def CircularLadderGraph(n):
     displayed as an inner and outer cycle pair, with the first `n` nodes drawn
     on the inner circle. The first (0) node is drawn at the top of the
     inner-circle, moving clockwise after that. The outer circle is drawn with
-    the `(n+1)`th node at the top, then counterclockwise as well.
+    the `(n+1)`-th node at the top, then counterclockwise as well.
     When `n == 2`, we rotate the outer circle by an angle of `\pi/8` to ensure
     that all edges are visible (otherwise the 4 vertices of the graph would be
     placed on a single line).
