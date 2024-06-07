@@ -27,6 +27,7 @@ pairs of integers.
 from sage.rings.integer import Integer
 from sage.structure.element import MonoidElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
+from sage.rings.semirings.non_negative_integer_semiring import NN
 
 
 def is_FreeMonoidElement(x):
@@ -176,8 +177,8 @@ class FreeMonoidElement(MonoidElement):
             2
             sage: (x*y).subs({x:z,y:z})
             z^2
-            sage: M1=MatrixSpace(ZZ,1,2)
-            sage: M2=MatrixSpace(ZZ,2,1)
+            sage: M1 = MatrixSpace(ZZ,1,2)
+            sage: M2 = MatrixSpace(ZZ,2,1)
             sage: (x*y).subs({x:M1([1,2]),y:M2([3,4])})
             [11]
 
@@ -188,6 +189,14 @@ class FreeMonoidElement(MonoidElement):
             sage: M.<a> = FreeMonoid(1)
             sage: a.substitute(a=5)
             5
+
+        TESTS::
+
+            sage: M.<x,y> = FreeMonoid(2)
+            sage: (x*y)(QQ(4),QQ(5)).parent()
+            Rational Field
+            sage: M.one()(QQ(4),QQ(5)).parent()
+            Integer Ring
 
         AUTHORS:
 
@@ -211,28 +220,15 @@ class FreeMonoidElement(MonoidElement):
         if len(x) != self.parent().ngens():
             raise ValueError("must specify as many values as generators in parent")
 
-        # I don't start with 0, because I don't want to preclude evaluation with
-        # arbitrary objects (e.g. matrices) because of funny coercion.
-        one = P.one()
-        result = None
+        # careful handling of anything that can be multiplied
+        # without being in one common parent
+        result = NN.one()
         for var_index, exponent in self._element_list:
-            # Take further pains to ensure that non-square matrices are not exponentiated.
             replacement = x[var_index]
             if exponent > 1:
-                c = replacement ** exponent
+                result *= replacement ** exponent
             elif exponent == 1:
-                c = replacement
-            else:
-                c = one
-
-            if result is None:
-                result = c
-            else:
-                result *= c
-
-        if result is None:
-            return one
-
+                result *= replacement
         return result
 
     def _mul_(self, y):
