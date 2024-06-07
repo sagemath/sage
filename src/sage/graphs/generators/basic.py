@@ -102,7 +102,7 @@ def ButterflyGraph():
 
     .. SEEALSO::
 
-        - :meth:`GraphGenerators.FriendshipGraph`
+        - :meth:`~sage.graphs.graph_generators.GraphGenerators.FriendshipGraph`
 
     EXAMPLES:
 
@@ -402,15 +402,28 @@ def CompleteGraph(n):
     G.add_edges((i, j) for i in range(n) for j in range(i + 1, n))
     return G
 
+
 def CorrelationGraph(seqs, alpha, include_anticorrelation):
-    """
-    Constructs and returns a correlation graph with a node corresponding to each sequence in `seqs`.
+    r"""
+    Return a correlation graph with a node per sequence in ``seqs``.
 
-    Edges are added between nodes where the corresponding sequences have a correlation coeffecient greater than alpha.
+    Edges are added between nodes where the corresponding sequences have a
+    correlation coeffecient greater than alpha.
 
-    If include_anticorrelation is true, then edges are also added between nodes with correlation coeffecient less than -alpha.
+    If ``include_anticorrelation`` is ``True``, then edges are also added
+    between nodes with correlation coefficient less than ``-alpha``.
 
-    EXAMPLES:
+    INPUT:
+
+    - ``seqs`` -- list of sequences, taht is a list of lists
+
+    - ``alpha`` -- float; threshold on the correlation coefficient between two
+      sequences for adding an edge
+
+    - ``include_anticorrelation`` -- boolean; whether to add edges between nodes
+      with correlation coefficient less than ``-alpha`` or not
+
+    EXAMPLES::
 
         sage: # needs numpy
         sage: from sage.graphs.generators.basic import CorrelationGraph
@@ -424,7 +437,6 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
         [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
         sage: CG3.edges(sort=False)
         [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
-
     """
     from numpy import corrcoef
     from sage.matrix.constructor import Matrix
@@ -442,6 +454,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
 
     # call graph constructor
     return Graph(adjacency_matrix, format="adjacency_matrix", name="Correlation Graph")
+
 
 def CompleteBipartiteGraph(p, q, set_position=True):
     r"""
@@ -859,7 +872,6 @@ def Toroidal6RegularGrid2dGraph(p, q):
         ...
         ValueError: parameters p and q must be integers larger than 3
     """
-
     if p <= 3 or q <= 3:
         raise ValueError("parameters p and q must be integers larger than 3")
 
