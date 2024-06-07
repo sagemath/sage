@@ -2410,7 +2410,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             - ``algorithm`` -- one of the following depending on the
               classification of the Lie algebra:
 
-              Nilpotent Lie algebras:
+              Nilpotent:
 
               * ``'regular'`` -- use the universal enveloping algebra quotient
                 :class:`~sage.algebras.lie_algebras.representation.FaithfulRepresentationNilpotentPBW`
@@ -2418,7 +2418,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 precise details, see the documentation of
                 :class:`~sage.algebras.lie_algebras.representation.FaithfulRepresentationNilpotentPBW`)
 
-              Solvable but not nilpotent:
+              Solvable:
 
               * Not implemented
 
@@ -2428,7 +2428,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
               General case
 
-              * Not implemented
+              * ``'generic'`` -- generic algortihm (only implemented currently
+                for positive characteristic)
+
+            Note that the algorithm for any more generic cases can be used
+            in the specialized cases. For instance, using ``'generic'`` for
+            any Lie algebra (e.g., even if nilpotent) will use the generic
+            implementation.
 
             EXAMPLES::
 
@@ -2478,7 +2484,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 if algorithm == "minimal":
                     from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
                     return FaithfulRepresentationNilpotentPBW(self, minimal=True)
-            else:
+            if algorithm is None or algorithm == "generic":
+                if self.base_ring().characteristic() > 0:
+                    from sage.algebras.lie_algebras.representation import FaithfulRepresentationPBWPosChar
+                    return FaithfulRepresentationPBWPosChar(self)
                 raise NotImplementedError("only implemented for nilpotent Lie algebras")
             raise ValueError("invalid algorithm '{}'".format(algorithm))
 
