@@ -674,7 +674,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             temp_rational = x.rational_reconstruction()
             mpq_set(self.value, temp_rational.value)
 
-        elif isinstance(x, RealDouble_classes):
+        elif isinstance(x, (float, sage.rings.real_double.RealDoubleElement)):
             try:
                 from sage.rings.real_mpfr import RR, RealNumber
             except ImportError:
