@@ -860,7 +860,7 @@ class Polyhedron_base3(Polyhedron_base2):
                 yield (obj[i], obj[j])
 
     @cached_method
-    def vertex_adjacency_matrix(self, algorithm=None):
+    def vertex_adjacency_matrix(self, algorithm=None, **kwds):
         """
         Return the binary matrix of vertex adjacencies.
 
@@ -872,6 +872,9 @@ class Polyhedron_base3(Polyhedron_base2):
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
+
+        - ``**kwds`` -- keywords to pass to
+          :func:`~sage.matrix.constructor.matrix`.
 
         EXAMPLES::
 
@@ -974,8 +977,8 @@ class Polyhedron_base3(Polyhedron_base2):
             (0, 0, 0, 0, 1) A ray in the direction (1, 1)
             (0, 0, 1, 1, 0) A vertex at (3, 0)
 
-        The vertex adjacency matrix has base ring integers. This way one can express various
-        counting questions::
+        By default, the vertex adjacency matrix has base ring integers. This way one
+        can express various counting questions::
 
             sage: P = polytopes.cube()
             sage: Q = P.stack(P.faces(2)[0])
@@ -993,7 +996,7 @@ class Polyhedron_base3(Polyhedron_base2):
                 sage: P.adjacency_matrix().is_immutable()
                 True
         """
-        return self.combinatorial_polyhedron().vertex_adjacency_matrix(algorithm=algorithm)
+        return self.combinatorial_polyhedron().vertex_adjacency_matrix(algorithm=algorithm, **kwds)
 
     adjacency_matrix = vertex_adjacency_matrix
 
