@@ -294,6 +294,22 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``algorithm`` (default: ``'crystalline'``) -- the algorithm
           used to compute the characteristic polynomial
 
+        .. NOTE:
+
+        Available algorithms are:
+
+            - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a central
+              simple algebra (CSA) over `\FF_q[\text{Frob}_\phi]` (see
+              Chapter 4 of [CL2023]_).
+            - ``'crystalline'`` -- it uses the action of the Frobenius on
+              the crystalline cohomology (see [MS2023]_).
+            - ``'gekeler'`` -- it tries to identify coefficients by writing
+              that the characteristic polynomial annihilates the Frobenius
+              endomorphism; this algorithm may fail is some cases (see
+              [Gek1991]_).
+            - ``'motive'`` -- it uses the action of the Frobenius on the
+              Anderson motive (see Chapter 2 of [CL2023]_).
+
         EXAMPLES::
 
             sage: Fq = GF(25)
@@ -329,21 +345,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         ALGORITHM:
 
-        By default, this method uses the so-called *crystalline*
-        algorithm which computes the characteristic polynomial of the
-        Frobenius acting on the crystalline cohomology of the Drinfeld
-        module. For further details, see [Ang1997]_.
-
-        The available options for 'algorithm' are:
-
-        - ``'crystalline'`` -- Computes the characteristic polynomial of the
-          Frobenius endomorphism on the crystalline cohomology of a Drinfeld
-          module.
-
-        - ``'motive'`` -- Based on computing the characteristic polynomial of
-          the Frobenius endomorphism on the motive of a Drinfeld module. This
-          instantiates the Frobenius as a morphism object and calls its
-          ``'characteristic_polynomial'`` method.
+        See the note above.
         """
         # Throw an error if the user asks for an unimplemented algorithm
         # even if the char poly has already been computed
