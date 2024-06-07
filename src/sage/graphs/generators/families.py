@@ -2098,8 +2098,7 @@ def HararyGraph(k, n):
     Harary graphs are minimal `k`-connected graphs on `n` vertices.
 
     The construction provided uses the method CirculantGraph.  For more
-    details, see the book D. B. West, Introduction to Graph Theory, 2nd
-    Edition, Prentice Hall, 2001, p. 150--151; or the `MathWorld article on
+    details, see the book [West2001]_ or the `MathWorld article on
     Harary graphs <http://mathworld.wolfram.com/HararyGraph.html>`_.
 
     EXAMPLES:
@@ -2317,6 +2316,8 @@ def MycielskiGraph(k=1, relabel=True):
     `w_i`-vertices. Finally, vertex `w_i` is adjacent to vertex
     `v_j` iff `v_i` is adjacent to `v_j`.
 
+    For more details, see the :wikipedia:`Mycielskian`.
+
     INPUT:
 
     - ``k`` Number of steps in the construction process.
@@ -2340,13 +2341,6 @@ def MycielskiGraph(k=1, relabel=True):
         sage: g = graphs.MycielskiGraph(4)
         sage: g.is_isomorphic(graphs.GrotzschGraph())
         True
-
-    REFERENCES:
-
-    -  [1] Weisstein, Eric W. "Mycielski Graph."
-       From MathWorld--A Wolfram Web Resource.
-       http://mathworld.wolfram.com/MycielskiGraph.html
-
     """
     g = Graph()
     g.name("Mycielski Graph " + str(k))
@@ -2440,9 +2434,7 @@ def NKStarGraph(n, k):
 
     REFERENCES:
 
-    - Wei-Kuo, Chiang, and Chen Rong-Jaye. "The (n, k)-star graph: A
-      generalized star graph." Information Processing Letters 56,
-      no. 5 (December 8, 1995): 259-264.
+    [CC1995]_
 
     AUTHORS:
 
@@ -2499,9 +2491,7 @@ def NStarGraph(n):
 
     REFERENCES:
 
-    - S.B. Akers, D. Horel and B. Krishnamurthy, The star graph: An
-      attractive alternative to the previous n-cube. In: Proc. Internat.
-      Conf. on Parallel Processing (1987), pp. 393--400.
+    [AHK1994]_
 
     AUTHORS:
 
@@ -3435,9 +3425,9 @@ def WheelGraph(n):
     displayed with the first (0) node in the center, the second node at the top,
     and the rest following in a counterclockwise manner.
 
-    With the wheel graph, we see that it doesn't take a very large n at all for
-    the spring-layout to give a counter-intuitive display. (See Graphics Array
-    examples below).
+    With the wheel graph, we see that it doesn't take a very large `n` at all
+    for the spring-layout to give a counter-intuitive display. (See Graphics
+    Array examples below).
 
     EXAMPLES:
 
