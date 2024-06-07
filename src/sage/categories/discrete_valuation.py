@@ -14,6 +14,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.fields import Fields
 
+
 class DiscreteValuationRings(Category_singleton):
     """
     The category of discrete valuation rings

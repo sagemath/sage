@@ -921,7 +921,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: True) if both
+    - ``return_pari_objects`` -- (boolean, default: ``True``) if both
       ``return_seqs`` and ``return_pari_objects`` are ``False`` then it
       returns the elements as Sage objects; otherwise it returns PARI
       objects.

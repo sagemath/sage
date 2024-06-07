@@ -9,6 +9,7 @@ Finite dimensional coalgebras with basis
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+
 def FiniteDimensionalCoalgebrasWithBasis(base_ring):
     """
     The category of finite dimensional coalgebras with a distinguished basis

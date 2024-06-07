@@ -503,11 +503,11 @@ cdef class MultiModularBasis_base():
 
         INPUT:
 
-        - ``z`` - the integer being reduced
-        - ``b`` - array to hold the reductions mod each m_i.
+        - ``z`` -- the integer being reduced
+        - ``b`` -- array to hold the reductions mod each m_i.
                  It MUST be allocated and have length at least len
-        - ``offset`` - first prime in list to reduce against
-        - ``len`` - number of primes in list to reduce against
+        - ``offset`` -- first prime in list to reduce against
+        - ``len`` -- number of primes in list to reduce against
         """
         cdef int i
         cdef mod_int* m
@@ -524,13 +524,13 @@ cdef class MultiModularBasis_base():
 
         INPUT:
 
-        - ``z``      - an array of integers being reduced
-        - ``b``      - array to hold the reductions mod each m_i.
-                        It MUST be fully allocated and each
-                        have length at least len
-        - ``vn``     - length of z and each b[i]
-        - ``offset`` - first prime in list to reduce against
-        - ``len``    - number of primes in list to reduce against
+        - ``z``      -- an array of integers being reduced
+        - ``b``      -- array to hold the reductions mod each m_i.
+                         It MUST be fully allocated and each
+                         have length at least len
+        - ``vn``     -- length of z and each b[i]
+        - ``offset`` -- first prime in list to reduce against
+        - ``len``    -- number of primes in list to reduce against
         """
         cdef int i, j
         cdef mod_int* m
@@ -552,12 +552,12 @@ cdef class MultiModularBasis_base():
 
         INPUT:
 
-        - ``z``      - a placeholder for the constructed integer
-                        z MUST be initialized IF and ONLY IF offset > 0
-        - ``b``      - array holding the reductions mod each m_i.
-                        It MUST have length at least len
-        - ``offset`` - first prime in list to reduce against
-        - ``len``    - number of primes in list to reduce against
+        - ``z``      -- a placeholder for the constructed integer
+                         z MUST be initialized IF and ONLY IF offset > 0
+        - ``b``      -- array holding the reductions mod each m_i.
+                         It MUST have length at least len
+        - ``offset`` -- first prime in list to reduce against
+        - ``len``    -- number of primes in list to reduce against
         """
         cdef int i, s
         cdef mpz_t u
@@ -594,14 +594,14 @@ cdef class MultiModularBasis_base():
 
         INPUT:
 
-        - ``z``      - a placeholder for the constructed integers
-                         z MUST be allocated and have length at least vc
-                        z[j] MUST be initialized IF and ONLY IF offset > 0
-        - ``b``      - array holding the reductions mod each m_i.
-                        MUST have length at least len
-        - ``vn``     - length of z and each b[i]
-        - ``offset`` - first prime in list to reduce against
-        - ``len``    - number of primes in list to reduce against
+        - ``z``      -- a placeholder for the constructed integers
+                          z MUST be allocated and have length at least vc
+                          z[j] MUST be initialized IF and ONLY IF offset > 0
+        - ``b``      -- array holding the reductions mod each m_i.
+                         MUST have length at least len
+        - ``vn``     -- length of z and each b[i]
+        - ``offset`` -- first prime in list to reduce against
+        - ``len``    -- number of primes in list to reduce against
         """
         cdef int i, j
         cdef mpz_t u
@@ -647,7 +647,7 @@ cdef class MultiModularBasis_base():
 
         INPUT:
 
-        - ``b`` - a list of length at most self.n
+        - ``b`` -- a list of length at most self.n
 
         OUTPUT:
 

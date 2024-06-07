@@ -624,10 +624,10 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``singletons`` -- (optional, default: ``False``) whether or not to
+        - ``singletons`` -- (default: ``False``) whether or not to
           include singleton blocks in the output
 
-        - ``optimal`` -- (optional, default: ``False``) whether or not to
+        - ``optimal`` -- (default: ``False``) whether or not to
           compute the coarsest possible partition
 
         .. NOTE::

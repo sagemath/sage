@@ -2168,7 +2168,7 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: True) determines whether the
+        - ``del_restrictions`` -- (default: ``True``) determines whether the
           restrictions of ``self`` to subdomains are deleted.
 
         TESTS::

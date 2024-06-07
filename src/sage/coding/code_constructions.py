@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Linear code constructors that do not preserve the structural information
 
@@ -227,47 +227,49 @@ def permutation_action(g, v):
 
     EXAMPLES::
 
+        sage: # needs sage.groups
         sage: V = VectorSpace(GF(3),5)
         sage: v = V([0,1,2,0,1])
-        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
-        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: G = SymmetricGroup(5)
+        sage: g = G([(1,2,3)])
+        sage: permutation_action(g,v)
         (1, 2, 0, 0, 1)
-        sage: g = G([()])                                                               # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: g = G([()])
+        sage: permutation_action(g,v)
         (0, 1, 2, 0, 1)
-        sage: g = G([(1,2,3,4,5)])                                                      # optional - sage.groups
-        sage: permutation_action(g,v)                                                   # optional - sage.groups
+        sage: g = G([(1,2,3,4,5)])
+        sage: permutation_action(g,v)
         (1, 2, 0, 1, 0)
         sage: L = Sequence([1,2,3,4,5])
-        sage: permutation_action(g,L)                                                   # optional - sage.groups
+        sage: permutation_action(g,L)
         [2, 3, 4, 5, 1]
         sage: MS = MatrixSpace(GF(3),3,7)
         sage: A = MS([[1,0,0,0,1,1,0],[0,1,0,1,0,1,0],[0,0,0,0,0,0,1]])
-        sage: S5 = SymmetricGroup(5)                                                    # optional - sage.groups
-        sage: g = S5([(1,2,3)])                                                         # optional - sage.groups
+        sage: S5 = SymmetricGroup(5)
+        sage: g = S5([(1,2,3)])
         sage: A
         [1 0 0 0 1 1 0]
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
-        sage: permutation_action(g,A)                                                   # optional - sage.groups
+        sage: permutation_action(g,A)
         [0 1 0 1 0 1 0]
         [0 0 0 0 0 0 1]
         [1 0 0 0 1 1 0]
 
     It also works on lists and is a "left action"::
 
+        sage: # needs sage.groups
         sage: v = [0,1,2,0,1]
-        sage: G = SymmetricGroup(5)                                                     # optional - sage.groups
-        sage: g = G([(1,2,3)])                                                          # optional - sage.groups
-        sage: gv = permutation_action(g,v); gv                                          # optional - sage.groups
+        sage: G = SymmetricGroup(5)
+        sage: g = G([(1,2,3)])
+        sage: gv = permutation_action(g,v); gv
         [1, 2, 0, 0, 1]
-        sage: permutation_action(g,v) == g(v)                                           # optional - sage.groups
+        sage: permutation_action(g,v) == g(v)
         True
-        sage: h = G([(3,4)])                                                            # optional - sage.groups
-        sage: gv = permutation_action(g,v)                                              # optional - sage.groups
-        sage: hgv = permutation_action(h,gv)                                            # optional - sage.groups
-        sage: hgv == permutation_action(h*g,v)                                          # optional - sage.groups
+        sage: h = G([(3,4)])
+        sage: gv = permutation_action(g,v)
+        sage: hgv = permutation_action(h,gv)
+        sage: hgv == permutation_action(h*g,v)
         True
 
     AUTHORS:
@@ -729,7 +731,7 @@ def ToricCode(P,F):
          sage: C = codes.ToricCode([[0,0],[1,0],[2,0],[0,1],[1,1]], GF(7))
          sage: C
          [36, 5] linear code over GF(7)
-         sage: C.minimum_distance()
+         sage: C.minimum_distance()                                                     # needs sage.groups
          24
          sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
          ...24
@@ -737,7 +739,7 @@ def ToricCode(P,F):
          ....:                      [0,-1],[0,0],[0,1],[1,-1],[1,0]], GF(5))
          sage: C
          [16, 9] linear code over GF(5)
-         sage: C.minimum_distance()
+         sage: C.minimum_distance()                                                     # needs sage.groups
          6
          sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
          6
@@ -786,9 +788,9 @@ def WalshCode(m):
         [8, 3] linear code over GF(2)
         sage: C.spectrum()
         [1, 0, 0, 0, 7, 0, 0, 0, 0]
-        sage: C.minimum_distance()
+        sage: C.minimum_distance()                                                      # needs sage.libs.gap
         4
-        sage: C.minimum_distance(algorithm='gap')  # check d=2^(m-1)
+        sage: C.minimum_distance(algorithm='gap')  # check d=2^(m-1)                    # needs sage.libs.gap
         4
 
     REFERENCES:

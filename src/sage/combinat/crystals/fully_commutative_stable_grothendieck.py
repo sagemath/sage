@@ -32,10 +32,12 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat import permutation
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.integer import Integer
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 
 class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscallMetaclass):

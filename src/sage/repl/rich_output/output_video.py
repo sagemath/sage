@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Video Output Types
 

@@ -469,9 +469,9 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
       - ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
-      - ``'giac'`` - use Giac
+      - ``'giac'`` -- use Giac
 
-      - ``'libgiac'`` - use libgiac
+      - ``'libgiac'`` -- use libgiac
 
     To prevent automatic evaluation, use the ``hold`` argument.
 

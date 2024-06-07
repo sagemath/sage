@@ -477,6 +477,7 @@ def Hom(X, Y, category=None, check=True):
                 pass
     return H
 
+
 def hom(X, Y, f):
     """
     Return ``Hom(X,Y)(f)``, where ``f`` is data that defines an element of
@@ -490,6 +491,7 @@ def hom(X, Y, f):
         7
     """
     return Hom(X,Y)(f)
+
 
 def End(X, category=None):
     r"""
@@ -522,9 +524,6 @@ def End(X, category=None):
          from Alternating group of order 3!/2 as a permutation group
          to Alternating group of order 3!/2 as a permutation group
          in Category of finite enumerated permutation groups
-        sage: from sage.categories.homset import is_Endset
-        sage: is_Endset(S)
-        True
         sage: S.domain()
         Alternating group of order 3!/2 as a permutation group
 
@@ -558,6 +557,7 @@ def End(X, category=None):
         Category of endsets of unital magmas and additive unital additive magmas
     """
     return Hom(X,X, category)
+
 
 def end(X, f):
     """
@@ -1298,13 +1298,20 @@ def is_Homset(x):
         sage: P.<t> = ZZ[]
         sage: f = P.hom([1/2*t])
         sage: is_Homset(f)
+        doctest:warning...
+        DeprecationWarning: the function is_Homset is deprecated;
+        use 'isinstance(..., Homset)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         False
         sage: is_Homset(f.category())
         False
         sage: is_Homset(f.parent())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_Homset is deprecated; use 'isinstance(..., Homset)' instead")
     return isinstance(x, Homset)
+
 
 def is_Endset(x):
     """
@@ -1316,9 +1323,15 @@ def is_Endset(x):
         sage: P.<t> = ZZ[]
         sage: f = P.hom([1/2*t])
         sage: is_Endset(f.parent())
+        doctest:warning...
+        DeprecationWarning: the function is_Endset is deprecated;
+        use 'isinstance(..., Homset) and ....is_endomorphism_set()' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         False
         sage: g = P.hom([2*t])
         sage: is_Endset(g.parent())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_Endset is deprecated; use 'isinstance(..., Homset) and ....is_endomorphism_set()' instead")
     return isinstance(x, Homset) and x.is_endomorphism_set()

@@ -51,13 +51,13 @@ class CyclicCover_generic(AffinePlaneCurve):
 
         INPUT:
 
-        - ``A`` - ambient affine space
+        - ``A`` -- ambient affine space
 
-        - ``r`` - degree of the cover
+        - ``r`` -- degree of the cover
 
-        -  ``f`` - univariate polynomial
+        -  ``f`` -- univariate polynomial
 
-        -  ``names``  (default: ``["x","y"]``) - names for the
+        -  ``names``  (default: ``["x","y"]``) -- names for the
            coordinate functions
 
         TESTS::

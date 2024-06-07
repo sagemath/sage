@@ -772,9 +772,9 @@ class HyperplaneArrangementElement(Element):
         - ``element_label`` -- (default: ``"int"``) specify how an
           intersection should be represented; must be one of the following:
 
-          * ``"subspace"`` - as a subspace
-          * ``"subset"`` - as a subset of the defining hyperplanes
-          * ``"int"`` - as an integer
+          * ``"subspace"`` -- as a subspace
+          * ``"subset"`` -- as a subset of the defining hyperplanes
+          * ``"int"`` -- as an integer
 
         OUTPUT:
 
@@ -1009,10 +1009,10 @@ class HyperplaneArrangementElement(Element):
         EXAMPLES::
 
             sage: A = hyperplane_arrangements.coordinate(2)
-            sage: A.cocharacteristic_polynomial()
+            sage: A.cocharacteristic_polynomial()                                       # needs sage.graphs
             z^2 + 2*z + 1
             sage: B = hyperplane_arrangements.braid(3)
-            sage: B.cocharacteristic_polynomial()
+            sage: B.cocharacteristic_polynomial()                                       # needs sage.graphs
             2*z^3 + 3*z^2 + z
 
         TESTS::
@@ -1059,26 +1059,26 @@ class HyperplaneArrangementElement(Element):
         EXAMPLES::
 
             sage: A = hyperplane_arrangements.coordinate(2)
-            sage: A.primitive_eulerian_polynomial()
+            sage: A.primitive_eulerian_polynomial()                                     # needs sage.graphs
             z^2
             sage: B = hyperplane_arrangements.braid(3)
-            sage: B.primitive_eulerian_polynomial()
+            sage: B.primitive_eulerian_polynomial()                                     # needs sage.graphs
             z^2 + z
 
             sage: H = hyperplane_arrangements.Shi(['B',2]).cone()
             sage: H.is_simplicial()
             False
-            sage: H.primitive_eulerian_polynomial()
+            sage: H.primitive_eulerian_polynomial()                                     # needs sage.graphs
             z^3 + 11*z^2 + 4*z
 
             sage: H = hyperplane_arrangements.graphical(graphs.CycleGraph(4))
-            sage: H.primitive_eulerian_polynomial()
+            sage: H.primitive_eulerian_polynomial()                                     # needs sage.graphs
             z^3 + 3*z^2 - z
 
         We verify Example 2.4 in [BHS2023]_ for `k = 2,3,4,5`::
 
             sage: R.<x,y> = HyperplaneArrangements(QQ)
-            sage: for k in range(2,6):
+            sage: for k in range(2,6):                                                  # needs sage.graphs
             ....:     H = R([x+j*y for j in range(k)])
             ....:     H.primitive_eulerian_polynomial()
             z^2
@@ -1088,6 +1088,7 @@ class HyperplaneArrangementElement(Element):
 
         We verify Equation (4) in [BHS2023]_ on some examples::
 
+            sage: # needs sage.graphs
             sage: R.<x> = ZZ[]
             sage: Arr = [hyperplane_arrangements.braid(n) for n in range(2,6)]
             sage: all(R(A.cocharacteristic_polynomial()(1/(x-1)) * (x-1)^A.dimension())
@@ -1096,10 +1097,11 @@ class HyperplaneArrangementElement(Element):
 
         We compute types `H_3` and `F_4` in Table 1 of [BHS2023]_::
 
+            sage: # needs sage.libs.gap
             sage: W = CoxeterGroup(['H',3], implementation="matrix")
             sage: A = HyperplaneArrangements(W.base_ring(), tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])
-            sage: H.is_simplicial()
+            sage: H.is_simplicial()                                                     # needs sage.graphs
             True
             sage: H.primitive_eulerian_polynomial()
             z^3 + 28*z^2 + 16*z
@@ -1107,7 +1109,7 @@ class HyperplaneArrangementElement(Element):
             sage: W = CoxeterGroup(['F',4], implementation="permutation")
             sage: A = HyperplaneArrangements(QQ, tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])
-            sage: H.primitive_eulerian_polynomial()  # long time
+            sage: H.primitive_eulerian_polynomial()     # long time                     # needs sage.graphs
             z^4 + 116*z^3 + 220*z^2 + 48*z
 
         We verify Proposition 2.5 in [BHS2023]_ on the braid arrangement
@@ -1116,7 +1118,8 @@ class HyperplaneArrangementElement(Element):
             sage: B = [hyperplane_arrangements.braid(k) for k in range(2,6)]
             sage: all(H.is_simplicial() for H in B)
             True
-            sage: all(c > 0 for H in B for c in H.primitive_eulerian_polynomial().coefficients())
+            sage: all(c > 0 for H in B                                                  # needs sage.graphs
+            ....:     for c in H.primitive_eulerian_polynomial().coefficients())
             True
 
         We verify Example 9.4 in [BHS2023]_ showing a hyperplane arrangement
@@ -1124,6 +1127,7 @@ class HyperplaneArrangementElement(Element):
         general, the graphical arrangement of a cycle graph corresponds
         to the arrangements in Example 9.4)::
 
+            sage: # needs sage.graphs
             sage: H = hyperplane_arrangements.graphical(graphs.CycleGraph(5))
             sage: pep = H.primitive_eulerian_polynomial(); pep
             z^4 + 6*z^3 - 4*z^2 + z

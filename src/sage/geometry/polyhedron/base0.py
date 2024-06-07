@@ -577,10 +577,10 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         EXAMPLES::
 
-            sage: p = polytopes.icosahedron()                                           # needs sage.rings.number_field
-            sage: p.is_compact()                                                        # needs sage.rings.number_field
+            sage: p = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
+            sage: p.is_compact()                                                        # needs sage.groups sage.rings.number_field
             True
-            sage: p = Polyhedron(ieqs = [[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
+            sage: p = Polyhedron(ieqs=[[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
             sage: p.is_compact()
             False
         """
@@ -1314,11 +1314,11 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         EXAMPLES::
 
-            sage: triangle = Polyhedron(vertices = [[1, 0], [0, 1], [1, 1]])
+            sage: triangle = Polyhedron(vertices=[[1, 0], [0, 1], [1, 1]])
             sage: triangle.backend()
             'ppl'
-            sage: D = polytopes.dodecahedron()                                          # needs sage.rings.number_field
-            sage: D.backend()                                                           # needs sage.rings.number_field
+            sage: D = polytopes.dodecahedron()                                          # needs sage.groups sage.rings.number_field
+            sage: D.backend()                                                           # needs sage.groups sage.rings.number_field
             'field'
             sage: P = Polyhedron([[1.23]])
             sage: P.backend()

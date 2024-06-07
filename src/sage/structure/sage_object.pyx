@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Abstract base class for Sage objects
 """

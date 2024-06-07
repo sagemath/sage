@@ -12,10 +12,8 @@ isomorphism testing.
 AUTHORS:
 
 - Rudi Pendavingh, Stefan van Zwam (2013-04-01): initial version
-
-Methods
-=======
 """
+
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
@@ -34,7 +32,7 @@ from sage.data_structures.bitset_base cimport *
 cdef class SetSystem:
     """
     A ``SetSystem`` is an enumerator of a collection of subsets of a given
-    fixed and finite ground set. It offers the possibility to enumerate its
+    fixed and finite groundset. It offers the possibility to enumerate its
     contents. One is most likely to encounter these as output from some
     Matroid methods::
 
@@ -83,8 +81,8 @@ cdef class SetSystem:
         else:
             self._groundset = groundset
         self._idx = {}
-        for i in range(len(groundset)):
-            self._idx[groundset[i]] = i
+        for i in range(len(self._groundset)):
+            self._idx[self._groundset[i]] = i
 
         self._groundset_size = len(groundset)
         self._bitset_size = max(self._groundset_size, 1)
@@ -99,11 +97,11 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``groundset`` -- a list or tuple of finitely many elements.
-        - ``subsets`` -- (default: ``None``) an enumerator for a set of
-          subsets of ``groundset``.
-        - ``capacity`` -- (default: ``1``) Initial maximal capacity of the set
-          system.
+        - ``groundset`` -- list or tuple of finitely many elements
+        - ``subsets`` -- (default: ``None``) enumerator for a set of subsets of
+          ``groundset``
+        - ``capacity`` -- (default: ``1``) initial maximal capacity of the set
+          system
 
         EXAMPLES::
 
@@ -165,7 +163,7 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``k`` -- an integer. The index of the subset in the system.
+        - ``k`` -- integer; the index of the subset in the system
 
         OUTPUT:
 
@@ -209,13 +207,13 @@ cdef class SetSystem:
 
     cdef _relabel(self, mapping):
         """
-        Relabel each element ``e`` of the ground set as ``mapping[e]``, where
+        Relabel each element `e` of the ground set as ``mapping[e]``, where
         ``mapping`` is a given injective map.
 
         INPUT:
 
-        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
-          label of ``e``
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
 
         OUTPUT: ``None``
         """
@@ -270,7 +268,7 @@ cdef class SetSystem:
 
     cdef inline _append(self, bitset_t X):
         """
-        Append subset in internal, bitset format
+        Append subset in internal, bitset format.
         """
         if self._capacity == self._len:
             self.resize(self._capacity * 2)
@@ -310,7 +308,7 @@ cdef class SetSystem:
 
     cpdef _get_groundset(self):
         """
-        Return the ground set of this SetSystem.
+        Return the groundset of this SetSystem.
 
         EXAMPLES::
 
@@ -326,7 +324,7 @@ cdef class SetSystem:
         Test if the :class:`SetSystem` is connected.
 
         A :class:`SetSystem` is connected if there is no nonempty proper subset
-        ``X`` of the ground set so the each subset is either contained in ``X``
+        ``X`` of the groundset so the each subset is either contained in ``X``
         or disjoint from ``X``.
 
         EXAMPLES::
@@ -504,30 +502,30 @@ cdef class SetSystem:
 
     cpdef _equitable_partition(self, SetSystem P=None, EP=None):
         r"""
-        Return an equitable ordered partition of the ground set of the
+        Return an equitable ordered partition of the groundset of the
         hypergraph whose edges are the subsets in this SetSystem.
 
-        Given any ordered partition `P = (p_1, ..., p_k)` of the ground set of
+        Given any ordered partition `P = (p_1, ..., p_k)` of the groundset of
         a hypergraph, any edge `e` of the hypergraph has a characteristic
         intersection number sequence `i(e)=(|p_1\cap e|, ... , |p_k\cap e|))`.
         There is an ordered partition `EP` of the edges that groups the edges
         according to this intersection number sequence. Given this an ordered
         partition of the edges, we may similarly refine `P` to a new ordered
-        partition `P'`, by considering the incidence numbers of ground set
+        partition `P'`, by considering the incidence numbers of groundset
         elements with each partition element of `EP`.
 
         The ordered partition `P` is equitable when `P' = P`.
 
         INPUT:
 
-        - ``P``, an equitable ordered partition of the ground set, stored as
-          a SetSystem.
-        - ``EP``, the corresponding equitable partition of the edges, stored
-          as a list of lists of indices of subsets of this SetSystem.
+        - ``P`` -- an equitable ordered partition of the groundset, stored as
+          a SetSystem
+        - ``EP`` -- the corresponding equitable partition of the edges, stored
+          as a list of lists of indices of subsets of this SetSystem
 
         OUTPUT:
 
-        - ``P``, an equitable ordered partition of the ground set, stored as a
+        - ``P``, an equitable ordered partition of the groundset, stored as a
           SetSystem.
         - ``EP``, the corresponding equitable partition of the edges, stored
           as a list of lists of indices of subsets of this SetSystem.
@@ -596,18 +594,18 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``P`` -- (default: ``None``) an ordered partition of the ground set.
+        - ``P`` -- (default: ``None``) an ordered partition of the groundset
         - ``EP`` -- (default: ``None``) the corresponding partition of the
           edges, stored as a list of lists of indices of subsets of this
-          SetSystem.
+          SetSystem
 
         OUTPUT:
 
-        - ``P`` -- an ordered partition of the ground set into singletons,
-          stored as a SetSystem.
+        - ``P`` -- an ordered partition of the groundset into singletons,
+          stored as a SetSystem
         - ``EP`` -- the corresponding partition of the edges, stored as a list
-          of lists of indices of subsets of this SetSystem.
-        - ``h`` -- an integer invariant of the SetSystem.
+          of lists of indices of subsets of this SetSystem
+        - ``h`` -- integer invariant of the SetSystem
 
         EXAMPLES::
 
@@ -639,9 +637,9 @@ cdef class SetSystem:
 
         - ``other`` -- a SetSystem
         - ``SP`` (optional) -- a SetSystem storing an ordered partition of the
-          ground set of ``self``
+          groundset of ``self``
         - ``OP`` (optional) -- a SetSystem storing an ordered partition of the
-          ground set of ``other``
+          groundset of ``other``
 
         OUTPUT:
 
