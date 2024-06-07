@@ -3,12 +3,12 @@
 # Assume Python 3.9
 target-version = "py39"
 
-select = [
+lint.select = [
     "E", # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
     "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
     "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
     "PL", # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
 ]
-ignore = [
+lint.ignore = [
     "E501", # Line too long - hard to avoid in doctests, and better handled by black.
 ]

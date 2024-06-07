@@ -828,7 +828,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
           of the generators of an affine Hecke algebra on ``self``. By
           default, this is ``T``.
 
-        - ``normalized`` -- boolean (default: True) whether the
+        - ``normalized`` -- boolean (default: ``True``) whether the
           eigenvector `E_\mu` is normalized so that `\mu` has
           coefficient `1`.
 

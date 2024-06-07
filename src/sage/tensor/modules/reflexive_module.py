@@ -192,10 +192,10 @@ class ReflexiveModule_abstract(Parent):
         """
         if not all(module._ring == self._ring for module in others):
             raise TypeError('all modules must be defined on the same base ring')
-
-        factors = (self,) + others
         base_module = self.base_module()
         dual_base_module = self.base_module().dual()
+        factors = [self] + list(others)
+        # for M.tensor((_,_))
         if all(module in (base_module, dual_base_module) for module in others):
             from sage.modules.free_module_element import vector
             from .comp import CompFullySym, CompFullyAntiSym, CompWithSym
@@ -238,7 +238,7 @@ class ReflexiveModule_abstract(Parent):
                                             sym=result_sym, antisym=result_antisym)
             result._index_maps = tuple(index_maps)
         else:
-            result = base_module.tensor_module(k=None, l=None, fmodules=factors)
+            result = base_module.tensor_module(fmodules=tuple(factors))
         return result
 
 

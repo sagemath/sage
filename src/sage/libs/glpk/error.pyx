@@ -116,4 +116,5 @@ def setup_glpk_error_handler():
     glp_term_hook(sage_glpk_term_hook, NULL)
     glp_error_hook(sage_glpk_error_hook, NULL)
 
+
 setup_glpk_error_handler()

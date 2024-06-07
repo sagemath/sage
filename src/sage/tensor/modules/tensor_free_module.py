@@ -348,27 +348,24 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: TestSuite(T).run()
 
         """
-        from functools import reduce
         from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
-        if not isinstance(fmodule, tuple):
-            self._shape = (fmodule._rank,) * (tensor_type[0] + tensor_type[1])
+        if not isinstance(fmodule, (list, tuple)): # for M.tensor((_,_)) syntax
             self._fmodule = (fmodule,)
             self._tensor_type = tuple(tensor_type)
+            self._module_set = (fmodule,) * tensor_type[0] + (fmodule.dual(),) * tensor_type[1]
+            rank = fmodule._rank * (tensor_type[0] + tensor_type[1])
         else:
+            rank = 1
             fmodules = []
-            shape = []
             for module in fmodule:
-                shape.append(module._rank)
+                rank *= module._rank
                 if module not in fmodules and module.dual() not in fmodules:
                     fmodules.append(module if isinstance(module, FiniteRankFreeModule) else module.dual())
-            self._shape = tuple(shape)
-            self._module_set = tuple(fmodule) # tuple of all ordered modules in the tensor product
+            self._module_set = tuple(fmodule) # tuple of all modules in the tensor product (ordered)
             self._fmodule = tuple(fmodules) # tuple of all unique modules in the tensor product
-            self._tensor_type = None
         ring = self._fmodule[0]._ring
-        rank = reduce(lambda x, y: x*y, self._shape, 1)
 
-        if self._tensor_type == (0,1):  # case of the dual
+        if hasattr(self, '_tensor_type') and self._tensor_type == (0,1):  # case of the dual
             category = Modules(ring).FiniteDimensional().or_subcategory(category)
             if name is None and self._fmodule[0]._name is not None:
                 name = self._fmodule[0]._name + '*'
@@ -436,7 +433,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
                     resu.add_comp(basis[0])[:] = mat
             else:
                 raise TypeError("cannot coerce the {}".format(endo) +
-                                " to an element of {}".format(self))
+                            " to an element of {}".format(self))
         elif isinstance(comp, AlternatingContrTensor):
             # coercion of an alternating contravariant tensor of degree
             # p to a type-(p,0) tensor:
@@ -501,9 +498,11 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
                 resu._components[basis] = comp.copy()
         else:
             # Standard construction:
-            resu = self.element_class(self._fmodule, self._tensor_type, self._shape,
-                                        name=name, latex_name=latex_name,
-                                        sym=sym, antisym=antisym, parent=self)
+            if hasattr(self, '_tensor_type'):
+                resu = self.element_class(self._fmodule, self._tensor_type, name=name,
+                            latex_name=latex_name, sym=sym, antisym=antisym, parent=self)
+            else:
+                resu = self.element_class(self._fmodule, name=name, latex_name=latex_name, parent=self)
             if comp:
                 resu.set_comp(basis)[:] = comp
         return resu
@@ -531,9 +530,10 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
 
         """
         resu = self._element_constructor_(name='zero', latex_name='0')
+        all_basis = tuple()
         for module in self._fmodule:
-            for basis in module._known_bases:
-                resu._add_comp_unsafe(basis)
+            all_basis += (module._def_basis,)
+        resu._add_comp_unsafe(all_basis)
             # (since new components are initialized to zero)
         resu._is_zero = True # This element is certainly zero
         resu.set_immutable()
@@ -711,7 +711,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             True
 
         """
-        if self._tensor_type is None:
+        if not hasattr(self, '_tensor_type'):
             return self._fmodule
         return self._fmodule[0]
 
@@ -732,7 +732,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             (1, 2)
 
         """
-        if self._tensor_type is None:
+        if not hasattr(self, '_tensor_type'):
             raise AttributeError("Tensor object has no attribute tensor type")
         return self._tensor_type
 

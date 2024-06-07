@@ -268,7 +268,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             if self._name is not None:
                 description += self._name + " "
             description += "of degree {} ".format(self._tensor_rank)
-        description += "on the {}".format(self._fmodule)
+        description += "on the {}".format(self._fmodule[0])
         return description
 
     def _new_instance(self):
@@ -292,7 +292,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             True
 
         """
-        return self.__class__(self._fmodule, self._tensor_rank)
+        return self.__class__(self._fmodule[0], self._tensor_rank)
 
     def _new_comp(self, basis):
         r"""
@@ -325,16 +325,16 @@ class FreeModuleAltForm(FreeModuleTensor):
              module M over the Integer Ring
 
         """
-        fmodule = self._fmodule  # the base free module
+        fmodule = self._fmodule[0]  # the base free module
         if self._tensor_rank == 1:
-            return Components(fmodule._ring, basis, 1,
+            return Components(fmodule._ring, basis, 1, self._shape,
                               start_index=fmodule._sindex,
                               output_formatter=fmodule._output_formatter)
 
         return CompFullyAntiSym(fmodule._ring, basis, self._tensor_rank,
                                 start_index=fmodule._sindex,
                                 output_formatter=fmodule._output_formatter)
-
+    
     def degree(self):
         r"""
         Return the degree of ``self``.

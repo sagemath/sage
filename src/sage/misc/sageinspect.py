@@ -493,7 +493,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
         INPUT:
 
-        - ``node`` - the node instance to visit
+        - ``node`` -- the node instance to visit
 
         OUTPUT: ``None``, ``True``, ``False``
 
@@ -1280,6 +1280,7 @@ def sage_getfile(obj):
         sage: from sage.misc.sageinspect import sage_getfile
         sage: sage_getfile(sage.rings.rational)
         '...sage/rings/rational.pyx'
+        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile(Sq)                                                          # needs sage.combinat sage.modules
         '...sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile(x)                                                           # needs sage.symbolic
@@ -1358,6 +1359,7 @@ def sage_getfile_relative(obj):
         sage: from sage.misc.sageinspect import sage_getfile_relative
         sage: sage_getfile_relative(sage.rings.rational)
         'sage/rings/rational.pyx'
+        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile_relative(x)                                                  # needs sage.symbolic
@@ -1689,7 +1691,7 @@ def formatannotation(annotation, base_module=None):
     INPUT:
 
     - ``annotation`` -- annotation for a function
-    - ``base_module``-- (optional, default ``None``)
+    - ``base_module`` -- (default: ``None``)
 
     This is only relevant with Python 3, so the doctests are marked
     accordingly.
@@ -1812,7 +1814,7 @@ def sage_getdef(obj, obj_name=''):
     INPUT:
 
     - ``obj`` -- function
-    - ``obj_name`` -- string (optional, default '')
+    - ``obj_name`` -- string (default: '')
 
     ``obj_name`` is prepended to the output.
 

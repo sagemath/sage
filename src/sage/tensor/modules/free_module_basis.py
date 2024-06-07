@@ -724,7 +724,9 @@ class FreeModuleBasis(Basis_abstract):
         Basis_abstract.__init__(self, fmodule, symbol, latex_symbol, indices,
                                 latex_indices)
         # The basis is added to the module list of bases
-        fmodule._known_bases.append(self)
+        for module in fmodule._all_modules:
+            if hasattr(module, '_known_bases'):
+                module._known_bases.append(self)
         # The individual vectors:
         vl = list()
         ring_one = fmodule._ring.one()
@@ -744,8 +746,10 @@ class FreeModuleBasis(Basis_abstract):
         # base module itself, since it is considered as a type-(1,0) tensor
         # module):
         for t in fmodule._all_modules:
-            t.zero()._add_comp_unsafe(self)
-            # (since new components are initialized to zero)
+            try: # when adding component on tensorproduct of different modules, some bases for modules may not be defined
+                t.zero()._add_comp_unsafe(self) # (since new components are initialized to zero)
+            except:
+                pass
         # Initialization of the components w.r.t. the current basis of the
         # identity map of the general linear group:
         if fmodule._general_linear_group is not None:

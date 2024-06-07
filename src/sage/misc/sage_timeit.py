@@ -113,12 +113,12 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     - ``preparse`` -- (default: use globals preparser default) if
       ``True`` preparse ``stmt`` using the Sage preparser.
 
-    - ``number`` -- integer, (optional, default: 0), number of loops.
+    - ``number`` -- integer, (default: 0), number of loops.
 
-    - ``repeat`` -- integer, (optional, default: 3), number of
+    - ``repeat`` -- integer, (default: 3), number of
       repetition.
 
-    - ``precision`` -- integer, (optional, default: 3), precision of
+    - ``precision`` -- integer, (default: 3), precision of
       output time.
 
     - ``seconds`` -- boolean (default: ``False``). Whether to just

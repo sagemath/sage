@@ -15,6 +15,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
 from sage.sets.family import Family
 
+
 class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
     r"""
     An example of a commutative additive monoid: the free commutative monoid

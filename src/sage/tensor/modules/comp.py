@@ -493,7 +493,7 @@ class Components(SageObject):
         True
 
     """
-    def __init__(self, ring, frame, nb_indices, start_index=0,
+    def __init__(self, ring, frame, nb_indices, comp, start_index=0,
                  output_formatter=None):
         r"""
         TESTS::
@@ -508,7 +508,7 @@ class Components(SageObject):
         self._ring = ring
         self._frame = frame
         self._nid = nb_indices
-        self._dim = len(frame)
+        self._dim = len(frame[0])
         self._sindex = start_index
         self._output_formatter = output_formatter
         self._comp = {} # the dictionary of components, with the index tuples

@@ -289,7 +289,7 @@ class AlternatingContrTensor(FreeModuleTensor):
         """
         fmodule = self._fmodule  # the base free module
         if self._tensor_rank == 1:
-            return Components(fmodule._ring, basis, 1,
+            return Components(fmodule._ring, basis, 1, self._shape,
                               start_index=fmodule._sindex,
                               output_formatter=fmodule._output_formatter)
 

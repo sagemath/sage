@@ -173,7 +173,7 @@ def Psi(l, use_stored=True):
 
     - ``l`` -- either 2, 3, 5, 7, or 13.
 
-    - ``use_stored`` (boolean, default True) -- If True, use
+    - ``use_stored`` (boolean, default: ``True``) -- If True, use
       precomputed values, otherwise compute them on the fly.
 
     .. NOTE::

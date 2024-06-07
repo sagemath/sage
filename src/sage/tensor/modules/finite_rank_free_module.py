@@ -1554,9 +1554,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             return self._tensor_modules[key] or self._tensor_modules[fmodules]
         except KeyError:
             if key == (1, 0):
-                T = self
+                return self
             elif key == (0, 1):
-                T = self.dual()
+                return self.dual()
             elif sym or antisym:
                 from sage.tensor.modules.tensor_free_submodule import TensorFreeSubmodule_sym
                 T = TensorFreeSubmodule_sym(self, (k, l), sym=sym, antisym=antisym)
@@ -1567,7 +1567,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
                 else:                # for tensor product of multiple dual pair modules
                     T = TensorFreeModule(fmodules)
             if key == None:
-                self._tensor_modules[T._shape] = T
+                shape = tuple([module._rank for module in T._module_set])
+                for module in T._fmodule:
+                    module._tensor_modules[shape] = T
             else:
                 self._tensor_modules[key] = T
             return T
