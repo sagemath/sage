@@ -133,6 +133,7 @@ jobs:
           # Wipe out chronic diffs between old doc and new doc
           (cd docs && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
+                                                -e '/This is documentation for/ s/ built with GitHub PR [^.]*././' \
                                                 -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
                                                 -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create git repo from old doc
@@ -148,6 +149,8 @@ jobs:
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
+          export GITHUB_REF=${{ github.ref }}
+          export PR_SHA=${{ github.event.pull_request.head.sha }}
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall
           export SAGE_USE_CDNS=yes
