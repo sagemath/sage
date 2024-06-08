@@ -428,7 +428,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             .. WARNING::
 
                 The internal representation order is fixed, whereas this
-                depends on ``"sorting_key"`` print option as it is used
+                depends on ``'sorting_key'`` print option as it is used
                 only for printing.
 
             EXAMPLES::

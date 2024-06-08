@@ -78,14 +78,14 @@ class InformationSetAlgorithm(SageObject):
 
     INPUT:
 
-    - ``code`` -- A linear code for which to decode.
+    - ``code`` -- a linear code for which to decode
 
     - ``number_errors`` -- integer; the maximal number of errors to accept as
       correct decoding. An interval can also be specified by giving a pair of
       integers, where both end values are taken to be in the interval.
 
-    - ``algorithm_name`` -- A name for the specific ISD algorithm used (used for
-      printing).
+    - ``algorithm_name`` -- a name for the specific ISD algorithm used (used for
+      printing)
 
     - ``parameters`` -- (optional) A dictionary for setting the parameters of
       this ISD algorithm. Note that sanity checking this dictionary for the
@@ -372,10 +372,10 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
 
     INPUT:
 
-    - ``code`` -- A linear code for which to decode.
+    - ``code`` -- a linear code for which to decode
 
     - ``decoding_interval`` -- a pair of integers specifying an interval of
-      number of errors to correct. Includes both end values.
+      number of errors to correct; includes both end values
 
     - ``search_size`` -- (optional) the size of subsets to use on step 3 of the
       algorithm as described above. Usually a small number. It has to be at most
@@ -668,7 +668,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- A linear code for which to decode.
+    - ``code`` -- a linear code for which to decode
 
     - ``number_errors`` -- integer; the maximal number of errors to accept as
       correct decoding. An interval can also be specified by giving a pair of
@@ -921,7 +921,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a vector in the ambient space of :meth:`decoder.Decoder.code`.
+        - ``r`` -- a vector in the ambient space of :meth:`decoder.Decoder.code`
 
         OUTPUT: a codeword of :meth:`decoder.Decoder.code`
 

@@ -95,7 +95,7 @@ cdef class Riemann_Map:
     - ``fprimes`` -- list of the derivatives of the boundary functions
       (Must be in the same order as ``fs``)
 
-    - ``a`` -- Complex, the center of the Riemann map. Will be mapped to
+    - ``a`` -- complex, the center of the Riemann map. Will be mapped to
       the origin of the unit disc. Note that ``a`` MUST be within
       the region in order for the results to be mathematically valid.
 
@@ -580,8 +580,8 @@ cdef class Riemann_Map:
 
         INPUT:
 
-        - ``pt`` -- A complex number representing the point to be
-          inverse mapped.
+        - ``pt`` -- a complex number representing the point to be
+          inverse mapped
 
         OUTPUT:
 
@@ -667,8 +667,8 @@ cdef class Riemann_Map:
 
         INPUT:
 
-        - ``pt`` -- A complex number (usually with absolute value <= 1)
-          representing the point to be inverse mapped.
+        - ``pt`` -- a complex number (usually with absolute value <= 1)
+          representing the point to be inverse mapped
 
         OUTPUT: the point on the region that Riemann maps to the input point
 
@@ -1102,8 +1102,8 @@ cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
 
     INPUT:
 
-    - ``z_values`` -- The values for a complex function evaluated on a grid
-      in the complex plane, usually from ``compute_on_grid``.
+    - ``z_values`` -- the values for a complex function evaluated on a grid
+      in the complex plane, usually from ``compute_on_grid``
 
     - ``xstep`` -- float, the spacing of the grid points in the real direction
 
@@ -1155,27 +1155,27 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
 
     INPUT:
 
-    - ``z_values`` -- A grid of complex numbers, as a list of lists
+    - ``z_values`` -- a grid of complex numbers, as a list of lists
 
     - ``dr`` -- grid of floats, the r derivative of ``z_values``
-      Used to determine precision.
+      Used to determine precision
 
     - ``dtheta`` -- grid of floats, the theta derivative of ``z_values``
-      Used to determine precision.
+      Used to determine precision
 
     - ``spokes`` -- integer; the number of equally spaced radial lines to plot
 
     - ``circles`` -- integer; the number of equally spaced circles about the
-      center to plot.
+      center to plot
 
     - ``rgbcolor`` -- float array; the red-green-blue color of the
-      lines of the spiderweb.
+      lines of the spiderweb
 
     - ``thickness`` -- positive float; the thickness of the lines or points
-      in the spiderweb.
+      in the spiderweb
 
-    - ``withcolor`` -- boolean; If ``True`` the spiderweb will be overlaid
-      on the basic color plot.
+    - ``withcolor`` -- boolean; if ``True`` the spiderweb will be overlaid
+      on the basic color plot
 
     - ``min_mag`` -- float; The magnitude cutoff below which spiderweb
       points are not drawn. This only applies to multiply connected
@@ -1273,7 +1273,7 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
 
     INPUT:
 
-    - ``z_values`` -- Numpy array of complex numbers
+    - ``z_values`` -- numpy array of complex numbers
 
     OUTPUT:
 
@@ -1371,18 +1371,19 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
     return rgb
 
 cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
-    """
-    Provides an exact (for n = infinity) Riemann boundary
-    correspondence for the ellipse with axes 1 + epsilon and 1 - epsilon. The
-    boundary is therefore given by e^(I*t)+epsilon*e^(-I*t). It is primarily
-    useful for testing the accuracy of the numerical :class:`Riemann_Map`.
+    r"""
+    Provides an exact (for `n = \infty`) Riemann boundary
+    correspondence for the ellipse with axes `1 + \epsilon` and `1 - \epsilon`.
+    The boundary is therefore given by `\exp(I t)+\epsilon\exp(-I t)`. It is
+    primarily useful for testing the accuracy of the numerical
+    :class:`Riemann_Map`.
 
     INPUT:
 
-    - ``t`` -- The boundary parameter, from 0 to 2*pi
+    - ``t`` -- the boundary parameter, from `0` to `2 \pi`
 
     - ``n`` -- integer; the number of terms to include
-      10 is fairly accurate, 20 is very accurate.
+      (10 is fairly accurate, 20 is very accurate)
 
     - ``epsilon`` -- float; the skew of the ellipse (0 is circular)
 
@@ -1425,7 +1426,7 @@ cpdef cauchy_kernel(t, args):
 
     INPUT:
 
-    - ``t`` -- The boundary parameter, meant to be integrated over
+    - ``t`` -- the boundary parameter, meant to be integrated over
 
     - ``args`` -- a tuple containing:
 

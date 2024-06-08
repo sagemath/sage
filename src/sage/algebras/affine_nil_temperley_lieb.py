@@ -48,7 +48,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = AffineNilTemperleyLiebTypeA(3, prefix="a"); A
+            sage: A = AffineNilTemperleyLiebTypeA(3, prefix='a'); A
             The affine nilTemperley Lieb algebra A3 over the ring Integer Ring
             sage: TestSuite(A).run()
             sage: A = AffineNilTemperleyLiebTypeA(3, QQ); A
@@ -76,7 +76,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = AffineNilTemperleyLiebTypeA(3, prefix="a")
+            sage: A = AffineNilTemperleyLiebTypeA(3, prefix='a')
             sage: W = A.weyl_group()
             sage: w = W.from_reduced_word([2,1,2])
             sage: A(w)

@@ -468,7 +468,7 @@ cdef class FvarsHandler:
             sage: n_proc = f.pool._processes
             sage: pids_name = f._pid_list.shm.name
             sage: fvars = FvarsHandler(8, f._field, f._idx_to_sextuple, use_mp=n_proc, pids_name=pids_name)
-            sage: TestSuite(fvars).run(skip="_test_pickling")
+            sage: TestSuite(fvars).run(skip='_test_pickling')
             sage: fvars.shm.unlink()
             sage: f.shutdown_worker_pool()
         """

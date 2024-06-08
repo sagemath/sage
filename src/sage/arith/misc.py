@@ -1868,7 +1868,7 @@ def __GCD_sequence(v, **kwargs):
     INPUT:
 
 
-    -  ``v`` -- A sequence (possibly empty)
+    -  ``v`` -- a sequence (possibly empty)
 
 
     OUTPUT: the gcd of the elements of the sequence as an element of
@@ -2383,7 +2383,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
         Traceback (most recent call last):
         ...
         ZeroDivisionError: rational reconstruction with zero modulus
-        sage: rational_reconstruction(0, 1, algorithm="foobar")
+        sage: rational_reconstruction(0, 1, algorithm='foobar')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm 'foobar'
@@ -4788,7 +4788,7 @@ def number_of_divisors(n):
     return ZZ(pari(m).numdiv())
 
 
-def hilbert_symbol(a, b, p, algorithm="pari"):
+def hilbert_symbol(a, b, p, algorithm='pari'):
     """
     Return 1 if `ax^2 + by^2` `p`-adically represents
     a nonzero square, otherwise returns `-1`. If either a or b

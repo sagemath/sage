@@ -17,7 +17,7 @@ Format of each entry: a Python dictionary with keys ``"order autgp"``, ``"spectr
 
 - ``"spectrum"`` -- the spectrum `[A_0,A_1,...,A_n]`
 
-- ``"Comment"`` -- possibly an empty string.
+- ``"Comment"`` -- possibly an empty string
 
 Python dictionaries were used since they seemed to be both
 human-readable and allow others to update the database easiest.

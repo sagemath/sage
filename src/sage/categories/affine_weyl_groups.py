@@ -125,9 +125,9 @@ class AffineWeylGroups(Category_singleton):
 
             def succ(pair):
                 u, length = pair
-                for i in u.descents(positive=True, side="left"):
+                for i in u.descents(positive=True, side='left'):
                     u1 = u.apply_simple_reflection(i, "left")
-                    if (length < k and i == u1.first_descent(side="left") and
+                    if (length < k and i == u1.first_descent(side='left') and
                             u1.is_affine_grassmannian()):
                         yield (u1, length + 1)
                 return

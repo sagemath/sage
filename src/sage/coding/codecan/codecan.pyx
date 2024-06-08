@@ -826,7 +826,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         INPUT:
 
-        - ``pos`` -- A position in  ``range(self.n)``
+        - ``pos`` -- a position in  ``range(self.n)``
 
         OUTPUT:
 

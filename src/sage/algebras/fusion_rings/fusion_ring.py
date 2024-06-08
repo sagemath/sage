@@ -40,13 +40,13 @@ class FusionRing(WeylCharacterRing):
 
     - ``ct`` -- the Cartan type of a simple (finite-dimensional) Lie algebra
     - ``k`` -- a nonnegative integer
-    - ``conjugate`` -- (default ``False``) set ``True`` to obtain
+    - ``conjugate`` -- (default: ``False``) set ``True`` to obtain
       the complex conjugate ring
-    - ``cyclotomic_order`` -- (default computed depending on ``ct`` and ``k``)
-    - ``fusion_labels`` --  (default None) either a tuple of strings to use as labels of the
+    - ``cyclotomic_order`` -- (default: computed depending on ``ct`` and ``k``)
+    - ``fusion_labels`` --  (default: ``None``) either a tuple of strings to use as labels of the
       basis of simple objects, or a string from which the labels will be
       constructed
-    - ``inject_variables`` -- (default ``False``): use with ``fusion_labels``.
+    - ``inject_variables`` -- (default: ``False``): use with ``fusion_labels``.
       If ``inject_variables`` is ``True``, the fusion labels will be variables
       that can be accessed from the command line
 
@@ -299,7 +299,7 @@ class FusionRing(WeylCharacterRing):
         True
     """
     @staticmethod
-    def __classcall__(cls, ct, k, base_ring=ZZ, prefix=None, style="coroots", conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
+    def __classcall__(cls, ct, k, base_ring=ZZ, prefix=None, style='coroots', conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         """
         Normalize input to ensure a unique representation.
 
@@ -307,7 +307,7 @@ class FusionRing(WeylCharacterRing):
 
             sage: F1 = FusionRing('B3', 2)
             sage: F2 = FusionRing(CartanType('B3'), QQ(2), ZZ)
-            sage: F3 = FusionRing(CartanType('B3'), int(2), style="coroots")
+            sage: F3 = FusionRing(CartanType('B3'), int(2), style='coroots')
             sage: F1 is F2 and F2 is F3
             True
 
@@ -554,7 +554,7 @@ class FusionRing(WeylCharacterRing):
 
         EXAMPLES::
 
-            sage: A13 = FusionRing("A1", 3, fusion_labels="a", inject_variables=True)
+            sage: A13 = FusionRing("A1", 3, fusion_labels='a', inject_variables=True)
             sage: A13.fvars_field()
             Cyclotomic Field of order 40 and degree 16
             sage: A13.field()
@@ -1398,7 +1398,7 @@ class FusionRing(WeylCharacterRing):
 
         EXAMPLES::
 
-            sage: F41 = FusionRing("F4", 1, fusion_labels="f", inject_variables=True)
+            sage: F41 = FusionRing("F4", 1, fusion_labels='f', inject_variables=True)
             sage: f1*f1
             f0 + f1
             sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False)

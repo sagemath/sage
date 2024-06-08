@@ -148,7 +148,7 @@ def bch_bound(n, D, arithmetic=False):
 
     - ``n`` -- integer
 
-    - ``D`` -- a list of integers
+    - ``D`` -- list of integers
 
     - ``arithmetic`` -- (default: ``False``), if it is set to ``True``, then it
       computes the BCH bound using the longest arithmetic sequence definition
@@ -823,7 +823,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -910,7 +910,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
         INPUT:
 
-        - ``p`` -- A polynomial from ``self`` message space
+        - ``p`` -- a polynomial from ``self`` message space
 
         OUTPUT: a codeword in associated code of ``self``
 
@@ -940,7 +940,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
         INPUT:
 
-        - ``c`` -- A vector with the same length as the code
+        - ``c`` -- a vector with the same length as the code
 
         OUTPUT: an element of the message space
 
@@ -992,7 +992,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -1115,7 +1115,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
         INPUT:
 
-        - ``c`` -- A vector with the same length as the code
+        - ``c`` -- a vector with the same length as the code
 
         OUTPUT: an element of the message space
 
@@ -1187,9 +1187,9 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this decoder.
+    - ``code`` -- the associated code of this decoder
 
-    - ``**kwargs`` -- All extra arguments are forwarded to the BCH decoder
+    - ``**kwargs`` -- all extra arguments are forwarded to the BCH decoder
 
     EXAMPLES::
 

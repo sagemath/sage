@@ -67,7 +67,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
             ....:                                   Matrix([[0, 1], [0, 0]])])
             sage: H = Hom(A, B)
             sage: phi = FiniteDimensionalAlgebraMorphism(H, Matrix([[1, 0]]))
-            sage: TestSuite(phi).run(skip="_test_category")
+            sage: TestSuite(phi).run(skip='_test_category')
         """
         A = parent.domain()
         B = parent.codomain()

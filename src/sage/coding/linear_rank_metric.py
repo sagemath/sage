@@ -790,7 +790,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
         INPUT:
 
-        - ``code`` -- A code associated to this decoder
+        - ``code`` -- a code associated to this decoder
 
         EXAMPLES::
 

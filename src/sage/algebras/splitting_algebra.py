@@ -138,7 +138,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     INPUT:
 
     - ``monic_polynomial`` -- the monic polynomial which should be split
-    - ``names``  -- names for the indeterminates to be adjoined to the
+    - ``names`` -- names for the indeterminates to be adjoined to the
       base ring of ``monic_polynomial``
     - ``warning`` -- boolean (default: ``True``); can be used (by setting to
       ``False``) to suppress a warning which will be thrown whenever it cannot
@@ -638,9 +638,9 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
     INPUT:
 
     - ``monic_polynomial`` -- the monic polynomial whose roots should be created
-    - ``root_names``  -- names for the indeterminates needed to define the
+    - ``root_names`` -- names for the indeterminates needed to define the
       splitting algebra of the ``monic_polynomial`` (if necessary and possible)
-    - ``var``  -- (default: ``'x'``) for the indeterminate needed to define the
+    - ``var`` -- (default: ``'x'``) for the indeterminate needed to define the
       splitting field of the ``monic_polynomial`` (if necessary and possible)
     - ``flatten`` -- boolean (default: ``True``); if ``True`` the roots will
       not be given as a list of pairs ``(root, multiplicity)`` but as a list of

@@ -102,7 +102,7 @@ class BaxterPermutations_size(BaxterPermutations):
 
         INPUT:
 
-        - ``x`` -- a permutation.
+        - ``x`` -- a permutation
 
         EXAMPLES::
 
@@ -285,7 +285,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
 
         INPUT:
 
-        - ``x`` -- any object.
+        - ``x`` -- any object
 
         EXAMPLES::
 
@@ -310,7 +310,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
 
         INPUT:
 
-        - ``p`` -- a Baxter permutation.
+        - ``p`` -- a Baxter permutation
 
         OUTPUT:
 

@@ -157,7 +157,7 @@ class LetterplaceIdeal(Ideal_nc):
         sage: (z*I.0-x*y*z).normal_form(I)
         -y*x*z + z*z
     """
-    def __init__(self, ring, gens, coerce=True, side="twosided"):
+    def __init__(self, ring, gens, coerce=True, side='twosided'):
         """
         INPUT:
 
@@ -165,8 +165,8 @@ class LetterplaceIdeal(Ideal_nc):
         - ``gens``: List, tuple or sequence of generators.
         - ``coerce`` (optional bool, default ``True``):
           Shall ``gens`` be coerced first?
-        - ``side``: optional string, one of ``"twosided"`` (default),
-          ``"left"`` or ``"right"``. Determines whether the ideal
+        - ``side``: optional string, one of ``'twosided'`` (default),
+          ``'left'`` or ``'right'``. Determines whether the ideal
           is a left, right or twosided ideal. Groebner bases or
           only supported in the twosided case.
 

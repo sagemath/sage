@@ -1141,7 +1141,7 @@ cdef class BinaryCode:
 
         INPUT:
 
-        - labeling -- a list permutation of the columns
+        - labeling -- list permutation of the columns
 
         EXAMPLES::
 
@@ -3186,7 +3186,7 @@ cdef class BinaryCodeClassifier:
 
         OUTPUT:
             a tuple, (gens, labeling, size, base)
-            gens -- a list of permutations (in list form) representing generators
+            gens -- list of permutations (in list form) representing generators
                 of the permutation automorphism group of the code CC.
             labeling -- a permutation representing the canonical labeling of the
                 code. mostly for internal use; entries describe the relabeling

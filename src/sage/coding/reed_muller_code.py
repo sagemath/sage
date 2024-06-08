@@ -79,13 +79,13 @@ def _multivariate_polynomial_interpolation(evaluation, order, polynomial_ring):
 
     INPUT:
 
-    - ``evaluation`` -- A vector or a list of evaluation of the polynomial at all the points.
+    - ``evaluation`` -- a vector or a list of evaluation of the polynomial at all the points
 
-    - ``num_of_var`` -- The number of variables used in the polynomial to interpolate
+    - ``num_of_var`` -- the number of variables used in the polynomial to interpolate
 
-    - ``order`` -- The degree of the polynomial to interpolate
+    - ``order`` -- the degree of the polynomial to interpolate
 
-    - ``polynomial_ring`` -- The Polynomial Ring the polynomial in question is from
+    - ``polynomial_ring`` -- the Polynomial Ring the polynomial in question is from
 
     EXAMPLES::
 
@@ -143,12 +143,12 @@ def ReedMullerCode(base_field, order, num_of_var):
 
     INPUT:
 
-    - ``base_field`` -- The finite field `F` over which the code is built.
+    - ``base_field`` -- the finite field `F` over which the code is built
 
-    - ``order`` -- The order of the Reed-Muller Code, which is the maximum
+    - ``order`` -- the order of the Reed-Muller Code, which is the maximum
       degree of the polynomial to be used in the code.
 
-    - ``num_of_var`` -- The number of variables used in polynomial.
+    - ``num_of_var`` -- the number of variables used in polynomial
 
     .. WARNING::
 
@@ -205,12 +205,12 @@ class QAryReedMullerCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``base_field`` -- A finite field, which is the base field of the code.
+    - ``base_field`` -- a finite field, which is the base field of the code
 
-    - ``order`` -- The order of the Reed-Muller Code, i.e., the maximum degree
+    - ``order`` -- the order of the Reed-Muller Code, i.e., the maximum degree
       of the polynomial to be used in the code.
 
-    - ``num_of_var`` -- The number of variables used in polynomial.
+    - ``num_of_var`` -- the number of variables used in polynomial
 
     .. WARNING::
 
@@ -389,10 +389,10 @@ class BinaryReedMullerCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``order`` -- The order of the Reed-Muller Code, i.e., the maximum degree
-      of the polynomial to be used in the code.
+    - ``order`` -- the order of the Reed-Muller Code, i.e., the maximum degree
+      of the polynomial to be used in the code
 
-    - ``num_of_var`` -- The number of variables used in the polynomial.
+    - ``num_of_var`` -- the number of variables used in the polynomial
 
     EXAMPLES:
 
@@ -548,7 +548,7 @@ class ReedMullerVectorEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -717,7 +717,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     - ``polynomial_ring`` -- (default:``None``) The polynomial ring from which
       the message is chosen.  If this is set to ``None``, a polynomial ring in
@@ -844,8 +844,8 @@ class ReedMullerPolynomialEncoder(Encoder):
 
         INPUT:
 
-        - ``p`` -- A polynomial from the message space of ``self`` of degree
-          less than ``self.code().order()``.
+        - ``p`` -- a polynomial from the message space of ``self`` of degree
+          less than ``self.code().order()``
 
         OUTPUT: a codeword in associated code of ``self``
 
@@ -900,7 +900,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
         INPUT:
 
-        - ``c`` -- A codeword of :meth:`code`.
+        - ``c`` -- a codeword of :meth:`code`
 
         OUTPUT:
 

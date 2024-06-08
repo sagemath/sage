@@ -28,11 +28,8 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
     INPUT:
 
     - ``W`` -- a Weyl group
-
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- a ring (default is the rational numbers)
-    - ``prefix`` -- a label for the generators (default "u")
+    - ``base_ring`` -- a ring (default: rational numbers)
+    - ``prefix`` -- a label for the generators (default: ``'u'``)
 
     EXAMPLES::
 

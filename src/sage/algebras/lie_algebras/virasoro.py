@@ -206,7 +206,7 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
         matrix over the base ring as part of the test::
 
             sage: L = lie_algebras.pwitt(Zmod(6), 6)
-            sage: TestSuite(L).run(skip="_test_grading")
+            sage: TestSuite(L).run(skip='_test_grading')
         """
         if R(p) != 0:
             raise ValueError("{} is not 0 in {}".format(p, R))

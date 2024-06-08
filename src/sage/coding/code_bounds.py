@@ -577,10 +577,10 @@ def entropy(x, q=2):
 
     INPUT:
 
-    - ``x`` -- real number in the interval `[0, 1]`.
+    - ``x`` -- real number in the interval `[0, 1]`
 
-    - ``q`` -- (default: 2) integer greater than 1. This is the base of the
-      logarithm.
+    - ``q`` -- (default: 2) integer greater than 1; this is the base of the
+      logarithm
 
     EXAMPLES::
 
@@ -622,10 +622,10 @@ def entropy_inverse(x, q=2):
 
     INPUT:
 
-    - ``x`` -- real number in the interval `[0, 1]`.
+    - ``x`` -- real number in the interval `[0, 1]`
 
-    - ``q`` -- (default: 2) integer greater than 1. This is the base of the
-      logarithm.
+    - ``q`` -- (default: 2) integer greater than 1; this is the base of the
+      logarithm
 
     OUTPUT:
 

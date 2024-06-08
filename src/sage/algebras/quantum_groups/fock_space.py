@@ -444,7 +444,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default ``True``) if ``True``, prints
+        - ``verbose`` -- boolean (default: ``True``); if ``True``, prints
           the defined shorthands
 
         EXAMPLES::
@@ -1819,7 +1819,7 @@ class FockSpaceTruncated(FockSpace):
 
         INPUT:
 
-        - ``algorithm`` -- (default ``'GW'``) the algorithm to use when
+        - ``algorithm`` -- (default: ``'GW'``) the algorithm to use when
           computing this basis in the Fock space; the possible values are:
 
           * ``'GW'`` -- use the algorithm given by Goodman and Wenzl

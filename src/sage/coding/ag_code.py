@@ -120,7 +120,7 @@ class EvaluationAGCode(AGCode):
 
     INPUT:
 
-    - ``pls`` -- a list of rational places of a function field
+    - ``pls`` -- list of rational places of a function field
 
     - ``G`` -- a divisor whose support is disjoint from ``pls``
 
@@ -359,7 +359,7 @@ class DifferentialAGCode(AGCode):
 
     INPUT:
 
-    - ``pls`` -- a list of rational places of a function field
+    - ``pls`` -- list of rational places of a function field
 
     - ``G`` -- a divisor whose support is disjoint from ``pls``
 
@@ -603,7 +603,7 @@ class CartierCode(AGCode):
 
     INPUT:
 
-    - ``pls`` -- a list of rational places
+    - ``pls`` -- list of rational places
 
     - ``G`` -- a divisor whose support is disjoint from ``pls``
 

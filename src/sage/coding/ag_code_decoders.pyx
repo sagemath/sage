@@ -1811,13 +1811,13 @@ cdef class EvaluationAGCodeDecoder_K(Decoder_K):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
     - ``Q`` -- a rational place not in ``pls``
 
-    - ``verbose`` -- if ``True``, verbose information is printed.
+    - ``verbose`` -- if ``True``, verbose information is printed
 
     EXAMPLES::
 
@@ -2066,7 +2066,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2320,7 +2320,7 @@ cdef class Decoder_K_extension():
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2538,7 +2538,7 @@ cdef class EvaluationAGCodeDecoder_K_extension(Decoder_K_extension):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2592,7 +2592,7 @@ cdef class DifferentialAGCodeDecoder_K_extension(Decoder_K_extension):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 

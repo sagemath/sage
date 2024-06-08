@@ -338,7 +338,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     case it is clear how to do this; also in this case, ``precision``
     is set to be one more than the length of this tuple.  In the
     second case, construct a tuple of length one less than
-    ``precision`` (default value 100).  In the last case, the empty
+    ``precision`` (default: 100).  In the last case, the empty
     tuple is returned and ``precision`` is set to 1.
 
     Once a sub-Hopf algebra of the Steenrod algebra has been defined

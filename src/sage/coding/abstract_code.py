@@ -1036,7 +1036,7 @@ class AbstractCode(Parent):
 
         INPUT:
 
-        - ``c`` -- a codeword of ``self``.
+        - ``c`` -- a codeword of ``self``
 
         - ``encoder_name`` -- (default: ``None``) name of the decoder which will be used
           to decode ``word``. The default decoder of ``self`` will be used if
@@ -1049,7 +1049,7 @@ class AbstractCode(Parent):
           defined (except that it will be in the message space of ``self``).
 
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used.
+          encoder that is used
 
         OUTPUT: an element of the message space of ``encoder_name`` of ``self``
 

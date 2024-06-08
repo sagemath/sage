@@ -1041,7 +1041,7 @@ class LinearCodeSystematicEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     - ``systematic_positions`` -- (default: ``None``) the positions in codewords that
       should correspond to the message symbols. A list of `k` distinct integers in

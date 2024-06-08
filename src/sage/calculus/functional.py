@@ -29,7 +29,7 @@ EXAMPLES: We illustrate each of the calculus functional functions.
 from sage.structure.element import Expression
 
 
-def simplify(f, algorithm="maxima", **kwds):
+def simplify(f, algorithm='maxima', **kwds):
     r"""
     Simplify the expression `f`.
 
@@ -53,7 +53,7 @@ def simplify(f, algorithm="maxima", **kwds):
         sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
         sage: simplify(ex)
         1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
-        sage: simplify(ex, algorithm="giac")
+        sage: simplify(ex, algorithm='giac')
         I*sqrt(x^2 - 1)
     """
     try:

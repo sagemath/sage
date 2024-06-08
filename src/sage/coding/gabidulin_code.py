@@ -397,7 +397,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
 
         INPUT:
 
-        - ``code`` -- the associated code of this encoder.
+        - ``code`` -- the associated code of this encoder
 
         EXAMPLES::
 

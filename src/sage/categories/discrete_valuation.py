@@ -100,7 +100,7 @@ class DiscreteValuationRings(Category_singleton):
             Another example over the p-adics::
 
                 sage: # needs sage.modules sage.rings.padics
-                sage: R = Zp(5, print_mode="digits", prec=5)
+                sage: R = Zp(5, print_mode='digits', prec=5)
                 sage: M = matrix(R, 3, 3, range(9))
                 sage: M
                 [        0  ...00001  ...00002]
@@ -298,7 +298,7 @@ class DiscreteValuationFields(Category_singleton):
             Another example over the p-adics::
 
                 sage: # needs sage.modules sage.rings.padics
-                sage: K = Qp(5, print_mode="digits", prec=5)
+                sage: K = Qp(5, print_mode='digits', prec=5)
                 sage: H = matrix(K, 3, 3, range(9)); H
                 [        0  ...00001  ...00002]
                 [ ...00003  ...00004 ...000010]

@@ -76,7 +76,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``evaluation_points`` -- a list of distinct elements of some
+    - ``evaluation_points`` -- list of distinct elements of some
       finite field `F`
 
     - ``dimension`` -- the dimension of the resulting code
@@ -593,17 +593,17 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
     INPUT:
 
     - ``base_field`` -- the finite field for which to build the classical
-      Reed-Solomon code.
+      Reed-Solomon code
 
     - ``length`` -- the length of the classical Reed-Solomon code. Must divide
-      `q-1` where `q` is the cardinality of ``base_field``.
+      `q-1` where `q` is the cardinality of ``base_field``
 
-    - ``dimension`` -- the dimension of the resulting code.
+    - ``dimension`` -- the dimension of the resulting code
 
     - ``primitive_root`` -- (default: ``None``) a primitive `n`'th root of unity
-      to use for constructing the classical Reed-Solomon code. If not supplied,
+      to use for constructing the classical Reed-Solomon code; if not supplied,
       one will be computed and can be recovered as ``C.evaluation_points()[1]``
-      where `C` is the code returned by this method.
+      where `C` is the code returned by this method
 
     EXAMPLES::
 
@@ -2016,7 +2016,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this decoder.
+    - ``code`` -- the associated code of this decoder
 
     EXAMPLES::
 

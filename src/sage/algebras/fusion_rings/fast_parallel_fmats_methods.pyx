@@ -406,7 +406,7 @@ cdef list compute_gb(factory, tuple args):
     for eq_tup in eqns:
         eq_tup = _unflatten_coeffs(F, eq_tup)
         polys.append(_tup_to_poly(resize(eq_tup, idx_map, nvars), parent=R))
-    gb = Ideal(sorted(polys)).groebner_basis(algorithm="libsingular:slimgb")
+    gb = Ideal(sorted(polys)).groebner_basis(algorithm='libsingular:slimgb')
 
     # Change back to fmats poly ring and append to temp_eqns
     cdef dict inv_idx_map = {v: k for k, v in idx_map.items()}

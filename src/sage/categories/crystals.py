@@ -116,7 +116,7 @@ class Crystals(Category_singleton):
         """
         return [EnumeratedSets()]
 
-    def example(self, choice="highwt", **kwds):
+    def example(self, choice='highwt', **kwds):
         r"""
         Returns an example of a crystal, as per
         :meth:`Category.example()
@@ -391,8 +391,8 @@ class Crystals(Category_singleton):
             R = RecursivelyEnumeratedSet(self.module_generators, succ, structure=None)
             return R.breadth_first_search_iterator(max_depth)
 
-        def subcrystal(self, index_set=None, generators=None, max_depth=float("inf"),
-                       direction="both", contained=None,
+        def subcrystal(self, index_set=None, generators=None, max_depth=float('inf'),
+                       direction='both', contained=None,
                        virtualization=None, scaling_factors=None,
                        cartan_type=None, category=None):
             r"""

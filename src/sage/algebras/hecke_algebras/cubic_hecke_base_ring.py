@@ -442,7 +442,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         INPUT:
 
-        - ``string``  -- string produced via GAP3 interface and containing
+        - ``string`` -- string produced via GAP3 interface and containing
           Jean Michel's ``MVP`` (multivariate polynomials)
 
         EXAMPLES::

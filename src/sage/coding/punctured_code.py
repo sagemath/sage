@@ -65,7 +65,7 @@ def _insert_punctured_positions(l, punctured_points, value=None):
 
     INPUT:
 
-    - ``l`` -- a list
+    - ``l`` -- list
 
     - ``punctured_points`` -- a set of integers
 
@@ -98,7 +98,7 @@ class PuncturedCode(AbstractLinearCode):
     r"""
     Representation of a punctured code.
 
-    - ``C`` -- A linear code
+    - ``C`` -- a linear code
 
     - ``positions`` -- the positions where ``C`` will be punctured. It can be either an integer
       if one need to puncture only one position, a list or a set of positions to puncture.
@@ -266,7 +266,7 @@ class PuncturedCode(AbstractLinearCode):
 
         INPUT:
 
-        - ``m`` -- a vector of the message space of the code.
+        - ``m`` -- a vector of the message space of the code
 
         - ``original_encode`` -- boolean (default: ``False``); if this is set
           to ``True``, ``m`` will be encoded using an Encoder of ``self``'s
@@ -345,7 +345,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -436,7 +436,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder
+    - ``code`` -- the associated code of this encoder
 
     - ``strategy`` -- (default: ``None``) the strategy used to decode.
       The available strategies are:

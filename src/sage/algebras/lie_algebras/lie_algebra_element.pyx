@@ -475,7 +475,7 @@ cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
             sage: z = L.z()
             sage: z.value.is_immutable()
             True

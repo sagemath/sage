@@ -149,7 +149,7 @@ class AffinePermutation(ClonableArray):
 
         INPUT:
 
-        - ``q`` -- An element of ``self.parent()``
+        - ``q`` -- an element of ``self.parent()``
 
         EXAMPLES::
 
@@ -183,7 +183,7 @@ class AffinePermutation(ClonableArray):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
         - ``side`` -- (default: ``'right'``) determines whether to apply the
           reflection on the ``'right'`` or ``'left'``
 
@@ -500,7 +500,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -579,7 +579,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -599,7 +599,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1231,7 +1231,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1252,7 +1252,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1414,7 +1414,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1433,7 +1433,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1589,7 +1589,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1610,7 +1610,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1791,7 +1791,7 @@ class AffinePermutationTypeG(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1812,7 +1812,7 @@ class AffinePermutationTypeG(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 

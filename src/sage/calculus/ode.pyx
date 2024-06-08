@@ -246,7 +246,7 @@ class ode_solver():
         sage: T.jacobian = j_1
         sage: T.ode_solve(y_0=[1,0], t_span=[0,100], params=[10.0], num_points=1000)
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                     # needs sage.plot
         ....:     T.plot_solution(filename=f.name)
 
     The solver line is equivalent to::
@@ -271,7 +271,7 @@ class ode_solver():
 
     By default ``T.plot_solution()`` plots the `y_0`; to plot general `y_i`, use::
 
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                     # needs sage.plot
         ....:     T.plot_solution(i=0, filename=f.name)
         ....:     T.plot_solution(i=1, filename=f.name)
         ....:     T.plot_solution(i=2, filename=f.name)
@@ -296,7 +296,7 @@ class ode_solver():
     ode_solver.  The previous example can be rewritten as::
 
         sage: T = ode_solver(g_1, y_0=[0,1,1], scale_abs=[1e-4,1e-4,1e-5],
-        ....:                error_rel=1e-4, algorithm="rk8pd")
+        ....:                error_rel=1e-4, algorithm='rk8pd')
         sage: T.ode_solve(t_span=[0,12], num_points=100)
         sage: f = T.interpolate_solution()
         sage: f(pi)
@@ -342,7 +342,7 @@ class ode_solver():
         sage: T.ode_solve(y_0=[1, 0], t_span=[0, 2000],
         ....:             num_points=1000)
         sage: from tempfile import NamedTemporaryFile
-        sage: with NamedTemporaryFile(suffix=".png") as f:
+        sage: with NamedTemporaryFile(suffix='.png') as f:
         ....:     T.plot_solution(i=0, filename=f.name)
 
     """

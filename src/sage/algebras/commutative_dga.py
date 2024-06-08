@@ -259,7 +259,7 @@ class Differential(UniqueRepresentation, Morphism,
         We skip the category test because homsets/morphisms aren't
         proper parents/elements yet::
 
-            sage: TestSuite(d).run(skip="_test_category")
+            sage: TestSuite(d).run(skip='_test_category')
 
         An error is raised if the differential `d` does not have
         degree 1 or if `d \circ d` is not zero::
@@ -612,7 +612,7 @@ class Differential_multigraded(Differential):
         We skip the category test because homsets/morphisms aren't
         proper parents/elements yet::
 
-            sage: TestSuite(d).run(skip="_test_category")
+            sage: TestSuite(d).run(skip='_test_category')
         """
         Differential.__init__(self, A, im_gens)
 
@@ -693,7 +693,7 @@ class Differential_multigraded(Differential):
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` -- boolean (default ``False``); if ``True``, return the
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
           coboundaries in total degree `n`
 
         If `n` is an integer rather than a multi-index, then the
@@ -1490,7 +1490,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             INPUT:
 
-            - ``total`` -- boolean (default ``False``); only used in the
+            - ``total`` -- boolean (default: ``False``); only used in the
               multi-graded case, in which case if ``True``, check to see
               if ``self`` is homogeneous with respect to total degree
 
@@ -1664,7 +1664,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             INPUT:
 
-            - ``total`` -- boolean (default ``False``); this
+            - ``total`` -- boolean (default: ``False``); this
               is only used in the multi-graded case, in which case if
               ``True``, it returns the coefficients with respect to
               the basis for the total degree of this element
@@ -2538,7 +2538,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         - ``i`` -- integer (default: `3`); degree to which the result is
           required to induce an isomorphism in cohomology, and the domain is
-          required to be minimal.
+          required to be minimal
 
         - ``max_iterations`` -- integer (default: `3`); the number of
           iterations of the method at each degree. If the algorithm does not
@@ -2546,8 +2546,8 @@ class DifferentialGCAlgebra(GCAlgebra):
           or the partial result computed up to that point is returned, deppending
           on the ``partial_result`` flag.
 
-        - ``partial_result``  -- boolean (default: ``False``); wether to return
-          the partial result if the ``max_iterations`` limit is reached.
+        - ``partial_result`` -- boolean (default: ``False``); wether to return
+          the partial result if the ``max_iterations`` limit is reached
 
         OUTPUT:
 
@@ -3325,7 +3325,7 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` (default ``False``) -- if ``True``, return the
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
           coboundaries in total degree `n`
 
         If `n` is an integer rather than a multi-index, then the
@@ -3725,7 +3725,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
               Defn: (x, y) --> (x, x)
             sage: f.is_graded()
             False
-            sage: TestSuite(f).run(skip="_test_category")
+            sage: TestSuite(f).run(skip='_test_category')
 
         Since `x^2=0` but `y^2 \neq 0`, the following does not define a valid morphism::
 

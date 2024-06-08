@@ -13,7 +13,7 @@ def var(*args, **kwds):
 
     INPUT:
 
-    - ``args`` -- A single string ``var('x y')``, a list of strings
+    - ``args`` -- a single string ``var('x y')``, a list of strings
       ``var(['x','y'])``, or multiple strings ``var('x', 'y')``. A
       single string can be either a single variable name, or a space
       or comma separated list of variable names. In a list or tuple of
@@ -77,12 +77,12 @@ def var(*args, **kwds):
 
     Custom latex expression can be assigned to variable::
 
-        sage: x = var('sui', latex_name="s_{u,i}"); x._latex_()
+        sage: x = var('sui', latex_name='s_{u,i}'); x._latex_()
         '{s_{u,i}}'
 
     In notebook, we can also colorize latex expression::
 
-        sage: x = var('sui', latex_name="\\color{red}{s_{u,i}}"); x._latex_()
+        sage: x = var('sui', latex_name='\\color{red}{s_{u,i}}'); x._latex_()
         '{\\color{red}{s_{u,i}}}'
 
     We can substitute a new variable name for n::
@@ -215,7 +215,7 @@ def function(s, **kwds):
     Custom typesetting of symbolic functions in LaTeX, either using latex_name
     keyword::
 
-        sage: function('riemann', latex_name="\\mathcal{R}")
+        sage: function('riemann', latex_name='\\mathcal{R}')
         riemann
         sage: latex(riemann(x))
         \mathcal{R}\left(x\right)

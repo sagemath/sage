@@ -48,14 +48,14 @@ def n_k_params(C, n_k):
 
     INPUT:
 
-    - ``C`` -- A GRS code or ``None``
+    - ``C`` -- a GRS code or ``None``
 
-    - ``n_k`` -- A tuple `(n,k)` being length and dimension of a GRS code, or
+    - ``n_k`` -- a tuple `(n,k)` being length and dimension of a GRS code, or
       ``None``.
 
     OUTPUT:
 
-    - ``n_k`` -- A tuple `(n,k)` being length and dimension of a GRS code.
+    - ``n_k`` -- a tuple `(n,k)` being length and dimension of a GRS code.
 
     EXAMPLES::
 

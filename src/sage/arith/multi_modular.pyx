@@ -190,7 +190,7 @@ cdef class MultiModularBasis_base():
 
         - ``known_primes`` -- Python set of already known primes in
           the allowed interval; we will not return a prime in
-          known_primes.
+          known_primes
         """
         cdef mod_int p
         while True:

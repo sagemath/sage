@@ -1958,7 +1958,7 @@ class AbstractClonableTree(AbstractTree):
 
         INPUT:
 
-        - ``idx`` -- an integer, or a valid path in ``self`` identifying a node
+        - ``idx`` -- integer; or a valid path in ``self`` identifying a node
 
         .. NOTE::
 
@@ -2515,7 +2515,7 @@ def _from_hexacode_aux(ch, parent, label='@'):
 
     - ``ch`` -- a hexadecimal string
 
-    - ``parent`` -- kind of trees to be produced.
+    - ``parent`` -- kind of trees to be produced
 
     - ``label`` -- a label (default: ``'@'``) to be used for every vertex
       of the tree

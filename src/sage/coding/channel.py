@@ -107,7 +107,7 @@ def format_interval(t):
 
     INPUT:
 
-    - ``t`` -- a list or a tuple
+    - ``t`` -- list or a tuple
 
     OUTPUT: a string
 
@@ -656,10 +656,10 @@ class QarySymmetricChannel(Channel):
 
     INPUT:
 
-    - ``space`` -- the input and output space of the channel. It has to be
-      `\GF{q}^n` for some finite field `\GF{q}`.
+    - ``space`` -- the input and output space of the channel; it has to be
+      `\GF{q}^n` for some finite field `\GF{q}`
 
-    - ``epsilon`` -- the transmission error probability of the individual elements.
+    - ``epsilon`` -- the transmission error probability of the individual elements
 
     EXAMPLES:
 

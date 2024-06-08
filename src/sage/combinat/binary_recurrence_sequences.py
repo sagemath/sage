@@ -83,18 +83,17 @@ class BinaryRecurrenceSequence(SageObject):
 
     INPUT:
 
-    - ``b`` -- an integer (partially determining the recurrence relation)
+    - ``b`` -- integer; (partially determining the recurrence relation)
 
-    - ``c`` -- an integer (partially determining the recurrence relation)
+    - ``c`` -- integer; (partially determining the recurrence relation)
 
-    - ``u0`` -- an integer (the 0th term of the binary recurrence sequence)
+    - ``u0`` -- integer; (the 0th term of the binary recurrence sequence)
 
-    - ``u1`` -- an integer (the 1st term of the binary recurrence sequence)
+    - ``u1`` -- integer; (the 1st term of the binary recurrence sequence)
 
 
-    OUTPUT:
-
-    - An integral linear binary recurrence sequence defined by ``u0``, ``u1``, and `u_{n+2} = b*u_{n+1}+c*u_n`
+    OUTPUT: an integral linear binary recurrence sequence defined by `u_0`,
+    `u_1`, and `u_{n+2} = b u_{n+1}+c u_n`
 
     .. SEEALSO::
 
@@ -170,7 +169,7 @@ class BinaryRecurrenceSequence(SageObject):
 
         INPUT:
 
-        - ``n`` -- an integer (the index of the term in the binary recurrence sequence)
+        - ``n`` -- integer; the index of the term in the binary recurrence sequence
 
         - ``modulus`` -- a natural number (optional --  default value is 0)
 
@@ -359,11 +358,9 @@ class BinaryRecurrenceSequence(SageObject):
 
         INPUT:
 
-        - ``m`` -- an integer (modulo which the period of the recurrence relation is calculated).
+        - ``m`` -- integer; modulo which the period of the recurrence relation is calculated
 
-        OUTPUT:
-
-        - The integer (the period of the sequence modulo m)
+        OUTPUT: integer (the period of the sequence modulo m)
 
         EXAMPLES:
 
@@ -755,19 +752,17 @@ class BinaryRecurrenceSequence(SageObject):
 
 
 def _prime_powers(N):
-    """
-    Find the prime powers dividing ``N``.
+    r"""
+    Find the prime powers dividing `N`.
 
-    In other words, if `N = q_1^(e_1)q_2^(e_2)...q_n^(e_n)`, it returns
-    `[q_1^(e_1),q_2^(e_2),...,q_n^(e_n)]`.
+    In other words, if `N = q_1^{e_1} q_2^{e_2} \cdots q_n^{e_n}`, it returns
+    `[q_1^{e_1}, q_2^{e_2}, \ldots, q_n^{e_n}]`.
 
     INPUT:
 
-    - ``N`` -- an integer
+    - ``N`` -- integer
 
-    OUTPUT:
-
-    - A list of the prime powers dividing N.
+    OUTPUT: list of the prime powers dividing N
 
     EXAMPLES::
 
@@ -782,13 +777,13 @@ def _prime_powers(N):
 
 def _largest_ppower_divisor(N):
     """
-    Find the largest prime power divisor of N.
+    Find the largest prime power divisor of `N`.
 
     INPUT:
 
-    - ``N`` -- an integer
+    - ``N`` -- integer
 
-    OUTPUT: the largest prime power dividing ``N``
+    OUTPUT: the largest prime power dividing `N`
 
     EXAMPLES::
 
@@ -851,9 +846,9 @@ def _next_good_prime(p, R, qq, patience, qqold):
 
     - ``qqold`` --  a perfect power less than or equal to ``qq``
 
-    OUTPUT:
-
-    - A prime `\\ell` such that `\\ell` is 1 mod ``p``, ``b^2+4*c`` is a square mod `\\ell` and the period of `\\ell` has ``goodness`` by ``qq`` but not ``qqold``, if patience has not be surpased.  Otherwise ``False``.
+    OUTPUT: a prime `\\ell` such that `\\ell` is 1 mod `p`, `b^2+4 c` is a
+    square mod `\\ell` and the period of `\\ell` has ``goodness`` by ``qq`` but
+    not ``qqold``, if patience has not be surpased; otherwise ``False``
 
 
     EXAMPLES::
@@ -940,15 +935,13 @@ def _is_p_power_mod(a, p, N):
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
     - ``p`` -- a rational prime number
 
     - ``N`` -- a positive integer
 
-    OUTPUT:
-
-    - ``True`` if `a` is a `p`th power modulo `N`; ``False`` otherwise.
+    OUTPUT: ``True`` if `a` is a `p`th power modulo `N`; ``False`` otherwise
 
     EXAMPLES::
 
@@ -1042,17 +1035,15 @@ def _estimated_time(M2, M1, length, p):
 
     INPUT:
 
-    - ``M2`` -- an integer (the new modulus)
+    - ``M2`` -- integer; (the new modulus)
 
-    - ``M1`` -- an integer (the old modulus)
+    - ``M1`` -- integer; (the old modulus)
 
-    - ``length`` -- a list (the current length of the list of congruences mod ``M1``)
+    - ``length`` -- list (the current length of the list of congruences mod ``M1``)
 
     - ``p`` --  a prime
 
-    OUTPUT:
-
-    - The estimated run time of the "CRT" step to combine consistent congruences.
+    OUTPUT: the estimated run time of the "CRT" step to combine consistent congruences
 
     EXAMPLES::
 
@@ -1133,13 +1124,11 @@ def _is_p_power(a, p):
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
     - ``p`` -- a prime number
 
-    OUTPUT:
-
-    - ``True`` if `a` is a `p`th power; else ``False``.
+    OUTPUT: ``True`` if `a` is a `p`th power; else ``False``
 
     EXAMPLES::
 

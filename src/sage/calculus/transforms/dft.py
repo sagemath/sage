@@ -93,11 +93,11 @@ class IndexedSequence(SageObject):
 
     INPUT:
 
-    - ``L`` -- A list
+    - ``L`` -- list
 
-    - ``index_object`` must be a Sage object with an ``__iter__`` method
+    - ``index_object`` -- must be a Sage object with an ``__iter__`` method
       containing the same number of elements as ``self``, which is a
-      list of elements taken from a field.
+      list of elements taken from a field
     """
     def __init__(self, L, index_object):
         r"""
@@ -699,7 +699,7 @@ class IndexedSequence(SageObject):
         a.inverse_transform()
         return IndexedSequence([a[j][0] + I * a[j][1] for j in J], J)
 
-    def dwt(self, other="haar", wavelet_k=2):
+    def dwt(self, other='haar', wavelet_k=2):
         r"""
         Wraps the gsl ``WaveletTransform.forward`` in :mod:`~sage.calculus.transforms.dwt`
         (written by Joshua Kantor). Assumes the length of the sample is a
@@ -716,7 +716,7 @@ class IndexedSequence(SageObject):
           * ``'bspline'``
           * ``'bspline_centered'``
 
-        - ``wavelet_k`` -- For daubechies wavelets, ``wavelet_k`` specifies a
+        - ``wavelet_k`` -- for daubechies wavelets, ``wavelet_k`` specifies a
           daubechie wavelet with `k/2` vanishing moments.
           `k = 4,6,...,20` for `k` even are the only ones implemented.
 
@@ -763,7 +763,7 @@ class IndexedSequence(SageObject):
         a.forward_transform()
         return IndexedSequence([RR(a[j]) for j in J], J)
 
-    def idwt(self, other="haar", wavelet_k=2):
+    def idwt(self, other='haar', wavelet_k=2):
         r"""
         Implements the gsl ``WaveletTransform.backward()`` in
         :mod:`~sage.calculus.transforms.dwt`.
@@ -773,16 +773,16 @@ class IndexedSequence(SageObject):
 
         INPUT:
 
-        - ``other`` -- Must be one of the following:
+        - ``other`` -- must be one of the following:
 
-          * ``"haar"``
-          * ``"daubechies"``
-          * ``"daubechies_centered"``
-          * ``"haar_centered"``
-          * ``"bspline"``
-          * ``"bspline_centered"``
+          * ``'haar'``
+          * ``'daubechies'``
+          * ``'daubechies_centered'``
+          * ``'haar_centered'``
+          * ``'bspline'``
+          * ``'bspline_centered'``
 
-        - ``wavelet_k`` -- For daubechies wavelets, ``wavelet_k`` specifies a
+        - ``wavelet_k`` -- for daubechies wavelets, ``wavelet_k`` specifies a
           daubechie wavelet with `k/2` vanishing moments.
           `k = 4,6,...,20` for `k` even are the only ones implemented.
 

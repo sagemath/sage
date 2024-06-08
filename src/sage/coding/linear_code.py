@@ -1548,7 +1548,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``algorithm`` -- If ``"gap"`` then GAP's MatrixAutomorphism function
+        - ``algorithm`` -- if ``"gap"`` then GAP's MatrixAutomorphism function
           (written by Thomas Breuer) is used. The implementation combines an
           idea of mine with an improvement suggested by Cary Huffman. If
           ``"gap+verbose"`` then code-theoretic data is printed out at
@@ -1719,7 +1719,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``L`` -- List of positions to puncture
+        - ``L`` -- list of positions to puncture
 
         OUTPUT: an instance of :class:`sage.coding.punctured_code`
 
@@ -1782,7 +1782,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``L`` -- Subset of `\{1,...,n\}`, where `n` is the length of this code
+        - ``L`` -- subset of `\{1,...,n\}`, where `n` is the length of this code
 
         OUTPUT: linear code, the shortened code described above
 
@@ -1985,7 +1985,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``name`` -- String, variable name (default: ``"T"``)
+        - ``name`` -- string (default: ``'T'``); variable name
 
         OUTPUT: polynomial over `\QQ`
 
@@ -2051,7 +2051,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``name`` -- String, variable name (default: ``"T"``)
+        - ``name`` -- string (default: ``'T'``); variable name
 
         OUTPUT:
 
@@ -2433,7 +2433,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated :class:`LinearCode` of this encoder.
+    - ``code`` -- the associated :class:`LinearCode` of this encoder
     """
 
     def __init__(self, code):
@@ -2548,7 +2548,7 @@ class LinearCodeSyndromeDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- A code associated to this decoder
+    - ``code`` -- a code associated to this decoder
 
     - ``maximum_error_weight`` -- (default: ``None``) the maximum number of
       errors to look for when building the table. An error is raised if it is
@@ -2964,7 +2964,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- A code associated to this decoder
+    - ``code`` -- a code associated to this decoder
     """
 
     def __init__(self, code):

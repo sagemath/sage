@@ -203,7 +203,7 @@ def srange(*args, **kwds):
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the
-      endpoint is hit for inexact rings (default 1e-5)
+      endpoint is hit for inexact rings (default: ``1e-5``)
 
     OUTPUT: list
 

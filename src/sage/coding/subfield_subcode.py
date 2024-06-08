@@ -34,9 +34,9 @@ class SubfieldSubcode(AbstractLinearCode):
 
     INPUT:
 
-    - ``original_code``  -- the code ``self`` comes from.
+    - ``original_code`` -- the code ``self`` comes from
 
-    - ``subfield`` -- the base field of ``self``.
+    - ``subfield`` -- the base field of ``self``
 
     - ``embedding`` -- (default: ``None``) a homomorphism from ``subfield`` to
       ``original_code``'s base field. If ``None`` is provided, it will default
@@ -266,14 +266,14 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this decoder
+    - ``code`` -- the associated code of this decoder
 
     - ``original_decoder`` -- (default: ``None``) The decoder that will be used
       over the original code. It has to be a decoder object over the original
       code. If it is set to ``None``, the default decoder over the original
       code will be used.
 
-    - ``**kwargs`` -- All extra arguments are forwarded to original code's decoder
+    - ``**kwargs`` -- all extra arguments are forwarded to original code's decoder
 
     EXAMPLES::
 
@@ -403,8 +403,8 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
         INPUT:
 
-        - ``kwargs`` -- Optional arguments are forwarded to original decoder's
-          :meth:`sage.coding.decoder.Decoder.decoding_radius` method.
+        - ``kwargs`` -- optional arguments are forwarded to original decoder's
+          :meth:`sage.coding.decoder.Decoder.decoding_radius` method
 
         EXAMPLES::
 

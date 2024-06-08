@@ -135,7 +135,7 @@ class Encoder(SageObject):
 
         INPUT:
 
-        - ``word`` -- a vector of the message space of the ``self``.
+        - ``word`` -- a vector of the message space of the ``self``
 
         OUTPUT: a vector of :meth:`code`
 
@@ -172,7 +172,7 @@ class Encoder(SageObject):
 
         INPUT:
 
-        - ``word`` -- a vector of the message space of the ``self``.
+        - ``word`` -- a vector of the message space of the ``self``
 
         EXAMPLES::
 
@@ -202,7 +202,7 @@ class Encoder(SageObject):
 
         INPUT:
 
-        - ``c`` -- a codeword of :meth:`code`.
+        - ``c`` -- a codeword of :meth:`code`
 
         - ``nocheck`` -- boolean (default: ``False``); checks if ``c`` is in
           :meth:`code`. You might set this to ``True`` to disable the check for
@@ -291,7 +291,7 @@ class Encoder(SageObject):
         INPUT:
 
 
-        - ``c`` -- a codeword of :meth:`code`.
+        - ``c`` -- a codeword of :meth:`code`
 
         OUTPUT: an element of the message space of ``self``
 

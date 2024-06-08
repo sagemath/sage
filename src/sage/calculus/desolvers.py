@@ -93,10 +93,10 @@ def fricas_desolve(de, dvar, ics, ivar):
 
         sage: x = var('x')
         sage: y = function('y')(x)
-        sage: desolve(diff(y,x) + y - 1, y, algorithm="fricas")             # optional - fricas
+        sage: desolve(diff(y,x) + y - 1, y, algorithm='fricas')             # optional - fricas
         _C0*e^(-x) + 1
 
-        sage: desolve(diff(y, x) + y == y^3*sin(x), y, algorithm="fricas")  # optional - fricas
+        sage: desolve(diff(y, x) + y == y^3*sin(x), y, algorithm='fricas')  # optional - fricas
         -1/5*(2*cos(x)*y(x)^2 + 4*sin(x)*y(x)^2 - 5)*e^(-2*x)/y(x)^2
 
     TESTS::
@@ -133,11 +133,11 @@ def fricas_desolve_system(des, dvars, ics, ivar):
         sage: y = function('y')(t)
         sage: de1 = diff(x,t) + y - 1 == 0
         sage: de2 = diff(y,t) - x + 1 == 0
-        sage: desolve_system([de1, de2], [x, y], algorithm="fricas")          # optional - fricas
+        sage: desolve_system([de1, de2], [x, y], algorithm='fricas')          # optional - fricas
         [x(t) == _C0*cos(t) + cos(t)^2 + _C1*sin(t) + sin(t)^2,
          y(t) == -_C1*cos(t) + _C0*sin(t) + 1]
 
-        sage: desolve_system([de1, de2], [x,y], [0,1,2], algorithm="fricas")  # optional - fricas
+        sage: desolve_system([de1, de2], [x,y], [0,1,2], algorithm='fricas')  # optional - fricas
         [x(t) == cos(t)^2 + sin(t)^2 - sin(t), y(t) == cos(t) + 1]
 
     TESTS::
@@ -178,7 +178,7 @@ def fricas_desolve_system(des, dvars, ics, ivar):
 
 
 def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
-            algorithm="maxima"):
+            algorithm='maxima'):
     r"""
     Solve a 1st or 2nd order linear ODE, including IVP and BVP.
 
@@ -473,20 +473,20 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
     order linear equations::
 
         sage: de = x^3*diff(y, x, 3) + x^2*diff(y, x, 2) - 2*x*diff(y, x) + 2*y - 2*x^4
-        sage: Y = desolve(de, y, algorithm="fricas"); Y               # optional - fricas
+        sage: Y = desolve(de, y, algorithm='fricas'); Y               # optional - fricas
         (2*x^3 - 3*x^2 + 1)*_C0/x + (x^3 - 1)*_C1/x
          + (x^3 - 3*x^2 - 1)*_C2/x + 1/15*(x^5 - 10*x^3 + 20*x^2 + 4)/x
 
     The initial conditions are then interpreted as `[x_0, y(x_0),
     y'(x_0), \ldots, y^(n)(x_0)]`::
 
-        sage: Y = desolve(de, y, ics=[1,3,7], algorithm="fricas"); Y  # optional - fricas
+        sage: Y = desolve(de, y, ics=[1,3,7], algorithm='fricas'); Y  # optional - fricas
         1/15*(x^5 + 15*x^3 + 50*x^2 - 21)/x
 
     FriCAS can also solve some non-linear equations::
 
         sage: de = diff(y, x) == y / (x+y*log(y))
-        sage: Y = desolve(de, y, algorithm="fricas"); Y               # optional - fricas
+        sage: Y = desolve(de, y, algorithm='fricas'); Y               # optional - fricas
         1/2*(log(y(x))^2*y(x) - 2*x)/y(x)
 
     TESTS:
@@ -787,7 +787,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     return soln
 
 
-def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
+def desolve_system(des, vars, ics=None, ivar=None, algorithm='maxima'):
     r"""
     Solve a system of any size of 1st order ODEs. Initial conditions
     are optional.
@@ -948,7 +948,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
     return soln
 
 
-def eulers_method(f, x0, y0, h, x1, algorithm="table"):
+def eulers_method(f, x0, y0, h, x1, algorithm='table'):
     r"""
     This implements Euler's method for finding numerically the
     solution of the 1st order ODE `y' = f(x,y)`, `y(a)=c`. The ``x``
@@ -974,7 +974,7 @@ def eulers_method(f, x0, y0, h, x1, algorithm="table"):
     ::
 
         sage: x,y = PolynomialRing(QQ,2,"xy").gens()
-        sage: eulers_method(5*x+y-5,0,1,1/2,1,algorithm="none")
+        sage: eulers_method(5*x+y-5,0,1,1/2,1,algorithm='none')
         [[0, 1], [1/2, -1], [1, -11/4], [3/2, -33/8]]
 
     ::
@@ -1006,12 +1006,12 @@ def eulers_method(f, x0, y0, h, x1, algorithm="table"):
 
     ::
 
-        sage: eulers_method(5*x+y-5,0,1,1/2,1,algorithm="none")
+        sage: eulers_method(5*x+y-5,0,1,1/2,1,algorithm='none')
         [[0, 1], [1/2, -1], [1, -11/4], [3/2, -33/8]]
 
     ::
 
-        sage: pts = eulers_method(5*x+y-5,0,1,1/2,1,algorithm="none")
+        sage: pts = eulers_method(5*x+y-5,0,1,1/2,1,algorithm='none')
         sage: P1 = list_plot(pts)                                                       # needs sage.plot
         sage: P2 = line(pts)                                                            # needs sage.plot
         sage: (P1 + P2).show()                                                          # needs sage.plot
@@ -1036,7 +1036,7 @@ def eulers_method(f, x0, y0, h, x1, algorithm="table"):
         return soln
 
 
-def eulers_method_2x2(f, g, t0, x0, y0, h, t1, algorithm="table"):
+def eulers_method_2x2(f, g, t0, x0, y0, h, t1, algorithm='table'):
     r"""
     This implements Euler's method for finding numerically the
     solution of the 1st order system of two ODEs
@@ -1064,7 +1064,7 @@ def eulers_method_2x2(f, g, t0, x0, y0, h, t1, algorithm="table"):
         sage: from sage.calculus.desolvers import eulers_method_2x2
         sage: t, x, y = PolynomialRing(QQ,3,"txy").gens()
         sage: f = x+y+t; g = x-y
-        sage: eulers_method_2x2(f,g, 0, 0, 0, 1/3, 1,algorithm="none")
+        sage: eulers_method_2x2(f,g, 0, 0, 0, 1/3, 1,algorithm='none')
         [[0, 0, 0], [1/3, 0, 0], [2/3, 1/9, 0], [1, 10/27, 1/27], [4/3, 68/81, 4/27]]
 
     ::
@@ -1499,9 +1499,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
     INPUT:
 
-    - ``des``  -- right hand sides of the system
+    - ``des`` -- right hand sides of the system
 
-    - ``ics``  -- initial conditions
+    - ``ics`` -- initial conditions
 
     - ``times`` -- a sequence of time points in which the solution must be found
 

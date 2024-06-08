@@ -61,7 +61,7 @@ class RepresentationType(Enum):
     r"""
     Enum class to select a representation type for the cubic Hecke algebra.
 
-    - ``RegularLeft``  -- left regular representations
+    - ``RegularLeft`` -- left regular representations
     - ``RegularRight`` -- right regular representations
     - ``SplitIrredMarin`` -- split irreducible representations obtained from
       Ivan Marin's data
@@ -586,7 +586,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
 
     INPUT:
 
-    - ``cubic_hecke_algebra``  -- (optional)
+    - ``cubic_hecke_algebra`` -- (optional)
       :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
       must be given if ``element`` fails to be an instance of its element class
     - ``representation_type`` -- (default: ``RepresentationType.SplitIrredChevie``)

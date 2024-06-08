@@ -126,9 +126,9 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
 
     -  ``k`` -- integer; the dimension of the code
 
-    -  ``F`` -- Finite field, of order 2, 3, 4, 5, 7, 8, or 9
+    -  ``F`` -- finite field, of order 2, 3, 4, 5, 7, 8, or 9
 
-    -  ``verbose`` -- Bool (default: ``False``)
+    -  ``verbose`` -- boolean (default: ``False``)
 
     OUTPUT: an unparsed text explaining the construction of the code
 
@@ -198,13 +198,13 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
        ``b=4``, all doubly even codes are generated). Must be an even positive
        integer.
 
-    -  ``parent`` -- Used in recursion (default: ``None``)
+    -  ``parent`` -- used in recursion (default: ``None``)
 
-    -  ``BC`` -- Used in recursion (default: ``None``)
+    -  ``BC`` -- used in recursion (default: ``None``)
 
-    -  ``equal`` -- If ``True``, generates only [n, k] codes (default: ``False``)
+    -  ``equal`` -- if ``True``, generates only [n, k] codes (default: ``False``)
 
-    -  ``in_test`` -- Used in recursion (default: ``None``)
+    -  ``in_test`` -- used in recursion (default: ``None``)
 
     EXAMPLES:
 

@@ -462,8 +462,8 @@ def xi_degrees(n, p=2, reverse=True):
     INPUT:
 
     - ``n`` -- integer
-    - ``p`` -- prime number, optional (default: 2)
-    - ``reverse`` -- bool, optional (default: ``True``)
+    - ``p`` -- prime number (default: 2)
+    - ``reverse`` -- bool (default: ``True``)
 
     OUTPUT: ``list`` -- list of integers
 

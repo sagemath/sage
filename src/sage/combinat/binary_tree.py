@@ -1631,7 +1631,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``shift`` -- an integer (default 0)
+        - ``shift`` -- integer (default: 0)
 
         OUTPUT: list of tilting coordinates and number of leaves
 
@@ -2813,7 +2813,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
           set to be the indeterminate `q` in the polynomial ring
           `\ZZ[q]`)
 
-        - ``q_factor`` -- a Boolean (default: ``False``) which
+        - ``q_factor`` -- a Boolean (default: ``False``); which
           determines whether to compute `h_{q} (T)` or to
           compute `f_{q} (T)` (namely, `h_{q} (T)` is obtained when
           ``q_factor == False``, and `f_{q} (T)` is obtained when
@@ -5228,7 +5228,7 @@ def binary_search_tree_shape(w, left_to_right=True):
 
     INPUT:
 
-    - ``w`` -- a list of integers
+    - ``w`` -- list of integers
 
     - ``left_to_right`` -- boolean (default ``True``)
 

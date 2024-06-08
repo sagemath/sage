@@ -1027,7 +1027,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - `n` -- an integer, the size of the matrices.
+    - `n` -- integer; the size of the matrices
 
     EXAMPLES:
 
@@ -1635,7 +1635,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
 
     INPUT:
 
-    - ``n`` -- The number of rows in the monotone triangles
+    - ``n`` -- the number of rows in the monotone triangles
 
     EXAMPLES:
 

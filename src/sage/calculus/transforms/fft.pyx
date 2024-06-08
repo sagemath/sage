@@ -296,11 +296,11 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         """
         Plot a slice of the array.
 
-        - ``style`` -- style of the plot, options are ``"rect"`` or ``"polar"``
+        - ``style`` -- style of the plot, options are ``'rect'`` or ``'polar'``
 
-          - ``"rect"`` -- height represents real part, color represents
+          - ``'rect'`` -- height represents real part, color represents
             imaginary part.
-          - ``"polar"`` -- height represents absolute value, color
+          - ``'polar'`` -- height represents absolute value, color
             represents argument.
 
         - ``xmin`` -- the lower bound of the slice to plot; 0 by default

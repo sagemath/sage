@@ -33,9 +33,9 @@ class HammingCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``base_field`` -- the base field over which ``self`` is defined.
+    - ``base_field`` -- the base field over which ``self`` is defined
 
-    - ``order`` -- the order of ``self``.
+    - ``order`` -- the order of ``self``
 
     EXAMPLES::
 

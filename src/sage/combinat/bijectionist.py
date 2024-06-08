@@ -2467,7 +2467,7 @@ class _BijectionistMILP:
 
         INPUT:
 
-        - ``bijectionist`` -- an instance of :class:`Bijectionist`.
+        - ``bijectionist`` -- an instance of :class:`Bijectionist`
 
         - ``solutions`` -- (optional) a list of solutions of the
           problem, each provided as a dictionary mapping `(a, z)` to
@@ -2631,7 +2631,7 @@ class _BijectionistMILP:
 
         INPUT:
 
-        - ``additional_constraints`` -- a list of constraints for the
+        - ``additional_constraints`` -- list of constraints for the
           underlying MILP
 
         - ``on_blocks``, whether to return the solution on blocks or

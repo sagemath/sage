@@ -52,7 +52,7 @@ def QuasiQuadraticResidueCode(p):
 
     INPUT:
 
-    - ``p`` -- a prime `>2`.
+    - ``p`` -- a prime `>2`
 
     OUTPUT: returns a QQR code of length `2p`
 

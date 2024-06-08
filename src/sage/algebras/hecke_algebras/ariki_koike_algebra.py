@@ -924,8 +924,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     c = ret[p]
                     # We have to flip the side due to Sage's
                     # convention for multiplying permutations
-                    pi = p.apply_simple_reflection(i, side="left")
-                    if p.has_descent(i, side="left"):
+                    pi = p.apply_simple_reflection(i, side='left')
+                    if p.has_descent(i, side='left'):
                         iaxpy(1, {p: c * qm1, pi: c * self._q}, temp)
                     else:
                         iaxpy(1, {pi: c}, temp)
@@ -1517,8 +1517,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                         c = sprod[p]
                         # We have to flip the side due to Sage's
                         # convention for multiplying permutations
-                        pj = p.apply_simple_reflection(j, side="left")
-                        if p.has_descent(j, side="left"):
+                        pj = p.apply_simple_reflection(j, side='left')
+                        if p.has_descent(j, side='left'):
                             iaxpy(1, {p: c * qm1, pj: c * self._q}, temp)
                         else:
                             iaxpy(1, {pj: c}, temp)

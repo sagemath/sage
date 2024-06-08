@@ -388,7 +388,7 @@ Ensure that :issue:`25626` is fixed. As the form of the answer is dependent of
 the giac version, we simplify it (see :issue:`34037`). ::
 
     sage: t = SR.var('t')
-    sage: integrate(exp(t)/(t + 1)^2, t, algorithm="giac").full_simplify()
+    sage: integrate(exp(t)/(t + 1)^2, t, algorithm='giac').full_simplify()
     ((t + 1)*Ei(t + 1) - e^(t + 1))/(t*e + e)
 
 Check if maxima has redundant variables defined after initialization,
@@ -939,7 +939,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
     INPUT:
 
-    - ``var`` -- polynomial variable name (default 'x')
+    - ``var`` -- polynomial variable name (default: 'x')
 
     - ``algorithm`` -- ``'algebraic'`` or ``'numerical'`` (default
       both, but with numerical first)
@@ -1640,7 +1640,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         sage: p1 = plot(xt, 0, 1/2, rgbcolor=(1,0,0))                                   # needs sage.plot
         sage: p2 = plot(yt, 0, 1/2, rgbcolor=(0,1,0))                                   # needs sage.plot
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                     # needs sage.plot
         ....:     (p1 + p2).save(f.name)
 
     Another example::

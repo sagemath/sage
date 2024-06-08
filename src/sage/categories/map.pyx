@@ -937,7 +937,7 @@ cdef class Map(Element):
 
         INPUT:
 
-        - ``self``  -- a Map in some ``Hom(Y, Z, category_left)``
+        - ``self`` -- a Map in some ``Hom(Y, Z, category_left)``
         - ``right`` -- a Map in some ``Hom(X, Y, category_right)``
 
         OUTPUT:

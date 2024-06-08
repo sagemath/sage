@@ -98,7 +98,7 @@ class FusionDouble(CombinatorialFreeModule):
     ::
 
         sage: G1 = SymmetricGroup(3)
-        sage: H1 = FusionDouble(G1, prefix="u", inject_variables=True)
+        sage: H1 = FusionDouble(G1, prefix='u', inject_variables=True)
         sage: F = H1.get_fmatrix()
 
     The above commands create the F-matrix. You can compute all of the
@@ -137,7 +137,7 @@ class FusionDouble(CombinatorialFreeModule):
 
     """
     @staticmethod
-    def __classcall_private__(cls, G, prefix="s", inject_variables=False):
+    def __classcall_private__(cls, G, prefix='s', inject_variables=False):
         """
         Normalize input to ensure a unique representation.
 
@@ -153,7 +153,7 @@ class FusionDouble(CombinatorialFreeModule):
             F.inject_variables()
         return F
 
-    def __init__(self, G, prefix="s"):
+    def __init__(self, G, prefix='s'):
         """
         EXAMPLES::
 
@@ -211,7 +211,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = FusionDouble(DiCyclicGroup(3), prefix="d")
+            sage: F = FusionDouble(DiCyclicGroup(3), prefix='d')
             sage: F.inject_variables()
             sage: d0 + d1 + d5
             d0 + d1 + d5
@@ -252,7 +252,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: D = FusionDouble(SymmetricGroup(3), prefix="t", inject_variables=True)
+            sage: D = FusionDouble(SymmetricGroup(3), prefix='t', inject_variables=True)
             sage: [D.s_ij(t2, x) for x in D.basis()]
             [2, 2, 4, 0, 0, -2, -2, -2]
             sage: [D.s_ij(t2, x, unitary=True) for x in D.basis()]
@@ -654,7 +654,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: FusionDouble(CyclicPermutationGroup(2), prefix="h").one()
+            sage: FusionDouble(CyclicPermutationGroup(2), prefix='h').one()
             h1
         """
         return self._unit_index
@@ -668,7 +668,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: K = FusionDouble(CyclicPermutationGroup(3),prefix="k")
+            sage: K = FusionDouble(CyclicPermutationGroup(3),prefix='k')
             sage: [(x,K.dual(x)) for x in K.basis()]
             [(k0, k0),
             (k1, k2),
@@ -744,7 +744,7 @@ class FusionDouble(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: H = FusionDouble(CyclicPermutationGroup(2), prefix="g", inject_variables=True)
+                sage: H = FusionDouble(CyclicPermutationGroup(2), prefix='g', inject_variables=True)
                 sage: [x.is_simple_object() for x in [g0, g1, g0+g1]]
                 [True, True, False]
             """
@@ -762,7 +762,7 @@ class FusionDouble(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: G = QuaternionGroup()
-                sage: H = FusionDouble(G, prefix="e", inject_variables=True)
+                sage: H = FusionDouble(G, prefix='e', inject_variables=True)
                 sage: e10.g()
                 (1,3)(2,4)(5,7)(6,8)
                 sage: e10.char()
@@ -784,7 +784,7 @@ class FusionDouble(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: G = DihedralGroup(5)
-                sage: H = FusionDouble(G, prefix="f", inject_variables=True)
+                sage: H = FusionDouble(G, prefix='f', inject_variables=True)
                 sage: f10.g()
                 (1,2,3,4,5)
                 sage: f10.char()
@@ -854,7 +854,7 @@ class FusionDouble(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: G = CyclicPermutationGroup(4)
-                sage: H = FusionDouble(G, prefix="j")
+                sage: H = FusionDouble(G, prefix='j')
                 sage: [x for x in H.basis() if x == x.dual()]
                 [j0, j1, j8, j9]
 

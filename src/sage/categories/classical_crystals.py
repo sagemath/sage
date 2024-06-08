@@ -214,7 +214,7 @@ class ClassicalCrystals(Category_singleton):
 
             One may specify an alternate :class:`WeylCharacterRing`::
 
-                sage: R = WeylCharacterRing("A2", style="coroots")
+                sage: R = WeylCharacterRing("A2", style='coroots')
                 sage: chiT = T.character(R); chiT
                 A2(0,0) + 2*A2(1,1) + A2(0,3) + A2(3,0) + A2(2,2)
                 sage: chiT in R
@@ -223,7 +223,7 @@ class ClassicalCrystals(Category_singleton):
             It should have the same Cartan type and use the same
             realization of the weight lattice as ``self``::
 
-                sage: R = WeylCharacterRing("A3", style="coroots")
+                sage: R = WeylCharacterRing("A3", style='coroots')
                 sage: T.character(R)
                 Traceback (most recent call last):
                 ...

@@ -263,14 +263,14 @@ class FMatrix(SageObject):
         sage: f.field()                                 # long time
         Algebraic Field
     """
-    def __init__(self, fusion_ring, fusion_label="f", var_prefix='fx', inject_variables=False):
+    def __init__(self, fusion_ring, fusion_label='f', var_prefix='fx', inject_variables=False):
         r"""
         Initialize ``self``.
 
         EXAMPLES::
 
             sage: f = FusionRing("B3", 2).get_fmatrix()
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
         """
         self._FR = fusion_ring
         if inject_variables and (self._FR._fusion_labels is None):
@@ -472,7 +472,7 @@ class FMatrix(SageObject):
 
         EXAMPLES::
 
-            sage: fr = FusionRing("A1", 2, fusion_labels="c", inject_variables=True)
+            sage: fr = FusionRing("A1", 2, fusion_labels='c', inject_variables=True)
             sage: f = fr.get_fmatrix(new=True)
             sage: f.fmatrix(c1, c1, c1, c1)
             [fx0 fx1]
@@ -606,7 +606,7 @@ class FMatrix(SageObject):
 
         EXAMPLES::
 
-            sage: fr = FusionRing("A1", 3, fusion_labels="a", inject_variables=True)
+            sage: fr = FusionRing("A1", 3, fusion_labels='a', inject_variables=True)
             sage: f = fr.get_fmatrix()
             sage: f.fmatrix(a1, a1, a2, a2)
             [fx6 fx7]
@@ -739,7 +739,7 @@ class FMatrix(SageObject):
         EXAMPLES::
 
             sage: fr = FusionRing("G2", 1)
-            sage: f = fr.get_fmatrix(fusion_label="g", inject_variables=True, new=True)
+            sage: f = fr.get_fmatrix(fusion_label='g', inject_variables=True, new=True)
             creating variables fx1..fx5
             Defining fx0, fx1, fx2, fx3, fx4
             sage: f.find_orthogonal_solution()
@@ -822,7 +822,7 @@ class FMatrix(SageObject):
         EXAMPLES::
 
             sage: fr = FusionRing("G2", 1)
-            sage: f = fr.get_fmatrix(fusion_label="g", inject_variables=True, new=True)
+            sage: f = fr.get_fmatrix(fusion_label='g', inject_variables=True, new=True)
             creating variables fx1..fx5
             Defining fx0, fx1, fx2, fx3, fx4
             sage: f.find_orthogonal_solution(verbose=False)
@@ -1087,7 +1087,7 @@ class FMatrix(SageObject):
             Checkpoint 2 reached!
             sage: del f
             sage: f = FusionRing("A1", 3).get_fmatrix(new=True)
-            sage: f.find_orthogonal_solution(warm_start="fmatrix_solver_checkpoint_A13.pickle")
+            sage: f.find_orthogonal_solution(warm_start='fmatrix_solver_checkpoint_A13.pickle')
             Computing F-symbols for The Fusion Ring of Type A1 and level 3 with Integer Ring coefficients with 71 variables...
             Set up 121 reduced pentagons...
             Elimination epoch completed... 18 eqns remain in ideal basis
@@ -1123,7 +1123,7 @@ class FMatrix(SageObject):
             Checkpoint 4 reached!
             sage: del f
             sage: f = FusionRing("A1", 2).get_fmatrix(new=True)
-            sage: f.find_orthogonal_solution(warm_start="fmatrix_solver_checkpoint_A12.pickle")
+            sage: f.find_orthogonal_solution(warm_start='fmatrix_solver_checkpoint_A12.pickle')
             Computing F-symbols for The Fusion Ring of Type A1 and level 2 with Integer Ring coefficients with 14 variables...
             Partitioned 0 equations into 0 components of size:
             []
@@ -1189,10 +1189,10 @@ class FMatrix(SageObject):
         TESTS::
 
             sage: f = FusionRing("A1", 3).get_fmatrix(new=True)
-            sage: f.find_orthogonal_solution(save_results="test.pickle", verbose=False)   # long time
+            sage: f.find_orthogonal_solution(save_results='test.pickle', verbose=False)   # long time
             sage: del f
             sage: f = FusionRing("A1", 3).get_fmatrix(new=True)
-            sage: f.find_orthogonal_solution(warm_start="test.pickle")                   # long time
+            sage: f.find_orthogonal_solution(warm_start='test.pickle')                   # long time
             sage: f._chkpt_status == 7                                                   # long time
             True
             sage: os.remove("test.pickle")                                               # long time
@@ -1724,7 +1724,7 @@ class FMatrix(SageObject):
             print(graph.connected_components_sizes())
         return partition
 
-    def _par_graph_gb(self, eqns=None, term_order="degrevlex", largest_comp=45, verbose=True):
+    def _par_graph_gb(self, eqns=None, term_order='degrevlex', largest_comp=45, verbose=True):
         r"""
         Compute a Groebner basis for a list of equations partitioned
         according to their corresponding graph.
@@ -2042,7 +2042,7 @@ class FMatrix(SageObject):
 
         EXAMPLES::
 
-            sage: f = FusionRing("B5", 1).get_fmatrix(fusion_label="b", inject_variables=True)
+            sage: f = FusionRing("B5", 1).get_fmatrix(fusion_label='b', inject_variables=True)
             creating variables fx1..fx14
             Defining fx0, fx1, fx2, fx3, fx4, fx5, fx6, fx7, fx8, fx9, fx10, fx11, fx12, fx13
             sage: f.find_orthogonal_solution()
@@ -2147,7 +2147,7 @@ class FMatrix(SageObject):
 
         # Set up new equations graph and compute variety for each component
         if self._chkpt_status < 5:
-            self.ideal_basis = self._par_graph_gb(term_order="lex", verbose=verbose)
+            self.ideal_basis = self._par_graph_gb(term_order='lex', verbose=verbose)
             self.ideal_basis.sort(key=poly_tup_sortkey)
             self._triangular_elim(verbose=verbose)
         self._checkpoint(checkpoint, 5, verbose=verbose)
@@ -2290,7 +2290,7 @@ class FMatrix(SageObject):
 
         EXAMPLES::
 
-            sage: fr = FusionRing("A2", 1, fusion_labels="a", inject_variables=True)
+            sage: fr = FusionRing("A2", 1, fusion_labels='a', inject_variables=True)
             sage: f = fr.get_fmatrix(inject_variables=True)
             creating variables fx1..fx8
             Defining fx0, fx1, fx2, fx3, fx4, fx5, fx6, fx7

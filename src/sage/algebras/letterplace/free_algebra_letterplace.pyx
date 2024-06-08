@@ -191,7 +191,7 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
         T += T0
         names.extend([x + '_' + str(i) for x in names0])
     return PolynomialRing(base_ring.base_ring(), names, order=T,
-                          implementation="singular")
+                          implementation='singular')
 
 
 #####################
@@ -762,8 +762,8 @@ cdef class FreeAlgebra_letterplace(Parent):
 #
 #        INPUT:
 #
-#        - ``degree`` -- the maximal degree of the output (default 2).
-#        - ``terms`` -- the maximal number of terms of the output (default 5).
+#        - ``degree`` -- the maximal degree of the output (default: 2)
+#        - ``terms`` -- the maximal number of terms of the output (default: 5)
 #
 #        NOTE:
 #

@@ -170,7 +170,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.graphs sage.groups
-                sage: W = CoxeterGroup(['H', 3], implementation="reflection")
+                sage: W = CoxeterGroup(['H', 3], implementation='reflection')
                 sage: G = W.coxeter_diagram(); G
                 Graph on 3 vertices
                 sage: G.edges(sort=True)
@@ -410,9 +410,9 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups
-                sage: W1 = WeylGroup("G2", prefix="s")
+                sage: W1 = WeylGroup("G2", prefix='s')
                 sage: W2 = CoxeterGroup("G2")
-                sage: W3 = CoxeterGroup("G2", implementation="permutation")
+                sage: W3 = CoxeterGroup("G2", implementation='permutation')
                 sage: W1(W2.an_element())
                 s1*s2
                 sage: W2(W1.an_element())
@@ -437,7 +437,7 @@ class CoxeterGroups(Category_singleton):
                     pass
             return self.element_class(self, x, **args)
 
-        def weak_order_ideal(self, predicate, side="right", category=None):
+        def weak_order_ideal(self, predicate, side='right', category=None):
             """
             Return a weak order ideal defined by a predicate
 
@@ -636,14 +636,14 @@ class CoxeterGroups(Category_singleton):
             return {self.from_reduced_word(w)
                     for w in Permutations(self.index_set())}
 
-        def grassmannian_elements(self, side="right"):
+        def grassmannian_elements(self, side='right'):
             """
             Return the left or right Grassmannian elements of ``self``
             as an enumerated set.
 
             INPUT:
 
-            - ``side`` -- (default: ``"right"``) ``"left"`` or ``"right"``
+            - ``side`` -- (default: ``'right'``) ``'left'`` or ``'right'``
 
             EXAMPLES::
 
@@ -937,7 +937,7 @@ class CoxeterGroups(Category_singleton):
             from sage.sets.family import Family
             return Family(self.index_set(), lambda i: self.simple_projection(i, side=side, length_increasing=length_increasing))
 
-        def sign_representation(self, base_ring=None, side="twosided"):
+        def sign_representation(self, base_ring=None, side='twosided'):
             r"""
             Return the sign representation of ``self`` over ``base_ring``.
 
@@ -960,7 +960,7 @@ class CoxeterGroups(Category_singleton):
             from sage.modules.with_basis.representation import SignRepresentationCoxeterGroup
             return SignRepresentationCoxeterGroup(self, base_ring)
 
-        def reflection_representation(self, base_ring=None, side="left"):
+        def reflection_representation(self, base_ring=None, side='left'):
             r"""
             Return the reflection representation of ``self``.
 
@@ -1036,14 +1036,14 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup("A3", prefix="s")                                   # needs sage.combinat sage.groups
+                sage: W = WeylGroup("A3", prefix='s')                                   # needs sage.combinat sage.groups
                 sage: s1, s2, s3 = W.simple_reflections()                               # needs sage.combinat sage.groups
                 sage: W.bruhat_interval(s2, s1*s3*s2*s1*s3)                             # needs sage.combinat sage.groups
                 [s1*s2*s3*s2*s1, s2*s3*s2*s1, s3*s1*s2*s1, s1*s2*s3*s1,
                  s1*s2*s3*s2, s3*s2*s1, s2*s3*s1, s2*s3*s2, s1*s2*s1,
                  s3*s1*s2, s1*s2*s3, s2*s1, s3*s2, s2*s3, s1*s2, s2]
 
-                sage: W = WeylGroup(['A', 2, 1], prefix="s")                            # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 2, 1], prefix='s')                            # needs sage.combinat sage.groups
                 sage: s0, s1, s2 = W.simple_reflections()                               # needs sage.combinat sage.groups
                 sage: W.bruhat_interval(1, s0*s1*s2)                                    # needs sage.combinat sage.groups
                 [s0*s1*s2, s1*s2, s0*s2, s0*s1, s2, s1, s0, 1]
@@ -1075,12 +1075,12 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup("A3", prefix="s")                                   # needs sage.combinat sage.groups
+                sage: W = WeylGroup("A3", prefix='s')                                   # needs sage.combinat sage.groups
                 sage: s1, s2, s3 = W.simple_reflections()                               # needs sage.combinat sage.groups
                 sage: W.bruhat_interval_poset(s2, s1*s3*s2*s1*s3)                       # needs sage.combinat sage.groups
                 Finite poset containing 16 elements
 
-                sage: W = WeylGroup(['A', 2, 1], prefix="s")                            # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 2, 1], prefix='s')                            # needs sage.combinat sage.groups
                 sage: s0, s1, s2 = W.simple_reflections()                               # needs sage.combinat sage.groups
                 sage: W.bruhat_interval_poset(1, s0*s1*s2)                              # needs sage.combinat sage.groups
                 Finite poset containing 8 elements
@@ -1154,7 +1154,7 @@ class CoxeterGroups(Category_singleton):
                 sage: W.bruhat_graph(s1, s3*s2*s3)
                 Digraph on 0 vertices
 
-                sage: W = WeylGroup("A3", prefix="s")                                   # needs sage.combinat sage.graphs sage.groups
+                sage: W = WeylGroup("A3", prefix='s')                                   # needs sage.combinat sage.graphs sage.groups
                 sage: s1, s2, s3 = W.simple_reflections()                               # needs sage.combinat sage.graphs sage.groups
                 sage: G = W.bruhat_graph(s1*s3, s1*s2*s3*s2*s1); G                      # needs sage.combinat sage.graphs sage.groups
                 Digraph on 10 vertices
@@ -1573,7 +1573,7 @@ class CoxeterGroups(Category_singleton):
             return [i for i in index_set if self.has_descent(i, side=side,
                                                              positive=positive)]
 
-        def is_grassmannian(self, side="right") -> bool:
+        def is_grassmannian(self, side='right') -> bool:
             """
             Return whether ``self`` is Grassmannian.
 
@@ -1600,9 +1600,9 @@ class CoxeterGroups(Category_singleton):
                 sage: (s[1]*s[2]*s[1]).is_grassmannian()
                 False
 
-                sage: (s[0]*s[2]*s[1]).is_grassmannian(side="left")
+                sage: (s[0]*s[2]*s[1]).is_grassmannian(side='left')
                 False
-                sage: (s[0]*s[2]*s[1]).is_grassmannian(side="right")
+                sage: (s[0]*s[2]*s[1]).is_grassmannian(side='right')
                 True
                 sage: (s[0]*s[2]*s[1]).is_grassmannian()
                 True
@@ -1917,7 +1917,7 @@ class CoxeterGroups(Category_singleton):
                             or x[j + m:] != y[j + m:]):
                         continue
                     edges.append([x, y, m])
-            G = Graph(edges, immutable=True, format="list_of_edges")
+            G = Graph(edges, immutable=True, format='list_of_edges')
             colors = {2: 'blue', 3: 'red', 4: 'green'}
             G.set_latex_options(edge_labels=True,
                                 color_by_label=lambda x: colors[x])
@@ -2341,7 +2341,7 @@ class CoxeterGroups(Category_singleton):
                 (1, 2, 0, 3)
 
                 sage: # needs sage.combinat sage.groups
-                sage: W = WeylGroup(['C', 4], prefix="s")
+                sage: W = WeylGroup(['C', 4], prefix='s')
                 sage: v = W.from_reduced_word([1,2,3,4,3,1])
                 sage: v
                 s1*s2*s3*s4*s3*s1
@@ -2468,7 +2468,7 @@ class CoxeterGroups(Category_singleton):
                 sage: w = W.from_reduced_word([0,2])
                 sage: print([v.reduced_word() for v in w.bruhat_lower_covers()])
                 [[2], [0]]
-                sage: W = WeylGroup("A3", prefix="s", implementation="permutation")
+                sage: W = WeylGroup("A3", prefix='s', implementation='permutation')
                 sage: s1, s2, s3 = W.simple_reflections()
                 sage: (s1*s2*s3*s1).bruhat_lower_covers()
                 [s2*s1*s3, s1*s2*s1, s1*s2*s3]
@@ -2507,7 +2507,7 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 3, 1], prefix="s")                            # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 3, 1], prefix='s')                            # needs sage.combinat sage.groups
                 sage: w = W.from_reduced_word([1,2,1])                                  # needs sage.combinat sage.groups
                 sage: w.bruhat_upper_covers()                                           # needs sage.combinat sage.groups
                 [s1*s2*s1*s0, s1*s2*s0*s1, s0*s1*s2*s1, s3*s1*s2*s1, s2*s3*s1*s2, s1*s2*s3*s1]
@@ -2546,7 +2546,7 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 3], prefix="s")                               # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 3], prefix='s')                               # needs sage.combinat sage.groups
                 sage: w = W.from_reduced_word([3,1,2,1])                                # needs sage.combinat sage.groups
                 sage: w.bruhat_lower_covers_reflections()                               # needs sage.combinat sage.groups
                 [(s1*s2*s1, s1*s2*s3*s2*s1), (s3*s2*s1, s2), (s3*s1*s2, s1)]
@@ -2580,7 +2580,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups
-                sage: W = WeylGroup(['A', 3],prefix="s")
+                sage: W = WeylGroup(['A', 3],prefix='s')
                 sage: w = W.from_reduced_word([3,1,2,1])
                 sage: w.lower_cover_reflections()
                 [s1*s2*s3*s2*s1, s2, s1]
@@ -2603,7 +2603,7 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 4], prefix="s")                               # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 4], prefix='s')                               # needs sage.combinat sage.groups
                 sage: w = W.from_reduced_word([3,1,2,1])                                # needs sage.combinat sage.groups
                 sage: w.bruhat_upper_covers_reflections()                               # needs sage.combinat sage.groups
                 [(s1*s2*s3*s2*s1, s3), (s2*s3*s1*s2*s1, s2*s3*s2),
@@ -2628,7 +2628,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups
-                sage: W = WeylGroup(['A', 4], prefix="s")
+                sage: W = WeylGroup(['A', 4], prefix='s')
                 sage: w = W.from_reduced_word([3,1,2,1])
                 sage: w.cover_reflections()
                 [s3, s2*s3*s2, s4, s1*s2*s3*s4*s3*s2*s1]
@@ -2967,7 +2967,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups
-                sage: W = WeylGroup(['C', 4], prefix="s")
+                sage: W = WeylGroup(['C', 4], prefix='s')
                 sage: v = W.from_reduced_word([1,2,3,4,3,1])
                 sage: v.apply_demazure_product([1,3,4,3,3])
                 s4*s1*s2*s3*s4*s3*s1
@@ -3011,7 +3011,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups
-                sage: W = WeylGroup(['A', 4], prefix="s")
+                sage: W = WeylGroup(['A', 4], prefix='s')
                 sage: v = W.from_reduced_word([2,3,4,1,2])
                 sage: u = W.from_reduced_word([2,3,2,1])
                 sage: v.min_demazure_product_greater(u)
@@ -3059,7 +3059,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups
-                sage: W = WeylGroup(['A', 5], prefix="s")
+                sage: W = WeylGroup(['A', 5], prefix='s')
                 sage: v = W.from_reduced_word([5])
                 sage: w = W.from_reduced_word([4,5,2,3,1,2])
                 sage: v.deodhar_factor_element(w, [1,3,4])
@@ -3116,7 +3116,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups
-                sage: W = WeylGroup(['A', 3], prefix="s")
+                sage: W = WeylGroup(['A', 3], prefix='s')
                 sage: v = W.from_reduced_word([1,2,3])
                 sage: w = W.from_reduced_word([1,3,2])
                 sage: v.deodhar_lift_up(w, [3])
@@ -3151,7 +3151,7 @@ class CoxeterGroups(Category_singleton):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups
-                sage: W = WeylGroup(['A', 3], prefix="s")
+                sage: W = WeylGroup(['A', 3], prefix='s')
                 sage: v = W.from_reduced_word([1,2,3,2])
                 sage: w = W.from_reduced_word([3,2])
                 sage: v.deodhar_lift_down(w, [3])
@@ -3174,7 +3174,7 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 3], prefix="s")                               # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 3], prefix='s')                               # needs sage.combinat sage.groups
                 sage: w = W.from_reduced_word([3,1,2,1])                                # needs sage.combinat sage.groups
                 sage: w.inversions_as_reflections()                                     # needs sage.combinat sage.groups
                 [s1, s1*s2*s1, s2, s1*s2*s3*s2*s1]
@@ -3191,7 +3191,7 @@ class CoxeterGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A', 3], prefix="s")                               # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['A', 3], prefix='s')                               # needs sage.combinat sage.groups
                 sage: w = W.from_reduced_word([3,1,2,1])                                # needs sage.combinat sage.groups
                 sage: w.left_inversions_as_reflections()                                # needs sage.combinat sage.groups
                 [s1, s3, s1*s2*s3*s2*s1, s2*s3*s2]

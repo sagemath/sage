@@ -314,7 +314,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``subdivide``  -- boolean (default: ``False``); this boolean is passed
+        - ``subdivide`` -- boolean (default: ``False``); this boolean is passed
           to the block_matrix function
         - ``representation_type`` -- instance of enum :class:`RepresentationType`;
           this can be obtained by the attribute :attr:`CubicHeckeAlgebra.repr_type`
@@ -2605,7 +2605,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``cubic_braid``  -- :class:`~sage.groups.cubic_braid.CubicBraid`
+        - ``cubic_braid`` -- :class:`~sage.groups.cubic_braid.CubicBraid`
           whose image in ``self`` should be returned
         - ``check`` -- boolean (default: ``True``); check if the given cubic
           braid is already registered in the finite sub basis; if set to
@@ -2970,7 +2970,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``var`` -- string (default ``h``) setting the indeterminate of the
+        - ``var`` -- string (default: ``'h'``) setting the indeterminate of the
           equation
         - ``as_coefficients`` -- boolean (default: ``False``);  if set to ``True``
           the list of coefficients is returned
@@ -3230,7 +3230,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``nstrands``  -- integer at least 1 and at most :meth:`strands` giving
+        - ``nstrands`` -- integer at least 1 and at most :meth:`strands` giving
           the number of strands for the subgroup; the default is one strand
           less than ``self`` has
 

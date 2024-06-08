@@ -39,8 +39,7 @@ def polygon_spline(pts):
 
     INPUT:
 
-    - ``pts`` -- A list or array of complex numbers of tuples of the form
-      `(x,y)`.
+    - ``pts`` -- list or array of complex numbers of tuples of the form `(x,y)`
 
     EXAMPLES:
 
@@ -175,8 +174,7 @@ def complex_cubic_spline(pts):
 
     INPUT:
 
-    - ``pts`` -- A list or array of complex numbers, or tuples of the form
-      `(x,y)`.
+    - ``pts`` -- list or array of complex numbers, or tuples of the form `(x,y)`
 
     EXAMPLES:
 
