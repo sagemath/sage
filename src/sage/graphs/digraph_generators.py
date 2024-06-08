@@ -569,7 +569,7 @@ class DiGraphGenerators:
 
         - ``options`` -- string; anything else that should be forwarded as input
           to Nauty's genbg. See its documentation for more information :
-          `<http://cs.anu.edu.au/~bdm/nauty/>`_.
+          `<https://pallini.di.uniroma1.it>`_.
 
         EXAMPLES::
 
