@@ -300,15 +300,15 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         Available algorithms are:
 
-            - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a central
-              simple algebra (CSA) over `\FF_q[\text{Frob}_\phi]` (see
-              Chapter 4 of [CL2023]_).
-            - ``'crystalline'`` -- it uses the action of the Frobenius on
-              the crystalline cohomology (see [MS2023]_).
-            - ``'gekeler'`` -- it tries to identify coefficients by writing
-              that the characteristic polynomial annihilates the Frobenius
-              endomorphism; this algorithm may fail is some cases (see
-              [Gek1991]_).
+            - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
+              central simple algebra (CSA) over `\mathbb
+              F_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+            - ``'crystalline'`` -- it uses the action of the Frobenius
+              on the crystalline cohomology (see [MS2023]_).
+            - ``'gekeler'`` -- it tries to identify coefficients by
+              writing that the characteristic polynomial annihilates the
+              Frobenius endomorphism; this algorithm may fail is some
+              cases (see [Gek1991]_).
             - ``'motive'`` -- it uses the action of the Frobenius on the
               Anderson motive (see Chapter 2 of [CL2023]_).
 
@@ -464,7 +464,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         the reduced characteristic polynomial of the Ore polynomial
         `phi_T`. This algorithm is particularly interesting when the
         rank of the Drinfeld module is large compared to the degree
-        of the extension `K/\FF_q`.
+        of the extension `K/\mathbb F_q`.
         """
         E = self._base
         EZ = PolynomialRing(E, name='Z')
