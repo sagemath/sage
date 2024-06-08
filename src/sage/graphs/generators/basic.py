@@ -1175,8 +1175,8 @@ def MoebiusLadderGraph(n):
 
     OUTPUT:
 
-    - ``G`` -- a Möbius graph of order `2n`; note that a :class:`ValueError` is
-      returned if `n < 0`
+    - ``G`` -- a Möbius ladder graph of order `2n`; note that a
+      :class:`ValueError` is returned if `n < 0`
 
     EXAMPLES:
 
