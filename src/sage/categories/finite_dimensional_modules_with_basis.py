@@ -685,6 +685,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: M = matrix(ZZ, [[1, 0, 0], [0, 1, 0]],
                 ....:            column_keys=['a', 'b', 'c'],
                 ....:            row_keys=['v', 'w']); M
@@ -713,6 +714,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: M = matrix(ZZ, [[1, 0, 0], [0, 1, 0]],
                 ....:            column_keys=['a', 'b', 'c'],
                 ....:            row_keys=['v', 'w']); M
@@ -744,6 +746,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: M = matrix(ZZ, [[1, 0, 0], [0, 1, 0]],
                 ....:            column_keys=['a', 'b', 'c'],
                 ....:            row_keys=['v', 'w']); M
@@ -909,6 +912,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
+                        sage: # needs sage.modules
                         sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                         sage: phi.characteristic_polynomial()
                         x^2 - 3*x + 2
@@ -918,7 +922,6 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         x^2 - 3*x + 2
                         sage: phi.charpoly('T')
                         T^2 - 3*T + 2
-
                         sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                         sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                         sage: psi = W.module_morphism(matrix=M, codomain=W)
@@ -938,12 +941,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
+                        sage: # needs sage.modules
                         sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                         sage: phi.determinant()
                         2
                         sage: phi.det()
                         2
-
                         sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                         sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                         sage: psi = W.module_morphism(matrix=M, codomain=W)
@@ -965,12 +968,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
+                        sage: # needs sage.modules
                         sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                         sage: phi.fcp()                                                         # needs sage.libs.pari
                         (x - 2) * (x - 1)
                         sage: phi.fcp('T')                                                      # needs sage.libs.pari
                         (T - 2) * (T - 1)
-
                         sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                         sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                         sage: psi = W.module_morphism(matrix=M, codomain=W)
@@ -994,6 +997,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     Compute the minimal polynomial, and check it. ::
 
+                        sage: # needs sage.modules
                         sage: V = GF(7)^3
                         sage: H = V.Hom(V)([[0,1,2], [-1,0,3], [2,4,1]]); H
                         Vector space morphism represented by the matrix:
@@ -1014,7 +1018,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         Domain:   Vector space of dimension 3 over Finite Field of size 7
                         Codomain: Vector space of dimension 3 over Finite Field of size 7
 
-                        sage: # needs sage.rings.finite_rings
+                        sage: # needs sage.modules sage.rings.finite_rings
                         sage: k = GF(9, 'c')
                         sage: V = CombinatorialFreeModule(k, ['x', 'y', 'z', 'w'])
                         sage: A = matrix(k, 4, [1,1,0,0, 0,1,0,0, 0,0,5,0, 0,0,0,5])
@@ -1037,10 +1041,10 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
+                        sage: # needs sage.modules
                         sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                         sage: phi.trace()
                         3
-
                         sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                         sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                         sage: psi = W.module_morphism(matrix=M, codomain=W)
