@@ -1866,7 +1866,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             LaurentPolynomialFunctor
             sage: F1.merge(F2)(LaurentPolynomialRing(GF(2), 'a'))                       # needs sage.modules
             Multivariate Laurent Polynomial Ring in a, t over Finite Field of size 2
-            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))                       # needs sage.modules
+            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))
             Univariate Laurent Polynomial Ring in t over
              Univariate Laurent Polynomial Ring in a over Finite Field of size 2
 
@@ -3925,7 +3925,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         """
         EXAMPLES::
 
-            sage: # needs sage.groups sage.modules
+            sage: # needs sage.combinat sage.groups sage.modules
             sage: G = SymmetricGroup(3); G.rename('S3')
             sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')
             sage: action = lambda g, x: M.term(g(x))
