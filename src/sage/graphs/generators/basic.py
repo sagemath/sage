@@ -1151,49 +1151,55 @@ def LadderGraph(n):
 
 def MoebiusLadderGraph(n):
     r"""
-    Return a Möbius ladder graph with `2 * n` nodes.
+    Return a Möbius ladder graph with `2n` nodes
 
-    A Möbius ladder graph is a ladder graph that is connected at the ends with
-    a single twist, i.e.: a ladder bent around so that top meets bottom with a
-    single twist. Alternatively, it can be described as a single cycle graph (of
-    order `2 * n`) with the addition of edges (called 'rungs') connecting the
-    antipodal pairs of vertices. See the :wikipedia:`Möbius_ladder` for more
-    information.
+    A Möbius ladder graph of order `2n` is a ladder graph of the same order
+    that is connected at the ends with a single twist, i.e., a ladder graph
+    bent around so that top meets bottom with a single twist. Alternatively,
+    it can be described as a single cycle graph (of order `2n`) with the
+    addition of edges (called `rungs`) joining the antipodal pairs of nodes.
+    Also, note that the Möbius ladder graph ``graphs.MoebiusLadderGraph(n)`` is
+    precisely the same graph as the circulant graph
+    ``graphs.CirculantGraph(2 * n, [1, n])``.
 
-    Note that :mod:`MoebiusLadderGraph(n)` is precisely the same graph as the
-    circulant graph :mod:`graphs.CirculantGraph(2 * n, [1, n])`. For more information,
-    see :meth:`GraphGenerators.CirculantGraph`.
+    PLOTTING:
 
-    PLOTTING: Upon construction, the position dictionary is filled to override
-    the spring-layout algorithm. By convention, each Möbius ladder graph will be
+    Upon construction, the position dictionary is filled to override the
+    spring-layout algorithm. By convention, each Möbius ladder graph will be
     displayed with the first (0) node at the top, with the rest following in a
     counterclockwise manner.
 
     INPUT:
 
-    - ``n`` -- a non negative integer; number of nodes is `2 * n`
+    - ``n`` -- a non negative integer; number of nodes is `2n`
+
+    OUTPUT:
+
+    - ``G`` -- a Möbius graph of order `2n`; note that a :class:`ValueError` is
+      returned if ``n < 0``
 
     EXAMPLES:
 
-    Construct and show a Moebius ladder graph with 26 nodes::
+    Construct and show a Möbius ladder graph with 26 nodes::
 
         sage: g = graphs.MoebiusLadderGraph(13)
-        sage: g.show()                          # long time                             # needs sage.plot
+        sage: g.show()  # long time  # needs sage.plot
 
-    Create several Moebius ladder graphs in a Sage graphics array::
+    Create several Möbius ladder graphs in a Sage graphics array::
 
         sage: g = []
         sage: j = []
         sage: for i in range(9):
         ....:    k = graphs.MoebiusLadderGraph(i+3)
         ....:    g.append(k)
-        sage: for i in range(3):                                                        # needs sage.plot
+        sage: for i in range(3):  # needs sage.plot
         ....:    n = []
         ....:    for m in range(3):
-        ....:        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+        ....:        n.append(g[3*i + m].plot(vertex_size=50,\
+                              vertex_labels=False))
         ....:    j.append(n)
-        sage: G = graphics_array(j)                                                     # needs sage.plot
-        sage: G.show()                          # long time                             # needs sage.plot
+        sage: G = graphics_array(j)  # needs sage.plot
+        sage: G.show()  # long time  # needs sage.plot
 
     TESTS:
 
@@ -1203,6 +1209,19 @@ def MoebiusLadderGraph(n):
         Traceback (most recent call last):
         ...
         ValueError: parameter n must be a non negative integer
+
+    REFERENCES:
+
+    - :wikipedia:`Möbius_ladder`
+
+    .. SEEALSO::
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.LadderGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CircularLadderGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CirculantGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-05-26)
     """
     if n < 0:
         raise ValueError("parameter n must be a non negative integer")
