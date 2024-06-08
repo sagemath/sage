@@ -701,9 +701,25 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         Let `C(X) = \sum_{i=0}^r a_iX^{i}` denote the characteristic
         polynomial of the Frobenius endomorphism. The Frobenius norm
-        is `(-1)^r a_{0}`. This is an element of the regular function ring
-        and if `n` is the degree of the base field over `\mathbb{F}_q`,
-        then the Frobenius norm has degree `n`.
+        is `a_{0}`, and given by the formula
+
+        .. MATH::
+
+            a_0 = (-1)^{nr - n -r}
+                  \mathrm{Norm}_{K/\mathbb F_q}(\Delta)^{-1}
+                  p^{n / \mathrm{deg}(p)},
+
+        where `K` is the ground field, which as degree `n` over
+        `\mathbb F_q`, `r` is the rank of the Drinfeld module,
+        and `\Delta` is the leading coefficient of the generator.
+        This formula is given in Theorem~4.2.7 of [Pap2023]_.
+
+        Note that the Frobenius norm computed by this method may be
+        different than what is computed as the isogeny norm of the
+        Frobenius endomorphism (see :meth:`norm` on the Frobenius
+        endomorphism), which is an ideal defined of the function ring
+        given by its monic generator; the Frobenius norm may not be
+        monic.
 
         EXAMPLES::
 
@@ -711,19 +727,28 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [1, 0, z6])
-            sage: B = phi.frobenius_norm()
-            sage: B
+            sage: frobenius_norm = phi.frobenius_norm()
+            sage: frobenius_norm
             (5*z3^2 + 2*z3)*T^2 + (4*z3^2 + 3*z3)*T + 5*z3^2 + 2*z3
 
         ::
 
             sage: n = 2  # Degree of the base field over Fq
-            sage: B.degree() == n
+            sage: frobenius_norm.degree() == n
             True
 
         ::
 
-            sage: B == phi.frobenius_charpoly()[0]
+            sage: frobenius_norm == phi.frobenius_charpoly()[0]
+            True
+
+        ::
+            
+            sage: lc = frobenius_norm.leading_coefficient()
+            sage: isogeny_norm = phi.frobenius_endomorphism().norm()
+            sage: isogeny_norm.gen() == frobenius_norm / lc
+            True
+            sage: A.ideal(frobenius_norm) == isogeny_norm
             True
 
         ALGORITHM:
@@ -735,9 +760,12 @@ class DrinfeldModule_finite(DrinfeldModule):
             return self._frobenius_norm
         K = self.base_over_constants_field()
         n = K.degree(self._Fq)
-        char = self.characteristic()
+        r = self.rank()
+        p = self.characteristic()
         norm = K(self.coefficients()[-1]).norm()
-        self._frobenius_norm = ((-1)**n)*(char**(n/char.degree())) / norm
+        self._frobenius_norm = (-1) ** (n*r - n - r) \
+                               * norm**(-1) \
+                               * p ** (n//p.degree())
         return self._frobenius_norm
 
     @cached_method
@@ -757,19 +785,19 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: A.<T> = Fq[]
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [1, 0, z6])
-            sage: A = phi.frobenius_trace()
-            sage: A
+            sage: frobenius_trace = phi.frobenius_trace()
+            sage: frobenius_trace
             (4*z3^2 + 6*z3 + 3)*T + 3*z3^2 + z3 + 4
 
         ::
 
             sage: n = 2  # Degree over Fq of the base codomain
-            sage: A.degree() <= n/2
+            sage: frobenius_trace.degree() <= n/2
             True
 
         ::
 
-            sage: A == -phi.frobenius_charpoly()[1]
+            sage: frobenius_trace == -phi.frobenius_charpoly()[1]
             True
 
         ALGORITHM:
