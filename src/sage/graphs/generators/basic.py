@@ -1195,8 +1195,7 @@ def MoebiusLadderGraph(n):
         sage: for i in range(3):  # needs sage.plot
         ....:    n = []
         ....:    for m in range(3):
-        ....:        n.append(g[3*i + m].plot(vertex_size=50,\
-                              vertex_labels=False))
+        ....:        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:    j.append(n)
         sage: G = graphics_array(j)  # needs sage.plot
         sage: G.show()  # long time  # needs sage.plot
