@@ -1176,29 +1176,30 @@ def MoebiusLadderGraph(n):
     OUTPUT:
 
     - ``G`` -- a Möbius graph of order `2n`; note that a :class:`ValueError` is
-      returned if ``n < 0``
+      returned if `n < 0`
 
     EXAMPLES:
 
     Construct and show a Möbius ladder graph with 26 nodes::
 
         sage: g = graphs.MoebiusLadderGraph(13)
-        sage: g.show()  # long time  # needs sage.plot
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several Möbius ladder graphs in a Sage graphics array::
 
+        sage: # needs sage.plots
         sage: g = []
         sage: j = []
         sage: for i in range(9):
         ....:    k = graphs.MoebiusLadderGraph(i+3)
         ....:    g.append(k)
-        sage: for i in range(3):  # needs sage.plot
+        sage: for i in range(3):
         ....:    n = []
         ....:    for m in range(3):
         ....:        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:    j.append(n)
-        sage: G = graphics_array(j)  # needs sage.plot
-        sage: G.show()  # long time  # needs sage.plot
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
 
     TESTS:
 
