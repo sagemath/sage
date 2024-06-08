@@ -1336,14 +1336,14 @@ def RandomTree(n, seed=None):
     Returns a random tree on `n` nodes numbered `0` through `n-1`.
 
     By Cayley's theorem, there are `n^{n-2}` trees with vertex
-    set `\{0,1,...,n-1\}`. This constructor chooses one of these uniformly
+    set `\{0,1,\dots,n-1\}`. This constructor chooses one of these uniformly
     at random.
 
     ALGORITHM:
 
     The algorithm works by generating an `(n-2)`-long
     random sequence of numbers chosen independently and uniformly
-    from `\{0,1,\ldots,n-1\}` and then applies an inverse
+    from `\{0,1,\dots,n-1\}` and then applies an inverse
     Prufer transformation.
 
     INPUT:

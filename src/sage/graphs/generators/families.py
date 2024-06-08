@@ -414,16 +414,16 @@ def EgawaGraph(p, s):
 
 def HammingGraph(n, q, X=None):
     r"""
-    Returns the Hamming graph with parameters ``n``, ``q`` over ``X``.
+    Return the Hamming graph with parameters `n`, `q` over `X`.
 
     Hamming graphs are graphs over the cartesian product of n copies
-    of ``X``, where `q = |X|`, where the vertices, labelled with the
+    of `X`, where `q = |X|`, where the vertices, labelled with the
     corresponding tuple in `X^n`, are connected if the Hamming distance
     between their labels is 1. All Hamming graphs are regular,
     vertex-transitive and distance-regular.
 
     Hamming graphs with parameters `(1,q)` represent the complete graph
-    with q vertices over the set ``X``.
+    with q vertices over the set `X`.
 
     INPUT:
 
@@ -453,14 +453,14 @@ def HammingGraph(n, q, X=None):
         sage: g.is_vertex_transitive()                                                  # needs sage.groups
         True
 
-    A Hamming graph with parameters ``(1,q)`` is isomorphic to the
-    Complete graph with parameter ``q``::
+    A Hamming graph with parameters `(1,q)` is isomorphic to the
+    Complete graph with parameter `q`::
 
         sage: g = graphs.HammingGraph(1, 23)
         sage: g.is_isomorphic(graphs.CompleteGraph(23))
         True
 
-    If a parameter ``q`` is provided which is not equal to ``X``'s
+    If a parameter `q` is provided which is not equal to `X`'s
     cardinality, an exception is raised::
 
         sage: X = ['a','b','c','d','e']
@@ -596,11 +596,12 @@ def BalancedTree(r, h):
 
 def BarbellGraph(n1, n2):
     r"""
-    Returns a barbell graph with ``2*n1 + n2`` nodes. The argument ``n1``
-    must be greater than or equal to 2.
+    Returns a barbell graph with `2*n_1 + n_2` nodes.
+
+    The argument `n_1` must be greater than or equal to 2.
 
     A barbell graph is a basic structure that consists of a path graph
-    of order ``n2`` connecting two complete graphs of order ``n1`` each.
+    of order `n_2` connecting two complete graphs of order `n_1` each.
 
     INPUT:
 
@@ -612,8 +613,8 @@ def BarbellGraph(n1, n2):
 
     OUTPUT:
 
-    A barbell graph of order ``2*n1 + n2``. A :class:`ValueError` is
-    returned if ``n1 < 2`` or ``n2 < 0``.
+    A barbell graph of order `2*n_1 + n_2`. A :class:`ValueError` is
+    returned if `n_1 < 2` or `n_2 < 0`.
 
     PLOTTING:
 
@@ -621,9 +622,9 @@ def BarbellGraph(n1, n2):
     override the spring-layout algorithm. By convention, each barbell
     graph will be displayed with the two complete graphs in the
     lower-left and upper-right corners, with the path graph connecting
-    diagonally between the two. Thus the ``n1``-th node will be drawn at a
+    diagonally between the two. Thus the `n_1`-th node will be drawn at a
     45 degree angle from the horizontal right center of the first
-    complete graph, and the ``n1 + n2 + 1``-th node will be drawn 45
+    complete graph, and the `n_1 + n_2 + 1`-th node will be drawn 45
     degrees below the left horizontal center of the second complete graph.
 
     EXAMPLES:
@@ -634,9 +635,9 @@ def BarbellGraph(n1, n2):
         Barbell graph: Graph on 22 vertices
         sage: g.show()                          # long time                             # needs sage.plot
 
-    An ``n1 >= 2``, ``n2 >= 0`` barbell graph has order ``2*n1 + n2``. It
-    has the complete graph on ``n1`` vertices as a subgraph. It also has
-    the path graph on ``n2`` vertices as a subgraph. ::
+    An `n_1 \geq 2`, `n_2 \geq 0` barbell graph has order `2*n_1 + n_2`. It
+    has the complete graph on `n_1` vertices as a subgraph. It also has
+    the path graph on `n_2` vertices as a subgraph. ::
 
         sage: n1 = randint(2, 2*10^2)
         sage: n2 = randint(0, 2*10^2)
@@ -668,7 +669,7 @@ def BarbellGraph(n1, n2):
         sage: g.girth() == 3
         True
 
-    The input ``n1`` must be `\geq 2`::
+    The input `n_1` must be `\geq 2`::
 
         sage: graphs.BarbellGraph(1, randint(0, 10^6))
         Traceback (most recent call last):
@@ -679,7 +680,7 @@ def BarbellGraph(n1, n2):
         ...
         ValueError: invalid graph description, n1 should be >= 2
 
-    The input ``n2`` must be `\geq 0`::
+    The input `n_2` must be `\geq 0`::
 
         sage: graphs.BarbellGraph(randint(2, 10^6), -1)
         Traceback (most recent call last):
@@ -713,14 +714,14 @@ def BarbellGraph(n1, n2):
 
 def LollipopGraph(n1, n2):
     r"""
-    Returns a lollipop graph with ``n1+n2`` nodes.
+    Returns a lollipop graph with `n_1 + n_2` nodes.
 
-    A lollipop graph is a path graph (order ``n2``) connected to a complete
-    graph (order ``n1``). (A barbell graph minus one of the bells).
+    A lollipop graph is a path graph (order `n_2`) connected to a complete
+    graph (order `n_1`). (A barbell graph minus one of the bells).
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the complete
-    graph will be drawn in the lower-left corner with the (``n1``)th node
+    graph will be drawn in the lower-left corner with the `n_1`-th node
     at a 45 degree angle above the right horizontal center of the
     complete graph, leading directly into the path graph.
 
@@ -751,14 +752,14 @@ def LollipopGraph(n1, n2):
         sage: graphs.LollipopGraph(0, 0).is_isomorphic(graphs.EmptyGraph())
         True
 
-        The input ``n1`` must be `\geq 0`::
+    The input `n_1` must be `\geq 0`::
 
         sage: graphs.LollipopGraph(-1, randint(0, 10^6))
         Traceback (most recent call last):
         ...
         ValueError: invalid graph description, n1 should be >= 0
 
-    The input ``n2`` must be `\geq 0`::
+    The input `n_2` must be `\geq 0`::
 
         sage: graphs.LollipopGraph(randint(2, 10^6), -1)
         Traceback (most recent call last):
@@ -786,14 +787,14 @@ def LollipopGraph(n1, n2):
 
 def TadpoleGraph(n1, n2):
     r"""
-    Return a tadpole graph with ``n1+n2`` nodes.
+    Return a tadpole graph with `n_1 + n_2` nodes.
 
-    A tadpole graph is a path graph (order ``n2``) connected to a cycle graph
-    (order ``n1``).
+    A tadpole graph is a path graph (order `n_2`) connected to a cycle graph
+    (order `n_1`).
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the cycle graph will be drawn
-    in the lower-left corner with the (``n1``)th node at a 45 degree angle above
+    in the lower-left corner with the `n_1`-th node at a 45 degree angle above
     the right horizontal center of the cycle graph, leading directly into the
     path graph.
 
@@ -818,14 +819,14 @@ def TadpoleGraph(n1, n2):
         sage: graphs.TadpoleGraph(n1, 0).is_isomorphic(graphs.CycleGraph(n1))
         True
 
-    The input ``n1`` must be `\geq 3`::
+    The input `n_1` must be `\geq 3`::
 
         sage: graphs.TadpoleGraph(2, randint(0, 10^6))
         Traceback (most recent call last):
         ...
         ValueError: invalid graph description, n1 should be >= 3
 
-    The input ``n2`` must be `\geq 0`::
+    The input `n_2` must be `\geq 0`::
 
         sage: graphs.TadpoleGraph(randint(2, 10^6), -1)
         Traceback (most recent call last):
@@ -2224,12 +2225,15 @@ def LCFGraph(n, shift_list, repeats):
     LCF (Lederberg-Coxeter-Fruchte) notation is a concise way of describing
     cubic Hamiltonian graphs. The way a graph is constructed is as
     follows. Since there is a Hamiltonian cycle, we first create a cycle on `n`
-    nodes. The variable `\textrm{shift_list} = [s_0, s_1, ..., s_k-1]`
-    describes edges to be created by the following scheme: for each `i`, connect
-    vertex `i` to vertex `(i + s_i)`. Then, repeats specifies the number of
-    times to repeat this process, where on the `j`-th repeat we connect vertex
-    `(i + j |\textrm{shift_list}|)` to vertex
-    `( i + j |\textrm{shift_list}| + s_i)`.
+    nodes. The variable ``shift_list`` = `[s_0, s_1, ..., s_{k-1}]` describes
+    edges to be created by the following scheme: for each `i \in \{0, 1, \dots,
+    k-1\}`, connect vertex `i` to vertex `(i + s_i) \pmod{n}`. Then, ``repeats``
+    specifies the number of times to repeat this process, where on the `j`-th
+    repeat we connect vertex `(i + j k) \pmod{n}` to vertex `(i + j k + s_i)
+    \pmod{n}`.
+
+    For more details, see the :wikipedia:`LCF_notation` and [Fru1977]_,
+    [Gru2003]_ pp. 357-365, and [Led1965]_.
 
     INPUT:
 
@@ -2237,9 +2241,7 @@ def LCFGraph(n, shift_list, repeats):
 
     -  ``shift_list`` -- a list of integer shifts mod `n`.
 
-    -  ``repeats`` -- the number of times to repeat the
-       process.
-
+    - ``repeats`` -- the number of times to repeat the process.
 
     EXAMPLES::
 
@@ -2272,21 +2274,6 @@ def LCFGraph(n, shift_list, repeats):
 
     PLOTTING: LCF Graphs are plotted as an `n`-cycle with edges in the
     middle, as described above.
-
-    REFERENCES:
-
-    - [1] Frucht, R. "A Canonical Representation of Trivalent
-      Hamiltonian Graphs." J. Graph Th. 1, 45-60, 1976.
-
-    - [2] Grunbaum, B.  Convex Polytope es. New York: Wiley,
-      pp. 362-364, 1967.
-
-    - [3] Lederberg, J. 'DENDRAL-64: A System for Computer
-      Construction, Enumeration and Notation of Organic Molecules
-      as Tree Structures and Cyclic Graphs. Part II. Topology of
-      Cyclic Graphs.' Interim Report to the National Aeronautics
-      and Space Administration. Grant NsG 81-60. December 15,
-      1965.  http://profiles.nlm.nih.gov/BB/A/B/I/U/_/bbabiu.pdf.
     """
     import networkx
     G = Graph(networkx.LCF_graph(n, shift_list, repeats), name="LCF Graph")
