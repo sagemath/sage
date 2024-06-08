@@ -1226,7 +1226,7 @@ def MoebiusLadderGraph(n):
     if n < 0:
         raise ValueError("parameter n must be a non negative integer")
 
-    G = Graph(2 * n, name="Moebius Ladder graph")
+    G = Graph(2 * n, name="Moebius ladder graph")
     G._circle_embedding(list(range(2 * n)), angle=pi/2)
     G.add_cycle(list(range(2 * n)))
     G.add_edges((i, i + n) for i in range(n))
