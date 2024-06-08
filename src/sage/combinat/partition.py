@@ -3553,7 +3553,7 @@ class Partition(CombinatorialElement):
             sage: cell = [0,0]; Partition([3,3]).hook_length(*cell)
             4
         """
-        return self.leg_length(i, j)+self.arm_length(i, j)+1
+        return self.leg_length(i, j) + self.arm_length(i, j) + 1
 
     def hooks(self):
         """
@@ -4111,7 +4111,7 @@ class Partition(CombinatorialElement):
           False
         """
         return (not self
-                or (self[-1] < e and all(self[r]-self[r+1] < e for r in range(len(self)-1))))
+                or (self[-1] < e and all(self[r] - self[r+1] < e for r in range(len(self) - 1))))
 
     def is_regular(self, e, multicharge=(0,)) -> bool:
         """
@@ -5176,8 +5176,8 @@ class Partition(CombinatorialElement):
         QQqt = PolynomialRing(QQ, ['q', 't'])
         (q, t) = QQqt.gens()
         if i < len(self) and j < self[i]:
-            res = (1-q**self.arm_length(i, j) * t**(self.leg_length(i, j)+1))
-            res /= (1-q**(self.arm_length(i, j)+1) * t**self.leg_length(i, j))
+            res = 1 - q**self.arm_length(i, j) * t**(self.leg_length(i, j)+1)
+            res /= 1 - q**(self.arm_length(i, j)+1) * t**self.leg_length(i, j)
             return res
         return ZZ.one()
 
@@ -5336,7 +5336,7 @@ class Partition(CombinatorialElement):
 
         # Replace each p_i by i*x_i-1
         items = ps_mu.monomial_coefficients().items()  # items contains a list of (partition, coeff) pairs
-        partition_to_monomial = lambda part: prod([(i*x[i-1]-1) for i in part])
+        partition_to_monomial = lambda part: prod([i*x[i-1] - 1 for i in part])
         res = [[partition_to_monomial(mc[0]), mc[1]] for mc in items]
 
         # Write things in the monomial basis
