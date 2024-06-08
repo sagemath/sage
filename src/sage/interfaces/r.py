@@ -282,8 +282,6 @@ rpy2_feature = PythonModule('rpy2', spkg='rpy2')
 lazy_import("rpy2", "robjects", feature=rpy2_feature)
 lazy_import("rpy2.robjects", "packages", "rpy2_packages", feature=rpy2_feature)
 lazy_import("rpy2.robjects.conversion", ["localconverter", "Converter"], feature=rpy2_feature)
-lazy_import("rpy2.rinterface", ["SexpVector", "ListSexpVector", "FloatSexpVector"],
-            feature=rpy2_feature)
 
 # for help page fetching
 lazy_import("rpy2.robjects.help", "Package", feature=rpy2_feature)
@@ -369,6 +367,8 @@ def _setup_r_to_sage_converter():
         sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs.sage()
         ['X1', 'Y2', 'X3', 'Y4', 'X5', 'Y6', 'X7', 'Y8', 'X9', 'Y10']
     """
+    from rpy2.rinterface import SexpVector, ListSexpVector, FloatSexpVector
+
     # convert rpy2's representation of r objects to the one sage expects (as defined by the old
     # expect interface)
     cv = Converter('r to sage converter')
@@ -701,8 +701,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r                 # resolve lazy import
-            R Interpreter
+            sage: from sage.interfaces.r import r
             sage: rlr, t = r.__reduce__()
             sage: rlr(*t)
             R Interpreter
