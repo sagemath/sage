@@ -597,7 +597,6 @@ class Permutation(CombinatorialElement):
             raise ValueError("unsupported algorithm %s; expected 'lex' or 'sjt'"
                              % self._algorithm)
 
-
         if check and len(l) > 0:
             # Make a copy to sort later
             lst = list(l)
