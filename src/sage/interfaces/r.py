@@ -277,7 +277,7 @@ from sage.misc.instancedoc import instancedoc
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 
-rpy2_feature = PythonModule('rpy2', spkg='rpy2')
+rpy2_feature = PythonModule('rpy2', spkg='rpy2', type='standard')
 
 lazy_import("rpy2", "robjects", feature=rpy2_feature)
 lazy_import("rpy2.robjects", "packages", "rpy2_packages", feature=rpy2_feature)
