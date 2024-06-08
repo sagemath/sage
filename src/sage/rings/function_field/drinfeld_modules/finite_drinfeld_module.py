@@ -743,7 +743,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             True
 
         ::
-            
+
             sage: lc = frobenius_norm.leading_coefficient()
             sage: isogeny_norm = phi.frobenius_endomorphism().norm()
             sage: isogeny_norm.gen() == frobenius_norm / lc
