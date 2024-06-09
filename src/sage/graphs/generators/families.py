@@ -4654,6 +4654,7 @@ def BiwheelGraph(n):
     pos_dict = G._circle_embedding(list(range(2*n - 2)), angle=angle_param, return_dict=True)
     edges = []
 
+    from sage.rings.rational_field import QQ
     pos_dict[2*n - 2] = (-QQ((1, 3)), 0)
     pos_dict[2*n - 1] = (QQ((1, 3)), 0)
 
