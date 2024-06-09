@@ -101,6 +101,9 @@ jobs:
             TARGETS=ci-build-with-fallback
 
       - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -110,6 +113,8 @@ jobs:
       # Docs
 
       - name: Update system packages
+        id: packages
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
@@ -119,6 +124,7 @@ jobs:
 
       - name: Build docs (PDF)
         id: docbuild
+        if: (success() || failure()) && steps.packages.outcome == 'success'
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps

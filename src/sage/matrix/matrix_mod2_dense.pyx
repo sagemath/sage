@@ -525,6 +525,45 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             mzd_submatrix(z._entries, self._entries, i, 0, i+1, self._ncols)
         return z
 
+    def columns(self, copy=True):
+        """
+        Return list of the columns of self.
+
+        INPUT:
+
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
+          modify it safely
+
+        EXAMPLES:
+
+        An example with a small 3x3 matrix::
+
+            sage: M2 = Matrix(GF(2), [[1, 0, 0], [0, 1, 0], [0, 1, 1]])
+            sage: M2.columns()
+            [(1, 0, 0), (0, 1, 1), (0, 0, 1)]
+        """
+        x = self.fetch('columns')
+        if x is not None:
+            if copy: return list(x)
+            return x
+        cdef Py_ssize_t i
+
+        # Note: due to the way M4ri represents values, extracting rows
+        #       is fast, but columns are slow. Therefore we transpose
+        #       then take rows. For more information, see the issue
+        #       https://github.com/sagemath/sage/issues/38150
+        C = self.transpose().rows()
+
+        # Make the vectors immutable since we are caching them
+        for x in C:
+            x.set_immutable()
+
+        # cache result
+        self.cache('columns', C)
+        if copy:
+            return list(C)
+        return C
+
     ########################################################################
     # LEVEL 2 functionality
     #   * def _pickle

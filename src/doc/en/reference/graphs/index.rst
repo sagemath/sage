@@ -78,6 +78,7 @@ Libraries of algorithms
    sage/graphs/centrality
    sage/graphs/asteroidal_triples
    sage/graphs/independent_sets
+   sage/graphs/cographs
    sage/graphs/comparability
    sage/graphs/line_graph
    sage/graphs/spanning_tree

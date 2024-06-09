@@ -1,5 +1,0 @@
-cd src
-
-sdh_cmake -DUSE_GAUSS='ON' -DENABLE_PYTHON_INTERFACE=OFF $EXTRA_OPTS
-sdh_make VERBOSE=ON
-sdh_make_install VERBOSE=ON

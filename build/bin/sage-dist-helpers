@@ -247,9 +247,10 @@ sdh_pip_install() {
                 install_options="$install_options $1"
                 ;;
             -C|--config-settings)
-                build_options="$build_options --config-setting"
                 shift
-                build_options="$build_options $1"
+                # Per 'python -m build --help', options which begin with a hyphen
+                # must be in the form of "--config-setting=--opt(=value)" or "-C--opt(=value)"
+                build_options="$build_options --config-setting=$1"
                 ;;
             *)
                 break
