@@ -4670,4 +4670,93 @@ def BiwheelGraph(n):
 
 
 def TruncatedBiwheelGraph(n):
-    pass
+    r"""
+    Return a truncated biwheel graph with `2n` nodes
+
+    For `n \geq 3`, the truncated biwheel graph of order `2n` is the graph
+    obtained from the path graph of order `2n - 2`, i.e.,
+    ``graphs.PathGraph(2*n - 2)`` by introducing two new nodes `2n - 2` and
+    `2n - 1`, and then joining the node `2n - 2` with the odd indexed nodes
+    up to `2n - 3`, joining the node `2n - 1` with the even indexed nodes up to
+    `2n - 4` and adding the edges `(0, 2n - 2)` and `(2n - 3, 2n - 1)`.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override the
+    spring-layout algorithm. By convention, each truncated biwheel graph will
+    be displayed horizontally, with the first `2n - 2` nodes displayed from
+    left to right on the middle horizontal line and the nodes `2n - 2` and
+    `2n - 1` displayed at the top and the bottom central positions
+    respectively.
+
+    INPUT:
+
+    - ``n`` -- an integer at least 3; number of nodes is `2n`
+
+    OUTPUT:
+
+    - ``G`` -- a truncated biwheel graph of order `2n`; note that a
+      :class:`ValueError` is returned if `n < 3`
+
+    EXAMPLES:
+
+    Construct and show a truncated biwheel graph with 10 nodes::
+
+        sage: g = graphs.TruncatedBiwheelGraph(5)
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    Create several truncated biwheel graphs in a Sage graphics array::
+
+        sage: # needs sage.plots
+        sage: g = []
+        sage: j = []
+        sage: for i in range(9):
+        ....:    k = graphs.TruncatedBiwheelGraph(i+3)
+        ....:    g.append(k)
+        sage: for i in range(3):
+        ....:    n = []
+        ....:    for m in range(3):
+        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i+m), vertex_labels=False))
+        ....:    j.append(n)
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
+
+    TESTS:
+
+    The input parameter must be an integer that is at least 3::
+        sage: G = graphs.TruncatedBiwheelGraph(2)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be at least 3
+
+    REFERENCES:
+
+    - [LM2024]_
+
+    .. SEEALSO::
+
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.WheelGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.BiwheelGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-06-09)
+    """
+    if n < 3:
+        raise ValueError("parameter n must be at least 3")
+
+    pos_dict = {2*n - 2: (0, n), 2*n - 1: (0, -n)}
+    edges = [(0, 2*n - 2), (2*n - 3, 2*n - 1)]
+
+    for v in range(2*n - 2):
+        pos_dict[v] = (2*(v-n) + 3, 0)
+        if v % 2 == 0:
+            edges += [(v, 2*n - 1)]
+        else:
+            edges += [(v, 2*n - 2)]
+
+    G = Graph(2 * n, pos=pos_dict, name="Truncated biwheel graph")
+    G.add_path(list(range(2*n - 2)))
+    G.add_edges(edges)
+
+    return G
