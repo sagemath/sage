@@ -4455,3 +4455,15 @@ def CubeConnectedCycle(d):
         G.add_edge((x, y), (x ^ (1 << y), y))
 
     return G
+
+
+def StaircaseGraph(n):
+    pass
+
+
+def BiwheelGraph(n):
+    pass
+
+
+def TruncatedBiwheelGraph(n):
+    pass
