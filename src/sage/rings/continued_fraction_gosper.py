@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Gosper iterator for homographic transformations
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Variable Substitution, Multiplication, Division, Scaling
 """

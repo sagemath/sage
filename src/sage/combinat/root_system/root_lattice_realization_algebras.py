@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Group algebras of root lattice realizations
 """

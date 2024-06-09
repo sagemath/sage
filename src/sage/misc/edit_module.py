@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Edit the source code of Sage interactively
 

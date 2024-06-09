@@ -69,24 +69,53 @@ if any(x in sys.argv
     from sage_setup.autogen import autogen_all
     autogen_all()
 
-# TODO: This should be quiet by default
-print("Discovering Python/Cython source code....")
-t = time.time()
-distributions = ['sagemath-categories',
-                 'sagemath-environment',
-                 'sagemath-objects',
-                 'sagemath-repl',
-                 '']
-log.warn('distributions = {0}'.format(distributions))
-from sage_setup.find import find_python_sources
-python_packages, python_modules, cython_modules = find_python_sources(
-    SAGE_SRC, ['sage'], distributions=distributions)
+    # TODO: This should be quiet by default
+    print("Discovering Python/Cython source code....")
+    t = time.time()
+    distributions = [
+        '',
+        "sagemath-brial",
+        "sagemath-categories",
+        "sagemath-combinat",
+        "sagemath-eclib",
+        "sagemath-environment",
+        "sagemath-flint",
+        "sagemath-gap",
+        "sagemath-giac",
+        "sagemath-glpk",
+        "sagemath-graphs",
+        "sagemath-groups",
+        "sagemath-homfly",
+        "sagemath-lcalc",
+        "sagemath-libbraiding",
+        "sagemath-libecm",
+        "sagemath-linbox",
+        "sagemath-modules",
+        "sagemath-mpmath",
+        "sagemath-ntl",
+        "sagemath-objects",
+        "sagemath-pari",
+        "sagemath-plot",
+        "sagemath-polyhedra",
+        "sagemath-repl",
+        "sagemath-schemes",
+        "sagemath-singular",
+        "sagemath-symbolics",
+    ]
+    log.warn('distributions = {0}'.format(distributions))
+    from sage_setup.find import find_python_sources
+    python_packages, python_modules, cython_modules = find_python_sources(
+        SAGE_SRC, ['sage'], distributions=distributions)
 
-log.debug('python_packages = {0}'.format(python_packages))
-log.debug('python_modules = {0}'.format(python_modules))
-log.debug('cython_modules = {0}'.format(cython_modules))
+    log.debug('python_packages = {0}'.format(python_packages))
+    log.debug('python_modules = {0}'.format(python_modules))
+    log.debug('cython_modules = {0}'.format(cython_modules))
 
-print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
+    print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
+else:
+    # sdist, egg_info, dist_info
+    python_packages = []
+    cython_modules = []
 
 #########################################################
 ### Distutils

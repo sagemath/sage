@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 A tool for inspecting Python pickles
 

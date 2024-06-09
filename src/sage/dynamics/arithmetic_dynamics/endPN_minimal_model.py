@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Sage functions to compute minimal models of rational functions
 under the conjugation action of `PGL_2(QQ)`.

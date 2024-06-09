@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.rings.number_field
 r"""
 Dual groups of Finite Multiplicative Abelian Groups

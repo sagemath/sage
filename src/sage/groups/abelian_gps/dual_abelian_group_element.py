@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.rings.number_field
 """
 Elements (characters) of the dual group of a finite Abelian group

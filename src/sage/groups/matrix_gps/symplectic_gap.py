@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 """
 Symplectic Linear Groups with GAP
 """

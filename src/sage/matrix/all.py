@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.misc.lazy_import import lazy_import
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import (matrix, Matrix, column_matrix, random_matrix,

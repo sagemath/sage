@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: optional - sage.modules
 r"""
 Families of graphs derived from classical geometries over finite fields

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Arbitrary precision floating point complex numbers using GNU MPFR
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.structure.sage_object cimport SageObject
 from sage.matroids.set_system cimport SetSystem
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.libs.gap sage.groups
 r"""
 Hecke algebra representations

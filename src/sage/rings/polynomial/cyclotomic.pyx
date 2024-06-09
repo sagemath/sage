@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Fast calculation of cyclotomic polynomials
 

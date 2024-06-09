@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # sage.doctest:           needs sage.libs.pari sage.rings.padics
 r"""
 Normal forms for `p`-adic quadratic and bilinear forms

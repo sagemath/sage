@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Class to flatten polynomial rings over polynomial ring
 

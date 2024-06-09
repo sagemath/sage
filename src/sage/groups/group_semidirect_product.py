@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 r"""
 Semidirect product of groups
 
