@@ -716,7 +716,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         INPUT:
 
-        - ``binary, integer, real`` -- boolean. Set one of these
+        - ``binary``, ``integer``, ``real`` -- boolean. Set one of these
           arguments to ``True`` to ensure that the variable gets the
           corresponding type.
 

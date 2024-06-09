@@ -3,5 +3,5 @@
 Whether or not computations are provably correct by default
 """
 
-#proof = False
+# proof = False
 proof = True

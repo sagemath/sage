@@ -6,7 +6,6 @@ Path algebra elements
 AUTHORS:
 
 - Simon King (2015-08)
-
 """
 
 # ****************************************************************************
@@ -1198,6 +1197,8 @@ cdef class PathAlgebraElement(RingElement):
             sage: z*3
             3*a + 6*b + 9*e_2
         """
+        if self.data == NULL:
+            return self
         cdef path_homog_poly_t * out = homog_poly_scale(self.data, right)
         cdef path_homog_poly_t * outnxt
         if out.poly.nterms == 0:
@@ -1228,6 +1229,8 @@ cdef class PathAlgebraElement(RingElement):
             sage: 3*z
             3*a + 6*b + 9*e_2
         """
+        if self.data == NULL:
+            return self
         cdef path_homog_poly_t * out = homog_poly_scale(self.data, left)
         cdef path_homog_poly_t * outnxt
         if out.poly.nterms == 0:
@@ -1314,7 +1317,11 @@ cdef class PathAlgebraElement(RingElement):
             sage: pA^5 == sage_eval(repr(pF^5), A.gens_dict())
             True
         """
+        if self.data == NULL:
+            return self
         cdef PathAlgebraElement right = other
+        if right.data == NULL:
+            return right
         cdef path_homog_poly_t *H1 = self.data
         cdef path_homog_poly_t *H2
         cdef path_term_t *T2

@@ -914,7 +914,6 @@ cdef class GLPKBackend(GenericBackend):
         sig_free(col_i)
         sig_free(col_values)
 
-
     cpdef int solve(self) except -1:
         """
         Solve the problem.
@@ -1873,7 +1872,6 @@ cdef class GLPKBackend(GenericBackend):
         p.iocp.tm_lim = self.iocp.tm_lim
         glp_copy_prob(p.lp, self.lp, 1)
         return p
-
 
     cpdef solver_parameter(self, name, value=None):
         """

@@ -81,7 +81,7 @@ import operator
 
 from sage.categories.homset import Hom
 from sage.geometry.cone import Cone
-from sage.geometry.fan import Fan, is_Fan
+from sage.geometry.fan import Fan, RationalPolyhedralFan
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
 from sage.structure.element import Matrix
@@ -269,8 +269,8 @@ class FanMorphism(FreeModuleMorphism):
             Codomain fan: Rational polyhedral fan in 2-d lattice N
             sage: TestSuite(fm).run(skip="_test_category")
         """
-        assert is_Fan(domain_fan)
-        if is_Fan(codomain):
+        assert isinstance(domain_fan, RationalPolyhedralFan)
+        if isinstance(codomain, RationalPolyhedralFan):
             codomain, codomain_fan = codomain.lattice(), codomain
         else:
             codomain_fan = None

@@ -264,6 +264,7 @@ cat <<EOF
 
 FROM with-system-packages as bootstrapped
 #:bootstrapping:
+RUN rm -rf /new /sage/.git
 $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 .gitignore /new/
 $ADD config/config.rpath /new/config/config.rpath
 $ADD src/doc/bootstrap /new/src/doc/bootstrap
@@ -338,7 +339,6 @@ ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
-ADD .ci /.ci
 RUN cd /new && rm -rf .git && \
     if /.ci/retrofit-worktree.sh worktree-pre /sage; then \
         cd /sage && touch configure build/make/Makefile; \
@@ -347,7 +347,8 @@ RUN cd /new && rm -rf .git && \
         rm -rf /sage/src;                                    \
         mv src /sage/src;                                    \
         cd /sage && ./bootstrap && ./config.status;          \
-    fi
+    fi; \
+    cd /sage && rm -rf /new .git
 
 ARG TARGETS="build"
 $RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN $THEN_SAVE_STATUS

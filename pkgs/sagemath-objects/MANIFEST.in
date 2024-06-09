@@ -84,7 +84,6 @@ include sage/modules/module.p*
 graft sage/libs/gmp
 include sage/libs/gmpxx.pxd
 
-
 ## What we do not want:
 # sage/misc/latex         -- this should really go to another package
 

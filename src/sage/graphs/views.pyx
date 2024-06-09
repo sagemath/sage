@@ -717,7 +717,7 @@ cdef class EdgesView:
 
         INPUT:
 
-        - ``left,right`` -- :class:`EdgesView` or list of edges
+        - ``left``, ``right`` -- :class:`EdgesView` or list of edges
 
         EXAMPLES::
 

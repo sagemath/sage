@@ -5434,8 +5434,6 @@ cdef class BooleSet:
 
             X\times Y = \{(x,y) | x\in X\;\mathrm{and}\;y\in Y\}.
 
-
-
         EXAMPLES::
 
             sage: B = BooleanPolynomialRing(5,'x')

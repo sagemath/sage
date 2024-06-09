@@ -229,10 +229,8 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         graph = {}
 
         for i, e in enumerate(elements):
-            edges = []
-            for v in graph:
-                if (e, elements[v]) not in independence:
-                    edges.append((v, i))
+            edges = [(v, i) for v in graph
+                     if (e, elements[v]) not in independence]
             graph[i] = []
             for v1, v2 in edges:
                 graph[v1].append(v2)

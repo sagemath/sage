@@ -485,5 +485,4 @@ r"""
 
     sage: sg[2].is_normal(P)
     False
-
 """

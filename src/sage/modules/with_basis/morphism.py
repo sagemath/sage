@@ -980,7 +980,9 @@ class TriangularModuleMorphism(ModuleMorphism):
                 # this is not possible?
                 c = c.parent()(c / s[j])
 
-            remainder -= s._lmul_(c)
+            # Before this was ``remainder -= s._lmul_(c)`` for speed, but
+            #   not every module implements scalar multiplication this way.
+            remainder -= s * c
             out += F.term(j_preimage, c)
 
         return out
@@ -1072,7 +1074,9 @@ class TriangularModuleMorphism(ModuleMorphism):
                 assert j == self._dominant_item(s)[0]
                 if not self._unitriangular:
                     c = c / s[j]  # the base ring is a field
-                remainder -= s._lmul_(c)
+                # Before this was ``remainder -= s._lmul_(c)`` for speed, but
+                #   not every module implements scalar multiplication this way.
+                remainder -= s * c
         return result
 
     def cokernel_basis_indices(self):

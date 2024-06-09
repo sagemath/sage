@@ -76,7 +76,6 @@ ACKNOWLEDGEMENT:
 
 Functions and methods
 ---------------------
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014--2015 Clemens Heuberger <clemens.heuberger@aau.at>

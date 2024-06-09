@@ -428,7 +428,6 @@ def zeta_symmetric(s):
                 xi(s) = \gamma(s/2 + 1) * (s-1) * \pi^{-s/2} * \zeta(s).
 
 
-
     EXAMPLES::
 
         sage: # needs sage.rings.real_mpfr

@@ -538,7 +538,6 @@ cdef class AbstractFamily(Parent):
         return Family({self[k]: k for k in self.keys()})
 
 
-
 cdef class FiniteFamily(AbstractFamily):
     r"""
     A :class:`FiniteFamily` is an associative container which models a finite

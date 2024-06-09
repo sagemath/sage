@@ -164,6 +164,7 @@ mod = Mod
 register_unpickle_override('sage.rings.integer_mod', 'Mod', Mod)
 register_unpickle_override('sage.rings.integer_mod', 'mod', mod)
 
+
 def IntegerMod(parent, value):
     """
     Create an integer modulo `n` with the given parent.
@@ -3463,7 +3464,6 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         return self._new_c((self.ivalue * (<IntegerMod_int64>right).ivalue) % self._modulus.int64)
 
-
     cpdef _div_(self, right):
         """
         EXAMPLES::
@@ -3995,6 +3995,7 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
     if val > 0:
         x *= p**(val//2)
     return x
+
 
 cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
     r"""

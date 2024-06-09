@@ -429,7 +429,7 @@ class PQ:
 
         INPUT:
 
-        - ``left, right`` (boolean) -- whether ``v`` is aligned to the
+        - ``left``, ``right`` -- booleans; whether ``v`` is aligned to the
           right or to the left
 
         - ``v`` -- an element of the ground set

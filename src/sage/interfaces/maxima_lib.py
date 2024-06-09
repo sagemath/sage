@@ -97,7 +97,6 @@ in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
     ....:     os.wait()
     ....: '''])
     sage: tmpdir.cleanup()
-
 """
 
 # ****************************************************************************

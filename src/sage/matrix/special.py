@@ -67,7 +67,7 @@ from copy import copy
 import sage.matrix.matrix_space as matrix_space
 from sage.categories.rings import Rings
 from sage.modules.free_module_element import vector
-from sage.structure.element import Matrix, parent
+from sage.structure.element import Matrix, parent, RingElement
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1412,7 +1412,6 @@ def elementary_matrix(arg0, arg1=None, **kwds):
 
     - Rob Beezer (2011-03-04)
     """
-    import sage.structure.element
     # determine ring and matrix size
     if arg1 is not None and arg0 not in Rings():
         raise TypeError('optional first parameter must be a ring, not {0}'.format(arg0))
@@ -1421,7 +1420,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         R = arg0
         arg0 = arg1
     elif scale is not None:
-        if not sage.structure.element.isinstance(scale, RingElement):
+        if not isinstance(scale, RingElement):
             raise TypeError('scale must be an element of some ring, not {0}'.format(scale))
         R = scale.parent()
     else:

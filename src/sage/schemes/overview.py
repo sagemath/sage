@@ -158,5 +158,4 @@ AUTHORS:
 - David Kohel, William Stein (2006-01-03): initial version
 
 - Andrey Novoseltsev (2010-09-24): updated due to addition of toric varieties
-
 """

@@ -26,7 +26,6 @@ AUTHOR:
 - Rusydi H. Makarim (2016-07-09): add is_plateaued()
 - Yann Laigle-Chapuy (2010-02-26): add basic arithmetic
 - Yann Laigle-Chapuy (2009-08-28): first implementation
-
 """
 
 from cysignals.signals cimport sig_check

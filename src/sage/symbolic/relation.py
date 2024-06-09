@@ -356,7 +356,6 @@ AUTHORS:
 - William Stein: second version
 
 - William Stein (2007-07-16): added arithmetic with symbolic equations
-
 """
 from itertools import product
 import operator

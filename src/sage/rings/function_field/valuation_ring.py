@@ -53,7 +53,6 @@ to the residue field, along with lifting and evaluation homomorphisms::
 AUTHORS:
 
 - Kwankyu Lee (2017-04-30): initial version
-
 """
 
 # ****************************************************************************

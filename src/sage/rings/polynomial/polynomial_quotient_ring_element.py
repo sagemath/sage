@@ -567,11 +567,11 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         f = R.hom([alpha], F, check=False)
 
         try:
-            from sage.rings.number_field.number_field_rel import is_RelativeNumberField
+            from sage.rings.number_field.number_field_rel import NumberField_relative
         except ImportError:
             pass
         else:
-            if is_RelativeNumberField(F):
+            if isinstance(F, NumberField_relative):
                 base_map = F.base_field().hom([R.base_ring().gen()])
                 g = F.Hom(R)(x, base_map)
                 return F, f, g

@@ -18,7 +18,6 @@ AUTHORS:
 - Nathann Cohen (2010-10)      : initial implementation
 - Risan (2012-02)              : extension for PPL backend
 - Ingolfur Edvardsson (2014-06): extension for CVXOPT backend
-
 """
 
 #*****************************************************************************
@@ -811,7 +810,6 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-
     cpdef get_relative_objective_gap(self):
         r"""
         Return the relative objective gap of the best known solution.
@@ -846,7 +844,6 @@ cdef class GenericBackend:
             0.0
         """
         raise NotImplementedError()
-
 
     cpdef get_variable_value(self, int variable):
         """
@@ -1316,7 +1313,6 @@ cdef class GenericBackend:
         cp = copy(self)
         self._do_test_problem_data(tester, cp)
 
-
     def _test_copy_does_not_share_data(self, **options):
         """
         Test whether copy makes an independent copy of the backend.
@@ -1589,7 +1585,9 @@ cdef class GenericBackend:
         tester.assertAlmostEqual(p.get_variable_value(0), 0.666666666667)
         tester.assertAlmostEqual(p.get_variable_value(1), 0.333333333333)
 
+
 default_solver = None
+
 
 def default_mip_solver(solver=None):
     """

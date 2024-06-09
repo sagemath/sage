@@ -14,7 +14,6 @@ different types.  The hierarchy is as follows:
     - :class:`ManinSymbolList_gamma_h`
 
   - :class:`ManinSymbolList_character`
-
 """
 # ****************************************************************************
 #       Sage: Open Source Mathematical Software

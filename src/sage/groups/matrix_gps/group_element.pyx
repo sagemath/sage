@@ -78,8 +78,6 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.structure.element cimport MultiplicativeGroupElement, Matrix
-from sage.structure.element import Matrix
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
 

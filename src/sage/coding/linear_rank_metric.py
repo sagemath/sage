@@ -220,11 +220,10 @@ def from_matrix_representation(w, base_field=None, basis=None):
     sub_field = w.base_ring()
     if not base_field:
         base_field = sub_field.extension(w.nrows())
-    v = []
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
-    for i in range(w.ncols()):
-        v.append(to_big_field(w.column(i)))
+    v = [to_big_field(w.column(i)) for i in range(w.ncols())]
     return vector(v)
+
 
 def rank_weight(c, sub_field=None, basis=None):
     r"""

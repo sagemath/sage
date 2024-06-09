@@ -7,7 +7,6 @@ and can store either floating-point SDPs or exact SDPs with rational or algebrai
 
 The class does not provide a solver method.  It can be used as a base class for
 other classes implementing solvers.
-
 """
 
 #*****************************************************************************
@@ -129,11 +128,10 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
                 row.append( matrix.zero(self.matrices_dim[i], self.matrices_dim[i]) )
             else:
                 row.append(0)
-            i+=1
+            i += 1
         self.col_name_var.append(name)
         self.objective_function.append(obj)
         return len(self.objective_function) - 1
-
 
     cpdef int add_variables(self, int n, names=None) except -1:
         """
@@ -317,7 +315,6 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             self.add_linear_constraint(zip(range(self.ncols()+1),[matrix.zero(1,1) for i in range(self.ncols()+1)]),
                                        name=None if names is None else names[i])
 
-
     cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
@@ -353,7 +350,6 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             2
         """
         return len(self.matrices_dim)
-
 
     cpdef bint is_maximization(self) noexcept:
         """
@@ -395,7 +391,6 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             return self.name
 
         self.name = name
-
 
     cpdef row(self, int i):
         """

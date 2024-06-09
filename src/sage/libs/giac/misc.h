@@ -40,7 +40,7 @@ int  giacgenrichcmp(gen & a, gen & b, int op, const context * context_ptr){
     case 1 : //<=
        if (is_greater(b,a,context_ptr)) {rep = 1;}
        break;
-    case 2 ://== 
+    case 2 ://==
        if (operator_equal(b,a,context_ptr)) {rep = 1;}
        break;
     case 3 ://!=
@@ -68,9 +68,9 @@ gen  giacdiv(gen & a, gen & b, const context * context_ptr){
 
 gen  giacmod(gen & a, gen & b, const context * context_ptr){
   if(b != 0)
-     return eval(a * makemod(1,b),context_ptr); 
+     return eval(a * makemod(1,b),context_ptr);
   else
-    return eval(makemod(a,b),context_ptr); 
+    return eval(makemod(a,b),context_ptr);
 }
 
 int htmlbrowserhelp(char * s){
@@ -79,9 +79,6 @@ int htmlbrowserhelp(char * s){
   else
     {return 1;}
 }
-
-
-
 
 string browser_help(const giac::gen & g, int language){
     giac::gen f(g);
@@ -102,20 +99,18 @@ string browser_help(const giac::gen & g, int language){
 }
 
 
-
-
 void archivegen( const string filename, const gen & g, const context * context_ptr){
   ofstream of(filename.c_str());
   giac::archive(of,g,context_ptr);
   of.close();
-} 
+}
 
 gen unarchivegen( const string filename, const context * context_ptr){
   ifstream f(filename.c_str());
   gen g=giac::unarchive(f,context_ptr);
   f.close();
   return g;
-} 
+}
 
 
 #endif

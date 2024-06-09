@@ -63,7 +63,6 @@ def bdg_symmetrica(part, perm):
     freeall(cD)
 
 
-
 def sdg_symmetrica(part, perm):
     """
     Calculates the irreducible matrix representation
@@ -90,8 +89,6 @@ def sdg_symmetrica(part, perm):
     freeall(cpart)
     freeall(cperm)
     freeall(cD)
-
-
 
     return res
 
@@ -122,8 +119,6 @@ def odg_symmetrica(part, perm):
     freeall(cperm)
     freeall(cD)
 
-
-
     return res
 
 
@@ -148,8 +143,6 @@ def ndg_symmetrica(part, perm):
     freeall(cperm)
     freeall(cD)
 
-
-
     return res
 
 def specht_dg_symmetrica(part, perm):
@@ -173,8 +166,6 @@ def specht_dg_symmetrica(part, perm):
     freeall(cperm)
     freeall(cD)
 
-
-
     return res
 
 
@@ -192,8 +183,6 @@ def specht_dg_symmetrica(part, perm):
 ##     """
 ##     cdef OP cm, cn, cM
 
-##
-
 ##     cm = callocobject()
 ##     _op_integer(m, cm)
 
@@ -202,8 +191,6 @@ def specht_dg_symmetrica(part, perm):
 
 ##     cM = callocobject()
 
-
-
 ##     glmndg(cm, cn, cM, VAR)
 ##     res = _py(cM)
 
@@ -211,7 +198,5 @@ def specht_dg_symmetrica(part, perm):
 ##    freeall(cm)
 ##    freeall(cn)
 ##    freeall(cM)
-
-##
 
 ##    return res

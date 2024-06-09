@@ -400,7 +400,6 @@ class TateAlgebraIdeal(Ideal_generic):
         return self.ring().ideal(gens)
 
 
-
 # Grobner bases computations
 ############################
 
@@ -577,11 +576,6 @@ cdef Jpair(p1, p2):
     - ``p1`` -- a pair (signature, series)
 
     - ``p2`` -- a pair (signature, series)
-
-    TESTS::
-
-
-
     """
     cdef TateAlgebraTerm s1, s2
     cdef TateAlgebraElement v1, v2

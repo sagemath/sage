@@ -33,7 +33,6 @@ REFERENCES:
 
 - [Lee2013]_
 - [KN1963]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

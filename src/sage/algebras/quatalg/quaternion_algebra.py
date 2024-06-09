@@ -630,8 +630,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
     INPUT:
 
     - ``base_ring`` -- a commutative ring `K` in which 2 is invertible
-    - ``a, b`` -- units of `K`
-    - ``names`` -- string (default: 'i,j,k') names of the generators
+    - ``a``, ``b`` -- units of `K`
+    - ``names`` -- string (default: ``'i,j,k'``) names of the generators
 
     OUTPUT:
 

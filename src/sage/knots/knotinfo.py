@@ -213,7 +213,6 @@ REFERENCES:
 - `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__
 
 
-
 AUTHORS:
 
 - Sebastian Oehms August 2020: initial version

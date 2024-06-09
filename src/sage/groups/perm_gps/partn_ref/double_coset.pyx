@@ -82,7 +82,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -117,6 +116,7 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
         if j != 0:
             return j
     return 0
+
 
 def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2,3,4,5,0]]):
     """
@@ -199,6 +199,7 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
         x = False
     sig_free(isomorphism)
     return x
+
 
 cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
     r"""

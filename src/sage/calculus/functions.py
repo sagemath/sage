@@ -4,7 +4,7 @@ r"""
 Calculus functions
 """
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import Matrix, is_Vector, Expression
+from sage.structure.element import Matrix, Vector, Expression
 
 lazy_import('sage.matrix.constructor', 'matrix')
 

@@ -247,5 +247,4 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: print(gap.help('SymmetricGroup', pager=False))   # not tested
-
 """

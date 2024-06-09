@@ -171,7 +171,7 @@ AUTHORS:
 from sage.combinat.combination import Combinations
 import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.toric_lattice_element import is_ToricLatticeElement
+from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
@@ -315,7 +315,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         check = False
         reduce = False
     # Divisor by lattice point (corresponding to a ray)
-    if is_ToricLatticeElement(arg):
+    if isinstance(arg, ToricLatticeElement):
         if arg not in toric_variety.fan().lattice():
             raise ValueError("%s is not in the ambient lattice of %s"
                              % (arg, toric_variety.fan()))

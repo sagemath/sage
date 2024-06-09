@@ -18847,7 +18847,6 @@ def _matrix_power_symbolic(A, n):
         if hasattr(mk, 'radical_expression'):
             mk = mk.radical_expression()
 
-
         # When the variable "mk" is equal to zero, it is advisable to employ the Kronecker delta function
         # instead of utilizing the numerical value zero. This choice is made to encompass scenarios where
         # the power of zero is also equal to zero.

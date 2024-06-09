@@ -13,7 +13,6 @@ AUTHORS:
 - David Harvey: doctests
 
 - Julian Rueth: fixes for exp() and log(), implemented gcd, xgcd
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed@math.harvard.edu>
@@ -4515,6 +4514,7 @@ def _compute_g(p, n, prec, terms):
     for i in range(n):
         g[i+1] = -(g[i]/(v-v**2)).integral()
     return [x.truncate(terms) for x in g]
+
 
 cpdef dwork_mahler_coeffs(R, int bd=20):
     r"""

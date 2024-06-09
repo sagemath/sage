@@ -1263,6 +1263,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         return res
 
+
 cdef inline bint _do_sig(long prec) noexcept:
     """
     Whether signal handlers should be installed for calls to FLINT.

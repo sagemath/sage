@@ -21,7 +21,6 @@ EXAMPLES::
 AUTHORS:
 
 - Filip Ion, Marketa Slukova (2019-06): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2019 Filip Ion <filip.alexandru.ion@gmail.com>,

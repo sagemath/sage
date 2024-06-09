@@ -468,7 +468,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -601,7 +602,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -625,7 +627,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 

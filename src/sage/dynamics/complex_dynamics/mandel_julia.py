@@ -19,7 +19,6 @@ the function `f_c(z)` is bounded under iteration.
 AUTHORS:
 
 - Ben Barros
-
 """
 
 #*****************************************************************************

@@ -272,7 +272,6 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         self._entries[i] = ivalue(<IntegerMod_abstract>value)
 
-
     def __reduce__(self):
         return unpickle_v1, (self._parent, self.list(), self._degree,
                              self._p, not self._is_immutable)
@@ -285,7 +284,6 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         for i from 0 <= i < self._degree:
             z._entries[i] = (self._entries[i] + r._entries[i]) % self._p
         return z
-
 
     cpdef _sub_(self, right):
         cdef Vector_modn_dense z, r

@@ -9,7 +9,6 @@ AUTHOR:
 Based in code of Gonzalo Tornaria
 
 The form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot yz + s\cdot xz + t\cdot xy` is stored as a tuple ``(a, b, c, r, s, t)`` of integers.
-
 """
 
 # ****************************************************************************

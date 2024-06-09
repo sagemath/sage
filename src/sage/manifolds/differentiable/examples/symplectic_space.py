@@ -5,7 +5,6 @@ Symplectic vector spaces
 AUTHORS:
 
 - Tobias Diez (2021): initial version
-
 """
 
 # *****************************************************************************

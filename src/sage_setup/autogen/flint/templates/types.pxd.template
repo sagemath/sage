@@ -3,7 +3,6 @@
 # WARNING: src/sage/libs/flint/types.pxd is generated from
 # src/sage_setup/autogen/flint/templates/types.pxd.template
 # please make sure that you are modifying the correct file!
-
 """
 Declarations for FLINT types
 """

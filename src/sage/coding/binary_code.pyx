@@ -29,7 +29,6 @@ AUTHOR:
 * optimized partition stack class
 * NICE-based partition refinement algorithm
 * canonical generation function
-
 """
 
 #*****************************************************************************
@@ -47,7 +46,7 @@ from cpython.mem cimport *
 from cpython.object cimport PyObject_RichCompare
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
-from sage.structure.element import Matrix
+from sage.structure.element cimport Matrix
 from sage.misc.timing import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
@@ -86,6 +85,7 @@ cdef int *hamming_weights() noexcept:
     for i from 256 <= i < 65536:
         ham_wts[i] = ham_wts[i & 255] + ham_wts[(i>>8) & 255]
     return ham_wts
+
 
 def weight_dist(M):
     """
@@ -155,6 +155,7 @@ def weight_dist(M):
     sig_free(LL)
     sig_free(basis)
     return L
+
 
 def test_word_perms(t_limit=5.0):
     r"""
@@ -279,6 +280,7 @@ def test_word_perms(t_limit=5.0):
         dealloc_word_perm(h)
         dealloc_word_perm(i)
     sig_free(arr)
+
 
 cdef WordPermutation *create_word_perm(object list_perm) noexcept:
     r"""
@@ -574,6 +576,7 @@ def test_expand_to_ortho_basis(B=None):
     for i from 0 <= i < k:
         print(''.join(reversed(Integer(output[i]).binary().zfill(C.ncols))))
     sig_free(output)
+
 
 cdef codeword *expand_to_ortho_basis(BinaryCode B, int n) noexcept:
     r"""
@@ -4070,7 +4073,6 @@ cdef class BinaryCodeClassifier:
 
         output = []
 
-
         for i from 0 <= i < len(aut_gp_gens):
             parent_generators[i] = create_word_perm(aut_gp_gens[i] + list(range(B.ncols, n)))
 
@@ -4095,7 +4097,6 @@ cdef class BinaryCodeClassifier:
             raise MemoryError()
         for temp from 0 <= temp < ((<codeword>1) << orb_chx_size):
             orbit_checks[temp] = 0
-
 
         combo = 0
         parity = 0
@@ -4212,7 +4213,6 @@ cdef class BinaryCodeClassifier:
                     for temp in orbits:
                         temp = (temp >> B.nrows) & k_gate
                         orbit_checks[temp >> log_2_radix] |= ((<codeword>1) << (temp & radix_gate))
-
 
             parity ^= 1
             i = 0

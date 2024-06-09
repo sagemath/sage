@@ -60,7 +60,7 @@ def group_divisible_design(v, K, G, existence=False, check=False):
 
     - ``v`` (integer)
 
-    - ``K,G`` (sets of integers)
+    - ``K``, ``G`` (sets of integers)
 
     - ``existence`` (boolean) -- instead of building the design, return:
 

@@ -39,7 +39,6 @@ AUTHORS:
 
 - John Cremona and Charlie Turner <charlotteturner@gmail.com> (06-2010):
   improvements to clarity and documentation.
-
 """
 
 # ****************************************************************************

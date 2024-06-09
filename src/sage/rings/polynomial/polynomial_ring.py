@@ -127,7 +127,6 @@ Check that :issue:`5562` has been fixed::
     sage: v2 = vector([CDF(2)])                                                         # needs sage.modules
     sage: v1 * v2                                                                       # needs sage.modules
     2.0*u
-
 """
 
 # ****************************************************************************

@@ -294,7 +294,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``(a,b)`` -- a secret key; this key is used for both encryption and
+        - ``(a, b)`` -- a secret key; this key is used for both encryption and
           decryption. For the affine cryptosystem whose plaintext and
           ciphertext spaces are `A`, a key is an ordered pair
           `(a,b) \in \ZZ / n\ZZ \times \ZZ / n\ZZ` where `n` is the size or
@@ -983,7 +983,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key belonging to the key space of this affine
+        - ``a``, ``b`` -- a secret key belonging to the key space of this affine
           cipher. This key must be an element of
           `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that `\gcd(a,n) = 1` with `n`
           being the size of the ciphertext and plaintext spaces.
@@ -1057,7 +1057,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key belonging to the key space of this affine
+        - ``a``, ``b`` -- a secret key belonging to the key space of this affine
           cipher. This key must be an element of
           `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that `\gcd(a,n) = 1` with `n`
           being the size of the ciphertext and plaintext spaces.
@@ -1182,7 +1182,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key for this affine cipher. The ordered pair
+        - ``a``, ``b`` -- a secret key for this affine cipher. The ordered pair
           `(a,b)` must be an element of `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that
           `\gcd(a,n) = 1`.
 

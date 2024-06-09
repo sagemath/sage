@@ -266,7 +266,6 @@ the supplied options. For example, the generated documentation for the options
       Reward for good service
 
 
-
     The END!
 
     See :class:`~sage.structure.global_options.GlobalOptions` for more features of these options.

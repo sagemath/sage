@@ -221,7 +221,6 @@ AUTHORS:
 - Ingolfur Edvardsson (2014/08): added extension for exact computation
 
 - Dima Pasechnik      (2014-)    : supervision, minor fixes, duality
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
@@ -518,8 +517,6 @@ cdef class SemidefiniteProgram(SageObject):
             Variables:
                x_0,  x_1
         """
-
-
         if not name and self._first_variable_names:
             name = self._first_variable_names.pop(0)
 
@@ -961,7 +958,6 @@ cdef class SemidefiniteProgram(SageObject):
         self._backend.solve()
         return self._backend.get_objective_value()
 
-
     cpdef dual_variable(self, int i, sparse=False):
         """
         The `i`-th dual variable.
@@ -1207,6 +1203,7 @@ class SDPSolverException(RuntimeError):
     """
     pass
 
+
 cdef class SDPVariable(Element):
     r"""
     ``SDPVariable`` is a variable used by the class
@@ -1250,7 +1247,6 @@ cdef class SDPVariable(Element):
         self._p = sdp
         self._name = name
 
-
     def __getitem__(self, i):
         r"""
         Return the symbolic variable corresponding to the key.
@@ -1277,10 +1273,9 @@ cdef class SDPVariable(Element):
         self._dict[i] = v
         return v
 
-
     def _repr_(self):
         r"""
-        Returns a representation of self.
+        Return a representation of ``self``.
 
         EXAMPLES::
 

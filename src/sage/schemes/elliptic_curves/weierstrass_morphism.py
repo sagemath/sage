@@ -45,8 +45,8 @@ class baseWI:
 
     INPUT:
 
-    - ``u,r,s,t`` (default `(1,0,0,0)`) -- standard parameters of an
-      isomorphism between Weierstrass models.
+    - ``u``, ``r``, ``s``, ``t`` -- (default: `1`, `0`, `0`, `0`); standard
+      parameters of an isomorphism between Weierstrass models
 
     EXAMPLES::
 
@@ -65,8 +65,8 @@ class baseWI:
 
         INPUT:
 
-        - ``u,r,s,t`` (default `(1,0,0,0)`) -- standard parameters of an
-          isomorphism between Weierstrass models.
+        - ``u``, ``r``, ``s``, ``t`` -- (default: `1`, `0`, `0`, `0`); standard
+          parameters of an isomorphism between Weierstrass models
 
         EXAMPLES::
 

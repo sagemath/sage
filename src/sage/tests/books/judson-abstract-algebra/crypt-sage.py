@@ -148,5 +148,4 @@ r"""
 
     sage: ''.join(letters)
     'Sage'
-
 """

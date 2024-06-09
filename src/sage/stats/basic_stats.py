@@ -29,7 +29,6 @@ in the module.
 AUTHOR:
 
 - Andrew Hou (11/06/2009)
-
 """
 # ***********************************************************************
 #          Copyright (C) 2009, Andrew Hou <amhou@uw.edu>

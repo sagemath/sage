@@ -86,7 +86,6 @@ cdef class HMM_Util:
                 T._values[k] /= s
 
 
-
     cpdef TimeSeries initial_probs_to_TimeSeries(self, pi, bint normalize):
         """
         This function is used internally by the __init__ methods of

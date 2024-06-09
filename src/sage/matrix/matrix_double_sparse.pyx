@@ -59,7 +59,6 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         """
         return self._is_hermitian(skew=False, tolerance=tolerance)
 
-
     def is_skew_hermitian(self, tolerance=1e-12):
         r"""
         Return whether or not the matrix is skew-Hermitian, up to the
@@ -101,7 +100,6 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         """
         return self._is_hermitian(skew=True, tolerance=tolerance)
-
 
     def cholesky(self):
         r"""

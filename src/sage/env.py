@@ -17,7 +17,6 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
 AUTHORS:
 
 - \R. Andrew Ohana (2012): initial version
-
 """
 
 # ****************************************************************************

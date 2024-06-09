@@ -254,14 +254,14 @@ The top of each Sage code file should follow this format::
 
     AUTHORS:
 
-    - YOUR NAME (2005-01-03): initial version
-
-    - person (date in ISO year-month-day format): short desc
+    - Your Name (2024-01-13): initial version
+    - Alice Liddell (2024-05-31): added a method; cleaned docstrings
+    - Full name (YYYY-MM-DD): short description
 
     """
 
     # ****************************************************************************
-    #       Copyright (C) 2013 YOUR NAME <your email>
+    #       Copyright (C) 2024 Your Name <your email>
     #
     # This program is free software: you can redistribute it and/or modify
     # it under the terms of the GNU General Public License as published by
@@ -341,9 +341,9 @@ information. You can use the existing functions of Sage as templates.
 
    The INPUT block describes all arguments that the function accepts.
 
-   1. The type names should be descriptive, but do not have to represent
-      the exact Sage/Python types. For example, use "integer" for
-      anything that behaves like an integer, rather than ``int``.
+   1. The type names should be descriptive, but do not have to represent the
+      exact Sage/Python types. For example, use "integer" for anything that
+      behaves like an integer, rather than "int" or "Integer".
 
    2. Mention the default values of the input arguments when applicable.
 
@@ -353,7 +353,13 @@ information. You can use the existing functions of Sage as templates.
 
        - ``n`` -- integer
 
-       - ``p`` -- prime integer (default: `2`); coprime with ``n``
+       - ``p`` -- prime integer (default: `2`); coprime with `n`
+
+       - ``var`` -- string (default: ``'lambda'``)
+
+       - ``check`` -- boolean (default: ``True``); specifies whether to check for primality
+
+       - ``algorithm`` -- (default: ``None``) the name of the algorithm to use
 
    The OUTPUT block describes the expected output. This is required if the
    one-sentence description of the function needs more explanation.
@@ -653,12 +659,12 @@ indentation:
 
         INPUT:
 
-        - ``x`` -- integer (default: ``1``); the description of the
+        - ``x`` -- integer (default: `1`); the description of the
           argument ``x`` goes here. If it contains multiple lines, all
           the lines after the first need to begin at the same indentation
           as the backtick.
 
-        - ``y`` -- integer (default: ``2``); the description of the
+        - ``y`` -- integer (default: `2`); the description of the
           argument ``y``
 
         OUTPUT: tuple; further description of the output
@@ -669,7 +675,7 @@ indentation:
 
             sage: A = EuclideanSpace(2)
             sage: A.point(2, 3)
-            (32, 3)
+            (2, 3)
 
         We now ... ::
 
@@ -686,7 +692,7 @@ indentation:
         .. NOTE::
 
             This function uses :func:`pow` to determine the fifth
-            power of ``x``.
+            power of `x`.
 
         ...
 
@@ -696,7 +702,7 @@ indentation:
 
         TESTS::
 
-            sage: A.point(42, 0)  # Check for corner case y = 0
+            sage: A.point(42, 0)  # check for corner case y = 0
             ...
         """
         <body of the function>

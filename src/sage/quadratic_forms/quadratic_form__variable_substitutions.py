@@ -1,7 +1,6 @@
 # sage_setup: distribution = sagemath-modules
 """
 Variable Substitution, Multiplication, Division, Scaling
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 William Stein and Jonathan Hanke
