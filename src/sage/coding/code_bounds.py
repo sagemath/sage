@@ -482,17 +482,11 @@ def elias_upper_bound(n,q,d,algorithm=None):
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundElias(n, d, q))
     else:
-        def ff(n,d,w,q):
+        def ff(n, d, w, q):
             return r*n*d*q**n/((w**2-2*r*n*w+r*n*d)*volume_hamming(n,q,w))
 
-    def get_list(n,d,q):
-        I = []
-        for i in range(1,int(r*n)+1):
-            if i**2-2*r*n*i+r*n*d > 0:
-                I.append(i)
-        return I
-    I = get_list(n,d,q)
-    bnd = min([ff(n,d,w,q) for w in I])
+    I = (i for i in range(1, int(r*n) + 1) if i**2 - 2*r*n*i + r*n*d > 0)
+    bnd = min([ff(n, d, w, q) for w in I])
     return int(bnd)
 
 
@@ -516,7 +510,6 @@ def hamming_upper_bound(n,q,d):
     .. MATH::
 
          M \leq \frac{q^n}{V(n,e)},
-
 
 
     where `M` is the maximum number of codewords and `V(n,e)` is

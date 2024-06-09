@@ -97,7 +97,6 @@ REFERENCE:
 
 - [1] McKay, Brendan D. Practical Graph Isomorphism. Congressus Numerantium,
   Vol. 30 (1981), pp. 45-87.
-
 """
 
 # ****************************************************************************
@@ -135,6 +134,7 @@ cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *c
 cdef int compare_structures_trivial(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     return 0
 
+
 def test_get_aut_gp_and_can_lab_trivially(int n=6,
     list partition=[[0,1,2],[3,4],[5]], canonical_label=True, base=False):
     """
@@ -170,6 +170,7 @@ def test_get_aut_gp_and_can_lab_trivially(int n=6,
     print(I)
     PS_dealloc(part)
     deallocate_agcl_output(output)
+
 
 def test_intersect_parabolic_with_alternating(int n=9, list partition=[[0,1,2],[3,4],[5,6,7,8]]):
     """
@@ -212,6 +213,7 @@ def test_intersect_parabolic_with_alternating(int n=9, list partition=[[0,1,2],[
     SC_dealloc(group)
     deallocate_agcl_output(output)
 
+
 cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
@@ -221,6 +223,7 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
         if j != 0:
             return j
     return 0
+
 
 def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     """
@@ -292,6 +295,7 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     deallocate_agcl_output(output)
     sig_free(c_perm)
     return label
+
 
 cdef aut_gp_and_can_lab *allocate_agcl_output(int n) noexcept:
     r"""

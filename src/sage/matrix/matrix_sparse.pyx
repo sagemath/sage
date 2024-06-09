@@ -349,9 +349,8 @@ cdef class Matrix_sparse(matrix.Matrix):
             r = get_ij(nz, k, 0)
             c = get_ij(nz, k, 1)
             entry = self.get_unsafe(r,c)*right
-            M.set_unsafe(r,c,entry)
+            M.set_unsafe(r, c, entry)
         return M
-
 
     cdef bint _will_use_strassen(self, matrix0.Matrix right) except -2:
         # never use Strassen for sparse matrix multiply
@@ -473,7 +472,6 @@ cdef class Matrix_sparse(matrix.Matrix):
             A.subdivide(list(reversed([self._ncols - t for t in col_divs])),
                             list(reversed([self._nrows - t for t in row_divs])))
         return A
-
 
     def _reverse_unsafe(self):
         r"""

@@ -360,7 +360,6 @@ Value restrictions::
     Traceback (most recent call last):
     ...
     ValueError: no possible values found for singleton block [[1, 2]]
-
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Martin Rubey <martin.rubey at tuwien.ac.at>

@@ -42,7 +42,6 @@ AUTHORS:
                              'plot_lineorders':<list of lists>}
 
 
-
 REFERENCES
 ==========
 
@@ -817,11 +816,8 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
         lims = tracklims([None, None, None, None], [pnt[0] for pnt in pl],
                          [pnt[1] for pnt in pl])
     elif M.rank() == 2:
-        nB1 = list(set(list(M.groundset())) - set(B1))
-        bline = []
-        for j in nB1:
-            if M.is_dependent([j, B1[0], B1[1]]):
-                bline.append(j)
+        nB1 = set(M.groundset()) - set(B1)
+        bline = [j for j in nB1 if M.is_dependent([j, B1[0], B1[1]])]
         interval = len(bline)+1
         if M._cached_info is not None and \
            'plot_positions' in M._cached_info.keys() and \

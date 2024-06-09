@@ -5,7 +5,6 @@ Lie Conformal Algebras With Structure Coefficients
 AUTHORS:
 
 - Reimundo Heluani (2019-08-09): Initial implementation.
-
 """
 
 # *****************************************************************************

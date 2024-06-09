@@ -444,6 +444,7 @@ cpdef closest(target, values, margin=1):
         else:
             return None
 
+
 def root_from_approx(f, a):
     """
     Return an exact root of the polynomial `f` closest to `a`.
@@ -504,6 +505,7 @@ def root_from_approx(f, a):
             or (not isinstance(rel, bool) and test_relation_maxima(rel))):
             raise ValueError("{} is not a root of {}".format(a, f))
         return a
+
 
 def create_embedding_from_approx(K, gen_image):
     """

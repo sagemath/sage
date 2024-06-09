@@ -154,7 +154,6 @@ REFERENCE:
 
 - [1] McKay, Brendan D. Isomorph-free exhaustive generation. J Algorithms,
   Vol. 26 (1998), pp. 306-324.
-
 """
 
 #*****************************************************************************

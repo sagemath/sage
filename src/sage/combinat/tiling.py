@@ -276,7 +276,6 @@ rectangles. Obviously, there is one solution::
 REFERENCES:
 
 .. [Knuth1] Knuth, Donald (2000). "Dancing links". :arxiv:`cs/0011047`.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2011-2015 Sébastien Labbé <slabqc@gmail.com>

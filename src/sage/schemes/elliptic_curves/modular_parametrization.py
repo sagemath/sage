@@ -27,7 +27,6 @@ EXAMPLES::
 AUTHORS:
 
 - Chris Wuthrich (02/10): moved from ell_rational_field.py.
-
 """
 ######################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>

@@ -2344,10 +2344,7 @@ cdef class PowerSeries(AlgebraElement):
 
               f'(t) = a(t) f(t) + b(t).
 
-
-
         INPUT:
-
 
         -  ``self`` -- the power series `a(t)`
 
@@ -2359,7 +2356,6 @@ cdef class PowerSeries(AlgebraElement):
 
         -  ``prec`` -- desired precision of result (this will be
            reduced if either a or b have less precision available)
-
 
         OUTPUT: the power series `f`, to indicated precision
 
@@ -2898,8 +2894,6 @@ def _solve_linear_de(R, N, L, a, b, f0):
     .. MATH::
 
          (t^N g)'  =  a t^N g  +  t^{N-1} b  +  O(t^{N+L'-1}).
-
-
 
     Next we want to find `h` modulo `t^{L-L'}` such
     that `f = g + t^{L'} h` is a solution of the original

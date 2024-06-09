@@ -344,7 +344,6 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             A.subdivide(*self.subdivisions())
         return A
 
-
     def _list(self):
         """
         Return all entries of self as a list of numbers of rows times

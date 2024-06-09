@@ -53,7 +53,6 @@ AUTHOR:
 
 - Nathann Cohen (2011): Some work on the documentation and defined the
   ``__contain__`` method
-
 """
 
 # ******************************************************************************
@@ -121,7 +120,7 @@ def is_debruijn_sequence(seq, k, n):
 
     - ``seq`` -- Sequence of elements in `0..k-1`.
 
-    - ``n,k`` -- Integers.
+    - ``n``, ``k`` -- Integers.
 
     EXAMPLES::
 

@@ -96,7 +96,6 @@ REFERENCES:
 AUTHORS:
 
 - chris wuthrich (02/10): moved from ell_rational_field.py.
-
 """
 
 ######################################################################

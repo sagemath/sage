@@ -1202,7 +1202,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi1, xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
+        - ``xi1``, ``xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
 
         - ``v`` (embedding) -- a real embedding of the field.
 
@@ -1250,7 +1250,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi1, xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
+        - ``xi1``, ``xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
 
         - ``n`` (integer) -- a positive integer.
 

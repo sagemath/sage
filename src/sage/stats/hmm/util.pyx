@@ -15,7 +15,7 @@ AUTHOR:
 #############################################################################
 
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.flatten  import flatten
 
 cdef class HMM_Util:
@@ -83,7 +83,6 @@ cdef class HMM_Util:
             # Normalise so sum is 1.
             for k in range(i, j):
                 T._values[k] /= s
-
 
 
     cpdef TimeSeries initial_probs_to_TimeSeries(self, pi, bint normalize):
@@ -156,7 +155,7 @@ cdef class HMM_Util:
         cdef TimeSeries T
         if isinstance(A, TimeSeries):
             T = A
-        elif is_Matrix(A):
+        elif isinstance(A, Matrix):
             T = TimeSeries(A.list())
         elif isinstance(A, list):
             T = TimeSeries(flatten(A))

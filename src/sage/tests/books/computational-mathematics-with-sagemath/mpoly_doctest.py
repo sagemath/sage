@@ -556,5 +556,4 @@ Sage example in ./mpoly.tex, line 3010::
   sage: p = previous_prime(2^30)
   sage: len(C(GF(p), 6).groebner_basis())
   45
-
 """

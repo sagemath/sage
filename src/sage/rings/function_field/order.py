@@ -96,7 +96,6 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): added maximal orders of global function fields
 
 - Brent Baccala (2019-12-20): support orders in characteristic zero
-
 """
 
 # ****************************************************************************

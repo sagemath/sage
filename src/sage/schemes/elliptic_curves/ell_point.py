@@ -1488,7 +1488,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         INPUT:
 
-        - ``R, Q`` -- points on self.curve() with ``Q`` nonzero.
+        - ``R``, ``Q`` -- points on self.curve() with ``Q`` nonzero.
 
         OUTPUT:
 

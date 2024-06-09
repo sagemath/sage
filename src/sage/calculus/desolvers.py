@@ -1647,11 +1647,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
         # n-dimensional systems:
         else:
-            desc = []
             variabs = dvars[:]
             variabs.append(ivar)
-            for de in des:
-                desc.append(fast_float(de, *variabs))
+            desc = [fast_float(de, *variabs) for de in des]
 
             def func(y, t):
                 v = list(y[:])

@@ -14,7 +14,6 @@ Depending on the domain, there are two classes of section modules:
 AUTHORS:
 
 - Michael Jung (2019): initial version
-
 """
 
 #******************************************************************************
