@@ -56,7 +56,6 @@ implementation for power series over `k`::
 AUTHORS:
 
 - Peter Bruin (December 2013): initial version
-
 """
 
 # ****************************************************************************

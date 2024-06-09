@@ -420,7 +420,7 @@ class BipartiteGraph(Graph):
         self.add_edges = MethodType(Graph.add_edges, self)
         alist_file = True
 
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
         if isinstance(data, BipartiteGraph):
             Graph.__init__(self, data, *args, **kwds)
             self.left = set(data.left)
@@ -463,7 +463,7 @@ class BipartiteGraph(Graph):
                 else:
                     # Automatically get partitions if not provided
                     self._upgrade_from_graph()
-        elif is_Matrix(data):
+        elif isinstance(data, Matrix):
             # sanity check for mutually exclusive keywords
             if kwds.get("multiedges", False) and kwds.get("weighted", False):
                 raise TypeError("weighted multi-edge bipartite graphs from "

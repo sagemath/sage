@@ -52,5 +52,4 @@ Sage example in ./sol/linalg.tex, line 168::
   [                 0   -4846439/3203360    7915157/3203360 -32420037/22423520 285914347/22423520]
   sage: ok, V = Similar(2*A, B); ok
   False
-
 """

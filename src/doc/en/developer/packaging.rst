@@ -568,7 +568,6 @@ pip for use in a separate process, like ``tox``, then this should be
 possible.
 
 
-
 .. _section-spkg-check:
 
 Self-tests
@@ -763,7 +762,6 @@ then we must declare this dependency.  Otherwise, various errors
 can occur when building or upgrading. When new versions of ``pip``
 packages add dependencies that happen to be Sage packages, there is a
 separate source of instability.
-
 
 
 .. _section-spkg-SPKG-txt:

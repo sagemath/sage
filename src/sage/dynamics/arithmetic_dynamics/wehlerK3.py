@@ -15,7 +15,6 @@ AUTHORS:
     Number Fields
 
 REFERENCES: [FH2015]_, [CS1996]_, [Weh1998]_, [Hutz2007]
-
 """
 # ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -1723,8 +1722,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``v`` -- non-negative integer. a place, use v = 0 for the Archimedean place
 
-        - ``m,n`` -- positive integers, We compute the local height for the divisor `E_{mn}^{+}`.
-                    These must be indices of non-zero coordinates of the point ``P``.
+        - ``m``, ``n`` -- positive integers; we compute the local height for
+          the divisor `E_{mn}^{+}`. These must be indices of non-zero
+          coordinates of the point ``P``.
 
         - ``prec`` -- (default: 100) float point or p-adic precision
 

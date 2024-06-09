@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage Input Formatting
 
@@ -2324,8 +2325,8 @@ class SIE_dict(SageInputExpression):
             sage: sie._sie_format(sif)
             ("{'carnivores':1, 'thinking':2, 'triumph':3}", 42)
         """
-        return "{%s}" %\
-            ', '.join(sif.format(k, 0) + ':' + sif.format(v, 0) for k, v in self._sie_entries), _prec_atomic
+        return "{%s}" % ', '.join(sif.format(k, 0) + ':' + sif.format(v, 0)
+                                  for k, v in self._sie_entries), _prec_atomic
 
 
 class SIE_binary(SageInputExpression):
@@ -3480,8 +3481,8 @@ def verify_same(a, b):
             assert(a.parent() == b.parent())
         AssertionError
     """
-    from sage.structure.element import is_Element
-    if is_Element(a):
+    from sage.structure.element import Element
+    if isinstance(a, Element):
         assert a.parent() == b.parent()
     else:
         assert type(a) is type(b)

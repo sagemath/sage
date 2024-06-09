@@ -121,7 +121,6 @@ AUTHORS:
 
 - Paul Scurek (2013-08-08): added
   :meth:`~sage.logic.boolformula.BooleanFormula.implies()`
-
 """
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein.gmail.com>

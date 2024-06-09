@@ -479,10 +479,9 @@ cdef class Matrix(Matrix0):
         entries = [list(row) for row in self]
         return macaulay2(self.base_ring()).matrix(entries)
 
-
     def _scilab_init_(self):
         """
-        Returns a string defining a Scilab representation of self.
+        Return a string defining a Scilab representation of ``self``.
 
         EXAMPLES::
 

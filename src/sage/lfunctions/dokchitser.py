@@ -15,7 +15,6 @@ AUTHORS:
   documentation below is based on Dokchitser's docs).
 
 - William Stein (2006-03-08): Sage interface
-
 """
 
 # ****************************************************************************

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 #*****************************************************************************
 #  Copyright (C) 2009-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #

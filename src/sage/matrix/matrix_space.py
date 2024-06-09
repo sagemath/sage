@@ -2621,6 +2621,50 @@ class MatrixSpace(UniqueRepresentation, Parent):
             rand_matrix = self.random_element(*args, **kwds)
         return rand_matrix
 
+    def from_vector(self, vector, order=None, coerce=True):
+        r"""
+        Build an element of ``self`` from a vector.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,2,3], [4,5,6]])
+            sage: v = vector(A); v
+            (1, 2, 3, 4, 5, 6)
+            sage: MS = A.parent()
+            sage: MS.from_vector(v)
+            [1 2 3]
+            [4 5 6]
+            sage: order = [(1,2), (1,0), (0,1), (0,2), (0,0), (1,1)]
+            sage: MS.from_vector(v, order=order)
+            [5 3 4]
+            [2 6 1]
+        """
+        if order is None:
+            if self.is_dense():
+                return self.element_class(self, vector, coerce=coerce)
+            else:
+                nc = self.ncols()
+                d = {(k // nc, k % nc): c for k, c in vector.dict().items()}
+                return self.element_class(self, d, coerce=coerce)
+        return super().from_vector(vector, order=order, coerce=coerce)
+
+    def _from_dict(self, d, coerce=True, remove_zeros=True):
+        r"""
+        Construct an element of ``self`` from the dictionary ``d``.
+
+        INPUT:
+
+        - ``coerce`` -- boolean; coerce the coefficients to the base ring
+        - ``remove_zeros`` -- ignored; for compatibility
+
+        EXAMPLES::
+
+            sage: MS = MatrixSpace(QQ['x'], 10, 5)
+            sage: A = MS.random_element()
+            sage: MS._from_dict(A.monomial_coefficients()) == A
+            True
+        """
+        return self.element_class(self, d, coerce=coerce)
 
 def dict_to_list(entries, nrows, ncols):
     r"""

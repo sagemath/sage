@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Unicode Characters
 
@@ -63,7 +64,6 @@ Letters::
     'ℂ'
     sage: hex(ord(_))
     '0x2102'
-
 """
 
 # ****************************************************************************

@@ -22,7 +22,6 @@ EXAMPLES::
 AUTHORS:
 
 - Sebastian Oehms (2020-08): initial version
-
 """
 ##############################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>

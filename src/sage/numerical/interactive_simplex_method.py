@@ -3978,9 +3978,7 @@ class LPDictionary(LPAbstractDictionary):
             c = random_vector(ZZ, n, x=-bound, y=0).change_ring(QQ)
         x_N = list(PolynomialRing(QQ, "x", m + n + 1, order="neglex").gens())
         x_N.pop(0)
-        x_B = []
-        for i in range(m):
-            x_B.append(x_N.pop(randint(0, n + m - i - 1)))
+        x_B = [x_N.pop(randint(0, n + m - i - 1)) for i in range(m)]
         return LPDictionary(A, b, c, randint(-bound, bound), x_B, x_N, "z")
 
     def __eq__(self, other):

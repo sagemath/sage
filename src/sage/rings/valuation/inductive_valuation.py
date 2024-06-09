@@ -26,7 +26,6 @@ REFERENCES:
 
 Inductive valuations are originally discussed in [Mac1936I]_ and [Mac1936II]_.
 An introduction is also given in Chapter 4 of [Rüt2014]_.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2016-2018 Julian Rüth <julian.rueth@fsfe.org>

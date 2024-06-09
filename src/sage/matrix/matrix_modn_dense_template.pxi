@@ -71,7 +71,6 @@ We test corner cases for multiplication::
     ....:         print('Uncaught dimension mismatch!')
     ....:     except (IndexError, TypeError, ArithmeticError):
     ....:         pass
-
 """
 
 #*****************************************************************************
@@ -2291,8 +2290,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``row1, row2`` -- the two rows to be transformed (within
-          self)
+        - ``row1``, ``row2`` -- the two rows to be transformed (within
+          ``self``)
 
         -``start_col`` -- the column of the pivots in ``row1`` and
          ``row2``. It is assumed that all entries before ``start_col``

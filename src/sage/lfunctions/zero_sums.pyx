@@ -6,7 +6,6 @@ All computations are done to double precision.
 AUTHORS:
 
 - Simon Spicer (2014-10): first version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Simon Spicer <mlungu@uw.edu>

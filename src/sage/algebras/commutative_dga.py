@@ -2598,7 +2598,6 @@ class DifferentialGCAlgebra(GCAlgebra):
             [z]
 
 
-
             sage: A.<e1, e2, e3, e4, e5, e6, e7> = GradedCommutativeAlgebra(QQ)
             sage: d = A.differential({e1:e1*e7, e2:e2*e7, e3:-e3*e7, e4:-e4*e7})
             sage: B = A.cdg_algebra(d)

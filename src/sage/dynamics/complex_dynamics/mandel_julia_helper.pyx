@@ -8,7 +8,6 @@ This is the helper file providing functionality for mandel_julia.py.
 AUTHORS:
 
 - Ben Barros
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 BEN BARROS <bbarros@slu.edu>

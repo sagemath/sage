@@ -143,7 +143,6 @@ can twist to a semistable curve, like in this example::
 AUTHORS:
 
 - Chris Wuthrich (2013-16)
-
 """
 
 # ***************************************************************************

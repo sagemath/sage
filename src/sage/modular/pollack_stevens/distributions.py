@@ -29,7 +29,6 @@ EXAMPLES::
     Space of 11-adic distributions with k=3 action and precision cap 5
     sage: D([1,2,3,4,5])
     (1 + O(11^5), 2 + O(11^4), 3 + O(11^3), 4 + O(11^2), 5 + O(11))
-
 """
 # *************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>

@@ -43,7 +43,6 @@ AUTHORS:
 - Kwankyu Lee (2020-02): added indeterminacy_locus() and image()
 
 - Kwankyu Lee (2022-05): added graph(), projective_degrees(), and degree()
-
 """
 
 # ****************************************************************************

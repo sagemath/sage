@@ -171,7 +171,7 @@ from bisect import bisect_left, bisect_right
 
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.matrix.constructor', 'matrix')
@@ -220,7 +220,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a biword
+        - ``obj1``, ``obj2`` -- anything representing a biword
           (see the doc of :meth:`forward_rule` for the
           encodings accepted).
 
@@ -281,7 +281,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -880,7 +880,7 @@ class RuleHecke(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -1326,7 +1326,7 @@ class RuleDualRSK(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a strict biword
+        - ``obj1``, ``obj2`` -- anything representing a strict biword
           (see the doc of :meth:`forward_rule` for the
           encodings accepted)
 
@@ -1709,7 +1709,7 @@ class RuleCoRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a strict
+        - ``obj1``, ``obj2`` -- anything representing a strict
           cobiword (see the doc of :meth:`forward_rule` for
           the encodings accepted)
 
@@ -2029,7 +2029,7 @@ class RuleSuperRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- anything representing a restricted super biword
+        - ``obj1``, ``obj2`` -- anything representing a restricted super biword
           (see the doc of :meth:`forward_rule` for the
           encodings accepted)
 
@@ -2159,7 +2159,7 @@ class RuleSuperRSK(RuleRSK):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to
+        - ``obj1``, ``obj2`` -- can be one of the following ways to
           represent a generalized permutation (or, equivalently,
           biword):
 
@@ -2662,7 +2662,7 @@ class RuleStar(Rule):
 
         INPUT:
 
-        - ``obj1, obj2`` -- can be one of the following ways to represent a
+        - ``obj1``, ``obj2`` -- can be one of the following ways to represent a
           biword (or, equivalently, an increasing 0-Hecke factorization) that
           is fully commutative:
 
@@ -3048,7 +3048,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
 
     INPUT:
 
-    - ``obj1, obj2`` -- can be one of the following:
+    - ``obj1``, ``obj2`` -- can be one of the following:
 
       - a word in an ordered alphabet (in this case, ``obj1`` is said
         word, and ``obj2`` is ``None``)
@@ -3183,7 +3183,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
         else:
             raise ValueError("invalid input")
 
-    if is_Matrix(obj1):
+    if isinstance(obj1, Matrix):
         obj1 = obj1.rows()
 
     output = rule.forward_rule(obj1, obj2, check_standard)

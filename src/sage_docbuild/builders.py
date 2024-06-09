@@ -1280,7 +1280,6 @@ def setup(app):
    :members:
    :undoc-members:
    :show-inheritance:
-
 """.format(heading, __file__, module_name)
         with open(os.path.join(self.dir, 'index.rst'), 'w') as indexfile:
             indexfile.write(index)
