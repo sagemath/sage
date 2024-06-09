@@ -324,14 +324,14 @@ def is_Integer(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.integer import is_Integer
-        sage: is_Integer(2)
+        sage: from sage.rings.integer import Integer
+        sage: isinstance(2, Integer)
         True
-        sage: is_Integer(2/1)
+        sage: isinstance(2/1, Integer)
         False
-        sage: is_Integer(int(2))
+        sage: isinstance(int(2), Integer)
         False
-        sage: is_Integer('5')
+        sage: isinstance('5', Integer)
         False
     """
     return isinstance(x, Integer)

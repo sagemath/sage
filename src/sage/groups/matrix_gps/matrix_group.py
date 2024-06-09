@@ -59,7 +59,7 @@ AUTHORS:
 
 from sage.categories.groups import Groups
 from sage.categories.rings import Rings
-from sage.rings.integer import is_Integer
+from sage.rings.integer import Integer
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.latex import latex
 from sage.structure.richcmp import (richcmp_not_equal, rich_to_bool,
@@ -417,7 +417,7 @@ class MatrixGroup_generic(MatrixGroup_base):
             True
         """
         assert base_ring in Rings
-        assert is_Integer(degree)
+        assert isinstance(degree, Integer)
 
         self._deg = degree
         if self._deg <= 0:

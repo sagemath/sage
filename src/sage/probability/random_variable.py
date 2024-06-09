@@ -19,7 +19,7 @@ import sage.rings.abc
 from sage.structure.parent import Parent
 from sage.functions.log import log
 from sage.misc.functional import sqrt
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.sets.set import Set
 from pprint import pformat
 
@@ -343,11 +343,11 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         if codomain is None:
             from sage.rings.real_mpfr import RealField
             codomain = RealField()
-        if not isinstance(codomain, sage.rings.abc.RealField) and not is_RationalField(codomain):
+        if not isinstance(codomain, sage.rings.abc.RealField) and not isinstance(codomain, RationalField):
             raise TypeError("Argument codomain (= %s) must be the reals or rationals" % codomain)
         if check:
             one = sum(P.values())
-            if is_RationalField(codomain):
+            if isinstance(codomain, RationalField):
                 if not one == 1:
                     raise TypeError("Argument P (= %s) does not define a probability function")
             else:

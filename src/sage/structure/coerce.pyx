@@ -90,7 +90,7 @@ from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent_richcmp_element_without_coercion
 from sage.structure.element cimport bin_op_exception, parent, Element
 from sage.structure.coerce_exceptions import CoercionException
-from sage.rings.integer_fake cimport is_Integer
+from sage.rings.integer_fake cimport Integer
 from sage.categories.map cimport Map
 from sage.categories.morphism import IdentityMorphism
 from sage.categories.action cimport Action, PrecomposedAction
@@ -1411,13 +1411,13 @@ cdef class CoercionModel:
                 return self.canonical_coercion(x, y)
 
         # Allow coercion of 0 even if no coercion from Z
-        if (x_numeric or is_Integer(x)) and not x and type(yp) is not type:
+        if (x_numeric or isinstance(x, Integer)) and not x and type(yp) is not type:
             try:
                 return yp(0), y
             except Exception:
                 self._record_exception()
 
-        if (y_numeric or is_Integer(y)) and not y and type(xp) is not type:
+        if (y_numeric or isinstance(y, Integer)) and not y and type(xp) is not type:
             try:
                 return x, xp(0)
             except Exception:

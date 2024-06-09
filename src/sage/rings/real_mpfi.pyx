@@ -5331,9 +5331,9 @@ def is_RealIntervalField(x):
 
     EXAMPLES::
 
-        sage: sage.rings.real_mpfi.is_RealIntervalField(RIF)
+        sage: sage.rings.real_mpfi.isinstance(RIF, RealIntervalField_class)
         True
-        sage: sage.rings.real_mpfi.is_RealIntervalField(RealIntervalField(200))
+        sage: sage.rings.real_mpfi.isinstance(RealIntervalField(200), RealIntervalField_class)
         True
     """
     return isinstance(x, RealIntervalField_class)
@@ -5345,7 +5345,7 @@ def is_RealIntervalFieldElement(x):
 
     EXAMPLES::
 
-        sage: sage.rings.real_mpfi.is_RealIntervalFieldElement(RIF(2.2))
+        sage: sage.rings.real_mpfi.isinstance(RIF(2.2), RealIntervalFieldElement)
         True
         sage: sage.rings.real_mpfi.is_RealIntervalFieldElement(RealIntervalField(200)(2.2))
         True

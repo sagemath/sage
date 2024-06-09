@@ -4538,11 +4538,11 @@ cdef class Matrix(Matrix1):
             algorithm = 'default'
         elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
-        elif algorithm == 'padic' and not (is_IntegerRing(R) or is_RationalField(R)):
+        elif algorithm == 'padic' and not (isinstance(R, IntegerRing_class) or isinstance(R, RationalField)):
             raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'flint' and not (is_IntegerRing(R) or is_RationalField(R)):
+        elif algorithm == 'flint' and not (isinstance(R, IntegerRing_class) or isinstance(R, RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'pari' and not (is_IntegerRing(R) or (isinstance(R, NumberField) and not is_RationalField(R))):
+        elif algorithm == 'pari' and not (isinstance(R, IntegerRing_class) or (isinstance(R, NumberField) and not isinstance(R, RationalField))):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
@@ -4557,7 +4557,7 @@ cdef class Matrix(Matrix1):
             raise ValueError("matrix kernel basis format '%s' not recognized" % basis)
         elif basis == 'pivot' and R not in _Fields:
             raise ValueError('pivot basis only available over a field, not over %s' % R)
-        elif basis == 'LLL' and not is_IntegerRing(R):
+        elif basis == 'LLL' and not isinstance(R, IntegerRing_class):
             raise ValueError('LLL-reduced basis only available over the integers, not over %s' % R)
         if basis == 'default':
             basis = 'echelon' if R in _Fields else 'computed'
@@ -4566,7 +4566,7 @@ cdef class Matrix(Matrix1):
         proof = kwds.pop('proof', None)
         if proof not in [None, True, False]:
             raise ValueError("'proof' must be one of True, False or None, not %s" % proof)
-        if not (proof is None or is_IntegerRing(R)):
+        if not (proof is None or isinstance(R, IntegerRing_class)):
             raise ValueError("'proof' flag only valid for matrices over the integers")
 
         # We could sanitize/process remaining (un-popped) keywords here and

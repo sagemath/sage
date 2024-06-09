@@ -123,14 +123,14 @@ def is_ComplexNumber(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.complex_mpfr import is_ComplexNumber
+        sage: from sage.rings.complex_mpfr import ComplexNumber
         sage: a = ComplexNumber(1, 2); a
         1.00000000000000 + 2.00000000000000*I
-        sage: is_ComplexNumber(a)
+        sage: isinstance(a, ComplexNumber)
         True
         sage: b = ComplexNumber(1); b
         1.00000000000000
-        sage: is_ComplexNumber(b)
+        sage: isinstance(b, ComplexNumber)
         True
 
     Note that the global element ``I`` is a number field element, of type
@@ -140,10 +140,10 @@ def is_ComplexNumber(x):
 
         sage: # needs sage.symbolic
         sage: c = 1 + 2*I
-        sage: is_ComplexNumber(c)
+        sage: isinstance(c, ComplexNumber)
         False
         sage: d = CC(1 + 2*I)
-        sage: is_ComplexNumber(d)
+        sage: isinstance(d, ComplexNumber)
         True
     """
     return isinstance(x, ComplexNumber)

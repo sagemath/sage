@@ -24,7 +24,7 @@ from sage.cpython.pycore_long cimport (
     ob_digit, _PyLong_IsNegative, _PyLong_DigitCount)
 
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_get_si
-from sage.rings.integer_fake cimport is_Integer, Integer_AS_MPZ
+from sage.rings.integer_fake cimport Integer, Integer_AS_MPZ
 
 
 cdef inline long pyobject_to_long(x) except? LONG_MIN:
@@ -65,7 +65,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
         if err:
             raise OverflowError("Python int too large to convert to C long")
         return value
-    if is_Integer(x):
+    if isinstance(x, Integer):
         z = Integer_AS_MPZ(x)
         if mpz_fits_slong_p(z):
             return mpz_get_si(z)
@@ -198,7 +198,7 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
     cdef int c = integer_check_long_py(x, value, err)
     if c:
         return c
-    if is_Integer(x):
+    if isinstance(x, Integer):
         z = Integer_AS_MPZ(x)
         if mpz_fits_slong_p(z):
             value[0] = mpz_get_si(z)

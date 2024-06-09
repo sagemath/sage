@@ -264,7 +264,7 @@ def ProjectiveSpace(n, R=None, names=None):
     if R in _Fields:
         if isinstance(R, FiniteField):
             return ProjectiveSpace_finite_field(n, R, names)
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             return ProjectiveSpace_rational_field(n, R, names)
         else:
             return ProjectiveSpace_field(n, R, names)
@@ -1170,7 +1170,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         # or the ring of integers
         is_ring_of_ints = False
 
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             field_type = False
         elif R in NumberFields():
             # True for the rational field as well, so check is_RationalField first

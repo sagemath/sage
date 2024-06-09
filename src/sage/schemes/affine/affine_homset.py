@@ -38,7 +38,7 @@ from sage.misc.verbose import verbose
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.cc import CC
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.rings.finite_rings.finite_field_base import FiniteField
@@ -349,7 +349,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         B = kwds.pop('bound', 0)
         tol = kwds.pop('tolerance', 1e-2)
         prec = kwds.pop('precision', 53)
-        if is_RationalField(R) or R == ZZ:
+        if isinstance(R, RationalField) or R == ZZ:
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.affine.affine_rational_point import enum_affine_rational_field

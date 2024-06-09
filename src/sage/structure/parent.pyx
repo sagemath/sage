@@ -1220,7 +1220,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             return x
         mor = self._internal_coerce_map_from(R)
         if mor is None:
-            if is_Integer(x) and not x:
+            if isinstance(x, Integer) and not x:
                 try:
                     return self(0)
                 except Exception:

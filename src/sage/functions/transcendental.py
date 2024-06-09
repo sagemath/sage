@@ -452,7 +452,7 @@ def zeta_symmetric(s):
     - I copied the definition of xi from
       http://web.viu.ca/pughg/RiemannZeta/RiemannZetaLong.html
     """
-    if not (is_ComplexNumber(s) or is_RealNumber(s)):
+    if not (isinstance(s, ComplexNumber) or isinstance(s, RealNumber)):
         s = ComplexField()(s)
 
     R = s.parent()
@@ -544,7 +544,7 @@ class DickmanRho(BuiltinFunction):
             sage: dickman_rho(0)                                                        # needs sage.symbolic
             1.00000000000000
         """
-        if not is_RealNumber(x):
+        if not isinstance(x, RealNumber):
             try:
                 x = RR(x)
             except (TypeError, ValueError):

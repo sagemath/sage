@@ -275,7 +275,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         cdef FiniteField_ntl_gf2eElement g
         cdef Py_ssize_t i
 
-        if is_IntegerMod(e):
+        if isinstance(e, IntegerMod_abstract):
             e = e.lift()
         if isinstance(e, (int, Integer)):
             GF2E_conv_long(res.x,int(e&1))

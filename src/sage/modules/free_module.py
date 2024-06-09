@@ -3823,7 +3823,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             return sage.rings.infinity.infinity
 
         a = sage.matrix.matrix_space.MatrixSpace(self.base_field(), self.rank())(C).determinant()
-        if sage.rings.integer_ring.is_IntegerRing(self.base_ring()):
+        if sage.rings.integer_ring.isinstance(self.base_ring(), IntegerRing_class):
             return a.abs()
         elif isinstance(self.base_ring, sage.rings.abc.Order):
             return self.base_ring().ideal(a).norm()
@@ -8266,10 +8266,10 @@ def element_class(R, is_sparse):
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
     """
     import sage.rings.integer_ring
-    if sage.rings.integer_ring.is_IntegerRing(R) and not is_sparse:
+    if sage.rings.integer_ring.isinstance(R, IntegerRing_class) and not is_sparse:
         from sage.modules.vector_integer_dense import Vector_integer_dense
         return Vector_integer_dense
-    elif sage.rings.rational_field.is_RationalField(R) and not is_sparse:
+    elif sage.rings.rational_field.isinstance(R, RationalField) and not is_sparse:
         from sage.modules.vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
     elif isinstance(R, sage.rings.abc.IntegerModRing) and not is_sparse:

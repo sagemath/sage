@@ -318,9 +318,9 @@ class _Coordinates:
 
         """
         from sage.structure.element import Expression
-        from sage.rings.real_mpfr import is_RealNumber
-        from sage.rings.integer import is_Integer
-        if params is not None and (isinstance(func, Expression) or is_RealNumber(func) or is_Integer(func)):
+        from sage.rings.real_mpfr import RealNumber
+        from sage.rings.integer import Integer
+        if params is not None and (isinstance(func, Expression) or isinstance(func, RealNumber) or isinstance(func, Integer)):
             return self.transform(**{
                 self.dep_var: func,
                 self.indep_vars[0]: params[0],

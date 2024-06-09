@@ -27,7 +27,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.search import search
 from sage.misc.verbose import verbose
 from sage.modular.modsym.manin_symbol_list import ManinSymbolList
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.categories.rings import Rings
 
 
@@ -498,7 +498,7 @@ def relation_matrix_wtk_g0(syms, sign, field, sparse):
     rels = sorted(rels)
     # required for stability of doctests with python3
 
-    if syms._apply_S_only_0pm1() and is_RationalField(field):
+    if syms._apply_S_only_0pm1() and isinstance(field, RationalField):
         from . import relation_matrix_pyx
         mod = relation_matrix_pyx.sparse_2term_quotient_only_pm1(rels, len(syms))
     else:

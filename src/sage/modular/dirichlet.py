@@ -1386,7 +1386,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         elif isinstance(K, sage.rings.abc.AlgebraicField):
             L = K
             zeta = L.zeta(m)
-        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K):
+        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField):
             chi = chi.minimize_base_ring()
             n = lcm(m, G.zeta_order())
             L = CyclotomicField(n)
@@ -1467,7 +1467,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             from sage.rings.complex_mpfr import ComplexField
             CC = ComplexField(prec)
             phi = CC.coerce_map_from(K)
-        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K):
+        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField):
             phi = K.complex_embedding(prec)
             CC = phi.codomain()
         else:
@@ -1688,7 +1688,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         G = self.parent()
         K = G.base_ring()
-        if not (isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K)):
+        if not (isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField)):
             raise NotImplementedError("Kloosterman sums only currently implemented when the base ring is a cyclotomic field or QQ.")
         phi = K.complex_embedding(prec)
         CC = phi.codomain()

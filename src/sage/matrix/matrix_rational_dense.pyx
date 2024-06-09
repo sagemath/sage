@@ -1465,7 +1465,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             if self._is_immutable:
                 return self
             return self.__copy__()
-        if is_IntegerRing(R):
+        if isinstance(R, IntegerRing_class):
             A, d = self._clear_denom()
             if not d.is_one():
                 raise TypeError("matrix has denominators so can't change to ZZ")

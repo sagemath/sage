@@ -813,7 +813,7 @@ numeric::numeric(PyObject* o, bool force_py) : basic(&numeric::tinfo_static) {
                                                 | status_flags::expanded);
                                 return;
                         }
-                        if (py_funcs.py_is_Rational(o) != 0) {
+                        if (py_funcs.py_isinstance(o, Rational) != 0) {
                                 mpq_ptr mpq = py_funcs.py_mpq_from_rational(o);
                                 set_from(t, v, hash, mpq);
                                 Py_DECREF(o);

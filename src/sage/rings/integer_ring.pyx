@@ -94,14 +94,14 @@ def is_IntegerRing(x):
 
     TESTS::
 
-        sage: from sage.rings.integer_ring import is_IntegerRing
-        sage: is_IntegerRing(ZZ)
+        sage: from sage.rings.integer_ring import IntegerRing
+        sage: isinstance(ZZ, IntegerRing_class)
         True
-        sage: is_IntegerRing(QQ)
+        sage: isinstance(QQ, IntegerRing_class)
         False
-        sage: is_IntegerRing(parent(3))
+        sage: isinstance(parent(3), IntegerRing_class)
         True
-        sage: is_IntegerRing(parent(1/3))
+        sage: isinstance(parent(1/3), IntegerRing_class)
         False
     """
     return isinstance(x, IntegerRing_class)

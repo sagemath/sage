@@ -382,7 +382,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     # Kpol = PARI polynomial in y defining the extension found so far
     F = poly.base_ring()
-    if is_RationalField(F):
+    if isinstance(F, RationalField):
         Kpol = pari("'y")
     else:
         Kpol = F.pari_polynomial("y")
