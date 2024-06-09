@@ -154,7 +154,8 @@ from .base import Graphics3dGroup
 from sage.plot.colors import rainbow
 from .texture import Texture
 
-from sage.functions.trig import cos, sin
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.trig", ["cos", "sin"])
 from sage.misc.sageinspect import sage_getargspec, is_function_or_cython_function
 
 

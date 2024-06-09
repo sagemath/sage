@@ -34,10 +34,12 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
-from ipywidgets.widgets.interaction import interactive, signature
 from collections import OrderedDict
 from collections.abc import Iterable, Iterator
+
+from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
+from ipywidgets.widgets.interaction import interactive, signature
+
 from .widgets import EvalText, SageColorPicker
 from sage.structure.element import parent
 import sage.rings.abc
@@ -173,8 +175,14 @@ class sage_interactive(interactive):
 
             return input_grid(abbrev.nrows(), abbrev.ncols(),
                               default=abbrev.list(), to_value=abbrev.parent())
-        if isinstance(abbrev, Color):
-            return SageColorPicker(value=abbrev.html_color())
+
+        try:
+            from sage.plot.colors import Color
+        except ImportError:
+            pass
+        else:
+            if isinstance(abbrev, Color):
+                return SageColorPicker(value=abbrev.html_color())
         # Get widget from IPython if possible
         widget = super().widget_from_single_value(abbrev, *args, **kwds)
         if widget is not None or isinstance(abbrev, Iterable):
