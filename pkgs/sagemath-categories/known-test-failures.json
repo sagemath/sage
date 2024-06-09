@@ -281,7 +281,7 @@
         "ntests": 6
     },
     "sage.categories.finite_dimensional_algebras_with_basis": {
-        "ntests": 82
+        "ntests": 71
     },
     "sage.categories.finite_dimensional_bialgebras_with_basis": {
         "ntests": 4
@@ -297,7 +297,7 @@
     },
     "sage.categories.finite_dimensional_lie_algebras_with_basis": {
         "failed": true,
-        "ntests": 107
+        "ntests": 167
     },
     "sage.categories.finite_dimensional_modules_with_basis": {
         "failed": true,
@@ -510,7 +510,7 @@
     },
     "sage.categories.modules_with_basis": {
         "failed": true,
-        "ntests": 240
+        "ntests": 242
     },
     "sage.categories.monoid_algebras": {
         "ntests": 4
@@ -556,7 +556,7 @@
     },
     "sage.categories.pushout": {
         "failed": true,
-        "ntests": 624
+        "ntests": 619
     },
     "sage.categories.quantum_group_representations": {
         "ntests": 13
@@ -720,7 +720,7 @@
     },
     "sage.combinat.permutation": {
         "failed": true,
-        "ntests": 1174
+        "ntests": 1177
     },
     "sage.combinat.permutation_cython": {
         "ntests": 39
@@ -794,7 +794,7 @@
     },
     "sage.doctest.forker": {
         "failed": true,
-        "ntests": 413
+        "ntests": 414
     },
     "sage.doctest.parsing": {
         "failed": true,
@@ -1278,7 +1278,6 @@
         "ntests": 103
     },
     "sage.misc.sageinspect": {
-        "failed": true,
         "ntests": 321
     },
     "sage.misc.search": {
