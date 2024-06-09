@@ -61,6 +61,7 @@ from cpython.object cimport PyObject_Call, PyObject_RichCompare
 
 import types
 
+
 def is_lazy_string(obj):
     """
     Checks if the given object is a lazy string.
@@ -75,6 +76,7 @@ def is_lazy_string(obj):
     """
     return isinstance(obj, _LazyString)
 
+
 def lazy_string(f, *args, **kwargs):
     """
     Creates a lazy string.
@@ -85,7 +87,6 @@ def lazy_string(f, *args, **kwargs):
     - positional arguments that are given to ``f``, either by calling or by
       applying it as a format string
     - named arguments, that are forwarded to ``f`` if it is not a string
-
 
     EXAMPLES::
 
@@ -130,6 +131,7 @@ def _make_lazy_string(ftype, fpickle, args, kwargs):
     else:
         f = fpickle
     return _LazyString(f, args, kwargs)
+
 
 cdef class _LazyString():
     """
