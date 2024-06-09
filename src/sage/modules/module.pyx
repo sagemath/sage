@@ -48,7 +48,6 @@ A minimal example of a module::
     sage: __main__.MyModule = MyModule
     sage: __main__.MyElement = MyElement
     sage: TestSuite(M).run()
-
 """
 
 #*****************************************************************************

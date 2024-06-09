@@ -15,7 +15,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -31,7 +30,7 @@ REFERENCE:
 from sage.data_structures.bitset_base cimport *
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
 from sage.rings.integer cimport Integer
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset
 
 
@@ -374,7 +373,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
 
     def __cinit__(self, arg):
         cdef int i,j
-        if is_Matrix(arg):
+        if isinstance(arg, Matrix):
             self.degree = arg.ncols()
             self.nwords = arg.nrows()
         elif isinstance(arg, tuple):
@@ -451,7 +450,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
             for j from 0 <= j < self.nwords:
                 bitset_zero(&self.words[j])
 
-        if is_Matrix(arg):
+        if isinstance(arg, Matrix):
             for i, j in arg.nonzero_positions():
                 bitset_set(&self.words[i], j)
 

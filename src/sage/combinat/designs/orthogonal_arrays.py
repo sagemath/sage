@@ -45,14 +45,12 @@ This module defines the following functions:
     :meth:`QDM_from_Vmt` | Return a QDM a `V(m,t)`
 
 
-
 REFERENCES:
 
 -- [CD1996]_
 
 Functions
 ---------
-
 """
 
 from sage.categories.sets_cat import EmptySetError
@@ -382,9 +380,9 @@ class TransversalDesign(GroupDivisibleDesign):
 
     - ``blocks`` -- collection of blocks
 
-    - ``k,n`` (integers) -- parameters of the transversal design. They can be
-      set to ``None`` (default) in which case their value is determined by the
-      blocks.
+    - ``k``, ``n`` (integers) -- parameters of the transversal design. They can
+      be set to ``None`` (default) in which case their value is determined by
+      the blocks.
 
     - ``check`` (boolean) -- whether to check that the design is indeed a
       transversal design with the right parameters. Set to ``True`` by default.
@@ -456,10 +454,10 @@ def is_transversal_design(B, k, n, verbose=False):
 
     - ``B`` -- the list of blocks
 
-    - ``k, n`` -- integers
+    - ``k``, ``n`` -- integers
 
-    - ``verbose`` (boolean) -- whether to display information about what is
-      going wrong.
+    - ``verbose`` -- boolean; whether to display information about what is
+      going wrong
 
     .. NOTE::
 
@@ -519,7 +517,7 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
       of a block are represented by ``None`` values. If ``OA=None``, it is
       defined as a truncated orthogonal arrays with `k+s` columns.
 
-    - ``k,r,m`` (integers)
+    - ``k``, ``r``, ``m`` (integers)
 
     - ``u`` (list) -- two cases depending on the form to use:
 
@@ -701,14 +699,13 @@ def TD_product(k,TD1,n1,TD2,n2, check=True):
 
     INPUT:
 
-    - ``TD1, TD2`` -- transversal designs.
+    - ``TD1``, ``TD2`` -- transversal designs
 
-    - ``k,n1,n2`` (integers) -- see above.
+    - ``k``, ``n1``, ``n2`` -- integers
 
-    - ``check`` (boolean) -- Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless (but we are
+      cautious guys), you may want to disable it whenever you want speed.
 
     .. NOTE::
 
@@ -1083,7 +1080,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` (integers)
 
     - ``holes`` (list of integers) -- respective sizes of the holes to be found.
 
@@ -1487,7 +1484,7 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
     - ``OA`` -- an OA, or rather a list of blocks of length `k`, each
       of which contains integers from `0` to `n-1`.
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` (integers)
 
     - ``blocks`` (list of blocks) -- relabels the integers of the OA
       from `[0..n-1]` into `[0..n-1]` in such a way that the `i`
@@ -1627,7 +1624,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
 
     INPUT:
 
-    - ``k,c`` (integers) -- integers
+    - ``k``, ``c`` -- integers
 
     - ``G`` -- an additive Abelian group
 
@@ -1880,7 +1877,7 @@ def OA_from_Vmt(m,t,V):
 
     INPUT:
 
-    - ``m,t`` (integers)
+    - ``m``, ``t`` (integers)
 
     - ``V`` -- the vector `V(m,t)`.
 
@@ -1931,7 +1928,7 @@ def QDM_from_Vmt(m,t,V):
 
     INPUT:
 
-    - ``m,t`` (integers)
+    - ``m``, ``t`` (integers)
 
     - ``V`` -- the vector `V(m,t)`.
 
@@ -1984,7 +1981,7 @@ def OA_from_PBD(k,n,PBD, check=True):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` (integers)
 
     - ``PBD`` -- a PBD on `0,...,n-1`.
 
@@ -2152,7 +2149,7 @@ class OAMainFunctions:
 
         INPUT:
 
-        - ``k,n,t`` (integers) -- parameters of the orthogonal array.
+        - ``k``, ``n``, ``t`` (integers) -- parameters of the orthogonal array.
 
         EXAMPLES::
 
@@ -2181,7 +2178,7 @@ class OAMainFunctions:
 
         INPUT:
 
-        - ``k,n,t`` (integers) -- parameters of the orthogonal array.
+        - ``k``, ``n``, ``t`` (integers) -- parameters of the orthogonal array.
 
         - ``resolvable`` (boolean) -- set to ``True`` if you want the design to be
           resolvable. The `n` classes of the resolvable design are obtained as the
@@ -2212,7 +2209,7 @@ class OAMainFunctions:
 
         INPUT:
 
-        - ``k,n,t`` (integers) -- parameters of the orthogonal array.
+        - ``k``, ``n``, ``t`` (integers) -- parameters of the orthogonal array.
 
         .. WARNING::
 
@@ -2241,7 +2238,7 @@ class OAMainFunctions:
 
         INPUT:
 
-        - ``k,n,t`` (integers) -- parameters of the orthogonal array.
+        - ``k``, ``n``, ``t`` (integers) -- parameters of the orthogonal array.
 
         .. SEEALSO::
 

@@ -126,7 +126,6 @@ REFERENCES:
     as permutation groups - the construction is too slow - unless (for
     small values or the parameter) they are made using explicit
     generators.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>

@@ -613,7 +613,6 @@ class Pi(Constant):
 
 
 pi = Pi().expression()
-
 """
 The formal square root of -1.
 

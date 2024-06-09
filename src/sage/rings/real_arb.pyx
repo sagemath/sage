@@ -1149,6 +1149,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         """
         return ARF_PREC_EXACT
 
+
 cdef inline bint _do_sig(long prec) noexcept:
     """
     Whether signal handlers should be installed for calls to FLINT.
@@ -1162,6 +1163,7 @@ cdef inline bint _do_sig(long prec) noexcept:
 
 cdef inline long prec(RealBall ball) noexcept:
     return ball._parent._prec
+
 
 def create_RealBall(parent, serialized):
     r"""
@@ -1186,6 +1188,7 @@ def create_RealBall(parent, serialized):
         raise ValueError("incorrect format")
     else:
         return res
+
 
 cdef class RealBall(RingElement):
     """

@@ -1817,7 +1817,6 @@ class FiniteExtFieldAdd(Benchmark):
    * symbolic det
    * poly factor
    * multivariate poly factor
-
 """
 
 

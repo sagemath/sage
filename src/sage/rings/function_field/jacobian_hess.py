@@ -48,7 +48,6 @@ divisor. Hence a point of the Jacobian group is represented by `D`.
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************

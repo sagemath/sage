@@ -29,7 +29,6 @@ AUTHOR:
 * optimized partition stack class
 * NICE-based partition refinement algorithm
 * canonical generation function
-
 """
 
 #*****************************************************************************
@@ -47,7 +46,7 @@ from cpython.mem cimport *
 from cpython.object cimport PyObject_RichCompare
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
-from sage.structure.element import is_Matrix
+from sage.structure.element cimport Matrix
 from sage.misc.timing import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
@@ -86,6 +85,7 @@ cdef int *hamming_weights() noexcept:
     for i from 256 <= i < 65536:
         ham_wts[i] = ham_wts[i & 255] + ham_wts[(i>>8) & 255]
     return ham_wts
+
 
 def weight_dist(M):
     """
@@ -155,6 +155,7 @@ def weight_dist(M):
     sig_free(LL)
     sig_free(basis)
     return L
+
 
 def test_word_perms(t_limit=5.0):
     r"""
@@ -279,6 +280,7 @@ def test_word_perms(t_limit=5.0):
         dealloc_word_perm(h)
         dealloc_word_perm(i)
     sig_free(arr)
+
 
 cdef WordPermutation *create_word_perm(object list_perm) noexcept:
     r"""
@@ -575,6 +577,7 @@ def test_expand_to_ortho_basis(B=None):
         print(''.join(reversed(Integer(output[i]).binary().zfill(C.ncols))))
     sig_free(output)
 
+
 cdef codeword *expand_to_ortho_basis(BinaryCode B, int n) noexcept:
     r"""
     INPUT:
@@ -760,7 +763,7 @@ cdef class BinaryCode:
 
         self.radix = sizeof(int) << 3
 
-        if is_Matrix(arg1):
+        if isinstance(arg1, Matrix):
             self.ncols = arg1.ncols()
             self.nrows = arg1.nrows()
             nrows = self.nrows
@@ -796,7 +799,7 @@ cdef class BinaryCode:
         self_words = self.words
         self_basis = self.basis
 
-        if is_Matrix(arg1):
+        if isinstance(arg1, Matrix):
             rows = arg1.rows()
             for i from 0 <= i < nrows:
                 word = <codeword> 0
@@ -4070,7 +4073,6 @@ cdef class BinaryCodeClassifier:
 
         output = []
 
-
         for i from 0 <= i < len(aut_gp_gens):
             parent_generators[i] = create_word_perm(aut_gp_gens[i] + list(range(B.ncols, n)))
 
@@ -4095,7 +4097,6 @@ cdef class BinaryCodeClassifier:
             raise MemoryError()
         for temp from 0 <= temp < ((<codeword>1) << orb_chx_size):
             orbit_checks[temp] = 0
-
 
         combo = 0
         parity = 0
@@ -4188,9 +4189,9 @@ cdef class BinaryCodeClassifier:
                                 dealloc_word_perm(hwp)
                                 break
                         if bingo2:
-                            from sage.matrix.constructor import Matrix
+                            from sage.matrix.constructor import matrix
                             from sage.rings.finite_rings.finite_field_constructor import GF
-                            M = Matrix(GF(2), B_aug.nrows, B_aug.ncols)
+                            M = matrix(GF(2), B_aug.nrows, B_aug.ncols)
                             for i from 0 <= i < B_aug.ncols:
                                 for j from 0 <= j < B_aug.nrows:
                                     M[j,i] = B_aug.is_one(1 << j, i)
@@ -4212,7 +4213,6 @@ cdef class BinaryCodeClassifier:
                     for temp in orbits:
                         temp = (temp >> B.nrows) & k_gate
                         orbit_checks[temp >> log_2_radix] |= ((<codeword>1) << (temp & radix_gate))
-
 
             parity ^= 1
             i = 0

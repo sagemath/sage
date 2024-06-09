@@ -60,5 +60,4 @@ r"""
     sage: DI = DiCyclicGroup(2)
     sage: Q.is_isomorphic(DI)
     True
-
 """

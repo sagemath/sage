@@ -194,5 +194,4 @@ r"""
 
     sage: len(factored)
     3
-
 """

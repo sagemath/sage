@@ -17,7 +17,6 @@ Note that because they are called by the constructors of :class:`Graph` and
 
 Functions
 ---------
-
 """
 from sage.cpython.string import bytes_to_str
 from sage.misc.rest_index_of_methods import gen_rest_table_index
@@ -191,9 +190,9 @@ def from_seidel_adjacency_matrix(G, M):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     from sage.rings.integer_ring import ZZ
-    assert is_Matrix(M)
+    assert isinstance(M, Matrix)
 
     if M.base_ring() != ZZ:
         try:
@@ -241,9 +240,9 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     from sage.rings.integer_ring import ZZ
-    assert is_Matrix(M)
+    assert isinstance(M, Matrix)
     # note: the adjacency matrix might be weighted and hence not
     # necessarily consists of integers
     if not weighted and M.base_ring() != ZZ:
@@ -317,8 +316,8 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
-    assert is_Matrix(M)
+    from sage.structure.element import Matrix
+    assert isinstance(M, Matrix)
 
     oriented = any(M[pos] < 0 for pos in M.nonzero_positions(copy=False))
 
@@ -412,8 +411,8 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         sage: list(G.edges(sort=True, labels=False))                                    # needs sage.modules
         [(1, 0)]
     """
-    from sage.structure.element import is_Matrix
-    assert is_Matrix(M)
+    from sage.structure.element import Matrix
+    assert isinstance(M, Matrix)
 
     positions = []
     for c in M.columns():

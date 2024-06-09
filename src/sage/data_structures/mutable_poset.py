@@ -1283,8 +1283,15 @@ def is_MutablePoset(P):
         sage: from sage.data_structures.mutable_poset import is_MutablePoset
         sage: P = MP()
         sage: is_MutablePoset(P)
+        doctest:warning...
+        DeprecationWarning: The function is_MutablePoset is deprecated; use 'isinstance(..., MutablePoset)' instead.
+        See https://github.com/sagemath/sage/issues/38125 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38125,
+                "The function is_MutablePoset is deprecated; "
+                "use 'isinstance(..., MutablePoset)' instead.")
     return isinstance(P, MutablePoset)
 
 
@@ -1403,7 +1410,7 @@ class MutablePoset(SageObject):
             ...
             TypeError: 33 is not iterable; do not know what to do with it.
         """
-        if is_MutablePoset(data):
+        if isinstance(data, MutablePoset):
             if key is not None:
                 raise TypeError('Cannot use key when data is a poset.')
             self._copy_shells_(data, lambda e: e)

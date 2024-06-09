@@ -627,5 +627,4 @@ Sage example in fsm-in-sage.tex, line 1216::
 
     sage: latex(moments['expectation'])                                                 # needs sage.symbolic
     \frac{5}{9} \, k + \mathcal{O}\left(1\right)
-
 """

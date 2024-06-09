@@ -15,7 +15,6 @@ AUTHORS:
 .. TODO::
 
     Smooth triangles using vertex normals
-
 """
 # ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>

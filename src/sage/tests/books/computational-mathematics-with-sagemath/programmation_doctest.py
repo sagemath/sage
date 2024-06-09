@@ -659,5 +659,4 @@ Sage example in ./programmation.tex, line 3894::
 
   sage: def injective(D):
   ....:   return len(D) == len (Set(D.values()))
-
 """

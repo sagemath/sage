@@ -333,7 +333,7 @@ TESTS::
 import sage.modules.free_module_morphism as free_module_morphism
 import sage.modules.matrix_morphism as matrix_morphism
 from sage.modules import vector_space_homspace
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 
 def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
@@ -707,7 +707,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
 
     if side not in ['left', 'right']:
         raise ValueError("side must be 'left' or 'right', not {}".format(side))
-    if is_Matrix(arg0):
+    if isinstance(arg0, Matrix):
         R = arg0.base_ring()
         if not R.is_field():
             try:
@@ -741,7 +741,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # Examine arg2 as the "rule" for the linear transformation
     # Pass on matrices, Python functions and lists to homspace call
     # Convert symbolic function here, to a matrix
-    if is_Matrix(arg2):
+    if isinstance(arg2, Matrix):
         if side == 'right':
             arg2 = arg2.transpose()
     elif isinstance(arg2, (list, tuple)):
@@ -873,7 +873,7 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             raise TypeError('homspace must be a vector space hom space, not {}'.format(homspace))
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             msg = 'input must be a matrix representation or another matrix morphism, not {0}'
             raise TypeError(msg.format(A))
         # now have a vector space homspace, and a matrix, check compatibility

@@ -579,7 +579,6 @@ AUTHOR:
 
 - Carl Witty (2007-01-27): initial version
 - Carl Witty (2007-10-29): massive rewrite to support complex as well as real numbers
-
 """
 
 import itertools

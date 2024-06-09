@@ -5,7 +5,6 @@ Declaration file for canonical augmentation
 AUTHORS:
 
 - Robert Miller (2011--2013): initial version
-
 """
 
 #*****************************************************************************

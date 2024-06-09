@@ -96,6 +96,7 @@ AA = None
 QQbar = None
 CDF = CLF = RLF = None
 
+
 def late_import():
     """
     Import the objects/modules after build (when needed).
@@ -112,6 +113,7 @@ def late_import():
         QQbar = sage.rings.qqbar.QQbar
         from sage.rings.real_lazy import CLF, RLF
         from sage.rings.complex_double import CDF
+
 
 _mpfr_rounding_modes = ['RNDN', 'RNDZ', 'RNDU', 'RNDD']
 
@@ -234,6 +236,8 @@ cpdef inline split_complex_string(string, int base=10):
 # their parent via direct C calls, which will be faster.
 
 cache = {}
+
+
 def MPComplexField(prec=53, rnd="RNDNN", names=None):
     """
     Return the complex field with real and imaginary parts having
@@ -2413,6 +2417,7 @@ cdef inline mp_exp_t max_exp(MPComplexNumber z) noexcept:
         return mpfr_get_exp(z.value.im)
     return max_exp_t(mpfr_get_exp(z.value.re), mpfr_get_exp(z.value.im))
 
+
 def __create__MPComplexField_version0 (prec, rnd):
     """
     Create a :class:`MPComplexField`.
@@ -2424,6 +2429,7 @@ def __create__MPComplexField_version0 (prec, rnd):
 
     """
     return MPComplexField(prec, rnd)
+
 
 def __create__MPComplexNumber_version0 (parent, s, base=10):
     """
@@ -2439,6 +2445,7 @@ def __create__MPComplexNumber_version0 (parent, s, base=10):
         33.000
     """
     return MPComplexNumber(parent, s, base=base)
+
 
 # original version of the file had this with only 1 underscore - TCS
 __create_MPComplexNumber_version0 = __create__MPComplexNumber_version0

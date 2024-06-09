@@ -1741,7 +1741,7 @@ def gcd(a, b=None, **kwargs):
 
     INPUT:
 
-    - ``a,b`` -- two elements of a ring with gcd or
+    - ``a``, ``b`` -- two elements of a ring with gcd or
 
     - ``a`` -- a list or tuple of elements of a ring with gcd
 
@@ -2420,7 +2420,7 @@ def mqrr_rational_reconstruction(u, m, T):
 
     INPUT:
 
-    - ``u, m, T`` --  integers such that `m > u \ge 0`, `T > 0`.
+    - ``u``, ``m``, ``T`` --  integers such that `m > u \ge 0`, `T > 0`
 
     OUTPUT:
 
@@ -4274,7 +4274,6 @@ def jacobi_symbol(a, b):
     `(a|b) = (a|p_1)^{e_1} ... (a|p_r)^{e_r}`
 
     where `(a|p_j)` are Legendre Symbols.
-
 
 
     INPUT:

@@ -25,7 +25,6 @@ letter, see chapter 3 of the book [BR2010b]_::
 
     sage: w[10000000]                                                                   # needs sage.modules
     'b'
-
 """
 
 from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable

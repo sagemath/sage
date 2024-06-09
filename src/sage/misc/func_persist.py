@@ -46,6 +46,7 @@ import os
 
 from sage.misc import persist
 
+
 class func_persist:
     r"""
     Put ``@func_persist`` right before your function

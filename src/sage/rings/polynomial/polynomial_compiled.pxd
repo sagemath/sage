@@ -57,9 +57,3 @@ cdef class mul_pd(binary_pd):
 
 cdef class abc_pd(binary_pd):
     cdef int index
-
-
-
-
-
-

@@ -88,6 +88,7 @@ cdef int number_of_integer_rings = 0
 #   sigma, we do not recreate the sampler but take it from this "cache".
 _prev_discrete_gaussian_integer_sampler = (None, None)
 
+
 def is_IntegerRing(x):
     r"""
     Internal function: return ``True`` iff ``x`` is the ring `\ZZ` of integers.
@@ -105,6 +106,7 @@ def is_IntegerRing(x):
         False
     """
     return isinstance(x, IntegerRing_class)
+
 
 cdef class IntegerRing_class(CommutativeRing):
     r"""
@@ -783,7 +785,7 @@ cdef class IntegerRing_class(CommutativeRing):
         - ``value`` -- this is the variable in which the answer will be
           returned
 
-        - ``x, y, distribution`` -- see :meth:`random_element`
+        - ``x``, ``y``, ``distribution`` -- see :meth:`random_element`
 
         TESTS::
 
@@ -1407,7 +1409,6 @@ cdef class IntegerRing_class(CommutativeRing):
 
         g = g.gcd(R( {e[j] - e[i_min]: c[j] for j in range(i_min, k)} ))
 
-
         cdef list cc
         cdef list ee
         cdef int m1, m2
@@ -1610,6 +1611,7 @@ cdef class IntegerRing_class(CommutativeRing):
 ZZ = IntegerRing_class()
 Z = ZZ
 
+
 def IntegerRing():
     """
     Return the integer ring.
@@ -1622,6 +1624,7 @@ def IntegerRing():
         True
     """
     return ZZ
+
 
 def crt_basis(X, xgcd=None):
     r"""

@@ -11,7 +11,6 @@ relevant Manin relations off of that picture. The algorithm follows [PS2011]_.
 AUTHORS:
 
 - Robert Pollack, Jonathan Hanke (2012): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
@@ -1276,7 +1275,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``r1, r2`` -- rational numbers
+        - ``r1``, ``r2`` -- rational numbers
 
         OUTPUT:
 
@@ -1309,8 +1308,8 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``r1, r2`` -- rational numbers (that are assumed to be connected by a
-          unimodular path)
+        - ``r1``, ``r2`` -- rational numbers (that are assumed to be connected
+          by a unimodular path)
 
         OUTPUT:
 

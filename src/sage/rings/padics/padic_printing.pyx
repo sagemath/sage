@@ -295,6 +295,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._alphabet = tuple(alphabet)
 
+
 _printer_defaults = pAdicPrinterDefaults()
 
 

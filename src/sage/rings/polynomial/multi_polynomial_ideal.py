@@ -213,7 +213,6 @@ AUTHORS:
   Singular 3.1
 
 - John Perry (2012): bug fixing equality & containment of ideals
-
 """
 
 # ****************************************************************************

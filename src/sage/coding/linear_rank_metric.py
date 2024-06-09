@@ -113,8 +113,8 @@ TESTS::
 # ****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix, is_Vector
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix, Vector
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
@@ -167,7 +167,7 @@ def to_matrix_representation(v, sub_field=None, basis=None):
         ...
         TypeError: Input must be a vector
     """
-    if not is_Vector(v):
+    if not isinstance(v, Vector):
         raise TypeError("Input must be a vector")
     base_field = v.base_ring()
     if not sub_field:
@@ -175,7 +175,7 @@ def to_matrix_representation(v, sub_field=None, basis=None):
     n = v.length()
     m = base_field.degree()//sub_field.degree()
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
-    return Matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
+    return matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
 
 def from_matrix_representation(w, base_field=None, basis=None):
     r"""
@@ -215,16 +215,15 @@ def from_matrix_representation(w, base_field=None, basis=None):
         ...
         TypeError: Input must be a matrix
     """
-    if not is_Matrix(w):
+    if not isinstance(w, Matrix):
         raise TypeError("Input must be a matrix")
     sub_field = w.base_ring()
     if not base_field:
         base_field = sub_field.extension(w.nrows())
-    v = []
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
-    for i in range(w.ncols()):
-        v.append(to_big_field(w.column(i)))
+    v = [to_big_field(w.column(i)) for i in range(w.ncols())]
     return vector(v)
+
 
 def rank_weight(c, sub_field=None, basis=None):
     r"""
@@ -253,7 +252,7 @@ def rank_weight(c, sub_field=None, basis=None):
         sage: rank_weight(a, GF(4))
         2
     """
-    if is_Vector(c):
+    if isinstance(c, Vector):
         c = to_matrix_representation(c, sub_field, basis)
     return c.rank()
 
@@ -311,7 +310,7 @@ def rank_distance(a, b, sub_field=None, basis=None):
     """
     if not (a.base_ring() == b.base_ring()):
         raise ValueError("The base field of {} and {} has to be the same".format(a, b))
-    if not (is_Vector(a) and is_Vector(b)):
+    if not (isinstance(a, Vector) and isinstance(b, Vector)):
         raise TypeError("Both inputs have to be vectors")
     if not len(a) == len(b):
         raise ValueError("The length of {} and {} has to be the same".format(a, b))

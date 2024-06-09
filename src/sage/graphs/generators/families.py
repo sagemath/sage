@@ -1337,7 +1337,7 @@ def GoethalsSeidelGraph(k, r):
 
     INPUT:
 
-    - ``k,r`` -- integers
+    - ``k``, ``r`` -- integers
 
     .. SEEALSO::
 

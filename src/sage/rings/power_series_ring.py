@@ -132,7 +132,6 @@ TESTS::
     sage: M is loads(dumps(M))
     True
     sage: TestSuite(M).run()
-
 """
 
 import sage.categories.commutative_rings as commutative_rings

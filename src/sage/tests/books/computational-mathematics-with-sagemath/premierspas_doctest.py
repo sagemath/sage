@@ -177,5 +177,4 @@ Sage example in ./premierspas.tex, line 1380::
 
   sage: var('bla')
   bla
-
 """

@@ -6,7 +6,6 @@ Fast functions for the category framework
 AUTHOR:
 
 - Simon King (initial version)
-
 """
 
 #*****************************************************************************

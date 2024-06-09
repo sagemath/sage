@@ -243,10 +243,10 @@ def contour_plot(f, xrange, yrange, **options):
 
     - ``f`` -- a function of two variables
 
-    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
+    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
       ``(x,xmin,xmax)``
 
-    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
+    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
       ``(y,ymin,ymax)``
 
     The following inputs must all be passed in as named parameters:
@@ -1047,10 +1047,10 @@ def implicit_plot(f, xrange, yrange, **options):
 
     - ``f`` -- a function of two variables or equation in two variables
 
-    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x``
+    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x``
       values or ``(x,xmin,xmax)``
 
-    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y``
+    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y``
       values or ``(y,ymin,ymax)``
 
     The following inputs must all be passed in as named parameters:
@@ -1408,10 +1408,10 @@ def region_plot(f, xrange, yrange, **options):
     - ``f`` -- a boolean function or a list of boolean functions of
       two variables
 
-    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
+    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
       ``(x,xmin,xmax)``
 
-    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
+    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
       ``(y,ymin,ymax)``
 
     - ``plot_points``  -- integer (default: 100); number of points to plot

@@ -15,7 +15,6 @@ AUTHORS:
 REFERENCES:
 
 - [Krumm2016]
-
 """
 
 import itertools

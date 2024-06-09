@@ -484,7 +484,6 @@ def t_SCHUR_MONOMIAL_symmetrica(schur):
     return res
 
 
-
 def t_SCHUR_HOMSYM_symmetrica(schur):
     """
     """
@@ -567,9 +566,6 @@ def t_POLYNOM_SCHUR_symmetrica(p):
     freeall(polynom)
 
     return res
-
-
-
 
 
 def t_MONOMIAL_HOMSYM_symmetrica(monomial):
@@ -740,7 +736,6 @@ def t_ELMSYM_MONOMIAL_symmetrica(elmsym):
     return res
 
 
-
 def t_ELMSYM_HOMSYM_symmetrica(elmsym):
     """
 
@@ -785,7 +780,6 @@ def t_POLYNOM_ELMSYM_symmetrica(p):
     return res
 
 
-
 def t_HOMSYM_SCHUR_symmetrica(homsym):
     """
 
@@ -825,8 +819,6 @@ def t_HOMSYM_POWSYM_symmetrica(homsym):
     freeall(chomsym)
 
     return res
-
-
 
 
 def t_HOMSYM_MONOMIAL_symmetrica(homsym):
@@ -870,7 +862,6 @@ def t_HOMSYM_ELMSYM_symmetrica(homsym):
     return res
 
 
-
 def t_POWSYM_MONOMIAL_symmetrica(powsym):
     """
 
@@ -890,8 +881,6 @@ def t_POWSYM_MONOMIAL_symmetrica(powsym):
     freeall(cpowsym)
 
     return res
-
-
 
 
 def t_POWSYM_SCHUR_symmetrica(powsym):
@@ -999,7 +988,6 @@ def mult_schur_schur_symmetrica(s1, s2):
     return res
 
 
-
 def mult_monomial_monomial_symmetrica(m1, m2):
     """
     """
@@ -1019,7 +1007,6 @@ def mult_monomial_monomial_symmetrica(m1, m2):
     freeall(cresult)
 
     return res
-
 
 
 def scalarproduct_schur_symmetrica(s1, s2):

@@ -126,7 +126,6 @@ cdef class MatrixWindow:
         """
         return self._matrix
 
-
     cpdef to_matrix(MatrixWindow self):
         """
         Returns an actual matrix object representing this view.

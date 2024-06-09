@@ -160,5 +160,4 @@ r"""
     Traceback (most recent call last):
     ...
     NotImplementedError
-
 """

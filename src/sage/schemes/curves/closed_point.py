@@ -63,7 +63,6 @@ closed point is of degree one::
 AUTHORS:
 
 - Kwankyu Lee (2019-03): initial version
-
 """
 
 # *****************************************************************************

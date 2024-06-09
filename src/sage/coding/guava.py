@@ -86,7 +86,7 @@ def RandomLinearCodeGuava(n, k, F):
 
     INPUT:
 
-    - ``n,k`` -- integers with `n>k>1`.
+    - ``n``, ``k`` -- integers with `n>k>1`.
 
     OUTPUT:
 

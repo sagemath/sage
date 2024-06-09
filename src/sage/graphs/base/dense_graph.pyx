@@ -291,7 +291,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- non-negative integers
+        - ``u``, ``v`` -- non-negative integers
 
         """
         if unlikely(l):
@@ -307,7 +307,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- non-negative integers, must be in self
 
         - ``l`` -- a positive integer label, or zero for no label, or ``-1`` for any label
 
@@ -340,7 +340,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- non-negative integers, must be in self
 
         """
         self._del_arc_unsafe(u, v)
@@ -361,9 +361,10 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- integers from 0, ..., n-1, where n is the number of vertices
-            arc_labels -- must be a pointer to an (allocated) integer array
-            size -- the length of the array
+        - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
+          number of vertices
+        - ``labels`` -- must be a pointer to an (allocated) integer array
+        - ``size`` -- the length of the array
 
         OUTPUT:
 
@@ -643,7 +644,7 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         INPUT:
 
-        - ``u, v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         EXAMPLES::
 
@@ -684,7 +685,7 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         INPUT:
 
-        - ``u, v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         - ``l`` -- the edge label (ignored)
 
@@ -740,7 +741,7 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         INPUT:
 
-        - ``u, v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         - ``l`` -- the edge label
 

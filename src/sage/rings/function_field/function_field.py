@@ -223,7 +223,6 @@ AUTHORS:
 
 - Sebastian A. Spindler (2024-03-06): implemented Hilbert symbols for global
   function fields
-
 """
 
 # *****************************************************************************

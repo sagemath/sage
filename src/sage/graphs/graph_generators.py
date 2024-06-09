@@ -233,6 +233,7 @@ __append_to_doc(
      "CaiFurerImmermanGraph",
      "chang_graphs",
      "CirculantGraph",
+     "cographs",
      "cospectral_graphs",
      "CubeGraph",
      "CubeConnectedCycle",
@@ -2633,6 +2634,7 @@ class GraphGenerators:
 ###########################################################################
 # Families
 ###########################################################################
+    from . import cographs as cographs_module
     from .generators import families
     from . import strongly_regular_db
     AlternatingFormsGraph = staticmethod(distance_regular.AlternatingFormsGraph)
@@ -2644,6 +2646,7 @@ class GraphGenerators:
     CaiFurerImmermanGraph = staticmethod(families.CaiFurerImmermanGraph)
     chang_graphs = staticmethod(families.chang_graphs)
     CirculantGraph = staticmethod(families.CirculantGraph)
+    cographs = staticmethod(cographs_module.cographs)
     CubeGraph = staticmethod(families.CubeGraph)
     CubeConnectedCycle = staticmethod(families.CubeConnectedCycle)
     DipoleGraph = staticmethod(families.DipoleGraph)

@@ -48,5 +48,4 @@ r"""
     sage: G = graphs.CycleGraph(8)
     sage: G.add_edges([(0,2),(1,3),(4,6),(5,7)])
     sage: G.plot()   # not tested
-
 """

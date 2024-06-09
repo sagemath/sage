@@ -146,7 +146,6 @@ REFERENCES:
 - [DB1996]_
 - [DS2010]_
 - [FNO2019]_
-
 """
 # *****************************************************************************
 #  Copyright (C) 2019 Hans Fotsing Tetsing <hans.fotsing@aims-cameroon.org>

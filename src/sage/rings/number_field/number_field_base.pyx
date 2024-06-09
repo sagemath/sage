@@ -6,7 +6,6 @@ Base class of number fields
 AUTHORS:
 
 - William Stein (2007-09-04): initial version
-
 """
 
 

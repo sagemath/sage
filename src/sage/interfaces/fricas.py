@@ -184,7 +184,6 @@ FriCAS does some limits right::
 
     sage: x = var('x'); ex = x^2*exp(-x)*Ei(x) - x; fricas(ex).limit(x=oo)
     1
-
 """
 
 ###########################################################################

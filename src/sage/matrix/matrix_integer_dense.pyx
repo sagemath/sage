@@ -47,7 +47,6 @@ TESTS::
     sage: TestSuite(a).run()
     sage: Matrix(ZZ,0,0).inverse()
     []
-
 """
 
 #*****************************************************************************
@@ -114,7 +113,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.structure.element cimport Element, Vector
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_template
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_float
@@ -701,7 +700,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
     def is_one(self):
         r"""
-        Tests whether self is the identity matrix.
+        Test whether ``self`` is the identity matrix.
 
         EXAMPLES::
 
@@ -713,8 +712,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
             False
         """
         return self.is_square() and fmpz_mat_is_one(self._matrix)
-
-
 
     def _multiply_linbox(self, Matrix_integer_dense right):
         """
@@ -1244,7 +1241,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         finally:
             fmpz_mat_clear(m)
-
 
     def _clear_denom(self):
         """
@@ -3839,7 +3835,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         self.cache('det', d)
         return d
 
-
     def _det_linbox(self):
         """
         Compute the determinant of this matrix using Linbox.
@@ -4296,7 +4291,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if not self.is_square():
             raise NotImplementedError("the input matrix must be square.")
 
-        if is_Vector(B):
+        if isinstance(B, Vector):
             if self.nrows() != B.degree():
                 raise ValueError("number of rows of self must equal degree of B.")
         elif self.nrows() != B.nrows():
@@ -4308,7 +4303,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         matrix = True
         C = B
         if not isinstance(B, Matrix_integer_dense):
-            if is_Vector(B):
+            if isinstance(B, Vector):
                 matrix = False
                 C = self.matrix_space(self.nrows(), 1)(B.list())
             else:
@@ -4811,8 +4806,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             if pivots_are_right:
                 break
 
-        #end while
-
+        # end while
 
         # Finally, return the answer.
         return pivots, non_pivots, X, d
@@ -5086,7 +5080,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 k += 1
         sig_free(res_l)
 
-
     cdef int* _hnf_modn_impl(Matrix_integer_dense self, unsigned int det,
             Py_ssize_t nrows, Py_ssize_t ncols) except NULL:
         # NOTE: det should be at most 2^31-1, such that anything modulo
@@ -5186,7 +5179,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 if T_rows[i][i] == 0:
                     T_rows[i][i] = R
                 continue
-
 
             j += 1
             if T_rows[j][i] == 0:
@@ -5929,7 +5921,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         from sage.matrix.compute_J_ideal import ComputeMinimalPolynomials
         return ComputeMinimalPolynomials(self).p_minimal_polynomials(p, s_max)
 
-
     def null_ideal(self, b=0):
         r"""
         Return the `(b)`-ideal of this matrix.
@@ -5969,7 +5960,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         from sage.matrix.compute_J_ideal import ComputeMinimalPolynomials
         return ComputeMinimalPolynomials(self).null_ideal(b)
-
 
     def integer_valued_polynomials_generators(self):
         r"""

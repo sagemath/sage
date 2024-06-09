@@ -90,5 +90,4 @@ PROBLEM S3::
 PROBLEM S4::
 
     sage: w = (sin(x)*cos(x)).series(x,400)
-
 """

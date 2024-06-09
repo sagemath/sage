@@ -85,7 +85,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertices
+        - ``u``, ``v`` -- vertices
         - ``l`` -- edge label
         - ``directed`` -- boolean
 
@@ -233,7 +233,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertices
+        - ``u``, ``v`` -- vertices
         - ``l`` -- edge label
         - ``directed`` -- boolean
 
@@ -289,7 +289,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertex labels
+        - ``u``, ``v`` -- vertex labels
 
         OUTPUT:
 
@@ -311,7 +311,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertex labels
+        - ``u``, ``v`` -- vertex labels
         - ``l`` -- label
 
         OUTPUT:
@@ -662,7 +662,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertices
+        - ``u``, ``v`` -- vertices
         - ``l`` -- edge label
         - ``directed`` -- boolean
 

@@ -32,7 +32,6 @@ module :mod:`~sage.misc.functional`.
 AUTHORS:
 
 - Eric Gourgoulhon (2018): initial version
-
 """
 
 #*****************************************************************************

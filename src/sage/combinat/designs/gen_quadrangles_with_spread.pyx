@@ -31,7 +31,6 @@ REFERENCES:
 AUTHORS:
 
 - Ivo Maffei (2020-07-26): initial version
-
 """
 
 # ****************************************************************************
@@ -52,7 +51,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised quadrangle
+    - ``s``, ``t`` -- integers; order of the generalised quadrangle
 
     - ``existence`` -- boolean;
 
@@ -138,7 +137,7 @@ def is_GQ_with_spread(GQ, S, s=None, t=None):
     - ``S`` -- iterable; the spread of ``GQ`` as an
       iterable of the blocks of ``GQ``
 
-    - ``s, t`` -- integers (optional); if `(s,t)` are given, then we check that
+    - ``s``, ``t`` -- integers (optional); if `(s,t)` are given, then we check that
       ``GQ`` has order `(s,t)`
 
     EXAMPLES::

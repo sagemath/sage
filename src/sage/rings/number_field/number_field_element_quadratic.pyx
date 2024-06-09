@@ -24,7 +24,6 @@ AUTHORS:
 - David Loeffler (2009-05): added more documentation and tests
 - Vincent Delecroix (2012-07): added comparisons for quadratic number fields
   (:issue:`13213`), abs, floor and ceil functions (:issue:`13256`)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -79,6 +78,7 @@ def __make_NumberFieldElement_quadratic0(parent, a, b, denom):
         True
     """
     return NumberFieldElement_quadratic(parent, (a, b, denom))
+
 
 def __make_NumberFieldElement_quadratic1(parent, cls, a, b, denom):
     """
@@ -411,12 +411,10 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         mpz_init(self.b)
         mpz_init(self.denom)
 
-
     def __dealloc__(self):
         mpz_clear(self.a)
         mpz_clear(self.b)
         mpz_clear(self.denom)
-
 
     def __reduce__(self):
         """
@@ -472,7 +470,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         self._reduce_c_()
         return 0  # No error
-
 
     def _lift_cyclotomic_element(self, new_parent, bint check=True, int rel=0):
         """
@@ -1318,7 +1315,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             mpz_neg(self.b, self.b)
         mpz_clear(gcd)
 
-
     cpdef _add_(self, other_m):
         """
         EXAMPLES::
@@ -1376,7 +1372,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         res._reduce_c_()
         return res
 
-
     cpdef _sub_(self, other_m):
         """
         EXAMPLES::
@@ -1423,7 +1418,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             mpz_clear(gcd)
         res._reduce_c_()
         return res
-
 
     def __neg__(self):
         """

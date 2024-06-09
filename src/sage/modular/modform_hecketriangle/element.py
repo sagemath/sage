@@ -6,7 +6,6 @@ Elements of Hecke modular forms spaces
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
