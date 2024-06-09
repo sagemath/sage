@@ -4566,7 +4566,7 @@ def BiwheelGraph(n):
     r"""
     Return a biwheel graph with `2n` nodes
 
-    For `n \geqslant 4`, the biwheel graph of order `2n` is the planar
+    For `n \geq 4`, the biwheel graph of order `2n` is the planar
     bipartite graph obtained from the cycle graph of order `2n - 2`, i.e.,
     ``graphs.CycleGraph(2*n - 2)`` (called the `rim` of the biwheel graph) by
     introducing two new nodes `2n - 2` and `2n - 1` (called the `hubs` of the
@@ -4578,11 +4578,11 @@ def BiwheelGraph(n):
 
     Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, each biwheel graph will be
-    displayed with the first (0) node at the right if `(n - 1)` is odd or
+    displayed with the first (0) node at the right if `n` is even or
     otherwise at an angle `\pi / (2n - 2)` with respect to the origin, with the
     rest of the nodes up to `2n - 3` following in a counterclockwise manner.
     Note that the last two nodes, i.e., the hubs `2n - 2` and `2n - 1` will
-    be displayed at the coordinates `(-0.33, 0)` and `(0.33, 0)` respectively.
+    be displayed at the coordinates `(-1/3, 0)` and `(1/3, 0)` respectively.
 
     INPUT:
 
@@ -4644,18 +4644,18 @@ def BiwheelGraph(n):
     if n < 4:
         raise ValueError("parameter n must be at least 4")
 
-    from math import pi
     angle_param = 0
 
-    if (n - 1) % 2 == 0:
+    if n % 2:
+        from math import pi
         angle_param = pi / (2*n - 2)
 
     G = Graph(2 * n, name="Biwheel graph")
     pos_dict = G._circle_embedding(list(range(2*n - 2)), angle=angle_param, return_dict=True)
     edges = []
 
-    pos_dict[2*n - 2] = (-0.33, 0)
-    pos_dict[2*n - 1] = (0.33, 0)
+    pos_dict[2*n - 2] = (-QQ((1, 3)), 0)
+    pos_dict[2*n - 1] = (QQ((1, 3)), 0)
 
     for i in range(2*n - 2):
         if i%2 == 0:
