@@ -147,6 +147,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We compute the radical basis in a subalgebra using
             the inherited product::
 
+                sage: # needs sage.modules
                 sage: scoeffs = {('a','e'): {'a':1}, ('b','e'): {'a':1, 'b':1},
                 ....:            ('c','d'): {'a':1}, ('c','e'): {'c':1}}
                 sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
@@ -157,14 +158,14 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: A = KleinFourGroup().algebra(GF(2))                               # needs sage.groups sage.modules
-                sage: A.radical_basis()                                                 # needs sage.groups sage.modules
+                sage: # needs sage.groups sage.modules
+                sage: A = KleinFourGroup().algebra(GF(2))
+                sage: A.radical_basis()
                 (() + (1,2)(3,4), (3,4) + (1,2)(3,4), (1,2) + (1,2)(3,4))
-
-                sage: A = KleinFourGroup().algebra(QQ, category=Monoids())              # needs sage.groups sage.modules
-                sage: A.radical_basis.__module__                                        # needs sage.groups sage.modules
+                sage: A = KleinFourGroup().algebra(QQ, category=Monoids())
+                sage: A.radical_basis.__module__
                 'sage.categories.finite_dimensional_algebras_with_basis'
-                sage: A.radical_basis()                                                 # needs sage.groups sage.modules
+                sage: A.radical_basis()
                 ()
             """
             F = self.base_ring()
@@ -425,6 +426,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: scoeffs = {('a','e'): {'a':1}, ('b','e'): {'a':1, 'b':1},
                 ....:            ('c','d'): {'a':1}, ('c','e'): {'c':1}}
                 sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
@@ -433,6 +435,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A.dimension()
                 7
 
+                sage: # needs sage.modules
                 sage: L.<x,y,z> = LieAlgebra(GF(3), {('x','z'): {'x':1, 'y':1}, ('y','z'): {'y':1}})
                 sage: MS = MatrixSpace(L.base_ring(), L.dimension())
                 sage: gens = [b.adjoint_matrix() for b in L.basis()]
@@ -477,6 +480,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: scoeffs = {('a','e'): {'a':1}, ('b','e'): {'a':1, 'b':1},
                 ....:            ('c','d'): {'a':1}, ('c','e'): {'c':1}}
                 sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
@@ -1541,18 +1545,21 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.modules
                     sage: TL = TemperleyLiebAlgebra(5, 30, QQ)  # semisimple
                     sage: len(TL.radical_basis())
                     0
                     sage: TL.simple_module_parameterization()
                     (1, 3, 5)
 
+                    sage: # needs sage.modules
                     sage: TL = TemperleyLiebAlgebra(5, 1, QQ)  # not semisimple
                     sage: len(TL.radical_basis())
                     24
                     sage: TL.simple_module_parameterization()
                     (1, 3, 5)
 
+                    sage: # needs sage.modules
                     sage: TL = TemperleyLiebAlgebra(6, 30, QQ)  # semisimple
                     sage: all(TL.cell_module(la).dimension()
                     ....:     == TL.cell_module(la).simple_module().dimension()
@@ -1561,6 +1568,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: TL.simple_module_parameterization()
                     (0, 2, 4, 6)
 
+                    sage: # needs sage.modules
                     sage: TL = TemperleyLiebAlgebra(6, 0, QQ)  # not semisimple
                     sage: TL.simple_module_parameterization()
                     (2, 4, 6)
