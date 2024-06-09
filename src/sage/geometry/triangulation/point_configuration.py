@@ -180,6 +180,7 @@ AUTHORS:
 
 import itertools
 
+from sage.features import FeatureNotPresentError
 from sage.features.topcom import TOPCOMExecutable
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
@@ -288,7 +289,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             PointConfiguration._have_TOPCOM_cached = True
             assert out == '{{0,1}}',\
                 'TOPCOM ran but did not produce the correct output!'
-        except pexpect.ExceptionPexpect:
+        except (FeatureNotPresentError, pexpect.ExceptionPexpect):
             PointConfiguration._have_TOPCOM_cached = False
 
         PointConfiguration.set_engine('auto')
