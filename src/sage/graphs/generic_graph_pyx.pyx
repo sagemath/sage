@@ -1381,7 +1381,8 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     # static copy of the graph for more efficient operations
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=True)
     cdef short_digraph rev_sd
     cdef bint reverse = False
     if directed:

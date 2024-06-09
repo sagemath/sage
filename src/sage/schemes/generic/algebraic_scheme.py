@@ -98,7 +98,6 @@ AUTHORS:
 - Ben Hutz (2014): subschemes of Cartesian products of projective space
 
 - Ben Hutz (2017): split subschemes types into respective folders
-
 """
 
 # ****************************************************************************

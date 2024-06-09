@@ -20,7 +20,6 @@ EXAMPLES::
     sage: from numpy import mean                                                        # needs numpy
     sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # needs numpy sage.symbolic
     (24.0, 24.0)
-
 """
 # ******************************************************************************
 #

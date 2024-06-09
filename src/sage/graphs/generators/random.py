@@ -193,7 +193,7 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
 
     INPUT:
 
-    - ``n1, n2`` -- Cardinalities of the two sets
+    - ``n1``, ``n2`` -- Cardinalities of the two sets
 
     - ``p`` -- Probability for an edge to exist
 
@@ -288,7 +288,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
 
     INPUT:
 
-    - ``n1, n2`` -- number of vertices in each side
+    - ``n1``, ``n2`` -- number of vertices in each side
 
     - ``d1`` -- degree of the vertices in the set of cardinality `n1`.
 

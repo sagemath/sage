@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-categories
+
 from sage.misc.lazy_import import lazy_import
 
 # Ring base classes

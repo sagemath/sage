@@ -43,7 +43,6 @@ Related topics
 - :ref:`sage.coding`
 - :ref:`sage.dynamics`
 - :ref:`sage.graphs`
-
 """
 from sage.misc.namespace_package import install_doc, install_dict
 # install the docstring of this module to the containing package

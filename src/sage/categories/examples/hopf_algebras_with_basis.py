@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Examples of Hopf algebras with basis

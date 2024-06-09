@@ -623,8 +623,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [1 0]
             [0 1]...
 
-
-
         .. WARNING::
 
             Matrix morphisms can be defined by either left or right-multiplication.

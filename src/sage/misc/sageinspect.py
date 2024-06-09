@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Inspect Python, Sage, and Cython objects
 
@@ -24,7 +25,7 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
@@ -965,21 +966,21 @@ def _split_syntactical_unit(s):
         a, b = split_string(s[3:], "'''")
         return "'''"+a+"'''", b.strip()
     if s.startswith("r'''"):
-        a,b = split_string(s[4:], "'''")
+        a, b = split_string(s[4:], "'''")
         return "r'''"+a+"'''", b.strip()
 
     # 2. s is a single-quoted string
     if s.startswith('"'):
-        a,b = split_string(s[1:], '"')
+        a, b = split_string(s[1:], '"')
         return '"'+a+'"', b.strip()
     if s.startswith("'"):
-        a,b = split_string(s[1:], "'")
+        a, b = split_string(s[1:], "'")
         return "'"+a+"'", b.strip()
     if s.startswith('r"'):
-        a,b = split_string(s[2:], '"')
+        a, b = split_string(s[2:], '"')
         return 'r"'+a+'"', b.strip()
     if s.startswith("r'"):
-        a,b = split_string(s[2:], "'")
+        a, b = split_string(s[2:], "'")
         return "r'"+a+"'", b.strip()
 
     # 3. s is not a string
@@ -1000,7 +1001,7 @@ def _split_syntactical_unit(s):
     elif start == '#':
         linebreak = s.index(os.linesep)
         if linebreak == -1:
-            return '',''
+            return '', ''
         return '', s[linebreak:].strip()
     else:
         M = __identifier_re.search(s)
@@ -1018,7 +1019,7 @@ def _split_syntactical_unit(s):
         elif s.startswith(stop):
             out.append(stop)
             return ''.join(out), s[1:].strip()
-    raise SyntaxError("Syntactical group starting with %s did not end with %s" % (repr(start),repr(stop)))
+    raise SyntaxError("Syntactical group starting with %s did not end with %s" % (repr(start), repr(stop)))
 
 
 def _sage_getargspec_from_ast(source):
@@ -1183,7 +1184,7 @@ def _sage_getargspec_cython(source):
     while (i < l):
         unit = cy_units[i]
         if expect_default:
-            if unit in ('=','*',','):
+            if unit in ('=', '*', ','):
                 raise SyntaxError("Definition of a default argument expected")
             while unit != ',':
                 py_units.append(unit)
@@ -1224,7 +1225,7 @@ def _sage_getargspec_cython(source):
             # Is "name" part of a type definition?
             # If it is the last identifier before '=' or ',',
             # then it *is* a variable name,
-            if i == l or cy_units[i] in ('=',','):
+            if i == l or cy_units[i] in ('=', ','):
                 if nb_stars == 0:
                     py_units.append(name)
                 elif nb_stars == 1:
@@ -1329,12 +1330,12 @@ def sage_getfile(obj):
     if isclassinstance(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
-        return sage_getfile(obj.__class__) #inspect.getabsfile(obj.__class__)
+        return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
 
     # No go? fall back to inspect.
     try:
         sourcefile = inspect.getabsfile(obj)
-    except TypeError: # this happens for Python builtins
+    except TypeError:  # this happens for Python builtins
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
@@ -1625,7 +1626,7 @@ def sage_getargspec(obj):
         except (TypeError, AttributeError):
             pass
     if isclassinstance(obj):
-        if hasattr(obj, '_sage_src_'): #it may be a decorator!
+        if hasattr(obj, '_sage_src_'):  # it may be a decorator!
             source = sage_getsource(obj)
             try:
                 # we try to find the definition and parse it by
@@ -1653,7 +1654,7 @@ def sage_getargspec(obj):
         # embedded in the docstring)
         try:
             source = sage_getsource(obj)
-        except TypeError: # happens for Python builtins
+        except TypeError:  # happens for Python builtins
             source = ''
         if source:
             return inspect.FullArgSpec(*_sage_getargspec_cython(source))
@@ -1666,11 +1667,11 @@ def sage_getargspec(obj):
     except AttributeError:
         try:
             args, varargs, varkw = inspect.getargs(func_obj)
-        except TypeError: # arg is not a code object
+        except TypeError:  # arg is not a code object
             # The above "hopefully" was wishful thinking:
             try:
                 return inspect.FullArgSpec(*_sage_getargspec_cython(sage_getsource(obj)))
-            except TypeError: # This happens for Python builtins
+            except TypeError:  # This happens for Python builtins
                 # The best we can do is to return a generic argspec
                 args = []
                 varargs = 'args'
@@ -1990,7 +1991,7 @@ def sage_getdoc_original(obj):
     else:
         typ = type(obj)
 
-    s,argspec = _extract_embedded_signature(_sage_getdoc_unformatted(obj), typ.__name__)
+    s, argspec = _extract_embedded_signature(_sage_getdoc_unformatted(obj), typ.__name__)
     if s:
         pos = _extract_embedded_position(s)
         if pos is not None:
@@ -2216,7 +2217,7 @@ def _sage_getsourcelines_name_with_dot(obj):
         pmatch = pat.match
         # fperez - fix: sometimes, co_firstlineno can give a number larger than
         # the length of lines, which causes an error.  Safeguard against that.
-        lnum = min(obj.co_firstlineno,len(lines))-1
+        lnum = min(obj.co_firstlineno, len(lines)) - 1
         while lnum > 0:
             if pmatch(lines[lnum]):
                 break

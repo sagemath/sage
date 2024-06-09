@@ -531,7 +531,7 @@ class FiniteField_givaro(FiniteField):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`~~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`~~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -547,7 +547,7 @@ class FiniteField_givaro(FiniteField):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -563,7 +563,7 @@ class FiniteField_givaro(FiniteField):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement`
 
         EXAMPLES::
 

@@ -197,5 +197,4 @@ This was fixed in Sympy, see :issue:`14437`::
     sage: f = u(n+2) - u(n+1) + u(n)/4
     sage: expand(2**n * rsolve(f,u(n)))
     2*C1*n + C0
-
 """

@@ -1035,6 +1035,7 @@ def _unpickle_element(C, d):
     """
     return C._from_dict(d, coerce=False, remove_zeros=False)
 
+
 # Handle old CombinatorialFreeModuleElement pickles, see Issue #22632
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.free_module",

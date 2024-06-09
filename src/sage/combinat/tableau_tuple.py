@@ -198,7 +198,6 @@ Parent classes:
 
 Much of the combinatorics implemented here is motivated by this and
 subsequent papers on the representation theory of these algebras.
-
 """
 
 # ****************************************************************************

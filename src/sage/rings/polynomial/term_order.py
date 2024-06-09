@@ -359,7 +359,6 @@ AUTHORS:
 - Kwankyu Lee: implemented matrix and weighted degree term orders
 
 - Simon King (2011-06-06): added termorder_from_singular
-
 """
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify

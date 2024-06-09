@@ -940,7 +940,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         return bound
 
-
     def height(self):
         r"""
         Return the height of self.
@@ -1220,7 +1219,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         return M
 
-
     def charpoly(self, var='x', algorithm="multimodular", proof=None):
         r"""
         Return the characteristic polynomial of self, as a polynomial
@@ -1427,7 +1425,6 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             f = f(x * denom) * (1 / (denom**f.degree()))
 
         return f
-
 
     def _reductions(self, p):
         """
