@@ -14,7 +14,6 @@ REFERENCES:
 
 - [AM1990]_
 - [RS2012]_
-
 """
 # *****************************************************************************
 #  Distributed under the terms of the GNU General Public License (GPL)

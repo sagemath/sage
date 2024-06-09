@@ -57,7 +57,7 @@ def is_paley(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -90,7 +90,7 @@ def is_mathon_PC_srg(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -152,7 +152,7 @@ def is_muzychuk_S6(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v, k, l, mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -202,7 +202,7 @@ def is_orthogonal_array_block_graph(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -262,7 +262,7 @@ def is_johnson(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -302,7 +302,7 @@ def is_steiner(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -347,7 +347,7 @@ def is_affine_polar(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -402,7 +402,7 @@ def is_orthogonal_polar(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -478,7 +478,7 @@ def is_goethals_seidel(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -559,7 +559,7 @@ def is_NOodd(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -630,7 +630,7 @@ def is_NOperp_F5(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -685,7 +685,7 @@ def is_NO_F2(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -736,7 +736,7 @@ def is_NO_F3(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -792,7 +792,7 @@ def is_NU(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -860,7 +860,7 @@ def is_haemers(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -902,7 +902,7 @@ def is_cossidente_penttila(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -947,7 +947,7 @@ def is_complete_multipartite(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1003,7 +1003,7 @@ def is_polhill(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1151,7 +1151,7 @@ def is_RSHCD(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1181,7 +1181,7 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     - ``existence`` (boolean) -- whether to return a graph or to test if Sage
       can build such a graph.
@@ -1262,7 +1262,7 @@ def is_unitary_polar(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1339,7 +1339,7 @@ def is_unitary_dual_polar(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1390,7 +1390,7 @@ def is_GQqmqp(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1483,7 +1483,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
 
     INPUT:
 
-    - ``v,k0,l,mu`` (integers)
+    - ``v``, ``k0``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1543,7 +1543,7 @@ def is_taylor_twograph_srg(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1595,7 +1595,7 @@ def is_switch_skewhad(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1642,7 +1642,7 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1700,7 +1700,7 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     OUTPUT:
 
@@ -1745,7 +1745,7 @@ cdef eigenvalues(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     """
     # See 1.3.1 of [Distance-regular graphs]
@@ -1789,7 +1789,7 @@ def eigenmatrix(int v, int k, int l, int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     EXAMPLES:
 
@@ -1854,7 +1854,7 @@ cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
 
     INPUT:
 
-    - ``v,k,l,mu`` -- (integers) parameters of the graph
+    - ``v``, ``k``, ``l``, ``mu`` -- - (integrs) parameters of the graph
 
     OUTPUT:
 
@@ -2384,8 +2384,8 @@ def strongly_regular_from_two_weight_code(L):
         sage: G.is_strongly_regular(parameters=True)                                    # needs sage.modules sage.rings.finite_rings
         (81, 50, 31, 30)
     """
-    from sage.structure.element import is_Matrix
-    if is_Matrix(L):
+    from sage.structure.element import Matrix
+    if isinstance(L, Matrix):
         L = LinearCode(L)
     V = [tuple(l) for l in L]
     w1, _ = sorted(set(sum(map(bool, x)) for x in V).difference([0]))
@@ -2693,7 +2693,7 @@ cdef bint seems_feasible(int v, int k, int l, int mu) noexcept:
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers)
+    - ``v``, ``k``, ``l``, ``mu`` -- integers
 
     TESTS:
 
@@ -2786,8 +2786,8 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     INPUT:
 
-    - ``v,k,l,mu`` (integers) -- note that ``mu``, if unspecified, is
-      automatically determined from ``v,k,l``.
+    - ``v``, ``k``, ``l``, ``mu`` -- integers -- note that ``mu``, if unspecified, is
+      automatically determined from ``v``, ``k``, ``l``.
 
     - ``existence`` (boolean;``False``) -- instead of building the graph,
       return:

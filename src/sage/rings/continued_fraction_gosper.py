@@ -46,7 +46,7 @@ class gosper_iterator():
 
         INPUT:
 
-        - ``a, b, c, d`` -- integer coefficients of the transformation
+        - ``a``, ``b``, ``c``, ``d`` -- integer coefficients of the transformation
 
         - ``x`` -- a continued fraction
 

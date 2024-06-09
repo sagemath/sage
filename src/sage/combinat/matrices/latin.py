@@ -113,7 +113,6 @@ TESTS::
     sage: L = elementary_abelian_2group(3)
     sage: L == loads(dumps(L))
     True
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>,
@@ -793,8 +792,8 @@ class LatinSquare:
 
         OUTPUT:
 
-        - ``[r, c]`` -- cell such that self[r, c] is empty, or returns
-          None if self is a (full) latin square.
+        - ``[r, c]`` -- cell such that ``self[r, c]`` is empty, or returns
+          ``None`` if ``self`` is a (full) latin square
 
         EXAMPLES::
 

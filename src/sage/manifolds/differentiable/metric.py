@@ -27,7 +27,6 @@ REFERENCES:
 - [ONe1983]_
 - [DB1996]_
 - [DS2010]_
-
 """
 # *****************************************************************************
 #  Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

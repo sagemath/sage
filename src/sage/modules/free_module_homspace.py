@@ -76,7 +76,7 @@ See :issue:`13321`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.categories.homset
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -202,7 +202,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         """
         from . import free_module_morphism
         side = kwds.get("side", "left")
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             # Compute the matrix of the morphism that sends the
             # generators of the domain to the elements of A.
             C = self.codomain()

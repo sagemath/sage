@@ -15,7 +15,6 @@ is independent of ramification is in Polynomial_shared.pxi.
 AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>

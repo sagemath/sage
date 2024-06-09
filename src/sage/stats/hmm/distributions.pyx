@@ -33,7 +33,6 @@ from sage.misc.randstate cimport current_randstate, randstate
 from sage.stats.time_series cimport TimeSeries
 
 
-
 cdef double random_normal(double mean, double std, randstate rstate) noexcept:
     r"""
     Return a floating point number chosen from the normal distribution

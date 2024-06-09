@@ -5,7 +5,6 @@ Finite dimensional graded commutative algebras
 AUTHORS:
 
 - Michael Jung (2021): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2021 Michael Jung <m.jung at vu.nl>

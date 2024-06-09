@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Installing the SageMath Jupyter Kernel and Extensions
 
@@ -11,7 +12,6 @@ in the Jupyter notebook's kernel drop-down. This is done by
     directories might be different during runs of the tests and actual
     installation and because we might be lacking write permission to places
     such as ``/usr/share``.
-
 """
 
 import errno

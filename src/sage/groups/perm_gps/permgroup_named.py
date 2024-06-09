@@ -3130,7 +3130,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
 
     One of the following:
 
-    - ``m, p, n`` -- positive integers to construct `G(m,p,n)`
+    - ``m``, ``p``, ``n`` -- positive integers to construct `G(m,p,n)`
 
     - ``m`` -- integer such that `4 \leq m \leq 37` to construct
       an exceptional complex reflection `G_m`

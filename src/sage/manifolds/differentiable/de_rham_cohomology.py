@@ -34,7 +34,6 @@ Its elements, the cohomology classes, are represented by
 AUTHORS:
 
 - Michael Jung (2021) : initial version
-
 """
 
 #******************************************************************************

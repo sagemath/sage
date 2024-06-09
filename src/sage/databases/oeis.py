@@ -129,7 +129,6 @@ AUTHORS:
 - Moritz Firsching (2016): modifies handling of dead sequence, see :issue:`17330`
 - Thierry Monteil (2019): refactorization (unique representation :issue:`28480`,
   laziness :issue:`28627`)
-
 """
 
 # ****************************************************************************

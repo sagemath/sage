@@ -436,7 +436,7 @@ def complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound):
     - ``N`` -- positive integer at least 2 and not divisible by `p` (level).
     - ``p`` -- prime at least 5.
     - ``k0`` -- integer in range 0 to `p-1`.
-    - ``n, elldash`` -- positive integers.
+    - ``n``, ``elldash`` -- positive integers.
     - ``LWBModp`` -- list of lists of `q`-expansions over `GF(p)`.
     - ``bound`` -- positive even integer (twice the length of the list ``LWBModp``).
 
@@ -489,7 +489,7 @@ def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bo
     - ``N`` -- positive integer at least 2 and not divisible by p (level).
     - ``p`` -- prime at least 5.
     - ``k0`` -- integer in range 0 to `p - 1`.
-    - ``n, mdash, elldashp, elldash`` -- positive integers.
+    - ``n``, ``mdash``, ``elldashp``, ``elldash`` -- positive integers.
     - ``modformsring`` -- ``True`` or ``False``.
     - ``bound`` -- positive (even) integer (ignored if ``modformsring`` is True).
 
@@ -555,7 +555,7 @@ def higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp, modformsring, b
     - ``p`` -- prime at least 5.
     - ``N`` -- positive integer at least 2 and not divisible by `p` (level).
     - ``k0`` -- integer in range 0 to `p-1`.
-    - ``m, mdash, elldash, elldashp`` -- positive integers.
+    - ``m``, ``mdash, ``elldash``, ``elldashp`` -- positive integers.
     - ``modformsring`` -- ``True`` or ``False``.
     - ``bound`` -- positive (even) integer.
 
@@ -909,7 +909,7 @@ def katz_expansions(k0, p, ellp, mdash, n):
 
     - ``k0`` -- integer in range 0 to `p - 1`.
     - ``p`` -- prime at least 5.
-    - ``ellp, mdash, n`` -- positive integers.
+    - ``ellp``, ``mdash``, ``n`` -- positive integers.
 
     OUTPUT:
 

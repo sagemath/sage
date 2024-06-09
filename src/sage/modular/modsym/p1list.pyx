@@ -1087,7 +1087,7 @@ cdef class P1List():
         INPUT:
 
 
-        - ``u, v`` -- integers, with `\gcd(u,v,N)=1`, normalized so they lie in the list.
+        - ``u``, ``v`` -- integers, with `\gcd(u,v,N)=1`, normalized so they lie in the list.
 
 
         OUTPUT:

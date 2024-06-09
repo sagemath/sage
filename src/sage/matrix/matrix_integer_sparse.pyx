@@ -131,7 +131,6 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         """
         return mpz_vector_is_entry_zero_unsafe(&self._matrix[i], j)
 
-
     ########################################################################
     # LEVEL 2 functionality
     #   * def _pickle
@@ -393,7 +392,6 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             for j from 0 <= j < self_row.num_nonzero:
                 set_entry(res_row, self_row.positions[j], mpz_fdiv_ui(self_row.entries[j], p))
         return res
-
 
     def rational_reconstruction(self, N):
         """
@@ -1261,7 +1259,6 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         cdef Matrix_integer_dense X = matrix(ZZ, A.coldim(), B.ncols(), sparse=False)  # solution
         cdef Vector_integer_dense d = vector(ZZ, X.ncols(), sparse=False)  # multipliers
-
 
         sig_on()
         cdef size_t i, j

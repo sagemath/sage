@@ -23,7 +23,7 @@ cdef double sqrt2pi = sqrt(2*M_PI)
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.flatten  import flatten
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
@@ -220,7 +220,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         # B should be a matrix of N rows, with column 0 the mean and 1
         # the standard deviation.
-        if is_Matrix(B):
+        if isinstance(B, Matrix):
             B = B.list()
         else:
             B = flatten(B)

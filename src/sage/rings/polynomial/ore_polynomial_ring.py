@@ -10,7 +10,6 @@ commutative base with equipped with an endomorphism and/or a derivation.
 AUTHOR:
 
 - Xavier Caruso (2020-04)
-
 """
 # ***************************************************************************
 #    Copyright (C) 2020 Xavier Caruso <xavier.caruso@normalesup.org>
@@ -976,7 +975,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         - ``monic`` -- (default: ``False``) if ``True``, return a monic
           Ore polynomial
 
-        - ``*args, **kwds`` -- passed on to the ``random_element`` method
+        - ``*args``, ``**kwds`` -- passed on to the ``random_element`` method
           for the base ring
 
         OUTPUT:
