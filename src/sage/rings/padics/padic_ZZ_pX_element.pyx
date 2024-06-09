@@ -567,6 +567,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         if shift != 0:
             raise NotImplementedError
 
+
 def _test_preprocess_list(R, L):
     r"""
     Given a list of elements convertible to ``ntl_ZZ_p``s, find the
@@ -697,6 +698,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
                 L[i] = ntl_ZZ_p(L[i].lift(), ctx)
     return L, min_val, ctx
 
+
 def _find_val_aprec_test(R, L):
     r"""
     Given a list ``L``, finds the minimum valuation, minimum absolute
@@ -771,6 +773,7 @@ cdef find_val_aprec(PowComputer_ext pp, L):
         if cur_type < total_type:
             total_type = cur_type
     return min_val, min_aprec, total_type
+
 
 def _test_get_val_prec(R, a):
     """
