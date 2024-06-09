@@ -4659,7 +4659,7 @@ def BiwheelGraph(n):
     pos_dict[2*n - 1] = (QQ((1, 3)), 0)
 
     for i in range(2*n - 2):
-        if i%2 == 0:
+        if i % 2 == 0:
             edges += [(i, 2*n - 1)]
         else:
             edges += [(i, 2*n - 2)]
