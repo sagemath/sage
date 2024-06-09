@@ -4458,7 +4458,108 @@ def CubeConnectedCycle(d):
 
 
 def StaircaseGraph(n):
-    pass
+    r"""
+    Return a staircase graph with `2n` nodes
+
+    For `n \geqslant 3`, the staircase graph of order `2n` is the graph obtained
+    from the ladder graph of order `2n - 2`, i.e., ``graphs.LadderGraph(n - 1)``
+    by introducing two new nodes `2n - 2` and `2n - 1`, and then joining the
+    node `2n - 2` with `0` and `n - 1`, the node `2n - 1` with `n - 2` and
+    `2n - 3`, and the nodes `2n - 2` and `2n - 1` with each other.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, each staircase graph will be
+    displayed horizontally, with the first `n - 1` nodes displayed from left to
+    right on the top horizontal line, the second `n - 1` nodes displayed from
+    left to right on the middle horizontal line, and the last two nodes
+    displayed at the bottom two corners.
+
+    INPUT:
+
+    - ``n`` -- an integer at least 3; number of nodes is `2n`
+
+    OUTPUT:
+
+    - ``G`` -- a staircase graph of order `2n`; note that a
+      :class:`ValueError` is returned if `n < 3`
+
+    EXAMPLES:
+
+    Construct and show a staircase graph with 10 nodes::
+
+        sage: g = graphs.StaircaseGraph(5)
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    Create several staircase graphs in a Sage graphics array::
+
+        sage: # needs sage.plots
+        sage: g = []
+        sage: j = []
+        sage: for i in range(9):
+        ....:    k = graphs.StaircaseGraph(i+3)
+        ....:    g.append(k)
+        sage: for i in range(3):
+        ....:    n = []
+        ....:    for m in range(3):
+        ....:        n.append(g[3*i + m].plot(vertex_size=50 - 4*(3*i+m), vertex_labels=False))
+        ....:    j.append(n)
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
+
+    TESTS:
+
+    The input parameter must be an integer that is at least 3::
+        sage: G = graphs.StaircaseGraph(2)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be at least 3
+
+    REFERENCES:
+
+    - [LM2024]_
+
+    .. SEEALSO::
+
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.LadderGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-06-09)
+    """
+    if n < 3:
+        raise ValueError("parameter n must be at least 3")
+
+    pos_dict = {
+        0: (0, 1),
+        n - 2: (n, 1),
+        2*n - 2: (0, -1),
+        2*n - 1: (n, -1)
+    }
+
+    edges = [
+        (0, n - 1),
+        (0, 2*n - 2),
+        (n - 2, 2*n - 3),
+        (n - 2, 2*n - 1),
+        (n - 1, 2*n - 2),
+        (2*n - 3, 2*n - 1),
+        (2*n - 2, 2*n - 1)
+    ]
+
+    for v in range(1, n - 2):
+        pos_dict[v] = (v + 1, 1)
+        edges.append((v, v + n - 1))
+
+    for v in range(n - 1, 2*n - 2):
+        pos_dict[v] = (v - n + 2, 0)
+
+    G = Graph(2 * n, pos=pos_dict, name="Staircase graph")
+    G.add_edges(edges)
+    G.add_path(list(range(n - 1)))
+    G.add_path(list(range(n - 1, 2*n - 2)))
+    return G
 
 
 def BiwheelGraph(n):
