@@ -163,10 +163,10 @@ def density_plot(f, xrange, yrange, **options):
 
     - ``f`` -- a function of two variables
 
-    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
+    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
       ``(x,xmin,xmax)``
 
-    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
+    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
       ``(y,ymin,ymax)``
 
     The following inputs must all be passed in as named parameters:

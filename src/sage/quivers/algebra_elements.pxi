@@ -4,7 +4,6 @@ Boilerplate functions for a cython implementation of elements of path algebras
 AUTHORS:
 
 - Simon King (2015-08)
-
 """
 
 # ****************************************************************************

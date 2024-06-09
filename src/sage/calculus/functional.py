@@ -390,9 +390,10 @@ def taylor(f, *args):
 
     - ``*args`` -- the following notation is supported
 
-    - ``x, a, n`` -- variable, point, degree
+    - ``x``, ``a``, ``n`` -- variable, point, degree
 
-    - ``(x, a), (y, b), ..., n`` -- variables with points, degree of polynomial
+    - ``(x, a)``, ``(y, b)``, ..., ``n`` -- variables with points, degree of
+      polynomial
 
     EXAMPLES::
 

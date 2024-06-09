@@ -245,7 +245,6 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
         sig_free(pos)
 
 
-
 cdef mpq_t mpq_set_tmp
 mpq_init(mpq_set_tmp)
 cdef int mpq_vector_set_entry_str(mpq_vector* v, Py_ssize_t n, char *x_str) except -1:

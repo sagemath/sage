@@ -2372,7 +2372,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``e0, e1, ...`` -- sequence of 0s and 1s
+        - ``e0``, ``e1``, ... -- sequence of 0s and 1s
 
         OUTPUT: The element `Q_0^{e_0} Q_1^{e_1} ...`
 
@@ -2426,7 +2426,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n0, n1, ...`` -- non-negative integers
+        - ``n0``, ``n1``, ... -- non-negative integers
 
         OUTPUT: The element `Q_{n0} Q_{n1} ...`
 
@@ -3777,7 +3777,7 @@ class SteenrodAlgebra_mod_two(SteenrodAlgebra_generic):
 
         INPUT:
 
-        - ``a, b, c, ...`` -- non-negative integers
+        - ``a``, ``b``, ``c``, ... -- non-negative integers
 
         OUTPUT: element of the Steenrod algebra
 

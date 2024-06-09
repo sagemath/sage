@@ -240,7 +240,6 @@ cdef extern from 'symmetrica/macro.h':
         data n_data
 
 
-
     #MACROS
     #S_PA_I(OP a, INT i)
     OBJECTKIND s_o_k(OP a)
@@ -616,7 +615,6 @@ cdef object _py_longint(OP a):
     return res
 
 
-
 ###########
 #Fractions#
 ###########
@@ -861,7 +859,6 @@ cdef object _op_polynom(object d, OP res):
     return None
 
 
-
 #######################################
 #Schur symmetric functions and friends#
 #######################################
@@ -1018,7 +1015,6 @@ cdef void* _op_schur_general_dict(object d, OP res) noexcept:
         insert(next, res, NULL, NULL)
 
 
-
 ######################
 #Schubert Polynomials#
 ######################
@@ -1168,8 +1164,6 @@ cdef object _py_tableau(OP t):
         return SkewTableau(res)
     else:
         return Tableau(res)
-
-
 
 
 def start():

@@ -3996,7 +3996,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
     - ``V`` -- the variables of the ``A[j]`` and ``B``
     - ``M`` -- a symmetric `l \times l` matrix, where `l` is the
       length of ``V``
-    - ``r, N`` -- natural numbers
+    - ``r``, ``N`` -- natural numbers
 
     OUTPUT:
 
@@ -4124,7 +4124,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
 
     INPUT:
 
-    - ``A, B`` -- Symbolic functions in the variable ``x``
+    - ``A``, ``B`` -- Symbolic functions in the variable ``x``
     - ``AB_derivs`` -- a dictionary whose keys are the (symbolic)
       derivatives of ``A`` up to order ``2 * N`` if ``v`` is even or
       ``N`` if ``v`` is odd and the (symbolic) derivatives of ``B``
@@ -4133,7 +4133,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
       that are the keys evaluated at a common point `p`
     - ``x`` -- a symbolic variable
     - ``a`` -- a complex number
-    - ``v, N`` -- natural numbers
+    - ``v``, ``N`` -- natural numbers
 
     OUTPUT:
 

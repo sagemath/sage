@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Coxeter Group Algebras
@@ -21,7 +22,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
 
             - ``w`` -- an element of the Coxeter group
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
+            - ``q1``, ``q2`` -- two elements of the ground ring
             - ``bar`` -- a boolean (default ``False``)
 
             See :meth:`demazure_lusztig_operators` for details.
@@ -75,7 +76,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring `K`
+            - ``q1``, ``q2`` -- two elements of the ground ring `K`
             - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``);
               which side to act upon
             - ``affine`` -- a boolean (default: ``True``)
@@ -145,7 +146,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             INPUT:
 
             - ``self`` -- a finite Coxeter group `W`
-            - ``q1,q2`` -- two elements of the ground ring `K`
+            - ``q1``, ``q2`` -- two elements of the ground ring `K`
 
             The affine Hecke algebra `H_{q_1,q_2}(\tilde W)` acts on
             the group algebra of `W` through the Demazure-Lusztig

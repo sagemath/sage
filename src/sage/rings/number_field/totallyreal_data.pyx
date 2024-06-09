@@ -8,7 +8,6 @@ AUTHORS:
 - John Voight (2007-09-19): various optimization tweaks
 - John Voight (2007-10-09): improvements: Smyth bound, Lagrange multipliers for b
 - Craig Citro and John Voight (2007-11-04): type checking and other polishing
-
 """
 
 #*****************************************************************************
@@ -108,6 +107,7 @@ def hermite_constant(n):
         gamma = 5.44615801810606**((n-1.)/35)
 
     return gamma
+
 
 cdef double eval_seq_as_poly(int *f, int n, double x) noexcept:
     r"""
@@ -291,11 +291,10 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
                     3*nrsq*s1sq*s2sq - 3*nr*s1fo*s2 + \
                     s1sq*s1fo
 
-
         fcoeff = [ int(coeffs[i]) for i in range(7) ]
         f = ZZx(fcoeff)
         df = ZZx([i*coeffs[i] for i in range(1,7)])
-        f = f//gcd(f,df)
+        f = f//gcd(f, df)
         fcoeff = [int(c) for c in f.list()]
 
         rts = RRx(fcoeff).roots()
@@ -314,6 +313,7 @@ cdef long primessq[46]
 primessq_py = [4, 9, 25, 49, 121, 169, 289, 361, 529, 841, 961, 1369, 1681, 1849, 2209, 2809, 3481, 3721, 4489, 5041, 5329, 6241, 6889, 7921, 9409, 10201, 10609, 11449, 11881, 12769, 16129, 17161, 18769, 19321, 22201, 22801, 24649, 26569, 27889, 29929, 32041, 32761, 36481, 37249, 38809, 39601]
 for i from 0 <= i < 46:
     primessq[i] = primessq_py[i]
+
 
 def int_has_small_square_divisor(sage.rings.integer.Integer d):
     r"""
@@ -342,6 +342,7 @@ def int_has_small_square_divisor(sage.rings.integer.Integer d):
             mpz_divexact_ui(d.value, d.value, primessq[i])
 
     return asq
+
 
 cdef int eval_seq_as_poly_int(int *f, int n, int x) noexcept:
     r"""
@@ -406,6 +407,7 @@ cdef int easy_is_irreducible(int *a, int n) noexcept:
 
     return 1
 
+
 def easy_is_irreducible_py(f):
     """
     Used solely for testing easy_is_irreducible.
@@ -422,7 +424,6 @@ def easy_is_irreducible_py(f):
     for i from 0 <= i < len(f):
         a[i] = f[i]
     return easy_is_irreducible(a, len(f)-1)
-
 
 
 #****************************************************************************
@@ -511,7 +512,6 @@ cdef class tr_data:
         for i from 0 <= i < (n+1)*n:
             self.beta[i] = <double>0
             self.gnk[i] = 0
-
 
         # Initialize variables.
         if a == []:
@@ -840,7 +840,6 @@ cdef class tr_data:
                                   -fabs(eval_seq_as_poly(gnkm1, nk, betak[nk+1-2*i]))*eps_global
                         if tmp_dbl > akmin:
                             akmin = tmp_dbl
-
 
                     akmax = -eval_seq_as_poly(gnkm, n-k, betak[nk]) \
                             +fabs(eval_seq_as_poly(gnkm1, n-(k+1), betak[nk]))*eps_global

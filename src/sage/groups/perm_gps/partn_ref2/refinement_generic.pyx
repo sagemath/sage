@@ -857,7 +857,6 @@ cdef class PartitionRefinement_generic:
         """
         return self._is_candidate_initialized and self._known_automorphisms.has_empty_intersection(self._part)
 
-
     ###########################################################################
     # These functions are used to produce some latex output:
     # it writes the actual node

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Semigroups
 """
@@ -497,6 +498,36 @@ class Semigroups(CategoryWithAxiom):
                 base_ring = ZZ
             from sage.modules.with_basis.representation import RegularRepresentation
             return RegularRepresentation(self, base_ring, side)
+
+        def representation(self, module, on_basis, side="left", *args, **kwargs):
+            r"""
+            Return a representation of ``self`` on ``module`` with
+            the action given by ``on_basis``.
+
+            INPUT:
+
+            - ``module`` -- a module with a basis
+            - ``on_basis`` -- function which takes as input ``g``, ``m``, where
+              ``g`` is an element of the semigroup and ``m`` is an element of the
+              indexing set for the basis, and returns the result of ``g`` acting
+              on ``m``
+            - ``side`` -- (default: ``"left"``) whether this is a
+              ``"left"`` or ``"right"`` representation
+
+            EXAMPLES::
+
+                sage: G = CyclicPermutationGroup(3)
+                sage: M = algebras.Exterior(QQ, 'x', 3)
+                sage: def on_basis(g, m):  # cyclically permute generators
+                ....:     return M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m])
+                sage: from sage.categories.algebras import Algebras
+                sage: R = G.representation(M, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional())
+                sage: R
+                Representation of Cyclic group of order 3 as a permutation group
+                 indexed by Subsets of {0,1,...,2} over Rational Field
+            """
+            from sage.modules.with_basis.representation import Representation
+            return Representation(self, module, on_basis, side, *args, **kwargs)
 
     class ElementMethods:
 
@@ -1015,3 +1046,31 @@ class Semigroups(CategoryWithAxiom):
                 """
                 S = self.basis().keys()
                 return S.regular_representation(self.base_ring(), side)
+
+            def representation(self, module, on_basis, side="left", *args, **kwargs):
+                r"""
+                Return a representation of ``self`` on ``module`` with
+                the action of the semigroup given by ``on_basis``.
+
+                INPUT:
+
+                - ``module`` -- a module with a basis
+                - ``on_basis`` -- function which takes as input ``g``, ``m``, where
+                  ``g`` is an element of the semigroup and ``m`` is an element of the
+                  indexing set for the basis, and returns the result of ``g`` acting
+                  on ``m``
+                - ``side`` -- (default: ``"left"``) whether this is a
+                  ``"left"`` or ``"right"`` representation
+
+                EXAMPLES::
+
+                    sage: G = groups.permutation.Dihedral(5)
+                    sage: CFM = CombinatorialFreeModule(GF(2), [1, 2, 3, 4, 5])
+                    sage: A = G.algebra(GF(2))
+                    sage: R = A.representation(CFM, lambda g, i: CFM.basis()[g(i)], side='right')
+                    sage: R
+                    Representation of Dihedral group of order 10 as a permutation
+                     group indexed by {1, 2, 3, 4, 5} over Finite Field of size 2
+                """
+                from sage.modules.with_basis.representation import Representation
+                return Representation(self.group(), module, on_basis, side, *args, **kwargs)

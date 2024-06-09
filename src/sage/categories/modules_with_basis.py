@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Modules With Basis
 
@@ -729,7 +730,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         def submodule(self, gens, check=True, already_echelonized=False,
                       unitriangular=False, support_order=None, category=None,
-                      *args, **opts):
+                      submodule_class=None, *args, **opts):
             r"""
             The submodule spanned by a finite set of elements.
 
@@ -746,6 +747,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``support_order`` -- (optional) either something that can
               be converted into a tuple or a key function
             - ``category`` -- (optional) the category of the submodule
+            - ``submodule_class`` -- (optional) the class of the submodule
+              to return
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
@@ -908,11 +911,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if not already_echelonized:
                 gens = self.echelon_form(gens, unitriangular, order=support_order)
 
-            from sage.modules.with_basis.subquotient import SubmoduleWithBasis
-            return SubmoduleWithBasis(gens, ambient=self,
-                                      support_order=support_order,
-                                      unitriangular=unitriangular,
-                                      category=category, *args, **opts)
+            if submodule_class is None:
+                from sage.modules.with_basis.subquotient import SubmoduleWithBasis as submodule_class
+            return submodule_class(gens, ambient=self,
+                                   support_order=support_order,
+                                   unitriangular=unitriangular,
+                                   category=category, *args, **opts)
 
         def quotient_module(self, submodule, check=True, already_echelonized=False, category=None):
             r"""
@@ -1077,7 +1081,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: GroupAlgebra(AbelianGroup(1), IntegerModRing(10)).is_finite()     # needs sage.groups sage.modules
                 False
             """
-            return (self.base_ring().is_finite() and self.group().is_finite())
+            return (self.base_ring().is_finite() and self.basis().keys().is_finite())
 
         def monomial(self, i):
             """
@@ -1466,6 +1470,39 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f
                 B['a'] + 3*B['c']
             """
+
+        def _test_monomial_coefficients(self, **options):
+            r"""
+            Test that :meth:`monomial_coefficients` works correctly if it is implemented.
+
+            INPUT:
+
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+
+            EXAMPLES:
+
+            By default, this method tests only the elements returned by
+            ``self.some_elements()``::
+
+                sage: A = AlgebrasWithBasis(QQ).example(); A
+                An example of an algebra with basis:
+                 the free algebra on the generators ('a', 'b', 'c') over Rational Field
+                sage: A.an_element()._test_monomial_coefficients()
+
+            See the documentation for :class:`TestSuite` for more information.
+            """
+            tester = self._tester(**options)
+            base_ring = self.parent().base_ring()
+            basis = self.parent().basis()
+            try:
+                d = self.monomial_coefficients()
+            except NotImplementedError:
+                return
+            tester.assertTrue(all(value.parent() == base_ring
+                                  for value in d.values()))
+            tester.assertEqual(self, self.parent().linear_combination(
+                (basis[index], coefficient)
+                for index, coefficient in d.items()))
 
         def __getitem__(self, m):
             """

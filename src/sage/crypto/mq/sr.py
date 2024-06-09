@@ -308,7 +308,7 @@ REFERENCES:
 - [MR2002]_
 """
 
-from sage.matrix.constructor import Matrix, random_matrix
+from sage.matrix.constructor import matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.flatten import flatten
 from sage.misc.verbose import get_verbose
@@ -320,7 +320,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import \
     BooleanPolynomialRing_constructor as BooleanPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from .mpolynomialsystemgenerator import MPolynomialSystemGenerator
 
@@ -683,7 +683,7 @@ class SR_generic(MPolynomialSystemGenerator):
             [  a^6 + a^5 + a^4 + a^3 + a^2 a^6 + a^5 + a^4 + a^2 + a + 1]
         """
         d = self.state_array(d)
-        return Matrix(self.base_ring(), d.nrows(), d.ncols(), [self.sub_byte(b) for b in d.list()])
+        return matrix(self.base_ring(), d.nrows(), d.ncols(), [self.sub_byte(b) for b in d.list()])
 
     def sub_byte(self, b):
         r"""
@@ -741,14 +741,14 @@ class SR_generic(MPolynomialSystemGenerator):
             # GF(2) linear map
             if e == 4:
                 if not hasattr(self, "_L"):
-                    self._L = Matrix(GF(2), 4, 4, [[1, 1, 1, 0],
+                    self._L = matrix(GF(2), 4, 4, [[1, 1, 1, 0],
                                                 [0, 1, 1, 1],
                                                 [1, 0, 1, 1],
                                                 [1, 1, 0, 1]])
 
             elif e == 8:
                 if not hasattr(self, "_L"):
-                    self._L = Matrix(GF(2), 8, 8, [[1, 0, 0, 0, 1, 1, 1, 1],
+                    self._L = matrix(GF(2), 8, 8, [[1, 0, 0, 0, 1, 1, 1, 1],
                                                 [1, 1, 0, 0, 0, 1, 1, 1],
                                                 [1, 1, 1, 0, 0, 0, 1, 1],
                                                 [1, 1, 1, 1, 0, 0, 0, 1],
@@ -910,7 +910,7 @@ class SR_generic(MPolynomialSystemGenerator):
         ret = []
         for i in range(d.nrows()):
             ret += list(d.row(i)[i % d.ncols():]) + list(d.row(i)[:i % d.ncols()])
-        return Matrix(self.base_ring(), self._r, self._c, ret)
+        return matrix(self.base_ring(), self._r, self._c, ret)
 
     def mix_columns(self, d):
         r"""
@@ -946,13 +946,13 @@ class SR_generic(MPolynomialSystemGenerator):
         a = k.gen()
         r = self._r
         if r == 1:
-            M = Matrix(self.base_ring(), 1, 1, [[1]])
+            M = matrix(self.base_ring(), 1, 1, [[1]])
         elif r == 2:
-            M = Matrix(self.base_ring(), 2, 2, [[a + 1, a],
+            M = matrix(self.base_ring(), 2, 2, [[a + 1, a],
                                               [a, a + 1]])
 
         elif r == 4:
-            M = Matrix(self.base_ring(), 4, 4, [[a, a+1, 1, 1],
+            M = matrix(self.base_ring(), 4, 4, [[a, a+1, 1, 1],
                                               [1, a, a+1, 1],
                                               [1, 1, a, a+1],
                                               [a+1, 1, 1, a]])
@@ -960,7 +960,7 @@ class SR_generic(MPolynomialSystemGenerator):
         for column in d.columns():
             ret.append(M * column)
         # AES uses the column major ordering
-        return Matrix(k, d.ncols(), d.nrows(), ret).transpose()
+        return matrix(k, d.ncols(), d.nrows(), ret).transpose()
 
     def add_round_key(self, d, key):
         r"""
@@ -1026,16 +1026,16 @@ class SR_generic(MPolynomialSystemGenerator):
         k = self.base_ring()
 
         if d is None:
-            return Matrix(k, r, c)
+            return matrix(k, r, c)
 
-        if is_Matrix(d):
+        if isinstance(d, Matrix):
             if d.nrows() == r*c*e:
-                return Matrix(k, c, r, self.antiphi(d).list()).transpose()
+                return matrix(k, c, r, self.antiphi(d).list()).transpose()
             elif d.ncols() == c and d.nrows() == r and d.base_ring() == k:
                 return d
 
         if isinstance(d, tuple([list, tuple])):
-            return Matrix(k, c, r, d).transpose()
+            return matrix(k, c, r, d).transpose()
 
     def is_state_array(self, d):
         """
@@ -1056,7 +1056,7 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr.is_state_array( matrix(k, 4, 4) )
             False
         """
-        return is_Matrix(d) and \
+        return isinstance(d, Matrix) and \
                d.nrows() == self.r and \
                d.ncols() == self.c and \
                d.base_ring() == self.base_ring()
@@ -1154,8 +1154,8 @@ class SR_generic(MPolynomialSystemGenerator):
         a = F.gen()
         SubByte = self.sub_byte
 
-        rc = Matrix(F, r, c, ([a**(i-1)] * c) + [F(0)]*((r-1)*c) )
-        ki = Matrix(F, r, c)
+        rc = matrix(F, r, c, ([a**(i-1)] * c) + [F(0)]*((r-1)*c) )
+        ki = matrix(F, r, c)
 
         if r == 1:
             s0 = SubByte(kj[0, c-1])
@@ -1852,10 +1852,10 @@ class SR_generic(MPolynomialSystemGenerator):
         _vars = self.vars
 
         if i == 0:
-            w1 = Matrix(R, r*c*e, 1, _vars("w", 1, r*c, e))
-            k0 = Matrix(R, r*c*e, 1, _vars("k", 0, r*c, e))
+            w1 = matrix(R, r*c*e, 1, _vars("w", 1, r*c, e))
+            k0 = matrix(R, r*c*e, 1, _vars("k", 0, r*c, e))
             if isinstance(plaintext, (tuple, list)) and len(plaintext) == r*c:
-                plaintext = Matrix(R, r*c*e, 1, self.phi(plaintext))
+                plaintext = matrix(R, r*c*e, 1, self.phi(plaintext))
             return tuple((w1 + k0 + plaintext).list())
 
         elif i > 0 and i <= n:
@@ -1863,21 +1863,21 @@ class SR_generic(MPolynomialSystemGenerator):
             if self._star and i == n:
                 M = self.Mstar
 
-            xj = Matrix(R, r*c*e, 1, _vars("x", i, r*c, e))
-            ki = Matrix(R, r*c*e, 1, _vars("k", i, r*c, e))
-            rcon = Matrix(R, r*c*e, 1, self.phi([self.sbox_constant()]*r*c))
+            xj = matrix(R, r*c*e, 1, _vars("x", i, r*c, e))
+            ki = matrix(R, r*c*e, 1, _vars("k", i, r*c, e))
+            rcon = matrix(R, r*c*e, 1, self.phi([self.sbox_constant()]*r*c))
 
             if i < n:
-                wj = Matrix(R, r*c*e, 1, _vars("w", i+1, r*c, e))
+                wj = matrix(R, r*c*e, 1, _vars("w", i+1, r*c, e))
             if i == n:
                 if isinstance(ciphertext, (tuple, list)) and len(ciphertext) == r*c:
-                    ciphertext = Matrix(R, r*c*e, 1, self.phi(ciphertext))
+                    ciphertext = matrix(R, r*c*e, 1, self.phi(ciphertext))
                 wj = ciphertext
 
             lin = (wj + ki + M * xj + rcon).list()
 
-            wi = Matrix(R, r*c*e, 1, _vars("w", i, r*c, e))
-            xi = Matrix(R, r*c*e, 1, _vars("x", i, r*c, e))
+            wi = matrix(R, r*c*e, 1, _vars("w", i, r*c, e))
+            xi = matrix(R, r*c*e, 1, _vars("x", i, r*c, e))
             sbox = []
             sbox += self.inversion_polynomials(xi, wi, r*c*e)
             sbox += self.field_polynomials("x", i)
@@ -1940,12 +1940,12 @@ class SR_generic(MPolynomialSystemGenerator):
             return tuple(self.field_polynomials("k", i, r*c))
         else:
             L = self.lin_matrix(r)
-            ki = Matrix(R, r*c*e, 1, self.vars("k", i  , r*c, e))
-            kj = Matrix(R, r*c*e, 1, self.vars("k", i-1, r*c, e))
-            si = Matrix(R, r*e, 1, self.vars("s", i-1, r, e))
+            ki = matrix(R, r*c*e, 1, self.vars("k", i  , r*c, e))
+            kj = matrix(R, r*c*e, 1, self.vars("k", i-1, r*c, e))
+            si = matrix(R, r*e, 1, self.vars("s", i-1, r, e))
 
-            rc = Matrix(R, r*e, 1, self.phi([a**(i-1)] + [k(0)]*(r-1)) )
-            d = Matrix(R, r*e, 1, self.phi([self.sbox_constant()]*r) )
+            rc = matrix(R, r*e, 1, self.phi([a**(i-1)] + [k(0)]*(r-1)) )
+            d = matrix(R, r*e, 1, self.phi([self.sbox_constant()]*r) )
 
             sbox = []
 
@@ -1970,7 +1970,7 @@ class SR_generic(MPolynomialSystemGenerator):
                     sbox += self.inversion_polynomials( kj[(4*c-4)*e  : (4*c-4)*e + e] , si[3*e : 4*e] , e )
 
             si = L * si + d + rc
-            Sum = Matrix(R, r*e, 1)
+            Sum = matrix(R, r*e, 1)
             lin = []
             if c > 1:
                 for q in range(c):
@@ -2090,7 +2090,7 @@ class SR_generic(MPolynomialSystemGenerator):
                 if isinstance(d[0], int):
                     d = [GF(2)(_) for _ in d]
                 if len(d) == r*c*e and (d[0].parent() is R or d[0].parent() == R):
-                    data.append( Matrix(R,r*c*e,1,d) )
+                    data.append( matrix(R,r*c*e,1,d) )
                     continue
                 try:
                     data.append( self.phi(self.state_array(d)) )
@@ -2164,9 +2164,9 @@ class SR_gf2n(SR_generic):
         k = self.base_ring()
 
         if d is None:
-            return Matrix(k, r*c*e, 1)
+            return matrix(k, r*c*e, 1)
         elif d.ncols() == c and d.nrows() == r and d.base_ring() == k:
-            return Matrix(k, r*c*e, 1, self.phi(d).transpose().list())
+            return matrix(k, r*c*e, 1, self.phi(d).transpose().list())
 
     def is_vector(self, d):
         """
@@ -2185,7 +2185,7 @@ class SR_gf2n(SR_generic):
             sage: sr.is_vector(B)
             True
         """
-        return is_Matrix(d) and \
+        return isinstance(d, Matrix) and \
                d.nrows() == self.r*self.c*self.e and \
                d.ncols() == 1 and \
                d.base_ring() == self.base_ring()
@@ -2212,7 +2212,7 @@ class SR_gf2n(SR_generic):
             [a^2 + 1       0]
         """
         ret = []
-        if is_Matrix(l):
+        if isinstance(l, Matrix):
             for e in l.transpose().list():
                 ret += [e**(2**i) for i in range(self.e)]
         else:
@@ -2222,8 +2222,8 @@ class SR_gf2n(SR_generic):
             return ret
         elif isinstance(l, tuple):
             return tuple(ret)
-        elif is_Matrix(l):
-            return Matrix(l.base_ring(), l.ncols(), l.nrows()*self.e, ret).transpose()
+        elif isinstance(l, Matrix):
+            return matrix(l.base_ring(), l.ncols(), l.nrows()*self.e, ret).transpose()
         else:
             raise TypeError
 
@@ -2242,7 +2242,7 @@ class SR_gf2n(SR_generic):
             sage: sr.antiphi(sr.phi(A)) == A
             True
         """
-        if is_Matrix(l):
+        if isinstance(l, Matrix):
             ret = [e for e in l.transpose().list()[0:-1:self.e]]
         else:
             ret = [e for e in l[0:-1:self.e]]
@@ -2251,8 +2251,8 @@ class SR_gf2n(SR_generic):
             return ret
         elif isinstance(l, tuple):
             return tuple(ret)
-        elif is_Matrix(l):
-            return Matrix(self.base_ring(), l.ncols(), l.nrows() // self.e,
+        elif isinstance(l, Matrix):
+            return matrix(self.base_ring(), l.ncols(), l.nrows() // self.e,
                           ret).transpose()
         else:
             raise TypeError
@@ -2275,7 +2275,7 @@ class SR_gf2n(SR_generic):
         c = self.c
         k = self.base_ring()
         bs = r*c*e
-        shift_rows = Matrix(k, bs, bs)
+        shift_rows = matrix(k, bs, bs)
         I = MatrixSpace(k, e, e)(1)
         for x in range(0, c):
             for y in range(0, r):
@@ -2316,7 +2316,7 @@ class SR_gf2n(SR_generic):
         if length is None:
             length = r*c
 
-        lin = Matrix(self.base_ring(), length*e, length*e)
+        lin = matrix(self.base_ring(), length*e, length*e)
         if e == 4:
             l = [k.from_integer(x) for x in (5, 1, 12, 5)]
             for k in range( 0, length ):
@@ -2364,7 +2364,7 @@ class SR_gf2n(SR_generic):
                 [      0       0   a + 1       0       0       0       a       0]
                 [      0       0       0 a^2 + 1       0       0       0     a^2]
             """
-            D = Matrix(self.base_ring(), self._e, self._e)
+            D = matrix(self.base_ring(), self._e, self._e)
             for i in range(self._e):
                 D[i, i] = b**(2**i)
             return D
@@ -2375,7 +2375,7 @@ class SR_gf2n(SR_generic):
         k = self.k
         a = k.gen()
 
-        M = Matrix(k, r*e, r*e)
+        M = matrix(k, r*e, r*e)
 
         if r == 1:
             self._insert_matrix_into_matrix(M,   D(1), 0, 0)
@@ -2407,7 +2407,7 @@ class SR_gf2n(SR_generic):
             self._insert_matrix_into_matrix(M,   D(1), 2*e, 1*e)
             self._insert_matrix_into_matrix(M,   D(1), 3*e, 2*e)
 
-        mix_columns = Matrix(k, r*c*e, r*c*e)
+        mix_columns = matrix(k, r*c*e, r*c*e)
 
         for i in range(c):
             self._insert_matrix_into_matrix(mix_columns, M, r*e*i, r*e*i)
@@ -2525,16 +2525,16 @@ class SR_gf2(SR_generic):
         k = GF(2)
 
         if d is None:
-            return Matrix(k, r*c*e, 1)
-        elif is_Matrix(d) and d.ncols() == c and d.nrows() == r and d.base_ring() == self.k:
+            return matrix(k, r*c*e, 1)
+        elif isinstance(d, Matrix) and d.ncols() == c and d.nrows() == r and d.base_ring() == self.k:
             l = flatten([self.phi(x) for x in d.transpose().list()], (Vector_modn_dense,list,tuple))
-            return Matrix(k, r*c*e, 1, l)
+            return matrix(k, r*c*e, 1, l)
         elif isinstance(d, (list, tuple)):
             if len(d) == self.r*self.c:
                 l = flatten([self.phi(x) for x in d], (Vector_modn_dense,list,tuple))
-                return Matrix(k, r*c*e, 1, l)
+                return matrix(k, r*c*e, 1, l)
             elif len(d) == self.r*self.c*self.e:
-                return Matrix(k, r*c*e, 1, d)
+                return matrix(k, r*c*e, 1, d)
             else:
                 raise TypeError
         else:
@@ -2565,7 +2565,7 @@ class SR_gf2(SR_generic):
             sage: sr.is_vector(B)
             True
         """
-        return is_Matrix(d) and \
+        return isinstance(d, Matrix) and \
                d.nrows() == self.r*self.c*self.e and \
                d.ncols() == 1 and \
                d.base_ring() == GF(2)
@@ -2599,10 +2599,10 @@ class SR_gf2(SR_generic):
         r, c, e = self.r, self.c, self.e
 
         # handle diffusion layer matrices first
-        if is_Matrix(l) and diffusion_matrix and \
+        if isinstance(l, Matrix) and diffusion_matrix and \
            l.nrows() == r*c and l.ncols() == r*c and \
            l.base_ring() == self.k:
-            B = Matrix(GF(2), r*c*e, r*c*e)
+            B = matrix(GF(2), r*c*e, r*c*e)
             for x in range(r*c):
                 for y in range(r*c):
                     T = self._mul_matrix(l[x, y])
@@ -2614,7 +2614,7 @@ class SR_gf2(SR_generic):
             return list(reversed(l._vector_()))
 
         # remaining matrices
-        if is_Matrix(l):
+        if isinstance(l, Matrix):
             for x in l.transpose().list():
                 ret += list(reversed(x._vector_()))
         # or lists
@@ -2626,8 +2626,8 @@ class SR_gf2(SR_generic):
             return ret
         elif isinstance(l, tuple):
             return tuple(ret)
-        elif is_Matrix(l):
-            return Matrix(GF(2), l.ncols(), l.nrows()*self.e, ret).transpose()
+        elif isinstance(l, Matrix):
+            return matrix(GF(2), l.ncols(), l.nrows()*self.e, ret).transpose()
         else:
             raise TypeError
 
@@ -2649,7 +2649,7 @@ class SR_gf2(SR_generic):
         e = self.e
         V = self.k.vector_space(map=False)
 
-        if is_Matrix(l):
+        if isinstance(l, Matrix):
             l2 = l.transpose().list()
         else:
             l2 = l
@@ -2662,8 +2662,8 @@ class SR_gf2(SR_generic):
             return ret
         elif isinstance(l, tuple):
             return tuple(ret)
-        elif is_Matrix(l):
-            return Matrix(self.base_ring(), self.r * self.c, 1, ret)
+        elif isinstance(l, Matrix):
+            return matrix(self.base_ring(), self.r * self.c, 1, ret)
         else:
             raise TypeError
 
@@ -2684,7 +2684,7 @@ class SR_gf2(SR_generic):
         c = self.c
         k = self.k
         bs = r*c
-        shift_rows = Matrix(k, r*c, r*c)
+        shift_rows = matrix(k, r*c, r*c)
         for x in range(0, c):
             for y in range(0, r):
                 _r = ((x*r)+y)
@@ -2711,18 +2711,18 @@ class SR_gf2(SR_generic):
         a = k.gen()
 
         if r == 1:
-            M = Matrix(k, r, r, 1)
+            M = matrix(k, r, r, 1)
 
         elif r == 2:
-            M = Matrix(k, r, r, [a+1, a, a, a+1])
+            M = matrix(k, r, r, [a+1, a, a, a+1])
 
         elif r == 4:
-            M = Matrix(k, r, [a, a+1, 1, 1,
+            M = matrix(k, r, [a, a+1, 1, 1,
                              1, a, a+1, 1,
                              1, 1, a, a+1,
                              a+1, 1, 1, a])
 
-        mix_columns = Matrix(k, r*c, r*c)
+        mix_columns = matrix(k, r*c, r*c)
 
         for i in range(c):
             self._insert_matrix_into_matrix(mix_columns, M, r*i, r*i)
@@ -2758,7 +2758,7 @@ class SR_gf2(SR_generic):
             length = r*c
 
         if e == 8:
-            Z = Matrix(GF(2), 8, 8, [1, 0, 0, 0, 1, 1, 1, 1,
+            Z = matrix(GF(2), 8, 8, [1, 0, 0, 0, 1, 1, 1, 1,
                                   1, 1, 0, 0, 0, 1, 1, 1,
                                   1, 1, 1, 0, 0, 0, 1, 1,
                                   1, 1, 1, 1, 0, 0, 0, 1,
@@ -2767,14 +2767,14 @@ class SR_gf2(SR_generic):
                                   0, 0, 1, 1, 1, 1, 1, 0,
                                   0, 0, 0, 1, 1, 1, 1, 1])
         else:
-            Z = Matrix(GF(2), 4, 4, [1, 1, 1, 0,
+            Z = matrix(GF(2), 4, 4, [1, 1, 1, 0,
                                   0, 1, 1, 1,
                                   1, 0, 1, 1,
                                   1, 1, 0, 1])
 
         Z = Z.transpose() # account for endianess mismatch
 
-        lin = Matrix(GF(2), length*e, length*e)
+        lin = matrix(GF(2), length*e, length*e)
 
         for i in range(length):
             self._insert_matrix_into_matrix(lin, Z, i*e, i*e)
@@ -2811,7 +2811,7 @@ class SR_gf2(SR_generic):
 
         columns = [list(reversed((x * a**i)._vector_()))
                    for i in reversed(range(e))]
-        return Matrix(GF(2), e, e, columns).transpose()
+        return matrix(GF(2), e, e, columns).transpose()
 
     def _square_matrix(self):
         """
@@ -2837,7 +2837,7 @@ class SR_gf2(SR_generic):
         columns = []
         for i in reversed(range(e)):
             columns.append( list(reversed(((a**i)**2)._vector_())) )
-        return Matrix(GF(2), e , e, columns).transpose()
+        return matrix(GF(2), e , e, columns).transpose()
 
     def inversion_polynomials_single_sbox(self, x=None, w=None, biaffine_only=None, correct_only=None):
         """
@@ -2916,14 +2916,14 @@ class SR_gf2(SR_generic):
         else:
             if isinstance(x, (tuple, list)):
                 P = x[0].parent()
-            elif is_Matrix(x):
+            elif isinstance(x, Matrix):
                 P = x.base_ring()
             else:
                 raise TypeError("x not understood")
 
-            if is_Matrix(x):
+            if isinstance(x, Matrix):
                 x = x.column(0).list()
-            if is_Matrix(w):
+            if isinstance(w, Matrix):
                 w = w.column(0).list()
 
         if e == 4:
@@ -3086,33 +3086,33 @@ class SR_gf2(SR_generic):
             # make sure it prints like in the book.
             names = ["w%d" % i for i in reversed(range(e))] + ["x%d" % i for i in reversed(range(e))]
             P = PolynomialRing(GF(2), e*2, names, order='lex')
-            x = Matrix(P, e, 1, P.gens()[e:])
-            w = Matrix(P, e, 1, P.gens()[:e])
+            x = matrix(P, e, 1, P.gens()[e:])
+            w = matrix(P, e, 1, P.gens()[:e])
         else:
             if isinstance(x, (tuple, list)):
                 P = x[0].parent()
-            elif is_Matrix(x):
+            elif isinstance(x, Matrix):
                 P = x.base_ring()
             else:
                 raise TypeError("x not understood")
 
             if isinstance(x, (tuple, list)):
-                x = Matrix(P, e, 1, x)
+                x = matrix(P, e, 1, x)
             if isinstance(w, (tuple, list)):
-                w = Matrix(P, e, 1, w)
+                w = matrix(P, e, 1, w)
 
         T = self._mul_matrix(self.k.gen())
-        o = Matrix(P, e, 1, [0]*(e-1) + [1])
+        o = matrix(P, e, 1, [0]*(e-1) + [1])
 
         columns = []
         for i in reversed(range(e)):
             columns.append((T**i * w).list())
-        Cw = Matrix(P, e, e, columns).transpose()
+        Cw = matrix(P, e, e, columns).transpose()
 
         columns = []
         for i in reversed(range(e)):
             columns.append((T**i * x).list())
-        Cx = Matrix(P, e, e, columns).transpose()
+        Cx = matrix(P, e, e, columns).transpose()
 
         S = self._square_matrix()
 
@@ -3153,9 +3153,9 @@ class SR_gf2(SR_generic):
              x100*w101 + x100*w103 + x100*w104 + x101*w100 + x101*w102 + x101*w103 + x101*w107 + x102*w101 + x102*w102 + x102*w106 + x103*w100 + x103*w101 + x103*w105 + x104*w100 + x104*w104 + x105*w103 + x106*w102 + x107*w101,
              x100*w102 + x100*w104 + x100*w105 + x101*w101 + x101*w103 + x101*w104 + x102*w100 + x102*w102 + x102*w103 + x102*w107 + x103*w101 + x103*w102 + x103*w106 + x104*w100 + x104*w101 + x104*w105 + x105*w100 + x105*w104 + x106*w103 + x107*w102]
         """
-        if is_Matrix(xi):
+        if isinstance(xi, Matrix):
             xi = xi.list()
-        if is_Matrix(wi):
+        if isinstance(wi, Matrix):
             wi = wi.list()
 
         e = self.e

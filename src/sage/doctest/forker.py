@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Processes for running doctests
 
@@ -1207,7 +1208,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: ex = doctests[0].examples[0]
             sage: print(DTR._failure_header(doctests[0], ex))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
@@ -1217,7 +1218,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: import doctest
             sage: print(doctest.DocTestRunner._failure_header(DTR, doctests[0], ex))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = Integer(42); doctest_var**Integer(2)
             <BLANKLINE>
@@ -1226,7 +1227,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
             sage: print(DTR._failure_header(doctests[0], ex, message='Hello there!'))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Hello there!
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
@@ -1317,7 +1318,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: DTR.report_start(sys.stdout.write, doctests[0], ex)
-            Trying (line 11):    doctest_var = 42; doctest_var^2
+            Trying (line 12):    doctest_var = 42; doctest_var^2
             Expecting:
                 1764
         """
@@ -1369,7 +1370,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
-            sage: ex.walltime = 0.0
+            sage: ex.walltime = 0.0r
             sage: DTR.report_success(sys.stdout.write, doctests[0], ex, '1764')
             ok [0.00 s]
         """
@@ -1412,7 +1413,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.no_failure_yet = True
             sage: DTR.report_failure(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', {})
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = 42; doctest_var^2
             Expected:
@@ -1542,10 +1543,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
-            sage: ex.walltime = 1.23
-            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34)
+            sage: ex.walltime = 1.23r
+            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34r)
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Warning, slow doctest:
                 doctest_var = 42; doctest_var^2
             Test ran for 1.23 s, check ran for 2.34 s
@@ -1673,11 +1674,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.run(doctests[0])
             TestResults(failed=0, attempted=4)
             sage: T.stop().annotate(DTR)
-            sage: D = DictAsObject({'cputime':[],'walltime':[],'err':None})
+            sage: D = DictAsObject({'cputime': [], 'walltime': [], 'err': None})
             sage: DTR.update_results(D)
             0
             sage: sorted(list(D.items()))
-            [('cputime', [...]), ('err', None), ('failures', 0), ('tests', 4), ('walltime', [...]), ('walltime_skips', 0)]
+            [('cputime', [...]), ('err', None), ('failures', 0), ('tests', 4),
+             ('walltime', [...]), ('walltime_skips', 0)]
         """
         for key in ["cputime", "walltime"]:
             if key not in D:

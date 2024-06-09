@@ -25,7 +25,6 @@ EXAMPLES::
     sage: phi = ps_modsym_from_simple_modsym_space(A)
     sage: phi.values()
     [(-1, 0, 0), (1, 0, 0), (-9, -6, -4)]
-
 """
 # ****************************************************************************
 #        Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
