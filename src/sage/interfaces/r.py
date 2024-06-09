@@ -631,8 +631,8 @@ class R(ExtraTabCompletion, Interface):
         We want to make sure that we actually can view R graphics, which happens
         differently on different platforms::
 
-            sage: s = r.eval('capabilities("png")')   # Should be on Linux and Solaris
-            sage: t = r.eval('capabilities("aqua")')  # Should be on all supported Mac versions
+            sage: s = r.eval('capabilities("png")')   # should be on Linux and Solaris
+            sage: t = r.eval('capabilities("aqua")')  # should be on all supported Mac versions
             sage: "TRUE" in s+t                                 # optional - rgraphics
             True
         """
@@ -1158,7 +1158,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: dummy = r._tab_completion(use_disk_cache=False)    #clean doctest
+            sage: dummy = r._tab_completion(use_disk_cache=False)  # clean doctest
             sage: 'testInheritedMethods' in r.completions('tes')
             True
         """
@@ -1306,7 +1306,7 @@ class R(ExtraTabCompletion, Interface):
         would need to use the following since R lattice graphics do
         not automatically print away from the command line::
 
-            sage: filename = tmp_filename() + '.png'  # Not needed in notebook, used for doctesting
+            sage: filename = tmp_filename() + '.png'  # not needed in notebook, used for doctesting
             sage: r.png(filename='"%s"'%filename)               # optional - rgraphics
             NULL
             sage: r.library("lattice")
