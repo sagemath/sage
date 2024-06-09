@@ -50,9 +50,9 @@ def best_linear_code_in_guava(n, k, F):
     """
     from sage.features.gap import GapPackage
     from .linear_code import LinearCode
-    GapPackage("guava", spkg="gap_packages").require()
+    GapPackage('guava', spkg='gap_packages').require()
     from sage.libs.gap.libgap import libgap
-    libgap.load_package("guava")
+    libgap.load_package('guava')
     C = libgap.BestKnownLinearCode(n, k, F)
     return LinearCode(C.GeneratorMat()._matrix_(F))
 
@@ -109,9 +109,9 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
           upperBoundExplanation := ... )
     """
     from sage.features.gap import GapPackage
-    GapPackage("guava", spkg="gap_packages").require()
+    GapPackage('guava', spkg='gap_packages').require()
     from sage.libs.gap.libgap import libgap
-    libgap.load_package("guava")
+    libgap.load_package('guava')
     return libgap.BoundsMinimumDistance(n, k, F)
 
 

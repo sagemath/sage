@@ -254,15 +254,15 @@ def codesize_upper_bound(n, d, q, algorithm=None):
 
         sage: codes.bounds.codesize_upper_bound(10, 3, 2)
         93
-        sage: codes.bounds.codesize_upper_bound(24, 8, 2, algorithm="LP")               # needs sage.numerical.mip
+        sage: codes.bounds.codesize_upper_bound(24, 8, 2, algorithm='LP')               # needs sage.numerical.mip
         4096
-        sage: codes.bounds.codesize_upper_bound(10, 3, 2, algorithm="gap")      # optional - gap_package_guava
+        sage: codes.bounds.codesize_upper_bound(10, 3, 2, algorithm='gap')              # optional - gap_package_guava
         85
         sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm=None)               # needs sage.symbolic
         123361
-        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="gap")      # optional - gap_package_guava
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm='gap')              # optional - gap_package_guava
         123361
-        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="LP")               # needs sage.numerical.mip
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm='LP')               # needs sage.numerical.mip
         109226
 
     TESTS:
@@ -271,7 +271,7 @@ def codesize_upper_bound(n, d, q, algorithm=None):
 
         sage: codes.bounds.codesize_upper_bound(19, 10, 2)
         20
-        sage: codes.bounds.codesize_upper_bound(19, 10, 2, algorithm="gap")     # optional - gap_package_guava
+        sage: codes.bounds.codesize_upper_bound(19, 10, 2, algorithm='gap')            # optional - gap_package_guava
         20
 
     Meaningless parameters are rejected::
@@ -283,7 +283,7 @@ def codesize_upper_bound(n, d, q, algorithm=None):
     """
     _check_n_q_d(n, q, d, field_based=False)
     if algorithm == "gap":
-        GapPackage("guava", spkg="gap_packages").require()
+        GapPackage("guava", spkg='gap_packages').require()
         libgap.load_package('guava')
         return int(libgap.UpperBound(n, d, q))
     if algorithm == "LP":
@@ -313,7 +313,7 @@ def dimension_upper_bound(n, d, q, algorithm=None):
         6
         sage: codes.bounds.dimension_upper_bound(30,15,4)                               # needs sage.libs.pari sage.symbolic
         13
-        sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm="LP")                # needs sage.libs.pari sage.numerical.mip
+        sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm='LP')                # needs sage.libs.pari sage.numerical.mip
         12
 
     TESTS:
@@ -380,12 +380,12 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
 
         sage: codes.bounds.plotkin_upper_bound(10,2,3)
         192
-        sage: codes.bounds.plotkin_upper_bound(10,2,3,algorithm="gap")  # optional - gap_package_guava
+        sage: codes.bounds.plotkin_upper_bound(10,2,3,algorithm='gap')  # optional - gap_package_guava
         192
     """
     _check_n_q_d(n, q, d, field_based=False)
     if algorithm == "gap":
-        GapPackage("guava", spkg="gap_packages").require()
+        GapPackage("guava", spkg='gap_packages').require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundPlotkin(n, d, q))
     else:
@@ -431,7 +431,7 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
 
         sage: codes.bounds.griesmer_upper_bound(10,2,3)                                 # needs sage.libs.pari
         128
-        sage: codes.bounds.griesmer_upper_bound(10,2,3,algorithm="gap")         # optional - gap_package_guava, needs sage.libs.pari
+        sage: codes.bounds.griesmer_upper_bound(10,2,3,algorithm='gap')                 # optional - gap_package_guava, needs sage.libs.pari
         128
 
     TESTS::
@@ -443,7 +443,7 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
     """
     _check_n_q_d(n, q, d)
     if algorithm == "gap":
-        GapPackage("guava", spkg="gap_packages").require()
+        GapPackage("guava", spkg='gap_packages').require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundGriesmer(n, d, q))
     else:
@@ -472,13 +472,13 @@ def elias_upper_bound(n,q,d,algorithm=None):
 
         sage: codes.bounds.elias_upper_bound(10,2,3)
         232
-        sage: codes.bounds.elias_upper_bound(10,2,3,algorithm="gap")  # optional - gap_package_guava
+        sage: codes.bounds.elias_upper_bound(10,2,3,algorithm='gap')  # optional - gap_package_guava
         232
     """
     _check_n_q_d(n, q, d, field_based=False)
     r = 1-1/q
     if algorithm == "gap":
-        GapPackage("guava", spkg="gap_packages").require()
+        GapPackage("guava", spkg='gap_packages').require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundElias(n, d, q))
     else:

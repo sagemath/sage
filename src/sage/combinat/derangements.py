@@ -89,7 +89,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``x`` -- Can be an integer which corresponds to derangements of
+    - ``x`` -- can be an integer which corresponds to derangements of
       `\{1, 2, 3, \ldots, x\}`, a list, or a string
 
     REFERENCES:

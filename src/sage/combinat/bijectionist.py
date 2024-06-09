@@ -1748,7 +1748,7 @@ class Bijectionist(SageObject):
 
         Test if all formats are really possible::
 
-            sage: bij.possible_values(p="a")
+            sage: bij.possible_values(p='a')
             {'a': {1, 2}, 'b': {1, 2}}
             sage: bij.possible_values(p=["a", "b"])
             {'a': {1, 2}, 'b': {1, 2}}
@@ -1762,9 +1762,9 @@ class Bijectionist(SageObject):
             sage: A = B = 'ab'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: bij.set_constant_blocks([['a', 'b']])
-            sage: bij.possible_values(p="a")
+            sage: bij.possible_values(p='a')
             {'a': {0, 1}, 'b': {0, 1}}
-            sage: bij.possible_values(p="a", optimal=True)
+            sage: bij.possible_values(p='a', optimal=True)
             {'a': set(), 'b': set()}
         """
         # convert input to set of block representatives
@@ -1893,7 +1893,7 @@ class Bijectionist(SageObject):
                 # add constraint that not all of these can be 1, thus vetoing
                 # the current solution
                 minimal_subdistribution.add_constraint(sum(active_vars) <= len(active_vars) - 1,
-                                                       name="veto")
+                                                       name='veto')
             else:
                 s = new_s
 
@@ -2110,7 +2110,7 @@ class Bijectionist(SageObject):
                 support = [X[p] for p in P if d[p]]
                 # add constraint that the support is different
                 minimal_subdistribution.add_constraint(sum(support) <= len(support) - 1,
-                                                       name="veto")
+                                                       name='veto')
             else:
                 s = new_s
                 add_counter_example_constraint(s)
@@ -2274,7 +2274,7 @@ class Bijectionist(SageObject):
         EXAMPLES::
 
             sage: A = B = 'abc'
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver="GLPK")
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
             sage: next(bij.solutions_iterator())
             {'a': 0, 'b': 1, 'c': 0}
 
@@ -2303,7 +2303,7 @@ class Bijectionist(SageObject):
 
             sage: P = [list(a) for n in range(N) for a in Permutations(n).conjugacy_classes()]
 
-            sage: bij = Bijectionist(A, B, tau, solver="GLPK")
+            sage: bij = Bijectionist(A, B, tau, solver='GLPK')
             sage: bij.set_statistics((len, len))
             sage: bij.set_constant_blocks(P)
             sage: for solution in bij.solutions_iterator():
@@ -2534,7 +2534,7 @@ class _BijectionistMILP:
         EXAMPLES::
 
             sage: A = B = ["a", "b", "c"]
-            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver="GLPK")
+            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver='GLPK')
             sage: bij.set_constant_blocks([["a", "b"]])
             sage: next(bij.solutions_iterator())
             {'a': 0, 'b': 0, 'c': 1}
@@ -2640,7 +2640,7 @@ class _BijectionistMILP:
         TESTS::
 
             sage: A = B = 'abc'
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver="GLPK")
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: bmilp = _BijectionistMILP(bij)
             sage: it = bmilp.solutions_iterator(False, [])
@@ -2729,7 +2729,7 @@ class _BijectionistMILP:
                        for z in self._bijectionist._possible_block_values[p]
                        if solution[(p, z)]]
         self.milp.add_constraint(sum(active_vars) <= len(active_vars) - 1,
-                                 name="veto")
+                                 name='veto')
         self._solution_cache.append(solution)
 
     def _is_solution(self, constraint, values):
@@ -2825,7 +2825,7 @@ class _BijectionistMILP:
         for w in range(len(W)):
             for z in range(len(Z)):
                 self.milp.add_constraint(AZ_matrix[z][w] == B_matrix[z][w],
-                                         name="statistics")
+                                         name='statistics')
 
     def add_distribution_constraints(self):
         r"""

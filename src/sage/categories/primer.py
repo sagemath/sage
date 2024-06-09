@@ -193,7 +193,7 @@ Altogether, our group gets algorithms from a bunch of bookshelves::
 Those can be viewed graphically::
 
     sage: g = Groups().category_graph()                                                 # needs sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                         # needs sage.graphs sage.modules sage.plot
+    sage: g.set_latex_options(format='dot2tex')                                         # needs sage.graphs sage.modules sage.plot
     sage: view(g)                               # not tested                            # needs sage.graphs sage.modules sage.plot
 
 In case ``dot2tex`` is not available, you can use instead::
@@ -203,7 +203,7 @@ In case ``dot2tex`` is not available, you can use instead::
 Here is an overview of all categories in Sage::
 
     sage: g = sage.categories.category.category_graph()                                 # needs sage.graphs sage.groups sage.modules
-    sage: g.set_latex_options(format="dot2tex")                                         # needs sage.graphs sage.modules sage.plot
+    sage: g.set_latex_options(format='dot2tex')                                         # needs sage.graphs sage.modules sage.plot
     sage: view(g)                               # not tested                            # needs sage.graphs sage.modules sage.plot
 
 Wrap-up: generic algorithms in Sage are organized in a hierarchy of
@@ -379,7 +379,7 @@ categories and their super categories::
      Category of objects]
 
     sage: g = EuclideanDomains().category_graph()                                       # needs sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                         # needs sage.graphs sage.plot
+    sage: g.set_latex_options(format='dot2tex')                                         # needs sage.graphs sage.plot
     sage: view(g)                               # not tested                            # needs sage.graphs sage.plot
 
 A bit of help from computer science
@@ -498,7 +498,7 @@ hierarchy of categories and provide generic algorithms.
 The full hierarchy is best viewed graphically::
 
     sage: g = class_graph(m.__class__)                                                  # needs sage.combinat sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                         # needs sage.combinat sage.graphs sage.plot
+    sage: g.set_latex_options(format='dot2tex')                                         # needs sage.combinat sage.graphs sage.plot
     sage: view(g)                               # not tested                            # needs sage.combinat sage.graphs sage.plot
 
 Parallel hierarchy of classes for parents
@@ -554,7 +554,7 @@ best viewed graphically::
     sage: # needs sage.combinat sage.graphs sage.modules sage.plot
     sage: g = class_graph(m.__class__)
     sage: g.relabel(lambda x: x.replace("_",r"\_"))
-    sage: g.set_latex_options(format="dot2tex")
+    sage: g.set_latex_options(format='dot2tex')
     sage: view(g)                               # not tested
 
 .. NOTE::
@@ -1405,7 +1405,7 @@ for a category with two operations `+` and `*`::
 or for more advanced categories::
 
     sage: g = HopfAlgebras(QQ).WithBasis().Graded().Connected().category_graph()        # needs sage.graphs
-    sage: g.set_latex_options(format="dot2tex")                                         # needs sage.graphs sage.plot
+    sage: g.set_latex_options(format='dot2tex')                                         # needs sage.graphs sage.plot
     sage: view(g)                               # not tested                            # needs sage.graphs sage.plot
 
 Difference between axioms and regressive covariant functorial constructions

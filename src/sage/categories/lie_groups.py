@@ -30,7 +30,7 @@ class LieGroups(Category_over_base_ring):
 
     TESTS::
 
-        sage: TestSuite(C).run(skip="_test_category_over_bases")
+        sage: TestSuite(C).run(skip='_test_category_over_bases')
     """
     @cached_method
     def super_categories(self):

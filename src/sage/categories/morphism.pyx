@@ -575,7 +575,7 @@ cdef class SetMorphism(Morphism):
 
         - ``parent`` -- a Homset
         - ``function`` -- a Python function that takes elements
-          of the domain as input and returns elements of the codomain.
+          of the domain as input and returns elements of the codomain
 
         EXAMPLES::
 
@@ -751,7 +751,7 @@ cdef class SetIsomorphism(SetMorphism):
 
     - ``parent`` -- a Homset
     - ``function`` -- a Python function that takes elements
-      of the domain as input and returns elements of the codomain.
+      of the domain as input and returns elements of the codomain
 
     EXAMPLES::
 

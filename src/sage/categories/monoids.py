@@ -677,7 +677,7 @@ class Monoids(CategoryWithAxiom):
                 gens_prod = cartesian_product([Family(M.monoid_generators(),
                                                       lambda g: (i, g))
                                                for i, M in enumerate(F)])
-                return Family(gens_prod, lift, name="gen")
+                return Family(gens_prod, lift, name='gen')
 
         class ElementMethods:
             def multiplicative_order(self):

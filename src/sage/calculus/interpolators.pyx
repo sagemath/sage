@@ -105,8 +105,8 @@ cdef class PSpline:
 
         INPUT:
 
-        - ``t`` -- double, the parameter value for the parameterized curve,
-          between 0 and 2*pi.
+        - ``t`` -- double; the parameter value for the parameterized curve,
+          between 0 and 2*pi
 
         OUTPUT:
 
@@ -138,8 +138,8 @@ cdef class PSpline:
 
         INPUT:
 
-        - ``t`` -- double, the parameter value for the parameterized curve,
-          between 0 and 2*pi.
+        - ``t`` -- double; the parameter value for the parameterized curve,
+          between 0 and 2*pi
 
         OUTPUT:
 
@@ -262,8 +262,8 @@ cdef class CCSpline:
 
         INPUT:
 
-        - ``t`` -- double, the parameter value for the parameterized curve,
-          between 0 and 2*pi.
+        - ``t`` -- double; the parameter value for the parameterized curve,
+          between 0 and 2*pi
 
         OUTPUT:
 
@@ -296,8 +296,8 @@ cdef class CCSpline:
 
         INPUT:
 
-        - ``t`` -- double, the parameter value for the parameterized curve,
-          between 0 and 2*pi.
+        - ``t`` -- double; the parameter value for the parameterized curve,
+          between 0 and 2*pi
 
         OUTPUT:
 

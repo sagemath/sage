@@ -290,7 +290,7 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
 
 
 def delsarte_bound_constant_weight_code(n, d, w, return_data=False,
-                                        solver="PPL", isinteger=False):
+                                        solver='PPL', isinteger=False):
     r"""
     Find the Delsarte bound on a constant weight code.
 
@@ -362,7 +362,7 @@ def delsarte_bound_constant_weight_code(n, d, w, return_data=False,
 
 
 def delsarte_bound_hamming_space(n, d, q, return_data=False,
-                                 solver="PPL", isinteger=False):
+                                 solver='PPL', isinteger=False):
     r"""
     Find the Delsarte bound on codes in ``H_q^n`` of minimal distance ``d``
 
@@ -446,7 +446,7 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False,
 
 
 def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_data=False,
-                                          solver="PPL", isinteger=False):
+                                          solver='PPL', isinteger=False):
     r"""
     Find a modified Delsarte bound on additive codes in Hamming space `H_q^n` of minimal distance `d`.
 
@@ -469,7 +469,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
       only makes sense for additive codes.
 
     - ``q_base`` -- if ``0``, the code is assumed to be linear. Otherwise,
-      ``q=q_base^m`` and the code is linear over ``F_{q_base}``.
+      ``q=q_base^m`` and the code is linear over ``F_{q_base}``
 
     - ``return_data`` -- if ``True``, return a triple ``(W,LP,bound)``,
       where ``W`` is a weights vector, and ``LP`` the Delsarte bound
@@ -640,7 +640,7 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
 
 
 def delsarte_bound_Q_matrix(q, d, return_data=False,
-                            solver="PPL", isinteger=False):
+                            solver='PPL', isinteger=False):
     r"""
     Delsarte bound on a code with Q matrix ``q`` and lower bound on min. dist. ``d``.
 

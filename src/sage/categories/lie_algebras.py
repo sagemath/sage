@@ -864,7 +864,7 @@ class LieAlgebras(Category_over_base_ring):
             By default, this method runs the tests only on the
             elements returned by ``self.some_elements()``::
 
-                sage: L = LieAlgebra(QQ, 3, 'x,y,z', representation="polynomial")       # needs sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, 3, 'x,y,z', representation='polynomial')       # needs sage.combinat sage.modules
                 sage: L.some_elements()                                                 # needs sage.combinat sage.modules
                 [x + y + z]
                 sage: L._test_distributivity()                                          # needs sage.combinat sage.modules
@@ -1043,7 +1043,7 @@ class LiftMorphism(Morphism):
         We skip the category test since this is currently not an element of
         a homspace::
 
-            sage: TestSuite(f).run(skip="_test_category")                               # needs sage.combinat sage.libs.singular sage.modules
+            sage: TestSuite(f).run(skip='_test_category')                               # needs sage.combinat sage.libs.singular sage.modules
         """
         Morphism.__init__(self, Hom(domain, codomain))
 

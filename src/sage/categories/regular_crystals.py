@@ -449,10 +449,10 @@ class RegularCrystals(Category_singleton):
                         if checker(y):
                             edges.append([x, y, i])
             from sage.graphs.digraph import DiGraph
-            G = DiGraph([X, edges], format="vertices_and_edges", immutable=True)
+            G = DiGraph([X, edges], format='vertices_and_edges', immutable=True)
             from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
-                G.set_latex_options(format="dot2tex", edge_labels=True,
+                G.set_latex_options(format='dot2tex', edge_labels=True,
                                     color_by_label=self.cartan_type()._index_set_coloring)
             return G
 
@@ -878,7 +878,7 @@ class RegularCrystals(Category_singleton):
                       immutable=True, multiedges=True)
             from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
-                G.set_latex_options(format="dot2tex", edge_labels=True,
+                G.set_latex_options(format='dot2tex', edge_labels=True,
                                     color_by_label=self.cartan_type()._index_set_coloring)
             return G
 

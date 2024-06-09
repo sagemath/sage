@@ -225,7 +225,7 @@ class Groups(CategoryWithAxiom):
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
 
-            - ``elements`` -- (default = ``None``);  A list of
+            - ``elements`` -- (default: ``None``);  A list of
               elements of the group, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an
@@ -627,7 +627,7 @@ class Groups(CategoryWithAxiom):
                 gens_prod = cartesian_product([Family(G.group_generators(),
                                                       lambda g: (i, g))
                                                for i, G in enumerate(F)])
-                return Family(gens_prod, lift, name="gen")
+                return Family(gens_prod, lift, name='gen')
 
             def order(self):
                 r"""

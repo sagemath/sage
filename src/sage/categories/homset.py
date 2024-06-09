@@ -929,7 +929,7 @@ class Homset(Set_generic):
              Set of Morphisms from Free Group on generators {x, y, z}
              to Free Group on generators {x, y, z} in Category of infinite groups
             sage: HH = Hom(H, H)
-            sage: HH(HH.identity(), foo="bar")
+            sage: HH(HH.identity(), foo='bar')
             Traceback (most recent call last):
             ...
             NotImplementedError: no keywords are implemented for

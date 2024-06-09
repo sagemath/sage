@@ -122,7 +122,7 @@ class LieConformalAlgebraWithStructureCoefficients(
         INPUT:
 
         - ``s_coeff`` -- a dictionary as in
-          :class:`~sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefficients.LieConformalAlgebraWithStructureCoefficients`.
+          :class:`~sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefficients.LieConformalAlgebraWithStructureCoefficients`
         - ``index_set`` -- a finite enumerated set indexing the
           generators (not counting the central elements).
         - ``ce`` -- a tuple of ``str``; a list of names for the central

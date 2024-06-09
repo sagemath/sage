@@ -36,7 +36,7 @@ def polynomial_to_list(p, len):
     - ``p`` -- a polynomial
 
     - ``len`` -- integer; if ``len`` is smaller than the degree of ``p``, the
-      returned list will be of size degree of ``p``, else it will be of size ``len``.
+      returned list will be of size degree of ``p``, else it will be of size ``len``
 
     EXAMPLES::
 
@@ -110,15 +110,16 @@ def gilt(x):
 def solve_degree2_to_integer_range(a, b, c):
     r"""
     Returns the greatest integer range `[i_1, i_2]` such that
-    `i_1 > x_1` and `i_2 < x_2` where `x_1, x_2` are the two zeroes of the equation in `x`:
-    `ax^2+bx+c=0`.
+    `i_1 > x_1` and `i_2 < x_2` where `x_1, x_2` are the two zeroes of the
+    equation in `x`: `ax^2+bx+c=0`.
 
-    If there is no real solution to the equation, it returns an empty range with negative coefficients.
+    If there is no real solution to the equation, it returns an empty range
+    with negative coefficients.
 
     INPUT:
 
-    - ``a``, ``b`` and ``c`` -- coefficients of a second degree equation, ``a`` being the coefficient of
-      the higher degree term.
+    - ``a``, ``b`` and ``c`` -- coefficients of a second degree equation, ``a``
+      being the coefficient of the higher degree term
 
     EXAMPLES::
 

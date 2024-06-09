@@ -146,7 +146,7 @@ def ReedMullerCode(base_field, order, num_of_var):
     - ``base_field`` -- the finite field `F` over which the code is built
 
     - ``order`` -- the order of the Reed-Muller Code, which is the maximum
-      degree of the polynomial to be used in the code.
+      degree of the polynomial to be used in the code
 
     - ``num_of_var`` -- the number of variables used in polynomial
 
@@ -208,7 +208,7 @@ class QAryReedMullerCode(AbstractLinearCode):
     - ``base_field`` -- a finite field, which is the base field of the code
 
     - ``order`` -- the order of the Reed-Muller Code, i.e., the maximum degree
-      of the polynomial to be used in the code.
+      of the polynomial to be used in the code
 
     - ``num_of_var`` -- the number of variables used in polynomial
 

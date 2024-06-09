@@ -382,9 +382,8 @@ class Core(CombinatorialElement):
 
         - a tuple `[r,s]` such that `r` and `s` are not equivalent mod `k`
 
-        OUTPUT:
-
-        - a list of integers in `\{0,1,\ldots,k-1\}` representing a reduced word for the transposition `t`
+        OUTPUT: a list of integers in `\{0,1,\ldots,k-1\}` representing a
+        reduced word for the transposition `t`
 
         EXAMPLES::
 

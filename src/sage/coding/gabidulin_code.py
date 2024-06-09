@@ -660,7 +660,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         C = self.code()
         return C.base_field()['x', C.twisting_homomorphism()]
 
-    def encode(self, p, form="vector"):
+    def encode(self, p, form='vector'):
         """
         Transform the polynomial ``p`` into a codeword of :meth:`code`.
 

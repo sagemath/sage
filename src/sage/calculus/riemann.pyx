@@ -863,7 +863,7 @@ cdef class Riemann_Map:
           behavior of the radial lines near the boundaries.
           - only for simply connected domains
 
-        - ``linescale`` -- float between 0 and 1. Shrinks the radial lines
+        - ``linescale`` -- float between 0 and 1; shrinks the radial lines
           away from the boundary to reduce erratic behavior.
           - only for simply connected domains
 
@@ -1435,7 +1435,7 @@ cpdef cauchy_kernel(t, args):
       - ``z`` -- complex; the point to be mapped
 
       - ``n`` -- integer; the number of terms to include
-        10 is fairly accurate, 20 is very accurate.
+        (10 is fairly accurate, 20 is very accurate)
 
       - ``part`` -- will return the real ('r'), imaginary ('i') or
         complex ('c') value of the kernel

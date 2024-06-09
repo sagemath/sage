@@ -120,7 +120,7 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- a list, the input alphabet
+        - ``input_alphabet`` -- list; the input alphabet
 
         OUTPUT: an :class:`~Automaton`
 
@@ -153,7 +153,7 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- a list, the input alphabet
+        - ``input_alphabet`` -- list; the input alphabet
 
         OUTPUT: an :class:`~Automaton`
 
@@ -221,10 +221,10 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``word`` -- an iterable.
+        - ``word`` -- an iterable
 
-        - ``input_alphabet`` -- a list or ``None``. If ``None``,
-          then the letters occurring in the word are used.
+        - ``input_alphabet`` -- list or ``None``; if ``None``,
+          then the letters occurring in the word are used
 
         OUTPUT: an :class:`~Automaton`
 
@@ -279,11 +279,11 @@ class AutomatonGenerators:
 
         INPUT:
 
-        - ``word`` -- a list (or other iterable) of letters, the
-          word we are looking for.
+        - ``word`` -- list (or other iterable) of letters; the
+          word we are looking for
 
-        - ``input_alphabet`` -- a list or other iterable, the input
-          alphabet.
+        - ``input_alphabet`` -- list or other iterable; the input
+          alphabet
 
         OUTPUT: an :class:`~Automaton`
 
@@ -363,7 +363,7 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -402,9 +402,9 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``block`` -- a list (or other iterable) of letters.
+        - ``block`` -- list (or other iterable) of letters
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -522,10 +522,10 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``threshold`` -- a positive integer specifying how many
-          occurrences of ``True`` inputs are waited for.
+          occurrences of ``True`` inputs are waited for
 
         OUTPUT:
 
@@ -565,9 +565,9 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``f`` -- function to realize.
+        - ``f`` -- function to realize
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -610,14 +610,14 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``operator`` -- operator to realize. It is a function which
+        - ``operator`` -- operator to realize; it is a function which
           takes ``number_of_operands`` input arguments (each out of
-          ``input_alphabet``).
+          ``input_alphabet``)
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) it specifies the number
-          of input arguments the operator takes.
+          of input arguments the operator takes
 
         OUTPUT:
 
@@ -692,10 +692,10 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) specifies the number
-          of input arguments for the ``and`` operation.
+          of input arguments for the ``and`` operation
 
         OUTPUT:
 
@@ -743,10 +743,10 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) specifies the number
-          of input arguments for the ``or`` operation.
+          of input arguments for the ``or`` operation
 
         OUTPUT:
 
@@ -794,10 +794,10 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) it specifies the number
-          of input arguments the operator takes.
+          of input arguments the operator takes
 
         OUTPUT:
 
@@ -848,7 +848,7 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -887,7 +887,7 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``zero`` -- the zero symbol in the alphabet used
 
@@ -895,7 +895,7 @@ class TransducerGenerators:
 
         A transducer mapping `i_0\ldots i_k` to `(i_0\neq 0)\ldots(i_k\neq 0)`.
 
-        The Hamming weight is defined as the number of non-zero digits in the
+        The Hamming weight is defined as the number of nonzero digits in the
         input sequence over the alphabet ``input_alphabet`` (see
         :wikipedia:`Hamming_weight`). The output sequence of the transducer is
         a unary encoding of the Hamming weight. Thus the sum of the output
@@ -953,7 +953,7 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -1039,24 +1039,24 @@ class TransducerGenerators:
 
         INPUT:
 
-        - ``equation`` -- An equation of the form
+        - ``equation`` -- an equation of the form
 
           - ``f(base^K * n + r) == f(base^k * n + s) + t`` for some
             integers ``0 <= k < K``, ``r`` and some ``t``---valid for
             all ``n`` such that the arguments on both sides are
-            non-negative---
+            nonnegative---
 
           or the form
 
           - ``f(r) == t`` for some integer ``r`` and some ``t``.
 
-        - ``base`` -- see :meth:`~Recursion`.
+        - ``base`` -- see :meth:`~Recursion`
 
-        - ``function`` -- see :meth:`~Recursion`.
+        - ``function`` -- see :meth:`~Recursion`
 
-        - ``var`` -- see :meth:`~Recursion`.
+        - ``var`` -- see :meth:`~Recursion`
 
-        - ``output_rings`` -- see :meth:`~Recursion`.
+        - ``output_rings`` -- see :meth:`~Recursion`
 
         OUTPUT:
 
@@ -1360,7 +1360,7 @@ class TransducerGenerators:
           - ``f(base^K * n + r) == f(base^k * n + s) + t`` for some
             integers ``0 <= k < K``, ``r`` and some ``t``---valid for
             all ``n`` such that the arguments on both sides are
-            non-negative---
+            nonnegative---
 
           or the form
 
@@ -1371,12 +1371,12 @@ class TransducerGenerators:
           ``r``, ``k``, ``s``, ``t`` as above or a tuple ``(r, t)``.
           Note that ``t`` *must* be a list in this case.
 
-        - ``base`` -- base of the digit expansion.
+        - ``base`` -- base of the digit expansion
 
         - ``function`` -- symbolic function ``f`` occurring in the
           recursions.
 
-        - ``var`` -- symbolic variable.
+        - ``var`` -- symbolic variable
 
         - ``input_alphabet`` -- (default: ``None``) a list of digits
           to be used as the input alphabet. If ``None`` and the base
@@ -1392,9 +1392,9 @@ class TransducerGenerators:
 
         - ``is_zero`` -- (default: ``None``) a callable. The recursion
           relations are only well-posed if there is no cycle with
-          non-zero output and input consisting of zeros. This parameter
+          nonzero output and input consisting of zeros. This parameter
           is used to determine whether the output of such a cycle is
-          non-zero. By default, the output must evaluate to ``False`` as
+          nonzero. By default, the output must evaluate to ``False`` as
           a boolean.
 
         - ``output_rings`` -- (default: ``[ZZ, QQ]``) a list of
@@ -1500,7 +1500,7 @@ class TransducerGenerators:
                 sage: sum(T(binary_expansion))                                          # needs sage.symbolic
                 3
 
-            Indeed, the given non-adjacent form has three non-zero
+            Indeed, the given non-adjacent form has three nonzero
             digits.
 
         -   The following example computes the non-adjacent form from the
@@ -1841,13 +1841,13 @@ class TransducerGenerators:
 
             INPUT:
 
-            - ``carry`` -- integer.
+            - ``carry`` -- integer
 
-            - ``level`` -- integer.
+            - ``level`` -- integer
 
-            - ``force_nonnegative_target`` -- boolean. If ``True``, only
-              recursion transitions leading to a non-negative carry are
-              returned.
+            - ``force_nonnegative_target`` -- boolean; if ``True``, only
+              recursion transitions leading to a nonnegative carry are
+              returned
 
             OUTPUT:
 
@@ -1880,13 +1880,13 @@ class TransducerGenerators:
 
             INPUT:
 
-            - ``carry`` -- integer.
+            - ``carry`` -- integer
 
-            - ``level`` -- integer.
+            - ``level`` -- integer
 
-            - ``force_nonnegative_target`` -- boolean. If ``True``, only
-              recursion transitions leading to a non-negative carry are
-              allowed.
+            - ``force_nonnegative_target`` -- boolean; if ``True``, only
+              recursion transitions leading to a nonnegative carry are
+              allowed
 
             OUTPUT:
 
@@ -1913,7 +1913,7 @@ class TransducerGenerators:
             carry += input * base**level
             level += 1
             # We now may proceed along recursion transitions
-            # as long as the carries stay non-negative.
+            # as long as the carries stay nonnegative.
             ((carry, level), new_output) = recursion_transitions(
                 carry, level, True)
             return ((carry, level), output + new_output)
@@ -1928,7 +1928,7 @@ class TransducerGenerators:
 
             INPUT:
 
-            - ``n`` -- integer.
+            - ``n`` -- integer
 
             OUTPUT:
 

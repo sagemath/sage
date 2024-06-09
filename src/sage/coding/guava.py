@@ -65,8 +65,8 @@ def QuasiQuadraticResidueCode(p):
 
     AUTHOR: David Joyner (11-2005)
     """
-    GapPackage("guava", spkg="gap_packages").require()
-    libgap.load_package("guava")
+    GapPackage('guava', spkg='gap_packages').require()
+    libgap.load_package('guava')
     C = libgap.QQRCode(p)
     G = C.GeneratorMat()
     MS = MatrixSpace(GF(2), len(G), len(G[0]))
@@ -98,8 +98,8 @@ def RandomLinearCodeGuava(n, k, F):
     """
     current_randstate().set_seed_gap()
 
-    GapPackage("guava", spkg="gap_packages").require()
-    libgap.load_package("guava")
+    GapPackage('guava', spkg='gap_packages').require()
+    libgap.load_package('guava')
     C = libgap.RandomLinearCode(n,k,F)
     G = C.GeneratorMat()
     MS = MatrixSpace(F, len(G), len(G[0]))

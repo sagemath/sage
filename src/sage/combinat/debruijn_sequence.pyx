@@ -74,9 +74,9 @@ def debruijn_sequence(int k, int n):
 
     INPUT:
 
-    - ``k`` -- Arity. Must be an integer.
+    - ``k`` -- arity; must be an integer
 
-    - ``n`` -- Substring length. Must be an integer.
+    - ``n`` -- substring length; must be an integer
 
     EXAMPLES::
 
@@ -113,14 +113,14 @@ cdef gen(int t, int p, k, n):
 
 def is_debruijn_sequence(seq, k, n):
     r"""
-    Given a sequence of integer elements in `0..k-1`, tests whether it
+    Given a sequence of integer elements in `0, \ldots, k-1`, tests whether it
     corresponds to a De Bruijn sequence of parameters `k` and `n`.
 
     INPUT:
 
-    - ``seq`` -- Sequence of elements in `0..k-1`.
+    - ``seq`` -- sequence of elements in `0, \ldots, k-1`
 
-    - ``n``, ``k`` -- Integers.
+    - ``n``, ``k`` -- integers
 
     EXAMPLES::
 
@@ -206,10 +206,10 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``k`` -- A natural number to define arity. The letters used are the
-      integers `0..k-1`.
+    - ``k`` -- a natural number to define arity; the letters used are the
+      integers `0, \ldots, k-1`
 
-    - ``n`` -- A natural number that defines the length of the substring.
+    - ``n`` -- a natural number that defines the length of the substring
 
     EXAMPLES:
 
@@ -325,7 +325,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``seq`` -- A sequence of integers.
+        - ``seq`` -- a sequence of integers
 
         EXAMPLES::
 

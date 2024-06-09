@@ -45,7 +45,7 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
     - ``names`` -- a tuple of ``str``; alternative names for the
       generators
     - ``index_set`` -- an enumerated set; alternative indexing
-      set for the generators.
+      set for the generators
 
     OUTPUT:
 

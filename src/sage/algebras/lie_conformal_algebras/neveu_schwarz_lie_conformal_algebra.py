@@ -35,7 +35,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative Ring; the base ring of this Lie
-      conformal algebra.
+      conformal algebra
 
     EXAMPLES::
 

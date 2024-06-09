@@ -406,13 +406,13 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P.order_ideal_complement_generators([1,2,3])
                 set()
 
-                sage: P.order_ideal_complement_generators([1], direction="down")
+                sage: P.order_ideal_complement_generators([1], direction='down')
                 {2}
-                sage: P.order_ideal_complement_generators([3], direction="down")
+                sage: P.order_ideal_complement_generators([3], direction='down')
                 {1, 2}
-                sage: P.order_ideal_complement_generators([1,2], direction="down")
+                sage: P.order_ideal_complement_generators([1,2], direction='down')
                 set()
-                sage: P.order_ideal_complement_generators([1,2,3], direction="down")
+                sage: P.order_ideal_complement_generators([1,2,3], direction='down')
                 set()
 
             .. WARNING::
@@ -664,7 +664,7 @@ class FinitePosets(CategoryWithAxiom):
                 [(1, x1), (2, x3), (3, x2)]
 
                 sage: l = P.birational_free_labelling(linear_extension=[1, 3, 2],
-                ....:                                 prefix="wut", reduced=True,
+                ....:                                 prefix='wut', reduced=True,
                 ....:                                 addvars="spam, eggs"); l
                 (Fraction Field of Multivariate Polynomial Ring
                   in wut1, wut2, wut3, spam, eggs over Rational Field,
@@ -701,7 +701,7 @@ class FinitePosets(CategoryWithAxiom):
 
                 sage: P = posets.ChainPoset(2).product(posets.ChainPoset(2))            # needs sage.modules
                 sage: l = P.birational_free_labelling(labels=x_label,
-                ....:                                 min_label="lambda", max_label="mu")
+                ....:                                 min_label='lambda', max_label='mu')
                 sage: sorted(l[1].items())
                 [((0, 0), x_00), ((0, 1), x_01), ((1, 0), x_10), ((1, 1), x_11)]
                 sage: l[2]
@@ -745,7 +745,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P = posets.SSTPoset([2,1])
                 sage: lext = sorted(P)
                 sage: l = P.birational_free_labelling(linear_extension=lext,
-                ....:                                 addvars="ohai"); l
+                ....:                                 addvars='ohai'); l
                 (Fraction Field of Multivariate Polynomial Ring
                   in a, x1, x2, x3, x4, x5, x6, x7, x8, b, ohai over Rational Field,
                  {...},
@@ -771,7 +771,7 @@ class FinitePosets(CategoryWithAxiom):
                 Finite lattice containing 6 elements
                 sage: lex = [(1,0),(0,0),(1,1),(0,1),(1,2),(0,2)]
                 sage: l = P.birational_free_labelling(linear_extension=lex,
-                ....:                                 prefix="u", reduced=True)
+                ....:                                 prefix='u', reduced=True)
                 sage: l
                 (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
                  {...},
@@ -788,7 +788,7 @@ class FinitePosets(CategoryWithAxiom):
             For comparison, the standard linear extension::
 
                 sage: # needs sage.modules
-                sage: l = P.birational_free_labelling(prefix="u", reduced=True); l
+                sage: l = P.birational_free_labelling(prefix='u', reduced=True); l
                 (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
                  {...},
                  1,
@@ -808,7 +808,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: # needs sage.modules
                 sage: lex = [(0,0),(0,1),(1,0),(1,1),(0,2),(1,2)]
                 sage: l = P.birational_free_labelling(linear_extension=P.linear_extension(lex),
-                ....:                                 prefix="u", reduced=True)
+                ....:                                 prefix='u', reduced=True)
                 sage: l
                 (Fraction Field of Multivariate Polynomial Ring in u1, u2, u3, u4, u5, u6 over Rational Field,
                  {...},
@@ -855,12 +855,12 @@ class FinitePosets(CategoryWithAxiom):
                  {},
                  1,
                  1)
-                sage: P.birational_free_labelling(prefix="zzz")
+                sage: P.birational_free_labelling(prefix='zzz')
                 (Fraction Field of Multivariate Polynomial Ring in a, b over Rational Field,
                  {},
                  a,
                  b)
-                sage: P.birational_free_labelling(labels="x,y,z", min_label="spam", max_label="eggs")
+                sage: P.birational_free_labelling(labels='x,y,z', min_label='spam', max_label='eggs')
                 (Fraction Field of Multivariate Polynomial Ring in spam, eggs over Rational Field,
                  {},
                  spam,
@@ -1590,12 +1590,11 @@ class FinitePosets(CategoryWithAxiom):
             INPUT:
 
             - ``antichain`` -- an antichain of ``self``, given as an
-              iterable.
+              iterable
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
-              constructor (``set``, ``tuple``, ``list``, ``frozenset``,
-              ``iter``, etc.) which is to be applied to the antichains
-              before they are yielded.
+            - ``element_constructor`` -- a type constructor (default: ``set``).
+              Can be ``set``, ``tuple``, ``list``, ``frozenset``, ``iter``,
+              etc. To be applied to the antichains before they are yielded.
 
             - ``stop`` -- boolean (default: ``True``); whether the iterator
               should stop once it completes its cycle (this happens when it is
@@ -1679,7 +1678,7 @@ class FinitePosets(CategoryWithAxiom):
             INPUT:
 
             - ``oideal`` -- an order ideal of ``self``, given as an
-              iterable.
+              iterable
 
             - ``element_constructor`` (defaults to ``set``) -- a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
@@ -1788,7 +1787,7 @@ class FinitePosets(CategoryWithAxiom):
               not be used as ``vs``).
 
             - ``oideal`` -- an order ideal of ``self``, given as an
-              iterable.
+              iterable
 
             - ``element_constructor`` (defaults to ``set``) -- a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,

@@ -356,7 +356,7 @@ class ConstructionFunctor(Functor):
         - ``self_bases`` -- the arguments passed to this functor
 
         - ``other_bases`` -- the arguments passed to the functor
-          ``other_functor``.
+          ``other_functor``
 
         OUTPUT:
 
@@ -394,7 +394,7 @@ class ConstructionFunctor(Functor):
         - ``self_bases`` -- the arguments passed to this functor
 
         - ``other_bases`` -- the arguments passed to the functor
-          ``other_functor``.
+          ``other_functor``
 
         - ``reason`` -- a string or ``None`` (default).
 
@@ -764,7 +764,7 @@ class MultivariateConstructionFunctor(ConstructionFunctor):
         - ``self_bases`` -- the arguments passed to this functor
 
         - ``other_bases`` -- the arguments passed to the functor
-          ``other_functor``.
+          ``other_functor``
 
         OUTPUT: a parent
 

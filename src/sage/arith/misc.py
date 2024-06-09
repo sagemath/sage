@@ -2323,10 +2323,10 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     - ``m`` -- a modulus
 
-    - ``algorithm`` -- (default: 'fast')
+    - ``algorithm`` -- string (default: ``'fast'``s)
 
       - ``'fast'`` -- a fast implementation using direct GMP library calls
-        in Cython.
+        in Cython
 
     OUTPUT:
 

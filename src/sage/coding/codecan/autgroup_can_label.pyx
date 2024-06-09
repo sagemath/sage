@@ -81,13 +81,13 @@ columns do share the same coloring::
 
 We can also restrict the group action to linear isometries::
 
-    sage: P = LinearCodeAutGroupCanLabel(C, algorithm_type="linear")
+    sage: P = LinearCodeAutGroupCanLabel(C, algorithm_type='linear')
     sage: P.get_autom_order() == GL(3, GF(4, 'a')).order()
     True
 
 and to the action of the symmetric group only::
 
-    sage: P = LinearCodeAutGroupCanLabel(C, algorithm_type="permutational")
+    sage: P = LinearCodeAutGroupCanLabel(C, algorithm_type='permutational')
     sage: P.get_autom_order() == C.permutation_automorphism_group().order()
     True
 """
@@ -184,7 +184,7 @@ class LinearCodeAutGroupCanLabel:
         True
     """
 
-    def __init__(self, C, P=None, algorithm_type="semilinear"):
+    def __init__(self, C, P=None, algorithm_type='semilinear'):
         """
         see :class:`LinearCodeAutGroupCanLabel`
 
@@ -213,7 +213,7 @@ class LinearCodeAutGroupCanLabel:
             [0 1 0 1 0 1 1]
             [0 0 1 1 1 1 0]
             sage: P2 = LinearCodeAutGroupCanLabel(C, P=[[0,3,5],[1,2,4,6]],
-            ....:      algorithm_type="permutational")
+            ....:      algorithm_type='permutational')
             sage: P2.get_canonical_form().generator_matrix()
             [1 1 1 0 0 0 1]
             [0 1 0 1 1 0 1]
@@ -294,7 +294,7 @@ class LinearCodeAutGroupCanLabel:
 
             # this command allows you some advanced debugging
             # it prints the backtrack tree -> must be activated when installing
-            # pr._latex_view(title="MyTitle") #this will provide you some visual representation of what is going on
+            # pr._latex_view(title='MyTitle') #this will provide you some visual representation of what is going on
 
             can_transp = pr.get_transporter()
             can_col_set = pr.get_canonical_form().columns()

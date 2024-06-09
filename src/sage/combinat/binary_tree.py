@@ -869,7 +869,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t1.show()                                                             # needs sage.plot
         """
         try:
-            self.graph(with_leaves=with_leaves).show(layout='tree', tree_root=0, tree_orientation="down")
+            self.graph(with_leaves=with_leaves).show(layout='tree', tree_root=0, tree_orientation='down')
         except RuntimeError:
             # This is for the border case BinaryTree().show().
             self.graph(with_leaves=with_leaves).show()
@@ -942,7 +942,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         self._require_mutable()
         self.__init__(self.parent(), None)
 
-    def _to_dyck_word_rec(self, usemap="1L0R"):
+    def _to_dyck_word_rec(self, usemap='1L0R'):
         r"""
         EXAMPLES::
 
@@ -1148,7 +1148,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         b = other.to_132_avoiding_permutation()
         return a.permutohedron_join(b).binary_search_tree_shape(left_to_right=False)
 
-    def tamari_meet(self, other, side="right"):
+    def tamari_meet(self, other, side='right'):
         r"""
         Return the meet of the binary trees ``self`` and ``other``
         (of equal size) in the `n`-th Tamari poset (where `n` is
@@ -1237,7 +1237,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         return from_tamari_sorting_tuple(meet)
 
     @combinatorial_map(name="to Dyck paths: up step, left tree, down step, right tree")
-    def to_dyck_word(self, usemap="1L0R"):
+    def to_dyck_word(self, usemap='1L0R'):
         r"""
         Return the Dyck word associated with ``self`` using the given map.
 
@@ -1293,7 +1293,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             raise ValueError("%s is not a correct map" % usemap)
         return DyckWord(self._to_dyck_word_rec(usemap))
 
-    def _to_ordered_tree(self, bijection="left", root=None):
+    def _to_ordered_tree(self, bijection='left', root=None):
         r"""
         Internal recursive method to obtain an ordered tree from a binary
         tree.
@@ -1303,16 +1303,16 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: bt = BinaryTree([[],[]])
             sage: bt._to_ordered_tree()
             [[], [[]]]
-            sage: bt._to_ordered_tree(bijection="right")
+            sage: bt._to_ordered_tree(bijection='right')
             [[[]], []]
-            sage: bt._to_ordered_tree(bijection="none")
+            sage: bt._to_ordered_tree(bijection='none')
             Traceback (most recent call last):
             ...
             ValueError: the bijection argument should be either left or right
             sage: bt = BinaryTree([[[], [[], None]], [[], []]])
             sage: bt._to_ordered_tree()
             [[], [[], []], [[], [[]]]]
-            sage: bt._to_ordered_tree(bijection="right")
+            sage: bt._to_ordered_tree(bijection='right')
             [[[[]], [[]]], [[]], []]
         """
         close_root = False
@@ -1377,7 +1377,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: bt.to_ordered_tree_right_branch()
             [[[[]], [[]]], [[]], []]
         """
-        return self._to_ordered_tree(bijection="right")
+        return self._to_ordered_tree(bijection='right')
 
     def _postfix_word(self, left_first=True, start=1):
         r"""
@@ -1425,7 +1425,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``reverse`` -- boolean (default ``False``) if ``True``,
+        - ``reverse`` -- boolean (default: ``False``); if ``True``,
           return instead the result for the left-right symmetric of the
           binary tree
 
@@ -4643,7 +4643,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
 
         sage: LabelledBinaryTree(None)
         .
-        sage: LabelledBinaryTree(None, label="ae")    # not well supported
+        sage: LabelledBinaryTree(None, label='ae')    # not well supported
         'ae'
         sage: LabelledBinaryTree([])
         None[., .]
@@ -5182,7 +5182,7 @@ class LabelledBinaryTrees(LabelledOrderedTrees):
         t = LT([], label=3)
         t1 = LT([t, t], label=42)
         t2 = LT([[], []], label=5)
-        return LT([t1, t2], label="toto")
+        return LT([t1, t2], label='toto')
 
     def unlabelled_trees(self):
         """
@@ -5230,7 +5230,7 @@ def binary_search_tree_shape(w, left_to_right=True):
 
     - ``w`` -- list of integers
 
-    - ``left_to_right`` -- boolean (default ``True``)
+    - ``left_to_right`` -- boolean (default: ``True``)
 
     OUTPUT: a non labelled binary tree
 

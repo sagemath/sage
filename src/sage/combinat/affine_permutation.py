@@ -219,7 +219,7 @@ class AffinePermutation(ClonableArray):
         """
         return self.value(i)
 
-    def is_i_grassmannian(self, i=0, side="right") -> bool:
+    def is_i_grassmannian(self, i=0, side='right') -> bool:
         r"""
         Test whether ``self`` is `i`-grassmannian, i.e., either is the
         identity or has ``i`` as the sole descent.
@@ -258,7 +258,7 @@ class AffinePermutation(ClonableArray):
         """
         return tuple(range(self.k+1))
 
-    def lower_covers(self,side="right"):
+    def lower_covers(self, side='right'):
         r"""
         Return lower covers of ``self``.
 

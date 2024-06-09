@@ -52,7 +52,7 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
     - ``names`` -- a tuple of ``str``; alternative names for the
       generators
     - ``index_set`` -- an enumerated set; alternative indexing set
-      for the generators.
+      for the generators
 
     OUTPUT:
 

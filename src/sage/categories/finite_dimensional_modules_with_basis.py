@@ -196,15 +196,15 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             roles of `x` and `y`::
 
                 sage: # needs sage.graphs sage.modules
-                sage: F.annihilator_basis([y], side="left")
+                sage: F.annihilator_basis([y], side='left')
                 (x, a, b)
-                sage: F.annihilator_basis([a], side="left")
+                sage: F.annihilator_basis([a], side='left')
                 (x, a, b)
-                sage: F.annihilator_basis([b], side="left")
+                sage: F.annihilator_basis([b], side='left')
                 (x, a, b)
-                sage: F.annihilator_basis([x], side="left")
+                sage: F.annihilator_basis([x], side='left')
                 (y,)
-                sage: F.annihilator_basis([a + 3*b + 2*x], side="left")
+                sage: F.annihilator_basis([a + 3*b + 2*x], side='left')
                 (-1/2*a - 3/2*b + y,)
 
             By specifying an inner product, this method can be used to
@@ -323,7 +323,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x")
+                sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x')
                 sage: x = X.basis()
                 sage: V = X.echelon_form([x[0]-x[1], x[0]-x[2], x[1]-x[2]]); V
                 [x[0] - x[2], x[1] - x[2]]
@@ -392,7 +392,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return ret
 
         def invariant_module(self, S, action=operator.mul, action_on_basis=None,
-                             side="left", **kwargs):
+                             side='left', **kwargs):
             r"""
             Return the submodule of ``self`` invariant under the action
             of ``S``.
@@ -570,7 +570,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                                                    coerce=True, copy=False)
 
     class MorphismMethods:
-        def matrix(self, base_ring=None, side="left"):
+        def matrix(self, base_ring=None, side='left'):
             r"""
             Return the matrix of this morphism in the distinguished
             bases of the domain and codomain.
@@ -603,7 +603,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: phi.matrix()
                 [1 2]
                 [3 5]
-                sage: phi.matrix(side="right")
+                sage: phi.matrix(side='right')
                 [1 3]
                 [2 5]
 

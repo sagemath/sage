@@ -231,7 +231,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
           will be used if default value is kept.
 
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used.
+          encoder that is used
 
         EXAMPLES::
 

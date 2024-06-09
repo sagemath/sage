@@ -1510,8 +1510,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
     - ``ivar`` -- independent variable, optional
 
-    - ``compute_jac`` -- boolean. If True, the Jacobian of ``des`` is computed and
-      used during the integration of stiff systems. Default value is False.
+    - ``compute_jac`` -- boolean (default: ``False``); if ``True``, the
+      Jacobian of ``des`` is computed and used during the integration of stiff
+      systems
 
     Other Parameters (taken from the documentation of the
     :func:`~scipy:scipy.integrate.odeint` function from
@@ -1694,8 +1695,8 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
 
     INPUT:
 
-    - ``f`` -- symbolic function. Its first argument will be the independent
-      variable. Its output should be de derivatives of the dependent variables.
+    - ``f`` -- symbolic function; its first argument will be the independent
+      variable, . Its output should be de derivatives of the dependent variables.
 
     - ``ics`` -- list or tuple with the initial conditions
 
@@ -1783,7 +1784,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
 
     INPUT:
 
-    - ``f`` -- symbolic function. Its first argument will be the independent
+    - ``f`` -- symbolic function; its first argument will be the independent
       variable. Its output should be de derivatives of the dependent variables.
 
     - ``ics`` -- list or tuple with the initial conditions

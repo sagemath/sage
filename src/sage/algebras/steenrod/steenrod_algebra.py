@@ -4004,7 +4004,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
     - a function from positive integers to nonnegative integers (and
       `\infty`), e.g., ``lambda n: n+2``.
     - ``None`` or ``Infinity`` -- use this for the profile function for
-      the whole Steenrod algebra.
+      the whole Steenrod algebra
 
     In the first and third cases, ``precision`` is ignored.  In the
     second case, this function is converted to a tuple of length one
@@ -4082,7 +4082,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
       1 if n<3 else 2)``.
 
     - ``None`` or ``Infinity`` -- use this for the profile function for
-      the whole Steenrod algebra.
+      the whole Steenrod algebra
 
     You can also mix and match the first two, passing a pair with
     first entry a list and second entry a function, for instance.  The

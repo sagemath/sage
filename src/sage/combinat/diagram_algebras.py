@@ -449,9 +449,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         r"""
         Return the underlying implementation of the diagram.
 
-        OUTPUT:
-
-        - tuple of tuples of integers
+        OUTPUT: tuple of tuples of integers
 
         EXAMPLES::
 
@@ -1589,7 +1587,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
         INPUT:
 
-        - ``D1_D2_pi`` -- a list or tuple where the first entry is a list of
+        - ``D1_D2_pi`` -- list or tuple where the first entry is a list of
           arcs on the top of the diagram, the second entry is a list of arcs
           on the bottom of the diagram, and the third entry is a permutation
           on the free nodes.
@@ -2286,12 +2284,10 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if
       ``None``, then Sage automatically chooses the parent of ``q``
 
-    - ``prefix`` -- (default ``"P"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'P'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -2516,7 +2512,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="P"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='P'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -2751,7 +2747,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- an integer between 1 and `k-1`
+        - ``i`` -- integer between 1 and `k-1`
 
         EXAMPLES::
 
@@ -2851,7 +2847,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- an integer between 1 and `k-1`
+        - ``i`` -- integer between 1 and `k-1`
 
         EXAMPLES::
 
@@ -3715,12 +3711,10 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"B"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'B'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -3760,7 +3754,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
     """
 
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="B"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='B'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4156,12 +4150,10 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"T"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'T'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -4245,7 +4237,7 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
           1  7 20 21 13
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="T"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='T'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4523,12 +4515,10 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"Pl"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'Pl'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -4564,7 +4554,7 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="Pl"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='Pl'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4653,7 +4643,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="I"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='I'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4736,7 +4726,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
 
     INPUT:
 
-    - ``diagram`` -- a list of pairs of matchings of the set
+    - ``diagram`` -- list of pairs of matchings of the set
       `\{-1, \ldots, -n, 1, \ldots, n\}`
     - ``use_unicode`` -- (default: ``False``): whether or not
       to use unicode art instead of ascii art
@@ -5798,12 +5788,10 @@ def to_set_partition(l, k=None):
 
     INPUT:
 
-    - ``l`` -- a list of lists of integers
+    - ``l`` -- list of lists of integers
     - ``k`` -- integer (default: ``None``)
 
-    OUTPUT:
-
-    - a list of sets
+    OUTPUT: list of sets
 
     EXAMPLES::
 

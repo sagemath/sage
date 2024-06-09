@@ -238,7 +238,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.modules
-                sage: L = LieAlgebra(QQ, cartan_type="F4")
+                sage: L = LieAlgebra(QQ, cartan_type='F4')
                 sage: L.inject_variables()
                 Defining e1, e2, e3, e4, f1, f2, f3, f4, h1, h2, h3, h4
                 sage: e1.part()

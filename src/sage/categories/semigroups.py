@@ -60,7 +60,7 @@ class Semigroups(CategoryWithAxiom):
     """
     _base_category_class_and_axiom = (Magmas, "Associative")
 
-    def example(self, choice="leftzero", **kwds):
+    def example(self, choice='leftzero', **kwds):
         r"""
         Returns an example of a semigroup, as per
         :meth:`Category.example()
@@ -68,10 +68,10 @@ class Semigroups(CategoryWithAxiom):
 
         INPUT:
 
-        - ``choice`` -- string (default: ``'leftzero'``); Can be either 'leftzero'
-          for the left zero semigroup, or 'free' for the free semigroup.
+        - ``choice`` -- string (default: ``'leftzero'``); can be either 'leftzero'
+          for the left zero semigroup, or 'free' for the free semigroup
         - ``**kwds`` -- keyword arguments passed onto the constructor for the
-          chosen semigroup.
+          chosen semigroup
 
         EXAMPLES::
 
@@ -173,7 +173,7 @@ class Semigroups(CategoryWithAxiom):
             assert len(args) > 0, "Cannot compute an empty product in a semigroup"
             return prod(args[1:], args[0])
 
-        def cayley_graph(self, side="right", simple=False, elements=None,
+        def cayley_graph(self, side='right', simple=False, elements=None,
                          generators=None, connecting_set=None):
             r"""
             Return the Cayley graph for this finite semigroup.
@@ -185,7 +185,7 @@ class Semigroups(CategoryWithAxiom):
             - ``simple`` -- boolean (default: ``False``):
               if ``True``, returns a simple graph (no loops, no labels,
               no multiple edges)
-            - ``generators`` -- list, tuple, or family of elements
+            - ``generators`` -- list; tuple, or family of elements
               of ``self`` (default: ``self.semigroup_generators()``)
             - ``connecting_set`` -- alias for ``generators``; deprecated
             - ``elements`` -- list (or iterable) of elements of ``self``
@@ -261,7 +261,7 @@ class Semigroups(CategoryWithAxiom):
 
             ::
 
-                sage: g = S.cayley_graph(side="left", simple=True)                      # needs sage.graphs
+                sage: g = S.cayley_graph(side='left', simple=True)                      # needs sage.graphs
                 sage: g.vertices(sort=True)                                             # needs sage.graphs
                 ['a', 'ab', 'b', 'ba']
                 sage: g.edges(sort=True)                                                # needs sage.graphs
@@ -270,7 +270,7 @@ class Semigroups(CategoryWithAxiom):
 
             ::
 
-                sage: g = S.cayley_graph(side="twosided", simple=True)                  # needs sage.graphs
+                sage: g = S.cayley_graph(side='twosided', simple=True)                  # needs sage.graphs
                 sage: g.vertices(sort=True)                                             # needs sage.graphs
                 ['a', 'ab', 'b', 'ba']
                 sage: g.edges(sort=True)                                                # needs sage.graphs
@@ -279,7 +279,7 @@ class Semigroups(CategoryWithAxiom):
 
             ::
 
-                sage: g = S.cayley_graph(side="twosided")                               # needs sage.graphs
+                sage: g = S.cayley_graph(side='twosided')                               # needs sage.graphs
                 sage: g.vertices(sort=True)                                             # needs sage.graphs
                 ['a', 'ab', 'b', 'ba']
                 sage: g.edges(sort=True)                                                # needs sage.graphs
@@ -293,7 +293,7 @@ class Semigroups(CategoryWithAxiom):
 
             TESTS::
 
-                sage: SymmetricGroup(2).cayley_graph(side="both")                       # needs sage.graphs sage.groups
+                sage: SymmetricGroup(2).cayley_graph(side='both')                       # needs sage.graphs sage.groups
                 Traceback (most recent call last):
                 ...
                 ValueError: option 'side' must be 'left', 'right' or 'twosided'
@@ -455,7 +455,7 @@ class Semigroups(CategoryWithAxiom):
             return AutomaticSemigroup(generators, ambient=self, one=one,
                                       category=category)
 
-        def trivial_representation(self, base_ring=None, side="twosided"):
+        def trivial_representation(self, base_ring=None, side='twosided'):
             r"""
             Return the trivial representation of ``self`` over ``base_ring``.
 
@@ -477,12 +477,12 @@ class Semigroups(CategoryWithAxiom):
             from sage.modules.with_basis.representation import TrivialRepresentation
             return TrivialRepresentation(self, base_ring)
 
-        def regular_representation(self, base_ring=None, side="left"):
+        def regular_representation(self, base_ring=None, side='left'):
             """
             Return the regular representation of ``self`` over ``base_ring``.
 
-            - ``side`` -- (default: ``"left"``) whether this is the
-              ``"left"`` or ``"right"`` regular representation
+            - ``side`` -- (default: ``'left'``) whether this is the
+              ``'left'`` or ``'right'`` regular representation
 
             EXAMPLES::
 
@@ -497,7 +497,7 @@ class Semigroups(CategoryWithAxiom):
             from sage.modules.with_basis.representation import RegularRepresentation
             return RegularRepresentation(self, base_ring, side)
 
-        def representation(self, module, on_basis, side="left", *args, **kwargs):
+        def representation(self, module, on_basis, side='left', *args, **kwargs):
             r"""
             Return a representation of ``self`` on ``module`` with
             the action given by ``on_basis``.
@@ -509,8 +509,8 @@ class Semigroups(CategoryWithAxiom):
               ``g`` is an element of the semigroup and ``m`` is an element of the
               indexing set for the basis, and returns the result of ``g`` acting
               on ``m``
-            - ``side`` -- (default: ``"left"``) whether this is a
-              ``"left"`` or ``"right"`` representation
+            - ``side`` -- (default: ``'left'``) whether this is a
+              ``'left'`` or ``'right'`` representation
 
             EXAMPLES::
 
@@ -1004,7 +1004,7 @@ class Semigroups(CategoryWithAxiom):
                 """
                 return self.monomial(g1 * g2)
 
-            def trivial_representation(self, side="twosided"):
+            def trivial_representation(self, side='twosided'):
                 """
                 Return the trivial representation of ``self``.
 
@@ -1024,14 +1024,14 @@ class Semigroups(CategoryWithAxiom):
                 S = self.basis().keys()
                 return S.trivial_representation(self.base_ring())
 
-            def regular_representation(self, side="left"):
+            def regular_representation(self, side='left'):
                 """
                 Return the regular representation of ``self``.
 
                 INPUT:
 
-                - ``side`` -- (default: ``"left"``) whether this is the
-                  ``"left"`` or ``"right"`` regular representation
+                - ``side`` -- (default: ``'left'``) whether this is the
+                  ``'left'`` or ``'right'`` regular representation
 
                 EXAMPLES::
 
@@ -1045,7 +1045,7 @@ class Semigroups(CategoryWithAxiom):
                 S = self.basis().keys()
                 return S.regular_representation(self.base_ring(), side)
 
-            def representation(self, module, on_basis, side="left", *args, **kwargs):
+            def representation(self, module, on_basis, side='left', *args, **kwargs):
                 r"""
                 Return a representation of ``self`` on ``module`` with
                 the action of the semigroup given by ``on_basis``.
@@ -1057,8 +1057,8 @@ class Semigroups(CategoryWithAxiom):
                   ``g`` is an element of the semigroup and ``m`` is an element of the
                   indexing set for the basis, and returns the result of ``g`` acting
                   on ``m``
-                - ``side`` -- (default: ``"left"``) whether this is a
-                  ``"left"`` or ``"right"`` representation
+                - ``side`` -- (default: ``'left'``) whether this is a
+                  ``'left'`` or ``'right'`` representation
 
                 EXAMPLES::
 

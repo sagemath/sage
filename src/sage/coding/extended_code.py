@@ -444,7 +444,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
         INPUT:
 
         - ``*args``, ``**kwargs`` -- arguments and optional arguments are
-          forwarded to original decoder's ``decoding_radius`` method.
+          forwarded to original decoder's ``decoding_radius`` method
 
         EXAMPLES::
 

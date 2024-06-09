@@ -36,7 +36,7 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative ring; behaviour is undefined if `R` is
-      not a Field of characteristic zero.
+      not a Field of characteristic zero
 
     EXAMPLES::
 

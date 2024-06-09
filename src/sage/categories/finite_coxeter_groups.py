@@ -113,7 +113,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             - ``index_set`` -- a subset (as a list or iterable) of the
               nodes of the Dynkin diagram; (default: all of them)
 
-            - ``as_word`` -- boolean (default ``False``). If ``True``, then
+            - ``as_word`` -- boolean (default: ``False``); if ``True``, then
               return instead a reduced decomposition of the longest element.
 
             Should this method be called maximal_element? longest_element?
@@ -394,7 +394,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             return tuple(d - 2 for d in self.degrees())
 
         @cached_method
-        def weak_poset(self, side="right", facade=False):
+        def weak_poset(self, side='right', facade=False):
             """
             INPUT:
 
@@ -479,7 +479,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             from sage.combinat.posets.posets import Poset
             from sage.combinat.posets.lattices import LatticePoset
             if side == "twosided":
-                covers = tuple([u, v] for u in self for v in u.upper_covers(side="left") + u.upper_covers(side="right"))
+                covers = tuple([u, v] for u in self for v in u.upper_covers(side='left') + u.upper_covers(side='right'))
                 return Poset((self, covers), cover_relations=True,
                              facade=facade)
             covers = tuple([u, v] for u in self for v in u.upper_covers(side=side))
@@ -499,7 +499,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             INPUT:
 
             - ``word`` -- a word in the indices of the simple
-              generators of ``self``.
+              generators of ``self``
 
             EXAMPLES::
 
@@ -691,7 +691,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             INPUT:
 
             - ``point`` -- optional, a point given by its coordinates in
-              the weight basis (default is `(1, 1, 1, \ldots)`)
+              the weight basis (default: `(1, 1, 1, \ldots)`)
             - ``base_ring`` -- optional, the base ring of the polytope
 
             .. NOTE::
@@ -801,7 +801,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 3
 
                 sage: # optional - gap3
-                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: W = CoxeterGroup(['H', 3], implementation='permutation')
                 sage: P = W.coxeter_poset()
                 sage: P
                 Finite meet-semilattice containing 363 elements
@@ -874,7 +874,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 {0: 0, 1: 0, 2: Z}
 
                 sage: # optional - gap3
-                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: W = CoxeterGroup(['H', 3], implementation='permutation')
                 sage: C = W.coxeter_complex()
                 sage: C
                 Simplicial complex with 62 vertices and 120 facets

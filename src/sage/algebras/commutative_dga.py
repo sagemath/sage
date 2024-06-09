@@ -935,7 +935,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         - ``base`` -- the base ring of the algebra
 
         - ``names`` -- the names of the variables; by default, set to ``x1``,
-          ``x2``, etc.
+          ``x2``, etc
 
         - ``degrees`` -- the degrees of the generators; by default, set to 1
 

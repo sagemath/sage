@@ -173,9 +173,7 @@ def orbit_decomposition(L, cyc_act) -> list[list]:
 
     - ``cyc_act`` -- bijective function from ``L`` to ``L``
 
-    OUTPUT:
-
-    - a list of lists, the orbits under the cyc_act acting on ``L``
+    OUTPUT: list of lists, the orbits under the cyc_act acting on ``L``
 
     EXAMPLES::
 

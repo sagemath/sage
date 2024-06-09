@@ -678,12 +678,12 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             def unrank(self, i):
                 r"""
-                Return the ``i``-th element of this Cartesian product.
+                Return the `i`-th element of this Cartesian product.
 
                 INPUT:
 
-                - ``i`` -- integer between ``0`` and ``n-1`` where
-                  ``n`` is the cardinality of this set.
+                - ``i`` -- integer between `0` and `n-1` where
+                  `n` is the cardinality of this set
 
                 .. SEEALSO::
 

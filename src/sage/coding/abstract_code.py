@@ -857,18 +857,18 @@ class AbstractCode(Parent):
 
     def encode(self, word, encoder_name=None, *args, **kwargs):
         r"""
-        Transforms an element of a message space into a codeword.
+        Transform an element of a message space into a codeword.
 
         INPUT:
 
         - ``word`` -- an element of a message space of the code
 
-        - ``encoder_name`` -- (default: ``None``) Name of the encoder which will be used
-          to encode ``word``. The default encoder of ``self`` will be used if
-          default value is kept.
+        - ``encoder_name`` -- (default: ``None``) name of the encoder which
+          will be used to encode ``word``. The default encoder of ``self`` will
+          be used if default value is kept.
 
-        - ``args``, ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used..
+        - ``args``, ``kwargs`` -- all additional arguments are forwarded to the
+          construction of the encoder that is used
 
         One can use the following shortcut to encode a word ::
 
@@ -915,8 +915,8 @@ class AbstractCode(Parent):
           returned. The default encoder of ``self`` will be used if
           default value is kept.
 
-        - ``args``, ``kwargs`` -- all additional arguments are forwarded to the constructor of the encoder
-          this method will return.
+        - ``args``, ``kwargs`` -- all additional arguments are forwarded to the
+          constructor of the encoder this method will return
 
         OUTPUT: an Encoder object
 

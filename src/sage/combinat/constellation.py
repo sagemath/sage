@@ -133,15 +133,16 @@ def Constellation(g=None, mutable=False, connected=True, check=True):
 
     INPUT:
 
-    - ``g`` -- a list of permutations
+    - ``g`` -- list of permutations
 
-    - ``mutable`` -- whether the result is mutable or not. Default is ``False``.
+    - ``mutable`` -- boolean (default: ``False``); whether the result is
+      mutable or not
 
-    - ``connected`` -- whether the result should be connected. Default is
-      ``True``.
+    - ``connected`` -- boolean (default: ``True``); whether the result should
+      be connected
 
-    - ``check`` -- whether or not to check. If it is ``True``, then the
-      list ``g`` must contains no ``None``.
+    - ``check`` -- boolean (default: ``True``); whether or not to check. If it
+      is ``True``, then the list ``g`` must contain no ``None``.
 
     EXAMPLES:
 
@@ -930,9 +931,9 @@ class Constellations_ld(UniqueRepresentation, Parent):
         self._length = length
         self._degree = degree
         if self._length < 0:
-            raise ValueError("length should be a non-negative integer")
+            raise ValueError("length should be a nonnegative integer")
         if self._degree < 0:
-            raise ValueError("degree should be a non-negative integer")
+            raise ValueError("degree should be a nonnegative integer")
 
         self._sym = sym
 
@@ -1185,9 +1186,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
         Return a list of graphs that corresponds to the braid group action on
         ``self`` up to isomorphism.
 
-        OUTPUT:
-
-        - list of graphs
+        OUTPUT: list of graphs
 
         EXAMPLES::
 
@@ -1276,7 +1275,7 @@ class Constellations_p(UniqueRepresentation, Parent):
         r"""
         OPTIONS:
 
-        - ``profile`` -- a list of integer partitions of the same integer
+        - ``profile`` -- list of integer partitions of the same integer
 
         - ``connected`` -- boolean (default: ``True``); whether we consider
           only connected constellations
@@ -1464,10 +1463,10 @@ def perms_sym_init(g, sym=None):
     Initialize a list of permutations (in the same symmetric group).
 
     OUTPUT:
-
+    
     - ``sym`` -- a symmetric group
 
-    - ``gg`` -- a list of permutations
+    - ``gg`` -- list of permutations
 
     EXAMPLES::
 

@@ -186,7 +186,7 @@ class FiniteMonoids(CategoryWithAxiom):
                 sage: # needs sage.combinat sage.groups sage.modules
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
                 sage: H3 = HeckeMonoid(SymmetricGroup(3))
-                sage: H3.repr_element_method(style="reduced")
+                sage: H3.repr_element_method(style='reduced')
                 sage: H3.rhodes_radical_congruence()
                 [([1, 2], [2, 1]), ([1, 2], [1, 2, 1]), ([2, 1], [1, 2, 1])]
 

@@ -113,7 +113,7 @@ cdef class InnerGroup:
 
     - ``rank`` -- integer in `\{0, \ldots, k\}`
     - ``row_partition`` -- a partition of `\{0, \ldots, k-1\}` with
-      discrete cells for all integers `i` `\geq` ``rank``.
+      discrete cells for all integers `i` `\geq` ``rank``
     - ``frob_pow`` -- integer `s` in `\{0, \ldots, r-1\}` if `q = p^r`
 
     The group `G_{\Pi^{(I)}(x)}` contains all elements `(A, \varphi, \alpha) \in G`,
@@ -132,7 +132,7 @@ cdef class InnerGroup:
 
     See [Feu2009]_ for more details.
     """
-    def __cinit__(self, k=0, algorithm="semilinear", **kwds):
+    def __cinit__(self, k=0, algorithm='semilinear', **kwds):
         r"""
         See :class:`sage.coding.codecan.codecan.InnerGroup`
 
@@ -505,7 +505,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         self._nr_of_point_refine_calls = 0
         self._stored_states = dict()
 
-    def __init__(self, n, generator_matrix, P=None, algorithm_type="semilinear"):
+    def __init__(self, n, generator_matrix, P=None, algorithm_type='semilinear'):
         r"""
         Initialization, we immediately start the algorithm
         (see :mod:`sage.coding.codecan.codecan`)
@@ -516,7 +516,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         - ``n`` -- integer
         - ``generator_matrix`` -- a `k \times n` matrix over `\GF{q}` of full row rank,
-          i.e. `k<n` and without zero columns.
+          i.e. `k<n` and without zero columns
         - partition (optional) -- a partition (as list of lists) of the set
           `\{0, \ldots, n-1\}` which restricts the action of the permutational
           part of the group to the stabilizer of this partition
@@ -854,10 +854,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         Refine the partition ``self.part``. Set  ``part_changed`` to ``True``
         if and only if ``self.part`` was refined.
 
-        OUTPUT:
-
-        - ``False`` -- only if the actual node compares larger than the candidate
-          for the canonical form.
+        OUTPUT: ``False`` -- only if the actual node compares larger than the
+        candidate for the canonical form
         """
         part_changed[0] = False
         cdef bint res, hyp_part_changed = not first_step

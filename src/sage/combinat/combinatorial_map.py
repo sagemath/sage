@@ -70,9 +70,7 @@ def combinatorial_map_trivial(f=None, order=None, name=None):
     - ``name`` -- (default: ``None``) the name for nicer outputs on combinatorial maps
     - ``order`` -- (default: ``None``) the order of the combinatorial map, if it is known. Is not used, but might be helpful later
 
-    OUTPUT:
-
-    - ``f`` unchanged
+    OUTPUT: ``f`` unchanged
 
     EXAMPLES::
 
@@ -119,9 +117,7 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
     - ``name`` -- (default: ``None``) the name for nicer outputs on combinatorial maps
     - ``order`` -- (default: ``None``) the order of the combinatorial map, if it is known. Is not used, but might be helpful later
 
-    OUTPUT:
-
-    - A combinatorial map. This is an instance of the :class:`CombinatorialMap`.
+    OUTPUT: a combinatorial map; this is an instance of the :class:`CombinatorialMap`
 
     EXAMPLES:
 

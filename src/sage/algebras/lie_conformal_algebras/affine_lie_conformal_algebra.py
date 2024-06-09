@@ -43,7 +43,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative Ring; the base ring for this Lie
-      conformal algebra.
+      conformal algebra
     - ``ct`` -- a ``str`` or a :mod:`CartanType<sage.combinat.\
       root_system.cartan_type>`; the Cartan Type for
       the corresponding finite dimensional Lie algebra. It must
@@ -55,7 +55,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     - ``prefix`` -- a ``str``; parameter passed to
       :class:`IndexedGenerators<sage.structure.indexed_generators.IndexedGenerators>`
     - ``bracket`` -- a ``str``; parameter passed to
-      :class:`IndexedGenerators<sage.structure.indexed_generators.IndexedGenerators>`.
+      :class:`IndexedGenerators<sage.structure.indexed_generators.IndexedGenerators>`
 
     EXAMPLES::
 

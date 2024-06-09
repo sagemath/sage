@@ -180,7 +180,7 @@ class Composition(CombinatorialElement):
             [ *  **   *        *                 ]
             [ *  *   **  ***   *   **    *       ]
             [ *, * , * , *  , **, ** , ***, **** ]
-            sage: Partitions.options(diagram_str='#', convention="French")
+            sage: Partitions.options(diagram_str='#', convention='French')
             sage: ascii_art(Compositions(4).list())
             [ #                                  ]
             [ #  #   #        ##                 ]
@@ -202,7 +202,7 @@ class Composition(CombinatorialElement):
             ⎢ ├┤  ├┼┘  ┌┼┤  ┌┬┬┐   ├┤   ┌┬┐    ┌┐        ⎥
             ⎢ ├┤  ├┤   ├┼┘  ├┼┴┘  ┌┼┤  ┌┼┼┘  ┌┬┼┤  ┌┬┬┬┐ ⎥
             ⎣ └┘, └┘ , └┘ , └┘  , └┴┘, └┴┘ , └┴┴┘, └┴┴┴┘ ⎦
-            sage: Partitions.options(diagram_str='#', convention="French")
+            sage: Partitions.options(diagram_str='#', convention='French')
             sage: unicode_art(Compositions(4).list())
             ⎡ ┌┐                                         ⎤
             ⎢ ├┤  ┌┐   ┌┐         ┌┬┐                    ⎥
@@ -363,7 +363,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``compositions`` -- a list (or iterable) of compositions
+        - ``compositions`` -- list (or iterable) of compositions
 
         EXAMPLES::
 
@@ -559,9 +559,7 @@ class Composition(CombinatorialElement):
         - ``check`` -- boolean (default: ``True``); whether to check the input
           compositions for having the same size
 
-        OUTPUT:
-
-        - the join of the compositions ``self`` and ``other``
+        OUTPUT: the join of the compositions ``self`` and ``other``
 
         EXAMPLES::
 
@@ -684,9 +682,7 @@ class Composition(CombinatorialElement):
         - ``check`` -- boolean (default: ``True``); whether to check the input
           compositions for having the same size
 
-        OUTPUT:
-
-        - the meet of the compositions ``self`` and ``other``
+        OUTPUT: the meet of the compositions ``self`` and ``other``
 
         EXAMPLES::
 
@@ -923,7 +919,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``J`` -- A composition such that ``self`` is finer than ``J``
+        - ``J`` -- a composition such that ``self`` is finer than ``J``
 
         OUTPUT:
 
@@ -1481,10 +1477,10 @@ class Compositions(UniqueRepresentation, Parent):
         [1, 2, 1]
 
     If `n` is not specified, this returns the combinatorial class of
-    all (non-negative) integer compositions::
+    all (nonnegative) integer compositions::
 
         sage: Compositions()
-        Compositions of non-negative integers
+        Compositions of nonnegative integers
         sage: [] in Compositions()
         True
         sage: [2,3,1] in Compositions()
@@ -1830,7 +1826,7 @@ class Compositions(UniqueRepresentation, Parent):
 
         - ``S`` -- an iterable, a subset of `\{1, 2, \ldots, n-1\}`
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -1944,9 +1940,9 @@ class Compositions_all(Compositions):
         TESTS::
 
             sage: repr(Compositions())
-            'Compositions of non-negative integers'
+            'Compositions of nonnegative integers'
         """
-        return "Compositions of non-negative integers"
+        return "Compositions of nonnegative integers"
 
     def subset(self, size=None):
         """

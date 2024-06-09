@@ -161,7 +161,7 @@ def replace_symbols(x):
 
     INPUT:
 
-    - ``x`` -- either ``open_symbol`` or ``close_symbol``.
+    - ``x`` -- either ``open_symbol`` or ``close_symbol``
 
     OUTPUT:
 
@@ -616,7 +616,7 @@ class DyckWord(CombinatorialElement):
 
         INPUT:
 
-        - ``unicode`` -- boolean (default ``False``) whether to use unicode
+        - ``unicode`` -- boolean (default: ``False``); whether to use unicode
 
         EXAMPLES::
 
@@ -1287,9 +1287,7 @@ class DyckWord(CombinatorialElement):
         r"""
         Return the length of the initial run of ``self``.
 
-        OUTPUT:
-
-        - a non--negative integer indicating the length of the initial rise
+        OUTPUT: nonnegative integer indicating the length of the initial rise
 
         EXAMPLES::
 
@@ -1497,9 +1495,7 @@ class DyckWord(CombinatorialElement):
         Note that these abscissae are precisely the entries of
         :meth:`returns_to_zero` divided by `2`.
 
-        OUTPUT:
-
-        - a list of integers indicating where the path touches the diagonal
+        OUTPUT: list of integers indicating where the path touches the diagonal
 
         EXAMPLES::
 
@@ -1521,9 +1517,7 @@ class DyckWord(CombinatorialElement):
 
         This assumes ``self`` to be a complete Dyck word.
 
-        OUTPUT:
-
-        - a composition of length equal to the length of the Dyck word.
+        OUTPUT: a composition of length equal to the length of the Dyck word
 
         EXAMPLES::
 
@@ -1547,9 +1541,7 @@ class DyckWord(CombinatorialElement):
         r"""
         Return the number of touches of ``self`` at the main diagonal.
 
-        OUTPUT:
-
-        - a non--negative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1673,7 +1665,7 @@ class DyckWord(CombinatorialElement):
         return resu
 
     @combinatorial_map(name="to binary trees: up step, left tree, down step, right tree")
-    def to_binary_tree(self, usemap="1L0R"):
+    def to_binary_tree(self, usemap='1L0R'):
         r"""
         Return a binary tree recursively constructed from the Dyck path
         ``self`` by the map ``usemap``. The default ``usemap`` is ``'1L0R'``
@@ -2057,7 +2049,7 @@ class DyckWord_complete(DyckWord):
         - ``q`` -- (default: ``q = R('q')``) a parameter for the generating
           function power
 
-        - ``R`` -- (default : ``R = QQ['q','t'].fraction_field()``) the base
+        - ``R`` -- (default: ``R = QQ['q','t'].fraction_field()``) the base
           ring to do the calculations over
 
         OUTPUT:
@@ -2324,13 +2316,13 @@ class DyckWord_complete(DyckWord):
             | x  . .
             |  . . .
 
-            sage: D.to_permutation(map="Bandlow-Killpatrick")
+            sage: D.to_permutation(map='Bandlow-Killpatrick')
             [3, 4, 2, 1]
-            sage: D.to_permutation(map="Stump")
+            sage: D.to_permutation(map='Stump')
             [4, 2, 3, 1]
-            sage: D.to_permutation(map="Knuth")
+            sage: D.to_permutation(map='Knuth')
             [1, 2, 4, 3]
-            sage: D.to_permutation(map="Krattenthaler")
+            sage: D.to_permutation(map='Krattenthaler')
             [2, 1, 3, 4]
 
         TESTS::
@@ -3338,7 +3330,7 @@ class DyckWords(UniqueRepresentation, Parent):
              _| x
             | x  .
             |  . .
-            sage: DyckWords.options(diagram_style="line")
+            sage: DyckWords.options(diagram_style='line')
             sage: D
              /\/\
             /    \
@@ -3355,7 +3347,7 @@ class DyckWords(UniqueRepresentation, Parent):
             description='Specifies how the ascii art of Dyck words should be printed',
             values=dict(path="Using the path string",
                         pretty_output="Using pretty printing"),
-            alias=dict(pretty_print="pretty_output", path_string="path"),
+            alias=dict(pretty_print='pretty_output', path_string='path'),
             case_sensitive=False)
         diagram_style = dict(default="grid",
             values=dict(grid='printing as paths on a grid using N and E steps',
@@ -3878,7 +3870,7 @@ class CompleteDyckWords(DyckWords):
 
         INPUT:
 
-        - ``code`` -- a list of integers satisfying ``code[0] == 0``
+        - ``code`` -- list of integers satisfying ``code[0] == 0``
           and ``0 <= code[i+1] <= code[i]+1``.
 
         EXAMPLES::

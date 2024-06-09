@@ -513,7 +513,7 @@ class Huffman(SageObject):
         g.add_edges(self._generate_edges(self._tree))
         return g
 
-    def _generate_edges(self, tree, parent="", bit=""):
+    def _generate_edges(self, tree, parent='', bit=''):
         """
         Generate the edges of the given Huffman tree.
 
@@ -522,11 +522,11 @@ class Huffman(SageObject):
         - ``tree`` -- a Huffman binary tree
 
         - ``parent`` -- (default: empty string) a parent vertex with exactly
-          two children.
+          two children
 
         - ``bit`` -- (default: empty string) the bit signifying either the
-          left or right branch. The bit "0" denotes the left branch and "1"
-          denotes the right branch.
+          left or right branch; the bit '0' denotes the left branch and '1'
+          denotes the right branch
 
         OUTPUT: an edge list of the Huffman binary tree
 
@@ -544,8 +544,8 @@ class Huffman(SageObject):
             u = parent
         s = "".join([parent, bit])
         try:
-            left = self._generate_edges(tree[0], parent=s, bit="0")
-            right = self._generate_edges(tree[1], parent=s, bit="1")
+            left = self._generate_edges(tree[0], parent=s, bit='0')
+            right = self._generate_edges(tree[1], parent=s, bit='1')
             L = [(u, s)] if s != "" else []
             return left + right + L
         except TypeError:

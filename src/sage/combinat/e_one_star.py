@@ -1006,7 +1006,7 @@ class Patch(SageObject):
 
            - string -- A coloring map. For available coloring map names type:
              ``sorted(colormaps)``
-           - list -- a list of colors to assign cyclically to the faces.
+           - list -- list of colors to assign cyclically to the faces
              A list of a single color colors all the faces with the same color.
            - dict -- a dict of face types mapped to colors, to color the
              faces according to their type.

@@ -299,9 +299,9 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         - ``style`` -- style of the plot, options are ``'rect'`` or ``'polar'``
 
           - ``'rect'`` -- height represents real part, color represents
-            imaginary part.
+            imaginary part
           - ``'polar'`` -- height represents absolute value, color
-            represents argument.
+            represents argument
 
         - ``xmin`` -- the lower bound of the slice to plot; 0 by default
         - ``xmax`` -- the upper bound of the slice to plot; ``len(self)`` by default

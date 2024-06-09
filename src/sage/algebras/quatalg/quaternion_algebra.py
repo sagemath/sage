@@ -3704,10 +3704,10 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         INPUT:
 
-        - ``certificate`` -- if ``True`` returns a generator alpha s.t. I = alpha*O
-          where O is the right order of I.
+        - ``certificate`` -- if ``True`` returns a generator alpha s.t.
+          `I = \alpha O` where `O` is the right order of `I`
 
-        OUTPUT: bool, or (bool, alpha) if ``certificate`` is ``True``
+        OUTPUT: boolean, or (boolean, alpha) if ``certificate`` is ``True``
 
         EXAMPLES::
 

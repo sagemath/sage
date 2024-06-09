@@ -268,21 +268,21 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               positional argument is used as the input of the function `f`
               (default: 0); this is currently only used with ``on_basis``.
 
-            - ``triangular`` -- (default: ``None``) ``"upper"`` or
-              ``"lower"`` or ``None``:
+            - ``triangular`` -- (default: ``None``) ``'upper'`` or
+              ``'lower'`` or ``None``:
 
-              * ``"upper"`` -- if the
+              * ``'upper'`` -- if the
                 :meth:`~ModulesWithBasis.ElementMethods.leading_support`
                 of the image of the basis vector `x_i` is `i`, or
 
-              * ``"lower"`` -- if the
+              * ``'lower'`` -- if the
                 :meth:`~ModulesWithBasis.ElementMethods.trailing_support`
                 of the image of the basis vector `x_i` is `i`.
 
             - ``unitriangular`` -- boolean (default: ``False``);
               Only meaningful for a triangular morphism.
               As a shorthand, one may use ``unitriangular="lower"``
-              for ``triangular="lower", unitriangular=True``.
+              for ``triangular='lower', unitriangular=True``.
 
             - ``side`` -- "left" or "right" (default: "left")
               Only meaningful for a morphism built from a matrix.
@@ -476,7 +476,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: X = CombinatorialFreeModule(QQ, I); X.rename("X"); x = X.basis()
                 sage: Y = CombinatorialFreeModule(QQ, I); Y.rename("Y"); y = Y.basis()
                 sage: f = Y.sum_of_monomials * divisors
-                sage: phi = X.module_morphism(f, triangular="upper", codomain=Y)
+                sage: phi = X.module_morphism(f, triangular='upper', codomain=Y)
                 sage: phi(x[2])
                 B[1] + B[2]
                 sage: phi(x[6])
@@ -500,7 +500,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: from sage.modules.with_basis.morphism import TriangularModuleMorphismFromFunction
                 sage: def f(x): return x + X.term(0, sum(x.coefficients()))
                 sage: phi = X.module_morphism(function=f, codomain=X,
-                ....:                         triangular="upper")
+                ....:                         triangular='upper')
                 sage: phi(x[2] + 3*x[4])
                 4*B[0] + B[2] + 3*B[4]
                 sage: phi.preimage(_)
@@ -779,7 +779,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             `y_1 - x_1 - x_2`, and its basis elements are indexed by `0` and `1`::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x")
+                sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x')
                 sage: x = X.basis()
                 sage: gens = [x[0] - x[1], x[1] - x[2]]; gens
                 [x[0] - x[1], x[1] - x[2]]
@@ -802,7 +802,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             submodule whose index set coincides with the index set of the family::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x")
+                sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x')
                 sage: x = X.basis()
                 sage: gens = Family({1: x[0] - x[1], 3: x[1] - x[2]}); gens
                 Finite family {1: x[0] - x[1], 3: x[1] - x[2]}
@@ -827,7 +827,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             a basis (an explicit basis will be computed)::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x")
+                sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x')
                 sage: x = X.basis()
                 sage: gens = [x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]]; gens
                 [x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]]
@@ -942,7 +942,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x")
+                sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x')
                 sage: x = X.basis()
                 sage: Y = X.quotient_module([x[0] - x[1], x[1] - x[2]],
                 ....:                       already_echelonized=True)
@@ -2351,7 +2351,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: # needs sage.modules
                     sage: X = CombinatorialFreeModule(QQ, [1,2,3,4]); X.rename("X")
                     sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4],
-                    ....:                             key="Y"); Y.rename("Y")
+                    ....:                             key='Y'); Y.rename("Y")
                     sage: H = Hom(X, Y)
                     sage: x = X.basis()
                     sage: phi = H(diagonal=lambda x: x^2)
@@ -2531,9 +2531,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 examples, with two modules `A` and `B`::
 
                     sage: # needs sage.modules
-                    sage: A = CombinatorialFreeModule(ZZ, [1,2], prefix="A")
+                    sage: A = CombinatorialFreeModule(ZZ, [1,2], prefix='A')
                     sage: A.rename("A")
-                    sage: B = CombinatorialFreeModule(ZZ, [3,4], prefix="B")
+                    sage: B = CombinatorialFreeModule(ZZ, [3,4], prefix='B')
                     sage: B.rename("B")
 
                 and `f` the bilinear morphism `(a,b) \mapsto b \otimes a`
@@ -2584,7 +2584,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 module with basis with a different base ring::
 
                     sage: # needs sage.modules
-                    sage: C = CombinatorialFreeModule(QQ, [(1,3),(2,4)], prefix="C")
+                    sage: C = CombinatorialFreeModule(QQ, [(1,3),(2,4)], prefix='C')
                     sage: C.rename("C")
                     sage: def f(a, b):
                     ....:     return C.sum_of_terms([((1,3), QQ(a[1]*b[3])),

@@ -100,9 +100,10 @@ class PuncturedCode(AbstractLinearCode):
 
     - ``C`` -- a linear code
 
-    - ``positions`` -- the positions where ``C`` will be punctured. It can be either an integer
-      if one need to puncture only one position, a list or a set of positions to puncture.
-      If the same position is passed several times, it will be considered only once.
+    - ``positions`` -- the positions where ``C`` will be punctured. It can be
+      either an integer if one need to puncture only one position, a list or a
+      set of positions to puncture. If the same position is passed several
+      times, it will be considered only once.
 
     EXAMPLES::
 
@@ -246,7 +247,7 @@ class PuncturedCode(AbstractLinearCode):
         INPUT:
 
         - ``agrs``, ``kwds`` -- extra positional arguments passed to
-          :meth:`sage.modules.free_module.random_element`.
+          :meth:`sage.modules.free_module.random_element`
 
         EXAMPLES::
 
@@ -479,7 +480,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
 
         sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
         sage: Cp = codes.PuncturedCode(C, 3)
-        sage: D = codes.decoders.PuncturedCodeOriginalCodeDecoder(Cp, strategy="try-all")
+        sage: D = codes.decoders.PuncturedCodeOriginalCodeDecoder(Cp, strategy='try-all')
         sage: "error-erasure" in D.decoder_type()
         False
 
@@ -490,7 +491,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         sage: Cp = codes.PuncturedCode(C, 3)
         sage: Dor = C.decoder("Gao")
         sage: D = codes.decoders.PuncturedCodeOriginalCodeDecoder(Cp, original_decoder=Dor,
-        ....:                                                     strategy="error-erasure")
+        ....:                                                     strategy='error-erasure')
         sage: D.original_decoder() == Dor
         True
     """

@@ -752,13 +752,13 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - An element or a list/tuple/sequence of elements.
-            - ``coerce`` (optional bool, default ``True``):
-              First coerce the elements into this ring.
-            - ``side``, optional string, one of ``"twosided"``
-              (default), ``"left"``, ``"right"``: determines
+            - an element or a list/tuple/sequence of elements
+            - ``coerce`` -- boolean (default: ``True``);
+              first coerce the elements into this ring
+            - ``side`` -- optional string, one of ``'twosided'``
+              (default), ``'left'``, ``'right'``; determines
               whether the resulting ideal is twosided, a left
-              ideal or a right ideal.
+              ideal or a right ideal
 
             EXAMPLES::
 
@@ -1351,7 +1351,7 @@ class Rings(CategoryWithAxiom):
 
             - ``basis`` -- (optional) a basis for this ring over the base
 
-            - ``map`` -- boolean (default ``True``), whether to return
+            - ``map`` -- boolean (default: ``True``); whether to return
               `R`-linear maps to and from `V`
 
             OUTPUT: a finite-rank free `R`-module `V`

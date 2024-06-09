@@ -201,13 +201,13 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
 
     - ``algorithm`` -- (Default: ``'flint'``) any one of the following:
 
-      - ``'dobinski'`` -- Use Dobinski's formula implemented in Sage
+      - ``'dobinski'`` -- use Dobinski's formula implemented in Sage
 
-      - ``'flint'`` -- Wrap FLINT's ``arith_bell_number``
+      - ``'flint'`` -- wrap FLINT's ``arith_bell_number``
 
-      - ``'gap'`` -- Wrap GAP's ``Bell``
+      - ``'gap'`` -- wrap GAP's ``Bell``
 
-      - ``'mpmath'`` -- Wrap mpmath's ``bell``
+      - ``'mpmath'`` -- wrap mpmath's ``bell``
 
     .. WARNING::
 
@@ -503,9 +503,9 @@ def narayana_number(n: Integer, k: Integer) -> Integer:
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    - ``k`` -- an integer between ``0`` and ``n - 1``
+    - ``k`` -- integer between ``0`` and ``n - 1``
 
     OUTPUT: integer
 
@@ -535,11 +535,11 @@ def euler_number(n, algorithm='flint') -> Integer:
 
     - ``n`` -- a positive integer
 
-    - ``algorithm`` -- (Default: ``'flint'``) any one of the following:
+    - ``algorithm`` -- (default: ``'flint'``) any one of the following:
 
-      - ``'maxima'`` -- Wraps Maxima's ``euler``.
+      - ``'maxima'`` -- wraps Maxima's ``euler``
 
-      - ``'flint'`` -- Wrap FLINT's ``arith_euler_number``
+      - ``'flint'`` -- wrap FLINT's ``arith_euler_number``
 
     EXAMPLES::
 
@@ -589,7 +589,7 @@ def eulerian_number(n, k, algorithm='recursive') -> Integer:
 
     - ``k`` -- integer between ``0`` and ``n - 1``
 
-    - ``algorithm`` -- ``"recursive"`` (default) or ``"formula"``
+    - ``algorithm`` -- ``'recursive'`` (default) or ``'formula'``
 
     OUTPUT: integer
 
@@ -631,9 +631,9 @@ def eulerian_polynomial(n, algorithm='derivative'):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    - ``algorithm`` -- ``"derivative"`` (default) or ``"coeffs"``
+    - ``algorithm`` -- ``'derivative'`` (default) or ``'coeffs'``
 
     OUTPUT: polynomial in one variable ``t``
 
@@ -671,7 +671,7 @@ def eulerian_polynomial(n, algorithm='derivative'):
         return R([eulerian_number(n, k, "formula") for k in range(n)])
 
 
-def fibonacci(n, algorithm="pari") -> Integer:
+def fibonacci(n, algorithm='pari') -> Integer:
     """
     Return the `n`-th Fibonacci number.
 
@@ -685,10 +685,10 @@ def fibonacci(n, algorithm="pari") -> Integer:
 
     - ``algorithm`` -- a string:
 
-      * ``"pari"`` -- (default) use the PARI C library's
+      * ``'pari'`` -- (default) use the PARI C library's
         :pari:`fibo` function
 
-      * ``"gap"`` -- use GAP's Fibonacci function
+      * ``'gap'`` -- use GAP's Fibonacci function
 
     .. NOTE::
 
@@ -849,7 +849,7 @@ def lucas_number2(n, P, Q):
     return libgap.Lucas(P, Q, n)[1].sage()
 
 
-def stirling_number1(n, k, algorithm="gap") -> Integer:
+def stirling_number1(n, k, algorithm='gap') -> Integer:
     r"""
     Return the `n`-th Stirling number `S_1(n,k)` of the first kind.
 
@@ -863,8 +863,8 @@ def stirling_number1(n, k, algorithm="gap") -> Integer:
     - ``k`` -- nonnegative machine-size integer
     - ``algorithm``:
 
-      * ``"gap"`` (default) -- use GAP's ``Stirling1`` function
-      * ``"flint"`` -- use flint's ``arith_stirling_number_1u`` function
+      * ``'gap'`` (default) -- use GAP's ``Stirling1`` function
+      * ``'flint'`` -- use flint's ``arith_stirling_number_1u`` function
 
     EXAMPLES::
 
@@ -885,7 +885,7 @@ def stirling_number1(n, k, algorithm="gap") -> Integer:
         sage: stirling_number1(10,5, algorithm='flint')                                 # needs sage.libs.flint
         269325
 
-        sage: s_sage = stirling_number1(50,3, algorithm="mutta")
+        sage: s_sage = stirling_number1(50,3, algorithm='mutta')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm: mutta
@@ -918,9 +918,9 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
     - ``algorithm``:
 
       * ``None`` (default) -- use native implementation
-      * ``"flint"`` -- use flint's ``arith_stirling_number_2`` function
-      * ``"gap"`` -- use GAP's ``Stirling2`` function
-      * ``"maxima"`` -- use Maxima's ``stirling2`` function
+      * ``'flint'`` -- use flint's ``arith_stirling_number_2`` function
+      * ``'gap'`` -- use GAP's ``Stirling2`` function
+      * ``'maxima'`` -- use Maxima's ``stirling2`` function
 
     EXAMPLES:
 
@@ -1008,10 +1008,10 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
         ....:         if not (s_sage == s_flint and s_sage == s_gap):
         ....:             print("Error with n<200")
 
-        sage: stirling_number2(20, 3, algorithm="maxima")                               # needs sage.symbolic
+        sage: stirling_number2(20, 3, algorithm='maxima')                               # needs sage.symbolic
         580606446
 
-        sage: s_sage = stirling_number2(5, 3, algorithm="namba")
+        sage: s_sage = stirling_number2(5, 3, algorithm='namba')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm: namba
@@ -1134,7 +1134,7 @@ class CombinatorialObject(SageObject):
 
         INPUT:
 
-        -  ``l`` -- a list or any object that can be converted to a
+        -  ``l`` -- list or any object that can be converted to a
            list by calling ``list()``.
 
         - ``copy`` -- (boolean, default ``True``) if ``False``, then
@@ -1378,7 +1378,7 @@ class CombinatorialObject(SageObject):
 
     def __bool__(self) -> bool:
         """
-        Return ``True`` if ``self`` is non-zero.
+        Return ``True`` if ``self`` is nonzero.
 
         We consider a list to be zero if it has length zero.
 
@@ -1499,10 +1499,10 @@ class CombinatorialElement(CombinatorialObject, Element,
 
     INPUT:
 
-    -  ``parent`` -- the :class:`Parent` class for this element.
+    -  ``parent`` -- the :class:`Parent` class for this element
 
-    -  ``lst`` -- a list or any object that can be converted to a
-       list by calling ``list()``.
+    -  ``lst`` -- list or any object that can be converted to a
+       list by calling ``list()``
 
     EXAMPLES::
 
@@ -1652,7 +1652,7 @@ def _tuples_native(S, k):
     Return a list of all `k`-tuples of elements of a given set ``S``.
 
     This is a helper method used in :meth:`tuples`. It returns the
-    same as ``tuples(S, k, algorithm="native")``.
+    same as ``tuples(S, k, algorithm='native')``.
 
     EXAMPLES::
 
@@ -1703,16 +1703,16 @@ def number_of_tuples(S, k, algorithm='naive') -> Integer:
         sage: S = [1,2,3,4,5]
         sage: number_of_tuples(S,2)
         25
-        sage: number_of_tuples(S,2, algorithm="gap")                                    # needs sage.libs.gap
+        sage: number_of_tuples(S,2, algorithm='gap')                                    # needs sage.libs.gap
         25
         sage: S = [1,1,2,3,4,5]
         sage: number_of_tuples(S,2)
         25
-        sage: number_of_tuples(S,2, algorithm="gap")                                    # needs sage.libs.gap
+        sage: number_of_tuples(S,2, algorithm='gap')                                    # needs sage.libs.gap
         25
         sage: number_of_tuples(S,0)
         1
-        sage: number_of_tuples(S,0, algorithm="gap")                                    # needs sage.libs.gap
+        sage: number_of_tuples(S,0, algorithm='gap')                                    # needs sage.libs.gap
         1
     """
     if algorithm == 'naive':
@@ -1819,16 +1819,16 @@ def number_of_unordered_tuples(S, k, algorithm='naive') -> Integer:
         sage: S = [1,2,3,4,5]
         sage: number_of_unordered_tuples(S,2)
         15
-        sage: number_of_unordered_tuples(S,2, algorithm="gap")                          # needs sage.libs.gap
+        sage: number_of_unordered_tuples(S,2, algorithm='gap')                          # needs sage.libs.gap
         15
         sage: S = [1,1,2,3,4,5]
         sage: number_of_unordered_tuples(S,2)
         15
-        sage: number_of_unordered_tuples(S,2, algorithm="gap")                          # needs sage.libs.gap
+        sage: number_of_unordered_tuples(S,2, algorithm='gap')                          # needs sage.libs.gap
         15
         sage: number_of_unordered_tuples(S,0)
         1
-        sage: number_of_unordered_tuples(S,0, algorithm="gap")                          # needs sage.libs.gap
+        sage: number_of_unordered_tuples(S,0, algorithm='gap')                          # needs sage.libs.gap
         1
     """
     if algorithm == 'naive':
@@ -2260,7 +2260,7 @@ def bernoulli_polynomial(x, n: Integer):
         if n < 0:
             raise TypeError
     except TypeError:
-        raise ValueError("the second argument must be a non-negative integer")
+        raise ValueError("the second argument must be a nonnegative integer")
 
     if n == 0:
         return x**0   # result should be in the parent of x

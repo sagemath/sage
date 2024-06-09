@@ -509,7 +509,7 @@ cdef class Map(Element):
 
         .. NOTE::
 
-            By default, the string ``"Generic"`` is returned. Subclasses may overload this method.
+            By default, the string ``'Generic'`` is returned. Subclasses may overload this method.
 
         EXAMPLES::
 

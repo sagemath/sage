@@ -92,7 +92,7 @@ class FiniteSemigroups(CategoryWithAxiom):
                 [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'],
                  ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
             """
-            return self.cayley_graph(side="twosided", simple=True).strongly_connected_components()
+            return self.cayley_graph(side='twosided', simple=True).strongly_connected_components()
 
         @cached_method
         def j_classes_of_idempotents(self):

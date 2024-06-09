@@ -35,7 +35,7 @@ class VectorBundles(Category_over_base_ring):
 
     TESTS::
 
-        sage: TestSuite(C).run(skip="_test_category_over_bases")
+        sage: TestSuite(C).run(skip='_test_category_over_bases')
 
     """
     def __init__(self, base_space, base_field, name=None):
@@ -47,7 +47,7 @@ class VectorBundles(Category_over_base_ring):
             sage: M = Manifold(2, 'M')
             sage: from sage.categories.vector_bundles import VectorBundles
             sage: C = VectorBundles(M, RR)
-            sage: TestSuite(C).run(skip="_test_category_over_bases")
+            sage: TestSuite(C).run(skip='_test_category_over_bases')
 
         """
         if base_field not in Fields().Topological():

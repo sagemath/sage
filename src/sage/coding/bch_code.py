@@ -270,7 +270,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
     - ``**kwargs`` -- all extra arguments are forwarded to the GRS decoder
     """
 
-    def __init__(self, code, grs_decoder="KeyEquationSyndrome", **kwargs):
+    def __init__(self, code, grs_decoder='KeyEquationSyndrome', **kwargs):
         r"""
 
         EXAMPLES::

@@ -124,12 +124,12 @@ class Crystals(Category_singleton):
 
         INPUT:
 
-        - ``choice`` -- string (default: ``'highwt'``); an be either ``'highwt'``
+        - ``choice`` -- string (default: ``'highwt'``); can be either ``'highwt'``
           for the highest weight crystal of type A, or ``'naive'`` for an
-          example of a broken crystal.
+          example of a broken crystal
 
         - ``**kwds`` -- keyword arguments passed onto the constructor for the
-          chosen crystal.
+          chosen crystal
 
         EXAMPLES::
 

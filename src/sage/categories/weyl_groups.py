@@ -243,7 +243,7 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A',3], prefix="s")
+                sage: W = WeylGroup(['A',3], prefix='s')
                 sage: g = W.quantum_bruhat_graph((1,3))
                 sage: g
                 Parabolic Quantum Bruhat Graph of Weyl Group of type ['A', 3]
@@ -260,7 +260,7 @@ class WeylGroups(Category_singleton):
                  (s2, s1*s2, alpha[1] + alpha[2]),
                  (s2, s3*s2, alpha[2] + alpha[3]),
                  (1, s2, alpha[2])]
-                sage: W = WeylGroup(['A',3,1], prefix="s")
+                sage: W = WeylGroup(['A',3,1], prefix='s')
                 sage: g = W.quantum_bruhat_graph()
                 Traceback (most recent call last):
                 ...
@@ -318,7 +318,7 @@ class WeylGroups(Category_singleton):
             return DiGraph(visited,
                            name="Parabolic Quantum Bruhat Graph of %s for nodes %s" % (self, index_set),
                            format="dict_of_dicts",
-                           data_structure="static_sparse")
+                           data_structure='static_sparse')
 
     class ElementMethods:
 
@@ -584,7 +584,7 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['C',2],prefix="s")
+                sage: W = WeylGroup(['C',2], prefix='s')
                 sage: W.from_reduced_word([1,2,1]).reflection_to_root()
                 2*alpha[1] + alpha[2]
                 sage: W.from_reduced_word([1,2]).reflection_to_root()
@@ -613,7 +613,7 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['C',2],prefix="s")
+                sage: W = WeylGroup(['C',2], prefix='s')
                 sage: W.from_reduced_word([1,2,1]).reflection_to_coroot()
                 alphacheck[1] + alphacheck[2]
                 sage: W.from_reduced_word([1,2]).reflection_to_coroot()
@@ -654,7 +654,7 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['C',2], prefix="s")
+                sage: W = WeylGroup(['C',2], prefix='s')
                 sage: w = W.from_reduced_word([1,2])
                 sage: w.inversions()
                 [s2, s2*s1*s2]
@@ -742,7 +742,7 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A',3], prefix="s")
+                sage: W = WeylGroup(['A',3], prefix='s')
                 sage: w = W.from_reduced_word([3,1,2,1])
                 sage: w.bruhat_lower_covers_coroots()
                 [(s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3]),
@@ -763,7 +763,7 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A',4], prefix="s")
+                sage: W = WeylGroup(['A',4], prefix='s')
                 sage: w = W.from_reduced_word([3,1,2,1])
                 sage: w.bruhat_upper_covers_coroots()
                 [(s1*s2*s3*s2*s1, alphacheck[3]),
@@ -800,7 +800,7 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
-                sage: W = WeylGroup(['A',3], prefix="s")
+                sage: W = WeylGroup(['A',3], prefix='s')
                 sage: w = W.from_reduced_word([3,1,2])
                 sage: w.quantum_bruhat_successors([1], roots = True)
                 [(s3, alpha[2]), (s1*s2*s3*s2, alpha[3]),

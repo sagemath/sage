@@ -122,12 +122,12 @@ cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
 
     INPUT:
 
-    - ``categories`` -- tuple of categories to be joined,
+    - ``categories`` -- tuple of categories to be joined
     - ``axioms`` -- tuple of strings; the names of some
-      supplementary axioms.
+      supplementary axioms
     - ``ignore_axioms`` -- tuple of pairs ``(cat, axiom)``, such
       that ``axiom`` will not be applied to ``cat``, should ``cat``
-      occur in the algorithm.
+      occur in the algorithm
 
     EXAMPLES::
 

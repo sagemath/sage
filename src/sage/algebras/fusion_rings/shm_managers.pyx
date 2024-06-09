@@ -399,7 +399,7 @@ cdef class FvarsHandler:
     - ``init_data`` -- a dictionary or :class:`FvarsHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
     - ``use_mp`` -- integer indicating the number of child processes
-      used for multiprocessing; if running serially, use 0.
+      used for multiprocessing; if running serially, use 0
     - ``pids_name`` -- the name of a ``ShareableList`` contaning the
       process ``pid``'s for every process in the pool (including the
       parent process)
