@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Interacts for the Sage Jupyter notebook
 

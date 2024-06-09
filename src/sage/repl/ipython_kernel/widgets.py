@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Widgets to be used for the Sage Jupyter notebook
 

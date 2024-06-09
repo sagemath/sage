@@ -43,7 +43,6 @@ AUTHORS:
 
 - Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
   cases of proper integral domains (see :issue:`26421`)
-
 """
 
 # ****************************************************************************
@@ -5840,8 +5839,6 @@ cdef class Polynomial(CommutativePolynomial):
 
         if self.degree() <= 1:
             return R.fraction_field()
-
-        from sage.rings.number_field.number_field import is_NumberField, NumberField
 
         if is_IntegerRing(R):
             from sage.rings.number_field.number_field import NumberField

@@ -101,5 +101,4 @@ Sage example in ./sol/graphique.tex, line 234::
   ....:         Y = [[u[0]*cos(u[1]), u[0]*sin(u[1])] for u in X]
   ....:         q += line(Y, xmin = -4, xmax = 4, color='blue')
   ....:     q.show(aspect_ratio = 1, axes = False)
-
 """

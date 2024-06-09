@@ -126,7 +126,6 @@ Check that :issue:`5562` has been fixed::
     sage: v2 = vector([CDF(2)])                                                         # needs sage.modules
     sage: v1 * v2                                                                       # needs sage.modules
     2.0*u
-
 """
 
 # ****************************************************************************
@@ -151,7 +150,7 @@ from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
 
 from sage.rings.ring import (Ring, IntegralDomain, PrincipalIdealDomain)
-from sage.structure.element import is_RingElement
+from sage.structure.element import RingElement
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
@@ -3700,7 +3699,7 @@ def polygen(ring_or_element, name="x"):
        get a tuple of indeterminates, exactly as if you called
        :func:`polygens`.
     """
-    if is_RingElement(ring_or_element):
+    if isinstance(ring_or_element, RingElement):
         base_ring = ring_or_element.parent()
     elif ring_or_element in Rings():
         base_ring = ring_or_element

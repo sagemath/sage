@@ -567,7 +567,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         return qq, rr
 
 
-
     @coerce_binop
     def gcd(self, right):
         r"""

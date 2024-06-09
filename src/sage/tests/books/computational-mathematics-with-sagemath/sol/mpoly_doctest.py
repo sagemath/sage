@@ -111,5 +111,4 @@ Sage example in ./sol/mpoly.tex, line 278::
   sage: Rel = ideal(u-(s+c), v-(2*s*c+c^2-s^2), s^2+c^2-1)
   sage: Rel.reduce(s^6)
   1/16*u^2*v^2 - 3/8*u^2*v + 7/16*u^2 + 1/8*v^2 - 1/8*v - 1/8
-
 """

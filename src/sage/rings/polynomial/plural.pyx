@@ -181,7 +181,7 @@ class G_AlgFactory(UniqueFactory):
         INPUT:
 
         - ``base_ring`` -- a ring
-        - ``c,d`` -- two matrices
+        - ``c``, ``d`` -- two matrices
         - ``names`` -- a tuple or list of names
         - ``order`` -- (optional) term order
         - ``category`` -- (optional) category

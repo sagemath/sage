@@ -1012,7 +1012,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
         INPUT:
 
-        - ``left, right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom` objects
+        - ``left``, ``right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+          objects
 
         ALGORITHM:
 

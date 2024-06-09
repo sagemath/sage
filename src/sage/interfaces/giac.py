@@ -448,7 +448,6 @@ Full html documentation for giac is available from your giac installation at:
     ``$PREFIX``/share/giac/doc/en/cascmd_en/index.html
 
 If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
-
 """
 
     def expect(self):

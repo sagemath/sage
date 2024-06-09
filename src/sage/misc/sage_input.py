@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage Input Formatting
 
@@ -2290,7 +2291,7 @@ class SIE_dict(SageInputExpression):
         """
         return "{dict: {%s}}" % \
             ', '.join([repr(key) + ':' + repr(val)
-                       for key,val in self._sie_entries])
+                       for key, val in self._sie_entries])
 
     def _sie_referenced(self):
         r"""
@@ -2306,7 +2307,7 @@ class SIE_dict(SageInputExpression):
             sage: sie._sie_referenced()
             [{atomic:1}, {atomic:2}, {atomic:3}, {atomic:'beguilement'}, {atomic:'legacy'}, {atomic:'passage'}]
         """
-        return [k for k,v in self._sie_entries] + [v for k,v in self._sie_entries]
+        return [k for k, v in self._sie_entries] + [v for k, v in self._sie_entries]
 
     def _sie_format(self, sif):
         r"""
@@ -2324,8 +2325,8 @@ class SIE_dict(SageInputExpression):
             sage: sie._sie_format(sif)
             ("{'carnivores':1, 'thinking':2, 'triumph':3}", 42)
         """
-        return "{%s}" %\
-            ', '.join(sif.format(k, 0)+':'+sif.format(v, 0) for k,v in self._sie_entries), _prec_atomic
+        return "{%s}" % ', '.join(sif.format(k, 0) + ':' + sif.format(v, 0)
+                                  for k, v in self._sie_entries), _prec_atomic
 
 
 class SIE_binary(SageInputExpression):
@@ -2476,6 +2477,7 @@ class SIE_binary(SageInputExpression):
         lhs = sif.format(self._sie_operands[0], prec)
         rhs = sif.format(self._sie_operands[1], prec+1)
         return '%s%s%s' % (lhs, fop, rhs), prec
+
 
 class SIE_unary(SageInputExpression):
     r"""
@@ -2659,6 +2661,7 @@ class SIE_unary(SageInputExpression):
         """
         return self._sie_op == '-'
 
+
 class SIE_gens_constructor(SageInputExpression):
     r"""
     This class represents an expression that can create a \sage parent
@@ -2707,7 +2710,7 @@ class SIE_gens_constructor(SageInputExpression):
         super().__init__(sib)
         self._sie_constr = constr
         self._sie_gen_names = gen_names
-        self._sie_gens = None # will be overwritten from .parent_with_gens()
+        self._sie_gens = None  # will be overwritten from .parent_with_gens()
         self._sie_gens_constr = gens_syntax
         self._sie_assign_gens = False
         self._sie_generated = False
@@ -2888,6 +2891,7 @@ class SIE_gens_constructor(SageInputExpression):
 
         return self._sie_constr._sie_format(sif)
 
+
 class SIE_gen(SageInputExpression):
     r"""
     This class represents a named generator of a parent with named
@@ -3038,6 +3042,7 @@ class SIE_gen(SageInputExpression):
         """
         return self._sie_get_varname(sif) == self._sie_preferred_varname
 
+
 class SIE_import_name(SageInputExpression):
     r"""
     This class represents a name which has been imported from a module.
@@ -3173,6 +3178,7 @@ class SIE_import_name(SageInputExpression):
                                                     rename)
         return name, _prec_atomic
 
+
 class SIE_assign(SageInputExpression):
     r"""
     This class represents an assignment command.
@@ -3277,6 +3283,7 @@ class SIE_assign(SageInputExpression):
             'foo.x = pi'
         """
         return '%s = %s' % (sif.format(self._sie_lhs, 0), sif.format(self._sie_rhs, 0))
+
 
 class SageInputFormatter:
     r"""
@@ -3441,6 +3448,7 @@ class SageInputFormatter:
         else:
             return name
 
+
 def verify_same(a, b):
     r"""
     Verify that two Sage values are the same.  This is an extended equality
@@ -3473,8 +3481,8 @@ def verify_same(a, b):
             assert(a.parent() == b.parent())
         AssertionError
     """
-    from sage.structure.element import is_Element
-    if is_Element(a):
+    from sage.structure.element import Element
+    if isinstance(a, Element):
         assert a.parent() == b.parent()
     else:
         assert type(a) is type(b)
@@ -3534,6 +3542,7 @@ def verify_si_answer(x, answer, preparse):
         verify_same(x, sage_eval(answer, preparse=False))
     else:
         verify_same(x, sage_eval(answer, preparse=preparse))
+
 
 class SageInputAnswer(tuple):
     r"""

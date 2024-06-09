@@ -932,8 +932,11 @@ class PolyhedralComplex(GenericCellComplex):
             sage: pc = PolyhedralComplex([
             ....:         Polyhedron(vertices=[(1/3, 1/3), (0, 0), (1, 2)]),
             ....:         Polyhedron(vertices=[(1, 2), (0, 0), (0, 1/2)])])
-            sage: pc._an_element_().vertices_list()
+            sage: element = pc._an_element_().vertices_list()
+            sage: element   # random output (one of the two maximal cells)
             [[0, 0], [0, 1/2], [1, 2]]
+            sage: element in ([[0, 0], [0, 1/2], [1, 2]], [[0, 0], [1/3, 1/3], [1, 2]])
+            True
         """
         try:
             return next(self.maximal_cell_iterator(increasing=False))

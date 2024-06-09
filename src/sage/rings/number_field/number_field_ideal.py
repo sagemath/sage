@@ -10,7 +10,6 @@ AUTHORS:
   NumberFieldFractionalIdeal now used for all except the 0 ideal
 - Radoslav Kirov and Alyson Deines (2010-06-22):
   prime_to_S_part, is_S_unit, is_S_integral
-
 """
 
 # ****************************************************************************
@@ -1789,6 +1788,10 @@ def is_NumberFieldIdeal(x):
 
         sage: from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
         sage: is_NumberFieldIdeal(2/3)
+        doctest:warning...
+        DeprecationWarning: The function is_NumberFieldIdeal is deprecated;
+        use 'isinstance(..., NumberFieldIdeal)' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         False
         sage: is_NumberFieldIdeal(ideal(5))
         False
@@ -1804,6 +1807,10 @@ def is_NumberFieldIdeal(x):
         sage: is_NumberFieldIdeal(Z)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_NumberFieldIdeal is deprecated; "
+                "use 'isinstance(..., NumberFieldIdeal)' instead.")
     return isinstance(x, NumberFieldIdeal)
 
 
@@ -3316,6 +3323,10 @@ def is_NumberFieldFractionalIdeal(x):
 
         sage: from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
         sage: is_NumberFieldFractionalIdeal(2/3)
+        doctest:warning...
+        DeprecationWarning: The function is_NumberFieldFractionalIdeal is deprecated;
+        use 'isinstance(..., NumberFieldFractionalIdeal)' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         False
         sage: is_NumberFieldFractionalIdeal(ideal(5))
         False
@@ -3330,6 +3341,10 @@ def is_NumberFieldFractionalIdeal(x):
         sage: is_NumberFieldFractionalIdeal(Z)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_NumberFieldFractionalIdeal is deprecated; "
+                "use 'isinstance(..., NumberFieldFractionalIdeal)' instead.")
     return isinstance(x, NumberFieldFractionalIdeal)
 
 

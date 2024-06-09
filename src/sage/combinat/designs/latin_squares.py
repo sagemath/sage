@@ -460,10 +460,10 @@ def MOLS_table(start,stop=None,compare=False,width=None):
 
     INPUT:
 
-    - ``start,stop`` (integers) -- print the table of MOLS for value of `n` such
-      that ``start<=n<stop``. If only one integer is given as input, it is
-      interpreted as the value of ``stop`` with ``start=0`` (same behaviour as
-      ``range``).
+    - ``start``, ``stop`` (integers) -- print the table of MOLS for value of
+      `n` such that ``start<=n<stop``. If only one integer is given as input,
+      it is interpreted as the value of ``stop`` with ``start=0`` (same
+      behaviour as ``range``).
 
     - ``compare`` (boolean) -- if sets to ``True`` the MOLS displays
       with `+` and `-` entries its difference with the table from the

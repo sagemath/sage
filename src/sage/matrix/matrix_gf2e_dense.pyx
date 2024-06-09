@@ -69,7 +69,6 @@ Test hashing::
 REFERENCES:
 
 - [BB2009]_
-
 """
 
 #*****************************************************************************
@@ -1064,7 +1063,6 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         cdef m4ri_word x = poly_to_word(multiple)
         mzed_add_multiple_of_row(self._entries, row_to, self._entries, row_from, x, start_col)
-
 
     cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
         """

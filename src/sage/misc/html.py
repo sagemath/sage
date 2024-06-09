@@ -10,14 +10,14 @@ producing an HTML representation of any object. The produced HTML is
 renderable in a browser-based notebook with the help of MathJax.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import re
 

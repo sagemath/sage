@@ -320,17 +320,19 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         """
         return 'Harmonic cocycle with values in %s' % self.parent()._U
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=True):
         r"""
-        Void method to comply with pickling.
+        Return a dictionary whose keys are indices of basis elements
+        in the support of ``self`` and whose values are the
+        corresponding coefficients.
 
         EXAMPLES::
 
-            sage: M = BruhatTitsQuotient(3,5).harmonic_cocycles(2,prec=10)
+            sage: M = BruhatTitsQuotient(3,5).harmonic_cocycles(2, prec=10)
             sage: M.monomial_coefficients()
             {}
         """
-        return {}
+        return self.element().monomial_coefficients(copy=copy)
 
     def print_values(self):
         r"""
@@ -2480,8 +2482,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 tmp.append(newtmp)
                 F.append(newtmp)
             A = data.parent()._Sigma0(Matrix(QQ, 2, 2, [0, ~self.prime(), 1, 0]), check=False)
-            for ii in range(len(data._F)):
-                F.append(-(A * tmp[ii]))
+            F.extend(-(A * tmp[ii]) for ii in range(len(data._F)))
             vals = self._make_invariant([self._U(o, normalize=False) for o in F])
             return self.element_class(self, vals)
         if data == 0:

@@ -213,8 +213,8 @@ from sage.arith.functions import lcm
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
-from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
-                                         is_ToricLatticeQuotient)
+from sage.geometry.toric_lattice import (ToricLattice, ToricLattice_generic,
+                                         ToricLattice_quotient)
 lazy_import('sage.geometry.toric_plotter', ['ToricPlotter', 'label_list'])
 from sage.geometry.relative_interior import RelativeInterior
 from sage.matrix.constructor import matrix
@@ -470,7 +470,7 @@ def Cone(rays, lattice=None, check=True, normalize=True):
     if not check or not rays:
         return ConvexRationalPolyhedralCone(rays, lattice)
     # Any set of rays forms a cone, but we want to keep only generators
-    if is_ToricLatticeQuotient(lattice):
+    if isinstance(lattice, ToricLattice_quotient):
         gs = Generator_System(
                         PPL_point(Linear_Expression(lattice(0).vector(), 0)))
         for r in rays:
@@ -619,7 +619,7 @@ def _ambient_space_point(body, data):
     p = try_base_extend(ZZ)
     if p is not None:
         return p
-    if is_ToricLattice(parent(data)):
+    if isinstance(parent(data), ToricLattice_generic):
         raise TypeError("the point %s and %s have incompatible "
                         "lattices" % (data, body))
 
@@ -730,7 +730,7 @@ def normalize_rays(rays, lattice):
     if rays:
         if lattice is None:
             ray_parent = parent(rays[0])
-            lattice = (ray_parent if is_ToricLattice(ray_parent)
+            lattice = (ray_parent if isinstance(ray_parent, ToricLattice_generic)
                                   else ToricLattice(len(rays[0])))
         if lattice.base_ring() is not ZZ:
             raise TypeError("lattice must be a free module over ZZ")
@@ -2016,7 +2016,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         result = "%d-d" % self.dim()
         if self.ambient() is self:
             result += " cone in"
-            if is_ToricLattice(self.lattice()):
+            if isinstance(self.lattice(), ToricLattice_generic):
                 result += " %s" % self.lattice()
             else:
                 result += " %d-d lattice" % self.lattice_dim()
@@ -3673,7 +3673,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # for sublattices. But it seems to be the most natural choice
         # for names. If many subcones land in the same lattice -
         # that's just how it goes.
-        if is_ToricLattice(L):
+        if isinstance(L, ToricLattice_generic):
             S = ToricLattice(Q.dimension(), L._name, L._dual_name,
                              L._latex_name, L._latex_dual_name)
         else:

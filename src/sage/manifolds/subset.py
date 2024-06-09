@@ -52,7 +52,6 @@ Families of subsets after the above operations::
     Set {A_inter_B} of subsets of the 2-dimensional topological manifold M
     sage: d.subset_family()
     Set {A, A_inter_B, A_union_B, B} of subsets of the 2-dimensional topological manifold M
-
 """
 #*****************************************************************************
 #       Copyright (C) 2015-2020 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

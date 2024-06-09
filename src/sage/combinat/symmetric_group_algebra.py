@@ -16,7 +16,7 @@ from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutation, Permutations, from_permutation_group_element
 from sage.combinat.permutation_cython import (left_action_same_n, right_action_same_n)
-from sage.combinat.partition import _Partitions, Partitions_n
+from sage.combinat.partition import _Partitions, Partitions, Partitions_n
 from sage.combinat.tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
 from sage.algebras.group_algebra import GroupAlgebra_class
 from sage.algebras.cellular_basis import CellularBasis
@@ -293,6 +293,10 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         category = category.Unital().FiniteDimensional().WithBasis().Cellular()
         GroupAlgebra_class.__init__(self, R, W, prefix='',
                                     latex_prefix='', category=category)
+
+        # Mixin class for extra methods for representations
+        from sage.combinat.specht_module import SymmetricGroupRepresentation
+        self._representation_mixin_class = SymmetricGroupRepresentation
 
     def _repr_(self):
         """
@@ -1717,6 +1721,28 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         span_set = specht_module_spanning_set(D, self)
         return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
 
+    def simple_module_parameterization(self):
+        r"""
+        Return a parameterization of the simple modules of ``self``.
+
+        The symmetric group algebra of `S_n` over a field of characteristic `p`
+        has its simple modules indexed by all `p`-regular partitions of `n`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 6)
+            sage: SGA.simple_module_parameterization()
+            Partitions of the integer 6
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 6)
+            sage: SGA.simple_module_parameterization()
+            2-Regular Partitions of the integer 6
+        """
+        p = self.base_ring().characteristic()
+        if p > 0:
+            return Partitions(self.n, regular=p)
+        return Partitions_n(self.n)
+
     def simple_module(self, la):
         r"""
         Return the simple module of ``self`` indexed by the partition ``la``.
@@ -1763,6 +1789,21 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             raise ValueError(f"{la} is not a partition of {self.n}")
         from sage.combinat.specht_module import simple_module_rank
         return simple_module_rank(la, self.base_ring())
+
+    def garsia_procesi_module(self, la):
+        r"""
+        Return the :class:`Garsia-Procesi module
+        <sage.combinat.symmetric_group_representations.GarsiaProcesiModule>`
+        of ``self`` indexed by ``la``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 6)
+            sage: SGA.garsia_procesi_module(Partition([2,2,1,1]))
+            Garsia-Procesi module of shape [2, 2, 1, 1] over Finite Field of size 2
+        """
+        from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
+        return GarsiaProcesiModule(self, la)
 
     def jucys_murphy(self, k):
         r"""

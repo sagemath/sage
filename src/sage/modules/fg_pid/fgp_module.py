@@ -35,7 +35,6 @@ to `M_1=V_1/W_1` by giving a morphism from the optimized representation `V_0'`
 of `M_0` to `V_1` that sends `W_0` into `W_1`.
 
 
-
 The following TUTORIAL illustrates several of the above points.
 
 First we create free modules `V_0` and `W_0` and the quotient module `M_0`.

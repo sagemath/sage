@@ -31,7 +31,7 @@ class Arc(GraphicPrimitive):
 
     INPUT:
 
-    - ``x,y`` -- coordinates of the center of the arc
+    - ``x``, ``y`` -- coordinates of the center of the arc
 
     - ``r1``, ``r2`` -- lengths of the two radii
 

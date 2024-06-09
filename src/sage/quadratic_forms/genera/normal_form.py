@@ -1031,7 +1031,7 @@ def _partial_normal_form_of_block(G):
 
     OUTPUT:
 
-    - ``D, B, w`` -- with ``B`` a transformation matrix such that
+    - ``D``, ``B``, ``w`` -- with ``B`` a transformation matrix such that
       ``B * G * B.T`` is in partial normal form
       and `w = 0, 1, 2` is the size of the part consisting of forms of type W
 

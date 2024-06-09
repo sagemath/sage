@@ -18,8 +18,8 @@ from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
 from sage.rings.integer_ring import ZZ
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
-from sage.matrix.constructor import Matrix, matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix
 from sage.rings.ring import Algebra
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
@@ -136,7 +136,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         table = [b.base_extend(k) for b in table]
         for b in table:
             b.set_immutable()
-            if not (is_Matrix(b) and b.dimensions() == (n, n)):
+            if not (isinstance(b, Matrix) and b.dimensions() == (n, n)):
                 raise ValueError("input is not a multiplication table")
         table = tuple(table)
 
@@ -389,7 +389,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         B = self.table()
         n = self.degree()
-        table = [Matrix([B[j][i] for j in range(n)]) for i in range(n)]
+        table = [matrix([B[j][i] for j in range(n)]) for i in range(n)]
         for b in table:
             b.set_immutable()
         return tuple(table)
@@ -596,9 +596,9 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             self._one = matrix(k, 1, n)
             return True
         B1 = reduce(lambda x, y: x.augment(y),
-                    self._table, Matrix(k, n, 0))
+                    self._table, matrix(k, n, 0))
         B2 = reduce(lambda x, y: x.augment(y),
-                    self.left_table(), Matrix(k, n, 0))
+                    self.left_table(), matrix(k, n, 0))
         # This is the vector obtained by concatenating the rows of the
         # n times n identity matrix:
         kone = k.one()
@@ -882,7 +882,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
                 and (self._assume_associative or self.is_associative())):
             raise TypeError("algebra must be unitary, commutative and associative")
         # Start with the trivial decomposition of self.
-        components = [Matrix.identity(k, n)]
+        components = [matrix.identity(k, n)]
         for b in self.table():
             # Use the action of the basis element b to refine our
             # decomposition of self.
@@ -903,7 +903,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             components = components_new
         quotients = []
         for i in range(len(components)):
-            I = Matrix(k, 0, n)
+            I = matrix(k, 0, n)
             for j,c in enumerate(components):
                 if j != i:
                     I = I.stack(c)
