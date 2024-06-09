@@ -4461,7 +4461,7 @@ def StaircaseGraph(n):
     r"""
     Return a staircase graph with `2n` nodes
 
-    For `n \geqslant 3`, the staircase graph of order `2n` is the graph obtained
+    For `n \geq 3`, the staircase graph of order `2n` is the graph obtained
     from the ladder graph of order `2n - 2`, i.e., ``graphs.LadderGraph(n - 1)``
     by introducing two new nodes `2n - 2` and `2n - 1`, and then joining the
     node `2n - 2` with `0` and `n - 1`, the node `2n - 1` with `n - 2` and
