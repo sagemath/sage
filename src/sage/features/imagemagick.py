@@ -41,7 +41,7 @@ class Magick(Executable):
         Executable.__init__(self, "magick", executable="magick")
         try:
             _ = self.absolute_filename()
-        except:
+        except RuntimeError:
             Executable.__init__(self, "magick", executable="convert")
 
     def is_functional(self):
