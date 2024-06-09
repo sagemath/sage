@@ -397,7 +397,7 @@ REFERENCES:
 
 **B**
 
-.. [Bab86] L. Babai. *On Lovász' lattice reduction and the nearest lattice point problem*, 
+.. [Bab86] L. Babai. *On Lovász' lattice reduction and the nearest lattice point problem*,
             Combinatorica, 6(1), 1986, 1-13. :doi:`10.1007/BF02579403`.
 
 .. [Baer2020] Christian Bär. *The Faddeev-LeVerrier algorithm and the Pfaffian*.
@@ -4330,6 +4330,10 @@ REFERENCES:
 
 .. [LM2018] \A. Lauve, M. Mastnak. *Bialgebra coverings and transfer
             of structure*. Preprint, :arxiv:`1803.02691`.
+
+.. [LM2024] C.L. Lucchesi, U.S.R. Murty. *Perfect Matchings: A Theory of
+            Matching Covered Graphs*. Algorithms and Computation in Mathematics.
+            Springer Cham, 1st edition, 2024, :doi:`10.1007/978-3-031-47504-7`.
 
 .. [LMR2010] \N. Linial, R. Meshulam and M. Rosenthal, "Sum complexes
              -- a new family of hypertrees", Discrete & Computational
