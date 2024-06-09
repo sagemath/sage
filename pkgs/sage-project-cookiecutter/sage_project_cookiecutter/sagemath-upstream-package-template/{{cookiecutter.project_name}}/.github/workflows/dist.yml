@@ -24,7 +24,7 @@ jobs:
         run: |
           python3 -m pip install build
           python3 -m build --sdist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -48,10 +48,10 @@ jobs:
             arch: x86_64
           - os: ubuntu-latest
             arch: i686
-          - os: macos-latest
-            arch: auto
+          - os: macos-13
+            arch: x86_64
           - os: macos-14
-            arch: auto
+            arch: arm64
     env:
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
@@ -74,7 +74,7 @@ jobs:
           repository:   sagemath/sage
           ref:          develop
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
@@ -101,15 +101,16 @@ jobs:
           mkdir -p unpacked
           for pkg in {{cookiecutter.project_name}}; do
               (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
-              "{{"${{"}} steps.python.outputs.python-path {{"}}"}}" -m pipx run cibuildwheel==2.17.0 unpacked/$pkg*
+              "{{"${{"}} steps.python.outputs.python-path {{"}}"}}" -m pipx run cibuildwheel==2.18.0 unpacked/$pkg*
           done
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: {{"${{"}} matrix.os {{"}}"}}-{{"${{"}} matrix.arch {{"}}"}}-wheels
           path: ./wheelhouse/*.whl
 
   pypi-publish:
+    # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
     # https://github.com/pypa/gh-action-pypi-publish
     name: Upload wheels to PyPI
     needs: build_wheels
@@ -119,10 +120,11 @@ jobs:
       CAN_DEPLOY: {{"${{"}} secrets.SAGEMATH_PYPI_API_TOKEN != '' {{"}}"}}
     steps:
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: wheels
+          pattern: "*-*-wheels"
           path: wheelhouse
+          merge-multiple: true
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
