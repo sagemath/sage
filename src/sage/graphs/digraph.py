@@ -1203,7 +1203,7 @@ class DiGraph(GenericGraph):
             1
             4
         """
-        return iter(set(self._backend.iterator_in_nbrs(vertex)))
+        yield from self._backend.iterator_in_nbrs(vertex)
 
     def neighbors_in(self, vertex):
         """
@@ -1234,7 +1234,7 @@ class DiGraph(GenericGraph):
             2
             3
         """
-        return iter(set(self._backend.iterator_out_nbrs(vertex)))
+        yield from self._backend.iterator_out_nbrs(vertex)
 
     def neighbors_out(self, vertex):
         """
