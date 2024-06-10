@@ -422,12 +422,9 @@ cdef class Functor(SageObject):
 
 def is_Functor(x):
     """
-    Test whether the argument is a functor
+    Test whether the argument is a functor.
 
-    NOTE:
-
-    There is a deprecation warning when using it from top level.
-    Therefore we import it in our doc test.
+    This function is deprecated.
 
     EXAMPLES::
 
@@ -436,6 +433,10 @@ def is_Functor(x):
         sage: F1
         FractionField
         sage: is_Functor(F1)
+        doctest:warning...
+        DeprecationWarning: The function is_Functor is deprecated;
+        use 'isinstance(..., Functor)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_Functor(FractionField)
         False
@@ -446,6 +447,10 @@ def is_Functor(x):
         True
 
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_Functor is deprecated; "
+                "use 'isinstance(..., Functor)' instead.")
     return isinstance(x, Functor)
 
 

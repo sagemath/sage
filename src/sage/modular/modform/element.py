@@ -72,10 +72,18 @@ def is_ModularFormElement(x):
 
         sage: from sage.modular.modform.element import is_ModularFormElement
         sage: is_ModularFormElement(5)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularFormElement is deprecated;
+        use 'isinstance(..., ModularFormElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: is_ModularFormElement(ModularForms(11).0)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ModularFormElement is deprecated; "
+                "use 'isinstance(..., ModularFormElement)' instead.")
     return isinstance(x, ModularFormElement)
 
 

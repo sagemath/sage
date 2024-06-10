@@ -172,10 +172,18 @@ def is_DirichletCharacter(x) -> bool:
 
         sage: from sage.modular.dirichlet import is_DirichletCharacter
         sage: is_DirichletCharacter(trivial_character(3))
+        doctest:warning...
+        DeprecationWarning: The function is_DirichletCharacter is deprecated;
+        use 'isinstance(..., DirichletCharacter)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_DirichletCharacter([1])
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DirichletCharacter is deprecated; "
+                "use 'isinstance(..., DirichletCharacter)' instead.")
     return isinstance(x, DirichletCharacter)
 
 

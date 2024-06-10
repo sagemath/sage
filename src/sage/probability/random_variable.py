@@ -27,15 +27,31 @@ from pprint import pformat
 ################################################################################
 
 def is_ProbabilitySpace(S):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ProbabilitySpace is deprecated; "
+                "use 'isinstance(..., ProbabilitySpace_generic)' instead.")
     return isinstance(S, ProbabilitySpace_generic)
 
 def is_DiscreteProbabilitySpace(S):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DiscreteProbabilitySpace is deprecated; "
+                "use 'isinstance(..., DiscreteProbabilitySpace)' instead.")
     return isinstance(S, DiscreteProbabilitySpace)
 
 def is_RandomVariable(X):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_RandomVariable is deprecated; "
+                "use 'isinstance(..., RandomVariable_generic)' instead.")
     return isinstance(X, RandomVariable_generic)
 
 def is_DiscreteRandomVariable(X):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DiscreteRandomVariable is deprecated; "
+                "use 'isinstance(..., DiscreteRandomVariable)' instead.")
     return isinstance(X, DiscreteRandomVariable)
 
 ################################################################################

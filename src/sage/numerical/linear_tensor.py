@@ -128,10 +128,18 @@ def is_LinearTensor(x):
         sage: x = p.new_variable(nonnegative=False)
         sage: from sage.numerical.linear_tensor import is_LinearTensor
         sage: is_LinearTensor(x[0] - 2*x[2])
+        doctest:warning...
+        DeprecationWarning: The function is_LinearTensor is deprecated;
+        use 'isinstance(..., LinearTensor)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: is_LinearTensor('a string')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_LinearTensor is deprecated; "
+                "use 'isinstance(..., LinearTensor)' instead.")
     return isinstance(x, LinearTensor)
 
 

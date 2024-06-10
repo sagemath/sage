@@ -132,10 +132,18 @@ cpdef is_LinearFunction(x):
         sage: x = p.new_variable()
         sage: from sage.numerical.linear_functions import is_LinearFunction
         sage: is_LinearFunction(x[0] - 2*x[2])
+        doctest:warning...
+        DeprecationWarning: The function is_LinearFunction is deprecated;
+use 'isinstance(..., LinearFunction)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_LinearFunction('a string')
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_LinearFunction is deprecated; "
+                       "use 'isinstance(..., LinearFunction)' instead.")
     return isinstance(x, LinearFunction)
 
 
@@ -158,10 +166,18 @@ def is_LinearConstraint(x):
         sage: ieq = (x[0] <= x[1])
         sage: from sage.numerical.linear_functions import is_LinearConstraint
         sage: is_LinearConstraint(ieq)
+        doctest:warning...
+        DeprecationWarning: The function is_LinearConstraint is deprecated;
+        use 'isinstance(..., LinearConstraint)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_LinearConstraint('a string')
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_LinearConstraint is deprecated; "
+                       "use 'isinstance(..., LinearConstraint)' instead.")
     return isinstance(x, LinearConstraint)
 
 
