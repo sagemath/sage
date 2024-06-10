@@ -1514,8 +1514,9 @@ cdef class SparseGraphBackend(CGraphBackend):
             degrees = cg.out_degrees
         else:
             degrees = cg.in_degrees
-        for v_int in range(cg.num_verts):
-            maxdegree = max(degrees[v_int], maxdegree)
+        for v_int in range(cg.active_vertices.size):
+            if bitset_in(cg.active_vertices, v_int):
+                maxdegree = max(degrees[v_int], maxdegree)
         cdef SparseGraphBTNode **neighbors = <SparseGraphBTNode **>check_allocarray(maxdegree, sizeof(SparseGraphBTNode *))
 
         if not isinstance(vertices, list):
