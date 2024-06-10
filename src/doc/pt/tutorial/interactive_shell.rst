@@ -540,7 +540,6 @@ coordinates, digite ``V.coordinates?`` para ajuda ou
 sessão.
 
 
-
 Sistema de Ajuda Integrado
 ==========================
 
@@ -699,7 +698,6 @@ computacionais de álgebra adotam para salvar objetos individuais.
 
 #. **Eval:** Torna fácil processar um código arbitrário no
    interpretador (por exemplo, Singular, PARI).
-
 
 
 Como o Sage usa o Python, ele adota uma estratégia diferente, que se

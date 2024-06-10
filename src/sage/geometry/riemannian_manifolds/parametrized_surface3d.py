@@ -5,7 +5,6 @@ AUTHORS:
 
 - Mikhail Malakhaltsev (2010-09-25): initial version
 - Joris Vankerschaver  (2010-10-25): implementation, doctests
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010  Mikhail Malakhaltsev <mikarm@gmail.com>
@@ -1442,9 +1441,6 @@ class ParametrizedSurface3D(SageObject):
             sage: helicoid.principal_directions()
             [(-1/(u^2 + 1), [(1, -(u^2 - sqrt(u^2 + 1) + 1)/(u^2 + 1))], 1),
             (1/(u^2 + 1), [(1, -(u^2 + sqrt(u^2 + 1) + 1)/(u^2 + 1))], 1)]
-
-
-
         """
         return self.shape_operator().eigenvectors_right()
 

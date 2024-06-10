@@ -128,9 +128,8 @@ from sage.features.databases import DatabaseReflexivePolytopes
 from sage.geometry.cone import _ambient_space_point, integral_length
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import (PointCollection,
-                                            is_PointCollection,
                                             read_palp_point_collection)
-from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
+from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
 lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 from sage.features import PythonModule
@@ -141,7 +140,7 @@ lazy_import('ppl', 'point', as_='PPL_point',
                     feature=PythonModule("ppl", spkg="pplpy", type="standard"))
 
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.temporary_file import tmp_filename
@@ -318,7 +317,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
     if isinstance(data, LatticePolytopeClass):
         data = data._vertices
         compute_vertices = False
-    if (is_PointCollection(data) and
+    if (isinstance(data, PointCollection) and
         (lattice is None or lattice is data.module())):
         return LatticePolytopeClass(data, compute_vertices)
     if isinstance(data, str):
@@ -328,7 +327,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
         f.close()
     if isinstance(data, (IOBase, StringIO)):
         data = read_palp_point_collection(data)
-    if not is_PointCollection(data) and not isinstance(data, (list, tuple)):
+    if not isinstance(data, PointCollection) and not isinstance(data, (list, tuple)):
         try:
             data = list(data)
         except TypeError:
@@ -338,7 +337,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
             raise ValueError("lattice must be given explicitly for "
                              "empty polytopes!")
         try:
-            if is_ToricLattice(data[0].parent()):
+            if isinstance(data[0].parent(), ToricLattice_generic):
                 lattice = data[0].parent()
         except AttributeError:
             pass
@@ -934,13 +933,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             return data
         self._compute_embedding()
         M = self.lattice()
-        if is_PointCollection(data):
+        if isinstance(data, PointCollection):
             r = [M(self._embedding_matrix * point + self._shift_vector)
                  for point in data]
             for point in r:
                 point.set_immutable()
             return PointCollection(r, M)
-        elif is_Matrix(data):
+        elif isinstance(data, Matrix):
             r = self._embedding_matrix * data
             for i, col in enumerate(r.columns(copy=False)):
                 r.set_column(i, col + self._shift_vector)
@@ -1103,12 +1102,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         self._compute_embedding()
         if data is self._vertices:
             return self._sublattice_polytope._vertices
-        if is_PointCollection(data):
+        if isinstance(data, PointCollection):
             r = [self._pullback(point) for point in data]
             for point in r:
                 point.set_immutable()
             return PointCollection(r, self._sublattice)
-        if is_Matrix(data):
+        if isinstance(data, Matrix):
             r = matrix([self._pullback(col)
                     for col in data.columns(copy=False)]).transpose()
             return r
@@ -1334,7 +1333,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                         parts.insert(-1, "#%d" % self.index())
             except ValueError:
                 pass
-            if is_ToricLattice(self.lattice()):
+            if isinstance(self.lattice(), ToricLattice_generic):
                 parts.append(str(self.lattice()))
             else:
                 parts.append("%d-d lattice" % self.lattice_dim())
@@ -4199,15 +4198,19 @@ def is_NefPartition(x):
 
     EXAMPLES::
 
-        sage: from sage.geometry.lattice_polytope import is_NefPartition
-        sage: is_NefPartition(1)
+        sage: from sage.geometry.lattice_polytope import NefPartition
+        sage: isinstance(1, NefPartition)
         False
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = o.nef_partitions()[0]; np                                            # needs palp
         Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
-        sage: is_NefPartition(np)                                                       # needs palp
+        sage: isinstance(np, NefPartition)                                                       # needs palp
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_NefPartition is deprecated; "
+                "use 'isinstance(..., NefPartition)' instead.")
     return isinstance(x, NefPartition)
 
 
@@ -4408,7 +4411,7 @@ class NefPartition(SageObject, Hashable):
             sage: np == 0
             False
         """
-        return (is_NefPartition(other)
+        return (isinstance(other, NefPartition)
                 and self._Delta_polar == other._Delta_polar
                 and self._vertex_to_part == other._vertex_to_part)
 
@@ -5989,7 +5992,7 @@ def write_palp_matrix(m, ofile=None, comment="", format=None):
            0    1    0    0   -1    0
            0    0    1    0    0   -1
     """
-    if is_PointCollection(m):
+    if isinstance(m, PointCollection):
         m = m.column_matrix()
     if format is None:
         n = max(len(str(m[i,j]))

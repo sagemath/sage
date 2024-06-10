@@ -165,7 +165,6 @@ REFERENCES:
   16-43.
 - [4] :wikipedia:`Regular_tiling`
 - [5] :wikipedia:`Dyck_word`
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Arnaud bergeron <abergeron@gmail.coms>,
@@ -2317,7 +2316,7 @@ class FiniteWordPath_hexagonal_grid(FiniteWordPath_triangle_grid):
         - ``parent`` -- a parent object inheriting from Words_all
           that has the alphabet attribute defined
 
-        - ``*args, **kwds`` -- arguments accepted by AbstractWord
+        - ``*args``, ``**kwds`` -- arguments accepted by AbstractWord
 
         EXAMPLES::
 

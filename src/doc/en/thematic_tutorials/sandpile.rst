@@ -122,7 +122,6 @@ Alternatives::
     [{1: 2, 2: 1, 3: 1}, {1: 2, 2: 2, 3: 3}]
 
 
-
 Since vertex 3 has become unstable after firing vertex 1, it can be fired,
 which causes vertex 2 to become unstable, etc.  Repeated firings eventually
 lead to a stable configuration.  The last line of the Sage code, above, is a

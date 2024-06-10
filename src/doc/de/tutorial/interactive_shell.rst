@@ -505,7 +505,6 @@ Hilfe, und ``V.coordinates??`` um den Quelltext der Funktion zu
 sehen.
 
 
-
 Integriertes Hilfesystem
 ========================
 

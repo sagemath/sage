@@ -322,7 +322,6 @@ AUTHORS:
 - Simon King (2011-06-06): Make conversion from Singular to Sage more flexible.
 
 - Simon King (2015): Extend pickling capabilities.
-
 """
 
 # ****************************************************************************
@@ -1940,19 +1939,19 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             [0.0 0.0]
             [0.0 0.0]
         """
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         nrows, ncols = int(self.nrows()), int(self.ncols())
 
         if R is None:
             R = self.sage_global_ring()
-            A = Matrix(R, nrows, ncols, sparse=sparse)
+            A = matrix(R, nrows, ncols, sparse=sparse)
             # this is slow
             for x in range(nrows):
                 for y in range(ncols):
                     A[x, y] = self[x + 1, y + 1].sage_poly(R)
             return A
 
-        A = Matrix(R, nrows, ncols, sparse=sparse)
+        A = matrix(R, nrows, ncols, sparse=sparse)
         # this is slow
         for x in range(nrows):
             for y in range(ncols):

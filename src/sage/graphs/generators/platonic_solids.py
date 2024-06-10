@@ -2,7 +2,6 @@ r"""
 1-skeletons of Platonic solids
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
-
 """
 # ****************************************************************************
 #

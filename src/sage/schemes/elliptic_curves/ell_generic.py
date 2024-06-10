@@ -3271,7 +3271,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``xmin, xmax`` -- (optional) points will be computed at
+        - ``xmin``, ``xmax`` -- (optional) points will be computed at
           least within this range, but possibly farther.
 
         - ``components`` -- a string, one of the following:

@@ -37,7 +37,7 @@ from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModu
 from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
 
-class SymmetricGroupRepresentation:
+class SymmetricGroupRepresentation(Representation_abstract):
     """
     Mixin class for symmetric group (algebra) representations.
     """
@@ -48,22 +48,11 @@ class SymmetricGroupRepresentation:
         EXAMPLES::
 
             sage: SM = Partition([3,1,1]).specht_module(GF(3))
-            sage: TestSuite(SM).run()
-        """
-        self._semigroup = SGA.group()
-        self._semigroup_algebra = SGA
-
-    def side(self):
-        r"""
-        Return the side of the action defining ``self``.
-
-        EXAMPLES::
-
-            sage: SM = Partition([3,1,1]).specht_module(GF(3))
             sage: SM.side()
             'left'
+            sage: TestSuite(SM).run()
         """
-        return "left"
+        Representation_abstract.__init__(self, SGA.group(), "left", SGA)
 
     @cached_method
     def frobenius_image(self):
@@ -123,145 +112,12 @@ class SymmetricGroupRepresentation:
         s = SymmetricFunctions(QQ).s()
         G = self._semigroup
         CCR = [(elt, elt.cycle_type()) for elt in G.conjugacy_classes_representatives()]
-        return s(p.sum(QQ(self.representation_matrix(elt).trace()) / la.centralizer_size() * p[la]
+        B = self.basis()
+        return s(p.sum(QQ(sum((elt * B[k])[k] for k in B.keys())) / la.centralizer_size() * p[la]
                        for elt, la in CCR))
 
-    # TODO: Move these methods up to methods of general representations
 
-    def representation_matrix(self, elt):
-        r"""
-        Return the matrix corresponding to the left action of the symmetric
-        group (algebra) element ``elt`` on ``self``.
-
-        EXAMPLES::
-
-            sage: SM = Partition([3,1,1]).specht_module(QQ)
-            sage: SM.representation_matrix(Permutation([2,1,3,5,4]))
-            [-1  0  0  0  0  0]
-            [ 0  0  0 -1  0  0]
-            [ 1  0  0 -1  1  0]
-            [ 0 -1  0  0  0  0]
-            [ 1 -1  1  0  0  0]
-            [ 0 -1  0  1  0 -1]
-
-            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
-            sage: SM = SGA.specht_module([(0,0), (0,1), (0,2), (1,0), (2,0)])
-            sage: SM.representation_matrix(Permutation([2,1,3,5,4]))
-            [-1  0  0  1 -1  0]
-            [ 0  0  1  0 -1  1]
-            [ 0  1  0 -1  0  1]
-            [ 0  0  0  0 -1  0]
-            [ 0  0  0 -1  0  0]
-            [ 0  0  0  0  0 -1]
-            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
-            sage: SM.representation_matrix(SGA([3,1,5,2,4]))
-            [ 0 -1  0  1  0 -1]
-            [ 0  0  0  0  0 -1]
-            [ 0  0  0 -1  0  0]
-            [ 0  0 -1  0  1 -1]
-            [ 1  0  0 -1  1  0]
-            [ 0  0  0  0  1  0]
-        """
-        return matrix(self.base_ring(), [(elt * b).to_vector() for b in self.basis()])
-
-    @cached_method
-    def character(self):
-        r"""
-        Return the character of ``self``.
-
-        EXAMPLES::
-
-            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
-            sage: SM = SGA.specht_module([3,2])
-            sage: SM.character()
-            (5, 1, 1, -1, 1, -1, 0)
-            sage: matrix(SGA.specht_module(la).character() for la in Partitions(5))
-            [ 1  1  1  1  1  1  1]
-            [ 4  2  0  1 -1  0 -1]
-            [ 5  1  1 -1  1 -1  0]
-            [ 6  0 -2  0  0  0  1]
-            [ 5 -1  1 -1 -1  1  0]
-            [ 4 -2  0  1  1  0 -1]
-            [ 1 -1  1  1 -1 -1  1]
-
-            sage: SGA = SymmetricGroupAlgebra(QQ, SymmetricGroup(5))
-            sage: SM = SGA.specht_module([3,2])
-            sage: SM.character()
-            Character of Symmetric group of order 5! as a permutation group
-            sage: SM.character().values()
-            [5, 1, 1, -1, 1, -1, 0]
-            sage: matrix(SGA.specht_module(la).character().values() for la in reversed(Partitions(5)))
-            [ 1 -1  1  1 -1 -1  1]
-            [ 4 -2  0  1  1  0 -1]
-            [ 5 -1  1 -1 -1  1  0]
-            [ 6  0 -2  0  0  0  1]
-            [ 5  1  1 -1  1 -1  0]
-            [ 4  2  0  1 -1  0 -1]
-            [ 1  1  1  1  1  1  1]
-            sage: SGA.group().character_table()
-            [ 1 -1  1  1 -1 -1  1]
-            [ 4 -2  0  1  1  0 -1]
-            [ 5 -1  1 -1 -1  1  0]
-            [ 6  0 -2  0  0  0  1]
-            [ 5  1  1 -1  1 -1  0]
-            [ 4  2  0  1 -1  0 -1]
-            [ 1  1  1  1  1  1  1]
-        """
-        G = self._semigroup
-        chi = [self.representation_matrix(g).trace()
-               for g in G.conjugacy_classes_representatives()]
-        try:
-            return G.character(chi)
-        except AttributeError:
-            return vector(chi, immutable=True)
-
-    @cached_method
-    def brauer_character(self):
-        r"""
-        Return the Brauer character of ``self``.
-
-        EXAMPLES::
-
-            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
-            sage: SM = SGA.specht_module([3,2])
-            sage: SM.brauer_character()
-            (5, -1, 0)
-            sage: SM.simple_module().brauer_character()
-            (4, -2, -1)
-        """
-        from sage.rings.number_field.number_field import CyclotomicField
-        from sage.arith.functions import lcm
-        G = self._semigroup
-        p = self.base_ring().characteristic()
-        # We manually compute the order since a Permutation does not implement order()
-        chi = []
-        for g in G.conjugacy_classes_representatives():
-            if p.divides(lcm(g.cycle_type())):
-                # ignore the non-p-regular elements
-                continue
-            evals = self.representation_matrix(g).eigenvalues()
-            K = evals[0].parent()
-            val = 0
-            orders = {la: la.multiplicative_order() for la in evals if la != K.one()}
-            zetas = {o: CyclotomicField(o).gen() for o in orders.values()}
-            prims = {o: K.zeta(o) for o in orders.values()}
-            for la in evals:
-                if la == K.one():
-                    val += 1
-                    continue
-                o = la.multiplicative_order()
-                zeta = zetas[o]
-                prim = prims[o]
-                for deg in range(o):
-                    if prim ** deg == la:
-                        val += zeta ** deg
-                        break
-            chi.append(val)
-
-        return vector(chi, immutable=True)
-
-
-class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation, Representation_abstract):
+class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
     r"""
     A Specht module.
 
@@ -541,7 +397,7 @@ class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation, Representat
             return None
 
 
-class TabloidModule(SymmetricGroupRepresentation, Representation_abstract):
+class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
     r"""
     The vector space of all tabloids of a fixed shape with the natural
     symmetric group action.
@@ -798,7 +654,7 @@ class TabloidModule(SymmetricGroupRepresentation, Representation_abstract):
                 return None
             P = self.parent()
             if x in P._semigroup_algebra:
-                return P.sum(c * (perm * self) for perm, c in x.monomial_coefficients().items())
+                return P.linear_combination((perm * self, c) for perm, c in x.monomial_coefficients().items())
             if x in P._semigroup_algebra.indices():
                 return P.element_class(P, {P._symmetric_group_action(T, x): c
                                            for T, c in self._monomial_coefficients.items()})
@@ -995,7 +851,7 @@ class SpechtModuleTableauxBasis(SpechtModule):
         return SimpleModule(self)
 
 
-class MaximalSpechtSubmodule(SubmoduleWithBasis, SymmetricGroupRepresentation):
+class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
     r"""
     The maximal submodule `U^{\lambda}` of the Specht module `S^{\lambda}`.
 
@@ -1080,7 +936,7 @@ class MaximalSpechtSubmodule(SubmoduleWithBasis, SymmetricGroupRepresentation):
     Element = SpechtModule.Element
 
 
-class SimpleModule(QuotientModuleWithBasis, SymmetricGroupRepresentation):
+class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
     r"""
     The simgle `S_n`-module associated with a partition `\lambda`.
 

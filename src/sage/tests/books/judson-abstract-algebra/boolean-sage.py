@@ -265,5 +265,4 @@ r"""
 
     sage: C.is_complemented()
     True
-
 """

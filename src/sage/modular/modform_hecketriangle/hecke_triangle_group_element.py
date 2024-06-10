@@ -5,7 +5,6 @@ Hecke triangle group elements
 AUTHORS:
 
 - Jonas Jermann (2014): initial version
-
 """
 
 # ****************************************************************************
@@ -1995,11 +1994,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         for r in R:
             fp = r.fixed_points()[0]
 
-            emb_res = emb(fp/G.lam())
+            emb_res = emb(fp / G.lam())
             emb_res.simplify()
             emb_res.exactify()
-            for j in range(1, emb_res.floor()+1):
-                L.append(G.T(-j).acton(r))
+            L.extend(G.T(-j).acton(r) for j in range(1, emb_res.floor() + 1))
 
         return L
 

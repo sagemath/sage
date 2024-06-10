@@ -9,7 +9,6 @@ EXAMPLES::
 AUTHORS:
 
 - Julian Rüth (2016-11-10): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>

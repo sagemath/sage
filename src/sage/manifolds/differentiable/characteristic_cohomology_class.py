@@ -269,7 +269,6 @@ Let us check whether this form represents the Euler class correctly::
 
 As we can see, the integral coincides with the Euler characteristic of `S^2` so
 that our form actually represents the Euler class appropriately.
-
 """
 
 # *****************************************************************************
