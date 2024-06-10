@@ -431,13 +431,14 @@ class Graphics(WithEqualityById, SageObject):
             sage: p.set_legend_options(loc=(0.5,0.5)); p  # aligns the bottom of the box to the center                # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
-        The parameters ``loc`` and ``borderaxespad`` can be altered in order to place the legend below the x-axis label or to the left of the y-axis label.
-        The following example sets ``loc=3`` and ``borderaxespad = -7.5-0.01*p.fontsize()`` so as to obtain the legend below the x-axis label::
+        The parameters ``loc`` and ``borderaxespad`` can be altered
+        in order to place the legend below the x-axis label or to
+        the left of the y-axis label::
 
             sage: p = line([(0, 0), (1, 1)], legend_label='test')
-            sage: p.axes_labels(['X-Label', 'Y-Label'])                                  # adding labels for axes
+            sage: p.axes_labels(['X-Label', 'Y-Label'])  # adding labels for axes
             sage: p.set_legend_options(loc=8, borderaxespad=-7.5-0.01*p.fontsize())
-            sage: print(p)
+            sage: p
             Graphics object consisting of 1 graphics primitive
         """
         if len(kwds) == 0:
