@@ -275,17 +275,17 @@ cdef class PeriodicRegion:
         new_data = np.zeros((m+2, n+2), self.data.dtype)
         for i in range(m):
             for j in range(n):
-                if framed[i,j]:
-                    new_data[i  , j  ] = True
-                    new_data[i-1, j  ] = True
-                    new_data[i+1, j  ] = True
-                    new_data[i  , j-1] = True
-                    new_data[i  , j+1] = True
+                if framed[i, j]:
+                    new_data[i, j] = True
+                    new_data[i - 1, j] = True
+                    new_data[i + 1, j] = True
+                    new_data[i, j - 1] = True
+                    new_data[i, j + 1] = True
                     if corners:
-                        new_data[i-1, j-1] = True
-                        new_data[i+1, j-1] = True
-                        new_data[i+1, j+1] = True
-                        new_data[i-1, j+1] = True
+                        new_data[i - 1, j - 1] = True
+                        new_data[i + 1, j - 1] = True
+                        new_data[i + 1, j + 1] = True
+                        new_data[i - 1, j + 1] = True
         return PeriodicRegion(self.w1, self.w2, unframe_data(new_data, self.full), self.full)
 
     def contract(self, corners=True):
@@ -661,11 +661,11 @@ cdef class PeriodicRegion:
             kwds['rgbcolor'] = 'red'
         for i, j, dir in self.border():
             ii, jj = i+dir, j+(1-dir)
-            L.append(line([tuple(i*dw1 + j*dw2), tuple(ii*dw1 + jj*dw2 )], **kwds))
+            L.append(line([tuple(i*dw1 + j*dw2), tuple(ii*dw1 + jj*dw2)], **kwds))
         return sum(L, F)
 
 
-cdef frame_data(data, bint full=True) noexcept:
+cdef frame_data(data, bint full=True):
     """
     Helper function for PeriodicRegion.expand() and
     PeriodicRegion.border().  This makes "wrapping around" work
@@ -691,17 +691,17 @@ cdef frame_data(data, bint full=True) noexcept:
         framed[:-2,-1] = data[::-1, 0]
         framed[:-2,-2] = data[::-1,-1]
     # left and right
-    framed[-2,:] = framed[ 0,:]
+    framed[-2,:] = framed[0,:]
     framed[-1,:] = framed[-3,:]
     return framed
 
-cdef unframe_data(framed, bint full=True) noexcept:
+cdef unframe_data(framed, bint full=True):
     """
     Helper function for PeriodicRegion.expand().  This glues the
     borders together using the "or" operator.
     """
     framed = framed.copy()
-    framed[ 0,:] |= framed[-2,:]
+    framed[0,:] |= framed[-2,:]
     framed[-3,:] |= framed[-1,:]
     if full:
         framed[:-2,-3] |= framed[:-2,-1]

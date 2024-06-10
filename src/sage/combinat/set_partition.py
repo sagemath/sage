@@ -2033,6 +2033,14 @@ class SetPartitions(UniqueRepresentation, Parent):
         sage: SetPartitions('aabcd').cardinality()                                      # needs sage.libs.flint
         15
 
+    If the number of parts exceeds the length of the set,
+    an empty iterator is returned (:issue:`37643`)::
+
+        sage: SetPartitions(range(3), 4).list()
+        []
+        sage: SetPartitions('abcd', 6).list()
+        []
+
     REFERENCES:
 
     - :wikipedia:`Partition_of_a_set`
@@ -2061,18 +2069,16 @@ class SetPartitions(UniqueRepresentation, Parent):
                 pass
             s = frozenset(s)
 
-        if part is not None:
+        if part is None:
+            return SetPartitions_set(s)
+        else:
             if isinstance(part, (int, Integer)):
-                if len(s) < part:
-                    raise ValueError("part must be <= len(set)")
                 return SetPartitions_setn(s, part)
             else:
                 part = sorted(part, reverse=True)
                 if part not in Partitions(len(s)):
                     raise ValueError("part must be an integer partition of %s" % len(s))
                 return SetPartitions_setparts(s, Partition(part))
-        else:
-            return SetPartitions_set(s)
 
     def __contains__(self, x):
         """
@@ -2958,7 +2964,8 @@ class SetPartitions_setparts(SetPartitions_set):
 
         TESTS::
 
-            sage: all((len(SetPartitions(size, part)) == SetPartitions(size, part).cardinality() for size in range(8) for part in Partitions(size)))
+            sage: all((len(SetPartitions(size, part)) == SetPartitions(size, part).cardinality()
+            ....:     for size in range(8) for part in Partitions(size)))
             True
             sage: sum((SetPartitions(13, p).cardinality()                               # needs sage.libs.flint
             ....:     for p in Partitions(13))) == SetPartitions(13).cardinality()

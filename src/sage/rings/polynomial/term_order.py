@@ -359,7 +359,6 @@ AUTHORS:
 - Kwankyu Lee: implemented matrix and weighted degree term orders
 
 - Simon King (2011-06-06): added termorder_from_singular
-
 """
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -388,7 +387,7 @@ print_name_mapping = {
 
 singular_name_mapping = {
     'lex'           : 'lp',
-    'invlex'        : 'rp',
+    'invlex'        : 'ip',
     'degrevlex'     : 'dp',
     'deglex'        : 'Dp',
     'neglex'        : 'ls',
@@ -574,13 +573,13 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``name`` - name of the term order (default: lex)
+        - ``name`` -- name of the term order (default: lex)
 
-        - ``n`` - number of variables (default is `0`) weights for
+        - ``n`` -- number of variables (default is `0`) weights for
           weighted degree orders. The weights are converted to
           integers and must be positive.
 
-        - ``force`` - ignore unknown term orders.
+        - ``force`` -- ignore unknown term orders.
 
         See the ``sage.rings.polynomial.term_order`` module
         for help which names and orders are available.
@@ -927,7 +926,7 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1220,9 +1219,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1249,9 +1248,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1271,9 +1270,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1295,9 +1294,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1321,9 +1320,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1347,9 +1346,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1376,9 +1375,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1405,9 +1404,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1434,9 +1433,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1456,9 +1455,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1483,9 +1482,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1510,9 +1509,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1540,9 +1539,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1573,9 +1572,9 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
-        - ``g`` - exponent tuple
+        - ``g`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1605,7 +1604,7 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``f`` - exponent tuple
+        - ``f`` -- exponent tuple
 
         EXAMPLES::
 
@@ -1983,7 +1982,7 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``other`` - a term order
+        - ``other`` -- a term order
 
         OUTPUT: a block order
 
@@ -2024,7 +2023,7 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``i`` - index
+        - ``i`` -- index
 
         EXAMPLES::
 

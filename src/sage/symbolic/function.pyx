@@ -110,7 +110,6 @@ is attempted, and after that ``sin()`` which succeeds::
     Traceback (most recent call last):
     ...
     TypeError: Symbolic function my_sin takes exactly 1 arguments (2 given)
-
 """
 
 # ****************************************************************************
@@ -245,14 +244,14 @@ cdef class Function(SageObject):
                 self._register_function()
             register_symbol(self, self._conversions)
 
-    cdef _is_registered(self) noexcept:
+    cdef _is_registered(self):
         """
         Check if this function is already registered. If it is, set
         `self._serial` to the right value.
         """
         raise NotImplementedError("this is an abstract base class, it shouldn't be initialized directly")
 
-    cdef _register_function(self) noexcept:
+    cdef _register_function(self):
         """
 
         TESTS:
@@ -290,7 +289,7 @@ cdef class Function(SageObject):
 
             sage: coth(5)  # indirect doctest                                           # needs sage.symbolic
             coth(5)
-            sage: coth(0.5)
+            sage: coth(0.5)                                                             # needs sage.rings.real_mpfr
             2.16395341373865
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class Test(BuiltinFunction):
@@ -307,13 +306,13 @@ cdef class Function(SageObject):
             ....:         else:
             ....:             return
             sage: test = Test()
-            sage: test(1.3, 4)
+            sage: test(1.3, 4)                                                          # needs sage.rings.real_mpfr
             2.30000000000000
             sage: test(pi, 4)                                                           # needs sage.symbolic
             test(pi, 4)
             sage: test(2, x)                                                            # needs sage.symbolic
             3
-            sage: test(2., 4)
+            sage: test(2., 4)                                                           # needs sage.rings.real_mpfr
             3.00000000000000
             sage: test(1 + 1.0*I, 2)                                                    # needs sage.symbolic
             2.00000000000000 + 1.00000000000000*I
@@ -329,7 +328,7 @@ cdef class Function(SageObject):
             ....:         else:
             ....:             return 3
             sage: test2 = Test2()
-            sage: test2(1.3)
+            sage: test2(1.3)                                                            # needs sage.rings.real_mpfr
             0.500000000000000
             sage: test2(pi)                                                             # needs sage.symbolic
             3
@@ -456,7 +455,7 @@ cdef class Function(SageObject):
 
         Precision of the result depends on the precision of the input::
 
-            sage: arctan(RR(1))
+            sage: arctan(RR(1))                                                         # needs sage.rings.real_mpfr
             0.785398163397448
             sage: arctan(RealField(100)(1))                                             # needs sage.rings.real_mpfr
             0.78539816339744830961566084582
@@ -646,7 +645,7 @@ cdef class Function(SageObject):
 
             sage: airy_ai(iv)                                                           # needs sage.rings.real_interval_field
             airy_ai(1.0001?)
-            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field
+            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field sage.rings.real_interval_field
             airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
@@ -850,14 +849,14 @@ cdef class GinacFunction(BuiltinFunction):
                 evalf_params_first=evalf_params_first,
                 preserved_arg=preserved_arg, alt_name=alt_name)
 
-    cdef _is_registered(self) noexcept:
+    cdef _is_registered(self):
         # Since this is function is defined in C++, it is already in
         # ginac's function registry
         fname = self._ginac_name if self._ginac_name is not None else self._name
         self._serial = find_registered_function(fname, self._nargs)
         return bool(get_sfunction_from_serial(self._serial))
 
-    cdef _register_function(self) noexcept:
+    cdef _register_function(self):
         # We don't need to add anything to GiNaC's function registry
         # However, if any custom methods were provided in the python class,
         # we should set the properties of the function_options object
@@ -1086,7 +1085,7 @@ cdef class BuiltinFunction(Function):
         else:
             return res
 
-    cdef _is_registered(self) noexcept:
+    cdef _is_registered(self):
         """
         TESTS:
 
@@ -1204,7 +1203,7 @@ cdef class SymbolicFunction(Function):
         Function.__init__(self, name, nargs, latex_name, conversions,
                 evalf_params_first)
 
-    cdef _is_registered(SymbolicFunction self) noexcept:
+    cdef _is_registered(SymbolicFunction self):
         # see if there is already a SymbolicFunction with the same state
         cdef long myhash = self._hash_()
         cdef SymbolicFunction sfunc = get_sfunction_from_hash(myhash)

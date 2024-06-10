@@ -151,7 +151,7 @@ cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n) noexcept:
     """
     return binary_search0(v.positions, v.num_nonzero, n) == -1
 
-cdef object mpz_vector_to_list(mpz_vector* v) noexcept:
+cdef object mpz_vector_to_list(mpz_vector* v):
     """
     Returns a Python list of 2-tuples (i,x), where x=v[i] runs
     through the nonzero elements of x, in order.
@@ -236,7 +236,6 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
             v.positions[i] = pos[i-1]
         sig_free(e)
         sig_free(pos)
-
 
 
 cdef mpz_t mpz_set_tmp

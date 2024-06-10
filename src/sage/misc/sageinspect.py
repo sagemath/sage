@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Inspect Python, Sage, and Cython objects
 
@@ -24,7 +25,7 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
@@ -42,7 +43,7 @@ Python classes::
 
     sage: sage_getfile(BlockFinder)
     '.../sage/misc/sageinspect.py'
-    sage: sage_getdoc(BlockFinder).lstrip()[:50]
+    sage: sage_getdoc(BlockFinder).lstrip()[:50]                                        # needs sphinx
     'Provide a "tokeneater()" method to detect the end '
     sage: sage_getsource(BlockFinder)
     'class BlockFinder:...'
@@ -167,28 +168,6 @@ def is_function_or_cython_function(obj):
     return hasattr(type(obj), "__code__")
 
 
-def loadable_module_extension():
-    r"""
-    Return the filename extension of loadable modules, including the dot.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.misc.sageinspect import loadable_module_extension
-        sage: from importlib.machinery import EXTENSION_SUFFIXES
-        sage: loadable_module_extension() in EXTENSION_SUFFIXES
-        doctest:warning...
-        DeprecationWarning: loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead
-        See https://github.com/sagemath/sage/issues/33636 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(33636, "loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead")
-    # Return the full platform-specific extension module suffix
-    return import_machinery.EXTENSION_SUFFIXES[0]
-
-
 def isclassinstance(obj):
     r"""
     Check if argument is instance of non built-in class
@@ -212,7 +191,7 @@ def isclassinstance(obj):
         sage: isclassinstance(myclass2)
         False
     """
-    builtin_mods = set(['__builtin__', 'builtins', 'exceptions'])
+    builtin_mods = {'__builtin__', 'builtins', 'exceptions'}
 
     return (not inspect.isclass(obj) and
             hasattr(obj, '__class__') and
@@ -515,7 +494,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
         INPUT:
 
-        - ``node`` - the node instance to visit
+        - ``node`` -- the node instance to visit
 
         OUTPUT: ``None``, ``True``, ``False``
 
@@ -625,10 +604,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             [[], ['s', 't', 'u'], [['e'], [], ['pi']]]
 
         """
-        t = []
-        for n in node.elts:
-            t.append(self.visit(n))
-        return t
+        return [self.visit(n) for n in node.elts]
 
     def visit_Tuple(self, node):
         """
@@ -649,10 +625,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             [(), ('x', 'y'), ('Au', 'Al', 'Cu')]
 
         """
-        t = []
-        for n in node.elts:
-            t.append(self.visit(n))
-        return tuple(t)
+        return tuple(self.visit(n) for n in node.elts)
 
     def visit_Dict(self, node):
         """
@@ -993,21 +966,21 @@ def _split_syntactical_unit(s):
         a, b = split_string(s[3:], "'''")
         return "'''"+a+"'''", b.strip()
     if s.startswith("r'''"):
-        a,b = split_string(s[4:], "'''")
+        a, b = split_string(s[4:], "'''")
         return "r'''"+a+"'''", b.strip()
 
     # 2. s is a single-quoted string
     if s.startswith('"'):
-        a,b = split_string(s[1:], '"')
+        a, b = split_string(s[1:], '"')
         return '"'+a+'"', b.strip()
     if s.startswith("'"):
-        a,b = split_string(s[1:], "'")
+        a, b = split_string(s[1:], "'")
         return "'"+a+"'", b.strip()
     if s.startswith('r"'):
-        a,b = split_string(s[2:], '"')
+        a, b = split_string(s[2:], '"')
         return 'r"'+a+'"', b.strip()
     if s.startswith("r'"):
-        a,b = split_string(s[2:], "'")
+        a, b = split_string(s[2:], "'")
         return "r'"+a+"'", b.strip()
 
     # 3. s is not a string
@@ -1028,7 +1001,7 @@ def _split_syntactical_unit(s):
     elif start == '#':
         linebreak = s.index(os.linesep)
         if linebreak == -1:
-            return '',''
+            return '', ''
         return '', s[linebreak:].strip()
     else:
         M = __identifier_re.search(s)
@@ -1046,7 +1019,7 @@ def _split_syntactical_unit(s):
         elif s.startswith(stop):
             out.append(stop)
             return ''.join(out), s[1:].strip()
-    raise SyntaxError("Syntactical group starting with %s did not end with %s" % (repr(start),repr(stop)))
+    raise SyntaxError("Syntactical group starting with %s did not end with %s" % (repr(start), repr(stop)))
 
 
 def _sage_getargspec_from_ast(source):
@@ -1211,7 +1184,7 @@ def _sage_getargspec_cython(source):
     while (i < l):
         unit = cy_units[i]
         if expect_default:
-            if unit in ('=','*',','):
+            if unit in ('=', '*', ','):
                 raise SyntaxError("Definition of a default argument expected")
             while unit != ',':
                 py_units.append(unit)
@@ -1252,7 +1225,7 @@ def _sage_getargspec_cython(source):
             # Is "name" part of a type definition?
             # If it is the last identifier before '=' or ',',
             # then it *is* a variable name,
-            if i == l or cy_units[i] in ('=',','):
+            if i == l or cy_units[i] in ('=', ','):
                 if nb_stars == 0:
                     py_units.append(name)
                 elif nb_stars == 1:
@@ -1308,6 +1281,7 @@ def sage_getfile(obj):
         sage: from sage.misc.sageinspect import sage_getfile
         sage: sage_getfile(sage.rings.rational)
         '...sage/rings/rational.pyx'
+        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile(Sq)                                                          # needs sage.combinat sage.modules
         '...sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile(x)                                                           # needs sage.symbolic
@@ -1356,12 +1330,12 @@ def sage_getfile(obj):
     if isclassinstance(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
-        return sage_getfile(obj.__class__) #inspect.getabsfile(obj.__class__)
+        return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
 
     # No go? fall back to inspect.
     try:
         sourcefile = inspect.getabsfile(obj)
-    except TypeError: # this happens for Python builtins
+    except TypeError:  # this happens for Python builtins
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
@@ -1386,6 +1360,7 @@ def sage_getfile_relative(obj):
         sage: from sage.misc.sageinspect import sage_getfile_relative
         sage: sage_getfile_relative(sage.rings.rational)
         'sage/rings/rational.pyx'
+        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile_relative(x)                                                  # needs sage.symbolic
@@ -1572,11 +1547,14 @@ def sage_getargspec(obj):
         ....:     cpdef meet(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
         ....: ''')
         sage: sage_getargspec(Foo.join)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(Bar.join)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getargspec(Bar.meet)
-        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
+                    defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     Test that :issue:`17009` is fixed::
 
@@ -1589,7 +1567,8 @@ def sage_getargspec(obj):
 
         sage: from sage.misc.nested_class import MainClass
         sage: sage_getargspec(MainClass.NestedClass.NestedSubClass.dummy)
-        FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds', defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds',
+                    defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In :issue:`18249` was decided to return a generic signature for Python
     builtin functions, rather than to raise an error (which is what Python's
@@ -1647,7 +1626,7 @@ def sage_getargspec(obj):
         except (TypeError, AttributeError):
             pass
     if isclassinstance(obj):
-        if hasattr(obj, '_sage_src_'): #it may be a decorator!
+        if hasattr(obj, '_sage_src_'):  # it may be a decorator!
             source = sage_getsource(obj)
             try:
                 # we try to find the definition and parse it by
@@ -1675,7 +1654,7 @@ def sage_getargspec(obj):
         # embedded in the docstring)
         try:
             source = sage_getsource(obj)
-        except TypeError: # happens for Python builtins
+        except TypeError:  # happens for Python builtins
             source = ''
         if source:
             return inspect.FullArgSpec(*_sage_getargspec_cython(source))
@@ -1688,11 +1667,11 @@ def sage_getargspec(obj):
     except AttributeError:
         try:
             args, varargs, varkw = inspect.getargs(func_obj)
-        except TypeError: # arg is not a code object
+        except TypeError:  # arg is not a code object
             # The above "hopefully" was wishful thinking:
             try:
                 return inspect.FullArgSpec(*_sage_getargspec_cython(sage_getsource(obj)))
-            except TypeError: # This happens for Python builtins
+            except TypeError:  # This happens for Python builtins
                 # The best we can do is to return a generic argspec
                 args = []
                 varargs = 'args'
@@ -1713,7 +1692,7 @@ def formatannotation(annotation, base_module=None):
     INPUT:
 
     - ``annotation`` -- annotation for a function
-    - ``base_module``-- (optional, default ``None``)
+    - ``base_module`` -- (default: ``None``)
 
     This is only relevant with Python 3, so the doctests are marked
     accordingly.
@@ -1836,7 +1815,7 @@ def sage_getdef(obj, obj_name=''):
     INPUT:
 
     - ``obj`` -- function
-    - ``obj_name`` -- string (optional, default '')
+    - ``obj_name`` -- string (default: '')
 
     ``obj_name`` is prepended to the output.
 
@@ -2012,7 +1991,7 @@ def sage_getdoc_original(obj):
     else:
         typ = type(obj)
 
-    s,argspec = _extract_embedded_signature(_sage_getdoc_unformatted(obj), typ.__name__)
+    s, argspec = _extract_embedded_signature(_sage_getdoc_unformatted(obj), typ.__name__)
     if s:
         pos = _extract_embedded_position(s)
         if pos is not None:
@@ -2238,7 +2217,7 @@ def _sage_getsourcelines_name_with_dot(obj):
         pmatch = pat.match
         # fperez - fix: sometimes, co_firstlineno can give a number larger than
         # the length of lines, which causes an error.  Safeguard against that.
-        lnum = min(obj.co_firstlineno,len(lines))-1
+        lnum = min(obj.co_firstlineno, len(lines)) - 1
         while lnum > 0:
             if pmatch(lines[lnum]):
                 break
@@ -2319,7 +2298,7 @@ def sage_getsourcelines(obj):
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
-         '    cpdef object pyobject(self) noexcept:\n']
+         '    cpdef object pyobject(self):\n']
         sage: lines[-1]    # last line                                                  # needs sage.symbolic
         '        return S\n'
 
@@ -2335,13 +2314,13 @@ def sage_getsourcelines(obj):
         (<class 'sage.misc.test_nested_class.TestNestedParent.Element'>,
          <class 'sage.categories.sets_cat.Sets.element_class'>)
         sage: print(sage_getsource(E))
-            class Element():
+            class Element:
                 "This is a dummy element class"
                 pass
         sage: print(sage_getsource(P))
         class TestNestedParent(UniqueRepresentation, Parent):
             ...
-            class Element():
+            class Element:
                 "This is a dummy element class"
                 pass
 

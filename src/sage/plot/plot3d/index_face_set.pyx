@@ -14,7 +14,6 @@ AUTHORS:
 .. TODO::
 
     Smooth triangles using vertex normals
-
 """
 # ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -69,7 +68,7 @@ from sage.plot.plot3d.transform cimport Transformation
 # Fast routines for generating string representations of the polygons.
 # --------------------------------------------------------------------
 
-cdef inline format_tachyon_texture(color_c rgb) noexcept:
+cdef inline format_tachyon_texture(color_c rgb):
     cdef char rs[200]
     cdef Py_ssize_t cr = sprintf_3d(rs,
                                    "TEXTURE\n AMBIENT 0.3 DIFFUSE 0.7 SPECULAR 0 OPACITY 1.0\n COLOR %g %g %g \n TEXFUNC 0",
@@ -77,7 +76,7 @@ cdef inline format_tachyon_texture(color_c rgb) noexcept:
     return bytes_to_str(PyBytes_FromStringAndSize(rs, cr))
 
 
-cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R) noexcept:
+cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R):
     cdef char ss[250]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_9d(ss,
@@ -88,22 +87,22 @@ cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R) noexcept:
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 
-cdef inline format_json_vertex(point_c P) noexcept:
+cdef inline format_json_vertex(point_c P):
     cdef char ss[100]
     cdef Py_ssize_t r = sprintf_3d(ss, '{"x":%g,"y":%g,"z":%g}', P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_json_face(face_c face) noexcept:
+cdef inline format_json_face(face_c face):
     s = "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
     return s
 
-cdef inline format_obj_vertex(point_c P) noexcept:
+cdef inline format_obj_vertex(point_c P):
     cdef char ss[100]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_3d(ss, "v %g %g %g", P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_obj_face(face_c face, int off) noexcept:
+cdef inline format_obj_face(face_c face, int off):
     cdef char ss[100]
     cdef Py_ssize_t r, i
     if face.n == 3:
@@ -115,7 +114,7 @@ cdef inline format_obj_face(face_c face, int off) noexcept:
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_obj_face_back(face_c face, int off) noexcept:
+cdef inline format_obj_face_back(face_c face, int off):
     cdef char ss[100]
     cdef Py_ssize_t r, i
     if face.n == 3:
@@ -126,13 +125,13 @@ cdef inline format_obj_face_back(face_c face, int off) noexcept:
         return "f " + " ".join(str(face.vertices[i] + off) for i from face.n > i >= 0)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_pmesh_vertex(point_c P) noexcept:
+cdef inline format_pmesh_vertex(point_c P):
     cdef char ss[100]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_3d(ss, "%g %g %g", P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_pmesh_face(face_c face, int has_color) noexcept:
+cdef inline format_pmesh_face(face_c face, int has_color):
     cdef char ss[100]
     cdef Py_ssize_t r, i
     cdef int color
@@ -196,6 +195,7 @@ cdef inline format_pmesh_face(face_c face, int has_color) noexcept:
         return bytes_to_str(b"\n".join(all))
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
+
 
 def midpoint(pointa, pointb, w):
     """
@@ -512,9 +512,9 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         INPUT:
 
-        ``threshold`` -- the minimum cosine of the angle between adjacent
-        faces a higher threshold separates more, all faces if >= 1, no
-        faces if <= -1
+        - ``threshold`` -- the minimum cosine of the angle between adjacent
+          faces a higher threshold separates more, all faces if >= 1, no
+          faces if <= -1
         """
         cdef Py_ssize_t i, j, k
         cdef face_c *face

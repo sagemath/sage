@@ -398,7 +398,7 @@ class GenericCellComplex(SageObject):
     #
     #     INPUT:
     #
-    #     -  ``n`` - positive integer (optional, default 1): suspend this
+    #     -  ``n`` -- positive integer (default: 1): suspend this
     #        many times.
     #     """
     #     raise NotImplementedError
@@ -433,7 +433,7 @@ class GenericCellComplex(SageObject):
 
         Definitely implement the following:
 
-        -  ``base_ring`` -- commutative ring (optional, default ZZ)
+        -  ``base_ring`` -- commutative ring (default: ZZ)
         -  ``cochain`` -- a bool: whether to return the cochain complex
 
         EXAMPLES::
@@ -466,15 +466,15 @@ class GenericCellComplex(SageObject):
         :type subcomplex: optional, default empty
         :param generators: If ``True``, return generators for the homology
            groups along with the groups.
-        :type generators: boolean; optional, default False
+        :type generators: boolean; optional, default: ``False``
         :param cohomology: If True, compute cohomology rather than homology.
-        :type cohomology: boolean; optional, default False
+        :type cohomology: boolean; optional, default: ``False``
         :param algorithm: The options are 'auto', 'dhsw', or 'pari'.
            See below for a description of what they mean.
         :type algorithm: string; optional, default 'pari'
         :param verbose: If True, print some messages as the homology is
            computed.
-        :type verbose: boolean; optional, default False
+        :type verbose: boolean; optional, default: ``False``
         :param reduced: If ``True``, return the reduced homology.
         :type reduced: boolean; optional, default ``True``
 
@@ -759,8 +759,8 @@ class GenericCellComplex(SageObject):
         INPUT:
 
         - ``n`` -- integer
-        - ``base_ring`` -- ring (optional, default `\ZZ`)
-        - ``cochains`` -- boolean (optional, default ``False``); if
+        - ``base_ring`` -- ring (default: `\ZZ`)
+        - ``cochains`` -- boolean (default: ``False``); if
           ``True``, return cochains instead
 
         The only difference between chains and cochains is
@@ -823,9 +823,9 @@ class GenericCellComplex(SageObject):
 
         INPUT:
 
-        - ``base_ring`` -- coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``); must be a field
-        - ``cohomology`` -- boolean (optional, default ``False``); if
+        - ``cohomology`` -- boolean (default: ``False``); if
           ``True``, return cohomology instead of homology
 
         Homology basis elements are named 'h_{dim,i}' where i ranges
@@ -888,7 +888,7 @@ class GenericCellComplex(SageObject):
 
         INPUT:
 
-        - ``base_ring`` -- coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``); must be a field
 
         The basis elements in dimension ``dim`` are named 'h^{dim,i}'

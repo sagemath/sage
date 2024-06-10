@@ -4118,7 +4118,7 @@ def RBIBD_120_8_1():
             if p in B:
                 equiv.append([x for x in B if x not in hyperoval])
         else:
-            new_BIBD.append([x for x in B])
+            new_BIBD.append(list(B))
 
     BIBD = new_BIBD
 
@@ -4658,7 +4658,7 @@ def BIBD_79_13_2():
 
     permAction = libgap.Action(G, points, action)
 
-    baseBlocks = [libgap.Set(list(map(lambda p: libgap.Position(points, p), B))) for B in [B1, B2, B3, B4]]
+    baseBlocks = [libgap.Set([libgap.Position(points, p) for p in B]) for B in [B1, B2, B3, B4]]
 
     B3Orbit = libgap.Orbit(permAction, baseBlocks[2], libgap.OnSets)
     B4Orbit = libgap.Orbit(permAction, baseBlocks[3], libgap.OnSets)

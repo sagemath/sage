@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Univariate Polynomial Rings
 
@@ -127,7 +126,6 @@ Check that :issue:`5562` has been fixed::
     sage: v2 = vector([CDF(2)])                                                         # needs sage.modules
     sage: v1 * v2                                                                       # needs sage.modules
     2.0*u
-
 """
 
 # ****************************************************************************
@@ -144,13 +142,15 @@ Check that :issue:`5562` has been fixed::
 import sys
 
 from sage.structure.element import Element
+from sage.structure.category_object import check_default_category
 
 import sage.categories as categories
 from sage.categories.morphism import IdentityMorphism
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
 
 from sage.rings.ring import (Ring, IntegralDomain, PrincipalIdealDomain)
-from sage.structure.element import is_RingElement
+from sage.structure.element import RingElement
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
@@ -246,7 +246,8 @@ class PolynomialRing_general(Ring):
             Join of Category of unique factorization domains
              and Category of commutative algebras over
               (Dedekind domains and euclidean domains
-               and infinite enumerated sets and metric spaces)
+               and noetherian rings and infinite enumerated sets
+               and metric spaces)
              and Category of infinite sets
             sage: category(GF(7)['x'])
             Join of Category of euclidean domains
@@ -264,9 +265,7 @@ class PolynomialRing_general(Ring):
         Check that category for zero ring::
 
             sage: PolynomialRing(Zmod(1), 'x').category()
-            Category of finite commutative algebras over
-            (finite commutative rings and subquotients of monoids and
-            quotients of semigroups and finite enumerated sets)
+            Category of finite commutative rings
 
         Check `is_finite` inherited from category (:issue:`24432`)::
 
@@ -284,11 +283,11 @@ class PolynomialRing_general(Ring):
         """
         # We trust that, if category is given, it is useful and does not need to be joined
         # with the default category
-        if category is None:
-            if base_ring.is_zero():
-                category = categories.rings.Rings().Finite()
-            else:
-                category = polynomial_default_category(base_ring.category(), 1)
+        if base_ring.is_zero():
+            category = categories.rings.Rings().Commutative().Finite()
+        else:
+            defaultcat = polynomial_default_category(base_ring.category(), 1)
+            category = check_default_category(defaultcat, category)
         self.__is_sparse = sparse
         if element_class:
             self._polynomial_class = element_class
@@ -788,6 +787,11 @@ class PolynomialRing_general(Ring):
             False
         """
         base_ring = self.base_ring()
+
+        # workaround, useful for the zero ring
+        if P == base_ring:
+            return self._coerce_map_from_base_ring()
+
         # handle constants that canonically coerce into self.base_ring()
         # first, if possible
         try:
@@ -1781,11 +1785,11 @@ class PolynomialRing_commutative(PolynomialRing_general):
         if base_ring not in _CommutativeRings:
             raise TypeError("Base ring %s must be a commutative ring." % repr(base_ring))
         # We trust that, if a category is given, that it is useful.
-        if category is None:
-            if base_ring.is_zero():
-                category = categories.algebras.Algebras(base_ring.category()).Commutative().Finite()
-            else:
-                category = polynomial_default_category(base_ring.category(), 1)
+        if base_ring.is_zero():
+            category = categories.algebras.Algebras(base_ring.category()).Commutative().Finite()
+        else:
+            defaultcat = polynomial_default_category(base_ring.category(), 1)
+            category = check_default_category(defaultcat, category)
         PolynomialRing_general.__init__(self, base_ring, name=name,
                                         sparse=sparse, implementation=implementation,
                                         element_class=element_class, category=category)
@@ -1858,9 +1862,9 @@ class PolynomialRing_commutative(PolynomialRing_general):
 
         - ``p`` -- the polynomial whose roots are computed
         - ``ring`` -- the ring to find roots (default is the base ring of ``p``)
-        - ``multiplicities`` -- bool (default: True): if ``True``, return a list of pairs ``(root, multiplicity)``; if ``False`` return a list of roots
+        - ``multiplicities`` -- bool (default: ``True``): if ``True``, return a list of pairs ``(root, multiplicity)``; if ``False`` return a list of roots
         - ``algorithm`` -- ignored (TODO: remove)
-        - ``degree_bound``-- if not ``None``, return only roots of degree at most ``degree_bound``
+        - ``degree_bound`` -- if not ``None``, return only roots of degree at most ``degree_bound``
 
         EXAMPLES::
 
@@ -2940,11 +2944,11 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
         - ``p`` -- the polynomial whose roots are computed
         - ``ring`` -- the ring to find roots (default is the base ring of ``p``)
-        - ``multiplicities`` -- bool (default: True): currently, roots are only
+        - ``multiplicities`` -- bool (default: ``True``): currently, roots are only
           computed without their multiplicities.
         - ``algorithm`` -- the algorithm to use: either ``"Alekhnovich"`` (default)
           or ``"Roth-Ruckenstein"``
-        - ``degree_bound``-- if not ``None``, return only roots of degree at
+        - ``degree_bound`` -- if not ``None``, return only roots of degree at
           most ``degree_bound``
 
         EXAMPLES::
@@ -3203,7 +3207,7 @@ class PolynomialRing_dense_padic_field_capped_relative(PolynomialRing_dense_padi
 
 class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
     def __init__(self, base_ring, name=None, element_class=None,
-            implementation=None, category=None):
+                 implementation=None, category=None):
         """
         TESTS::
 
@@ -3446,6 +3450,9 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
                     self._implementation_repr = ' (using GF2X)'
                 break
 
+        category = check_default_category(PrincipalIdealDomains(),
+                                          category)
+
         PolynomialRing_dense_mod_n.__init__(self, base_ring, name=name, implementation=implementation,
                                             element_class=element_class, category=category)
 
@@ -3467,6 +3474,10 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             Traceback (most recent call last):
             ...
             ValueError: GF2X only supports modulus 2
+            sage: A = PolynomialRing(Zmod(2), 'x'); A
+            Univariate Polynomial Ring in x over Ring of integers modulo 2 (using GF2X)
+            sage: A in PrincipalIdealDomains()
+            True
 
             sage: PolynomialRing(GF(2), 'x', implementation="FLINT")                    # needs sage.libs.flint
             Univariate Polynomial Ring in x over Finite Field of size 2
@@ -3688,7 +3699,7 @@ def polygen(ring_or_element, name="x"):
        get a tuple of indeterminates, exactly as if you called
        :func:`polygens`.
     """
-    if is_RingElement(ring_or_element):
+    if isinstance(ring_or_element, RingElement):
         base_ring = ring_or_element.parent()
     elif ring_or_element in Rings():
         base_ring = ring_or_element

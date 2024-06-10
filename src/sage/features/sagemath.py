@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of Python modules in the Sage library
 
@@ -41,6 +42,31 @@ Hence, we conditionalize this doctest on the presence of the feature
 
 from . import PythonModule, StaticFile
 from .join_feature import JoinFeature
+
+
+class SAGE_SRC(StaticFile):
+    r"""
+    A :class:`~sage.features.Feature` which describes the presence of the
+    monolithic source tree of the Sage library.
+
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import SAGE_SRC
+            sage: isinstance(SAGE_SRC(), SAGE_SRC)
+            True
+        """
+        from sage.env import SAGE_SRC
+        # We check the file bin/sage-src-env-config.in, which by design is:
+        # - never installed,
+        # - not included in the sagemath-standard sdist,
+        # - included only in one modularized sdist, of pkgs/sage-conf_pypi,
+        #   where it appears in a subdirectory (sage_root/src/bin/)
+        StaticFile.__init__(self, 'SAGE_SRC',
+                            filename='bin/sage-src-env-config.in',
+                            search_path=(SAGE_SRC,) if SAGE_SRC else ())
 
 
 class sagemath_doc_html(StaticFile):
@@ -1055,7 +1081,6 @@ class sage__symbolic(JoinFeature):
                               PythonModule('sage.geometry.riemannian_manifolds'),
                               PythonModule('sage.geometry.hyperbolic_space'),
                               PythonModule('sage.dynamics.complex_dynamics'),
-                              PythonModule('sage.libs.pynac'),
                               PythonModule('sage.libs.ecl'),
                               PythonModule('sage.interfaces.fricas'),
                               PythonModule('sage.interfaces.giac'),
@@ -1095,7 +1120,8 @@ def all_features():
         sage: list(all_features())
         [...Feature('sage.combinat'), ...]
     """
-    return [sagemath_doc_html(),
+    return [SAGE_SRC(),
+            sagemath_doc_html(),
             sage__combinat(),
             sage__geometry__polyhedron(),
             sage__graphs(),

@@ -21,7 +21,7 @@ class WeightSpace(CombinatorialFreeModule):
 
     - ``root_system`` -- a root system
     - ``base_ring`` -- a ring `R`
-    - ``extended`` -- a boolean (default: False)
+    - ``extended`` -- a boolean (default: ``False``)
 
     The weight space (or lattice if ``base_ring`` is `\ZZ`) of a root
     system is the formal free module `\bigoplus_i R \Lambda_i`

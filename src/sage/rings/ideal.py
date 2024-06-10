@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Ideals of commutative rings
 
@@ -53,12 +54,12 @@ def Ideal(*args, **kwds):
 
     INPUT:
 
-    -  ``R`` - A ring (optional; if not given, will try to infer it from
+    -  ``R`` -- A ring (optional; if not given, will try to infer it from
        ``gens``)
 
-    -  ``gens`` - list of elements generating the ideal
+    -  ``gens`` -- list of elements generating the ideal
 
-    -  ``coerce`` - bool (optional, default: ``True``);
+    -  ``coerce`` -- bool (default: ``True``);
        whether ``gens`` need to be coerced into the ring.
 
 
@@ -539,8 +540,8 @@ class Ideal_generic(MonoidElement):
             sage: taus[1](B)                                                            # needs sage.rings.number_fields
             Fractional ideal (2, a + 1)
         """
-        from sage.categories.morphism import is_Morphism
-        if not is_Morphism(phi):
+        from sage.categories.morphism import Morphism
+        if not isinstance(phi, Morphism):
             raise TypeError("phi must be a morphism")
         # delegate: morphisms know how to apply themselves to ideals
         return phi(self)
@@ -741,7 +742,7 @@ class Ideal_generic(MonoidElement):
 
         INPUT:
 
-        - ``P`` - (default: ``None``) a prime ideal in the same ring
+        - ``P`` -- (default: ``None``) a prime ideal in the same ring
 
         EXAMPLES::
 
@@ -1077,7 +1078,7 @@ class Ideal_generic(MonoidElement):
         ``self.ngens() * other.ngens()``. So if used repeatedly this method
         will create an ideal with a uselessly large amount of generators.
         Therefore it is advisable to overwrite this method with a method that
-        takes advantage of the structure of the ring your working in.
+        takes advantage of the structure of the ring you are working in.
 
         Example::
 

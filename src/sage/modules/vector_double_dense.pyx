@@ -81,7 +81,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         30.0
     """
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two vectors together.
 
@@ -101,7 +101,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(_left._vector_numpy + _right._vector_numpy)
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Return self - right
 
@@ -121,7 +121,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(_left._vector_numpy - _right._vector_numpy)
 
-    cpdef _dot_product_(self, Vector right) noexcept:
+    cpdef _dot_product_(self, Vector right):
         """
         Dot product of self and right.
 
@@ -145,7 +145,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._sage_dtype(numpy.dot(_left._vector_numpy, _right._vector_numpy))
 
-    cpdef _pairwise_product_(self, Vector right) noexcept:
+    cpdef _pairwise_product_(self, Vector right):
         """
         Return the component-wise product of self and right.
 
@@ -168,7 +168,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(_left._vector_numpy * _right._vector_numpy)
 
-    cpdef _rmul_(self, Element left) noexcept:
+    cpdef _rmul_(self, Element left):
         """
         Multiply a scalar and vector
 
@@ -184,7 +184,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(self._python_dtype(left)*self._vector_numpy)
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         Multiply a scalar and vector
 
@@ -199,7 +199,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             return copy(self)
 
         return self._new(self._vector_numpy*self._python_dtype(right))
-
 
     def inv_fft(self,algorithm="radix2", inplace=False):
         """
@@ -310,7 +309,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         """
         return self.change_ring(CDF)
 
-
     def zero_at(self, eps):
         r"""
         Returns a copy with small entries replaced by zeros.
@@ -321,7 +319,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         INPUT:
 
-        - ``eps`` - cutoff value
+        - ``eps`` -- cutoff value
 
         OUTPUT:
 
@@ -360,14 +358,13 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         v = self._new(out)
         return v
 
-
     def norm(self, p=2):
         r"""
         Returns the norm (or related computations) of the vector.
 
         INPUT:
 
-        - ``p`` - default: 2 - controls which norm is computed,
+        - ``p`` -- (default: 2); controls which norm is computed,
           allowable values are any real number and positive and
           negative infinity.  See output discussion for specifics.
 
@@ -545,7 +542,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             return self._sage_dtype(numpy.std(self._vector_numpy, ddof=1))
         else:
             return self._sage_dtype(numpy.std(self._vector_numpy, ddof=0))
-
 
     def stats_kurtosis(self):
         """

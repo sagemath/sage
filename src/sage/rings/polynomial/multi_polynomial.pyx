@@ -20,11 +20,13 @@ from itertools import chain
 
 from sage.misc.misc_c import prod
 
+
 def is_MPolynomial(x):
     from sage.misc.superseded import deprecation
     deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial) instead")
 
     return isinstance(x, MPolynomial)
+
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.map cimport Map
@@ -434,7 +436,7 @@ cdef class MPolynomial(CommutativePolynomial):
             z *= var
         return ring(v)
 
-    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None) noexcept:
+    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None):
         r"""
         Return a ``dict`` of coefficient entries suitable for construction
         of a ``MPolynomial_polydict`` with the given variables.
@@ -813,7 +815,7 @@ cdef class MPolynomial(CommutativePolynomial):
                 d[e.unweighted_degree()][e] = c
         return {k: self._parent(d[k]) for k in d}
 
-    cpdef _mod_(self, other) noexcept:
+    cpdef _mod_(self, other):
         r"""
         EXAMPLES::
 
@@ -1559,7 +1561,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``variable`` - The variable with respect to which we compute
+        - ``variable`` -- The variable with respect to which we compute
           the discriminant
 
         OUTPUT: An element of the base ring of the polynomial ring.
@@ -1997,7 +1999,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``weights`` - Either individual numbers, an iterable or a dictionary,
+        - ``weights`` -- Either individual numbers, an iterable or a dictionary,
           specifying the weights of each variable. If it is a dictionary, it
           maps each variable of ``self`` to its weight. If it is a sequence of
           individual numbers or a tuple, the weights are specified in the order
@@ -2140,6 +2142,10 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: Pol = QQ['x']['x','y']
             sage: Pol.one().gcd(1)
             1
+
+            sage: P = PolynomialRing(QQ, 'x', 0)
+            sage: P.gens()
+            ()
         """
         flatten = self._parent.flattening_morphism()
         tgt = flatten.codomain()
@@ -2154,7 +2160,13 @@ cdef class MPolynomial(CommutativePolynomial):
         except (TypeError, AttributeError):
             pass
 
-        x = self._parent.gens()[-1]
+        gens = self.parent().gens()
+        if not gens:
+            # no variables
+            base = self.parent().base_ring()
+            return base(self).gcd(base(other))
+
+        x = gens[-1]
         uniself = self.polynomial(x)
         unibase = uniself.base_ring()
         try:
@@ -2226,7 +2238,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``root`` - if set to ``True``, return a pair ``(True, root)``
+        - ``root`` -- if set to ``True``, return a pair ``(True, root)``
           where ``root`` is a square root or ``(False, None)`` if
           it is not a square.
 
@@ -2338,11 +2350,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - ``prec`` --  integer, sets the precision (default: 300)
 
-        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: True)
+        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: ``True``)
 
         - ``error_limit`` -- sets the error tolerance (default: 0.000001)
 
-        - ``smallest_coeffs`` -- (default: True), boolean, whether to find the
+        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
           model with smallest coefficients
 
         - ``norm_type`` -- either ``'norm'`` or ``'height'``. What type of norm
@@ -2926,7 +2938,7 @@ def _is_M_convex_(points):
     return True
 
 
-cdef remove_from_tuple(e, int ind) noexcept:
+cdef remove_from_tuple(e, int ind):
     w = list(e)
     del w[ind]
     if len(w) == 1:

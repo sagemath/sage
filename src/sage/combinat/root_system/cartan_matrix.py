@@ -29,7 +29,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
@@ -349,11 +349,11 @@ class CartanMatrix(Base, CartanType_abstract,
 
         INPUT:
 
-        - ``nrows`` - number of rows
+        - ``nrows`` -- number of rows
 
-        - ``ncols`` - number of columns
+        - ``ncols`` -- number of columns
 
-        - ``sparse`` - (boolean) sparseness
+        - ``sparse`` -- (boolean) sparseness
 
         EXAMPLES::
 
@@ -388,6 +388,14 @@ class CartanMatrix(Base, CartanType_abstract,
 
             sage: C = CartanMatrix(['A',1,1])  # indirect doctest                       # needs sage.graphs
             sage: TestSuite(C).run(skip=["_test_category", "_test_change_ring"])        # needs sage.graphs
+
+        Check that :issue:`37979` is fixed::
+
+            sage: C = CartanMatrix([[2]], index_set=(4,))
+            sage: C.index_set()
+            (4,)
+            sage: CartanType("A3").subtype((2,)) is CartanType("A1").relabel({1:2})
+            True
         """
         self._index_set = index_set
         self.set_immutable()
@@ -396,6 +404,8 @@ class CartanMatrix(Base, CartanType_abstract,
             cartan_type = CartanType(cartan_type)
         elif self.nrows() == 1:
             cartan_type = CartanType(['A', 1])
+            if index_set != (1,):
+                cartan_type = cartan_type.relabel({1: index_set[0]})
         elif cartan_type_check:
             # Placeholder so we don't have to reimplement creating a
             #   Dynkin diagram from a Cartan matrix
@@ -1064,7 +1074,7 @@ def is_borcherds_cartan_matrix(M):
         sage: is_borcherds_cartan_matrix(O)
         False
     """
-    if not is_Matrix(M):
+    if not isinstance(M, Matrix):
         return False
     if not M.is_square():
         return False

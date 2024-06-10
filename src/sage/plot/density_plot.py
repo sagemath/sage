@@ -33,14 +33,14 @@ class DensityPlot(GraphicPrimitive):
 
     INPUT:
 
-    - ``xy_data_array`` - list of lists giving evaluated values of the
+    - ``xy_data_array`` -- list of lists giving evaluated values of the
       function on the grid
 
-    - ``xrange`` - tuple of 2 floats indicating range for horizontal direction
+    - ``xrange`` -- tuple of 2 floats indicating range for horizontal direction
 
-    - ``yrange`` - tuple of 2 floats indicating range for vertical direction
+    - ``yrange`` -- tuple of 2 floats indicating range for vertical direction
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -127,7 +127,7 @@ class DensityPlot(GraphicPrimitive):
             sage: d = D[0]; d
             DensityPlot defined by a 25 x 25 data grid
         """
-        return "DensityPlot defined by a %s x %s data grid" % (self.xy_array_row, self.xy_array_col)
+        return "DensityPlot defined by a {} x {} data grid".format(self.xy_array_row, self.xy_array_col)
 
     def _render_on_subplot(self, subplot):
         """
@@ -163,10 +163,10 @@ def density_plot(f, xrange, yrange, **options):
 
     - ``f`` -- a function of two variables
 
-    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
+    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
       ``(x,xmin,xmax)``
 
-    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
+    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
       ``(y,ymin,ymax)``
 
     The following inputs must all be passed in as named parameters:

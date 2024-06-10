@@ -236,7 +236,7 @@ def reorder_sets(sets):
 
     INPUT:
 
-    - ``sets`` - a list of instances of ``list, Set`` or ``set``
+    - ``sets`` -- a list of instances of ``list, Set`` or ``set``
 
     ALGORITHM:
 
@@ -428,10 +428,10 @@ class PQ:
 
         INPUT:
 
-        - ``left, right`` (boolean) -- whether ``v`` is aligned to the
+        - ``left``, ``right`` -- booleans; whether ``v`` is aligned to the
           right or to the left
 
-        - ``v``-- an element of the ground set
+        - ``v`` -- an element of the ground set
 
         OUTPUT:
 

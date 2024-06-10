@@ -18,7 +18,6 @@ general, allowing any positive odd integer as start index.
 AUTHORS:
 
 - Frédéric Chapoton (2022-09): Initial version
-
 """
 # ****************************************************************************
 #  Copyright (C) 2022 Frédéric Chapoton <chapoton-unistra-fr>

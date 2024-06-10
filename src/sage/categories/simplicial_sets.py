@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Simplicial Sets
 """
@@ -509,8 +510,7 @@ class SimplicialSets(Category_singleton):
                                         lifted = h
                                         break
                                 grelems = [cells_dict[(f0.nondegenerate(), lifted)].apply_degeneracies(*f0.degeneracies())]
-                                for f in faces[1:]:
-                                    grelems.append(cells_dict[(f.nondegenerate(), g)].apply_degeneracies(*f.degeneracies()))
+                                grelems.extend(cells_dict[(f.nondegenerate(), g)].apply_degeneracies(*f.degeneracies()) for f in faces[1:])
                                 faces_dict[cell] = grelems
                 cover = SimplicialSet(faces_dict, base_point=cells_dict[(self.base_point(), G.one())])
                 cover_map_data = {c: s[0] for (s, c) in cells_dict.items()}
@@ -634,20 +634,20 @@ class SimplicialSets(Category_singleton):
                   chain complex in those dimensions, setting the chain groups
                   in all other dimensions to zero.
 
-                - ``augmented`` (optional, default ``False``) -- if ``True``,
+                - ``augmented`` (default: ``False``) -- if ``True``,
                   return the augmented chain complex (that is, include a class
                   in dimension `-1` corresponding to the empty cell).
 
-                - ``cochain`` (optional, default ``False``) -- if ``True``,
+                - ``cochain`` (default: ``False``) -- if ``True``,
                   return the cochain complex (that is, the dual of the chain
                   complex).
 
-                - ``verbose`` (optional, default ``False``) -- ignored.
+                - ``verbose`` (default: ``False``) -- ignored.
 
-                - ``subcomplex`` (optional, default ``None``) -- if present,
+                - ``subcomplex`` (default: ``None``) -- if present,
                   compute the chain complex relative to this subcomplex.
 
-                - ``check`` (optional, default ``False``) -- If ``True``, make
+                - ``check`` (default: ``False``) -- If ``True``, make
                   sure that the chain complex is actually a chain complex:
                   the differentials are composable and their product is zero.
 
@@ -822,9 +822,9 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``n`` - a positive integer.
+                - ``n`` -- a positive integer.
 
-                - ``reduced`` - (default: False) if set to True, the presentation matrix
+                - ``reduced`` -- (default: ``False``) if set to True, the presentation matrix
                   will be reduced.
 
                 EXAMPLES::

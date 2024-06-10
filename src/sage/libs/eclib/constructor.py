@@ -8,8 +8,8 @@ def CremonaModularSymbols(level, sign=0, cuspidal=False, verbose=0):
 
     - ``level`` -- an integer >= 2  (at least 2, not just positive!)
     - ``sign`` -- an integer either 0 (the default) or 1 or -1.
-    - ``cuspidal`` -- (default: False); if True, compute only the cuspidal subspace
-    - ``verbose`` -- (default: False): if True, print verbose information while creating space
+    - ``cuspidal`` -- (default: ``False``); if True, compute only the cuspidal subspace
+    - ``verbose`` -- (default: ``False``): if True, print verbose information while creating space
 
     EXAMPLES::
 

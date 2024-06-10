@@ -31,7 +31,6 @@ AUTHORS:
   numbers of higher level
 
 - Simon Spicer (2014-08): Added new analytic rank computation functionality
-
 """
 
 ##############################################################################
@@ -52,7 +51,7 @@ from itertools import product
 
 from . import constructor
 from . import BSD
-from .ell_generic import is_EllipticCurve
+from .ell_generic import EllipticCurve_generic
 from . import ell_modular_symbols
 from .ell_number_field import EllipticCurve_number_field
 from . import ell_point
@@ -816,7 +815,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
           general 2-descent when 2-torsion trivial; n_aux=-1 causes default
           to be used (depends on method)
 
-        - ``second_descent`` -- (default: True)
+        - ``second_descent`` -- (default: ``True``)
           second_descent only relevant for descent via 2-isogeny
 
         OUTPUT:
@@ -2267,10 +2266,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
           - ``'pari'`` -- use ellrank in pari
 
-        - ``only_use_mwrank`` -- bool (default True) if False, first
+        - ``only_use_mwrank`` -- bool (default: ``True``) if False, first
           attempts to use more naive, natively implemented methods
 
-        - ``use_database`` -- bool (default True) if True, attempts to
+        - ``use_database`` -- bool (default: ``True``) if True, attempts to
           find curve and gens in the (optional) database
 
         - ``descent_second_limit`` -- (default: 12) used in 2-descent
@@ -3846,10 +3845,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``algorithm`` -- string:
 
-          * ``'sympow'`` - (default) use Mark Watkin's (newer) C
+          * ``'sympow'`` -- (default) use Mark Watkin's (newer) C
             program sympow
 
-          * ``'magma'`` - requires that MAGMA be installed (also
+          * ``'magma'`` -- requires that MAGMA be installed (also
             implemented by Mark Watkins)
 
         - ``M`` -- non-negative integer; the modular degree at level `MN`
@@ -4985,7 +4984,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.is_isogenous(EE)
             False
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             raise ValueError("Second argument is not an Elliptic Curve.")
         if other.base_field() is not QQ:
             raise ValueError("If first argument is an elliptic curve over QQ then the second argument must be also.")
@@ -5823,8 +5822,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         c4 = self.c4()
         c6 = self.c6()
         j = self.j_invariant()
-        log_g2 = R((c4/12)).abs().log()
-        log_g3 = R((c6/216)).abs().log()
+        log_g2 = R(c4/12).abs().log()
+        log_g3 = R(c6/216).abs().log()
 
         if j == 0:
             h_j = R(1)
@@ -6348,7 +6347,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             #new bound according to low_bound and upper bound
             #[c_5 exp((-c_2*H_q^2)/2)] provided by Corollary 8.7.3
             if low_bound != 0:
-                H_q_new = R((log(low_bound/c5)/(-c2/2))).sqrt()
+                H_q_new = R(log(low_bound/c5)/(-c2/2)).sqrt()
                 H_q_new = H_q_new.ceil()
                 if H_q_new == 1:
                     break_cond = 1 # stops reduction
@@ -7025,9 +7024,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             else:
                 bound_list.append(H_q)
 
-         ##reduction for finite places in S
-            for p in S:
-                bound_list.append(reduction_at(p))
+            # reduction for finite places in S
+            bound_list.extend(reduction_at(p) for p in S)
 
             if verbose:
                 print('bound_list', bound_list)

@@ -313,7 +313,7 @@ cdef class PolyhedronFaceLattice:
 
         return find_face(face, self.faces[dimension+1])
 
-    cpdef CombinatorialFace get_face(self, int dimension, size_t index) noexcept:
+    cpdef CombinatorialFace get_face(self, int dimension, size_t index):
         r"""
         Return the face of dimension ``dimension`` and index ``index``.
 

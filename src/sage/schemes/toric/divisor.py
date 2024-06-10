@@ -170,7 +170,7 @@ AUTHORS:
 from sage.combinat.combination import Combinations
 import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.toric_lattice_element import is_ToricLatticeElement
+from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.topology.simplicial_complex import SimplicialComplex
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
@@ -185,9 +185,9 @@ from sage.rings.rational_field import QQ
 from sage.schemes.generic.divisor import Divisor_generic
 from sage.schemes.generic.divisor_group import DivisorGroup_generic
 from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
-from sage.schemes.toric.variety import CohomologyRing, is_ToricVariety
+from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 
 
 def is_ToricDivisor(x):
@@ -244,11 +244,11 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
       divisor group. If ``ring`` is not specified, a coefficient ring
       suitable for ``arg`` is derived.
 
-    - ``check`` -- bool (default: True). Whether to coerce
+    - ``check`` -- bool (default: ``True``). Whether to coerce
       coefficients into base ring. Setting it to ``False`` can speed
       up construction.
 
-    - ``reduce`` -- reduce (default: True). Whether to combine common
+    - ``reduce`` -- reduce (default: ``True``). Whether to combine common
       terms. Setting it to ``False`` can speed up construction.
 
     .. WARNING::
@@ -302,7 +302,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         ...
         TypeError: cannot deduce coefficient ring for [(u, u)]
     """
-    assert is_ToricVariety(toric_variety)
+    assert isinstance(toric_variety, ToricVariety_field)
 
     # First convert special arguments into lists
     # of multiplicities or (multiplicity,coordinate)
@@ -312,7 +312,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
         check = False
         reduce = False
     # Divisor by lattice point (corresponding to a ray)
-    if is_ToricLatticeElement(arg):
+    if isinstance(arg, ToricLatticeElement):
         if arg not in toric_variety.fan().lattice():
             raise ValueError("%s is not in the ambient lattice of %s"
                              % (arg, toric_variety.fan()))
@@ -346,7 +346,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
     except (AssertionError, TypeError):
         n_rays = toric_variety.fan().nrays()
         assert len(arg) == n_rays, \
-            'Argument list {0} is not of the required length {1}!' \
+            'Argument list {} is not of the required length {}!' \
             .format(arg, n_rays)
         arg = list(zip(arg, toric_variety.gens()))
         reduce = False
@@ -567,7 +567,7 @@ class ToricDivisor_generic(Divisor_generic):
           returned.
 
         - If there is no such vector (i.e. ``self`` is not even a
-          `\QQ`-Cartier divisor), a ``ValueError`` is raised.
+          `\QQ`-Cartier divisor), a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -773,7 +773,7 @@ class ToricDivisor_generic(Divisor_generic):
         .. NOTE::
 
             A divisor that is Weil but not Cartier might be impossible
-            to move away. In this case, a ``ValueError`` is raised.
+            to move away. In this case, a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -1687,7 +1687,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: DivisorGroup(P2, ZZ) is ToricDivisorGroup(P2, ZZ)
             False
         """
-        assert is_ToricVariety(toric_variety), str(toric_variety) + ' is not a toric variety!'
+        assert isinstance(toric_variety, ToricVariety_field), str(toric_variety) + ' is not a toric variety!'
         super().__init__(toric_variety, base_ring)
 
     def _latex_(self):
@@ -2014,7 +2014,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
         """
         if is_ToricDivisor(x):
             x = self._projection_matrix * vector(x)
-        if is_Vector(x):
+        if isinstance(x, Vector):
             x = list(x)
         return self.element_class(self, x)
 

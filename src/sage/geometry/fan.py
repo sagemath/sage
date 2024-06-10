@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs sage.combinat
+# sage.doctest: needs sage.graphs sage.combinat
 r"""
 Rational polyhedral fans
 
@@ -238,20 +238,21 @@ from collections.abc import Callable, Container
 from copy import copy
 from warnings import warn
 
+import sage.geometry.abc
+
 from sage.structure.richcmp import richcmp_method, richcmp
-from sage.combinat.combination import Combinations
-from sage.combinat.posets.posets import FinitePoset
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.combinat.combination', 'Combinations')
+lazy_import('sage.combinat.posets.posets', 'FinitePoset')
 from sage.geometry.cone import (_ambient_space_point,
                                 Cone,
                                 ConvexRationalPolyhedralCone,
                                 IntegralRayCollection,
-                                is_Cone,
                                 normalize_rays)
-from sage.geometry.hasse_diagram import lattice_from_incidences
+lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import PointCollection
-from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
-from sage.geometry.toric_plotter import ToricPlotter
-from sage.graphs.digraph import DiGraph
+from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
+lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.timing import walltime
@@ -278,12 +279,19 @@ def is_Fan(x) -> bool:
 
         sage: from sage.geometry.fan import is_Fan
         sage: is_Fan(1)
+        doctest:warning...
+        DeprecationWarning: The function is_Fan is deprecated; use 'isinstance(..., RationalPolyhedralFan)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: fan = toric_varieties.P2().fan(); fan                                     # needs palp
         Rational polyhedral fan in 2-d lattice N
         sage: is_Fan(fan)                                                               # needs palp
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_Fan is deprecated; "
+                "use 'isinstance(..., RationalPolyhedralFan)' instead.")
     return isinstance(x, RationalPolyhedralFan)
 
 
@@ -571,7 +579,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         cones = ((), )
         rays = ()
         return result()
-    if is_Cone(cones[0]):
+    if isinstance(cones[0], sage.geometry.abc.ConvexRationalPolyhedralCone):
         # Construct the fan from Cone objects
         if lattice is None:
             lattice = cones[0].lattice()
@@ -749,11 +757,10 @@ def FaceFan(polytope, lattice=None):
         ValueError: face fans are defined only for
         polytopes containing the origin as an interior point!
     """
-    from sage.geometry.lattice_polytope import is_LatticePolytope
     interior_point_error = ValueError(
         "face fans are defined only for polytopes containing "
         "the origin as an interior point!")
-    if is_LatticePolytope(polytope):
+    if isinstance(polytope, sage.geometry.abc.LatticePolytope):
         if any(d <= 0 for d in polytope.distances([0] * polytope.dim())):
             raise interior_point_error
         cones = (f.ambient_vertex_indices() for f in polytope.facets())
@@ -843,8 +850,7 @@ def NormalFan(polytope, lattice=None):
     """
     dimension_error = ValueError(
         'the normal fan is only defined for full-dimensional polytopes')
-    from sage.geometry.lattice_polytope import is_LatticePolytope
-    if is_LatticePolytope(polytope):
+    if isinstance(polytope, sage.geometry.abc.LatticePolytope):
         if polytope.dim() != polytope.lattice_dim():
             raise dimension_error
         rays = polytope.facet_normals()
@@ -1331,7 +1337,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: f2 is f3
             False
         """
-        if is_Fan(right):
+        if isinstance(right, RationalPolyhedralFan):
             return richcmp([self.rays(), self.virtual_rays(),
                             self.generating_cones()],
                            [right.rays(), right.virtual_rays(),
@@ -1398,7 +1404,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         not even need to check if it is complete::
 
             sage: fan = toric_varieties.P1xP1().fan()                                   # needs palp
-            sage: fan.cone_lattice() # indirect doctest                                 # needs palp
+            sage: fan.cone_lattice()  # indirect doctest                                # needs palp
             Finite lattice containing 10 elements with distinguished linear extension
 
         These 10 elements are: 1 origin, 4 rays, 4 generating cones, 1 fan.
@@ -1468,6 +1474,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         else:
             # For general fans we will "merge" face lattices of generating
             # cones.
+            from sage.graphs.digraph import DiGraph
             L = DiGraph()
             face_to_rays = {}  # face |---> (indices of fan rays)
             rays_to_index = {}  # (indices of fan rays) |---> face index
@@ -1680,7 +1687,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: _.ngenerating_cones()
             6
         """
-        assert is_Fan(other)
+        assert isinstance(other, RationalPolyhedralFan)
         rc = super().cartesian_product(other, lattice)
         self_cones = [cone.ambient_ray_indices() for cone in self]
         n = self.nrays()
@@ -1860,7 +1867,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             'Rational polyhedral fan in 2-d lattice'
         """
         result = "Rational polyhedral fan in"
-        if is_ToricLattice(self.lattice()):
+        if isinstance(self.lattice(), ToricLattice_generic):
             result += " %s" % self.lattice()
         else:
             result += " %d-d lattice" % self.lattice_dim()
@@ -2425,7 +2432,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             ValueError: 2-d cone in 3-d lattice N does not belong
             to Rational polyhedral fan in 3-d lattice N!
         """
-        if not is_Cone(cone):
+        if not isinstance(cone, sage.geometry.abc.ConvexRationalPolyhedralCone):
             raise TypeError("%s is not a cone!" % cone)
         if cone.ambient() is self:
             return cone
@@ -2605,7 +2612,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         INPUT:
 
-        - ``other`` - fan.
+        - ``other`` -- fan.
 
         OUTPUT:
 
@@ -3004,17 +3011,17 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         INPUT:
 
-        - ``new_rays`` - list of new rays to be added during subdivision, each
+        - ``new_rays`` -- list of new rays to be added during subdivision, each
           ray must be a list or a vector. May be empty or ``None`` (default);
 
-        - ``make_simplicial`` - if ``True``, the returned fan is guaranteed to
+        - ``make_simplicial`` -- if ``True``, the returned fan is guaranteed to
           be simplicial, default is ``False``;
 
-        - ``algorithm`` - string with the name of the algorithm used for
+        - ``algorithm`` -- string with the name of the algorithm used for
           subdivision. Currently there is only one available algorithm called
           "default";
 
-        - ``verbose`` - if ``True``, some timing information may be printed
+        - ``verbose`` -- if ``True``, some timing information may be printed
           during the process of subdivision.
 
         OUTPUT:
@@ -3494,7 +3501,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         INPUT:
 
-        - ``extended`` -- Boolean (default:False). Whether to
+        - ``extended`` -- Boolean (default: ``False``). Whether to
           construct the extended complex, that is, including the
           `\ZZ`-term at degree -1 or not.
 

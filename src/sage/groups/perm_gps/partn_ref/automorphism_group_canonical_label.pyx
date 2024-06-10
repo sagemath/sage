@@ -97,7 +97,6 @@ REFERENCE:
 
 - [1] McKay, Brendan D. Practical Graph Isomorphism. Congressus Numerantium,
   Vol. 30 (1981), pp. 45-87.
-
 """
 
 # ****************************************************************************
@@ -135,6 +134,7 @@ cdef int refine_and_return_invariant_trivial(PartitionStack *PS, void *S, int *c
 cdef int compare_structures_trivial(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     return 0
 
+
 def test_get_aut_gp_and_can_lab_trivially(int n=6,
     list partition=[[0,1,2],[3,4],[5]], canonical_label=True, base=False):
     """
@@ -170,6 +170,7 @@ def test_get_aut_gp_and_can_lab_trivially(int n=6,
     print(I)
     PS_dealloc(part)
     deallocate_agcl_output(output)
+
 
 def test_intersect_parabolic_with_alternating(int n=9, list partition=[[0,1,2],[3,4],[5,6,7,8]]):
     """
@@ -212,6 +213,7 @@ def test_intersect_parabolic_with_alternating(int n=9, list partition=[[0,1,2],[
     SC_dealloc(group)
     deallocate_agcl_output(output)
 
+
 cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     cdef list MS1 = <list> S1
     cdef list MS2 = <list> S2
@@ -221,6 +223,7 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
         if j != 0:
             return j
     return 0
+
 
 def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     """
@@ -292,6 +295,7 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     deallocate_agcl_output(output)
     sig_free(c_perm)
     return label
+
 
 cdef aut_gp_and_can_lab *allocate_agcl_output(int n) noexcept:
     r"""
@@ -412,7 +416,7 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     partition -- PartitionStack representing a partition of the points
     len_partition -- length of the partition
     n -- the number of points (points are assumed to be 0,1,...,n-1)
-    canonical_label -- whether to search for canonical label - if True, return
+    canonical_label -- whether to search for canonical label; if True, return
         the permutation taking S to its canonical label
     all_children_are_equivalent -- pointer to a function
         INPUT:
@@ -438,12 +442,12 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
         int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
             such that the set of all structures is well-ordered
 
-    NOTE:
-    The partition ``partition1`` *must* satisfy the property that in each cell,
-    the smallest element occurs first!
+    .. NOTE::
 
-    OUTPUT:
-    pointer to a aut_gp_and_can_lab struct
+        The partition ``partition1`` *must* satisfy the property that in each
+        cell, the smallest element occurs first!
+
+    OUTPUT: a pointer to a ``aut_gp_and_can_lab`` struct
 
     """
     cdef PartitionStack *current_ps

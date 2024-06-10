@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.pari
 """
 Examples of sets
@@ -151,6 +152,8 @@ class PrimeNumbers(UniqueRepresentation, Parent):
 
 
 from sage.misc.abstract_method import abstract_method
+
+
 class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     """
     This class shows how to write a parent while keeping the choice of the

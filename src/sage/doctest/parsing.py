@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 Parsing docstrings
 
@@ -136,7 +136,7 @@ def parse_optional_tags(
     - ``'not tested'``
     - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
-    - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
+    - ``'optional -- FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
     The values, if non-``None``, are strings with optional explanations
@@ -782,10 +782,8 @@ class OriginalSource():
 
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.control import DocTestDefaults
-        sage: from sage.env import SAGE_SRC
-        sage: import os
-        sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-        sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+        sage: filename = sage.doctest.forker.__file__
+        sage: FDS = FileDocTestSource(filename, DocTestDefaults())
         sage: doctests, extras = FDS.create_doctests(globals())
         sage: ex = doctests[0].examples[0]
         sage: ex.sage_source
@@ -809,10 +807,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource
@@ -827,10 +823,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource
@@ -847,10 +841,8 @@ class OriginalSource():
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: from sage.doctest.parsing import OriginalSource

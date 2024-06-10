@@ -7,6 +7,8 @@ import ast
 import argparse
 import logging
 import textwrap
+from contextlib import contextmanager
+
 logging.basicConfig()
 logger = logging.getLogger()
 
@@ -19,7 +21,6 @@ _system_jupyter_url = "https://doc.sagemath.org/html/en/installation/launching.h
 class NotebookJupyter():
 
     def print_banner(self):
-        banner()
         print('Please wait while the Sage Jupyter Notebook server starts...')
 
     @classmethod
@@ -50,7 +51,6 @@ class NotebookJupyter():
 
 class NotebookJupyterlab():
     def print_banner(self):
-        banner()
         print('Please wait while the Jupyterlab server starts...')
 
     @classmethod
@@ -77,7 +77,6 @@ class NotebookJupyterlab():
 class SageNBExport(NotebookJupyter):
 
     def print_banner(self):
-        banner()
         print('Please wait while the SageNB export server starts...')
 
     @classmethod
@@ -128,9 +127,7 @@ EXAMPLES:
 * Export a legacy Sage notebook as a Jupyter notebook:
 
       sage --notebook=export --ipynb=Output.ipynb admin:10
-
 """
-
 
 notebook_launcher = {
     'default': NotebookJupyter,   # change this to change the default
@@ -139,7 +136,6 @@ notebook_launcher = {
     'jupyterlab': NotebookJupyterlab,
     'export': SageNBExport,
 }
-
 
 notebook_names = ', '.join(notebook_launcher.keys())
 
@@ -187,6 +183,32 @@ def trac_23428_browser_workaround():
         os.environ['BROWSER'] = 'open'
 
 
+@contextmanager
+def sage_doc_server():
+    from functools import partial
+    from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    from threading import Thread
+    from sage.env import SAGE_DOC, SAGE_DOC_LOCAL_PORT as port
+
+    server = ThreadingHTTPServer(('127.0.0.1', int(port)),
+        partial(SimpleHTTPRequestHandler, directory=SAGE_DOC))
+
+    if port == '0':
+        port = str(server.server_address[1])
+        os.environ['SAGE_DOC_LOCAL_PORT'] = port
+
+    server_thread = Thread(target=server.serve_forever, name="sage_doc_server")
+    server_thread.start()
+    print(f'Sage doc server started running at http://127.0.0.1:{port}')
+
+    try:
+        yield
+    finally:
+        server.shutdown()
+        server_thread.join()
+        print(f'Sage doc server stopped runnning at http://127.0.0.1:{port}')
+
+
 if __name__ == '__main__':
     parser = make_parser()
     args, unknown = parser.parse_known_args(sys.argv[1:])
@@ -227,4 +249,19 @@ if __name__ == '__main__':
             launcher.print_help()
         sys.exit(0)
 
-    launcher(unknown)
+    banner()
+
+    # Start a Sage doc server if the Sage documentation is available locally.
+    # See the corresponding code in src/sage/repl/ipython_kernel/kernel.py.
+
+    from sage.env import SAGE_DOC_SERVER_URL
+    from sage.features.sagemath import sagemath_doc_html
+
+    if SAGE_DOC_SERVER_URL:
+        print(f'Sage doc server is running at {SAGE_DOC_SERVER_URL}')
+        launcher(unknown)
+    elif sagemath_doc_html().is_present():
+        with sage_doc_server():
+            launcher(unknown)
+    else:
+        launcher(unknown)

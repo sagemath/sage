@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Functors
 
@@ -14,7 +15,6 @@ AUTHORS:
   making functors applicable to morphisms (not only to objects)
 
 - Simon King (2010-12): Pickling of functors without losing domain and codomain
-
 """
 
 # ****************************************************************************
@@ -179,9 +179,9 @@ cdef class Functor(SageObject):
             Finite Field of size 2
 
         """
-        if not category.is_Category(domain):
+        if not isinstance(domain, category.Category):
             raise TypeError("domain (=%s) must be a category" % domain)
-        if not category.is_Category(codomain):
+        if not isinstance(codomain, category.Category):
             raise TypeError("codomain (=%s) must be a category" % codomain)
         self.__domain = domain
         self.__codomain = codomain
@@ -385,8 +385,8 @@ cdef class Functor(SageObject):
             that is not in Category of rings.
 
         """
-        from sage.categories.morphism import is_Morphism
-        if is_Morphism(x):
+        from sage.categories.morphism import Morphism
+        if isinstance(x, Morphism):
             return self._apply_functor_to_morphism(x)
         y = self._apply_functor(self._coerce_into_domain(x))
         if not ((y in self.__codomain) or (y in self.__codomain.Homsets())):
@@ -660,7 +660,7 @@ def ForgetfulFunctor(domain, codomain):
 
     INPUT:
 
-    ``C``, ``D`` - two categories
+    ``C``, ``D`` -- two categories
 
     OUTPUT:
 

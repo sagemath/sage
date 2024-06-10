@@ -66,8 +66,8 @@ AUTHOR:
 
 import operator
 
-from sage.matrix.matrix_space import MatrixSpace, is_MatrixSpace
-from sage.modules.free_module import FreeModule, is_FreeModule
+from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.structure.coerce cimport coercion_model
 from sage.categories.homset import Hom, End
 
@@ -100,7 +100,7 @@ cdef class MatrixMulAction(Action):
          over Univariate Polynomial Ring in x over Rational Field
     """
     def __init__(self, G, S, is_left):
-        if not is_MatrixSpace(G):
+        if not isinstance(G, MatrixSpace):
             raise TypeError("Not a matrix space: %s" % G)
         if isinstance(S, SchemeHomset_generic):
             if G.base_ring() is not S.domain().base_ring():
@@ -160,7 +160,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         example is good practice.
     """
     def __init__(self, G, S):
-        if not is_MatrixSpace(S):
+        if not isinstance(S, MatrixSpace):
             raise TypeError("Not a matrix space: %s" % S)
 
         MatrixMulAction.__init__(self, G, S, True)
@@ -215,7 +215,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         return MatrixSpace(base, self.G.nrows(), self.underlying_set().ncols(),
                            sparse = self.G.is_sparse() and self.underlying_set().is_sparse())
 
-    cpdef _act_(self, g, s) noexcept:
+    cpdef _act_(self, g, s):
         """
         EXAMPLES:
 
@@ -304,7 +304,7 @@ cdef class MatrixVectorAction(MatrixMulAction):
             ...
             TypeError: incompatible dimensions 3, 4
             """
-        if not is_FreeModule(S):
+        if not isinstance(S, FreeModule_generic):
             raise TypeError("Not a free module: %s" % S)
         MatrixMulAction.__init__(self, G, S, True)
 
@@ -326,7 +326,7 @@ cdef class MatrixVectorAction(MatrixMulAction):
                                                                  self.underlying_set().degree()))
         return FreeModule(base, self.G.nrows(), sparse = self.G.is_sparse())
 
-    cpdef _act_(self, g, s) noexcept:
+    cpdef _act_(self, g, s):
         cdef Matrix A = <Matrix>g
         cdef Vector v = <Vector>s
         if A._parent._base is not self._codomain._base:
@@ -355,7 +355,7 @@ cdef class VectorMatrixAction(MatrixMulAction):
             ...
             TypeError: incompatible dimensions 5, 3
         """
-        if not is_FreeModule(S):
+        if not isinstance(S, FreeModule_generic):
             raise TypeError("Not a free module: %s" % S)
         MatrixMulAction.__init__(self, G, S, False)
 
@@ -378,7 +378,7 @@ cdef class VectorMatrixAction(MatrixMulAction):
                                                                  self.underlying_set().degree()))
         return FreeModule(base, self.G.ncols(), sparse = self.G.is_sparse())
 
-    cpdef _act_(self, g, s) noexcept:
+    cpdef _act_(self, g, s):
         cdef Matrix A = <Matrix>g
         cdef Vector v = <Vector>s
         if A._parent._base is not self._codomain._base:
@@ -437,7 +437,7 @@ cdef class MatrixPolymapAction(MatrixMulAction):
             return End(self.underlying_set().domain().change_ring(base))
         return Hom(self.underlying_set().domain().change_ring(base), self.underlying_set().codomain().change_ring(base))
 
-    cpdef _act_(self, mat, f) noexcept:
+    cpdef _act_(self, mat, f):
         """
         Call the action
 
@@ -510,7 +510,7 @@ cdef class PolymapMatrixAction(MatrixMulAction):
             return End(self.underlying_set().domain().change_ring(base))
         return Hom(self.underlying_set().domain().change_ring(base), self.underlying_set().codomain().change_ring(base))
 
-    cpdef _act_(self, mat, f) noexcept:
+    cpdef _act_(self, mat, f):
         """
         Call the action.
 
@@ -578,7 +578,7 @@ cdef class MatrixSchemePointAction(MatrixMulAction):
         amb = self.underlying_set().codomain()
         return amb.change_ring(base)(base)
 
-    cpdef _act_(self, mat, P) noexcept:
+    cpdef _act_(self, mat, P):
         """
         Action of matrices on scheme points.
 

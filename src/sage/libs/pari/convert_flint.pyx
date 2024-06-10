@@ -126,7 +126,7 @@ cdef GEN _new_GEN_from_fmpq_mat_t_rotate90(fmpq_mat_t B) noexcept:
     return A
 
 
-cdef Gen integer_matrix(fmpz_mat_t B, bint rotate) noexcept:
+cdef Gen integer_matrix(fmpz_mat_t B, bint rotate):
     """
     EXAMPLES::
 
@@ -142,7 +142,7 @@ cdef Gen integer_matrix(fmpz_mat_t B, bint rotate) noexcept:
     return new_gen(g)
 
 
-cdef Gen rational_matrix(fmpq_mat_t B, bint rotate) noexcept:
+cdef Gen rational_matrix(fmpq_mat_t B, bint rotate):
     """
     EXAMPLES::
 

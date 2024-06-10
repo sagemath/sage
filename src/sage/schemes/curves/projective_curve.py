@@ -125,7 +125,6 @@ AUTHORS:
 - Grayson Jorgenson (2016-08)
 
 - Kwankyu Lee (2019-05): added integral projective curves
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -158,7 +157,7 @@ from sage.rings.qqbar import (number_field_elements_from_algebraics,
 from sage.rings.rational_field import is_RationalField
 from sage.rings.integer import Integer
 
-from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 
 from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subscheme_projective,
                                                           AlgebraicScheme_subscheme_projective_field)
@@ -215,7 +214,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             sage: loads(dumps(C)) == C
             True
         """
-        if not is_ProjectiveSpace(A):
+        if not isinstance(A, ProjectiveSpace_ring):
             raise TypeError("A (=%s) must be a projective space" % A)
 
         Curve_generic.__init__(self, A, X, category=category)
@@ -419,7 +418,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         if self.base_ring() not in Fields():
             raise TypeError("this curve must be defined over a field")
         if PS is not None:
-            if not is_ProjectiveSpace(PS):
+            if not isinstance(PS, ProjectiveSpace_ring):
                 raise TypeError("(=%s) must be a projective space" % PS)
             if PS.dimension_relative() != n - 1:
                 raise TypeError("(=%s) must have dimension (=%s)" % (PS, n - 1))
@@ -487,12 +486,12 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         # defining polynomials of this curve with the polynomials defining the inverse of the change of coordinates
         invcoords = [Q[i]*PP.gens()[j] + PP.gens()[i] for i in range(n + 1)]
         invcoords[j] = Q[j]*PP.gens()[j]
-        I = PP.coordinate_ring().ideal([f(invcoords) for f in self.defining_polynomials()])
-        J = I.elimination_ideal(PP.gens()[j])
+        id = PP.coordinate_ring().ideal([f(invcoords) for f in self.defining_polynomials()])
+        J = id.elimination_ideal(PP.gens()[j])
         K = Hom(PP.coordinate_ring(), PP2.coordinate_ring())
-        l = list(PP2.gens())
-        l.insert(j, 0)
-        phi = K(l)
+        ll = list(PP2.gens())
+        ll.insert(j, 0)
+        phi = K(ll)
         G = [phi(f) for f in J.gens()]
         C = PP2.curve(G)
         return (psi, C)
@@ -621,7 +620,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             sage: loads(dumps(C)) == C
             True
         """
-        if not (is_ProjectiveSpace(A) and A.dimension != 2):
+        if not (isinstance(A, ProjectiveSpace_ring) and A.dimension != 2):
             raise TypeError("the ambient space is not a projective plane")
 
         super().__init__(A, [f], category=category)
@@ -691,7 +690,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         - ``pt`` -- a rational point on X which is not a point of ramification
            for the projection `(x,y) \to x`.
 
-        - ``n``-- the number of terms desired
+        - ``n`` -- the number of terms desired
 
         OUTPUT: `x = x0 + t`, `y = y0` + power series in `t`
 
@@ -758,16 +757,16 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        -  ``self`` - an affine plane curve
+        -  ``self`` -- an affine plane curve
 
-        -  ``patch`` - (optional) the affine patch to be plotted; if not
+        -  ``patch`` -- (optional) the affine patch to be plotted; if not
            specified, the patch corresponding to the last projective
            coordinate being nonzero
 
-        -  ``*args`` - optional tuples (variable, minimum, maximum) for
+        -  ``*args`` -- optional tuples (variable, minimum, maximum) for
            plotting dimensions
 
-        -  ``**kwds`` - optional keyword arguments passed on to
+        -  ``**kwds`` -- optional keyword arguments passed on to
            ``implicit_plot``
 
         EXAMPLES:
@@ -781,32 +780,35 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         The other affine patches of the same curve::
 
-            sage: C.plot(patch=0)                                                       # needs sage.plot
+            sage: # needs sage.plot
+            sage: C.plot(patch=0)
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)                                                       # needs sage.plot
+            sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
 
         An elliptic curve::
 
+            sage: # needs sage.plot
             sage: E = EllipticCurve('101a')
             sage: C = Curve(E)
-            sage: C.plot()                                                              # needs sage.plot
+            sage: C.plot()
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=0)                                                       # needs sage.plot
+            sage: C.plot(patch=0)
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)                                                       # needs sage.plot
+            sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
 
         A hyperelliptic curve::
 
+            sage: # needs sage.plot
             sage: P.<x> = QQ[]
             sage: f = 4*x^5 - 30*x^3 + 45*x - 22
             sage: C = HyperellipticCurve(f)
-            sage: C.plot()                                                              # needs sage.plot
+            sage: C.plot()
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=0)                                                       # needs sage.plot
+            sage: C.plot(patch=0)
             Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)                                                       # needs sage.plot
+            sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
         """
         # if user has not specified a favorite affine patch, take the
@@ -862,16 +864,17 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         Over `\CC`::
 
+            sage: # needs sage.rings.function_field
             sage: F = CC
             sage: P2.<X,Y,Z> = ProjectiveSpace(F, 2)
             sage: C = Curve(X)
-            sage: C.is_singular()                                                       # needs sage.rings.function_field
+            sage: C.is_singular()
             False
             sage: D = Curve(Y^2*Z - X^3)
-            sage: D.is_singular()                                                       # needs sage.rings.function_field
+            sage: D.is_singular()
             True
             sage: E = Curve(Y^2*Z - X^3 + Z^3)
-            sage: E.is_singular()                                                       # needs sage.rings.function_field
+            sage: E.is_singular()
             False
 
         Showing that :issue:`12187` is fixed::
@@ -883,10 +886,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         ::
 
+            sage: # needs sage.fings.function_field
             sage: P.<x,y,z> = ProjectiveSpace(CC, 2)
             sage: C = Curve([y^4 - x^3*z], P)
             sage: Q = P([0,0,1])
-            sage: C.is_singular()                                                       # needs sage.rings.function_field
+            sage: C.is_singular()
             True
         """
         if P is None:
@@ -1277,11 +1281,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     if j == 0:
                         div_pow = min(e[1] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0, v1 - div_pow, v2): g
-                            for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.dict().items()})
                     else:
                         div_pow = min(e[0] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0 - div_pow, v1, v2): g
-                            for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.dict().items()})
                     # check the degree again
                     if npoly.degree() != d - r:
                         need_continue = True
@@ -1660,9 +1664,9 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             False
         """
         singular.lib("sing.lib")
-        I = singular.simplify(self.defining_ideal(), 10)
-        L = singular.is_ci(I).sage()
-        return len(self.ambient_space().gens()) - len(I.sage().gens()) == L[-1]
+        id = singular.simplify(self.defining_ideal(), 10)
+        L = singular.is_ci(id).sage()
+        return len(self.ambient_space().gens()) - len(id.sage().gens()) == L[-1]
 
     def tangent_line(self, p):
         """
@@ -1742,12 +1746,18 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             The curve must be defined over the rationals or a number field
             with an embedding over `\QQbar`.
 
+        .. NOTE::
+
+           This functionality requires the ``sirocco`` package to be installed.
+
         EXAMPLES::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = P.curve(x^2*z - y^3)
-            sage: C.fundamental_group()                         # optional - sirocco
+            sage: C.fundamental_group()                                 # needs sirocco
             Finitely presented group < x0 | x0^3 >
+            sage: P.curve(z*(x^2*z - y^3)).fundamental_group()          # needs sirocco
+            Finitely presented group < x0, x1 | x1*x0*x1*x0^-1*x1^-1*x0^-1 >
 
         In the case of number fields, they need to have an embedding
         into the algebraic field::
@@ -1761,12 +1771,8 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: F.inject_variables()
             Defining a
             sage: C = P.curve(x^2 + a * y^2)
-            sage: C.fundamental_group()                         # optional - sirocco
+            sage: C.fundamental_group()                         # needs sirocco
             Finitely presented group < x0 |  >
-
-        .. WARNING::
-
-            This functionality requires the ``sirocco`` package to be installed.
 
         TESTS::
 
@@ -1778,11 +1784,13 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: G0 = C.fundamental_group()                 # optional - sirocco
-            sage: G.is_isomorphic(G0)                        # optional - sirocco
+            sage: G0 = C.fundamental_group()                    # needs sirocco
+            sage: G.is_isomorphic(G0)                           # needs sirocco
             #I  Forcing finiteness test
             True
-
+            sage: C = P.curve(z)
+            sage: C.fundamental_group()                         # needs sirocco
+            Finitely presented group <  |  >
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group
         F = self.base_ring()
@@ -1790,7 +1798,11 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         if QQbar.coerce_map_from(F) is None:
             raise NotImplementedError("the base field must have an embedding"
                                       " to the algebraic field")
-        f = self.affine_patch(2).defining_polynomial()
+        g = self.defining_polynomial()
+        ring = self.ambient_space().affine_patch(2).coordinate_ring()
+        if g.degree() == 1:
+            return fundamental_group(ring.one())
+        f = ring(self.affine_patch(2).defining_polynomial())
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
         else:  # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
@@ -2003,7 +2015,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
         INPUT:
 
 
-        -  ``sort`` - bool (default: ``True``), if ``True`` return the
+        -  ``sort`` -- bool (default: ``True``), if ``True`` return the
            point list sorted. If ``False``, returns the points in the order
            computed by Singular.
 
@@ -2073,7 +2085,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         INPUT:
 
-        -  ``D`` - a divisor
+        -  ``D`` -- a divisor
 
         OUTPUT: A list of function field elements that form a basis of the
         Riemann-Roch space.
@@ -2723,6 +2735,46 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             if all(f.valuation(p) > 0 for f in fs):
                 places.append(p)
         return places
+
+    def jacobian(self, model, base_div=None):
+        """
+        Return the Jacobian of this curve.
+
+        INPUT:
+
+        - ``model`` -- model to use for arithmetic
+
+        - ``base_div`` -- an effective divisor for the model
+
+        The degree of the base divisor should satisfy certain degree condition
+        corresponding to the model used. The following table lists these
+        conditions. Let `g` be the geometric genus of the curve.
+
+        - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
+
+        - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
+          degree at least `2g + 1`
+
+        - ``km_medium``: Khuri-Makdisi's medium model; requires base divisor of
+          degree at least `2g + 1`
+
+        - ``km_small``: Khuri-Makdisi's small model requires base divisor of
+          degree at least `g + 1`
+
+        We assume the curve (or its function field) has a rational place. If a
+        base divisor is not given, one is chosen using a rational place.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(GF(5), 2)
+            sage: C = Curve(y^2*(x^3 - 1) - (x^3 - 2)).projective_closure()
+            sage: J = C.jacobian(model='hess'); J
+            Jacobian of Projective Plane Curve over Finite Field of size 5
+             defined by 2*x0^5 - x0^2*x1^3 - x0^3*x2^2 + x1^3*x2^2 (Hess model)
+            sage: J.base_divisor().degree() == C.genus()
+            True
+        """
+        return self.function_field().jacobian(model, base_div, curve=self)
 
 
 class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):

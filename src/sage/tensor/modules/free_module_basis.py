@@ -18,7 +18,6 @@ REFERENCES:
 
 - Chap. 10 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015, 2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -48,7 +47,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
     :class:`Mapping` subclasses, not the :meth:`keys` but the
     :meth:`values` are considered the elements.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
         sage: e = M.basis('e'); e
@@ -111,8 +110,8 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
             sage: e = M.basis('e')
             sage: list(e.values())
             [Element e_0 of the Rank-3 free module M over the Integer Ring,
-            Element e_1 of the Rank-3 free module M over the Integer Ring,
-            Element e_2 of the Rank-3 free module M over the Integer Ring]
+             Element e_1 of the Rank-3 free module M over the Integer Ring,
+             Element e_2 of the Rank-3 free module M over the Integer Ring]
         """
         return self._vec
 

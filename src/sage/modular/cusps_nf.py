@@ -74,7 +74,7 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 # ****************************************************************************
 
 from sage.structure.parent import Parent
-from sage.structure.element import Element, is_InfinityElement
+from sage.structure.element import Element, InfinityElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -461,7 +461,7 @@ class NFCusp(Element):
             elif a in number_field:
                 self.__b = R(a.denominator())
                 self.__a = R(a * self.__b)
-            elif is_InfinityElement(a):
+            elif isinstance(a, InfinityElement):
                 self.__a = R.one()
                 self.__b = R.zero()
             elif isinstance(a, int):
@@ -502,8 +502,8 @@ class NFCusp(Element):
                     raise TypeError("unable to convert %r to a cusp "
                                     "of the number field" % a)
         else:  # 'b' is given
-            if is_InfinityElement(b):
-                if is_InfinityElement(a) or (isinstance(a, NFCusp) and a.is_infinity()):
+            if isinstance(b, InfinityElement):
+                if isinstance(a, InfinityElement) or (isinstance(a, NFCusp) and a.is_infinity()):
                     raise TypeError("unable to convert (%r, %r) "
                                     "to a cusp of the number field" % (a, b))
                 self.__a = R.zero()
@@ -526,7 +526,7 @@ class NFCusp(Element):
             else:
                 if a in R or a in number_field:
                     r = a / b
-                elif is_InfinityElement(a):
+                elif isinstance(a, InfinityElement):
                     self.__a = R.one()
                     self.__b = R.zero()
                     return
@@ -944,7 +944,7 @@ class NFCusp(Element):
 
         ::
 
-            sage: k.<a> = NumberField(x^2+23)
+            sage: k.<a> = NumberField(x^2 + 23)
             sage: N = k.ideal(3)
             sage: alpha1 = NFCusp(k, a+1, 4)
             sage: alpha2 = NFCusp(k, a-8, 29)
@@ -1188,7 +1188,7 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
 
     ::
 
-        sage: k.<a> = NumberField(x^4 - x^3 -21*x^2 + 17*x + 133)
+        sage: k.<a> = NumberField(x^4 - x^3 - 21*x^2 + 17*x + 133)
         sage: N = k.ideal(6)
         sage: from sage.modular.cusps_nf import NFCusps_ideal_reps_for_levelN
         sage: NFCusps_ideal_reps_for_levelN(N)
@@ -1202,14 +1202,12 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
     """
     k = N.number_field()
     G = k.class_group()
-    L = []
-    for i in range(nlists):
-        L.append([k.ideal(1)])
+    L = [[k.ideal(1)] for _ in range(nlists)]
     it = k.primes_of_degree_one_iter()
     for I in G.list():
         check = 0
         if not I.is_principal():
-            Iinv = (I.ideal())**(-1)
+            Iinv = I.ideal()**(-1)
             while check < nlists:
                 J = next(it)
                 if (J * Iinv).is_principal() and J.is_coprime(N):

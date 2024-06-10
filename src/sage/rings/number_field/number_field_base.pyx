@@ -5,7 +5,6 @@ Base class of number fields
 AUTHORS:
 
 - William Stein (2007-09-04): initial version
-
 """
 
 
@@ -413,7 +412,7 @@ cdef class NumberField(Field):
             self._gen_approx = []
             self._embedded_real = 1
 
-    cpdef _get_embedding_approx(self, size_t i) noexcept:
+    cpdef _get_embedding_approx(self, size_t i):
         r"""
         Return an interval approximation of the generator of this number field.
 
