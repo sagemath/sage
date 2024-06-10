@@ -300,10 +300,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           entries;
         - if `d` is a list `(d_1,\ldots,d_m)` and ``row_wise`` is ``True``,
           this selects the coefficient of degree `d_i` for all entries of the
-          `i`th row for each `i`;
+          `i`-th row for each `i`;
         - if `d` is a list `(d_1,\ldots,d_n)` and ``row_wise`` is ``False``,
           this selects the coefficient of degree `d_i` for all entries of the
-          `j`th column for each `j`.
+          `j`-th column for each `j`.
 
         INPUT:
 
@@ -392,10 +392,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - if `d` is an integer, the truncation is at precision `d` for all
           entries;
         - if `d` is a list `(d_1,\ldots,d_m)` and ``row_wise`` is ``True``, all
-          entries of the `i`th row are truncated at precision `d_i` for each
+          entries of the `i`-th row are truncated at precision `d_i` for each
           `i`;
         - if `d` is a list `(d_1,\ldots,d_n)` and ``row_wise`` is ``False``,
-          all entries of the `j`th column are truncated at precision `d_j` for
+          all entries of the `j`-th column are truncated at precision `d_j` for
           each `j`.
 
         Here the convention for univariate polynomials is to take zero
@@ -484,9 +484,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         - if `d` is an integer, the shift is by `d` for all entries;
         - if `d` is a list `(d_1,\ldots,d_m)` and ``row_wise`` is ``True``, all
-          entries of the `i`th row are shifted by `d_i` for each `i`;
+          entries of the `i`-th row are shifted by `d_i` for each `i`;
         - if `d` is a list `(d_1,\ldots,d_n)` and ``row_wise`` is ``False``,
-          all entries of the `j`th column are shifted by `d_j` for each `j`.
+          all entries of the `j`-th column are shifted by `d_j` for each `j`.
 
         Shifting by `d` means multiplying by the variable to the power `d`; if
         `d` is negative then terms of negative degree after shifting are
@@ -590,10 +590,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - if ``degree`` is not provided, then all entries are reversed with
           respect to the degree of the whole matrix;
         - if ``degree`` is a list `(d_1,\ldots,d_m)` and ``row_wise`` is
-          ``True``, all entries of the `i`th row are reversed with respect to
+          ``True``, all entries of the `i`-th row are reversed with respect to
           `d_i` for each `i`;
         - if ``degree`` is a list `(d_1,\ldots,d_n)` and ``row_wise`` is
-          ``False``, all entries of the `j`th column are reversed with respect
+          ``False``, all entries of the `j`-th column are reversed with respect
           to `d_j` for each `j`.
 
         INPUT:

@@ -335,7 +335,7 @@ cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, 
 
 cdef inline cexpansion_getitem(celement value, long m, PowComputer_ prime_pow):
     """
-    Return the `m`th `p`-adic digit in the ``simple_mode`` expansion.
+    Return the `m`-th `p`-adic digit in the ``simple_mode`` expansion.
 
     INPUT:
 

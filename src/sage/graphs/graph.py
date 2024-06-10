@@ -10118,7 +10118,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``extended`` -- boolean (default: ``False``); Whether to return the
+        - ``extended`` -- boolean (default: ``False``); whether to return the
           extended bipartite double, or only the bipartite double (default)
 
         OUTPUT: a graph; ``self`` is left untouched

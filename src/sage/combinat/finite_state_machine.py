@@ -3834,8 +3834,6 @@ class FiniteStateMachine(SageObject):
         Return ``True`` if the finite state machine consists of at least
         one state.
 
-        OUTPUT: boolean
-
         TESTS::
 
             sage: bool(FiniteStateMachine())

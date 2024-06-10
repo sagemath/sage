@@ -1143,7 +1143,7 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         Return a dictionary from theta series vectors of degree `B` to
         list of integers `i`, where the key is the vector of
-        coefficients of the normalized theta series of the `i`th right
+        coefficients of the normalized theta series of the `i`-th right
         ideal, as indexed by ``self.right_ideals()``.
 
         INPUT:

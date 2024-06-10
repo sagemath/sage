@@ -215,7 +215,7 @@ class MultiGraphics(WithEqualityById, SageObject):
 
     def __getitem__(self, i):
         r"""
-        Return the ``i``th element of the list of graphics composing ``self``.
+        Return the ``i``-th element of the list of graphics composing ``self``.
 
         EXAMPLES:
 
@@ -239,7 +239,7 @@ class MultiGraphics(WithEqualityById, SageObject):
 
     def __setitem__(self, i, g):
         r"""
-        Set the ``i``th element of the list of graphics composing ``self``.
+        Set the ``i``-th element of the list of graphics composing ``self``.
 
         EXAMPLES::
 

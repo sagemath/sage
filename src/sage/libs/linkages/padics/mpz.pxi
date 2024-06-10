@@ -525,7 +525,7 @@ cdef inline cexpansion_next(mpz_t value, expansion_mode mode, long curpower, Pow
 
 cdef inline cexpansion_getitem(mpz_t value, long m, PowComputer_ prime_pow):
     """
-    Return the `m`th `p`-adic digit in the ``simple_mode`` expansion.
+    Return the `m`-th `p`-adic digit in the ``simple_mode`` expansion.
 
     INPUT:
 

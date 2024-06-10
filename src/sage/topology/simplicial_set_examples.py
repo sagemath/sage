@@ -813,7 +813,7 @@ def PresentationComplex(G):
 
     INPUT:
 
-    - "G" -- a finitely presented group
+    - ``G`` -- a finitely presented group
 
     EXAMPLES::
 

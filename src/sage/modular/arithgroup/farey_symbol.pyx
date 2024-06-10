@@ -364,7 +364,7 @@ cdef class Farey:
 
         - ``standard`` returns the so called the Tietze representation,
           consists of a tuple of nonzero integers `i`, where if `i` > 0
-          then it indicates the `i`th generator (that is, ``self.generators()[0]``
+          then it indicates the `i`-th generator (that is, ``self.generators()[0]``
           would correspond to `i` = 1), and if `i` < 0 then it indicates
           the inverse of the `i`-th generator.
         - ``syllables`` returns a tuple of tuples of the form `(i,n)`, where

@@ -4095,8 +4095,9 @@ cdef class pAdicGenericElement(LocalGenericElement):
         raise NotImplementedError
 
     def _polylog_res_1(self, n, p_branch = 0):
-        """
-        Return `Li_n(`self`)` , the `n`th `p`-adic polylogarithm of ``self``, assuming that self is congruent to 1 mod p.
+        r"""
+        Return `Li_n(`self`)`, the `n`-th `p`-adic polylogarithm of ``self``,
+        assuming that self is congruent to `1 \pmod p`.
 
         This is an internal function, used by :meth:`polylog`.
 
@@ -4104,9 +4105,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         - ``n`` -- a non-negative integer
 
-        OUTPUT:
-
-        - `Li_n(`self`)`
+        OUTPUT: `Li_n(`self`)`
 
         EXAMPLES::
 

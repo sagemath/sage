@@ -802,7 +802,7 @@ cdef class FpTElement(FieldElement):
 
     def __pow__(FpTElement self, Py_ssize_t e, dummy):
         r"""
-        Return the ``e``th power of this element.
+        Return the `e`-th power of this element.
 
         EXAMPLES::
 

@@ -1879,12 +1879,13 @@ class GCAlgebra_multigraded(GCAlgebra):
             sage: A.basis(2, total=True)
             [a^2, a*b, b^2, c]
 
-        Since 2 is a not a multi-index, we don't need to specify ``total=True``::
+        Since 2 is a not a multi-index, we don't need to specify that ``total``
+        is ``True``::
 
             sage: A.basis(2)
             [a^2, a*b, b^2, c]
 
-        If ``total==True``, then `n` can still be a tuple, list,
+        If ``total`` is ``True``, then `n` can still be a tuple, list,
         etc., and its total degree is used instead::
 
             sage: A.basis((1,1), total=True)

@@ -177,8 +177,7 @@ def preparser(on=True):
     """
     Turn on or off the Sage preparser.
 
-    :keyword on: if True turn on preparsing; if False, turn it off.
-    :type on: bool
+    - ``on`` -- boolean; if True turn on preparsing. If False, turn it off.
 
     EXAMPLES::
 
@@ -556,8 +555,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
         ``maxima(object)`` if :attr:`shell.interface` is
         ``maxima``.
 
-        :param line: the line to transform
-        :type line: string
+        - line -- string; the line to transform
 
         EXAMPLES::
 
@@ -610,10 +608,9 @@ class InterfaceShellTransformer(PrefilterTransformer):
         Evaluates *line* in :attr:`shell.interface` and returns a
         string representing the result of that evaluation.
 
-        :param line: the line to be transformed *and evaluated*
-        :type line: string
-        :param continue_prompt: is this line a continuation in a sequence of multiline input?
-        :type continue_prompt: bool
+        - line -- string; the line to be transformed *and evaluated*
+        - continue_prompt -- boolean; whether this line is a continuation in a
+          sequence of multiline input
 
         EXAMPLES::
 
@@ -675,7 +672,7 @@ def interface_shell_embed(interface):
 
     INPUT:
 
-    - ``interface`` -- A Sage ``PExpect`` interface instance.
+    - ``interface`` -- a Sage ``PExpect`` interface instance
 
     EXAMPLES::
 
@@ -792,7 +789,7 @@ class SageTerminalApp(TerminalIPythonApp):
         r"""
         Merges a config file with the default sage config.
 
-        .. note::
+        .. NOTE::
 
             This code is based on :meth:`Application.update_config`.
 

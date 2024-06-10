@@ -185,7 +185,7 @@ def get_basis_name(basis, p, generic=None):
 
 def is_valid_profile(profile, truncation_type, p=2, generic=None):
     r"""
-    ``True`` if ``profile``, together with ``truncation_type``, is a valid
+    Return ``True`` if ``profile``, together with ``truncation_type``, is a valid
     profile at the prime `p`.
 
     INPUT:

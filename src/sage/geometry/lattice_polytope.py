@@ -428,9 +428,11 @@ def ReflexivePolytopes(dim):
        future use, so repetitive calls will return the same object in
        memory.
 
-    :param dim: dimension of required reflexive polytopes
-    :type dim: 2 or 3
-    :rtype: list of lattice polytopes
+    INPUT:
+
+    - ``dim`` -- integer (2 or 3); dimension of required reflexive polytopes
+    
+    OUTPUT: list of lattice polytopes
 
     EXAMPLES:
 

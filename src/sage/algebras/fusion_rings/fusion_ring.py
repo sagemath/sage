@@ -136,15 +136,15 @@ class FusionRing(WeylCharacterRing):
     as the Grothendieck ring of a *modular tensor category* (MTC). These
     include twist methods :meth:`Element.twist` and :meth:`Element.ribbon`
     for its elements related to the ribbon structure, and the
-    S-matrix :meth:`s_ij`.
+    `S`-matrix :meth:`s_ij`.
 
-    There are two natural normalizations of the S-matrix. Both
+    There are two natural normalizations of the `S`-matrix. Both
     are explained in Chapter 3 of [BaKi2001]_. The one that is computed
     by the method :meth:`s_matrix`, or whose individual entries
     are computed by :meth:`s_ij` is denoted `\tilde{s}` in
     [BaKi2001]_. It is not unitary.
 
-    The unitary S-matrix is `s=D^{-1/2}\tilde{s}` where
+    The unitary `S`-matrix is `s=D^{-1/2}\tilde{s}` where
 
     .. MATH::
 
@@ -154,7 +154,7 @@ class FusionRing(WeylCharacterRing):
     `d_i(V)` the *quantum dimension*. We will call quantity `D`
     the *global quantum dimension* and `\sqrt{D}` the
     *total quantum order*. They are  computed by :meth:`global_q_dimension`
-    and :meth:`total_q_order`. The unitary S-matrix `s` may be obtained
+    and :meth:`total_q_order`. The unitary `S`-matrix `s` may be obtained
     using :meth:`s_matrix` with the option ``unitary=True``.
 
     Let us check the Verlinde formula, which is [DFMS1996]_ (16.3). This
@@ -166,7 +166,7 @@ class FusionRing(WeylCharacterRing):
 
     where `N^k_{ij}` are the fusion coefficients, i.e. the structure
     constants of the fusion ring, and ``I`` is the unit object.
-    The S-matrix has the property that if `i*` denotes the dual
+    The `S`-matrix has the property that if `i*` denotes the dual
     object of `i`, implemented in Sage as ``i.dual()``, then
 
     .. MATH::
@@ -180,7 +180,7 @@ class FusionRing(WeylCharacterRing):
 
         N_{ijk} = \sum_l \frac{s(i, \ell)\, s(j, \ell)\, s(k, \ell)}{s(I, \ell)},
 
-    In this formula `s` is the normalized unitary S-matrix
+    In this formula `s` is the normalized unitary `S`-matrix
     denoted `s` in [BaKi2001]_. We may define a function that
     corresponds to the right-hand side, except using
     `\tilde{s}` instead of `s`::
@@ -257,9 +257,9 @@ class FusionRing(WeylCharacterRing):
         T = \begin{pmatrix} 1 & 1\\ &1 \end{pmatrix}
 
     subject to the relations `(ST)^3 = S^2`, `S^2T = TS^2`, and `S^4 = I`.
-    Let `s` be the normalized S-matrix, and
+    Let `s` be the normalized `S`-matrix, and
     `t` the diagonal matrix whose entries are the twists of the simple
-    objects. Let `s` the unitary S-matrix and `t` the matrix of twists,
+    objects. Let `s` the unitary `S`-matrix and `t` the matrix of twists,
     and `C` the conjugation matrix :meth:`conj_matrix`. Let
 
     .. MATH::
@@ -509,7 +509,7 @@ class FusionRing(WeylCharacterRing):
         r"""
         Return a cyclotomic field large enough to
         contain the `2 \ell`-th roots of unity, as well as
-        all the S-matrix entries.
+        all the `S`-matrix entries.
 
         EXAMPLES::
 
@@ -815,11 +815,11 @@ class FusionRing(WeylCharacterRing):
     @cached_method
     def s_ij(self, elt_i, elt_j, base_coercion=True):
         r"""
-        Return the element of the S-matrix of this fusion ring corresponding to
+        Return the element of the `S`-matrix of this fusion ring corresponding to
         the given elements.
 
-        This is the unnormalized S-matrix, denoted `\tilde{s}_{ij}`
-        in [BaKi2001]_ . To obtain the normalized S-matrix, divide by
+        This is the unnormalized `S`-matrix, denoted `\tilde{s}_{ij}`
+        in [BaKi2001]_ . To obtain the normalized `S`-matrix, divide by
         :meth:`global_q_dimension()` or use :meth:`S_matrix()` with
         the option ``unitary=True``.
 
@@ -854,7 +854,7 @@ class FusionRing(WeylCharacterRing):
 
     def s_ijconj(self, elt_i, elt_j, base_coercion=True):
         """
-        Return the conjugate of the element of the S-matrix given by
+        Return the conjugate of the element of the `S`-matrix given by
         ``self.s_ij(elt_i, elt_j, base_coercion=base_coercion)``.
 
         See :meth:`s_ij`.
@@ -895,7 +895,7 @@ class FusionRing(WeylCharacterRing):
 
     def s_matrix(self, unitary=False, base_coercion=True):
         r"""
-        Return the S-matrix of this fusion ring.
+        Return the `S`-matrix of this fusion ring.
 
         OPTIONAL:
 

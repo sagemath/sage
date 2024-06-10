@@ -3171,7 +3171,7 @@ class SandpileConfig(dict):
 
     def __le__(self, other):
         r"""
-        ``True`` if every component of ``self`` is at most that of
+        Return ``True`` if every component of ``self`` is at most that of
         ``other``.
 
         INPUT:
@@ -3201,7 +3201,7 @@ class SandpileConfig(dict):
 
     def __lt__(self, other):
         r"""
-        ``True`` if every component of ``self`` is at most that
+        Return ``True`` if every component of ``self`` is at most that
         of ``other`` and the two configurations are not equal.
 
         INPUT:
@@ -3226,7 +3226,7 @@ class SandpileConfig(dict):
 
     def __ge__(self, other):
         r"""
-        ``True`` if every component of ``self`` is at least that of
+        Return ``True`` if every component of ``self`` is at least that of
         ``other``.
 
         INPUT:
@@ -3256,7 +3256,7 @@ class SandpileConfig(dict):
 
     def __gt__(self, other):
         r"""
-        ``True`` if every component of ``self`` is at least that
+        Return ``True`` if every component of ``self`` is at least that
         of ``other`` and the two configurations are not equal.
 
         INPUT:
@@ -4441,7 +4441,7 @@ class SandpileDivisor(dict):
 
     def __le__(self, other):
         r"""
-        ``True`` if every component of ``self`` is at most that of
+        Return ``True`` if every component of ``self`` is at most that of
         ``other``.
 
         INPUT:
@@ -4471,7 +4471,7 @@ class SandpileDivisor(dict):
 
     def __lt__(self, other):
         r"""
-        ``True`` if every component of ``self`` is at most that
+        Return ``True`` if every component of ``self`` is at most that
         of ``other`` and the two divisors are not equal.
 
         INPUT:
@@ -4496,7 +4496,7 @@ class SandpileDivisor(dict):
 
     def __ge__(self, other):
         r"""
-        ``True`` if every component of ``self`` is at least that of
+        Return ``True`` if every component of ``self`` is at least that of
         ``other``.
 
         INPUT:
@@ -4526,7 +4526,7 @@ class SandpileDivisor(dict):
 
     def __gt__(self, other):
         r"""
-        ``True`` if every component of ``self`` is at least that
+        Return ``True`` if every component of ``self`` is at least that
         of ``other`` and the two divisors are not equal.
 
         INPUT:

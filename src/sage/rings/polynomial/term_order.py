@@ -519,7 +519,7 @@ block_description = r"""
 Block term order defined by term orders `<_1, <_2, \dots, <_n`.
 
 `x^a < x^b` if and only if `a = b` with respect to the first `n-1` term orders and `a <_n b`
-with respect to the `n`th term order `<_n`.
+with respect to the `n`-th term order `<_n`.
 """
 
 description_mapping = {

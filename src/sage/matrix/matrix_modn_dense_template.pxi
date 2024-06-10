@@ -1147,7 +1147,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     cdef _vector_times_matrix_(self, Vector v):
         """
-        ``v*self``
+        Return ``v*self``.
 
         INPUT:
 
@@ -1204,7 +1204,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     cdef _matrix_times_vector_(self, Vector v):
         """
-        ``self*v``
+        Return ``self*v``.
 
         EXAMPLES::
 

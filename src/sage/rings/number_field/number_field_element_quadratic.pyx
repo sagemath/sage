@@ -2956,7 +2956,7 @@ cdef class Z_to_quadratic_field_element(Morphism):
 
     def __init__(self, K):
         """
-        ``K`` is the target quadratic field
+        ``K`` is the target quadratic field.
 
         EXAMPLES::
 

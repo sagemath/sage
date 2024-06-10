@@ -237,18 +237,18 @@ class FusionDouble(CombinatorialFreeModule):
     @cached_method
     def s_ij(self, i, j, unitary=False, base_coercion=True):
         r"""
-        Return the element of the S-matrix of this fusion ring
+        Return the element of the `S`-matrix of this fusion ring
         corresponding to the given elements.
 
-        Without the unitary option set true, this is the unnormalized S-matrix
+        Without the unitary option set true, this is the unnormalized `S`-matrix
         entry, denoted `\tilde{s}_{ij}`, in [BaKi2001]_ Chapter 3. The
-        normalized S-matrix entries are denoted `s_{ij}`.
+        normalized `S`-matrix entries are denoted `s_{ij}`.
 
         INPUT:
 
         - ``i``, ``j``, -- a pair of basis elements
         - ``unitary`` -- boolean (default: ``False``); set to ``True`` to
-          obtain the unitary S-matrix
+          obtain the unitary `S`-matrix
 
         EXAMPLES::
 
@@ -280,7 +280,7 @@ class FusionDouble(CombinatorialFreeModule):
 
     def s_ijconj(self, i, j, unitary=False, base_coercion=True):
         r"""
-        Return the conjugate of the element of the S-matrix given by
+        Return the conjugate of the element of the `S`-matrix given by
         ``self.s_ij(elt_i, elt_j, base_coercion=base_coercion)``.
 
         .. SEEALSO::
@@ -299,7 +299,7 @@ class FusionDouble(CombinatorialFreeModule):
 
     def s_matrix(self, unitary=False, base_coercion=True):
         r"""
-        Return the S-matrix of this fusion ring.
+        Return the `S`-matrix of this fusion ring.
 
         OPTIONAL:
 
@@ -349,7 +349,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         where `s_0` is the unit element (assuming ``prefix='s'``).
         Method of computation is through the Verlinde formula,
-        deducing the values from the known values of the S-matrix.
+        deducing the values from the known values of the `S`-matrix.
 
         EXAMPLES::
 

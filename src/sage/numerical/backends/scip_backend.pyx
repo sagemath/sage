@@ -916,7 +916,7 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef col_name(self, int index):
         """
-        Return the ``index``th col name
+        Return the ``index``-th col name
 
         INPUT:
 

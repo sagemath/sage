@@ -1781,19 +1781,19 @@ def Cyclic(R, n=None, homog=False, singular=None):
     return R2.ideal(I).change_ring(R)
 
 def Katsura(R, n=None, homog=False, singular=None):
-    """
-    ``n``-th katsura ideal of ``R`` if ``R`` is coercible to
+    r"""
+    `n`-th katsura ideal of `R` if `R` is coercible to
     :class:`Singular <sage.interfaces.singular.Singular>`.
 
     INPUT:
 
     - ``R`` -- base ring to construct ideal for
 
-    - ``n`` -- (default: ``None``) which katsura ideal of ``R``. If ``None``,
-      then ``n`` is set to ``R.ngens()``.
+    - ``n`` -- (default: ``None``) which katsura ideal of `R`. If ``None``,
+      then ``n`` is set to ``R.ngens()``
 
-    -  ``homog`` -- if ``True`` a homogeneous ideal is returned
-       using the last variable in the ideal (default: ``False``)
+    -  ``homog`` -- boolean (default: ``False``); if ``True`` a homogeneous
+      ideal is returned using the last variable in the ideal
 
     -  ``singular`` -- singular instance to use
 

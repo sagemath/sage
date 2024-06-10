@@ -573,7 +573,7 @@ class BinaryRecurrenceSequence(SageObject):
         #Starting lower bound on good primes
         self._ell = 1
 
-        #If the sequence is geometric, then the `n`th term is `a*r^n`.  Thus the
+        #If the sequence is geometric, then the `n`-th term is `a*r^n`.  Thus the
         #property of being a ``p`` th power is periodic mod ``p``.  So there are either
         #no ``p`` th powers if there are none in the first ``p`` terms, or many if there
         #is at least one in the first ``p`` terms.
@@ -941,7 +941,7 @@ def _is_p_power_mod(a, p, N):
 
     - ``N`` -- a positive integer
 
-    OUTPUT: ``True`` if `a` is a `p`th power modulo `N`; ``False`` otherwise
+    OUTPUT: ``True`` if `a` is a `p`-th power modulo `N`; ``False`` otherwise
 
     EXAMPLES::
 
@@ -1128,7 +1128,7 @@ def _is_p_power(a, p):
 
     - ``p`` -- a prime number
 
-    OUTPUT: ``True`` if `a` is a `p`th power; else ``False``
+    OUTPUT: ``True`` if `a` is a `p`-th power; else ``False``
 
     EXAMPLES::
 

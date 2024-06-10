@@ -192,15 +192,14 @@ def lattice_paths(t1, t2, length=None):
     ``(t1[last], t2[last])``, and at each grid point, going either
     right or up.  See the examples.
 
-    :param t1: labeling for vertices
-    :param t2: labeling for vertices
-    :param length: if not ``None``, then an integer, the length of the desired
-        path.
-    :type length: integer or ``None``; optional, default ``None``
-    :type t1: list, other iterable
-    :type t2: list, other iterable
-    :return: list of lists of vertices making up the paths as described above
-    :rtype: list of lists
+    INPUT:
+
+    - ``t1`` -- list or other iterable; labeling for vertices
+    - ``t2`` -- list or other iterable; labeling for vertices
+    - ``length`` -- integer or ``None`` (default: ``None``); if not ``None``, then
+      an integer, the length of the desired path
+
+    OUTPUT: list of lists of vertices making up the paths
 
     This is used when triangulating the product of simplices.  The
     optional argument ``length`` is used for `\Delta`-complexes, to
@@ -301,10 +300,12 @@ def rename_vertex(n, keep, left=True):
     renamed to by prepending an 'L' or an 'R' (thus to either 'L4' or
     'R4'), depending on whether the argument left is ``True`` or ``False``.
 
-    :param n: a 'vertex': either an integer or a string
-    :param keep: a list of three vertices
-    :param left: if ``True``, rename for use in left factor
-    :type left: boolean; optional, default ``True``
+    INPUT:
+
+    - ``n`` -- a 'vertex'; either an integer or a string
+    - ``keep`` -- a list of three vertices
+    - ``left`` -- boolean (default: ``True``); if ``True``, rename for use in left
+      factor
 
     This is used by the :meth:`~SimplicialComplex.connected_sum` method for
     simplicial complexes.
@@ -336,9 +337,11 @@ class Simplex(SageObject):
     by specifying a set of vertices.  It is represented in Sage by the
     tuple of the vertices.
 
-    :param X: set of vertices
-    :type X: integer, list, other iterable
-    :return: simplex with those vertices
+    INPUT:
+
+    - ``X`` -- set of vertices (integer, list, or other iterable)
+
+    OUTPUT: simplex with those vertices
 
     ``X`` may be a non-negative integer `n`, in which case the
     simplicial complex will have `n+1` vertices `(0, 1, ..., n)`, or
@@ -486,7 +489,9 @@ class Simplex(SageObject):
         Simplex obtained by concatenating the underlying tuples of the
         two arguments.
 
-        :param other: another simplex
+        INPUT:
+
+        - ``other`` -- another simplex
 
         EXAMPLES::
 
@@ -499,10 +504,12 @@ class Simplex(SageObject):
         """
         The `n`-th face of this simplex.
 
-        :param n: an integer between 0 and the dimension of this simplex
-        :type n: integer
-        :return: the simplex obtained by removing the `n`-th vertex from this
-            simplex
+        INPUT:
+
+        - ``n`` -- an integer between 0 and the dimension of this simplex
+
+        OUTPUT: the simplex obtained by removing the `n`-th vertex from this
+        simplex
 
         EXAMPLES::
 
@@ -564,17 +571,17 @@ class Simplex(SageObject):
         The join of two simplices `[v_0, ..., v_k]` and `[w_0, ...,
         w_n]` is the simplex `[v_0, ..., v_k, w_0, ..., w_n]`.
 
-        :param right: the other simplex (the right-hand factor)
+        INPUT:
 
-        :param rename_vertices: If this is ``True``, the vertices in the
-            join will be renamed by this formula: vertex "v" in the
-            left-hand factor --> vertex "Lv" in the join, vertex "w"
-            in the right-hand factor --> vertex "Rw" in the join.  If
-            this is false, this tries to construct the join without
-            renaming the vertices; this may cause problems if the two
-            factors have any vertices with names in common.
+        - ``right`` -- the other simplex (the right-hand factor)
 
-        :type rename_vertices: boolean; optional, default ``True``
+        - ``rename_vertices`` -- boolean (default ``True``); If this is ``True``,
+          the vertices in the join will be renamed by this formula: vertex "v"
+          in the left-hand factor --> vertex "Lv" in the join, vertex "w" in
+          the right-hand factor --> vertex "Rw" in the join.  If this is
+          ``False``, this tries to construct the join without renaming the
+          vertices; this may cause problems if the two factors have any
+          vertices with names in common.
 
         EXAMPLES::
 
@@ -596,21 +603,20 @@ class Simplex(SageObject):
         r"""
         The product of this simplex with another one, as a list of simplices.
 
-        :param other: the other simplex
+        INPUT:
 
-        :param rename_vertices: If this is ``False``, then the vertices in
-            the product are the set of ordered pairs `(v,w)` where `v`
-            is a vertex in the left-hand factor (``self``) and `w` is
-            a vertex in the right-hand factor (``other``). If this is
-            ``True``, then the vertices are renamed as "LvRw" (e.g., the
-            vertex (1,2) would become "L1R2").  This is useful if you
-            want to define the Stanley-Reisner ring of the complex:
-            vertex names like (0,1) are not suitable for that, while
-            vertex names like "L0R1" are.
+        - ``other`` -- the other simplex
 
-        :type rename_vertices: boolean; optional, default ``True``
+        - ``rename_vertices`` -- boolean (default ``True``); if this is
+          ``False``, then the vertices in the product are the set of ordered
+          pairs `(v,w)` where `v` is a vertex in the left-hand factor
+          (``self``) and `w` is a vertex in the right-hand factor (``other``).
+          If this is ``True``, then the vertices are renamed as "LvRw" (e.g.,
+          the vertex (1,2) would become "L1R2").  This is useful if you want to
+          define the Stanley-Reisner ring of the complex: vertex names like
+          (0,1) are not suitable for that, while vertex names like "L0R1" are.
 
-        Algorithm: see Hatcher, p. 277-278 [Hat2002]_ (who in turn refers to
+        ALGORITHM: see Hatcher, p. 277-278 [Hat2002]_ (who in turn refers to
         Eilenberg-Steenrod, p. 68): given ``S = Simplex(m)`` and
         ``T = Simplex(n)``, then `S \times T` can be
         triangulated as follows: for each path `f` from `(0,0)` to
@@ -697,7 +703,9 @@ class Simplex(SageObject):
         is, if the vertices of the two are the same, even with a
         different ordering
 
-        :param other: the other simplex
+        INPUT:
+
+        - ``other`` -- the other simplex
 
         EXAMPLES::
 
@@ -718,7 +726,9 @@ class Simplex(SageObject):
         """
         Return ``True`` iff this simplex is not equal to ``other``.
 
-        :param other: the other simplex
+        INPUT:
+
+        - ``other`` -- the other simplex
 
         EXAMPLES::
 
@@ -734,7 +744,9 @@ class Simplex(SageObject):
         Return ``True`` iff the sorted tuple for this simplex is less than
         that for ``other``.
 
-        :param other: the other simplex
+        INPUT:
+
+        - ``other`` -- the other simplex
 
         EXAMPLES::
 
@@ -821,19 +833,19 @@ class SimplicialComplex(Parent, GenericCellComplex):
     r"""
     Define a simplicial complex.
 
-    :param maximal_faces: set of maximal faces
-    :param from_characteristic_function: see below
-    :param maximality_check: see below
-    :type maximality_check: boolean; optional, default ``True``
-    :param sort_facets: see below
-    :type sort_facets: dict
-    :param name_check: see below
-    :type name_check: boolean; optional, default ``False``
-    :param is_mutable: Set to ``False`` to make this immutable
-    :type is_mutable: boolean; optional, default ``True``
-    :param category: the category of the simplicial complex
-    :type category: category; optional, default finite simplicial complexes
-    :return: a simplicial complex
+    INPUT:
+
+    - ``maximal_faces`` -- set of maximal faces
+    - ``from_characteristic_function`` -- see below
+    - ``maximality_check`` -- boolean (default: ``True``); see below
+    - ``sort_facets`` -- dictionary; see below
+    - ``name_check`` -- boolean (default: ``False``); see below
+    - ``is_mutable`` -- boolean (default: ``True``); set to ``False`` to make
+      this immutable
+    - ``category`` -- the category of the simplicial complex (default: finite
+      simplicial complexes)
+
+    OUTPUT: a simplicial complex
 
     ``maximal_faces`` should be a list or tuple or set (indeed,
     anything which may be converted to a set) whose elements are lists
@@ -1247,7 +1259,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def __contains__(self, x):
         """
-        ``True`` if ``x`` is a simplex which is contained in this complex.
+        Return ``True`` if ``x`` is a simplex which is contained in this complex.
 
         EXAMPLES::
 
@@ -1315,10 +1327,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         argument ``subcomplex`` is present, then return only the
         faces which are *not* in the subcomplex.
 
-        :param subcomplex: a subcomplex of this simplicial complex.
-            Return faces which are not in this subcomplex.
+        INPUT:
 
-        :type subcomplex: optional, default ``None``
+        - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
+          ``None``). Return faces which are not in this subcomplex.
 
         EXAMPLES::
 
@@ -1766,22 +1778,22 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         The product of this simplicial complex with another one.
 
-        :param right: the other simplicial complex (the right-hand
+        INPUT:
+
+        - ``right`` -- the other simplicial complex (the right-hand
            factor)
 
-        :param rename_vertices: If this is False, then the vertices in
-           the product are the set of ordered pairs `(v,w)` where `v`
-           is a vertex in ``self`` and `w` is a vertex in
-           ``right``. If this is ``True``, then the vertices are renamed
-           as "LvRw" (e.g., the vertex (1,2) would become "L1R2").
-           This is useful if you want to define the Stanley-Reisner
-           ring of the complex: vertex names like (0,1) are not
-           suitable for that, while vertex names like "L0R1" are.
+        - ``rename_vertices`` -- boolean (default: ``True``); if this is
+          ``False``, then the vertices in the product are the set of ordered
+          pairs `(v,w)` where `v` is a vertex in ``self`` and `w` is a vertex
+          in ``right``. If this is ``True``, then the vertices are renamed as
+          "LvRw" (e.g., the vertex (1,2) would become "L1R2"). This is useful
+          if you want to define the Stanley-Reisner ring of the complex: vertex
+          names like (0,1) are not suitable for that, while vertex names like
+          "L0R1" are.
 
-        :type rename_vertices: boolean; optional, default ``True``
-
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
+        - ``is_mutable`` -- boolean (default: ``True``); determines whether the
+          output is mutable
 
         The vertices in the product will be the set of ordered pairs
         `(v,w)` where `v` is a vertex in self and `w` is a vertex in
@@ -1846,20 +1858,20 @@ class SimplicialComplex(Parent, GenericCellComplex):
         ..., v_k, w_0, ..., w_n]` for all simplices `[v_0, ..., v_k]` in
         `S` and `[w_0, ..., w_n]` in `T`.
 
-        :param right: the other simplicial complex (the right-hand factor)
+        INPUT:
 
-        :param rename_vertices: If this is True, the vertices in the
-           join will be renamed by the formula: vertex "v" in the
-           left-hand factor --> vertex "Lv" in the join, vertex "w" in
-           the right-hand factor --> vertex "Rw" in the join.  If this
-           is false, this tries to construct the join without renaming
-           the vertices; this will cause problems if the two factors
-           have any vertices with names in common.
+        - ``right`` -- the other simplicial complex (the right-hand factor)
 
-        :type rename_vertices: boolean; optional, default ``True``
+        - ``rename_vertices`` -- boolean (default: ``True``); if this is
+          ``True``, the vertices in the join will be renamed by the formula:
+          vertex "v" in the left-hand factor --> vertex "Lv" in the join,
+          vertex "w" in the right-hand factor --> vertex "Rw" in the join.
+          If this is ``False``, this tries to construct the join without
+          renaming the vertices; this will cause problems if the two factors
+          have any vertices with names in common.
 
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
+        - ``is_mutable`` -- boolean (default: ``True``); determine whether the
+        output is mutable
 
         EXAMPLES::
 
@@ -1891,8 +1903,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         The cone on this simplicial complex.
 
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
+        INPUT:
+
+        - ``is_mutable`` -- boolean (default: ``True``); determines whether
+          the output is mutable
 
         The cone is the simplicial complex formed by adding a new
         vertex `C` and simplices of the form `[C, v_0, ..., v_k]` for
@@ -1918,12 +1932,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         The suspension of this simplicial complex.
 
-        :param n: positive integer -- suspend this many times.
+        INPUT:
 
-        :type n: optional, default 1
+        - ``n`` -- positive integer (default: 1); suspend this many times
 
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
+        - ``is_mutable`` -- boolean (default: ``True``); determine whether
+          the output is mutable
 
         The suspension is the simplicial complex formed by adding two
         new vertices `S_0` and `S_1` and simplices of the form `[S_0,
@@ -1994,18 +2008,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         The disjoint union of this simplicial complex with another one.
 
-        :param right: the other simplicial complex (the right-hand factor)
+        INPUT:
 
-        :param rename_vertices: If this is True, the vertices in the
-           disjoint union will be renamed by the formula: vertex "v"
-           in the left-hand factor --> vertex "Lv" in the disjoint
-           union, vertex "w" in the right-hand factor --> vertex "Rw"
-           in the disjoint union.  If this is false, this tries to
-           construct the disjoint union without renaming the vertices;
-           this will cause problems if the two factors have any
-           vertices with names in common.
+        - ``right`` -- the other simplicial complex (the right-hand factor)
 
-        :type rename_vertices: boolean; optional, default: ``True``
+        - ``rename_vertices`` -- boolean (default: ``True``); if this is
+          ``True``, the vertices in the disjoint union will be renamed by the
+          formula: vertex "v" in the left-hand factor --> vertex "Lv" in the
+          disjoint union, vertex "w" in the right-hand factor --> vertex "Rw"
+          in the disjoint union.  If this is false, this tries to construct the
+          disjoint union without renaming the vertices; this will cause
+          problems if the two factors have any vertices with names in common.
 
         EXAMPLES::
 
@@ -2030,21 +2043,21 @@ class SimplicialComplex(Parent, GenericCellComplex):
         The wedge (one-point union) of this simplicial complex with
         another one.
 
-        :param right: the other simplicial complex (the right-hand factor)
+        INPUT:
 
-        :param rename_vertices: If this is ``True``, the vertices in the
-           wedge will be renamed by the formula: first vertex in each
-           are glued together and called "0".  Otherwise, each vertex
-           "v" in the left-hand factor --> vertex "Lv" in the wedge,
-           vertex "w" in the right-hand factor --> vertex "Rw" in the
-           wedge.  If this is ``False``, this tries to construct the wedge
-           without renaming the vertices; this will cause problems if
-           the two factors have any vertices with names in common.
+        - ``right`` -- the other simplicial complex (the right-hand factor)
 
-        :type rename_vertices: boolean; optional, default ``True``
+        - ``rename_vertices`` -- boolean (default: ``True``); if this is
+          ``True``, the vertices in the wedge will be renamed by the formula:
+          first vertex in each are glued together and called "0".  Otherwise,
+          each vertex "v" in the left-hand factor --> vertex "Lv" in the wedge,
+          vertex "w" in the right-hand factor --> vertex "Rw" in the wedge.  If
+          this is ``False``, this tries to construct the wedge without renaming
+          the vertices; this will cause problems if the two factors have any
+          vertices with names in common.
 
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
+        - ``is_mutable`` -- boolean (default: ``True``); determine whether
+          the output is mutable
 
         .. NOTE::
 
@@ -2085,30 +2098,27 @@ class SimplicialComplex(Parent, GenericCellComplex):
         r"""
         The chain complex associated to this simplicial complex.
 
-        :param dimensions: if ``None``, compute the chain complex in all
+        INPUT:
+
+        - ``dimensions`` -- if ``None``, compute the chain complex in all
            dimensions.  If a list or tuple of integers, compute the
            chain complex in those dimensions, setting the chain groups
            in all other dimensions to zero.
-        :param base_ring: commutative ring
-        :type base_ring: optional, default ``ZZ``
-        :param subcomplex: a subcomplex of this simplicial complex.
-           Compute the chain complex relative to this subcomplex.
-        :type subcomplex: optional, default empty
-        :param augmented: If ``True``, return the augmented chain complex
-           (that is, include a class in dimension `-1` corresponding
-           to the empty cell).  This is ignored if ``dimensions`` is
-           specified.
-        :type augmented: boolean; optional, default ``False``
-        :param cochain: If ``True``, return the cochain complex (that is,
+        - ``base_ring`` -- commutative ring (default: ``ZZ``)
+        - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
+          empty). Compute the chain complex relative to this subcomplex.
+        - ``augmented`` -- boolean (default: ``False``); if ``True``, return
+          the augmented chain complex (that is, include a class in dimension
+          `-1` corresponding to the empty cell). This is ignored if
+          ``dimensions`` is specified.
+        - ``cochain`` -- boolean (default: ``False``); if ``True``, return the
+          cochain complex (that is,
            the dual of the chain complex).
-        :type cochain: boolean; optional, default ``False``
-        :param verbose: If ``True``, print some messages as the chain
-           complex is computed.
-        :type verbose: boolean; optional, default ``False``
-        :param check: If ``True``, make sure that the chain complex
-           is actually a chain complex: the differentials are
-           composable and their product is zero.
-        :type check: boolean; optional, default ``False``
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
+          messages as the chain complex is computed.
+        - ``check`` -- boolean (default: ``False``); If ``True``, make sure
+          that the chain complex is actually a chain complex: the differentials
+          are composable and their product is zero.
 
         .. NOTE::
 
@@ -2247,62 +2257,47 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         The (reduced) homology of this simplicial complex.
 
-        :param dim: If ``None``, then return the homology in every
-           dimension.  If ``dim`` is an integer or list, return the
-           homology in the given dimensions.  (Actually, if ``dim`` is
-           a list, return the homology in the range from ``min(dim)``
-           to ``max(dim)``.)
+        INPUT:
 
-        :type dim: integer or list of integers or ``None``; optional,
-                   default ``None``
+        - ``dim`` -- integer or list of integers or ``None`` (default:
+          ``None``); if ``None``, then return the homology in every dimension.
+          If ``dim`` is an integer or list, return the homology in the given
+          dimensions.  (Actually, if ``dim`` is a list, return the homology in
+          the range from ``min(dim)`` to ``max(dim)``.)
 
-        :param base_ring: commutative ring. Must be ``ZZ`` or a field.
+        - ``base_ring`` -- commutative ring (default: ``ZZ``); must be ``ZZ``
+          or a field
 
-        :type base_ring: optional, default ``ZZ``
+        - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
+          ``None``); compute homology relative to this subcomplex
 
-        :param subcomplex: a subcomplex of this simplicial complex.
-           Compute homology relative to this subcomplex.
+        - ``cohomology`` -- boolean (default: ``False``); if ``True``, compute
+          cohomology rather than homology
 
-        :type subcomplex: optional, default ``None``
+        - ``enlarge`` -- boolean (default: ``True``); if ``True``, find a new
+          subcomplex homotopy equivalent to, and probably larger than, the
+          given one
 
-        :param cohomology: If ``True``, compute cohomology rather than
-           homology.
+        - ``algorithm`` -- string (default: ``'pari'``); the options are
+          ``'auto'``, ``'dhsw'``, or ``'pari'``.  (``'no_chomp'`` is a synonym
+          for ``'auto'``, maintained for backward compatibility.) If
+          ``'auto'``, use the Dumas, Heckenbach, Saunders, and Welker
+          elimination algorithm for large matrices, Pari for small ones. If
+          ``'pari'``, then compute elementary divisors using Pari. If
+          ``'dhsw'``, then use the DHSW algorithm to compute elementary
+          divisors.  (As of this writing, ``'pari'`` is the fastest standard
+          option.)
 
-        :type cohomology: boolean; optional, default ``False``
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
+          messages as the homology is computed
 
-        :param enlarge: If ``True``, find a new subcomplex homotopy
-           equivalent to, and probably larger than, the given one.
+        - ``reduced`` -- boolean (default: ``Trues``); if ``True``, return the
+          reduced homology
 
-        :type enlarge: boolean; optional, default ``True``
+        - ``generators`` -- boolean (default: ``False``); if ``True``, return
+          the homology groups and also generators for them
 
-        :param algorithm: The options are ``'auto'``, ``'dhsw'``, or
-           ``'pari'``.  (``'no_chomp'`` is a synomym for ``'auto'``,
-           maintained for backward compatibility.)  If ``'auto'``,
-           use the Dumas, Heckenbach, Saunders, and Welker elimination
-           algorithm for large matrices, Pari for small ones.
-           If ``'pari'``, then compute elementary divisors
-           using Pari.  If ``'dhsw'``, then use the DHSW algorithm to
-           compute elementary divisors.  (As of this writing, ``'pari'``
-           is the fastest standard option.)
-
-        :type algorithm: string; optional, default ``'pari'``
-
-        :param verbose: If ``True``, print some messages as the homology
-           is computed.
-
-        :type verbose: boolean; optional, default ``False``
-
-        :param reduced: If ``True``, return the reduced homology.
-
-        :type reduced: boolean; optional, default ``True``
-
-        :param generators: If ``True``, return the homology groups and
-           also generators for them.
-
-        :type reduced: boolean; optional, default ``False``
-
-
-        Algorithm: if ``generators`` is ``True``, directly compute the
+        ALGORITHM: if ``generators`` is ``True``, directly compute the
         chain complex, compute its homology along with its generators,
         and then convert the chain complex generators to chains in the
         simplicial complex.
@@ -2555,7 +2550,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         Add a face to this simplicial complex.
 
-        :param face: a subset of the vertex set
+        INPUT:
+
+        - ``face`` -- a subset of the vertex set
 
         This *changes* the simplicial complex, adding a new face and all
         of its subfaces.
@@ -2688,11 +2685,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         Remove a face from this simplicial complex.
 
-        :param face: a face of the simplicial complex
+        INPUT:
 
-        :param check: boolean; optional, default ``False``. If
-            ``True``, raise an error if ``face`` is not a
-            face of this simplicial complex
+        - ``face`` -- a face of the simplicial complex
+
+        - ``check`` -- boolean (default: ``False``); if
+          ``True``, raise an error if ``face`` is not a
+          face of this simplicial complex
 
         This does not return anything; instead, it *changes* the
         simplicial complex.
@@ -2817,12 +2816,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         Remove a collection of faces from this simplicial complex.
 
-        :param faces: a list (or any iterable) of faces of the
-            simplicial complex
+        INPUT:
 
-        :param check: boolean; optional, default ``False``. If
-            ``True``, raise an error if any element of ``faces`` is not a
-            face of this simplicial complex
+        - ``faces`` -- a list (or any iterable) of faces of the simplicial
+          complex
+
+        - ``check`` -- boolean (default: ``False``); if ``True``, raise an
+          error if any element of ``faces`` is not a face of this simplicial
+          complex
 
         This does not return anything; instead, it *changes* the
         simplicial complex.
@@ -2865,7 +2866,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         Return ``True`` if this is a subcomplex of ``other``.
 
-        :param other: another simplicial complex
+        INPUT:
+
+        - ``other`` -- another simplicial complex
 
         EXAMPLES::
 
@@ -2894,10 +2897,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         The connected sum of this simplicial complex with another one.
 
-        :param other: another simplicial complex
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
-        :return: the connected sum ``self # other``
+        INPUT:
+
+        - ``other`` -- another simplicial complex
+        - ``is_mutable`` -- boolean (default: ``True``); determine whether
+          the output is mutable
+
+        OUTPUT: the connected sum ``self # other``
 
         .. WARNING::
 
@@ -2958,9 +2964,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
         all simplices `G` which are disjoint from `F` but for which `F
         \cup G` is a simplex.
 
-        :param simplex: a simplex in this simplicial complex.
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
+        INPUT:
+
+        - ``simplex`` -- a simplex in this simplicial complex
+        - ``is_mutable`` -- boolean (default: ``True``); determine whether
+          the output is mutable
 
         EXAMPLES::
 
@@ -3089,9 +3097,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Return the largest sub-simplicial complex of ``self`` containing
         exactly ``sub_vertex_set`` as vertices.
 
-        :param sub_vertex_set: The sub-vertex set.
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
+        INPUT:
+
+        - ``sub_vertex_set`` -- the sub-vertex set
+        - ``is_mutable`` -- boolean (default: ``True``); determine whether
+          the output is mutable
 
         EXAMPLES::
 
@@ -3339,7 +3349,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Return the complement of a simplex in the vertex set of this
         simplicial complex.
 
-        :param simplex: a simplex (need not be in the simplicial complex)
+        INPUT:
+
+        - ``simplex`` -- a simplex (need not be in the simplicial complex)
 
         OUTPUT: its complement: the simplex formed by the vertices not
         contained in ``simplex``.
@@ -3365,7 +3377,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         simplex is formed by taking a vertex from each simplex from
         ``L``.
 
-        :param simplices: a bunch of simplices
+        INPUT:
+
+        - ``simplices`` -- a bunch of simplices
 
         If ``simplices`` consists of `(f_0, f_1, f_2, ...)`, then the
         output consists of all possible simplices of the form `(v_0,
@@ -3503,10 +3517,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
         The polynomial algebra of which the Stanley-Reisner ring is a
         quotient.
 
-        :param base_ring: a commutative ring
-        :type base_ring: optional, default ``ZZ``
-        :return: a polynomial algebra with coefficients in base_ring,
-          with one generator for each vertex in the simplicial complex.
+        INPUT:
+
+        - ``base_ring`` -- a commutative ring (default: ``ZZ``)
+
+        OUTPUT: a polynomial algebra with coefficients in base_ring,
+        with one generator for each vertex in the simplicial complex.
 
         See the documentation for :meth:`stanley_reisner_ring` for a
         warning about the names of the vertices.
@@ -3531,12 +3547,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         The Stanley-Reisner ring of this simplicial complex.
 
-        :param base_ring: a commutative ring
-        :type base_ring: optional, default ``ZZ``
-        :return: a quotient of a polynomial algebra with coefficients
-           in ``base_ring``, with one generator for each vertex in the
-           simplicial complex, by the ideal generated by the products
-           of those vertices which do not form faces in it.
+        INPUT:
+
+        - ``base_ring`` -- a commutative ring (default: ``ZZ``)
+
+        OUTPUT: a quotient of a polynomial algebra with coefficients
+        in ``base_ring``, with one generator for each vertex in the
+        simplicial complex, by the ideal generated by the products
+        of those vertices which do not form faces in it
 
         Thus the ideal is generated by the products corresponding to
         the minimal nonfaces of the simplicial complex.
@@ -3587,8 +3605,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Thus find the minimal nonfaces and take their complements to
         find the facets in the Alexander dual.
 
-        :param is_mutable: Determines if the output is mutable
-        :type is_mutable: boolean; optional, default ``True``
+        INPUT:
+
+        - ``is_mutable`` -- boolean (default: ``True``); determine whether
+          the output is mutable
 
         EXAMPLES::
 
@@ -3770,9 +3790,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         simplicial complex: it has same simplices with the same
         boundaries.
 
-        :param sort_simplices: if ``True``, sort the list of simplices in
-          each dimension
-        :type sort_simplices: boolean; optional, default ``False``
+        INPUT:
+
+        - ``sort_simplices`` -- boolean (default: ``False``); if ``True``, sort
+          the list of simplices in each dimension
 
         EXAMPLES::
 
@@ -3829,7 +3850,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         The `n`-skeleton of a simplicial complex is obtained by discarding
         all of the simplices in dimensions larger than `n`.
 
-        :param n: non-negative integer
+        INPUT:
+
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -3857,9 +3880,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
         Find a contractible subcomplex `L` of this simplicial complex,
         preferably one which is as large as possible.
 
-        :param verbose: If ``True``, print some messages as the simplicial
-           complex is computed.
-        :type verbose: boolean; optional, default ``False``
+        INPUT:
+
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
+          messages as the simplicial complex is computed
 
         Motivation: if `K` is the original complex and if `L` is
         contractible, then the relative homology `H_*(K,L)` is
@@ -3903,12 +3927,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         `H_{*}(K,L)` will be smaller than that for computing
         `H_{*}(K,S)`, so the computations should be faster.
 
-        :param subcomplex: a subcomplex of this simplicial complex
-        :param verbose: If ``True``, print some messages as the simplicial
-           complex is computed.
-        :type verbose: boolean; optional, default ``False``
-        :return: a complex `L` containing ``subcomplex`` and contained
-           in ``self``, homotopy equivalent to ``subcomplex``.
+        INPUT:
+
+        - ``subcomplex`` -- a subcomplex of this simplicial complex
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
+          messages as the simplicial complex is computed
+
+        OUTPUT: a complex `L` containing ``subcomplex`` and contained
+        in ``self``, homotopy equivalent to ``subcomplex``
 
         Algorithm: start with the subcomplex `S` and loop through the
         facets of `K` which are not in `S`.  For each one, see whether

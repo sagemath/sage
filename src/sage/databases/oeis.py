@@ -1354,7 +1354,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
     def __getitem__(self, i):
         r"""
-        Return the ``i``th element of sequence ``self``, viewed as a tuple.
+        Return the `i`-th element of sequence ``self``, viewed as a tuple.
 
         The first element appearing in the sequence ``self``corresponds to
         ``self[0]``. Do not confuse with calling ``self(k)``.

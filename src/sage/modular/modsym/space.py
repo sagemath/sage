@@ -1696,7 +1696,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
     def integral_hecke_matrix(self, n):
         r"""
-        Return the matrix of the `n`th Hecke operator acting on the integral
+        Return the matrix of the `n`-th Hecke operator acting on the integral
         structure on ``self`` (as returned by ``self.integral_structure()``).
 
         This is often (but not always) different from the matrix

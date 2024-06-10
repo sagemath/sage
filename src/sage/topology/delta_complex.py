@@ -66,10 +66,13 @@ class DeltaComplex(GenericCellComplex):
     r"""
     Define a `\Delta`-complex.
 
-    :param data: see below for a description of the options
-    :param check_validity: If True, check that the simplicial identities hold.
-    :type check_validity: boolean; optional, default: ``True``
-    :return: a `\Delta`-complex
+    INPUT:
+
+    - ``data`` -- see below for a description of the options
+    - ``check_validity`` -- boolean (default: ``True``); if ``True``, check
+      that the simplicial identities hold
+
+    OUTPUT: a `\Delta`-complex
 
     Use ``data`` to define a `\Delta`-complex.  It may be in any of
     three forms:
@@ -84,7 +87,7 @@ class DeltaComplex(GenericCellComplex):
         declared to be the same as the ith face of `T`: `S` and `T`
         are glued along their entire boundary,
 
-      - ``None`` or ``True`` or False or anything other than the previous two
+      - ``None`` or ``True`` or ``False`` or anything other than the previous two
         options, in which case the faces are just the ordinary faces of `S`.
 
       For example, consider the following::
@@ -391,10 +394,12 @@ class DeltaComplex(GenericCellComplex):
         r"""
         Create a subcomplex.
 
-        :param data: a dictionary indexed by dimension or a list (or
+        INPUT:
+
+        - ``data`` -- a dictionary indexed by dimension or a list (or
           tuple); in either case, data[n] should be the list (or tuple
           or set) of the indices of the simplices to be included in
-          the subcomplex.
+          the subcomplex
 
         This automatically includes all faces of the simplices in
         ``data``, so you only have to specify the simplices which are
@@ -514,8 +519,9 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The cells of this `\Delta`-complex.
 
-        :param subcomplex: a subcomplex of this complex
-        :type subcomplex: optional, default None
+        INPUT:
+
+        - ``subcomplex`` -- a subcomplex of this complex (default: ``None``)
 
         The cells of this `\Delta`-complex, in the form of a dictionary:
         the keys are integers, representing dimension, and the value
@@ -572,31 +578,27 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The chain complex associated to this `\Delta`-complex.
 
-        :param dimensions: if ``None``, compute the chain complex in all
+        INPUT:
+
+        - ``dimensions`` -- if ``None``, compute the chain complex in all
            dimensions.  If a list or tuple of integers, compute the
            chain complex in those dimensions, setting the chain groups
            in all other dimensions to zero.  NOT IMPLEMENTED YET: this
            function always returns the entire chain complex
-        :param base_ring: commutative ring
-        :type base_ring: optional, default ZZ
-        :param subcomplex: a subcomplex of this simplicial complex.
-           Compute the chain complex relative to this subcomplex.
-        :type subcomplex: optional, default empty
-        :param augmented: If True, return the augmented chain complex
-           (that is, include a class in dimension `-1` corresponding
-           to the empty cell).  This is ignored if ``dimensions`` is
-           specified or if ``subcomplex`` is nonempty.
-        :type augmented: boolean; optional, default: ``False``
-        :param cochain: If True, return the cochain complex (that is,
-           the dual of the chain complex).
-        :type cochain: boolean; optional, default: ``False``
-        :param verbose: If True, print some messages as the chain
-           complex is computed.
-        :type verbose: boolean; optional, default: ``False``
-        :param check: If True, make sure that the chain complex
-           is actually a chain complex: the differentials are
-           composable and their product is zero.
-        :type check: boolean; optional, default: ``False``
+        - ``base_ring`` -- commutative ring (default: ``ZZ``)
+        - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
+          empty). Compute the chain complex relative to this subcomplex.
+        - ``augmented`` -- boolean (default: ``False``); if ``True``, return the
+          augmented chain complex (that is, include a class in dimension `-1`
+          corresponding to the empty cell).  This is ignored if ``dimensions``
+          is specified or if ``subcomplex`` is nonempty.
+        - ``cochain`` -- boolean (default: ``False``); if ``True``, return the
+          cochain complex (that is, the dual of the chain complex)
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
+          messages as the chain complex is computed
+        - ``check`` -- boolean (default: ``False``); if ``True``, make sure that
+          the chain complex is actually a chain complex: the differentials are
+          composable and their product is zero
 
         .. note::
 
@@ -741,8 +743,7 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The n-skeleton of this `\Delta`-complex.
 
-        :param n: dimension
-        :type n: non-negative integer
+        - ``n`` -- nonnegative integer; dimension
 
         EXAMPLES::
 
@@ -787,9 +788,11 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The join of this `\Delta`-complex with another one.
 
-        :param other: another `\Delta`-complex (the right-hand
-           factor)
-        :return: the join ``self * other``
+        INPUT:
+
+        - ``other`` -- another `\Delta`-complex (the right-hand factor)
+
+        OUTPUT: the join ``self * other``
 
         The join of two `\Delta`-complexes `S` and `T` is the
         `\Delta`-complex `S*T` with simplices of the form `[v_0, ...,
@@ -901,8 +904,7 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The suspension of this `\Delta`-complex.
 
-        :param n: suspend this many times.
-        :type n: positive integer; optional, default 1
+        - ``n`` -- positive integer (default: 1); suspend this many times
 
         The suspension is the complex formed by adding two new
         vertices `S_0` and `S_1` and simplices of the form `[S_0, v_0,
@@ -930,11 +932,13 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The product of this `\Delta`-complex with another one.
 
-        :param other: another `\Delta`-complex (the right-hand
-           factor)
-        :return: the product ``self x other``
+        INPUT:
 
-        .. warning::
+        - ``other`` -- another `\Delta`-complex (the right-hand factor)
+
+        OUTPUT: the product ``self x other``
+
+        .. WARNING::
 
            If ``X`` and ``Y`` are `\Delta`-complexes, then ``X*Y``
            returns their join, not their product.
@@ -1059,7 +1063,9 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The disjoint union of this `\Delta`-complex with another one.
 
-        :param right: the other `\Delta`-complex (the right-hand factor)
+        INPUT:
+
+        - ``right`` -- the other `\Delta`-complex (the right-hand factor)
 
         EXAMPLES::
 
@@ -1086,9 +1092,9 @@ class DeltaComplex(GenericCellComplex):
         The wedge (one-point union) of this `\Delta`-complex with
         another one.
 
-        :param right: the other `\Delta`-complex (the right-hand factor)
+        - ``right`` -- the other `\Delta`-complex (the right-hand factor)
 
-        .. note::
+        .. NOTE::
 
             This operation is not well-defined if ``self`` or
             ``other`` is not path-connected.
@@ -1115,8 +1121,11 @@ class DeltaComplex(GenericCellComplex):
         r"""
         Return the connected sum of self with other.
 
-        :param other: another `\Delta`-complex
-        :return: the connected sum ``self # other``
+        INPUT:
+
+        - ``other`` -- another `\Delta`-complex
+
+        OUTPUT: the connected sum ``self # other``
 
         .. warning::
 
@@ -1218,9 +1227,12 @@ class DeltaComplex(GenericCellComplex):
         top-dimensional simplices) of the simplex to subdivide.  If
         not present, subdivide the last entry in this list.
 
-        :param idx: index specifying which simplex to subdivide
-        :type idx: integer; optional, default -1
-        :return: `\Delta`-complex with one simplex subdivided.
+        INPUT:
+
+        - ``idx`` -- integer (default: -1); index specifying which simplex to
+          subdivide
+
+        OUTPUT: `\Delta`-complex with one simplex subdivided
 
         *Elementary subdivision* of a simplex means replacing that
         simplex with the cone on its boundary.  That is, given a
@@ -1330,12 +1342,15 @@ class DeltaComplex(GenericCellComplex):
 
         This is used by :meth:`elementary_subdivision`.
 
-        :param idx: index specifying which simplex to examine
-        :type idx: integer; optional, default -1
-        :return: boolean, ``True`` if the boundary of the simplex has any
-          identifications
-        :param dim: dimension of simplex to consider
-        :type dim: integer; optional, default = dim of complex
+        INPUT:
+
+        - ``idx`` -- integer (default: -1); index specifying which simplex to
+          examine
+        - ``dim`` -- integer (default: dimension of complex); dimension of simplex
+          to consider
+
+        OUTPUT: boolean; whether the boundary of the simplex has any
+        identifications
 
         Suppose that the dimension is `d`. The map is given by a
         dictionary indexed by dimension: in dimension `i`, its value
@@ -1397,7 +1412,7 @@ class DeltaComplex(GenericCellComplex):
 
     def _is_glued(self, idx=-1, dim=None):
         r"""
-        ``True`` if there is any gluing along the boundary of a
+        Return ``True`` if there is any gluing along the boundary of a
         top-dimensional simplex in this `\Delta`-complex.
 
         If the optional argument ``idx`` is present, it specifies
@@ -1409,12 +1424,15 @@ class DeltaComplex(GenericCellComplex):
 
         This is used by :meth:`connected_sum`.
 
-        :param idx: index specifying which simplex to examine
-        :type idx: integer; optional, default -1
-        :return: boolean, ``True`` if the boundary of the simplex has any
-          identifications
-        :param dim: dimension of simplex to consider
-        :type dim: integer; optional, default = dim of complex
+        INPUT:
+
+        - ``idx`` -- integer (default: -1); index specifying which simplex to
+          examine
+        - ``dim`` -- integer (default = dimension of complex); dimension of simplex
+          to consider
+
+        OUTPUT: boolean; whether the boundary of the simplex has any
+        identifications
 
         EXAMPLES::
 
@@ -1646,7 +1664,9 @@ class DeltaComplexExamples:
         except in dimension 1, in which case it is a single 1-simplex
         starting and ending at the same vertex.
 
-        :param n: dimension of the sphere
+        INPUT:
+
+        - ``n`` -- dimension of the sphere
 
         EXAMPLES::
 
@@ -1728,10 +1748,11 @@ class DeltaComplexExamples:
         r"""
         A surface of genus g as a `\Delta`-complex.
 
-        :param g: the genus
-        :type g: non-negative integer
-        :param orientable: whether the surface should be orientable
-        :type orientable: bool, optional, default ``True``
+        INPUT:
+
+        - ``g`` -- nonnegative integer; the genus
+        - ``orientable`` -- boolean (default: ``True``); whether the surface should
+          be orientable
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with

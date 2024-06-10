@@ -1053,7 +1053,8 @@ class LocalGeneric(CommutativeRing):
 
     def uniformiser_pow(self, n):
         r"""
-        Return the `n`th power of the uniformiser of ``self`` (as an element of ``self``).
+        Return the `n`-th power of the uniformiser of ``self`` (as an element
+        of ``self``).
 
         EXAMPLES::
 

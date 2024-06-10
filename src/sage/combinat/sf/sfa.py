@@ -6838,7 +6838,7 @@ def _to_polynomials(lf, R):
 def _from_polynomial(p, f):
     """
     Return the polynomial as a symmetric function in the given
-    basis , where the `n`th variable corresponds to the symmetric
+    basis , where the `n`-th variable corresponds to the symmetric
     function`f[n]`.
 
     INPUT:

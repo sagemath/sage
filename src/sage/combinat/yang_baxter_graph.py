@@ -877,8 +877,8 @@ class SwapOperator(SageObject):
 
     def position(self):
         r"""
-        ``self`` is the operator that swaps positions ``i`` and ``i+1``. This
-        method returns ``i``.
+        Return ``i`` where ``self`` is the operator that swaps positions ``i``
+        and ``i+1``.
 
         EXAMPLES::
 

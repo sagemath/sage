@@ -430,8 +430,6 @@ def affine_factorizations(w, l, weight=None):
        [s3, s2, s3, s1, s2, s3]]
        sage: affine_factorizations(w0,6,(0,0,0,1,2,3))
        [[1, 1, 1, s1, s2*s1, s3*s2*s1]]
-
-
     """
     if weight is None:
         if l == 0:

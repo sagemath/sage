@@ -2886,8 +2886,6 @@ class CoxeterGroups(Category_singleton):
             - ``sorting_word`` -- sorting word (default: ``None``); used to
               not recompute the `c`-sorting word if already computed
 
-            OUTPUT: is ``self`` `c`-sortable
-
             EXAMPLES::
 
                 sage: W = CoxeterGroups().example()

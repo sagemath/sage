@@ -90,7 +90,7 @@ class EnumeratedSetFromIterator(Parent):
       you know that your iterator will run over and over you should set it as
       :class:`InfiniteEnumeratedSets`.
 
-    - ``cache`` -- boolean (default: ``False``); Whether or not use a cache
+    - ``cache`` -- boolean (default: ``False``); whether or not use a cache
       mechanism for the iterator. If ``True``, then the function `f` is called
       only once.
 

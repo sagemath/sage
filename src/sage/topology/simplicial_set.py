@@ -667,7 +667,7 @@ class AbstractSimplex_class(SageObject):
 
     def is_degenerate(self):
         """
-        ``True`` if this simplex is degenerate.
+        Return ``True`` if this simplex is degenerate.
 
         EXAMPLES::
 
@@ -681,7 +681,7 @@ class AbstractSimplex_class(SageObject):
 
     def is_nondegenerate(self):
         """
-        ``True`` if this simplex is non-degenerate.
+        Return ``True`` if this simplex is non-degenerate.
 
         EXAMPLES::
 
