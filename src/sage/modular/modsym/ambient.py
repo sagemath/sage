@@ -79,7 +79,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.verbose import verbose
 from sage.modular.arithgroup.arithgroup_element import M2Z
-from sage.modular.dirichlet import TrivialCharacter, is_DirichletCharacter
+from sage.modular.dirichlet import DirichletCharacter, TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
 from sage.modular.cusps import Cusp
 from sage.modular.modsym.apply import apply_to_monomial
