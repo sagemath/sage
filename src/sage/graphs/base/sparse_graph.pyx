@@ -1584,6 +1584,10 @@ cdef class SparseGraphBackend(CGraphBackend):
             r = self._cg._neighbors_BTNode_unsafe(v_int, out, neighbors, maxdegree)
             for i in range(r):
                 u_int = neighbors[i].vertex
+                if neighbors[i].number:
+                    l_int = 0
+                else:
+                    l_int = neighbors[i].labels.label
                 if (modus < 2 or                                            # Do not delete duplicates.
                         vertices_case == 1 or                               # Only one vertex, so no duplicates.
                         u_int >= v_int or                                   # We visit if u_int >= v_int ...
