@@ -756,7 +756,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             ...
             ValueError: variable names have not yet been set using self._assign_names(...)
 
-        Check that pickling works
+        Check that pickling works::
 
             sage: G = FreeGroup(2) / [2 * (1, 2, -1, -2)]
             sage: loads(dumps(G))
@@ -802,6 +802,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             sage: G1 = FreeGroup(2) / [(1, 2, 2, 1, 2, 1)]
             sage: G2 = FreeGroup(2) / [(1, 2, 2, 1, 2, 1)]
             sage: G1 == G2
+            True
+            sage: G1 is G2
             True
         """
         if not isinstance(other, self.__class__):

@@ -1543,7 +1543,7 @@ def braid2rels(L):
         P.TzGoGo()
         P.TzGoGo()
         gb = P.FpGroupPresentation().sage()
-        U = [_.Tietze() for _ in gb.relations()]
+        U = [rel.Tietze() for rel in gb.relations()]
     return U
 
 

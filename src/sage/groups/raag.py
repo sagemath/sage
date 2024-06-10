@@ -38,7 +38,6 @@ from sage.categories.fields import Fields
 from sage.categories.groups import Groups
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.algebras.clifford_algebra_element import CohomologyRAAGElement
-from sage.structure.unique_representation import CachedRepresentation
 from sage.typeset.ascii_art import ascii_art
 from sage.typeset.unicode_art import unicode_art
 
