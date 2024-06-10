@@ -134,7 +134,7 @@ cpdef is_LinearFunction(x):
         sage: is_LinearFunction(x[0] - 2*x[2])
         doctest:warning...
         DeprecationWarning: The function is_LinearFunction is deprecated;
-use 'isinstance(..., LinearFunction)' instead.
+        use 'isinstance(..., LinearFunction)' instead.
         See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_LinearFunction('a string')
