@@ -2548,7 +2548,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
                 x_B[self.b().list().index(bm)] = self.auxiliary_variable()
         return LPRevisedDictionary(self, x_B)
 
-    def run_revised_simplex_method(self, pivot_rule=None, *args):
+    def run_revised_simplex_method(self, *, pivot_rule=None, **kwrds):
         r"""
         Apply the revised simplex method and return all steps.
 
@@ -2559,7 +2559,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
           One can pass in a custom instance of :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` too.
 
         - Additional arguments are passed directly into the method.
-          Not specifiying additional arguments will use the default parameters set by the class.
+          Not specifying additional arguments will use the default parameters set by the class.
 
         OUTPUT:
 
@@ -2607,7 +2607,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             The optimal value: $6250$. An optimal solution: $\left(250,\,750\right)$.
         """
         d = self.revised_dictionary()
-        output = [d.run_simplex_method(pivot_rule, *args)]
+        output = [d.run_simplex_method(pivot_rule=pivot_rule, **kwrds)]
         if d.is_optimal():
             if self.auxiliary_variable() in d.basic_variables():
                 output.append("The problem is infeasible.")
@@ -2621,7 +2621,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         self._final_revised_dictionary = d
         return HtmlFragment("\n".join(output))
 
-    def run_simplex_method(self, pivot_rule=None, *args):
+    def run_simplex_method(self, *, pivot_rule=None, **kwrds):
         r"""
         Apply the simplex method and return all steps and intermediate states.
 
@@ -2631,7 +2631,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
           Supported rules are ``"steepest_edge"``, ``"blands_rule"``, ``"dantzig"``, ``"NW_rule"``.
           One can pass in a custom instance of :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` too.
 
-        - :\*args: Optional -- arguments needed for pivot rule.
+        - :\*\*kwds: Optional -- arguments needed for pivot rule.
 
         OUTPUT:
 
@@ -2682,7 +2682,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             sage: b = (1000, 1500, -400)
             sage: c = (10, 5)
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
-            sage: P.run_simplex_method('steepest_edge')
+            sage: P.run_simplex_method(pivot_rule='steepest_edge')
             \begin{equation*}
             ...
             \end{equation*}
@@ -2708,7 +2708,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: def eta(v):
             ....:     return v.norm()
-            sage: P.run_simplex_method('NW_rule', eta, [1,2])
+            sage: P.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=[1,2])
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Integer Ring' and 'Vector space of dimension 3 over Rational Field'
@@ -2722,8 +2722,10 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             # Phase I
             ad = self.auxiliary_problem().initial_dictionary()
             ad.enter(self.auxiliary_variable())
+            pivot = SimplexMethodPivot(pivot_rule)
+            pivot(ad, False, **kwrds)
             ad.leave(min(zip(ad.constant_terms(), ad.basic_variables()))[1])
-            output.append(ad.run_simplex_method(pivot_rule, *args))
+            output.append(ad.run_simplex_method(pivot_rule=pivot_rule, **kwrds))
             if ad.objective_value() < 0:
                 output.append("The original problem is infeasible.")
                 self._final_dictionary = ad
@@ -2732,7 +2734,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
                 d = self.feasible_dictionary(ad)
         if d.is_feasible():
             # Phase II
-            output.append(d.run_simplex_method(pivot_rule, *args))
+            output.append(d.run_simplex_method(pivot_rule=pivot_rule, **kwrds))
             if d.is_optimal():
                 v = d.objective_value()
                 if self._is_negative:
@@ -3691,7 +3693,7 @@ class LPAbstractDictionary(SageObject):
             (1/10, -1/5)
         """
 
-    def run_dual_simplex_method(self, pivot_rule=None, *args):
+    def run_dual_simplex_method(self, *, pivot_rule=None, **kwrds):
         r"""
         Apply the dual simplex method and return all steps/intermediate states.
 
@@ -3701,7 +3703,7 @@ class LPAbstractDictionary(SageObject):
         INPUT:
 
         - ``pivot_rule`` -- string or :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` (default: None);
-          Supported rules are ``"steepest_edge"``, ``"blands_rule"``, ``"dantzig"``, ``"NW_rule"``.
+          Supported rules are currently``"blands_rule"`` and ``"dantzig"``.
           One can pass in a custom instance of :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` too.
 
         - :\*args: Optional -- arguments needed for pivot rule.
@@ -3756,12 +3758,35 @@ class LPAbstractDictionary(SageObject):
             \end{equation*}
             The problem is infeasible because of $x_{3}$ constraint.
 
-        Different pivot rules can be used.
+        Different pivot rules can be used::
+
+            sage: A = ([1, 1], [3, 1], [-1, -1])
+            sage: b = (1000, 1500, -400)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: D = P.dictionary(2, 3, 5)
+            sage: D.run_dual_simplex_method(pivot_rule="dantzig")
+            \begin{equation*}
+            ...
+            \end{equation*}
+            Leaving: $x_{3}$. Entering: $x_{1}$.
+            \begin{equation*}
+            ...
+            \end{equation*}
+            sage: A = ([1, 1], [3, 1], [-1, -1])
+            sage: b = (1000, 1500, -400)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: D = P.dictionary(2, 3, 5)
+            sage: D.run_dual_simplex_method(pivot_rule="steepest_edge")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: The selected pivot rule does not have an implementation that is compatible with the dual simplex method.
         """
         pivot = SimplexMethodPivot(pivot_rule)
         output = []
         while not self.is_optimal():
-            pivot(self, True, *args)
+            pivot(self, True, **kwrds)
             output.append(self._html_())
             if self.entering() is None:
                 output.append("The problem is infeasible because of "
@@ -3773,7 +3798,7 @@ class LPAbstractDictionary(SageObject):
             output.append(self._html_())
         return HtmlFragment("\n".join(output))
 
-    def run_simplex_method(self, pivot_rule=None, *args):
+    def run_simplex_method(self, *, pivot_rule=None, **kwrds):
         r"""
         Apply the simplex method and return all steps and intermediate states.
 
@@ -3845,7 +3870,7 @@ class LPAbstractDictionary(SageObject):
         pivot = SimplexMethodPivot(pivot_rule)
         output = []
         while not self.is_optimal():
-            pivot(self, False, *args) # Sets entering and leaving variables
+            pivot(self, False, **kwrds) # Sets entering and leaving variables
             output.append(self._html_())
             if self.leaving() is None:
                 output.append("The problem is unbounded in ${}$ direction."

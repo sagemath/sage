@@ -3769,7 +3769,7 @@ REFERENCES:
 
 .. [KMT2019] Tomonari Kitachara, Ryyhei Miyashiro, and Masaya Tano. *Steepest-edge rule
              and its number of simplex iterations for a nondegenerate LP*
-             Operation Reserach Letters, Vol 47, pp 151-156, (2019).
+             Operations Research Letters, Vol 47, pp 151-156, 2019.
              :doi:`10.1016/j.orl.2019.02.003`
 
 .. [KN1963] \S. Kobayashi & K. Nomizu : *Foundations of Differential
@@ -6158,7 +6158,7 @@ REFERENCES:
             calculus*, Algebra and Number Theory 3 (2009), 121-148,
             https://projecteuclid.org/euclid.ant/1513797353
 
-.. [TZ1993] Tamas Terlaky and Shuzhong Zhang, *Pivot rules for linear
+.. [TZ1993] Tamás Terlaky and Shuzhong Zhang, *Pivot rules for linear
             programming: A survey on recent theoretical developments*,
             Annals of Operation Research, Vol 46, 203-223, 1993.
             :doi:`10.1007/BF02096264`
