@@ -192,10 +192,10 @@ class LinearCodeAutGroupCanLabel:
 
         - ``C`` -- a linear code
 
-        - ``P`` (optional) -- a coloring of the coordinates i.e. a partition
+        - ``P`` -- optional; a coloring of the coordinates i.e. a partition
           (list of disjoint lists) of [0 , ..., C.length()-1 ]
 
-        - ``algorithm_type`` (optional) -- which defines the acting group, either
+        - ``algorithm_type`` -- optional; defines the acting group, either
 
             * ``permutational``
 
@@ -412,7 +412,7 @@ class LinearCodeAutGroupCanLabel:
           only if the indices ``col2pos[i]`` and ``col2pos[j]`` are in the
           same partition
 
-        - ``zero_column_case`` (boolean) -- set to ``True`` iff we are dealing
+        - ``zero_column_case`` -- boolean; set to ``True`` iff we are dealing
           with the zero column
 
         OUTPUT: a list of generators in `S`

@@ -716,7 +716,7 @@ cdef class Riemann_Map:
 
         The following inputs may be passed in as named parameters:
 
-        - ``plotjoined`` -- boolean (default: ``True``); If ``False``,
+        - ``plotjoined`` -- boolean (default: ``True``); if ``False``,
           discrete points will be drawn; otherwise they will be connected
           by lines. In this case, if ``plotjoined=False``, the points shown
           will be the original collocation points used to generate the
@@ -770,12 +770,12 @@ cdef class Riemann_Map:
 
         INPUT:
 
-        - ``plot_range`` -- a tuple of the form ``[xmin, xmax, ymin, ymax]``.
-          If the value is ``[]``, the default plotting window of the map will
-          be used.
+        - ``plot_range`` -- a tuple of the form ``[xmin, xmax, ymin, ymax]``;
+          if the value is ``[]``, the default plotting window of the map will
+          be used
 
-        - ``x_points`` -- int, the size of the grid in the x direction
-          The number of points in the y_direction is scaled accordingly
+        - ``x_points`` -- integer; the size of the grid in the x direction;
+          the number of points in the y direction is scaled accordingly
 
         OUTPUT:
 
@@ -864,22 +864,22 @@ cdef class Riemann_Map:
           - only for simply connected domains
 
         - ``linescale`` -- float between 0 and 1; shrinks the radial lines
-          away from the boundary to reduce erratic behavior.
+          away from the boundary to reduce erratic behavior
           - only for simply connected domains
 
-        - ``rgbcolor`` -- float array (default: ``[0,0,0]``) the
-          red-green-blue color of the spiderweb.
+        - ``rgbcolor`` -- float array (default: ``[0,0,0]``); the
+          red-green-blue color of the spiderweb
 
-        - ``thickness`` -- positive float (default: ``1``) the thickness of
-          the lines or points in the spiderweb.
+        - ``thickness`` -- positive float (default: `1`); the thickness of
+          the lines or points in the spiderweb
 
-        - ``plotjoined`` -- boolean (default: ``True``); If ``False``,
+        - ``plotjoined`` -- boolean (default: ``True``); if ``False``,
           discrete points will be drawn; otherwise they will be connected
-          by lines.
+          by lines
           - only for simply connected domains
 
-        - ``withcolor`` -- boolean (default: ``False``); If ``True``,
-          The spiderweb will be overlaid on the basic color plot.
+        - ``withcolor`` -- boolean (default: ``False``); if ``True``,
+          the spiderweb will be overlaid on the basic color plot
 
         - ``plot_points`` -- integer (default: ``200``); the size of the grid
           in the x direction. The number of points in the y_direction is scaled
@@ -887,7 +887,7 @@ cdef class Riemann_Map:
           run slowly.
           - only for multiply connected domains
 
-        - ``min_mag`` -- float (default: ``0.001``); The magnitude cutoff
+        - ``min_mag`` -- float (default: ``0.001``); the magnitude cutoff
           below which spiderweb points are not drawn. This only applies
           to multiply connected domains and is designed to prevent
           "fuzz" at the edge of the domain. Some complicated multiply

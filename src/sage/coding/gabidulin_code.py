@@ -257,7 +257,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
 
         - ``other`` -- another Gabidulin Code object
 
-        OUTPUT: ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -465,7 +465,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
 
         - ``other`` -- another Gabidulin Generator Matrix Encoder
 
-        OUTPUT: ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -621,7 +621,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
         - ``other`` -- another Gabidulin Polynomial Evaluation Encoder
 
-        OUTPUT: ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -674,7 +674,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
         - ``form`` -- type parameter taking strings "vector" or "matrix"
           as values and converting the output codeword into the respective form
-          (default: "vector")
+          (default: ``'vector'``)
 
         OUTPUT: a codeword corresponding to `p` in vector or matrix form
 
@@ -847,7 +847,7 @@ class GabidulinGaoDecoder(Decoder):
 
         - ``other`` -- another Gabidulin Gao Decoder
 
-        OUTPUT: ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 

@@ -957,7 +957,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - `i` -- integer
+        - ``i`` -- integer
         - ``component`` -- either 0 or 1 (default: 0)
 
         OUTPUT: integer or `\infty`
@@ -1038,7 +1038,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - `n` -- integer
+        - ``n`` -- integer
 
         OUTPUT: a vector space spanned by the basis for this algebra in dimension `n`
 
@@ -1720,7 +1720,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - x -- an element of this algebra
+        - ``x`` -- an element of this algebra
 
         OUTPUT: x converted to the Milnor basis
 
@@ -1745,7 +1745,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         - ``t`` -- tuple, representing basis element in the current basis
 
         - ``basis`` -- string, the basis to which to convert, optional
-          (default: 'milnor')
+          (default: ``'milnor'``)
 
         OUTPUT: an element of the Steenrod algebra with basis ``basis``
 
@@ -1827,7 +1827,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         - ``x`` -- an element of this algebra
 
         - ``basis`` -- string, the basis to which to convert, optional
-          (default: 'milnor')
+          (default: ``'milnor'``)
 
         OUTPUT: an element of the Steenrod algebra with basis ``basis``
 
@@ -2191,7 +2191,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - `d` -- integer or ``None``, (default: ``None``)
+        - ``d`` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
 
@@ -4185,8 +4185,8 @@ def AA(n=None, p=2):
 
     INPUT:
 
-    - `n` -- nonnegative integer (default: ``None``)
-    - `p` -- prime number (default: 2)
+    - ``n`` -- nonnegative integer (default: ``None``)
+    - ``p`` -- prime number (default: 2)
 
     OUTPUT:
 

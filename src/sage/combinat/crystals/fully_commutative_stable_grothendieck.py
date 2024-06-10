@@ -450,8 +450,8 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
     - ``excess`` -- the total number of letters in the factorization minus the
       length of a reduced word for ``w``
 
-    - ``shape`` -- (default: ``False``) indicator for input ``w``, ``True`` if
-      ``w`` is entered as a (skew) shape and ``False`` otherwise.
+    - ``shape`` -- boolean (default: ``False``); indicator for input ``w``,
+      ``True`` if ``w`` is entered as a (skew) shape and ``False`` otherwise
 
     EXAMPLES::
 
@@ -1147,27 +1147,27 @@ def _apply_relations(word, position, move):
 
         sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import _apply_relations
         sage: w = [2, 1, 3, 4]
-        sage: _apply_relations(w, position=1, move="pq=qp")
+        sage: _apply_relations(w, position=1, move='pq=qp')
         [2, 3, 1, 4]
 
         sage: w = [1, 3, 2, 1, 2, 4]
-        sage: _apply_relations(w, position=2, move="pqp=qpq")
+        sage: _apply_relations(w, position=2, move='pqp=qpq')
         [1, 3, 1, 2, 1, 4]
 
         sage: w = [2, 3, 1, 2, 2, 3]
-        sage: _apply_relations(w, position=3, move="pp=p")
+        sage: _apply_relations(w, position=3, move='pp=p')
         [2, 3, 1, 2, 3]
 
         sage: w = [2, 3, 1, 2, 3]
-        sage: _apply_relations(w, position=3, move="p=pp")
+        sage: _apply_relations(w, position=3, move='p=pp')
         [2, 3, 1, 2, 2, 3]
 
         sage: w = [2, 3, 1, 2, 2, 3]
-        sage: _apply_relations(w, position=2, move="pqq=ppq")
+        sage: _apply_relations(w, position=2, move='pqq=ppq')
         [2, 3, 1, 1, 2, 3]
 
         sage: w = [2, 3, 1, 1, 2, 3]
-        sage: _apply_relations(w, position=2, move="ppq=pqq")
+        sage: _apply_relations(w, position=2, move='ppq=pqq')
         [2, 3, 1, 2, 2, 3]
     """
     w = list(word)

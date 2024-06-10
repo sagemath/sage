@@ -23,7 +23,7 @@ class FacadeSets(CategoryWithAxiom):
 
         INPUT:
 
-        - ``choice`` -- 'union' or 'subset' (default: 'subset').
+        - ``choice`` -- 'union' or 'subset' (default: ``'subset'``)
 
         EXAMPLES::
 

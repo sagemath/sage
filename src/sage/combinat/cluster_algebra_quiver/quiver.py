@@ -666,7 +666,7 @@ class ClusterQuiver(SageObject):
           circular plot is chosen, otherwise >>spring<< is used
         - ``directed`` -- boolean (default: ``True``); if ``True``, the directed
           version is shown, otherwise the undirected
-        - ``mark`` -- boolean (default: ``None``) if set to i, the vertex i is
+        - ``mark`` -- boolean (default: ``None``); if set to i, the vertex i is
           highlighted
         - ``save_pos`` -- boolean (default: ``False``); if ``True``, the
           positions of the vertices are saved
@@ -705,7 +705,7 @@ class ClusterQuiver(SageObject):
             sage: S.interact()                                                          # needs sage.plot sage.symbolic
             ...VBox(children=...
         """
-        return cluster_interact(self, fig_size, circular, kind="quiver")
+        return cluster_interact(self, fig_size, circular, kind='quiver')
 
     def save_image(self, filename, circular=False):
         """
@@ -721,7 +721,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                 # needs sage.plot sage.symbolic
             ....:     Q.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular)
@@ -737,7 +737,7 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``filename`` -- the filename the image is saved to.
+        - ``filename`` -- the filename the image is saved to
 
         If a filename is not specified, the default name is
         ``from_sage.qmu`` in the current sage directory.
@@ -746,7 +746,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
 
         Make sure we can save quivers with `m != n` frozen variables, see :issue:`14851`::
@@ -755,7 +755,7 @@ class ClusterQuiver(SageObject):
             sage: T1 = S.principal_extension()
             sage: Q = T1.quiver()
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
         """
         M = self.b_matrix()
@@ -1121,9 +1121,9 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``certificate`` -- boolean (default: ``False``) if ``True``, the dictionary
-          from ``self.vertices()`` to the vertices of the returned quiver
-          is returned as well.
+        - ``certificate`` -- boolean (default: ``False``); if ``True``, the
+          dictionary from ``self.vertices()`` to the vertices of the returned
+          quiver is returned as well
 
         EXAMPLES::
 
@@ -1480,7 +1480,7 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``sequence`` -- a list or tuple of vertices of ``self``
+        - ``sequence`` -- list or tuple of vertices of ``self``
         - ``show_sequence`` -- boolean (default: ``False``); if ``True``, a png
           containing the mutation sequence is shown
         - ``fig_size`` -- (default: 1.2) factor by which the size of the
@@ -1637,7 +1637,7 @@ class ClusterQuiver(SageObject):
         - ``return_paths`` -- boolean (default: ``False``); if ``True``, a
           shortest path of mutation sequences from ``self`` to the given quiver
           is returned as well
-        - ``data_type`` -- (default: "quiver") can be one of the following::
+        - ``data_type`` -- (default: ``'quiver'``) can be one of the following::
 
             * "quiver"
             * "matrix"
@@ -1764,7 +1764,7 @@ class ClusterQuiver(SageObject):
                 yield next_element
 
     def mutation_class(self, depth=infinity, show_depth=False, return_paths=False,
-                       data_type="quiver", up_to_equivalence=True, sink_source=False):
+                       data_type='quiver', up_to_equivalence=True, sink_source=False):
         """
         Return the mutation class of ``self`` together with certain constraints.
 
@@ -1777,12 +1777,12 @@ class ClusterQuiver(SageObject):
         - ``return_paths`` -- boolean (default: ``False``); if ``True``, a
           shortest path of mutation sequences from self to the given quiver is
           returned as well
-        - ``data_type`` -- (default: ``"quiver"``) can be one of
+        - ``data_type`` -- (default: ``'quiver'``) can be one of
           the following:
 
-          * ``"quiver"`` -- the quiver is returned
-          * ``"dig6"`` -- the dig6-data is returned
-          * ``"path"`` -- shortest paths of mutation sequences from
+          * ``'quiver'`` -- the quiver is returned
+          * ``'dig6'`` -- the dig6-data is returned
+          * ``'path'`` -- shortest paths of mutation sequences from
             ``self`` are returned
 
         - ``sink_source`` -- boolean (default: ``False``); if ``True``, only
@@ -1999,7 +1999,7 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``relabelling`` -- Dictionary of labels to move around
+        - ``relabelling`` -- dictionary of labels to move around
         - ``inplace`` -- boolean (default: ``True``); if ``True``, will return
           a duplicate of the quiver
 

@@ -53,18 +53,18 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
     INPUT:
 
     - ``cartan_type`` -- Cartan type of a finite or affine untwisted root
-      system.
+      system
 
-    - ``weight`` -- Dominant weight as a list of (integral) coefficients of
-      the fundamental weights.
+    - ``weight`` -- dominant weight as a list of (integral) coefficients of
+      the fundamental weights
 
-    - ``highest_weight_crystal`` -- (Default: ``True``) If ``True``
+    - ``highest_weight_crystal`` -- (default: ``True``) if ``True``
       returns the highest weight crystal.  If ``False`` returns an
       object which is close to being isomorphic to the tensor product
       of Kirillov-Reshetikhin crystals of column shape in the
       following sense: We get all the vertices, but only some of the
       edges.  We'll call the included edges pseudo-Demazure.  They are
-      all non-zero edges and the 0-edges not at the end of a 0-string
+      all nonzero edges and the 0-edges not at the end of a 0-string
       of edges, i.e.  not those with `f_{0}(b) = b'` with
       `\varphi_0(b) =1`.  (Whereas Demazure 0-edges are those that
       are not at the beginning of a zero string.) In this case the
@@ -295,7 +295,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
             sage: TestSuite(C).run() #long time
 
             sage: C = crystals.AlcovePaths(['A',2,1],[1,0],False)
-            sage: TestSuite(C).run(skip="_test_stembridge_local_axioms") #long time
+            sage: TestSuite(C).run(skip='_test_stembridge_local_axioms') #long time
 
         Check that :issue:`20292` is fixed::
 
@@ -453,7 +453,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
     INPUT:
 
-    - ``data`` -- a list of folding positions in the lambda chain (indexing
+    - ``data`` -- list of folding positions in the lambda chain (indexing
       starts at 0) or a tuple of :class:`RootsWithHeight` giving folding
       positions in the lambda chain.
 
@@ -776,7 +776,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         INPUT:
 
-        - ``i`` -- element of the index_set of the underlying root_system.
+        - ``i`` -- element of the index_set of the underlying root_system
 
         OUTPUT:
 
@@ -877,7 +877,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         INPUT:
 
-        - ``i`` -- element of the index set of the underlying root system.
+        - ``i`` -- element of the index set of the underlying root system
 
         EXAMPLES::
 
@@ -943,7 +943,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         INPUT:
 
-        - ``i`` -- element of the index_set of the underlying root_system.
+        - ``i`` -- element of the index_set of the underlying root_system
 
         OUTPUT:
 
@@ -997,7 +997,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         INPUT:
 
-        - ``i`` -- element of the index_set of the underlying root_system.
+        - ``i`` -- element of the index_set of the underlying root_system
 
         EXAMPLES::
 
@@ -1398,7 +1398,7 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
 class RootsWithHeight(UniqueRepresentation, Parent):
     r"""
     Data structure of the ordered pairs `(\beta,k)`,
-    where `\beta` is a positive root and `k` is a non-negative integer. A total
+    where `\beta` is a positive root and `k` is a nonnegative integer. A total
     order is implemented on this set, and depends on the weight.
 
     INPUT:
@@ -1620,8 +1620,8 @@ class RootsWithHeightElement(Element):
 
     INPUT:
 
-    - ``root`` -- A positive root `\beta` in our root system
-    - ``height`` -- Is an integer, such that
+    - ``root`` -- a positive root `\beta` in our root system
+    - ``height`` -- integer such that
       `0 \leq l \leq \langle \lambda, \beta^{\vee} \rangle`
 
     EXAMPLES::

@@ -43,7 +43,7 @@ class VectorSpaces(Category_module):
         """
         INPUT:
 
-        - `K` -- a field
+        - ``K`` -- a field
         - ``check`` -- boolean (default: ``True``); whether to check that `K`
           is a field
 

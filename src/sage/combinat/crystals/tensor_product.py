@@ -196,7 +196,7 @@ class TensorProductOfCrystals(CrystalOfWords):
     .. RUBRIC:: Regular crystals
 
     Now if all crystals `B_k` are regular crystals, all `\varepsilon_i` and
-    `\varphi_i` are non-negative and we can
+    `\varphi_i` are nonnegative and we can
     define tensor product by the *signature rule*. We start by writing a word
     in `+` and `-` as follows:
 
@@ -451,7 +451,7 @@ class TensorProductOfCrystals(CrystalOfWords):
                         description='Sets the convention used for displaying/inputting tensor product of crystals',
                         values=dict(antiKashiwara='use the anti-Kashiwara convention',
                                     Kashiwara='use the Kashiwara convention'),
-                            alias=dict(anti="antiKashiwara", opposite="antiKashiwara"),
+                            alias=dict(anti='antiKashiwara', opposite='antiKashiwara'),
                             case_sensitive=False)
 
     def _element_constructor_(self, *crystalElements):
@@ -711,7 +711,7 @@ class CrystalOfTableaux(CrystalOfWords):
 
     - ``cartan_type`` -- a Cartan type
     - ``shape`` -- a partition of length at most ``cartan_type.rank()``
-    - ``shapes`` -- a list of such partitions
+    - ``shapes`` -- list of such partitions
 
     This constructs a classical crystal with the given Cartan type and
     highest weight(s) corresponding to the given shape(s).
@@ -979,7 +979,7 @@ class CrystalOfTableaux(CrystalOfWords):
         INPUT:
 
         - ``cartan_type`` -- (data coercible into) a Cartan type
-        - ``shapes``      -- a list (or iterable) of shapes
+        - ``shapes``      -- list (or iterable) of shapes
         - ``shape``       -- a shape
 
         Shapes themselves are lists (or iterable) of integers.

@@ -1349,11 +1349,11 @@ class E1Star(SageObject):
     INPUT:
 
     - ``sigma`` -- unimodular ``WordMorphism``, i.e. such that its incidence
-      matrix has determinant `\pm 1`.
+      matrix has determinant `\pm 1`
 
-    - ``method`` -- 'prefix' or 'suffix' (default: 'suffix')
-      Enables to use an alternative definition `E_1^*(\sigma)` substitutions,
-      where the abelianized of the prefix` is used instead of the suffix.
+    - ``method`` -- 'prefix' or 'suffix' (default: 'suffix');
+      enables to use an alternative definition `E_1^*(\sigma)` substitutions,
+      where the abelianized of the prefix` is used instead of the suffix
 
     .. NOTE::
 

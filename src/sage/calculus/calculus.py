@@ -939,7 +939,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
     INPUT:
 
-    - ``var`` -- polynomial variable name (default: 'x')
+    - ``var`` -- polynomial variable name (default: ``'x'``)
 
     - ``algorithm`` -- ``'algebraic'`` or ``'numerical'`` (default
       both, but with numerical first)

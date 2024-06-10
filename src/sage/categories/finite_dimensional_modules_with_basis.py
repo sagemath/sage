@@ -64,7 +64,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``action`` -- a function (default: :obj:`operator.mul`)
 
-            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``side`` -- 'left' or 'right' (default: ``'right'``)
 
             - ``category`` -- a category
 
@@ -141,7 +141,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``action`` -- a function (default: :obj:`operator.mul`)
 
-            - ``side`` -- 'left' or 'right' (default: 'right'):
+            - ``side`` -- 'left' or 'right' (default: ``'right'``):
               on which side of ``self`` the elements of `S` acts.
 
             See :meth:`annihilator` for the assumptions and definition
@@ -580,7 +580,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``base_ring`` -- a ring (default: ``None``, meaning the
               base ring of the codomain)
 
-            - ``side`` -- "left" or "right" (default: "left")
+            - ``side`` -- "left" or "right" (default: ``'left'``)
 
             If ``side`` is "left", this morphism is considered as
             acting on the left; i.e. each column of the matrix

@@ -272,7 +272,8 @@ def Heisenberg(R, n, representation='structure'):
 
     - ``R`` -- the base ring
     - ``n`` -- the rank (a nonnegative integer or infinity)
-    - ``representation`` -- (default: "structure") can be one of the following:
+    - ``representation`` -- (default: ``'structure'``) can be one of the
+      following:
 
       - ``'structure'`` -- using structure coefficients
       - ``'matrix'`` -- using matrices

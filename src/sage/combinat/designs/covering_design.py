@@ -63,11 +63,11 @@ def schonheim(v, k, t):
 
     INPUT:
 
-    - ``v`` -- integer, size of point set
+    - ``v`` -- integer; size of point set
 
-    - ``k`` -- integer, cardinality of each block
+    - ``k`` -- integer; cardinality of each block
 
-    - ``t`` -- integer, cardinality of sets being covered
+    - ``t`` -- integer; cardinality of sets being covered
 
     OUTPUT:
 
@@ -95,11 +95,11 @@ def trivial_covering_design(v, k, t):
 
     INPUT:
 
-    - ``v`` -- integer, size of point set
+    - ``v`` -- integer; size of point set
 
-    - ``k`` -- integer, cardinality of each block
+    - ``k`` -- integer; cardinality of each block
 
-    - ``t`` -- integer, cardinality of sets being covered
+    - ``t`` -- integer; cardinality of sets being covered
 
     OUTPUT:
 
@@ -171,13 +171,13 @@ class CoveringDesign(SageObject):
 
     - ``v``, ``k``, ``t`` -- integer parameters of the covering design
 
-    - ``size`` (integer)
+    - ``size`` -- integer
 
-    - ``points`` -- list of points (default points are `[0, ..., v-1]`)
+    - ``points`` -- list of points (default: `[0, ..., v-1]`)
 
     - ``blocks``
 
-    - ``low_bd`` (integer) -- lower bound for such a design
+    - ``low_bd`` -- integer; lower bound for such a design
 
     - ``method``, ``creator``, ``timestamp`` -- database information
     """
@@ -481,11 +481,11 @@ def best_known_covering_design_www(v, k, t, verbose=False):
 
     INPUT:
 
-    - ``v`` -- integer, the size of the point set for the design
+    - ``v`` -- integer; the size of the point set for the design
 
-    - ``k`` -- integer, the number of points per block
+    - ``k`` -- integer; the number of points per block
 
-    - ``t`` -- integer, the size of sets covered by the blocks
+    - ``t`` -- integer; the size of sets covered by the blocks
 
     - ``verbose`` -- boolean (default: ``False``); print verbose message
 

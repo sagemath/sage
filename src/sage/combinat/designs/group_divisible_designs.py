@@ -57,18 +57,18 @@ def group_divisible_design(v, K, G, existence=False, check=False):
 
     INPUT:
 
-    - ``v`` (integer)
+    - ``v`` -- integer
 
-    - ``K``, ``G`` (sets of integers)
+    - ``K``, ``G`` -- sets of integers
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
           design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
     - ``check`` -- (boolean) Whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
@@ -139,16 +139,16 @@ def GDD_4_2(q, existence=False, check=True):
 
     INPUT:
 
-    - ``q`` (integer)
+    - ``q`` -- integer
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
           design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
     - ``check`` -- (boolean) Whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
@@ -235,10 +235,10 @@ class GroupDivisibleDesign(IncidenceStructure):
     - ``K`` -- list of integers of which the sizes of the blocks must be
       elements. Set to ``None`` (automatic guess) by default.
 
-    - ``lambd`` (integer) -- value of `\lambda`, set to `1` by default.
+    - ``lambd`` -- integer (default: `1`); value of `\lambda`
 
-    - ``check`` (boolean) -- whether to check that the design is indeed a `GDD`
-      with the right parameters. Set to ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that the design is indeed a `GDD`
+      with the right parameters
 
     - ``copy`` -- (use with caution) if set to ``False`` then ``blocks`` must be
       a list of lists of integers. The list will not be copied but will be

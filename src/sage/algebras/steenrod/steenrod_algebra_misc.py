@@ -54,7 +54,7 @@ def get_basis_name(basis, p, generic=None):
 
     - ``p`` -- positive prime number
 
-    - ``generic`` -- boolean, optional, default to 'None'
+    - ``generic`` -- boolean (default: 'None')
 
     OUTPUT: ``basis_name`` -- string
 
@@ -195,9 +195,9 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
 
     - ``truncation_type`` -- either 0 or `\infty`
 
-    - `p` -- prime number (default: 2)
+    - ``p`` -- prime number (default: 2)
 
-    - `generic` -- boolean (default: ``None``)
+    - ``generic`` -- boolean (default: ``None``)
 
     OUTPUT: ``True`` if the profile function is valid, False otherwise
 
@@ -304,10 +304,10 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
     INPUT:
 
     - ``profile`` -- a profile function in form specified below
-    - ``precision`` -- integer or ``None``, optional, default ``None``
-    - ``truncation_type`` -- 0 or `\infty` or 'auto', optional, default 'auto'
-    - `p` -- prime, optional, default 2
-    - `generic` -- boolean, optional, default ``None``
+    - ``precision`` -- integer or ``None`` (default: ``None``)
+    - ``truncation_type`` -- 0 or `\infty` or 'auto' (default: 'auto')
+    - ``p`` -- prime (default: 2)
+    - ``generic`` -- boolean (default: ``None``)
 
     OUTPUT:
 

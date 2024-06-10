@@ -394,7 +394,7 @@ cdef class Envelope():
             inf
             sage: f.min_slope
             1
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
             sage: Envelope(3, sign=1/3, max_slope=-1, min_length=4)
             Traceback (most recent call last):
             ...

@@ -185,7 +185,7 @@ def m_to_s_stat(R, I, K):
 
     INPUT:
 
-    - ``R`` -- A ring, supposed to be a `\QQ`-algebra
+    - ``R`` -- a ring; supposed to be a `\QQ`-algebra
     - ``I``, ``K`` -- compositions
 
     OUTPUT:
@@ -226,9 +226,7 @@ def number_of_fCT(content_comp, shape_comp):
 
     - ``content_comp``, ``shape_comp`` -- compositions
 
-    OUTPUT:
-
-    - An integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -274,9 +272,7 @@ def number_of_SSRCT(content_comp, shape_comp):
 
     - ``content_comp``, ``shape_comp`` -- compositions
 
-    OUTPUT:
-
-    - An integer
+    OUTPUT: integer
 
     EXAMPLES::
 

@@ -72,11 +72,11 @@ def _MOLS_from_string(s,k):
 
     INPUT:
 
-    - ``s`` (string) -- represents the MOLS with entries in a-z. To understand
+    - ``s`` -- string; represents the MOLS with entries in a-z; to understand
       how the string should be formatted, read the source code of a constructor
-      that uses it.
+      that uses it
 
-    - ``k`` (integer) -- the number of MOLS encoded by the string.
+    - ``k`` -- integer; the number of MOLS encoded by the string
 
     EXAMPLES::
 
@@ -4143,8 +4143,8 @@ def BIBD_45_9_8(from_code=False):
 
     INPUT:
 
-    - ``from_code`` (boolean) -- whether to build the design from hardcoded data
-      (default) or from the code object (much longer).
+    - ``from_code`` -- boolean; whether to build the design from hardcoded data
+      (default) or from the code object (much longer)
 
     EXAMPLES::
 

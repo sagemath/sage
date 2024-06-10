@@ -144,8 +144,8 @@ cdef to_quaternion(R, x):
 
     INPUT:
 
-        - R -- callable
-        - x -- element or 4-tuple
+    - ``R`` -- callable
+    - ``x`` -- element or 4-tuple
 
     Given a callable R and an x that defines a quaternion, which can be a
     4-tuple, list of length 4, or something that coerces to R, return
@@ -168,9 +168,9 @@ cdef inline print_coeff(y, i, bint atomic):
 
     INPUT:
 
-    - y -- coefficient
-    - i -- string (name of a generator)
-    - atomic -- boolean int; whether or not elements of base ring
+    - ``y`` -- coefficient
+    - ``i`` -- string (name of a generator)
+    - ``atomic`` -- boolean int; whether or not elements of base ring
       print atomically
 
     EXAMPLES::
@@ -563,7 +563,8 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
         INPUT:
 
-        - var -- string (default: 'x'); indeterminate of characteristic polynomial
+        - ``var`` -- string (default: ``'x'``); indeterminate of characteristic
+          polynomial
 
         EXAMPLES::
 
@@ -592,7 +593,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
         INPUT:
 
-        - ``action`` -- (default: 'right') 'right' or 'left'.
+        - ``action`` -- (default: ``'right'``) 'right' or 'left'.
 
         OUTPUT: a matrix
 

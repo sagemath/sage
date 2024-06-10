@@ -700,7 +700,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
     where `\{h_i : i \in I\}` and `\{\Lambda_i : i \in I \}` are the simple
     coroots and fundamental weights, respectively.  With a chosen set of
-    non-negative integers `C = (c_{ij})_{i\neq j}` such that
+    nonnegative integers `C = (c_{ij})_{i\neq j}` such that
     `c_{ij} + c_{ji} = 1`, one defines
 
     .. MATH::
@@ -797,7 +797,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
             ...
-            ValueError: the c matrix must have non-negative entries
+            ValueError: the c matrix must have nonnegative entries
             sage: c = matrix([[0,1],[1,0]])
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
@@ -815,7 +815,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         if any(c[i,j] + c[j,i] != 1 for i in range(n) for j in range(i)):
             raise ValueError("transpose entries do not sum to 1")
         if any(c[i,j] < 0 or c[j,i] < 0 for i in range(n) for j in range(i)):
-            raise ValueError("the c matrix must have non-negative entries")
+            raise ValueError("the c matrix must have nonnegative entries")
         return c
 
     @staticmethod

@@ -73,14 +73,14 @@ def biplane(n, existence=False):
 
     - ``n`` -- (integer) order of the biplane
 
-     - ``existence`` (boolean) -- instead of building the design, return:
+     - ``existence`` -- boolean; instead of building the design, return:
 
        - ``True`` -- meaning that Sage knows how to build the design
 
        - ``Unknown`` -- meaning that Sage does not know how to build the
-         design, but that the design may exist (see :mod:`sage.misc.unknown`).
+         design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-       - ``False`` -- meaning that the design does not exist.
+       - ``False`` -- meaning that the design does not exist
 
     .. SEEALSO::
 
@@ -127,16 +127,16 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
     - ``v``, ``k``, ``lambd`` -- integers
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
-    - ``use_LJCR`` (boolean) -- whether to query the La Jolla Covering
+    - ``use_LJCR`` -- boolean; whether to query the La Jolla Covering
       Repository for the design when Sage does not know how to build it (see
       :func:`~sage.combinat.designs.covering_design.best_known_covering_design_www`). This
       requires internet.
@@ -373,9 +373,7 @@ def BruckRyserChowla_check(v, k, lambd):
 
     - ``v``, ``k``, ``lambd`` -- integers; parameters to check
 
-    OUTPUT:
-
-    - ``True`` -- the parameters satisfy the theorem
+    OUTPUT: ``True`` -- the parameters satisfy the theorem
 
     - ``False`` -- the theorem fails for the given parameters
 
@@ -455,7 +453,7 @@ def steiner_triple_system(n):
 
     INPUT:
 
-    - ``n`` return a Steiner Triple System of `\{0,...,n-1\}`
+    - ``n`` -- return a Steiner Triple System of `\{0,...,n-1\}`
 
     EXAMPLES:
 
@@ -528,9 +526,9 @@ def BIBD_from_TD(v,k,existence=False):
 
     INPUT:
 
-    - ``v``, ``k`` -- (integers) computes a `(v,k,1)`-BIBD.
+    - ``v``, ``k`` -- integers; computes a `(v,k,1)`-BIBD
 
-    - ``existence``  -- (boolean) instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
       - ``True`` -- meaning that Sage knows how to build the design
 
@@ -766,9 +764,9 @@ def v_4_1_BIBD(v, check=True):
 
     INPUT:
 
-    - ``v`` (integer) -- number of points.
+    - ``v`` -- integer; number of points
 
-    - ``check`` (boolean) -- whether to check that output is correct before
+    - ``check`` -- boolean; whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed. Set to ``True``
       by default.
@@ -852,17 +850,16 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
 
     INPUT:
 
-    - ``v``, ``k`` -- integers.
+    - ``v``, ``k`` -- integers
 
-    - ``PBD`` -- A PBD on `r=(v-1)/(k-1)` points, such that for any block of
-      ``PBD`` of size `s` there must exist a `((k-1)s+1,k,1)`-BIBD.
+    - ``PBD`` -- a PBD on `r=(v-1)/(k-1)` points, such that for any block of
+      ``PBD`` of size `s` there must exist a `((k-1)s+1,k,1)`-BIBD
 
-    - ``check`` (boolean) -- whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless (but we
+      are cautious guys), you may want to disable it whenever you want speed.
 
-    - ``base_cases`` -- caching system, for internal use.
+    - ``base_cases`` -- caching system, for internal use
 
     EXAMPLES::
 
@@ -903,11 +900,11 @@ def _relabel_bibd(B,n,p=None):
 
     INPUT:
 
-    - ``B`` -- a list of blocks.
+    - ``B`` -- list of blocks
 
-    - ``n`` (integer) -- number of points.
+    - ``n`` -- integer; number of points
 
-    - ``p`` (optional) -- the point that will be labeled with `n-1`.
+    - ``p`` -- optional; the point that will be labeled with `n-1`
 
     EXAMPLES::
 
@@ -944,9 +941,9 @@ def PBD_4_5_8_9_12(v, check=True):
 
     INPUT:
 
-    - ``v`` -- an integer congruent to `0` or `1` modulo `4`.
+    - ``v`` -- integer congruent to `0` or `1` modulo `4`
 
-    - ``check`` (boolean) -- whether to check that output is correct before
+    - ``check`` -- boolean; whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed. Set to ``True``
       by default.
@@ -1083,7 +1080,7 @@ def _get_t_u(v):
 
     INPUT:
 
-    - ``v`` (integer)
+    - ``v`` -- integer
 
     EXAMPLES::
 
@@ -1115,7 +1112,7 @@ def v_5_1_BIBD(v, check=True):
 
     INPUT:
 
-    - ``v`` (integer)
+    - ``v`` -- integer
 
     .. SEEALSO::
 
@@ -1189,7 +1186,7 @@ def _get_r_s_t_u(v):
 
     INPUT:
 
-    - ``v`` (integer)
+    - ``v`` -- integer
 
     EXAMPLES::
 
@@ -1262,7 +1259,7 @@ def BIBD_5q_5_for_q_prime_power(q):
 
     INPUT:
 
-    - ``q`` (integer) -- a prime power such that `q\equiv 1\pmod 4`.
+    - ``q`` -- integer; a prime power such that `q\equiv 1\pmod 4`
 
     EXAMPLES::
 
@@ -1308,9 +1305,9 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
 
     INPUT:
 
-    - ``n``, ``k`` (integers) -- must be powers of two (among other restrictions).
+    - ``n``, ``k`` -- integers; must be powers of two (among other restrictions)
 
-    - ``existence`` (boolean) -- whether to return the BIBD obtained through
+    - ``existence`` -- boolean; whether to return the BIBD obtained through
       this construction (default), or to merely indicate with a boolean return
       value whether this method *can* build the requested BIBD.
 
@@ -1422,10 +1419,10 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
     - ``K`` -- list of integers of which the sizes of the blocks must be
       elements. Set to ``None`` (automatic guess) by default.
 
-    - ``lambd`` (integer) -- value of `\lambda`, set to `1` by default.
+    - ``lambd`` -- integer; value of `\lambda`, set to `1` by default
 
-    - ``check`` (boolean) -- whether to check that the design is a `PBD` with
-      the right parameters.
+    - ``check`` -- boolean; whether to check that the design is a `PBD` with
+      the right parameters
 
     - ``copy`` -- (use with caution) if set to ``False`` then ``blocks`` must be
       a list of lists of integers. The list will not be copied but will be
@@ -1484,13 +1481,13 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
     - ``blocks`` -- collection of blocks
 
-    - ``k`` (integer) -- size of the blocks. Set to ``None`` (automatic guess)
+    - ``k`` -- integer; size of the blocks. Set to ``None`` (automatic guess)
       by default.
 
-    - ``lambd`` (integer) -- value of `\lambda`, set to `1` by default.
+    - ``lambd`` -- integer; value of `\lambda`, set to `1` by default
 
-    - ``check`` (boolean) -- whether to check that the design is a `PBD` with
-      the right parameters.
+    - ``check`` -- boolean; whether to check that the design is a `PBD` with
+      the right parameters
 
     - ``copy`` -- (use with caution) if set to ``False`` then ``blocks`` must be
       a list of lists of integers. The list will not be copied but will be
@@ -1553,7 +1550,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
         INPUT:
 
-        - ``s`` -- (default to ``2``) the maximum number of points from the arc
+        - ``s`` -- (default: `2`) the maximum number of points from the arc
           in each block
 
         - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
@@ -1564,8 +1561,8 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``). Sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
           an inexact base ring; see

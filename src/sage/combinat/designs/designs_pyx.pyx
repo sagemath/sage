@@ -24,20 +24,20 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
 
     INPUT:
 
-    - ``array`` -- the Covering Array to be tested.
+    - ``array`` -- the Covering Array to be tested
 
-    - ``strength`` (integer) -- the parameter `t` of the covering array,
+    - ``strength`` -- integer; the parameter `t` of the covering array,
       such that in any selection of `t` columns of the array, every `t`
       -tuple appears at least once. If set to None then all t > 0 are
       tested to and the maximal strength is used.
 
-    - ``levels`` -- the number of symbols that appear in ``array``.
-      If set to None, then each unique entry in ``array`` is counted.
+    - ``levels`` -- the number of symbols that appear in ``array``
+      If set to None, then each unique entry in ``array`` is counted
 
-    - ``verbose`` (boolean) -- whether to display some information about
-      the covering array.
+    - ``verbose`` -- boolean; whether to display some information about
+      the covering array
 
-    - ``parameters`` (boolean) -- whether to return the parameters of
+    - ``parameters`` -- boolean; whether to return the parameters of
       the Covering Array. If set to ``True``, the function returns a
       pair ``(boolean_answer,(N,t,k,v))``.
 
@@ -211,7 +211,7 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
         return result
 
 
-def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="OA"):
+def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='OA'):
     r"""
     Check that the integer matrix `OA` is an `OA(k,n,t)`.
 
@@ -222,12 +222,12 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
 
     - ``OA`` -- the Orthogonal Array to be tested
 
-    - ``k``, ``n``, ``t`` (integers) -- only implemented for `t=2`.
+    - ``k``, ``n``, ``t`` -- integers; only implemented for `t=2`
 
-    - ``verbose`` (boolean) -- whether to display some information when ``OA``
-      is not an orthogonal array `OA(k,n)`.
+    - ``verbose`` -- boolean; whether to display some information when ``OA``
+      is not an orthogonal array `OA(k,n)`
 
-    - ``terminology`` (string) -- how to phrase the information when ``verbose =
+    - ``terminology`` -- string; how to phrase the information when ``verbose =
       True``. Possible values are `"OA"`, `"MOLS"`.
 
     EXAMPLES::
@@ -245,7 +245,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
         sage: is_orthogonal_array(OA,8,9,verbose=True)
         Columns 0 and 3 are not orthogonal
         False
-        sage: is_orthogonal_array(OA,8,9, verbose=True, terminology="MOLS")
+        sage: is_orthogonal_array(OA,8,9, verbose=True, terminology='MOLS')
         Squares 0 and 3 are not orthogonal
         False
 
@@ -259,13 +259,13 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
         sage: is_orthogonal_array([[3]*8],8,9, verbose=True)
         The number of rows is 1 instead of 9^2=81
         False
-        sage: is_orthogonal_array([[3]*8],8,9, verbose=True, terminology="MOLS")
+        sage: is_orthogonal_array([[3]*8],8,9, verbose=True, terminology='MOLS')
         All squares do not have dimension n^2=9^2
         False
         sage: is_orthogonal_array([[3]*7],8,9, verbose=True)
         Some row does not have length 8
         False
-        sage: is_orthogonal_array([[3]*7],8,9, verbose=True, terminology="MOLS")
+        sage: is_orthogonal_array([[3]*7],8,9, verbose=True, terminology='MOLS')
         The number of squares is not 6
         False
 
@@ -366,7 +366,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
 
     - ``blocks`` -- collection of blocks
 
-    - ``v`` (integers) -- size of the ground set assumed to be `X=\{0,...,v-1\}`.
+    - ``v`` -- integers; size of the ground set assumed to be `X=\{0,...,v-1\}`
 
     - ``G`` -- list of integers of which the sizes of the groups must be
       elements. Set to ``None`` (automatic guess) by default.
@@ -374,10 +374,10 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
     - ``K`` -- list of integers of which the sizes of the blocks must be
       elements. Set to ``None`` (automatic guess) by default.
 
-    - ``lambd`` -- value of `\lambda`. Set to `1` by default.
+    - ``lambd`` -- value of `\lambda`. Set to `1` by default
 
-    - ``verbose`` (boolean) -- whether to display some information when the
-      design is not a GDD.
+    - ``verbose`` -- boolean; whether to display some information when the
+      design is not a GDD
 
     EXAMPLES::
 
@@ -430,7 +430,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
 
     if v < 0 or lambd < 0:
         if verbose:
-            print("v={} and lambda={} must be non-negative integers".format(v,l))
+            print("v={} and lambda={} must be nonnegative integers".format(v,l))
         return False
 
     # Block sizes are element of K
@@ -546,15 +546,15 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
 
     - ``blocks`` -- collection of blocks
 
-    - ``v`` (integers) -- size of the ground set assumed to be `X=\{0,...,v-1\}`.
+    - ``v`` -- integers; size of the ground set assumed to be `X=\{0,...,v-1\}`
 
     - ``K`` -- list of integers of which the sizes of the blocks must be
-      elements. Set to ``None`` (automatic guess) by default.
+      elements; set to ``None`` (automatic guess) by default
 
-    - ``lambd`` -- value of `\lambda`. Set to `1` by default.
+    - ``lambd`` -- value of `\lambda` (default: `1`)
 
-    - ``verbose`` (boolean) -- whether to display some information when the
-      design is not a PBD.
+    - ``verbose`` -- boolean; whether to display some information when the
+      design is not a PBD
 
     EXAMPLES::
 
@@ -681,10 +681,10 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
 
     - ``k`` -- integer
 
-    - ``lmbda`` (integer) -- set to `1` by default.
+    - ``lmbda`` -- integer (default: `1`)
 
-    - ``verbose`` (boolean) -- whether to print some information when the answer
-      is ``False``.
+    - ``verbose`` -- boolean; whether to print some information when the answer
+      is ``False``
 
     EXAMPLES::
 
@@ -757,8 +757,8 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
 
     - ``k``, ``lmbda``, ``mu``, ``u`` -- integers
 
-    - ``verbose`` (boolean) -- whether to print some information when the answer
-      is ``False``.
+    - ``verbose`` -- boolean; whether to print some information when the answer
+      is ``False``
 
     EXAMPLES:
 
@@ -960,7 +960,7 @@ cpdef _OA_cache_set(int k,int n,truth_value):
 
     INPUT:
 
-    - ``k``, ``n`` (integers)
+    - ``k``, ``n`` -- integers
 
     - ``truth_value`` -- one of ``True,False,Unknown``
     """

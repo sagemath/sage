@@ -2739,7 +2739,7 @@ class _BijectionistMILP:
         INPUT:
 
         - ``constraint`` -- a
-          :class:`sage.numerical.linear_functions.LinearConstraint`.
+          :class:`sage.numerical.linear_functions.LinearConstraint`
 
         - ``values`` -- a candidate for a solution of the MILP as a
           dictionary from pairs `(a, z)\in A\times Z` to `0` or `1`,

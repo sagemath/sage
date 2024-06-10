@@ -809,9 +809,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
     INPUT:
 
-    - ``ret_conn_vert`` -- boolean (default: ``False``). If ``True``,
+    - ``ret_conn_vert`` -- boolean (default: ``False``); if ``True``,
       returns 'connecting vertices', technical information that is
-      used in the algorithm.
+      used in the algorithm
 
     A brief description of the algorithm::
 
@@ -1418,10 +1418,10 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
 
     INPUT:
 
-    - ``mt`` something that can be turned into a QuiverMutationType
-    - ``k`` (integer) the number of tests performed for each quiver of rank ``n``
-    - ``mut_class`` is given, this mutation class is used
-    - ``nr_mut`` (integer, default:5) the number of mutations performed before
+    - ``mt`` something that can be turned into a ``QuiverMutationType``
+    - ``k`` -- integer; the number of tests performed for each quiver of rank ``n``
+    - ``mut_class`` -- if given, this mutation class is used
+    - ``nr_mut`` -- integer (default: 5); the number of mutations performed before
       testing
 
     The idea of this random test is to start with a mutation type
@@ -1512,9 +1512,9 @@ def _random_multi_tests(n, k, nr_mut=5):
 
     INPUT:
 
-    - ``n`` (integer) -- the rank of the mutation types to test
-    - ``k`` (integer) -- the number of tests performed for each quiver of rank ``n``
-    - ``nr_mut`` (integer, default:5) -- the number of mutations performed before testing
+    - ``n`` -- integer; the rank of the mutation types to test
+    - ``k`` -- integer; the number of tests performed for each quiver of rank ``n``
+    - ``nr_mut`` -- integer (default: 5); the number of mutations performed before testing
 
     TESTS::
 

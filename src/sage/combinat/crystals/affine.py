@@ -537,7 +537,7 @@ class AffineCrystalFromClassicalAndPromotion(AffineCrystalFromClassical):
     - ``automorphism, inverse_automorphism`` -- a function on the
       elements of the ``classical_crystal``
 
-    - ``dynkin_node`` -- an integer specifying the classical node in the
+    - ``dynkin_node`` -- integer specifying the classical node in the
       image of the zero node under the automorphism sigma
 
     EXAMPLES::

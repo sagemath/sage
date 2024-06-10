@@ -42,7 +42,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     - ``cartan_type`` -- the Cartan type and must be either type `A_2`, `B_2`, or `C_2`
 
-    - ``shape`` -- A shape is of the form ``[l1,l2]`` where ``l1`` and ``l2``
+    - ``shape`` -- a shape is of the form ``[l1,l2]`` where ``l1`` and ``l2``
       are either integers or (in type `B_2`) half integers such that
       ``l1 - l2`` is integral. It is assumed that ``l1 >= l2 >= 0``. If
       ``l1`` and ``l2` are integers, this will produce a crystal
@@ -101,7 +101,7 @@ class FastCrystal(UniqueRepresentation, Parent):
          [2, 1, 0]]
     """
     @staticmethod
-    def __classcall__(cls, cartan_type, shape, format="string"):
+    def __classcall__(cls, cartan_type, shape, format='string'):
         """
         Normalize the input arguments to ensure unique representation
 

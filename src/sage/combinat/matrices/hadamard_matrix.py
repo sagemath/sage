@@ -909,10 +909,10 @@ def _construction_goethals_seidel_matrix(A, B, C, D):
 
     INPUT:
 
-    - ``A`` -- The first matrix used in the construction
-    - ``B`` -- The second matrix used in the construction
-    - ``C`` -- The third matrix used in the construction
-    - ``D`` -- The fourth matrix used in the construction
+    - ``A`` -- the first matrix used in the construction
+    - ``B`` -- the second matrix used in the construction
+    - ``C`` -- the third matrix used in the construction
+    - ``D`` -- the fourth matrix used in the construction
 
     TESTS::
 
@@ -1293,10 +1293,10 @@ def hadamard_matrix_turyn_type(a, b, c, d, e1, e2, e3, e4, check=True):
     - ``b`` -- 1,-1 list; the 1st row of `B`
     - ``d`` -- 1,-1 list; the 1st row of `C`
     - ``c`` -- 1,-1 list; the 1st row of `D`
-    - ``e1`` -- Matrix; the first Baumert-Hall unit
-    - ``e2`` -- Matrix; the second Baumert-Hall unit
-    - ``e3`` -- Matrix; the third Baumert-Hall unit
-    - ``e4`` -- Matrix; the fourth Baumert-Hall unit
+    - ``e1`` -- matrix; the first Baumert-Hall unit
+    - ``e2`` -- matrix; the second Baumert-Hall unit
+    - ``e3`` -- matrix; the third Baumert-Hall unit
+    - ``e4`` -- matrix; the fourth Baumert-Hall unit
     - ``check`` -- boolean (default: ``True``); whether to check that the output
       is a Hadamard matrix before returning it
 
@@ -1362,9 +1362,9 @@ def turyn_type_hadamard_matrix_smallcases(n, existence=False, check=True):
     INPUT:
 
     - ``n`` -- integer; the order of the matrix to be constructed
-    - ``existence`` -- boolean (default: ``False``): if ``True``, only check if
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists
-    - ``check`` -- boolean (default: ``True``): if ``True``, check that the matrix
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning
 
     EXAMPLES::
@@ -1658,7 +1658,7 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         - ``True`` -- meaning that Sage knows how to build the matrix
         - ``Unknown`` -- meaning that Sage does not know how to build the
           matrix, although the matrix may exist (see :mod:`sage.misc.unknown`).
-        - ``False`` -- meaning that the matrix does not exist.
+        - ``False`` -- meaning that the matrix does not exist
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
@@ -2205,7 +2205,7 @@ def rshcd_from_close_prime_powers(n):
 
     INPUT:
 
-    - ``n`` -- an integer congruent to `0\pmod{4}`
+    - ``n`` -- integer congruent to `0\pmod{4}`
 
     .. SEEALSO::
 
@@ -2534,7 +2534,7 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     - ``n`` -- integer; the order of the matrix
     - ``existence`` -- boolean (default: ``True``); if ``True``, only check that
       we can do the construction
-    - ``check`` -- boolean (default: ``False``): if ``True``, check the result
+    - ``check`` -- boolean (default: ``False``); if ``True``, check the result
 
     TESTS::
 
@@ -2801,7 +2801,7 @@ def skew_hadamard_matrix_whiteman_construction(n, existence=False, check=True):
     INPUT:
 
     - ``n`` -- positive integer; the order of the matrix to be constructed
-    - ``existence`` -- boolean (default: ``False``); If ``True``, only return
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
       whether the Hadamard matrix can be constructed
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the result
       is a skew Hadamard matrix before returning it
@@ -2994,7 +2994,7 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
     - ``n`` -- integer; the order of the skew Hadamard matrix to be constructed
     - ``existence`` -- boolean (default:  ``False``); If ``True``, only return
       whether the Hadamard matrix can be constructed
-    - ``check`` -- boolean (default: ``True``): if ``True``, check that the matrix
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning it
 
     OUTPUT:
@@ -3100,7 +3100,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
         - ``True`` -- meaning that Sage knows how to build the matrix
         - ``Unknown`` -- meaning that Sage does not know how to build the
           matrix, but that the design may exist (see :mod:`sage.misc.unknown`).
-        - ``False`` -- meaning that the matrix does not exist.
+        - ``False`` -- meaning that the matrix does not exist
 
     - ``skew_normalize`` -- boolean (default: ``True``); whether to make the 1st
       row all-one, and adjust the 1st column accordingly
@@ -3401,7 +3401,7 @@ def rshcd_from_prime_power_and_conference_matrix(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     .. SEEALSO::
 
@@ -3477,7 +3477,7 @@ def are_amicable_hadamard_matrices(M, N, verbose=False):
 
     - ``M`` -- a square matrix
     - ``N`` -- a square matrix
-    - ``verbose`` -- boolean (default ``False``); whether to be verbose when the
+    - ``verbose`` -- boolean (default: ``False``); whether to be verbose when the
       matrices are not amicable Hadamard matrices
 
     EXAMPLES::

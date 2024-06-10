@@ -130,7 +130,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
     INPUT:
 
-    - ``cartan_type`` -- One of ``['A',n]``, ``['B',n]``, ``['C',n]``,
+    - ``cartan_type`` -- one of ``['A',n]``, ``['B',n]``, ``['C',n]``,
       ``['D',n]``, or ``['G',2]``, where ``n`` is a positive integer
 
     EXAMPLES::
@@ -307,7 +307,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 

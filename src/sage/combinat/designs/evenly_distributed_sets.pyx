@@ -71,7 +71,7 @@ cdef class EvenlyDistributedSetsBacktracker:
       `x \mapsto ax + b`. If set to ``False`` then the iteration is over all
       evenly distributed sets that contain ``0`` and ``1``.
 
-    - ``check`` -- boolean (default is ``False``). Whether you want to check
+    - ``check`` -- boolean (default: ``False``); whether you want to check
       intermediate steps of the iterator. This is mainly intended for debugging
       purpose. Setting it to ``True`` will considerably slow the iteration.
 
@@ -410,9 +410,7 @@ cdef class EvenlyDistributedSetsBacktracker:
         This is an internal function and should only be call by the backtracker
         implemented in the method `__iter__`.
 
-        OUTPUT:
-
-        - ``False`` if ``self.B`` is not minimal
+        OUTPUT: ``False`` if ``self.B`` is not minimal
 
         - the list of evenly distributed sets isomorphic to ``self.B``
           given as a list of tuples if ``self.up_to_isom=0`` or list

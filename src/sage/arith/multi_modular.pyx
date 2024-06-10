@@ -502,8 +502,8 @@ cdef class MultiModularBasis_base():
         INPUT:
 
         - ``z`` -- the integer being reduced
-        - ``b`` -- array to hold the reductions mod each m_i.
-                 It MUST be allocated and have length at least len
+        - ``b`` -- array to hold the reductions mod each `m_i`;
+          it MUST be allocated and have length at least len
         - ``offset`` -- first prime in list to reduce against
         - ``len`` -- number of primes in list to reduce against
         """
@@ -864,8 +864,8 @@ cdef class MultiModularBasis(MultiModularBasis_base):
         INPUT:
 
         - ``z`` -- the integer being reduced
-        - ``b`` -- array to hold the reductions mod each m_i.
-                 It MUST be allocated and have length at least len
+        - ``b`` -- array to hold the reductions mod each `m_i`;
+           it MUST be allocated and have length at least len
         """
         self.mpz_reduce_tail(z, b, 0, self.n)
 
@@ -878,10 +878,9 @@ cdef class MultiModularBasis(MultiModularBasis_base):
         INPUT:
 
         - ``z`` -- an array of integers being reduced
-        - ``b`` -- array to hold the reductions mod each m_i.
-                 It MUST be fully allocated and each
-                 have length at least len
-        - ``vn`` -- length of z and each b[i]
+        - ``b`` -- array to hold the reductions mod each `m_i`;
+          it MUST be fully allocated and each have length at least len
+        - ``vn`` -- length of ``z`` and each ``b[i]``
         """
         self.mpz_reduce_vec_tail(z, b, vn, 0, self.n)
 
@@ -893,10 +892,10 @@ cdef class MultiModularBasis(MultiModularBasis_base):
 
         INPUT:
 
-        - ``z`` -- a placeholder for the constructed integer
-                   z MUST NOT be initialized
-        - ``b`` -- array holding the reductions mod each `m_i`.
-                   It MUST have length at least len(self)
+        - ``z`` -- a placeholder for the constructed integer;
+          ``z`` MUST NOT be initialized
+        - ``b`` -- array holding the reductions mod each `m_i`;
+          it MUST have length at least ``len(self)``
         """
         self.mpz_crt_tail(z, b, 0, self.n)
 
@@ -911,8 +910,8 @@ cdef class MultiModularBasis(MultiModularBasis_base):
         - ``z`` -- a placeholder for the constructed integers
                     z MUST be allocated and have length at least vn,
                     but each z[j] MUST NOT be initialized
-        - ``b`` -- array holding the reductions mod each `m_i`.
-                    It MUST have length at least len(self)
+        - ``b`` -- array holding the reductions mod each `m_i`;
+          it MUST have length at least ``len(self)``
         - ``vn`` -- length of z and each b[i]
         """
         self.mpz_crt_vec_tail(z, b, vn, 0, self.n)

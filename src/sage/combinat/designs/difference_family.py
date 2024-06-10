@@ -990,7 +990,7 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
     INPUT:
 
     - ``v``, ``k``, ``lmbda`` -- integers; parameters of the difference family
-    - ``return_parameters`` -- boolean (default ``False``); if ``True``, return a
+    - ``return_parameters`` -- boolean (default: ``False``); if ``True``, return a
       pair ``(True, (q, s))`` so that ``(q,s)`` can be used in the function
       :func:`mcfarland_1973_construction` to actually build a
       ``(v,k,lmbda)``-difference family. Or ``(False, None)`` if the
@@ -1473,8 +1473,8 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
     INPUT:
 
     - ``q`` -- a prime power
-    - ``N`` -- an integer greater than 1
-    - ``d`` -- an integer which divides `q-1`
+    - ``N`` -- integer greater than 1
+    - ``d`` -- integer which divides `q-1`
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the
       result is a relative difference set before returning it
     - ``return_group`` -- boolean (default: ``False``); if ``True``, the function
@@ -1636,7 +1636,7 @@ def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=Fals
 
     INPUT:
 
-    - ``Ks`` -- a list of sets to be checked
+    - ``Ks`` -- list of sets to be checked
     - ``v`` -- integer; the parameter `v` of the supplementary difference sets
     - ``lmbda`` -- integer; the parameter `\lambda` of the supplementary difference sets
     - ``G`` -- a group of order `v`
@@ -1731,9 +1731,9 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     INPUT:
 
     - ``q`` -- an odd prime power
-    - ``existence`` -- boolean (default: ``False``); If ``True``, only check
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check
       whether the supplementary difference sets can be constructed
-    - ``check`` -- boolean (default: ``True``); If ``True``, check that the sets
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the sets
       are supplementary difference sets before returning them
 
     OUTPUT:
@@ -1987,9 +1987,9 @@ def is_fixed_relative_difference_set(R, q):
 
     INPUT:
 
-    - ``R`` -- a list containing elements of an abelian group; the relative
+    - ``R`` -- list containing elements of an abelian group; the relative
       difference set
-    - ``q`` -- an integer
+    - ``q`` -- integer
 
     EXAMPLES::
 
@@ -3125,7 +3125,7 @@ def complementary_difference_setsI(n, check=True):
     Construct complementary difference sets in a group of order `n \cong 3 \mod 4`, `n` a prime power.
 
     Let `G` be a Galois Field of order `n`, where `n` satisfies the requirements
-    above. Let `A` be the set of non-zero quadratic elements in `G`, and `B = A`.
+    above. Let `A` be the set of nonzero quadratic elements in `G`, and `B = A`.
     Then `A` and `B` are complementary difference sets over a group of order `n`.
     This construction is described in [Sze1971]_.
 
@@ -3190,11 +3190,11 @@ def complementary_difference_setsII(n, check=True):
     the corresponding multiplicative group. Then, there are two different constructions,
     depending on whether `t` is even or odd.
 
-    If `t \cong 2 \mod 4`, let `C_0` be the set of non-zero octic residues in `G`,
+    If `t \cong 2 \mod 4`, let `C_0` be the set of nonzero octic residues in `G`,
     and let `C_i = \rho^i C_0` for `1 \le i \le  7`.
     Then, `A = C_0 \cup C_1 \cup C_2 \cup C_3` and  `B = C_0 \cup C_1 \cup C_6 \cup C_7`.
 
-    If `t` is odd, let `C_0` be the set of non-zero fourth powers in `G`, and let
+    If `t` is odd, let `C_0` be the set of nonzero fourth powers in `G`, and let
     `C_i = \rho^i C_0` for `1 \le i \le  3`.
     Then, `A = C_0 \cup C_1` and  `B = C_0 \cup C_3`.
 

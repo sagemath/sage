@@ -581,8 +581,8 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n) noexcept:
     r"""
     INPUT:
 
-    - B -- a BinaryCode in standard form
-    - n -- the degree
+    - ``B`` -- a BinaryCode in standard form
+    - ``n`` -- the degree
 
     OUTPUT:
 
@@ -1086,10 +1086,10 @@ cdef class BinaryCode:
 
         INPUT:
 
-        - col_gamma -- permutation sending i |--> col_gamma[i] acting
-          on the columns.
-        - word_gamma -- permutation sending i |--> word_gamma[i] acting
-          on the words.
+        - ``col_gamma`` -- permutation sending i |--> col_gamma[i] acting
+          on the columns
+        - ``word_gamma`` -- permutation sending i |--> word_gamma[i] acting
+          on the words
 
         EXAMPLES::
 
@@ -1141,7 +1141,7 @@ cdef class BinaryCode:
 
         INPUT:
 
-        - labeling -- list permutation of the columns
+        - ``labeling`` -- list permutation of the columns
 
         EXAMPLES::
 
@@ -2561,9 +2561,9 @@ cdef class PartitionStack:
 
         INPUT:
 
-        - start -- location of the beginning of the cell
-        - k -- at what level of refinement the partition of interest lies
-        - degrees -- the counts to sort by
+        - ``start`` -- location of the beginning of the cell
+        - ``k`` -- at what level of refinement the partition of interest lies
+        - ``degrees`` -- the counts to sort by
 
         EXAMPLES::
 
@@ -2633,9 +2633,9 @@ cdef class PartitionStack:
 
         INPUT:
 
-        - start -- location of the beginning of the cell
-        - k -- at what level of refinement the partition of interest lies
-        - degrees -- the counts to sort by
+        - ``start`` -- location of the beginning of the cell
+        - ``k`` -- at what level of refinement the partition of interest lies
+        - ``degrees`` -- the counts to sort by
 
         EXAMPLES::
 

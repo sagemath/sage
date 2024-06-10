@@ -647,7 +647,7 @@ class SimplicialSets(Category_singleton):
                 - ``subcomplex`` -- (default: ``None``) if present,
                   compute the chain complex relative to this subcomplex.
 
-                - ``check`` -- boolean (default: ``False``); If ``True``, make
+                - ``check`` -- boolean (default: ``False``); if ``True``, make
                   sure that the chain complex is actually a chain complex:
                   the differentials are composable and their product is zero.
 

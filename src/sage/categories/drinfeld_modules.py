@@ -212,7 +212,7 @@ class DrinfeldModules(Category_over_base_ring):
         - ``base_field`` -- the base field, which is a ring extension
           over a base
 
-        - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
+        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           variable
 
         TESTS::

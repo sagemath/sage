@@ -1384,7 +1384,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - `p` -- unramified odd prime
+        - ``p`` -- unramified odd prime
 
         OUTPUT: 2-tuple of matrices over finite field
 
@@ -1485,7 +1485,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - `p` -- prime number
+        - ``p`` -- prime number
 
         EXAMPLES::
 
@@ -3087,7 +3087,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         INPUT:
 
         - ``B`` -- positive integer
-        - ``var`` -- string (default: 'q')
+        - ``var`` -- string (default: ``'q'``)
 
         OUTPUT: power series
 

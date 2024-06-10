@@ -406,7 +406,7 @@ def factorial(n, algorithm='gmp'):
 
     -  ``n`` -- an integer
 
-    -  ``algorithm`` -- string (default: 'gmp'):
+    -  ``algorithm`` -- string (default: ``'gmp'``):
 
        -  ``'gmp'`` -- use the GMP C-library factorial function
 
@@ -934,9 +934,9 @@ def primes_first_n(n, leave_pari=False):
 
     INPUT:
 
-    - `n` -- a nonnegative integer
+    - ``n`` -- nonnegative integer
 
-    OUTPUT: a list of the first `n` prime numbers
+    OUTPUT: list of the first `n` prime numbers
 
     EXAMPLES::
 
@@ -1039,7 +1039,7 @@ def primes(start=2, stop=None, proof=None):
     - ``stop`` -- integer (or infinity); upper (open) bound for the
       primes
 
-    - ``proof`` -- bool or ``None`` (default: ``None``); If ``True``, the
+    - ``proof`` -- bool or ``None`` (default: ``None``); if ``True``, the
       function yields only proven primes.  If ``False``, the function uses a
       pseudo-primality test, which is much faster for really big numbers but
       does not provide a proof of primality. If ``None``, uses the global
@@ -1691,21 +1691,19 @@ class Sigma:
 
         INPUT:
 
+        - ``xmin`` -- default: 1
 
-        -  ``xmin`` -- default: 1
+        - ``xmax`` -- default: 50
 
-        -  ``xmax`` -- default: 50
+        - ``k`` -- default: 1
 
-        -  ``k`` -- default: 1
+        - ``pointsize`` -- default: 30
 
-        -  ``pointsize`` -- default: 30
+        - ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``rgbcolor`` -- default: (0,0,1)
+        - ``join`` -- default: ``True``; whether to join the points
 
-        -  ``join`` -- default: ``True``; whether to join the
-           points.
-
-        -  ``**kwds`` -- passed on
+        - ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -2323,9 +2321,9 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     - ``m`` -- a modulus
 
-    - ``algorithm`` -- string (default: ``'fast'``s)
+    - ``algorithm`` -- string (default: ``'fast'``)
 
-      - ``'fast'`` -- a fast implementation using direct GMP library calls
+    - ``'fast'`` -- a fast implementation using direct GMP library calls
         in Cython
 
     OUTPUT:
@@ -6054,8 +6052,8 @@ def squarefree_divisors(x):
 
     INPUT:
 
-    - x -- an element of any ring for which the prime_divisors
-      function works.
+    - ``x`` -- an element of any ring for which the prime_divisors
+      function works
 
     EXAMPLES:
 

@@ -70,7 +70,7 @@ def two_n(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -107,7 +107,7 @@ def three_n_minus_two(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -162,7 +162,7 @@ def three_n_minus_eight(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -222,8 +222,8 @@ def three_n_minus_four(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points where `n\equiv
-      10\pmod{12}`.
+    - ``B`` -- a Steiner Quadruple System on `n` points where `n\equiv
+      10\pmod{12}`
 
     EXAMPLES::
 
@@ -287,7 +287,7 @@ def four_n_minus_six(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -359,7 +359,7 @@ def twelve_n_minus_ten(B):
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -457,7 +457,7 @@ def relabel_system(B):
 
     INPUT:
 
-    - ``B`` -- a list of 4-uples on `0,...,n-1`.
+    - ``B`` -- list of 4-uples on `0,...,n-1`
 
     EXAMPLES::
 
@@ -683,10 +683,10 @@ def steiner_quadruple_system(n, check=False):
 
     INPUT:
 
-    - ``n`` -- an integer such that `n\equiv 2,4\pmod 6`
+    - ``n`` -- integer such that `n\equiv 2,4\pmod 6`
 
-    - ``check`` (boolean) -- whether to check that the system is a Steiner
-      Quadruple System before returning it (`False` by default)
+    - ``check`` -- boolean (default: ``False``); whether to check that the
+      system is a Steiner Quadruple System before returning it
 
     EXAMPLES::
 

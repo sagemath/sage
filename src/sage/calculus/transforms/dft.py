@@ -717,8 +717,8 @@ class IndexedSequence(SageObject):
           * ``'bspline_centered'``
 
         - ``wavelet_k`` -- for daubechies wavelets, ``wavelet_k`` specifies a
-          daubechie wavelet with `k/2` vanishing moments.
-          `k = 4,6,...,20` for `k` even are the only ones implemented.
+          daubechie wavelet with `k/2` vanishing moments;
+          `k = 4,6,...,20` for `k` even are the only ones implemented
 
           For Haar wavelets, ``wavelet_k`` must be 2.
 
@@ -783,8 +783,8 @@ class IndexedSequence(SageObject):
           * ``'bspline_centered'``
 
         - ``wavelet_k`` -- for daubechies wavelets, ``wavelet_k`` specifies a
-          daubechie wavelet with `k/2` vanishing moments.
-          `k = 4,6,...,20` for `k` even are the only ones implemented.
+          daubechie wavelet with `k/2` vanishing moments;
+          `k = 4,6,...,20` for `k` even are the only ones implemented
 
           For Haar wavelets, ``wavelet_k`` must be 2.
 

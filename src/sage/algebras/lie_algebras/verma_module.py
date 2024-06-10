@@ -907,7 +907,7 @@ class VermaModuleMorphism(Morphism):
         INPUT:
 
         - ``self``, ``right`` -- maps
-        - homset -- a homset
+        - ``homset`` -- a homset
 
         ASSUMPTION:
 

@@ -652,7 +652,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - `x` -- an element of `A` that projects on an idempotent
+            - ``x`` -- an element of `A` that projects on an idempotent
               `\overline x` of the semisimple quotient of `A`.
               Alternatively one may give as input the idempotent
               `\overline{x}`, in which case some lift thereof will be
@@ -847,7 +847,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``side`` -- 'left' or 'right' (default: 'left')
+            - ``side`` -- 'left' or 'right' (default: ``'left'``)
 
             OUTPUT: a list of subspaces of ``self``
 
@@ -1171,7 +1171,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``base_ring`` -- the base ring for the matrix to be constructed
             - ``action`` -- a bivariate function (default: :func:`operator.mul`)
-            - ``side`` -- 'left' or 'right' (default: 'left')
+            - ``side`` -- 'left' or 'right' (default: ``'left'``)
 
             EXAMPLES::
 

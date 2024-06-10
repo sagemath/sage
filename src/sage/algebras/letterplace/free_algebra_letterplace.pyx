@@ -326,7 +326,7 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         INPUT:
 
-        - `i` -- an integer
+        - ``i`` -- integer
 
         OUTPUT: the generator with index `i`
 

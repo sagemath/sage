@@ -187,9 +187,7 @@ def dual_GQ_ovoid(GQ, O):
 
     - ``O`` -- iterable; the iterable of blocks we want to compute the dual
 
-    OUTPUT:
-
-    A pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
+    OUTPUT: a pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
     ``S`` is the dual of ``O``
 
     EXAMPLES::
@@ -248,7 +246,7 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
 
     A pair ``(D, O)`` where ``D`` is an IncidenceStructure representing the
     generalised quadrangle and ``O`` is a list of points of ``D`` which
-    constitute an ovoid of ``D``
+    constitute an ovoid of ``D``.
 
     EXAMPLES::
 

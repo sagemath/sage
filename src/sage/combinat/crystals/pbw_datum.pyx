@@ -44,7 +44,7 @@ class PBWDatum():
             sage: from sage.combinat.crystals.pbw_datum import PBWData, PBWDatum
             sage: P = PBWData("A2")
             sage: L = PBWDatum(P, (1,2,1), (1,4,7))
-            sage: TestSuite(L).run(skip="_test_pickling")
+            sage: TestSuite(L).run(skip='_test_pickling')
         """
         self.parent = parent
         self.long_word = tuple(long_word)
@@ -195,7 +195,7 @@ class PBWData(): # UniqueRepresentation?
 
             sage: from sage.combinat.crystals.pbw_datum import PBWData
             sage: P = PBWData(["A",2])
-            sage: TestSuite(P).run(skip="_test_pickling")
+            sage: TestSuite(P).run(skip='_test_pickling')
         """
         self.cartan_type = CartanType(cartan_type)
         self.root_system = RootSystem(self.cartan_type)

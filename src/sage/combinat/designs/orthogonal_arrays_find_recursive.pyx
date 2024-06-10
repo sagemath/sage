@@ -818,11 +818,11 @@ def int_as_sum(int value, list S, int k_max):
 
     INPUT:
 
-    - ``value`` (integer)
+    - ``value`` -- integer
 
-    - ``S`` -- a list of integers
+    - ``S`` -- list of integers
 
-    - ``k_max`` (integer)
+    - ``k_max`` -- integer
 
     EXAMPLES::
 

@@ -396,7 +396,7 @@ class ClusterSeed(SageObject):
 
         - ``use`` -- boolean (default: ``True``); if ``True``, will use
           `c`-vectors
-        - ``bot_is_c`` -- boolean (default: ``False``); If ``True`` and
+        - ``bot_is_c`` -- boolean (default: ``False``); if ``True`` and
           :class:`ClusterSeed` ``self`` has ``self._m == self._n``, then will
           assume bottom half of the extended exchange matrix is the c-matrix.
           If ``True``, lets the :class:`ClusterSeed` know c-vectors can be
@@ -481,7 +481,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``use`` -- boolean (default: ``True``); If ``True``, will use
+        - ``use`` -- boolean (default: ``True``); if ``True``, will use
           g-vectors
 
         EXAMPLES::
@@ -567,7 +567,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``use`` -- boolean (default: ``True``); If ``True``, will use
+        - ``use`` -- boolean (default: ``True``); if ``True``, will use
           `d`-vectors
 
         EXAMPLES::
@@ -753,7 +753,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``use`` -- boolean (default: ``True``); If ``True``, will begin
+        - ``use`` -- boolean (default: ``True``); if ``True``, will begin
           filling the mutation path
 
         EXAMPLES::
@@ -809,7 +809,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``user_labels`` -- The labels that need sanitizing
+        - ``user_labels`` -- the labels that need sanitizing
         - ``user_labels_prefix`` -- (default: ``'x'``) The prefix to use
           for labels if integers given for labels
 
@@ -878,9 +878,9 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``data`` -- The matrix to set the c-matrix to.  Also allowed
+        - ``data`` -- the matrix to set the c-matrix to; also allowed
           to be a quiver or cluster seed, in which case the b-matrix
-          is used.
+          is used
 
         EXAMPLES::
 
@@ -1153,7 +1153,7 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                 # needs sage.plot sage.symbolic
             ....:     S.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular, mark=mark, save_pos=save_pos)
@@ -1221,7 +1221,7 @@ class ClusterSeed(SageObject):
             sage: S.x(2)
             x2
 
-            sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format="list_of_edges")
+            sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format='list_of_edges')
             sage: S = ClusterSeed(dg, frozen=['c'])
             sage: S.x(0)
             a
@@ -1260,7 +1260,7 @@ class ClusterSeed(SageObject):
             sage: S.y(2)
             y2
 
-            sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format="list_of_edges")
+            sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format='list_of_edges')
             sage: S = ClusterSeed(dg, frozen=['c'])
             sage: S.y(0)
             c
@@ -1984,7 +1984,7 @@ class ClusterSeed(SageObject):
         r"""
         Return the list of green vertices of ``self``.
 
-        A vertex is defined to be green if its c-vector has all non-positive
+        A vertex is defined to be green if its c-vector has all nonpositive
         entries. More information on green vertices can be found at [BDP2013]_
 
         OUTPUT: the green vertices as a list of integers
@@ -2008,7 +2008,7 @@ class ClusterSeed(SageObject):
         r"""
         Return the first green vertex of ``self``.
 
-        A vertex is defined to be green if its c-vector has all non-positive entries.
+        A vertex is defined to be green if its c-vector has all nonpositive entries.
         More information on green vertices can be found at [BDP2013]_
 
         EXAMPLES::
@@ -2033,7 +2033,7 @@ class ClusterSeed(SageObject):
         r"""
         Return the list of red vertices of ``self``.
 
-        A vertex is defined to be red if its c-vector has all non-negative entries.
+        A vertex is defined to be red if its c-vector has all nonnegative entries.
         More information on red vertices can be found at [BDP2013]_.
 
         OUTPUT: the red vertices as a list of integers
@@ -2062,7 +2062,7 @@ class ClusterSeed(SageObject):
         r"""
         Return the first red vertex of ``self``.
 
-        A vertex is defined to be red if its c-vector has all non-negative entries.
+        A vertex is defined to be red if its c-vector has all nonnegative entries.
         More information on red vertices can be found at [BDP2013]_.
 
         EXAMPLES::
@@ -2139,7 +2139,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``filter`` -- a list or iterable
+        - ``filter`` -- list or iterable
 
         OUTPUT: integer
 
@@ -2285,14 +2285,14 @@ class ClusterSeed(SageObject):
 
         Possible values for vertex types in ``sequence`` are:
 
-        - ``"first_source"``: mutates at first found source vertex,
-        - ``"sources"``: mutates at all sources,
-        - ``"first_sink"``: mutates at first sink,
-        - ``"sinks"``: mutates at all sink vertices,
-        - ``"green"``: mutates at the first green vertex,
-        - ``"red"``: mutates at the first red vertex,
-        - ``"urban_renewal"`` or ``"urban"``: mutates at first urban renewal vertex,
-        - ``"all_urban_renewals"`` or ``"all_urban"``: mutates at all
+        - ``'first_source'``: mutates at first found source vertex,
+        - ``'sources'``: mutates at all sources,
+        - ``'first_sink'``: mutates at first sink,
+        - ``'sinks'``: mutates at all sink vertices,
+        - ``'green'``: mutates at the first green vertex,
+        - ``'red'``: mutates at the first red vertex,
+        - ``'urban_renewal'`` or ``'urban'``: mutates at first urban renewal vertex,
+        - ``'all_urban_renewals'`` or ``'all_urban'``: mutates at all
           urban renewal vertices.
 
         For ``input_type``, if no value is given, preference will
@@ -2300,9 +2300,9 @@ class ClusterSeed(SageObject):
         If all input is not of the same type, an error is given.
         Possible values for ``input_type`` are:
 
-        - ``"vertices"``: interprets the input sequence as vertices
-        - ``"indices"``: interprets the input sequence as indices
-        - ``"cluster_vars"``: interprets the input sequence as cluster variables
+        - ``'vertices'``: interprets the input sequence as vertices
+        - ``'indices'``: interprets the input sequence as indices
+        - ``'cluster_vars'``: interprets the input sequence as cluster variables
           this must be selected if inputting a sequence of cluster variables.
 
         EXAMPLES::
@@ -2436,7 +2436,7 @@ class ClusterSeed(SageObject):
              Mutating at vertices by default.
             sage: S.cluster()
             [(x2 + 1)/x1, x2, c]
-            sage: S.mutate(1, input_type="indices")
+            sage: S.mutate(1, input_type='indices')
             sage: S.cluster()
             [(x2 + 1)/x1, (x2*c + x1 + c)/(x1*x2), c]
 
@@ -2449,7 +2449,7 @@ class ClusterSeed(SageObject):
              Mutating at vertices by default.
             sage: S.cluster()
             [(a*c*d + 1)/b, a, c, d]
-            sage: S.mutate('a', input_type="cluster_vars")
+            sage: S.mutate('a', input_type='cluster_vars')
             sage: S.cluster()
             [(a*c*d + 1)/b, (a*c*d + b + 1)/(a*b), c, d]
             sage: S.mutate(['(a*c*d + 1)/b', 'd'])
@@ -2613,7 +2613,7 @@ class ClusterSeed(SageObject):
                 index_list = []
                 for cluster_var in seqq:
                     new_index = mutation_seed.cluster_index(cluster_var)
-                    mutation_seed.mutate(new_index, input_type="indices")
+                    mutation_seed.mutate(new_index, input_type='indices')
                     index_list.append(new_index)
             except (ValueError, TypeError):
                 raise ValueError('input interpreted as cluster variables,'
@@ -2712,24 +2712,24 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``sequence`` -- an iterable of vertices of self.
+        - ``sequence`` -- an iterable of vertices of self
 
         - ``show_sequence`` -- boolean (default: ``False``); if ``True``, a png
-          containing the associated quivers is shown.
+          containing the associated quivers is shown
 
         - ``fig_size`` -- (default: 1.2) factor by which the size of
-          the plot is multiplied.
+          the plot is multiplied
 
         - ``return_output`` -- (default: ``'seed'``) determines what output
           is to be returned:
 
           * if ``'seed'``, outputs all the cluster seeds obtained
-            by the ``sequence`` of mutations.
+            by the ``sequence`` of mutations
 
-          * if ``'matrix'``, outputs a list of exchange matrices.
+          * if ``'matrix'``, outputs a list of exchange matrices
 
           * if ``'var'``, outputs a list of new cluster variables obtained
-            at each step.
+            at each step
 
         EXAMPLES::
 
@@ -2785,20 +2785,20 @@ class ClusterSeed(SageObject):
 
         Possible options are:
 
-        - ``"all"`` -- All options below
-        - ``"edges"`` -- Number of edges (works with skew-symmetric quivers)
-        - ``"edge_diff"`` -- Edges added/deleted (works with skew-symmetric quivers)
-        - ``"green_vertices"`` -- List of green vertices (works with principals)
-        - ``"green_vertices_diff"`` -- Green vertices added/removed (works with principals)
-        - ``"red_vertices"`` -- List of red vertices (works with principals)
-        - ``"red_vertices_diff"`` -- Red vertices added/removed (works with principals)
-        - ``"urban_renewals"`` -- List of urban renewal vertices
-        - ``"urban_renewals_diff"`` -- Urban renewal vertices added/removed
-        - ``"sources"`` -- List of source vertices
-        - ``"sources_diff"`` -- Source vertices added/removed
-        - ``"sinks"`` -- List of sink vertices
-        - ``"sinks_diff"`` -- Sink vertices added/removed
-        - ``"denominators"`` -- List of all denominators of the cluster variables
+        - ``'all'`` -- all options below
+        - ``'edges'`` -- number of edges (works with skew-symmetric quivers)
+        - ``'edge_diff'`` -- edges added/deleted (works with skew-symmetric quivers)
+        - ``'green_vertices'`` -- list of green vertices (works with principals)
+        - ``'green_vertices_diff'`` -- green vertices added/removed (works with principals)
+        - ``'red_vertices'`` -- list of red vertices (works with principals)
+        - ``'red_vertices_diff'`` -- red vertices added/removed (works with principals)
+        - ``'urban_renewals'`` -- list of urban renewal vertices
+        - ``'urban_renewals_diff'`` -- urban renewal vertices added/removed
+        - ``'sources'`` -- list of source vertices
+        - ``'sources_diff'`` -- source vertices added/removed
+        - ``'sinks'`` -- list of sink vertices
+        - ``'sinks_diff'`` -- sink vertices added/removed
+        - ``'denominators'`` -- list of all denominators of the cluster variables
 
         OUTPUT:
 
@@ -3270,7 +3270,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``cluster`` -- an iterable defining a cluster for ``self``.
+        - ``cluster`` -- an iterable defining a cluster for ``self``
 
         EXAMPLES::
 
@@ -3581,7 +3581,7 @@ class ClusterSeed(SageObject):
                     # If we aren't only sinking the source
                     if not only_sink_source or all(entry >= 0 for entry in sd[0]._M.row(i)) or all(entry <= 0 for entry in sd[0]._M.row(i)):
                         # do an inplace mutation on our cluster (sd[0])
-                        sd2 = sd[0].mutate(i, inplace=False, input_type="indices")
+                        sd2 = sd[0].mutate(i, inplace=False, input_type='indices')
 
                         # set up our new cluster variables
                         if up_to_equivalence:
@@ -3740,7 +3740,7 @@ class ClusterSeed(SageObject):
 
         For a cluster seed from an arbitrarily labelled digraph::
 
-            sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format="list_of_edges")
+            sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format='list_of_edges')
             sage: S = ClusterSeed(dg, frozen=['b'])
             sage: S.cluster_class()
             [[a, c], [a, (b + 1)/c], [(b + 1)/a, c], [(b + 1)/a, (b + 1)/c]]
@@ -3874,7 +3874,7 @@ class ClusterSeed(SageObject):
 
         For a cluster seed from an arbitrarily labelled digraph::
 
-            sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format="list_of_edges")
+            sage: dg = DiGraph([['a', 'b'], ['b', 'c']], format='list_of_edges')
             sage: S = ClusterSeed(dg, frozen=['b'])
             sage: S.b_matrix_class()
             [
@@ -4477,8 +4477,8 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``B`` -- a skew-symmetric matrix. Must have the same number of columns
-          as the length of the vectors in `vd`.
-        - ``a`` -- a vector in `\ZZ^n` where `n` is the number of columns in `B`.
+          as the length of the vectors in `vd`
+        - ``a`` -- a vector in `\ZZ^n` where `n` is the number of columns in `B`
 
         OUTPUT: return an element in the upper cluster algebra. Depending on the input it may or may not be irreducible
 
@@ -4524,9 +4524,9 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``B`` -- a skew-symmetric matrix.
+        - ``B`` -- a skew-symmetric matrix
         - ``size_limit`` -- a limit on how many vectors you want
-          the function to return.
+          the function to return
 
         OUTPUT: an array of elements in the upper cluster algebra
 
@@ -4566,14 +4566,13 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``B`` -- a skew-symmetric matrix. Must have the same number of columns
-          as the length of the vectors in ``vd``.
+          as the length of the vectors in ``vd``
         - ``vd`` -- a collection of tuples `(v,z)` with `v \in \{0,1\}^n` and `z \in \ZZ`.
           `n` must be the number of columns in `B`. Taken from the output of
           :func:`_vector_decomposition`.
 
-        OUTPUT:
-
-        a 2-dimensional array containing all the vectors compatible with each vector in ``vd.``
+        OUTPUT: a 2-dimensional array containing all the vectors compatible
+        with each vector in ``vd.``
 
         .. NOTE::
 
@@ -4643,7 +4642,7 @@ class ClusterSeed(SageObject):
             if any(am < 0 for am in a[0]):
                 compatibleList.append([])
                 continue
-                # If the vector a in vd is non-positive, it is not compatible
+                # If the vector a in vd is nonpositive, it is not compatible
                 # with any vector. 0 vector will pass this check but will be
                 # handled later.
             clist = []
@@ -4902,7 +4901,7 @@ def get_green_vertices(C):
 
     INPUT:
 
-    - ``C`` -- The C-matrix to check
+    - ``C`` -- the C-matrix to check
 
     EXAMPLES::
 
@@ -4923,7 +4922,7 @@ def get_red_vertices(C):
 
     INPUT:
 
-    - ``C`` -- The C-matrix to check
+    - ``C`` -- the C-matrix to check
 
     EXAMPLES::
 
@@ -4941,7 +4940,7 @@ def _vector_decomposition(a, length):
 
     INPUT:
 
-    - `a` -- a vector in `\ZZ^n`
+    - ``a`` -- a vector in `\ZZ^n`
 
     OUTPUT:
 
@@ -5032,7 +5031,7 @@ def _power_set(n):
 
     INPUT:
 
-    - `n` -- an integer.
+    - ``n`` -- integer
 
     OUTPUT:
 

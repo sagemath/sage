@@ -410,7 +410,7 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``indices`` -- list, row indices to be found in the solution
+        - ``indices`` -- list; row indices to be found in the solution
 
         OUTPUT: dancing links solver
 
@@ -486,7 +486,7 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``column`` -- integer, the column used to split the problem into
+        - ``column`` -- integer; the column used to split the problem into
           independent subproblems
 
         OUTPUT: dict where keys are row numbers and values are dlx solvers
@@ -578,12 +578,12 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``ncpus`` -- integer (default: ``None``), maximal number of
+        - ``ncpus`` -- integer (default: ``None``); maximal number of
           subprocesses to use at the same time. If ``None``, it detects the
           number of effective CPUs in the system using
           :func:`sage.parallel.ncpus.ncpus()`.
           If ``ncpus=1``, the first solution is searched serially.
-        - ``column`` -- integer (default: ``None``), the column used to split
+        - ``column`` -- integer (default: ``None``); the column used to split
           the problem (see :meth:`restrict`). If ``None``, a random column
           is chosen. This argument is ignored if ``ncpus=1``.
 
@@ -679,11 +679,11 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``ncpus`` -- integer (default: ``None``), maximal number of
+        - ``ncpus`` -- integer (default: ``None``); maximal number of
           subprocesses to use at the same time. If ``None``, it detects the
           number of effective CPUs in the system using
           :func:`sage.parallel.ncpus.ncpus()`.
-        - ``column`` -- integer (default: ``None``), the column used to split
+        - ``column`` -- integer (default: ``None``); the column used to split
           the problem, if ``None`` a random column is chosen
 
         OUTPUT: list of solutions
@@ -794,13 +794,13 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``ncpus`` -- integer (default: ``None``), maximal number of
+        - ``ncpus`` -- integer (default: ``None``); maximal number of
           subprocesses to use at the same time. If ``ncpus>1`` the dancing
           links problem is split into independent subproblems to allow
           parallel computation. If ``None``, it detects the number of
           effective CPUs in the system using
           :func:`sage.parallel.ncpus.ncpus()`.
-        - ``column`` -- integer (default: ``None``), the column used to split
+        - ``column`` -- integer (default: ``None``); the column used to split
           the problem, if ``None`` a random column is chosen (this argument
           is ignored if ``ncpus`` is ``1``)
 

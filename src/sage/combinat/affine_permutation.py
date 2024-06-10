@@ -675,11 +675,11 @@ class AffinePermutationTypeA(AffinePermutation):
           (default: ``'decreasing'``); chooses whether to find increasing
           or decreasing sets
 
-        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) chooses
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``); chooses
           whether to find maximal sets starting from the left or the right
 
-        - ``verbose`` -- boolean;  If ``True``, outputs information about how
-          the cyclically increasing element was found.
+        - ``verbose`` -- boolean;  if ``True``, outputs information about how
+          the cyclically increasing element was found
 
         EXAMPLES::
 

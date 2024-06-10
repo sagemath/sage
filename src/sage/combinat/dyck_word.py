@@ -3871,7 +3871,7 @@ class CompleteDyckWords(DyckWords):
         INPUT:
 
         - ``code`` -- list of integers satisfying ``code[0] == 0``
-          and ``0 <= code[i+1] <= code[i]+1``.
+          and ``0 <= code[i+1] <= code[i]+1``
 
         EXAMPLES::
 

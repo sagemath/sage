@@ -92,7 +92,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `n` -- an integer with `n \geq 2`
+        - ``n`` -- integer with `n \geq 2`
 
         EXAMPLES::
 

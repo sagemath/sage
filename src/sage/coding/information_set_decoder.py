@@ -439,8 +439,8 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
 
         INPUT:
 
-        - `r` -- a received word, i.e. a vector in the ambient space of
-          :meth:`decoder.Decoder.code`.
+        - ``r`` -- a received word, i.e. a vector in the ambient space of
+          :meth:`decoder.Decoder.code`
 
         OUTPUT: a codeword whose distance to `r` satisfies ``self.decoding_interval()``.
 
@@ -606,8 +606,8 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
 
         INPUT:
 
-        - `estimates` -- list of time estimates, for the search size set to the
-                        index of the list entry.
+        - ``estimates`` -- list of time estimates, for the search size set to the
+          index of the list entry
 
         OUTPUT: none, but sets the private fields `self._parameters` and
         `self._time_estimate`.

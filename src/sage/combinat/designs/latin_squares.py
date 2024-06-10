@@ -199,7 +199,7 @@ def are_mutually_orthogonal_latin_squares(l, verbose=False):
             return False
 
     from .designs_pyx import is_orthogonal_array
-    return is_orthogonal_array(list(zip(*[[x for R in M for x in R] for M in l])),k,n, verbose=verbose, terminology="MOLS")
+    return is_orthogonal_array(list(zip(*[[x for R in M for x in R] for M in l])),k,n, verbose=verbose, terminology='MOLS')
 
 
 def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
@@ -211,12 +211,12 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
     INPUT:
 
-    - ``k`` (integer) -- number of MOLS. If ``k=None`` it is set to the largest
-      value available.
+    - ``k`` -- integer; number of MOLS. If ``k=None`` it is set to the largest
+      value available
 
-    - ``n`` (integer) -- size of the latin square.
+    - ``n`` -- integer; size of the latin square
 
-    - ``partitions`` (boolean) -- a Latin Square can be seen as 3 partitions of
+    - ``partitions`` -- boolean; a Latin Square can be seen as 3 partitions of
       the `n^2` cells of the array into `n` sets of size `n`, respectively:
 
       * The partition of rows
@@ -460,16 +460,16 @@ def MOLS_table(start,stop=None,compare=False,width=None):
 
     INPUT:
 
-    - ``start``, ``stop`` (integers) -- print the table of MOLS for value of
+    - ``start``, ``stop`` -- integers; print the table of MOLS for value of
       `n` such that ``start<=n<stop``. If only one integer is given as input,
       it is interpreted as the value of ``stop`` with ``start=0`` (same
       behaviour as ``range``).
 
-    - ``compare`` (boolean) -- if sets to ``True`` the MOLS displays
+    - ``compare`` -- boolean; if sets to ``True`` the MOLS displays
       with `+` and `-` entries its difference with the table from the
       Handbook of Combinatorial Designs (2ed).
 
-    - ``width`` (integer) -- the width of each column of the table. By default,
+    - ``width`` -- integer; the width of each column of the table. By default,
       it is computed from range of values determined by the parameters ``start``
       and ``stop``.
 

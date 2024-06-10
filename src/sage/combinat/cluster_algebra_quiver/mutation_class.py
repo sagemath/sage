@@ -68,7 +68,7 @@ def _digraph_mutate(dg, k, frozen=None):
 
     - ``dg`` -- a digraph with integral edge labels with ``n+m`` vertices
     - ``k`` -- the vertex at which ``dg`` is mutated
-    - ``frozen`` -- the list of frozen vertices (default is the empty list)
+    - ``frozen`` -- the list of frozen vertices (default: empty list)
 
     EXAMPLES::
 
@@ -197,9 +197,7 @@ def _dg_canonical_form(dg, frozen=None):
 
     - ``frozen`` -- list (default: ``[]``) of frozen vertices
 
-    OUTPUT:
-
-    - dictionary {original label: canonical label}
+    OUTPUT: dictionary {original label: canonical label}
 
     - list of orbits of mutable vertices (using canonical labels)
 
@@ -288,7 +286,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
       string data
     - ``show_depth`` -- if ``True``, indicates that a running count of the
       depth is to be displayed
-    - ``up_to_equivalence``  -- if ``True``, only one digraph for each
+    - ``up_to_equivalence`` -- if ``True``, only one digraph for each
       graph-isomorphism class is recorded
     - ``sink_source`` -- if ``True``, only mutations at sinks or sources are
       applied

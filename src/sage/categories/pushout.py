@@ -428,7 +428,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
 
     INPUT:
 
-    ``F1, F2,...``: A list of Construction Functors. The result is the
+    ``F1, F2,...`` -- A list of Construction Functors. The result is the
     composition ``F1`` followed by ``F2`` followed by ...
 
     EXAMPLES::
@@ -1752,8 +1752,8 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
         """
         INPUT:
 
-        - ``var``, a string or a list of strings
-        - ``multi_variate``, optional bool, default ``False`` if ``var`` is a string
+        - ``var`` -- a string or a list of strings
+        - ``multi_variate`` -- optional bool, default ``False`` if ``var`` is a string
           and ``True`` otherwise: If ``True``, application to a Laurent polynomial
           ring yields a multivariate Laurent polynomial ring.
 
@@ -1899,11 +1899,11 @@ class VectorFunctor(ConstructionFunctor):
         """
         INPUT:
 
-        - ``n``, the rank of the to-be-created modules (nonnegative integer)
-        - ``is_sparse`` (optional bool, default ``False``), create sparse implementation of modules
-        - ``inner_product_matrix``: ``n`` by ``n`` matrix, used to compute inner products in the
+        - ``n`` -- the rank of the to-be-created modules (nonnegative integer)
+        - ``is_sparse`` -- (optional bool, default ``False``), create sparse implementation of modules
+        - ``inner_product_matrix`` -- ``n`` by ``n`` matrix, used to compute inner products in the
           to-be-created modules
-        - ``name_mapping``, ``latex_name_mapping``: Dictionaries from base rings to names
+        - ``name_mapping``, ``latex_name_mapping`` -- Dictionaries from base rings to names
         - other keywords: see :func:`~sage.modules.free_module.FreeModule`
 
         TESTS::
@@ -2224,7 +2224,7 @@ class SubspaceFunctor(ConstructionFunctor):
         """
         INPUT:
 
-        ``basis``: a list of elements of a free module.
+        ``basis`` -- a list of elements of a free module.
 
         TESTS::
 
@@ -2548,14 +2548,15 @@ class CompletionFunctor(ConstructionFunctor):
         """
         INPUT:
 
-        - ``p``: A prime number, the generator of a univariate polynomial ring, or ``+Infinity``
+        - ``p`` -- prime number, the generator of a univariate polynomial ring,
+          or ``+Infinity``
 
-        - ``prec``: an integer, yielding the precision in bits. Note that
+        - ``prec`` -- integer; yielding the precision in bits. Note that
           if ``p`` is prime then the ``prec`` is the *capped* precision,
           while it is the *set* precision if ``p`` is ``+Infinity``.
           In the ``lattice-cap`` precision case, ``prec`` will be a tuple instead.
 
-        - ``extras`` (optional dictionary): Information on how to print elements, etc.
+        - ``extras`` -- dictionary (optional); information on how to print elements, etc.
           If 'type' is given as a key, the corresponding value should be a string among
           the following:
 
@@ -2898,15 +2899,15 @@ class QuotientFunctor(ConstructionFunctor):
         """
         INPUT:
 
-        - ``I``, an ideal (the modulus)
-        - ``names`` (optional string or list of strings), the names for the
+        - ``I`` -- an ideal (the modulus)
+        - ``names`` -- string or list of strings (optional); the names for the
           quotient ring generators
-        - ``as_field`` (optional bool, default false), return the quotient
-          ring as field (if available).
-        - ``domain`` (optional category, default ``Rings()``), the domain of
-          this functor.
-        - ``codomain`` (optional category, default ``Rings()``), the codomain
-          of this functor.
+        - ``as_field`` -- boolean (default: ``False``); return the quotient
+          ring as field (if available)
+        - ``domain`` -- category (default: ``Rings()``); the domain of
+          this functor
+        - ``codomain`` -- category (default: ``Rings()``); the codomain
+          of this functor
         - Further named arguments. In particular, an implementation of the
           quotient can be suggested here.  These named arguments are passed to
           the quotient construction.

@@ -1374,7 +1374,7 @@ class TransducerGenerators:
         - ``base`` -- base of the digit expansion
 
         - ``function`` -- symbolic function ``f`` occurring in the
-          recursions.
+          recursions
 
         - ``var`` -- symbolic variable
 

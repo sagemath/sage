@@ -132,9 +132,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             r"""
             Return the empty composition.
 
-            OUTPUT:
-
-            - The empty composition.
+            OUTPUT: the empty composition
 
             EXAMPLES::
 
@@ -243,7 +241,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             INPUT:
 
             - ``composition`` -- a composition
-            - ``conjugate`` -- (default: ``False``) a boolean
+            - ``conjugate`` -- boolean (default: ``False``)
 
             OUTPUT:
 
@@ -633,8 +631,8 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             INPUT:
 
-            - ``basis`` -- A basis of the dual Hopf algebra
-            - ``degree`` -- a non-negative integer
+            - ``basis`` -- a basis of the dual Hopf algebra
+            - ``degree`` -- a nonnegative integer
 
             OUTPUT:
 
@@ -857,9 +855,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             - ``y`` -- an element of the dual Hopf algebra of ``self``
 
-            OUTPUT:
-
-            - The result of pairing ``self`` with ``y``.
+            OUTPUT: the result of pairing ``self`` with ``y``
 
             EXAMPLES::
 
@@ -893,11 +889,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             INPUT:
 
             - ``y`` -- an element of the dual Hopf algebra of ``self``
-            - ``side`` -- (Default='left') Either 'left' or 'right'
+            - ``side`` -- (default=``'left'``) Either 'left' or 'right'
 
-            OUTPUT:
-
-            - The result of skewing ``self`` by ``y``, on the side ``side``
+            OUTPUT: the result of skewing ``self`` by ``y``, on the side ``side``
 
             EXAMPLES:
 
@@ -1008,13 +1002,11 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
         - ``domain`` -- an algebra with a multiplicative basis
         - ``on_generators`` -- a function defined on the index set of the generators
         - ``codomain`` -- the codomain
-        - ``position`` -- integer; default is 0
-        - ``category`` -- a category; defaults to None
-        - ``anti`` -- a boolean; defaults to False
+        - ``position`` -- integer (default: 0)
+        - ``category`` -- a category (default: ``None``)
+        - ``anti`` -- boolean (default: False)
 
-        OUTPUT:
-
-        - module morphism
+        OUTPUT: module morphism
 
         EXAMPLES:
 
@@ -1139,9 +1131,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
 
         - ``c`` -- an iterable that spits out generators
 
-        OUTPUT:
-
-        - element of the codomain
+        OUTPUT: element of the codomain
 
         EXAMPLES::
 
@@ -1426,9 +1416,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 - ``left`` -- an element of the non-commutative symmetric functions
                 - ``right`` -- an element of the non-commutative symmetric functions
 
-                OUTPUT:
-
-                - The internal product of ``left`` and ``right``.
+                OUTPUT: the internal product of ``left`` and ``right``
 
                 EXAMPLES::
 

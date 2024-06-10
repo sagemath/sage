@@ -919,7 +919,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - `n` -- a positive integer
+        - ``n`` -- positive integer
         - ``indices`` -- boolean (default: ``False``)
 
         If ``indices`` is ``False`` (default),

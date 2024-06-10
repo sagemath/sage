@@ -445,7 +445,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``equivalence`` (optional) -- which defines the acting group, either
+        - ``equivalence`` -- optional; defines the acting group, either
 
           * ``'permutational'``
 
@@ -745,7 +745,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``equivalence`` (optional) -- which defines the acting group, either
+        - ``equivalence`` -- optional; defines the acting group, either
 
           * ``'permutational'``
 

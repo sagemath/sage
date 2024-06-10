@@ -977,7 +977,7 @@ cdef class Map(Element):
         INPUT:
 
         - ``self``, ``right`` -- maps
-        - homset -- a homset
+        - ``homset`` -- a homset
 
         ASSUMPTION:
 

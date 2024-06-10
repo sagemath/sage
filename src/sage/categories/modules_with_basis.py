@@ -284,8 +284,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               As a shorthand, one may use ``unitriangular="lower"``
               for ``triangular='lower', unitriangular=True``.
 
-            - ``side`` -- "left" or "right" (default: "left")
-              Only meaningful for a morphism built from a matrix.
+            - ``side`` -- "left" or "right" (default: ``'left'``);
+              only meaningful for a morphism built from a matrix
 
             EXAMPLES:
 

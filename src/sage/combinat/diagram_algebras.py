@@ -941,7 +941,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
           are connected, and
 
         - ``pi`` --  is a permutation that is to be interpreted as the relative
-          order of the remaining elements in the top row and the bottom row.
+          order of the remaining elements in the top row and the bottom row
 
         EXAMPLES::
 

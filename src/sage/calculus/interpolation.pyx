@@ -311,7 +311,7 @@ cdef class Spline:
 
         - ``x`` -- value at which to evaluate the derivative
 
-        - ``order`` (default: 1) -- order of the derivative. Must be 1 or 2.
+        - ``order`` -- (default: 1) order of the derivative; must be 1 or 2
 
         EXAMPLES:
 

@@ -318,9 +318,9 @@ class Posets(Category):
 
             INPUT:
 
-            - elements -- list of elements
+            - ``elements`` -- list of elements
 
-            - direction -- 'up' or 'down'
+            - ``direction`` -- 'up' or 'down'
 
             EXAMPLES::
 

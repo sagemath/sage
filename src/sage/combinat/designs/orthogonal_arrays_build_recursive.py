@@ -49,11 +49,11 @@ def construction_3_3(k,n,m,i,explain_construction=False):
 
     INPUT:
 
-    - ``k``, ``n``, ``m``, ``i`` (integers) such that the following designs are
-      available: `OA(k,n)`, `OA(k,m)`, `OA(k,m+1)`, `OA(k,r)`.
+    - ``k``, ``n``, ``m``, ``i`` -- integers such that the following designs are
+      available: `OA(k,n)`, `OA(k,m)`, `OA(k,m+1)`, `OA(k,r)`
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     .. SEEALSO::
 
@@ -123,8 +123,8 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
       `OA(k,m+1)`, `OA(k,m+2)`, `OA(k,s)`. Additionally, it requires either a
       `OA(k,m+r)` or a `OA(k,m+r+1)`.
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     .. SEEALSO::
 
@@ -190,13 +190,13 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
 
     INPUT:
 
-    - ``k``, ``n``, ``m`` (integers)
+    - ``k``, ``n``, ``m`` -- integers
 
-    - ``r``, ``s``, ``t`` (integers) -- sizes of the three truncated groups,
-      such that `r\leq s` and `(q-r-1)(q-s) \geq (q-s-1)*(q-r)`.
+    - ``r``, ``s``, ``t`` -- integers; sizes of the three truncated groups,
+      such that `r\leq s` and `(q-r-1)(q-s) \geq (q-s-1)*(q-r)`
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     The following designs must be available : `OA(k,n)`, `OA(k,r)`, `OA(k,s)`,
     `OA(k,t)`, `OA(k,m+1)`, `OA(k,m+2)`, `OA(k,m+3)`.
@@ -283,12 +283,12 @@ def construction_3_6(k,n,m,i,explain_construction=False):
 
     INPUT:
 
-    - ``k``, ``n``, ``m``, ``i`` (integers) -- `n` must be a prime power. The
+    - ``k``, ``n``, ``m``, ``i`` -- integers; `n` must be a prime power. The
       following designs must be available: `OA(k+r,q)`, `OA(k,m)`, `OA(k,m+1)`,
-      `OA(k,m+2)`.
+      `OA(k,m+2)`
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     This is construction 3.6 from [AC07]_.
 
@@ -355,7 +355,7 @@ def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
-      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
     .. NOTE::
 
@@ -487,8 +487,8 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
       guys), you may want to disable it whenever you want speed. Set to
       ``True`` by default.
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     .. SEEALSO::
 
@@ -637,14 +637,14 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
     INPUT:
 
     - ``k``, ``n``, ``m``, ``a``, ``b``, ``c``, ``d`` -- integers which must
-      satisfy the constraints above. In particular, `a+b+c\leq n+1` must hold.
+      satisfy the constraints above. In particular, `a+b+c\leq n+1` must hold
       By default, `d=0`.
 
-    - ``complement`` (boolean) -- whether to complement the sets, i.e. follow
-      the `n-a,n-b,n-c` variant described above.
+    - ``complement`` -- boolean; whether to complement the sets, i.e. follow
+      the `n-a,n-b,n-c` variant described above
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     .. SEEALSO::
 
@@ -777,10 +777,10 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
     INPUT:
 
-    - ``k``, ``n``, ``m`` (integers)
+    - ``k``, ``n``, ``m`` -- integers
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     .. SEEALSO::
 
@@ -949,14 +949,14 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
     INPUT:
 
-    - ``k``, ``n1``, ``n2``, ``n3`` (integers)
+    - ``k``, ``n1``, ``n2``, ``n3`` -- integers
 
     - ``check`` -- (boolean) Whether to check that everything is going smoothly
       while the design is being built. It is disabled by default, as the
       constructor of orthogonal arrays checks the final design anyway.
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     .. SEEALSO::
 
@@ -1187,7 +1187,7 @@ def _reorder_matrix(matrix):
     g.add_edges((x,N+i) for i,S in enumerate(matrix) for x in S)
     matrix = []
     for _ in range(k):
-        matching = g.matching(algorithm="LP")
+        matching = g.matching(algorithm='LP')
         col = [0]*N
         for x,i,_ in matching:
             if i < N:
@@ -1323,16 +1323,16 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
 
     INPUT:
 
-    - ``k``, ``t``, ``q``, ``x`` (integers)
+    - ``k``, ``t``, ``q``, ``x`` -- integers
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. Set to ``False`` by default.
+    - ``check`` -- boolean (default: ``False``); whether to check that output
+      is correct before returning it
 
-    - ``verbose`` (boolean) -- whether to print some information on the
-      construction and parameters being used.
+    - ``verbose`` -- boolean; whether to print some information on the
+      construction and parameters being used
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     .. SEEALSO::
 

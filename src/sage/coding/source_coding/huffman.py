@@ -266,7 +266,7 @@ class Huffman(SageObject):
 
         - ``d`` -- the dictionary to fill
 
-        - ``prefix`` (string) -- binary string which is the prefix
+        - ``prefix`` -- string; binary string which is the prefix
           of any element of the tree
 
         EXAMPLES::

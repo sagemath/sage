@@ -386,7 +386,7 @@ class FinitePosets(CategoryWithAxiom):
             - ``antichain`` -- an antichain of ``self``, as a list (or
               iterable), or, more generally, generators of an order ideal
               (resp. order filter)
-            - ``direction`` -- 'up' or 'down' (default: 'up')
+            - ``direction`` -- 'up' or 'down' (default: ``'up'``)
 
             OUTPUT:
 

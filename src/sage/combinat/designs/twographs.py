@@ -103,8 +103,8 @@ class TwoGraph(IncidenceStructure):
 
         INPUT:
 
-        - ``alpha`` -- (default: ``False``) return the value of
-          ``alpha``, if possible.
+        - ``alpha`` -- boolean (default: ``False``); return the value of
+          ``alpha``, if possible
 
         EXAMPLES::
 

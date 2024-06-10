@@ -760,7 +760,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
         - ``q`` -- (default: ``None``) a variable or ``None``; if ``None``,
           a variable ``q`` is set in the code
-        - ``group_components`` -- (default: ``True``) boolean; if ``True``,
+        - ``group_components`` -- boolean (default: ``True``); if ``True``,
           then the terms are grouped by classical component
 
         The one-dimensional configuration sum is the sum of the weights
@@ -997,7 +997,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             """
             cartan = self.parent().weight.parent().cartan_type().classical()
             I = cartan.index_set()
-            W = WeylGroup(cartan, prefix='s', implementation="permutation")
+            W = WeylGroup(cartan, prefix='s', implementation='permutation')
             return [W.from_reduced_word(x.to_dominant_chamber(index_set=I, reduced_word=True)[1]) for x in self.value]
 
         @cached_in_parent_method
@@ -1151,7 +1151,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             ct = P.cartan_type()
             cartan = ct.classical()
             Qv = RootSystem(cartan).coroot_lattice()
-            W = WeylGroup(cartan, prefix='s', implementation="permutation")
+            W = WeylGroup(cartan, prefix='s', implementation='permutation')
             J = tuple(weight.weyl_stabilizer())
             L = self.weyl_group_representation()
             if ct.is_untwisted_affine() or ct.type() == 'BC':
@@ -1160,7 +1160,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             else:
                 untwisted = False
                 cartan_dual = cartan.dual()
-                Wd = WeylGroup(cartan_dual, prefix='s', implementation="permutation")
+                Wd = WeylGroup(cartan_dual, prefix='s', implementation='permutation')
                 G = Wd.quantum_bruhat_graph(J)
                 Qd = RootSystem(cartan_dual).root_lattice()
 
@@ -1305,7 +1305,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             - ``i`` -- element of the index set
             - ``power`` -- (default: 1) positive integer; specifies the
               power of the lowering operator to be applied
-            - ``length_only`` -- (default: ``False``) boolean; if ``True``,
+            - ``length_only`` -- boolean (default: ``False``); if ``True``,
               then return the distance to the anti-dominant end of the
               `i`-string of ``self``
 
@@ -1382,7 +1382,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             - ``i`` -- element of the index set
             - ``power`` -- (default: 1) positive integer; specifies the
               power of the lowering operator to be applied
-            - ``length_only`` -- (default: ``False``) boolean; if ``True``,
+            - ``length_only`` -- boolean (default: ``False``); if ``True``,
               then return the distance to the anti-dominant end of the
               `i`-string of ``self``
 

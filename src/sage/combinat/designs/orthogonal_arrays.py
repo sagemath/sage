@@ -81,10 +81,10 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
 
     INPUT:
 
-    - `n,k` -- integers. If ``k is None`` it is set to the largest value
-      available.
+    - ``n``, ``k`` -- integers; if ``k is None`` it is set to the largest value
+      available
 
-    - ``resolvable`` (boolean) -- set to ``True`` if you want the design to be
+    - ``resolvable`` -- boolean; set to ``True`` if you want the design to be
       resolvable (see
       :meth:`sage.combinat.designs.incidence_structures.IncidenceStructure.is_resolvable`). The
       `n` classes of the resolvable design are obtained as the first `n` blocks,
@@ -95,14 +95,14 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
       guys), you may want to disable it whenever you want speed. Set to
       ``True`` by default.
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
           design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
       .. NOTE::
 
@@ -377,12 +377,12 @@ class TransversalDesign(GroupDivisibleDesign):
 
     - ``blocks`` -- collection of blocks
 
-    - ``k``, ``n`` (integers) -- parameters of the transversal design. They can
+    - ``k``, ``n`` -- integers; parameters of the transversal design. They can
       be set to ``None`` (default) in which case their value is determined by
       the blocks.
 
-    - ``check`` (boolean) -- whether to check that the design is indeed a
-      transversal design with the right parameters. Set to ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that the
+      design is indeed a transversal design with the right parameters
 
     EXAMPLES::
 
@@ -514,9 +514,9 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
       of a block are represented by ``None`` values. If ``OA=None``, it is
       defined as a truncated orthogonal arrays with `k+s` columns.
 
-    - ``k``, ``r``, ``m`` (integers)
+    - ``k``, ``r``, ``m`` -- integers
 
-    - ``u`` (list) -- two cases depending on the form to use:
+    - ``u`` -- list; two cases depending on the form to use:
 
         - Simple form: a list of length `s` such that column ``k+i`` has size
           ``u[i]``. The untruncated points of column ``k+i`` are assumed to be
@@ -529,13 +529,12 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
           represent `H_{i0}`, the next `|H_{i1}|` points represent `H_{i1}`,
           etc...
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
-    - ``check`` (boolean) -- whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless (but we
+      are cautious guys), you may want to disable it whenever you want speed.
 
     REFERENCE:
 
@@ -756,32 +755,31 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
 
     - ``t`` -- (integer; default: 2) -- strength of the array
 
-    - ``resolvable`` (boolean) -- set to ``True`` if you want the design to be
-      resolvable. The `n` classes of the resolvable design are obtained as the
-      first `n` blocks, then the next `n` blocks, etc ... Set to ``False`` by
-      default.
+    - ``resolvable`` -- boolean (default: ``False``); set to ``True`` if you
+      want the design to be resolvable. The `n` classes of the resolvable
+      design are obtained as the first `n` blocks, then the next `n` blocks,
+      etc.
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless (but we
+      are cautious guys), you may want to disable it whenever you want speed.
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
           design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
       .. NOTE::
 
           When ``k=None`` and ``existence=True`` the function returns an
           integer, i.e. the largest `k` such that we can build a `OA(k,n)`.
 
-    - ``explain_construction`` (boolean) -- return a string describing
-      the construction.
+    - ``explain_construction`` -- boolean; return a string describing
+      the construction
 
     OUTPUT: the kind of output depends on the input:
 
@@ -1008,15 +1006,15 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
     return OA
 
 
-def largest_available_k(n,t=2):
+def largest_available_k(n, t=2):
     r"""
     Return the largest `k` such that Sage can build an `OA(k,n)`.
 
     INPUT:
 
-    - ``n`` (integer)
+    - ``n`` -- integer
 
-    - ``t`` -- (integer; default: 2) -- strength of the array
+    - ``t`` -- integer (default: 2); strength of the array
 
     EXAMPLES::
 
@@ -1075,22 +1073,22 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
 
     INPUT:
 
-    - ``k``, ``n`` (integers)
+    - ``k``, ``n`` -- integers
 
-    - ``holes`` (list of integers) -- respective sizes of the holes to be found.
+    - ``holes`` -- list of integers respective sizes of the holes to be found
 
-    - ``resolvable`` (boolean) -- set to ``True`` if you want the design to be
-      resolvable. The classes of the resolvable design are obtained as the first
-      `n` blocks, then the next `n` blocks, etc ... Set to ``False`` by default.
+    - ``resolvable`` -- boolean (default: ``False``); set to ``True`` if you
+      want the design to be resolvable. The classes of the resolvable design
+      are obtained as the first `n` blocks, then the next `n` blocks, etc.
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
           design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
     .. NOTE::
 
@@ -1414,7 +1412,7 @@ def OA_find_disjoint_blocks(OA, k, n, x,
 
     - ``OA`` -- an orthogonal array
 
-    - ``k``, ``n``, ``x`` (integers)
+    - ``k``, ``n``, ``x`` -- integers
 
     - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
@@ -1425,7 +1423,7 @@ def OA_find_disjoint_blocks(OA, k, n, x,
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
-      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
     .. SEEALSO::
 
@@ -1479,9 +1477,9 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
     - ``OA`` -- an OA, or rather a list of blocks of length `k`, each
       of which contains integers from `0` to `n-1`.
 
-    - ``k``, ``n`` (integers)
+    - ``k``, ``n`` -- integers
 
-    - ``blocks`` (list of blocks) -- relabels the integers of the OA
+    - ``blocks`` -- list of blocks; relabels the integers of the OA
       from `[0..n-1]` into `[0..n-1]` in such a way that the `i`
       blocks from ``block`` are respectively relabeled as
       ``[n-i,...,n-i]``, ..., ``[n-1,...,n-1]``. Thus, the blocks from
@@ -1499,7 +1497,7 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
 
       If set to ``None`` (default) no such relabelling is performed.
 
-    - ``symbol_list`` -- a list of the desired symbols for the
+    - ``symbol_list`` -- list of the desired symbols for the
       relabelled OA. If this is not ``None``, the same relabelling is
       done on all blocks such that the index of an element in
       symbol_list is its preimage in the relabelling map.
@@ -1567,8 +1565,8 @@ def OA_standard_label(OA):
 
     INPUT:
 
-    - ``OA`` -- a list of lists with symbols as entries that are not
-      necessarily integers.
+    - ``OA`` -- list of lists with symbols as entries that are not
+      necessarily integers
 
     EXAMPLES::
 
@@ -1812,10 +1810,10 @@ def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
 
     - ``G`` -- a group
 
-    - ``add_col`` (boolean) -- whether to add a column to the final OA equal to
+    - ``add_col`` -- boolean; whether to add a column to the final OA equal to
       `(x_1,\dots,x_g,x_1,\dots,x_g,\dots)` where `G=\{x_1,\dots,x_g\}`.
 
-    - ``fill_hole`` (boolean) -- whether to return the incomplete orthogonal
+    - ``fill_hole`` -- boolean; whether to return the incomplete orthogonal
       array, or complete it with the `OA(k,u)` (default). When ``fill_hole is
       None``, no block of the incomplete OA contains more than one value `\geq
       |G|`.
@@ -1872,9 +1870,9 @@ def OA_from_Vmt(m,t,V):
 
     INPUT:
 
-    - ``m``, ``t`` (integers)
+    - ``m``, ``t`` -- integers
 
-    - ``V`` -- the vector `V(m,t)`.
+    - ``V`` -- the vector `V(m,t)`
 
     .. SEEALSO::
 
@@ -1923,9 +1921,9 @@ def QDM_from_Vmt(m,t,V):
 
     INPUT:
 
-    - ``m``, ``t`` (integers)
+    - ``m``, ``t`` -- integers
 
-    - ``V`` -- the vector `V(m,t)`.
+    - ``V`` -- the vector `V(m,t)`
 
     .. SEEALSO::
 
@@ -1976,9 +1974,9 @@ def OA_from_PBD(k,n,PBD, check=True):
 
     INPUT:
 
-    - ``k``, ``n`` (integers)
+    - ``k``, ``n`` -- integers
 
-    - ``PBD`` -- a PBD on `0,...,n-1`.
+    - ``PBD`` -- a PBD on `0, \ldots, n-1`
 
     EXAMPLES:
 
@@ -2045,9 +2043,9 @@ def OA_from_wider_OA(OA,k):
 
     INPUT:
 
-    - ``OA`` -- an orthogonal array.
+    - ``OA`` -- an orthogonal array
 
-    - ``k`` (integer)
+    - ``k`` -- integer
 
     EXAMPLES::
 
@@ -2144,7 +2142,7 @@ class OAMainFunctions:
 
         INPUT:
 
-        - ``k``, ``n``, ``t`` (integers) -- parameters of the orthogonal array.
+        - ``k``, ``n``, ``t`` -- integers; parameters of the orthogonal array
 
         EXAMPLES::
 
@@ -2173,12 +2171,12 @@ class OAMainFunctions:
 
         INPUT:
 
-        - ``k``, ``n``, ``t`` (integers) -- parameters of the orthogonal array.
+        - ``k``, ``n``, ``t`` -- integers; parameters of the orthogonal array
 
-        - ``resolvable`` (boolean) -- set to ``True`` if you want the design to be
-          resolvable. The `n` classes of the resolvable design are obtained as the
-          first `n` blocks, then the next `n` blocks, etc ... Set to ``False`` by
-          default.
+        - ``resolvable`` -- boolean (default: ``False``); set to ``True`` if
+          you want the design to be resolvable. The `n` classes of the
+          resolvable design are obtained as the first `n` blocks, then the next
+          `n` blocks, etc.
 
         EXAMPLES::
 
@@ -2204,7 +2202,7 @@ class OAMainFunctions:
 
         INPUT:
 
-        - ``k``, ``n``, ``t`` (integers) -- parameters of the orthogonal array.
+        - ``k``, ``n``, ``t`` -- integers; parameters of the orthogonal array
 
         .. WARNING::
 
@@ -2233,7 +2231,7 @@ class OAMainFunctions:
 
         INPUT:
 
-        - ``k``, ``n``, ``t`` (integers) -- parameters of the orthogonal array.
+        - ``k``, ``n``, ``t`` -- integers; parameters of the orthogonal array
 
         .. SEEALSO::
 

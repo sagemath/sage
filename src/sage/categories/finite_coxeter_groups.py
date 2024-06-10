@@ -398,7 +398,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             INPUT:
 
-            - ``side`` -- "left", "right", or "twosided" (default: "right")
+            - ``side`` -- "left", "right", or "twosided" (default: ``'right'``)
             - ``facade`` -- boolean (default: ``False``)
 
             Returns the left (resp. right) poset for weak order.  In
@@ -552,10 +552,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
             INPUT:
 
-            - `c` -- a Coxeter element of ``self`` (as a tuple, or
+            - ``c`` -- a Coxeter element of ``self`` (as a tuple, or
               as an element of ``self``)
 
-            - `m` -- a positive integer (default: 1)
+            - ``m`` -- a positive integer (default: 1)
 
             - ``on_roots`` -- boolean (default: ``False``); if
               ``on_roots`` is ``True``, the lattice is realized on

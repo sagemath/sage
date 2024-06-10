@@ -171,7 +171,7 @@ class WeylGroups(Category_singleton):
 
             - ``y`` -- an element in the group `W`
 
-            - ``side`` (default: ``'upper'``) -- must be one of the following:
+            - ``side`` -- (default: ``'upper'``) must be one of the following:
 
               * ``'upper'`` -- return the upper Bruhat cone of the interval [``x``, ``y``]
               * ``'lower'`` -- return the lower Bruhat cone of the interval [``x``, ``y``]
