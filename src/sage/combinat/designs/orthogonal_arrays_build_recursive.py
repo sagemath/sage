@@ -579,7 +579,7 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
 
 def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False):
     r"""
-    Returns an `OA(k,nm+a+b+c+d)`
+    Return an `OA(k,nm+a+b+c+d)`
 
     *(When `d=0`)*
 
@@ -757,7 +757,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
 
 def thwart_lemma_4_1(k,n,m,explain_construction=False):
     r"""
-    Returns an `OA(k,nm+4(n-2))`.
+    Return an `OA(k,nm+4(n-2))`.
 
     Implements Lemma 4.1 from [Thwarts]_.
 
@@ -885,7 +885,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
 def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
     r"""
-    Returns an `OA(k+1,n_1n_2n_3)`
+    Return an `OA(k+1,n_1n_2n_3)`
 
     The three factor product construction from [DukesLing14]_ does the following:
 
@@ -1020,7 +1020,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
     def product_with_parallel_classes(OA1,k,g1,g2,g1_parall,parall,check=True):
         r"""
-        Returns the product of two OA while keeping track of parallel classes
+        Return the product of two OA while keeping track of parallel classes.
 
         INPUT:
 
@@ -1200,7 +1200,7 @@ def _reorder_matrix(matrix):
 
 def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construction=False):
     r"""
-    Returns a `OA(k,t(q^2+q+1)+x)` using Brouwer's result on separable designs.
+    Return a `OA(k,t(q^2+q+1)+x)` using Brouwer's result on separable designs.
 
     This method is an implementation of Brouwer's construction presented in
     [Brouwer80]_. It consists in a systematic application of the usual

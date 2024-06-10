@@ -993,7 +993,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
     def f(self, i):
         r"""
-        Returns the `i`-th crystal lowering operator on ``self``.
+        Return the `i`-th crystal lowering operator on ``self``.
 
         INPUT:
 

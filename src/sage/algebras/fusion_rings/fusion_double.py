@@ -473,7 +473,7 @@ class FusionDouble(CombinatorialFreeModule):
     @cached_method
     def field(self):
         """
-        Returns a cyclotomic field large enough to contain the values
+        Return a cyclotomic field large enough to contain the values
         of R-matrices and twists that can arise for this fusion ring.
 
         EXAMPLES::

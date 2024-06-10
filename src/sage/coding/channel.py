@@ -482,8 +482,6 @@ class ErrorErasureChannel(Channel):
 
     def __init__(self, space, number_errors, number_erasures):
         r"""
-
-
         TESTS:
 
         If the sum of number of errors and number of erasures

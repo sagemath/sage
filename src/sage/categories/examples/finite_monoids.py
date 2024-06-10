@@ -134,7 +134,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of the monoid, as per :meth:`Sets.ParentMethods.an_element`.
+        Return an element of the monoid, as per :meth:`Sets.ParentMethods.an_element`.
 
         EXAMPLES::
 

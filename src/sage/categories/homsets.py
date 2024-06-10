@@ -122,7 +122,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
     def _test_homsets_category(self, **options):
         r"""
-        Run generic tests on this homsets category
+        Run generic tests on this homsets category.
 
         .. SEEALSO:: :class:`TestSuite`.
 

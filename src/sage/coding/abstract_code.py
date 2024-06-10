@@ -398,7 +398,7 @@ class AbstractCode(Parent):
 
     def __call__(self, m):
         r"""
-        Returns either ``m`` if it is a codeword or ``self.encode(m)``
+        Return either ``m`` if it is a codeword or ``self.encode(m)``
         if it is an element of the message space of the encoder used by
         ``encode``.
 
@@ -516,7 +516,7 @@ class AbstractCode(Parent):
 
     def length(self):
         r"""
-        Returns the length of this code.
+        Return the length of this code.
 
         EXAMPLES::
 
@@ -826,7 +826,7 @@ class AbstractCode(Parent):
 
     def decoders_available(self, classes=False):
         r"""
-        Returns a list of the available decoders' names for ``self``.
+        Return a list of the available decoders' names for ``self``.
 
         INPUT:
 
@@ -901,7 +901,7 @@ class AbstractCode(Parent):
     @cached_method
     def encoder(self, encoder_name=None, *args, **kwargs):
         r"""
-        Returns an encoder of ``self``.
+        Return an encoder of ``self``.
 
         The returned encoder provided by this method is cached.
 
@@ -1001,7 +1001,7 @@ class AbstractCode(Parent):
 
     def encoders_available(self, classes=False):
         r"""
-        Returns a list of the available encoders' names for ``self``.
+        Return a list of the available encoders' names for ``self``.
 
         INPUT:
 
@@ -1030,7 +1030,7 @@ class AbstractCode(Parent):
 
     def unencode(self, c, encoder_name=None, nocheck=False, **kwargs):
         r"""
-        Returns the message corresponding to ``c``.
+        Return the message corresponding to ``c``.
 
         This is the inverse of :meth:`encode`.
 
@@ -1067,7 +1067,7 @@ class AbstractCode(Parent):
 
     def random_element(self, *args, **kwds):
         """
-        Returns a random codeword; passes other positional and keyword
+        Return a random codeword; passes other positional and keyword
         arguments to ``random_element()`` method of vector space.
 
         OUTPUT: random element of the vector space of this code

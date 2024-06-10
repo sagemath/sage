@@ -575,7 +575,7 @@ def is_prime(n) -> bool:
 
 def is_pseudoprime(n):
     r"""
-    Test whether ``n`` is a pseudo-prime
+    Test whether ``n`` is a pseudo-prime.
 
     The result is *NOT* proven correct - *this is a pseudo-primality test!*.
 
@@ -610,7 +610,7 @@ def is_pseudoprime(n):
 
 def is_prime_power(n, get_data=False):
     r"""
-    Test whether ``n`` is a positive power of a prime number
+    Test whether ``n`` is a positive power of a prime number.
 
     This function simply calls the method :meth:`Integer.is_prime_power()
     <sage.rings.integer.Integer.is_prime_power>` of Integers.
@@ -1861,7 +1861,7 @@ GCD = gcd
 
 def __GCD_sequence(v, **kwargs):
     """
-    Internal function returning the gcd of the elements of a sequence
+    Internal function returning the gcd of the elements of a sequence.
 
     INPUT:
 
@@ -3637,7 +3637,7 @@ def CRT_vectors(X, moduli):
 
 def binomial(x, m, **kwds):
     r"""
-    Return the binomial coefficient
+    Return the binomial coefficient.
 
     .. MATH::
 
@@ -5318,7 +5318,7 @@ def integer_floor(x):
 
 def integer_trunc(i):
     """
-    Truncate to the integer closer to zero
+    Truncate to the integer closer to zero.
 
     EXAMPLES::
 

@@ -72,7 +72,7 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
 
     def _richcmp_(self, other, op):
         r"""
-        Comparisons
+        Comparisons.
 
         TESTS::
 

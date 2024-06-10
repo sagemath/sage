@@ -99,7 +99,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
     def domain(self):
         """
-        Returns the domain of ``self``
+        Return the domain of ``self``.
 
         EXAMPLES::
 
@@ -111,7 +111,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
     def codomain(self):
         """
-        Returns the codomain of ``self``
+        Return the codomain of ``self``.
 
         EXAMPLES::
 
@@ -182,7 +182,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
     def __mul__(self, other):
         r"""
-        Composition
+        Composition.
 
         INPUT:
 

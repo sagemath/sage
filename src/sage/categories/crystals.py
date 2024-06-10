@@ -118,7 +118,7 @@ class Crystals(Category_singleton):
 
     def example(self, choice='highwt', **kwds):
         r"""
-        Returns an example of a crystal, as per
+        Return an example of a crystal, as per
         :meth:`Category.example()
         <sage.categories.category.Category.example>`.
 
@@ -237,7 +237,7 @@ class Crystals(Category_singleton):
 
         def an_element(self):
             """
-            Returns an element of ``self``
+            Return an element of ``self``.
 
                 sage: C = crystals.Letters(['A', 5])
                 sage: C.an_element()
@@ -309,7 +309,7 @@ class Crystals(Category_singleton):
 
         def cartan_type(self):
             """
-            Returns the Cartan type of the crystal
+            Return the Cartan type of the crystal.
 
             EXAMPLES::
 
@@ -322,7 +322,7 @@ class Crystals(Category_singleton):
         @cached_method
         def index_set(self):
             """
-            Returns the index set of the Dynkin diagram underlying the crystal
+            Return the index set of the Dynkin diagram underlying the crystal.
 
             EXAMPLES::
 
@@ -334,7 +334,7 @@ class Crystals(Category_singleton):
 
         def Lambda(self):
             """
-            Returns the fundamental weights in the weight lattice
+            Return the fundamental weights in the weight lattice
             realization for the root system associated with the crystal
 
             EXAMPLES::
@@ -955,7 +955,7 @@ class Crystals(Category_singleton):
 
         def _latex_(self, **options):
             r"""
-            Returns the crystal graph as a latex string. This can be exported
+            Return the crystal graph as a latex string. This can be exported
             to a file with ``self.latex_file('filename')``.
 
             EXAMPLES::
@@ -1331,7 +1331,7 @@ class Crystals(Category_singleton):
 
         def cartan_type(self):
             """
-            Returns the Cartan type associated to ``self``
+            Return the Cartan type associated to ``self``.
 
             EXAMPLES::
 
@@ -1551,7 +1551,7 @@ class Crystals(Category_singleton):
 
         def is_lowest_weight(self, index_set=None):
             r"""
-            Returns ``True`` if ``self`` is a lowest weight.
+            Return ``True`` if ``self`` is a lowest weight.
             Specifying the option ``index_set`` to be a subset `I` of the
             index set of the underlying crystal, finds all lowest
             weight vectors for arrows in `I`.

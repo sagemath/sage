@@ -52,7 +52,7 @@ class LinearExtensionOfPoset(ClonableArray,
 
     INPUT:
 
-    - ``linear_extension`` -- a list of the elements of `P`
+    - ``linear_extension`` -- list of the elements of `P`
     - ``poset`` -- the underlying poset `P`
 
     .. SEEALSO:: :class:`~sage.combinat.posets.posets.Poset`, :class:`LinearExtensionsOfPoset`
@@ -97,7 +97,7 @@ class LinearExtensionOfPoset(ClonableArray,
 
         INPUT:
 
-        - ``linear_extension`` -- a list of elements of ``poset``
+        - ``linear_extension`` -- list of elements of ``poset``
         - ``poset`` -- a finite poset
 
         .. TODO:: check whether this method is still useful
@@ -320,7 +320,8 @@ class LinearExtensionOfPoset(ClonableArray,
 
         INPUT:
 
-        - `i` -- an integer between `1` and `n-1`, where `n` is the cardinality of the poset.
+        - ``i`` -- an integer between `1` and `n-1`, where `n` is the
+          cardinality of the poset
 
         The operator `\tau_i` on a linear extension `\pi` of a poset
         `P` interchanges positions `i` and `i+1` if the result is
@@ -472,12 +473,12 @@ class LinearExtensionOfPoset(ClonableArray,
 
 class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
     """
-    The set of all linear extensions of a finite poset
+    The set of all linear extensions of a finite poset.
 
     INPUT:
 
     - ``poset`` -- a poset `P` of size `n`
-    - ``facade`` -- a boolean (default: ``False``)
+    - ``facade`` -- boolean (default: ``False``)
 
     .. SEEALSO::
 
@@ -540,7 +541,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: TestSuite(L).run()                                                    # needs sage.modules
 
             sage: L = P.linear_extensions(facade=True)
-            sage: TestSuite(L).run(skip="_test_an_element")                             # needs sage.modules
+            sage: TestSuite(L).run(skip='_test_an_element')                             # needs sage.modules
         """
         self._poset = poset
         self._is_facade = facade
@@ -714,8 +715,8 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``action`` -- 'promotion' or 'tau' (default: 'promotion')
-        - ``labeling`` -- 'identity' or 'source' (default: 'identity')
+        - ``action`` -- 'promotion' or 'tau' (default: ``'promotion'``)
+        - ``labeling`` -- 'identity' or 'source' (default: ``'identity'``)
 
         .. TODO::
 
@@ -801,9 +802,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
                 for i in R:
                     child = getattr(x, action)(i + 1)
                     d[x][child] += [i + 1]
-        G = DiGraph(d, format="dict_of_dicts")
+        G = DiGraph(d, format='dict_of_dicts')
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex", edge_labels=True,
+            G.set_latex_options(format='dot2tex', edge_labels=True,
                                 color_by_label={1: "blue", 2: "red",
                                                 3: "green", 4: "yellow"})
         return G

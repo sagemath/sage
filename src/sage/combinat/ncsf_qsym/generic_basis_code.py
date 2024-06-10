@@ -889,7 +889,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             INPUT:
 
             - ``y`` -- an element of the dual Hopf algebra of ``self``
-            - ``side`` -- (default=``'left'``) Either 'left' or 'right'
+            - ``side`` -- (default: ``'left'``) either ``'left'`` or ``'right'``
 
             OUTPUT: the result of skewing ``self`` by ``y``, on the side ``side``
 

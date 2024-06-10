@@ -340,7 +340,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
 
     def __init__(self, R, r, s, names, naming, category, **kwds):
         r"""
-        Initialize ``self``
+        Initialize ``self``.
 
         EXAMPLES::
 

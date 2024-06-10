@@ -19,7 +19,7 @@ from sage.structure.sequence import Sequence
 
 class CommutativeRings(CategoryWithAxiom):
     """
-    The category of commutative rings
+    The category of commutative rings.
 
     commutative rings with unity, i.e. rings with commutative * and
     a multiplicative identity

@@ -355,7 +355,7 @@ class EvaluationAGCode(AGCode):
 
 class DifferentialAGCode(AGCode):
     """
-    Differential AG code defined by rational places ``pls`` and a divisor ``G``
+    Differential AG code defined by rational places ``pls`` and a divisor ``G``.
 
     INPUT:
 

@@ -17,7 +17,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
 class AffineWeylGroups(Category_singleton):
     """
-    The category of affine Weyl groups
+    The category of affine Weyl groups.
 
     .. TODO:: add a description of this category
 

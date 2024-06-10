@@ -956,7 +956,7 @@ _OA_cache_size = 2
 
 cpdef _OA_cache_set(int k,int n,truth_value):
     r"""
-    Sets a value in the OA cache of existence results
+    Sets a value in the OA cache of existence results.
 
     INPUT:
 
@@ -991,7 +991,7 @@ cpdef _OA_cache_set(int k,int n,truth_value):
 
 cpdef _OA_cache_get(int k,int n):
     r"""
-    Gets a value from the OA cache of existence results
+    Gets a value from the OA cache of existence results.
 
     INPUT:
 

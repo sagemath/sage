@@ -139,7 +139,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 

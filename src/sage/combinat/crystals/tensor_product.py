@@ -705,7 +705,7 @@ class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals, QueerSu
 
 class CrystalOfTableaux(CrystalOfWords):
     r"""
-    A class for crystals of tableaux with integer valued shapes
+    A class for crystals of tableaux with integer valued shapes.
 
     INPUT:
 
@@ -999,7 +999,7 @@ class CrystalOfTableaux(CrystalOfWords):
 
     def cartan_type(self):
         """
-        Returns the Cartan type of the associated crystal
+        Return the Cartan type of the associated crystal.
 
         EXAMPLES::
 

@@ -54,7 +54,7 @@ def _flatten_once(lstlst):
 
 def _monomial_list(maxdeg, l, wy):
     r"""
-    Returns a list of all nonnegative integer pairs `(i,j)` such that ``i + wy
+    Return a list of all nonnegative integer pairs `(i,j)` such that ``i + wy
     * j < maxdeg`` and ``j \geq l``.
 
     INPUT:
@@ -88,7 +88,7 @@ def _monomial_list(maxdeg, l, wy):
 
 def _interpolation_matrix_given_monomials(points, s, monomials):
     r"""
-    Returns a matrix whose nullspace is a basis for all interpolation
+    Return a matrix whose nullspace is a basis for all interpolation
     polynomials, each polynomial having its coefficients laid out according to
     the given list of monomials.
 
@@ -158,7 +158,7 @@ def _interpolation_max_weighted_deg(n, tau, s):
 
 def _interpolation_matrix_problem(points, tau, parameters, wy):
     r"""
-    Returns the linear system of equations which ``Q`` should be a solution to.
+    Return the linear system of equations which ``Q`` should be a solution to.
 
     This linear system is returned as a matrix ``M`` and a list of monomials ``monomials``,
     where a vector in the right nullspace of ``M`` corresponds to an
@@ -351,7 +351,7 @@ def lee_osullivan_module(points, parameters, wy):
 
 def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
     r"""
-    Returns an interpolation polynomial Q(x,y) for the given input using the
+    Return an interpolation polynomial Q(x,y) for the given input using the
     module-based algorithm of Lee and O'Sullivan.
 
     This algorithm constructs an explicit `(\ell+1) \times (\ell+1)` polynomial

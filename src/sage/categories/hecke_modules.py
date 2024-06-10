@@ -104,7 +104,7 @@ class HeckeModules(Category_module):
 
         def _Hom_(self, Y, category):
             r"""
-            Return the homset from ``self`` to ``Y`` in the category ``category``
+            Return the homset from ``self`` to ``Y`` in the category ``category``.
 
             INPUT:
 

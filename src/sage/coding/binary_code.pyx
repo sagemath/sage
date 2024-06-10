@@ -1051,7 +1051,7 @@ cdef class BinaryCode:
 
     def _is_one(self, word, col):
         """
-        Returns the col-th letter of word, i.e. 0 or 1. Words are expressed
+        Return the col-th letter of word, i.e. 0 or 1. Words are expressed
         as integers, which represent linear combinations of the rows of the
         generator matrix of the code.
 
@@ -1371,7 +1371,7 @@ cdef class OrbitPartition:
 
     def _wd_find(self, word):
         """
-        Returns the root of word.
+        Return the root of word.
 
         EXAMPLES::
 
@@ -1445,7 +1445,7 @@ cdef class OrbitPartition:
 
     def _col_find(self, col):
         """
-        Returns the root of col.
+        Return the root of col.
 
         EXAMPLES::
 
@@ -1884,7 +1884,7 @@ cdef class PartitionStack:
 
     def _is_discrete(self, k):
         """
-        Returns whether the partition at level k is discrete.
+        Return whether the partition at level k is discrete.
 
         EXAMPLES::
 
@@ -1924,7 +1924,7 @@ cdef class PartitionStack:
 
     def _num_cells(self, k):
         """
-        Returns the number of cells in the partition at level k.
+        Return the number of cells in the partition at level k.
 
         EXAMPLES::
 
@@ -1960,7 +1960,7 @@ cdef class PartitionStack:
 
     def _sat_225(self, k):
         """
-        Returns whether the partition at level k satisfies the hypotheses of
+        Return whether the partition at level k satisfies the hypotheses of
         Lemma 2.25 in Brendan McKay's Practical Graph Isomorphism paper (see
         sage/graphs/graph_isom.pyx.
 
@@ -2471,7 +2471,7 @@ cdef class PartitionStack:
 
     def _col_degree(self, C, col, wd_ptr, k):
         """
-        Returns the number of words in the cell specified by wd_ptr that have a
+        Return the number of words in the cell specified by wd_ptr that have a
         1 in the col-th column.
 
         EXAMPLES::
@@ -2512,7 +2512,7 @@ cdef class PartitionStack:
 
     def _wd_degree(self, C, wd, col_ptr, k):
         """
-        Returns the number of columns in the cell specified by col_ptr that are
+        Return the number of columns in the cell specified by col_ptr that are
         1 in wd.
 
         EXAMPLES::

@@ -31,7 +31,7 @@ from sage.rings.integer_ring import ZZ
 
 def coeff_pi(J, I):
     r"""
-    Returns the coefficient `\pi_{J,I}` as defined in [NCSF]_.
+    Return the coefficient `\pi_{J,I}` as defined in [NCSF]_.
 
     INPUT:
 
@@ -53,7 +53,7 @@ def coeff_pi(J, I):
 
 def coeff_lp(J,I):
     r"""
-    Returns the coefficient `lp_{J,I}` as defined in [NCSF]_.
+    Return the coefficient `lp_{J,I}` as defined in [NCSF]_.
 
     INPUT:
 
@@ -75,7 +75,7 @@ def coeff_lp(J,I):
 
 def coeff_ell(J,I):
     r"""
-    Returns the coefficient `\ell_{J,I}` as defined in [NCSF]_.
+    Return the coefficient `\ell_{J,I}` as defined in [NCSF]_.
 
     INPUT:
 
@@ -97,7 +97,7 @@ def coeff_ell(J,I):
 
 def coeff_sp(J, I):
     r"""
-    Returns the coefficient `sp_{J,I}` as defined in [NCSF]_.
+    Return the coefficient `sp_{J,I}` as defined in [NCSF]_.
 
     INPUT:
 

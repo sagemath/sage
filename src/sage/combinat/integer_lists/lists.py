@@ -280,7 +280,7 @@ class IntegerLists(Parent):
 
     def _element_constructor_default(self, l):
         """
-        Default element constructor
+        Default element constructor.
 
         EXAMPLES::
 

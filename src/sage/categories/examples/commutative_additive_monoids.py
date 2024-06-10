@@ -69,7 +69,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
 
     def __init__(self, alphabet=('a','b','c','d')):
         r"""
-        The free commutative monoid
+        The free commutative monoid.
 
         INPUT:
 
@@ -102,7 +102,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
     @cached_method
     def zero(self):
         r"""
-        Returns the zero of this additive monoid, as per :meth:`CommutativeAdditiveMonoids.ParentMethods.zero`.
+        Return the zero of this additive monoid, as per :meth:`CommutativeAdditiveMonoids.ParentMethods.zero`.
 
         EXAMPLES::
 

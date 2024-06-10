@@ -103,7 +103,7 @@ class FastCrystal(UniqueRepresentation, Parent):
     @staticmethod
     def __classcall__(cls, cartan_type, shape, format='string'):
         """
-        Normalize the input arguments to ensure unique representation
+        Normalize the input arguments to ensure unique representation.
 
         EXAMPLES::
 

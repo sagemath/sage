@@ -3822,7 +3822,7 @@ class PMDiagram(CombinatorialObject):
 
     def inner_shape(self):
         """
-        Return the inner shape of the pm diagram
+        Return the inner shape of the pm diagram.
 
         EXAMPLES::
 
@@ -3957,7 +3957,7 @@ class PMDiagram(CombinatorialObject):
 
 def partitions_in_box(r, s):
     """
-    Returns all partitions in a box of width s and height r.
+    Return all partitions in a box of width s and height r.
 
     EXAMPLES::
 
@@ -3970,7 +3970,7 @@ def partitions_in_box(r, s):
 
 def vertical_dominoes_removed(r, s):
     """
-    Returns all partitions obtained from a rectangle of width s and height r by removing
+    Return all partitions obtained from a rectangle of width s and height r by removing
     vertical dominoes.
 
     EXAMPLES::
@@ -3987,7 +3987,7 @@ def vertical_dominoes_removed(r, s):
 
 def horizontal_dominoes_removed(r, s):
     """
-    Returns all partitions obtained from a rectangle of width s and height r by removing
+    Return all partitions obtained from a rectangle of width s and height r by removing
     horizontal dominoes.
 
     EXAMPLES::

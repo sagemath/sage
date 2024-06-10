@@ -62,7 +62,7 @@ class Elements(Category):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 
@@ -147,7 +147,7 @@ class Elements(Category):
 #############################################################
 class Category_over_base(CategoryWithParameters):
     r"""
-    A base class for categories over some base object
+    A base class for categories over some base object.
 
     INPUT:
 
@@ -253,7 +253,7 @@ class Category_over_base(CategoryWithParameters):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 

@@ -27,8 +27,8 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
 
     INPUT:
 
-    - ``positions`` -- a list of sets of integers describing the poset,
-      as given by the lazy attribute ``_leq_storage`` of Hasse diagrams.
+    - ``positions`` -- list of sets of integers describing the poset,
+      as given by the lazy attribute ``_leq_storage`` of Hasse diagrams
 
     - ``element_constructor`` -- used to determine the type of chains,
       for example :class:`list` or :class:`tuple`

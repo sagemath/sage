@@ -472,7 +472,7 @@ class Monoids(CategoryWithAxiom):
 
             def one(self):
                 """
-                Returns the multiplicative unit of this monoid,
+                Return the multiplicative unit of this monoid,
                 obtained by retracting that of the ambient monoid.
 
                 EXAMPLES::

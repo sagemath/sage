@@ -70,7 +70,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
     """
     def __init__(self):
         r"""
-        The left zero semigroup
+        The left zero semigroup.
 
         EXAMPLES::
 
@@ -85,7 +85,6 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def _repr_(self):
         r"""
-
         EXAMPLES::
 
             sage: Semigroups().example()._repr_()
@@ -96,7 +95,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def product(self, x, y):
         r"""
-        Returns the product of ``x`` and ``y`` in the semigroup, as per
+        Return the product of ``x`` and ``y`` in the semigroup, as per
         :meth:`Semigroups.ParentMethods.product`.
 
         EXAMPLES::
@@ -114,7 +113,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of the semigroup.
+        Return an element of the semigroup.
 
         EXAMPLES::
 
@@ -126,7 +125,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def some_elements(self):
         r"""
-        Returns a list of some elements of the semigroup.
+        Return a list of some elements of the semigroup.
 
         EXAMPLES::
 
@@ -215,7 +214,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
     def product(self, x, y):
         r"""
-        Returns the product of ``x`` and ``y`` in the semigroup, as per
+        Return the product of ``x`` and ``y`` in the semigroup, as per
         :meth:`Semigroups.ParentMethods.product`.
 
         EXAMPLES::
@@ -232,7 +231,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
     @cached_method
     def semigroup_generators(self):
         r"""
-        Returns the generators of the semigroup.
+        Return the generators of the semigroup.
 
         EXAMPLES::
 
@@ -245,7 +244,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of the semigroup.
+        Return an element of the semigroup.
 
         EXAMPLES::
 
@@ -303,7 +302,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
 class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
     r"""
-    Example of a quotient semigroup
+    Example of a quotient semigroup.
 
     EXAMPLES::
 
@@ -411,7 +410,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def ambient(self):
         r"""
-        Returns the ambient semigroup.
+        Return the ambient semigroup.
 
         EXAMPLES::
 
@@ -454,7 +453,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def the_answer(self):
         r"""
-        Returns the Answer to Life, the Universe, and Everything as an
+        Return the Answer to Life, the Universe, and Everything as an
         element of this semigroup.
 
         EXAMPLES::
@@ -468,7 +467,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of the semigroup.
+        Return an element of the semigroup.
 
         EXAMPLES::
 
@@ -481,7 +480,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def some_elements(self):
         r"""
-        Returns a list of some elements of the semigroup.
+        Return a list of some elements of the semigroup.
 
         EXAMPLES::
 
@@ -495,7 +494,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
     def retract(self, x):
         r"""
-        Returns the retract ``x`` onto an element of this semigroup.
+        Return the retract ``x`` onto an element of this semigroup.
 
         INPUT:
 
@@ -585,7 +584,7 @@ class IncompleteSubquotientSemigroup(UniqueRepresentation,Parent):
 
     def ambient(self):
         r"""
-        Returns the ambient semigroup.
+        Return the ambient semigroup.
 
         EXAMPLES::
 

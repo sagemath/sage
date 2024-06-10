@@ -131,7 +131,7 @@ class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def ambient(self):
         """
-        Returns the ambient space for ``self``, as per
+        Return the ambient space for ``self``, as per
         :meth:`Sets.Subquotients.ParentMethods.ambient()
         <sage.categories.sets_cat.Sets.Subquotients.ParentMethods.ambient>`.
 

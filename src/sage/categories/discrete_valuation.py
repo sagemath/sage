@@ -18,7 +18,7 @@ from sage.categories.fields import Fields
 
 class DiscreteValuationRings(Category_singleton):
     """
-    The category of discrete valuation rings
+    The category of discrete valuation rings.
 
     EXAMPLES::
 
@@ -226,7 +226,7 @@ class DiscreteValuationRings(Category_singleton):
 
 class DiscreteValuationFields(Category_singleton):
     """
-    The category of discrete valuation fields
+    The category of discrete valuation fields.
 
     EXAMPLES::
 

@@ -1119,7 +1119,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
         def _mul_(self, other):
             r"""
-            Return the product of ``self`` and ``other``
+            Return the product of ``self`` and ``other``.
 
             This default implementation computes a reduced word of
             ``other`` using :meth:`reduced_word`, and applies the

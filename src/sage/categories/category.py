@@ -608,7 +608,7 @@ class Category(UniqueRepresentation, SageObject):
 
     def _latex_(self):
         r"""
-        Returns the latex representation of this category.
+        Return the latex representation of this category.
 
         EXAMPLES::
 
@@ -682,7 +682,7 @@ class Category(UniqueRepresentation, SageObject):
 
     def __contains__(self, x):
         """
-        Membership testing
+        Membership testing.
 
         Returns whether ``x`` is an object in this category, that is
         if the category of ``x`` is a subcategory of ``self``.
@@ -785,7 +785,7 @@ class Category(UniqueRepresentation, SageObject):
 
     def category_graph(self):
         r"""
-        Returns the graph of all super categories of this category
+        Return the graph of all super categories of this category.
 
         EXAMPLES::
 
@@ -926,7 +926,7 @@ class Category(UniqueRepresentation, SageObject):
 
     def all_super_categories(self, proper=False):
         """
-        Returns the list of all super categories of this category.
+        Return the list of all super categories of this category.
 
         INPUT:
 
@@ -1399,7 +1399,7 @@ class Category(UniqueRepresentation, SageObject):
 
     def _test_category(self, **options):
         r"""
-        Run generic tests on this category
+        Run generic tests on this category.
 
         .. SEEALSO:: :class:`TestSuite`.
 
@@ -1746,7 +1746,7 @@ class Category(UniqueRepresentation, SageObject):
 
     def required_methods(self):
         """
-        Returns the methods that are required and optional for parents
+        Return the methods that are required and optional for parents
         in this category and their elements.
 
         EXAMPLES::
@@ -1761,7 +1761,7 @@ class Category(UniqueRepresentation, SageObject):
     # Operations on the lattice of categories
     def is_subcategory(self, c):
         """
-        Returns ``True`` if self is naturally embedded as a subcategory of `c`.
+        Return ``True`` if self is naturally embedded as a subcategory of `c`.
 
         EXAMPLES::
 
@@ -1880,7 +1880,7 @@ class Category(UniqueRepresentation, SageObject):
     @cached_method
     def _meet_(self, other):
         """
-        Returns the largest common subcategory of self and other:
+        Return the largest common subcategory of self and other.
 
         EXAMPLES::
 
@@ -1937,7 +1937,7 @@ class Category(UniqueRepresentation, SageObject):
     @staticmethod
     def meet(categories):
         """
-        Returns the meet of a list of categories
+        Return the meet of a list of categories.
 
         INPUT:
 
@@ -2504,7 +2504,7 @@ class Category(UniqueRepresentation, SageObject):
 
     def example(self, *args, **keywords):
         """
-        Returns an object in this category. Most of the time, this is a parent.
+        Return an object in this category. Most of the time, this is a parent.
 
         This serves three purposes:
 
@@ -2561,7 +2561,7 @@ class Category(UniqueRepresentation, SageObject):
 
 def is_Category(x):
     """
-    Returns ``True`` if `x` is a category.
+    Return ``True`` if `x` is a category.
 
     EXAMPLES::
 
@@ -2940,7 +2940,7 @@ class JoinCategory(CategoryWithParameters):
 
     def __init__(self, super_categories, **kwds):
         """
-        Initializes this JoinCategory
+        Initializes this JoinCategory.
 
         INPUT:
 
@@ -3000,7 +3000,7 @@ class JoinCategory(CategoryWithParameters):
 
     def super_categories(self):
         """
-        Returns the immediate super categories, as per :meth:`Category.super_categories`.
+        Return the immediate super categories, as per :meth:`Category.super_categories`.
 
         EXAMPLES::
 
@@ -3026,7 +3026,7 @@ class JoinCategory(CategoryWithParameters):
 
     def _subcategory_hook_(self, category):
         """
-        Returns whether ``category`` is a subcategory of this join category
+        Return whether ``category`` is a subcategory of this join category.
 
         INPUT:
 

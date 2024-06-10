@@ -93,7 +93,7 @@ class VectorSpaces(Category_module):
 
     def _call_(self, x):
         """
-        Try to coerce ``x`` into an object of this category
+        Try to coerce ``x`` into an object of this category.
 
         EXAMPLES::
 
@@ -119,7 +119,7 @@ class VectorSpaces(Category_module):
 
     def base_field(self):
         """
-        Returns the base field over which the vector spaces of this
+        Return the base field over which the vector spaces of this
         category are all defined.
 
         EXAMPLES::
@@ -309,7 +309,7 @@ class VectorSpaces(Category_module):
 
         def extra_super_categories(self):
             r"""
-            Returns the dual category
+            Return the dual category.
 
             EXAMPLES:
 

@@ -266,8 +266,8 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        -  ``x, y`` -- two elements of the (semi)lattice OR
-        -  ``x`` -- a list or tuple of elements
+        -  ``x``, ``y`` -- two elements of the (semi)lattice OR
+        -  ``x`` -- list or tuple of elements
 
         EXAMPLES::
 
@@ -342,7 +342,7 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -384,7 +384,7 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -435,7 +435,7 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        - ``element`` -- an element of the lattice.
+        - ``element`` -- an element of the lattice
 
         OUTPUT:
 
@@ -593,7 +593,7 @@ class FiniteJoinSemilattice(FinitePoset):
         INPUT:
 
         -  ``x, y`` -- two elements of the (semi)lattice OR
-        -  ``x`` -- a list or tuple of elements
+        -  ``x`` -- list or tuple of elements
 
         EXAMPLES::
 
@@ -933,7 +933,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1021,7 +1021,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1114,7 +1114,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1202,7 +1202,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         in lattices it follows that then also join distributes over
         meet.
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1324,7 +1324,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1416,7 +1416,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1537,7 +1537,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - certificate -- boolean (default ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``) whether to return
           instead a maximum chain of left modular elements
 
         EXAMPLES::
@@ -1586,7 +1586,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -1638,8 +1638,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not cosectionally complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not cosectionally complemented
 
         OUTPUT:
 
@@ -1713,8 +1713,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not relatively complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not relatively complemented
 
         OUTPUT:
 
@@ -1827,8 +1827,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not sectionally complemented.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not sectionally complemented
 
         OUTPUT:
 
@@ -1907,7 +1907,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2100,7 +2100,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2165,7 +2165,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2332,7 +2332,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2391,7 +2391,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2572,7 +2572,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         - ``L`` -- (default: ``None``) a list of elements to check being
           modular, if ``L`` is ``None``, then this checks the entire lattice
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2730,8 +2730,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not upper semimodular.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not upper semimodular
 
         OUTPUT:
 
@@ -2790,8 +2790,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
-          a certificate if the lattice is not lower semimodular.
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate if the lattice is not lower semimodular
 
         OUTPUT:
 
@@ -2847,7 +2847,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -2953,7 +2953,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``other`` -- a lattice
 
-        - ``labels`` -- a string (default ``'pairs'``); can be one of
+        - ``labels`` -- a string (default: ``'pairs'``); can be one of
           the following:
 
           * ``'pairs'`` -- each element ``v`` in this poset will be
@@ -3107,7 +3107,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -3156,7 +3156,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``elms`` -- a list of elements of the lattice.
+        - ``elms`` -- list of elements of the lattice
 
         EXAMPLES::
 
@@ -3353,7 +3353,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - other --  a finite lattice
+        - ``other`` --  a finite lattice
 
         EXAMPLES:
 
@@ -3698,7 +3698,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` (boolean) -- Whether to return a certificate.
+        - ``certificate`` -- boolean; Whether to return a certificate
 
           * If ``certificate = False`` (default), returns ``True`` or
             ``False`` accordingly.
@@ -3815,7 +3815,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -3996,7 +3996,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -4086,9 +4086,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``e`` -- an element of the lattice
 
-        OUTPUT:
-
-        - canonical meetands as a list, if it exists; if not, ``None``
+        OUTPUT: canonical meetands as a list, if it exists; if not, ``None``
 
         EXAMPLES::
 
@@ -4152,9 +4150,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``e`` -- an element of the lattice
 
-        OUTPUT:
-
-        - canonical joinands as a list, if it exists; if not, ``None``
+        OUTPUT: canonical joinands as a list, if it exists; if not, ``None``
 
         EXAMPLES::
 
@@ -4359,7 +4355,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not isoform
 
         OUTPUT:
@@ -4434,7 +4430,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not uniform
 
         OUTPUT:
@@ -4514,7 +4510,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not regular
 
         OUTPUT:
@@ -4583,7 +4579,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate if the lattice is not simple
 
         OUTPUT:
@@ -4727,7 +4723,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``S`` -- a list of lists; list of element blocks that the congruence
+        - ``S`` -- list of lists; list of element blocks that the congruence
           will contain
 
         OUTPUT:
@@ -4984,7 +4980,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         INPUT:
 
         - ``G`` -- a subset of elements of ``self``
-        - ``use_defining`` -- (default: ``False``) whether or not to use
+        - ``use_defining`` -- boolean (default: ``False``); whether or not to use
           the defining presentation in `x_g`
         - ``base_ring`` -- (default: `\QQ`) the base ring
 

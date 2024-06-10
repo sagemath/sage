@@ -343,7 +343,7 @@ class Simplex(SageObject):
 
     OUTPUT: simplex with those vertices
 
-    ``X`` may be a non-negative integer `n`, in which case the
+    ``X`` may be a nonnegative integer `n`, in which case the
     simplicial complex will have `n+1` vertices `(0, 1, ..., n)`, or
     it may be anything which may be converted to a tuple, in which
     case the vertices will be that tuple.  In the second case, each
@@ -851,7 +851,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     anything which may be converted to a set) whose elements are lists
     (or tuples, etc.) of vertices.  Maximal faces are also known as
     'facets'. ``maximal_faces`` can also be a list containing a single
-    non-negative integer `n`, in which case this constructs the
+    nonnegative integer `n`, in which case this constructs the
     simplicial complex with a single `n`-simplex as the only facet.
 
     Alternatively, the maximal faces can be defined from a monotone boolean
@@ -1037,7 +1037,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     # Convert it into a list (in case it is an iterable)
                     maximal_faces = list(maximal_faces)
                 if len(maximal_faces) == 1 and isinstance(maximal_faces[0], (int, Integer)):
-                    # list containing a single non-negative integer n;
+                    # list containing a single nonnegative integer n;
                     # construct the simplicial complex with a single n-simplex as the only facet.
                     vertices = tuple(range(maximal_faces[0] + 1))
                     maximal_faces = [vertices]
@@ -1385,7 +1385,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default: ``True``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``True``); if ``True``, return
           faces in increasing order of dimension, thus starting with
           the empty face. Otherwise it returns faces in decreasing order of
           dimension.
@@ -1513,7 +1513,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def face(self, simplex, i):
         """
-        The `i`-th face of ``simplex`` in this simplicial complex
+        The `i`-th face of ``simplex`` in this simplicial complex.
 
         INPUT:
 
@@ -1871,7 +1871,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
           have any vertices with names in common.
 
         - ``is_mutable`` -- boolean (default: ``True``); determine whether the
-        output is mutable
+          output is mutable
 
         EXAMPLES::
 
@@ -1979,7 +1979,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             (0, 1, 2, 3, 4, 5, 6, 7)
         """
         if n < 0:
-            raise ValueError("n must be non-negative")
+            raise ValueError("n must be nonnegative")
         if n == 0:
             return self
         if n == 1:
@@ -2106,19 +2106,18 @@ class SimplicialComplex(Parent, GenericCellComplex):
            in all other dimensions to zero.
         - ``base_ring`` -- commutative ring (default: ``ZZ``)
         - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
-          empty). Compute the chain complex relative to this subcomplex.
+          empty); compute the chain complex relative to this subcomplex
         - ``augmented`` -- boolean (default: ``False``); if ``True``, return
           the augmented chain complex (that is, include a class in dimension
           `-1` corresponding to the empty cell). This is ignored if
-          ``dimensions`` is specified.
+          ``dimensions`` is specified
         - ``cochain`` -- boolean (default: ``False``); if ``True``, return the
-          cochain complex (that is,
-           the dual of the chain complex).
+          cochain complex (that is, the dual of the chain complex)
         - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
-          messages as the chain complex is computed.
-        - ``check`` -- boolean (default: ``False``); If ``True``, make sure
+          messages as the chain complex is computed
+        - ``check`` -- boolean (default: ``False``); if ``True``, make sure
           that the chain complex is actually a chain complex: the differentials
-          are composable and their product is zero.
+          are composable and their product is zero
 
         .. NOTE::
 
@@ -2531,7 +2530,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         - ``dim`` -- integer between 0 and one more than the
           dimension of this simplex
 
-        OUTPUT: a list containing just the triple ``(1, left,
+        OUTPUT: list containing just the triple ``(1, left,
         right)``, where ``left`` and ``right`` are the two simplices
         described above.
 
@@ -2998,7 +2997,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``simplex`` -- a simplex in this simplicial complex
-        - ``is_mutable`` -- (default: ``True``) boolean; determines if the output
+        - ``is_mutable`` -- boolean (default: ``True``); determines if the output
           is mutable
 
         EXAMPLES::
@@ -3140,7 +3139,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``shelling_order`` -- an ordering of the facets of ``self``
-        - ``certificate`` -- (default: ``False``) if ``True`` then returns
+        - ``certificate`` -- boolean (default: ``False``); if ``True`` then returns
           the index of the first facet that violate the condition
 
         .. SEEALSO::
@@ -3213,7 +3212,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) if ``True`` then
+        - ``certificate`` -- boolean (default: ``False``); if ``True`` then
           returns the shelling order (if it exists)
 
         EXAMPLES::
@@ -3569,7 +3568,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
            More precisely, this is a quotient of a polynomial ring
            with one generator for each vertex.  If the name of a
-           vertex is a non-negative integer, then the corresponding
+           vertex is a nonnegative integer, then the corresponding
            polynomial generator is named ``'x'`` followed by that integer
            (e.g., ``'x2'``, ``'x3'``, ``'x5'``, ...).  Otherwise, the
            polynomial generators are given the same names as the vertices.
@@ -3661,9 +3660,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``simplex`` -- a simplex face of ``self``
-        - ``inplace`` -- (default: ``False``) boolean; determines if the
+        - ``inplace`` -- boolean (default: ``False``); determines if the
           operation is done on ``self`` or on a copy
-        - ``is_mutable`` -- (default: ``True``) boolean; determines if the
+        - ``is_mutable`` -- boolean (default: ``True``); determines if the
           output is mutable
 
         OUTPUT:
@@ -4127,7 +4126,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
           leave this as its default setting of ``None``. (If this
           complex is path-connected, then this argument is ignored.)
 
-        - ``simplify`` -- boolean (default: ``True``), then return a
+        - ``simplify`` -- boolean (default: ``True``); then return a
           presentation of the group in terms of generators and
           relations. If ``True``, the default, simplify as much as GAP is
           able to.
@@ -4444,7 +4443,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     # @cached_method    when we switch to immutable SimplicialComplex
     def _is_numeric(self):
         """
-        Test whether all vertices are labeled by integers
+        Test whether all vertices are labeled by integers.
 
         OUTPUT:
 
@@ -4466,7 +4465,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     # @cached_method    when we switch to immutable SimplicialComplex
     def _translation_to_numeric(self):
         """
-        Return a dictionary enumerating the vertices
+        Return a dictionary enumerating the vertices.
 
         See also :meth:`_translation_from_numeric`, which returns the
         inverse map.
@@ -4494,7 +4493,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     # @cached_method    when we switch to immutable SimplicialComplex
     def _translation_from_numeric(self):
         """
-        Return a dictionary mapping vertex indices to vertices
+        Return a dictionary mapping vertex indices to vertices.
 
         See also :meth:`_translation_to_numeric`, which returns the
         inverse map.
@@ -4668,11 +4667,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``check_purity`` -- (default: ``False``) if this is ``True``,
+        - ``check_purity`` -- boolean (default: ``False``); if this is ``True``,
           require that ``self`` be pure as well as balanced
 
-        - ``certificate`` -- (default: ``False``) if this is ``True`` and
-          ``self`` is balanced, then return a `d`-coloring of the 1-skeleton.
+        - ``certificate`` -- boolean (default: ``False``); if this is ``True`` and
+          ``self`` is balanced, then return a `d`-coloring of the 1-skeleton
 
         EXAMPLES:
 
@@ -4736,7 +4735,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``)  If ``True``,
+        - ``certificate`` -- boolean (default: ``False``);  If ``True``,
           and ``self`` is partitionable, then return a list of pairs `(R,F)`
           that form a partitioning.
 
@@ -4749,7 +4748,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
           :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
-          inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
+          inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
         EXAMPLES:
 
@@ -4841,7 +4840,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         - ``base_ring`` -- (default: ``ZZ``) the base ring used
           when computing homology
-        - ``verbose`` -- (default: ``False``) if ``True``, print
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print
           messages during the computation, which indicate in which
           subcomplexes non-trivial homologies appear
 
@@ -4947,7 +4946,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         - ``base_ring`` -- (default: ``ZZ``) the base ring used
           when computing homology
-        - ``verbose`` -- (default: ``False``) if ``True``, print
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print
           messages during the computation, which indicate in which
           subcomplexes non-trivial homologies appear
 

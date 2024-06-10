@@ -642,7 +642,7 @@ class ReedMullerVectorEncoder(Encoder):
     @cached_method
     def generator_matrix(self):
         r"""
-        Return a generator matrix of ``self``
+        Return a generator matrix of ``self``.
 
         EXAMPLES::
 
@@ -938,7 +938,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Return the message space of ``self``
+        Return the message space of ``self``.
 
         EXAMPLES::
 
@@ -952,7 +952,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def polynomial_ring(self):
         r"""
-        Return the polynomial ring associated with ``self``
+        Return the polynomial ring associated with ``self``.
 
         EXAMPLES::
 

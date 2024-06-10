@@ -82,7 +82,7 @@ class ClassicalCrystals(Category_singleton):
 
     def example(self, n=3):
         """
-        Returns an example of highest weight crystals, as per
+        Return an example of highest weight crystals, as per
         :meth:`Category.example`.
 
         EXAMPLES::
@@ -191,7 +191,7 @@ class ClassicalCrystals(Category_singleton):
 
         def character(self, R=None):
             """
-            Returns the character of this crystal.
+            Return the character of this crystal.
 
             INPUT:
 
@@ -241,7 +241,7 @@ class ClassicalCrystals(Category_singleton):
 
         def __iter__(self):
             r"""
-            Returns an iterator over the elements of this crystal.
+            Return an iterator over the elements of this crystal.
 
             This iterator uses little memory, storing only one element
             of the crystal at a time. For details on the complexity, see
@@ -403,7 +403,7 @@ class ClassicalCrystals(Category_singleton):
 
         def cardinality(self):
             r"""
-            Returns the number of elements of the crystal, using Weyl's
+            Return the number of elements of the crystal, using Weyl's
             dimension formula on each connected component.
 
             EXAMPLES::

@@ -366,7 +366,7 @@ class CoveringDesign(SageObject):
 
     def size(self):
         """
-        Return the number of blocks in the covering design
+        Return the number of blocks in the covering design.
 
         EXAMPLES::
 
@@ -418,7 +418,7 @@ class CoveringDesign(SageObject):
 
     def creator(self):
         """
-        Return the creator of the covering design
+        Return the creator of the covering design.
 
         This field is optional, and is used in a database to give
         attribution for the covering design It can refer to the person
@@ -437,7 +437,7 @@ class CoveringDesign(SageObject):
 
     def timestamp(self):
         """
-        Return the time that the covering was submitted to the database
+        Return the time that the covering was submitted to the database.
 
         EXAMPLES::
 

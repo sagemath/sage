@@ -52,7 +52,7 @@ class Decoder(SageObject):
     @classmethod
     def decoder_type(cls):
         r"""
-        Returns the set of types of ``self``.
+        Return the set of types of ``self``.
 
         This method can be called on both an uninstantiated decoder class,
         or on an instance of a decoder class.
@@ -183,7 +183,7 @@ class Decoder(SageObject):
 
     def __hash__(self):
         r"""
-        Returns the hash value of ``self``.
+        Return the hash value of ``self``.
 
         This is a generic implementation which should be overwritten on decoders
         with extra arguments.

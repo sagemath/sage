@@ -22,7 +22,7 @@ from sage.misc.abstract_method import abstract_method
 
 class CompleteDiscreteValuationRings(Category_singleton):
     """
-    The category of complete discrete valuation rings
+    The category of complete discrete valuation rings.
 
     EXAMPLES::
 
@@ -174,7 +174,7 @@ class CompleteDiscreteValuationRings(Category_singleton):
 
 class CompleteDiscreteValuationFields(Category_singleton):
     """
-    The category of complete discrete valuation fields
+    The category of complete discrete valuation fields.
 
     EXAMPLES::
 

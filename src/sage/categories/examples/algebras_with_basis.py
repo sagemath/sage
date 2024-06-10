@@ -50,7 +50,7 @@ class FreeAlgebra(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         """
-        Returns the empty word, which index the one of this algebra,
+        Return the empty word, which index the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::r

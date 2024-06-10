@@ -336,7 +336,7 @@ class IncidenceStructure:
 
     def __contains__(self, block):
         r"""
-        Tests if a block belongs to the incidence structure
+        Tests if a block belongs to the incidence structure.
 
         INPUT:
 
@@ -1154,7 +1154,7 @@ class IncidenceStructure:
 
     def incidence_graph(self,labels=False):
         r"""
-        Return the incidence graph of the incidence structure
+        Return the incidence graph of the incidence structure.
 
         A point and a block are adjacent in this graph whenever they are
         incident.
@@ -1323,7 +1323,7 @@ class IncidenceStructure:
 
     def relabel(self, perm=None, inplace=True):
         r"""
-        Relabel the ground set
+        Relabel the ground set.
 
         INPUT:
 
@@ -1414,7 +1414,7 @@ class IncidenceStructure:
 
     def packing(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
-        Return a maximum packing
+        Return a maximum packing.
 
         A maximum packing in a hypergraph is collection of disjoint sets/blocks
         of maximal cardinality. This problem is NP-complete in general, and in
@@ -1876,7 +1876,7 @@ class IncidenceStructure:
     def is_resolvable(self, certificate=False, solver=None, verbose=0, check=True,
                       *, integrality_tolerance=1e-3):
         r"""
-        Test whether the hypergraph is resolvable
+        Test whether the hypergraph is resolvable.
 
         A hypergraph is said to be resolvable if its sets can be partitionned
         into classes, each of which is a partition of the ground set.
@@ -2199,7 +2199,7 @@ class IncidenceStructure:
 
     def _latex_(self):
         r"""
-        Return a TikZ representation of the incidence structure
+        Return a TikZ representation of the incidence structure.
 
         EXAMPLES::
 

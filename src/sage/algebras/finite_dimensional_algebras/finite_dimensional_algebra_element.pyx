@@ -339,7 +339,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
     def __getitem__(self, m):
         """
-        Return the `m`-th coefficient of ``self``
+        Return the `m`-th coefficient of ``self``.
 
         EXAMPLES::
 

@@ -22,7 +22,7 @@ from sage.structure.element import Element
 
 class Rings(CategoryWithAxiom):
     """
-    The category of rings
+    The category of rings.
 
     Associative rings with unit, not necessarily commutative
 

@@ -62,7 +62,7 @@ class Semigroups(CategoryWithAxiom):
 
     def example(self, choice='leftzero', **kwds):
         r"""
-        Returns an example of a semigroup, as per
+        Return an example of a semigroup, as per
         :meth:`Category.example()
         <sage.categories.category.Category.example>`.
 
@@ -828,7 +828,7 @@ class Semigroups(CategoryWithAxiom):
 
         def example(self):
             """
-            Returns an example of subquotient of a semigroup, as per
+            Return an example of subquotient of a semigroup, as per
             :meth:`Category.example()
             <sage.categories.category.Category.example>`.
 

@@ -951,7 +951,7 @@ class AdditiveMagmas(Category_singleton):
             class ParentMethods:
                 def zero(self):
                     r"""
-                    Returns the zero of this group
+                    Return the zero of this group.
 
                     EXAMPLES::
 

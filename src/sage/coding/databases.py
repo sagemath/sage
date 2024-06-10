@@ -182,7 +182,7 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
 def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     in_test=None):
     """
-    Returns a Python iterator which generates a complete set of
+    Return a Python iterator which generates a complete set of
     representatives of all permutation equivalence classes of
     self-orthogonal binary linear codes of length in ``[1..n]`` and
     dimension in ``[1..k]``.

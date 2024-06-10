@@ -770,7 +770,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
     def from_vector(self, v, order=None, coerce=False):
         r"""
-        Return the element of ``self`` corresponding to the vector ``v``
+        Return the element of ``self`` corresponding to the vector ``v``.
 
         INPUT:
 

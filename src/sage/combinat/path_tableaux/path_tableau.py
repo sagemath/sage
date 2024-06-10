@@ -508,7 +508,7 @@ class CylindricalDiagram(SageObject):
 
     def _repr_(self):
         r"""
-        Return a string representation of ``self``
+        Return a string representation of ``self``.
 
         TESTS::
 
@@ -626,7 +626,7 @@ class CylindricalDiagram(SageObject):
 
     def _ascii_art_(self):
         r"""
-        Return an ascii art representation of ``self``
+        Return an ascii art representation of ``self``.
 
         TESTS::
 
@@ -661,7 +661,7 @@ class CylindricalDiagram(SageObject):
 
     def _unicode_art_(self):
         r"""
-        Return a unicode art representation of ``self``
+        Return a unicode art representation of ``self``.
 
         TESTS::
 

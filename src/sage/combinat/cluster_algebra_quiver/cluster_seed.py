@@ -1367,7 +1367,7 @@ class ClusterSeed(SageObject):
 
     def cluster_variable(self, k):
         r"""
-        Generates a cluster variable using F-polynomials
+        Generates a cluster variable using F-polynomials.
 
         EXAMPLES::
 
@@ -2214,7 +2214,7 @@ class ClusterSeed(SageObject):
 
     def most_decreased_edge_after_mutation(self):
         r"""
-        Return the vertex that will produce the least degrees after mutation
+        Return the vertex that will produce the least degrees after mutation.
 
         EXAMPLES::
 
@@ -2242,7 +2242,7 @@ class ClusterSeed(SageObject):
 
     def most_decreased_denominator_after_mutation(self):
         r"""
-        Return the vertex that will produce the most decrease in denominator degrees after mutation
+        Return the vertex that will produce the most decrease in denominator degrees after mutation.
 
         EXAMPLES::
 

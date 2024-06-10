@@ -1165,7 +1165,7 @@ class HasseDiagram(DiGraph):
             [-1  1  1  0 -1]
             [-1  1  0  1 -1]
             sage: P.__dict__['coxeter_transformation'].clear_cache()
-            sage: P.coxeter_transformation(algorithm="matrix") == M
+            sage: P.coxeter_transformation(algorithm='matrix') == M
             True
 
         TESTS::
@@ -1176,7 +1176,7 @@ class HasseDiagram(DiGraph):
             sage: M**8 == 1
             True
             sage: P.__dict__['coxeter_transformation'].clear_cache()
-            sage: P.coxeter_transformation(algorithm="banana")
+            sage: P.coxeter_transformation(algorithm='banana')
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm
@@ -1366,7 +1366,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``boolean`` -- optional flag (default ``False``) telling whether to
+        - ``boolean`` -- flag (default: ``False``); whether to
           return a matrix with coefficients in `\GF(2)` or in `\ZZ`
 
         .. SEEALSO::
@@ -1954,7 +1954,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``element`` -- an element of the lattice.
+        - ``element`` -- an element of the lattice
 
         OUTPUT:
 
@@ -3138,9 +3138,9 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``parts`` -- a list of lists; congruences to add
+        - ``parts`` -- list of lists; congruences to add
         - ``start`` -- a disjoint set; already computed congruence (or ``None``)
-        - ``stop_pairs`` -- a list of pairs; list of pairs for stopping computation
+        - ``stop_pairs`` -- list of pairs; list of pairs for stopping computation
 
         OUTPUT:
 

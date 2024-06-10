@@ -126,7 +126,7 @@ class GoppaCode(AbstractLinearCode):
 
     def _repr_(self):
         """
-        Representation of a Goppa code
+        Representation of a Goppa code.
 
         EXAMPLES::
 
@@ -315,7 +315,7 @@ class GoppaCode(AbstractLinearCode):
 
 class GoppaCodeEncoder(Encoder):
     r"""
-    Encoder for Goppa codes
+    Encoder for Goppa codes.
 
     Encodes words represented as vectors of length `k`, where `k` is
     the dimension of ``self``, with entries from `\GF{p}`, the prime field of
@@ -393,7 +393,7 @@ class GoppaCodeEncoder(Encoder):
 
     def __eq__(self, other):
         """
-        Test equality with ``other``
+        Test equality with ``other``.
 
         EXAMPLES::
 
@@ -412,7 +412,7 @@ class GoppaCodeEncoder(Encoder):
 
     def generator_matrix(self):
         r"""
-        A generator matrix for ``self``
+        A generator matrix for ``self``.
 
         Dimension of resulting matrix is `k \times n`, where `k` is
         the dimension of ``self`` and `n` is the length of ``self``.

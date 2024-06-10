@@ -216,7 +216,7 @@ def _lift2smallest_field(a):
 
 def permutation_action(g, v):
     r"""
-    Returns permutation of rows `g * v`.
+    Return permutation of rows `g * v`.
 
     Works on lists, matrices,
     sequences and vectors (by permuting coordinates). The code requires

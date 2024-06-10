@@ -78,7 +78,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
     def example(self):
         """
-        Returns an example of finite permutation group, as per
+        Return an example of finite permutation group, as per
         :meth:`Category.example`.
 
         EXAMPLES::

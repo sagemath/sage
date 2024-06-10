@@ -98,7 +98,7 @@ class RegularCrystals(Category_singleton):
 
     def example(self, n=3):
         """
-        Returns an example of highest weight crystals, as per
+        Return an example of highest weight crystals, as per
         :meth:`Category.example`.
 
         EXAMPLES::
@@ -170,7 +170,7 @@ class RegularCrystals(Category_singleton):
         #   sage: m.demazure_operator([1,4,2])
         def demazure_operator(self, element, reduced_word):
             r"""
-            Returns the application of Demazure operators `D_i` for `i` from
+            Return the application of Demazure operators `D_i` for `i` from
             ``reduced_word`` on ``element``.
 
             INPUT:

@@ -78,7 +78,7 @@ class FreeMonoid(FreeSemigroup):
 
     def __init__(self, alphabet=('a','b','c','d')):
         r"""
-        The free monoid
+        The free monoid.
 
         INPUT:
 
@@ -111,7 +111,7 @@ class FreeMonoid(FreeSemigroup):
     @cached_method
     def one(self):
         r"""
-        Returns the one of the monoid, as per :meth:`Monoids.ParentMethods.one`.
+        Return the one of the monoid, as per :meth:`Monoids.ParentMethods.one`.
 
         EXAMPLES::
 

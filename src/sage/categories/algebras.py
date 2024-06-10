@@ -62,7 +62,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
     # For backward compatibility?
     def __contains__(self, x):
         """
-        Membership testing
+        Membership testing.
 
         EXAMPLES::
 
@@ -224,7 +224,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
         # TODO: move the content of AlgebraElement here or higher in the category hierarchy
         def _div_(self, y):
             """
-            Division by invertible elements
+            Division by invertible elements.
 
             # TODO: move in Monoids
 
@@ -273,7 +273,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
     class CartesianProducts(CartesianProductsCategory):
         """
-        The category of algebras constructed as Cartesian products of algebras
+        The category of algebras constructed as Cartesian products of algebras.
 
         This construction gives the direct product of algebras. See
         discussion on:
@@ -327,7 +327,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
         def extra_super_categories(self):
             r"""
-            Return the dual category
+            Return the dual category.
 
             EXAMPLES:
 

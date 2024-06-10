@@ -436,7 +436,7 @@ def BruckRyserChowla_check(v, k, lambd):
 
 def steiner_triple_system(n):
     r"""
-    Return a Steiner Triple System
+    Return a Steiner Triple System.
 
     A Steiner Triple System (STS) of a set `\{0,...,n-1\}`
     is a family `S` of 3-sets such that for any `i \not = j`
@@ -1432,7 +1432,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
     """
     def __init__(self, points, blocks, K=None, lambd=1, check=True, copy=True,**kwds):
         r"""
-        Constructor
+        Constructor.
 
         EXAMPLES::
 
@@ -1459,7 +1459,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
 
     def __repr__(self):
         r"""
-        Return a string describing the PBD
+        Return a string describing the PBD.
 
         EXAMPLES::
 
@@ -1501,7 +1501,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
     """
     def __init__(self, points, blocks, k=None, lambd=1, check=True, copy=True,**kwds):
         r"""
-        Constructor
+        Constructor.
 
         EXAMPLES::
 
@@ -1519,7 +1519,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
     def __repr__(self):
         r"""
-        A string to describe self
+        A string to describe self.
 
         EXAMPLES::
 

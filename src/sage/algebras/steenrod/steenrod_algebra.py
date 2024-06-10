@@ -1125,7 +1125,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def product_on_basis(self, t1, t2):
         """
-        The product of two basis elements of this algebra
+        The product of two basis elements of this algebra.
 
         INPUT:
 
@@ -1228,7 +1228,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def coproduct_on_basis(self, t, algorithm=None):
         r"""
-        The coproduct of a basis element of this algebra
+        The coproduct of a basis element of this algebra.
 
         INPUT:
 
@@ -1435,7 +1435,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def antipode_on_basis(self, t):
         r"""
-        The antipode of a basis element of this algebra
+        The antipode of a basis element of this algebra.
 
         INPUT:
 
@@ -1716,7 +1716,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
     @lazy_attribute
     def milnor(self):
         """
-        Convert an element of this algebra to the Milnor basis
+        Convert an element of this algebra to the Milnor basis.
 
         INPUT:
 
@@ -1820,7 +1820,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def _change_basis(self, x, basis='milnor'):
         """
-        Convert an element of this algebra to the specified basis
+        Convert an element of this algebra to the specified basis.
 
         INPUT:
 
@@ -3802,7 +3802,7 @@ class SteenrodAlgebra_mod_two(SteenrodAlgebra_generic):
 
 def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
     r"""
-    The mod `p` Steenrod algebra
+    The mod `p` Steenrod algebra.
 
     INPUT:
 

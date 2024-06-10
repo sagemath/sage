@@ -449,7 +449,7 @@ class Huffman(SageObject):
 
     def encoding_table(self):
         r"""
-        Returns the current encoding table.
+        Return the current encoding table.
 
         INPUT:
 
@@ -490,7 +490,7 @@ class Huffman(SageObject):
 
     def tree(self):
         r"""
-        Returns the Huffman tree corresponding to the current encoding.
+        Return the Huffman tree corresponding to the current encoding.
 
         INPUT:
 

@@ -67,7 +67,7 @@ class AlgebraModules(Category_module):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 

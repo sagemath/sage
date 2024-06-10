@@ -301,7 +301,7 @@ class InformationSetAlgorithm(SageObject):
 
     def __hash__(self):
         r"""
-        Returns the hash value of ``self``.
+        Return the hash value of ``self``.
 
         EXAMPLES::
 
@@ -319,7 +319,7 @@ class InformationSetAlgorithm(SageObject):
 
     def _repr_(self):
         r"""
-        Returns a string representation of this ISD algorithm.
+        Return a string representation of this ISD algorithm.
 
         EXAMPLES::
 
@@ -333,7 +333,7 @@ class InformationSetAlgorithm(SageObject):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of this ISD algorithm.
+        Return a latex representation of this ISD algorithm.
 
         EXAMPLES::
 
@@ -1000,7 +1000,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
     def _repr_(self):
         r"""
-        Returns a string representation of this decoding algorithm.
+        Return a string representation of this decoding algorithm.
 
         EXAMPLES::
 
@@ -1013,7 +1013,7 @@ class LinearCodeInformationSetDecoder(Decoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of this decoding algorithm.
+        Return a latex representation of this decoding algorithm.
 
         EXAMPLES::
 

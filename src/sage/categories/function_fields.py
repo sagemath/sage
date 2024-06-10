@@ -36,7 +36,7 @@ class FunctionFields(Category):
     @cached_method
     def super_categories(self):
         """
-        Returns the Category of which this is a direct sub-Category
+        Return the Category of which this is a direct sub-Category
         For a list off all super categories see all_super_categories
 
         EXAMPLES::

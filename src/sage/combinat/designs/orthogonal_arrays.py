@@ -371,7 +371,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
 
 class TransversalDesign(GroupDivisibleDesign):
     r"""
-    Class for Transversal Designs
+    Class for Transversal Designs.
 
     INPUT:
 
@@ -395,7 +395,7 @@ class TransversalDesign(GroupDivisibleDesign):
     """
     def __init__(self, blocks, k=None,n=None,check=True,**kwds):
         r"""
-        Constructor of the class
+        Constructor of the class.
 
         EXAMPLES::
 
@@ -426,7 +426,7 @@ class TransversalDesign(GroupDivisibleDesign):
 
     def __repr__(self):
         r"""
-        Returns a string describing the transversal design.
+        Return a string describing the transversal design.
 
         EXAMPLES::
 
@@ -476,7 +476,7 @@ def is_transversal_design(B, k, n, verbose=False):
 
 def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
     r"""
-    Returns a `OA(k,rm+\sum_i u_i)` from a truncated `OA(k+s,r)` by Wilson's
+    Return a `OA(k,rm+\sum_i u_i)` from a truncated `OA(k+s,r)` by Wilson's
     construction.
 
     **Simple form:**
@@ -1746,7 +1746,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
 
 def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
     r"""
-    Return an Orthogonal Array from a Quasi-Difference matrix
+    Return an Orthogonal Array from a Quasi-Difference matrix.
 
     **Difference Matrices**
 

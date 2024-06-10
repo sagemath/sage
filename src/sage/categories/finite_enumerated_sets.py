@@ -22,7 +22,7 @@ lazy_import("sage.rings.integer", "Integer")
 
 class FiniteEnumeratedSets(CategoryWithAxiom):
     """
-    The category of finite enumerated sets
+    The category of finite enumerated sets.
 
     EXAMPLES::
 
@@ -609,7 +609,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             def last(self):
                 r"""
-                Return the last element
+                Return the last element.
 
                 EXAMPLES::
 
@@ -725,7 +725,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
         def example(self):
             """
-            Returns an example of isomorphic object of a finite
+            Return an example of isomorphic object of a finite
             enumerated set, as per :meth:`Category.example
             <sage.categories.category.Category.example>`.
 
@@ -741,7 +741,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             def cardinality(self):
                 r"""
-                Returns the cardinality of ``self`` which is the same
+                Return the cardinality of ``self`` which is the same
                 as that of the ambient set ``self`` is isomorphic to.
 
                 EXAMPLES::
@@ -755,7 +755,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             def __iter__(self):
                 r"""
-                Returns an iterator over ``self``, using the bijection
+                Return an iterator over ``self``, using the bijection
                 with the ambient space.
 
                 EXAMPLES::

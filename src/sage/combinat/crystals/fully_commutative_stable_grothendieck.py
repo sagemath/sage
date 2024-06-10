@@ -76,7 +76,7 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
     @staticmethod
     def __classcall_private__(self, t, max_value=None, parent=None):
         """
-        Assign the correct parent for ``t`` and call ``t`` as an element of that parent
+        Assign the correct parent for ``t`` and call ``t`` as an element of that parent.
 
         EXAMPLES::
 

@@ -205,7 +205,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
     def __call__(self, args, **kwargs):
         """
-        Functorial construction application
+        Functorial construction application.
 
         INPUT:
 

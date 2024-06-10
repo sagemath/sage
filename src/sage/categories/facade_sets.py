@@ -17,7 +17,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 class FacadeSets(CategoryWithAxiom):
     def example(self, choice='subset'):
         r"""
-        Returns an example of facade set, as per
+        Return an example of facade set, as per
         :meth:`Category.example()
         <sage.categories.category.Category.example>`.
 
@@ -46,7 +46,7 @@ class FacadeSets(CategoryWithAxiom):
 
         def _element_constructor_(self, element):
             """
-            Coerce ``element`` into ``self``
+            Coerce ``element`` into ``self``.
 
             INPUT:
 
@@ -106,7 +106,7 @@ class FacadeSets(CategoryWithAxiom):
 
         def facade_for(self):
             """
-            Returns the parents this set is a facade for
+            Return the parents this set is a facade for.
 
             This default implementation assumes that ``self`` has
             an attribute ``_facade_for``, typically initialized by
@@ -138,7 +138,7 @@ class FacadeSets(CategoryWithAxiom):
 
         def is_parent_of(self, element):
             """
-            Returns whether ``self`` is the parent of ``element``
+            Return whether ``self`` is the parent of ``element``.
 
             INPUT:
 
@@ -183,7 +183,7 @@ class FacadeSets(CategoryWithAxiom):
 
         def __contains__(self, element):
             """
-            Membership testing
+            Membership testing.
 
             Returns whether ``element`` is in one of the parents
             ``self`` is a facade for.

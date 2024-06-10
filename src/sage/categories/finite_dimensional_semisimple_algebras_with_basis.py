@@ -18,7 +18,7 @@ from sage.misc.cachefunc import cached_method
 
 class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
-    The category of finite dimensional semisimple algebras with a distinguished basis
+    The category of finite dimensional semisimple algebras with a distinguished basis.
 
     EXAMPLES::
 

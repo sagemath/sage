@@ -63,7 +63,7 @@ def _Functor_unpickle(Cl, D, domain, codomain):
 
 cdef class Functor(SageObject):
     """
-    A class for functors between two categories
+    A class for functors between two categories.
 
     NOTE:
 
@@ -395,7 +395,7 @@ cdef class Functor(SageObject):
 
     def domain(self):
         """
-        The domain of self
+        The domain of self.
 
         EXAMPLES::
 
@@ -408,7 +408,7 @@ cdef class Functor(SageObject):
 
     def codomain(self):
         """
-        The codomain of self
+        The codomain of self.
 
         EXAMPLES::
 
@@ -422,7 +422,7 @@ cdef class Functor(SageObject):
 
 def is_Functor(x):
     """
-    Test whether the argument is a functor
+    Test whether the argument is a functor.
 
     NOTE:
 
@@ -547,7 +547,7 @@ class ForgetfulFunctor_generic(Functor):
 
 class IdentityFunctor_generic(ForgetfulFunctor_generic):
     """
-    Generic identity functor on any category
+    Generic identity functor on any category.
 
     NOTE:
 

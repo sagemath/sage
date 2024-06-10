@@ -80,7 +80,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
 
     def le(self, x, y):
         r"""
-        Returns whether `x` is a subset of `y`
+        Return whether `x` is a subset of `y`.
 
         EXAMPLES::
 
@@ -96,7 +96,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of this poset
+        Return an element of this poset.
 
         EXAMPLES::
 
@@ -163,7 +163,7 @@ class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
 
     def le(self, x, y):
         r"""
-        Returns whether `x` is divisible by `y`
+        Return whether `x` is divisible by `y`.
 
         EXAMPLES::
 

@@ -2259,7 +2259,7 @@ def rshcd_from_close_prime_powers(n):
 
 def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
     r"""
-    Williamson-Goethals-Seidel construction of a skew Hadamard matrix
+    Williamson-Goethals-Seidel construction of a skew Hadamard matrix.
 
     Given `n\times n` (anti)circulant matrices `A`, `B`, `C`, `D` with 1,-1 entries,
     and satisfying `A+A^\top = 2I`, `AA^\top + BB^\top + CC^\top + DD^\top = 4nI`,
@@ -2512,7 +2512,7 @@ def skew_hadamard_matrix_spence_1975(n, existence=False, check=True):
 
 def GS_skew_hadamard_smallcases(n, existence=False, check=True):
     r"""
-    Data for Williamson-Goethals-Seidel construction of skew Hadamard matrices
+    Data for Williamson-Goethals-Seidel construction of skew Hadamard matrices.
 
     Here we keep the data for this construction.
     Namely, it needs 4 circulant matrices with extra properties, as described in
@@ -3267,7 +3267,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
 
 def symmetric_conference_matrix(n, check=True):
     r"""
-    Tries to construct a symmetric conference matrix
+    Tries to construct a symmetric conference matrix.
 
     A conference matrix is an `n\times n` matrix `C` with 0s on the main diagonal
     and 1s and -1s elsewhere, satisfying `CC^\top=(n-1)I`.

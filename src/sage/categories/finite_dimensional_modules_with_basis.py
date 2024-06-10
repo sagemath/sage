@@ -21,7 +21,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 
 class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
     """
-    The category of finite dimensional modules with a distinguished basis
+    The category of finite dimensional modules with a distinguished basis.
 
     EXAMPLES::
 

@@ -637,7 +637,7 @@ class Modules(Category_module):
         @cached_method
         def tensor_square(self):
             """
-            Returns the tensor square of ``self``
+            Return the tensor square of ``self``.
 
             EXAMPLES::
 
@@ -837,7 +837,7 @@ class Modules(Category_module):
 
     class CartesianProducts(CartesianProductsCategory):
         """
-        The category of modules constructed as Cartesian products of modules
+        The category of modules constructed as Cartesian products of modules.
 
         This construction gives the direct product of modules. The
         implementation is based on the following resources:

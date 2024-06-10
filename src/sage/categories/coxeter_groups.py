@@ -439,7 +439,7 @@ class CoxeterGroups(Category_singleton):
 
         def weak_order_ideal(self, predicate, side='right', category=None):
             """
-            Return a weak order ideal defined by a predicate
+            Return a weak order ideal defined by a predicate.
 
             INPUT:
 

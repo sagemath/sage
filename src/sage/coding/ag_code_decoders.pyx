@@ -76,7 +76,7 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 class EvaluationAGCodeEncoder(Encoder):
     """
-    Encoder of an evaluation AG code
+    Encoder of an evaluation AG code.
 
     INPUT:
 

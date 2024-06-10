@@ -280,7 +280,7 @@ class Encoder(SageObject):
 
     def unencode_nocheck(self, c):
         r"""
-        Returns the message corresponding to ``c``.
+        Return the message corresponding to ``c``.
 
         When ``c`` is not a codeword, the output is unspecified.
 
@@ -327,7 +327,7 @@ class Encoder(SageObject):
 
     def code(self):
         r"""
-        Returns the code for this :class:`Encoder`.
+        Return the code for this :class:`Encoder`.
 
         EXAMPLES::
 
@@ -342,7 +342,7 @@ class Encoder(SageObject):
 
     def message_space(self):
         r"""
-        Returns the ambient space of allowed input to :meth:`encode`.
+        Return the ambient space of allowed input to :meth:`encode`.
         Note that :meth:`encode` is possibly a partial function over
         the ambient space.
 
@@ -360,7 +360,7 @@ class Encoder(SageObject):
     @abstract_method(optional=True)
     def generator_matrix(self):
         r"""
-        Returns a generator matrix of the associated code of ``self``.
+        Return a generator matrix of the associated code of ``self``.
 
         This is an abstract method and it should be implemented separately.
         Reimplementing this for each subclass of :class:`Encoder` is not mandatory

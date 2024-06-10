@@ -3009,7 +3009,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
         def to_symmetric_function_on_basis(self, I):
             r"""
-            The commutative image of a complete element
+            The commutative image of a complete element.
 
             The commutative image of a basis element is obtained by sorting
             the indexing composition of the basis element and the output
@@ -5088,7 +5088,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
         def to_symmetric_function_on_basis(self, I):
             r"""
-            The commutative image of a dual quasi-symmetric Schur element
+            The commutative image of a dual quasi-symmetric Schur element.
 
             The commutative image of a basis element is obtained by sorting
             the indexing composition of the basis element.

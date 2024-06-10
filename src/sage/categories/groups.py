@@ -155,7 +155,7 @@ class Groups(CategoryWithAxiom):
 
         def semidirect_product(self, N, mapping, check=True):
             r"""
-            The semi-direct product of two groups
+            The semi-direct product of two groups.
 
             EXAMPLES::
 
@@ -171,7 +171,7 @@ class Groups(CategoryWithAxiom):
 
         def holomorph(self):
             r"""
-            The holomorph of a group
+            The holomorph of a group.
 
             The holomorph of a group `G` is the semidirect product
             `G \rtimes_{id} Aut(G)`, where `id` is the identity function

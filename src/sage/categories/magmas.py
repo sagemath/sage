@@ -835,7 +835,7 @@ class Magmas(Category_singleton):
 
         def multiplication_table(self, names='letters', elements=None):
             r"""
-            Returns a table describing the multiplication operation.
+            Return a table describing the multiplication operation.
 
             .. note:: The order of the elements in the row and column
               headings is equal to the order given by the table's
@@ -987,7 +987,7 @@ class Magmas(Category_singleton):
         @abstract_method(optional=True)
         def _mul_(self, right):
             """
-            Product of two elements
+            Product of two elements.
 
             INPUT:
 

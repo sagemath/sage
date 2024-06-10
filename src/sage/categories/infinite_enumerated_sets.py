@@ -19,7 +19,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 
 class InfiniteEnumeratedSets(CategoryWithAxiom):
     """
-    The category of infinite enumerated sets
+    The category of infinite enumerated sets.
 
     An infinite enumerated sets is a countable set together with a
     canonical enumeration of its elements.

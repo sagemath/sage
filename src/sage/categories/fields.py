@@ -160,7 +160,7 @@ class Fields(CategoryWithAxiom):
 
     def _call_(self, x):
         """
-        Construct a field from the data in ``x``
+        Construct a field from the data in ``x``.
 
         EXAMPLES::
 
@@ -191,7 +191,7 @@ class Fields(CategoryWithAxiom):
 
         def is_field( self, proof=True ):
             r"""
-            Returns ``True`` as ``self`` is a field.
+            Return ``True`` as ``self`` is a field.
 
             EXAMPLES::
 
@@ -446,7 +446,7 @@ class Fields(CategoryWithAxiom):
 
         def fraction_field(self):
             r"""
-            Returns the *fraction field* of ``self``, which is ``self``.
+            Return the *fraction field* of ``self``, which is ``self``.
 
             EXAMPLES::
 
@@ -584,7 +584,7 @@ class Fields(CategoryWithAxiom):
 
         def is_unit( self ):
             r"""
-            Returns ``True`` if ``self`` has a multiplicative inverse.
+            Return ``True`` if ``self`` has a multiplicative inverse.
 
             EXAMPLES::
 

@@ -81,7 +81,7 @@ class FiniteGroups(CategoryWithAxiom):
 
         def cardinality(self):
             """
-            Returns the cardinality of ``self``, as per
+            Return the cardinality of ``self``, as per
             :meth:`EnumeratedSets.ParentMethods.cardinality`.
 
             This default implementation calls :meth:`.order` if

@@ -87,7 +87,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, object):
         r"""
-        Construction of elements
+        Construction of elements.
 
         Since ``self`` is a strict subset of the parent it is a facade
         for, it is mandatory to override this method. This method

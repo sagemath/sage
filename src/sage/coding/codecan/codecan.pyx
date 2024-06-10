@@ -198,7 +198,7 @@ cdef class InnerGroup:
 
     cdef bint has_semilinear_action(self) noexcept:
         """
-        Returns ``True`` iff the field automorphism group component of ``self``
+        Return ``True`` iff the field automorphism group component of ``self``
         is non-trivial.
         """
         return (self.frob_pow > 0)

@@ -152,7 +152,7 @@ cdef class dancing_linksWrapper:
 
     def _initialize(self):
         r"""
-        Initialization of the search algorithm
+        Initialization of the search algorithm.
 
         This adds the rows to the instance of dancing_links. This method is
         used by `__init__` and `reinitialize` methods and should not be
@@ -190,7 +190,7 @@ cdef class dancing_linksWrapper:
 
     def reinitialize(self):
         r"""
-        Reinitialization of the search algorithm
+        Reinitialization of the search algorithm.
 
         This recreates an empty ``dancing_links`` object and adds the rows to
         the instance of ``dancing_links.``

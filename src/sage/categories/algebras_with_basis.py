@@ -309,7 +309,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             @cached_method
             def one_basis(self):
                 """
-                Returns the index of the one of this tensor product of
+                Return the index of the one of this tensor product of
                 algebras, as per ``AlgebrasWithBasis.ParentMethods.one_basis``
 
                 It is the tuple whose operands are the indices of the

@@ -264,7 +264,7 @@ class GroupDivisibleDesign(IncidenceStructure):
     def __init__(self, points, groups, blocks, G=None, K=None, lambd=1,
                  check=True, copy=True, **kwds):
         r"""
-        Constructor function
+        Constructor function.
 
         EXAMPLES::
 

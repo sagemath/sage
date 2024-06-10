@@ -25,7 +25,7 @@ from sage.categories.covariant_functorial_construction import RegressiveCovarian
 
 class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
-    An abstract base class for all categories of realizations category
+    An abstract base class for all categories of realizations category.
 
     Relization are implemented as
     :class:`~sage.categories.covariant_functorial_construction.RegressiveCovariantConstructionCategory`.
@@ -111,7 +111,7 @@ Category.Realizations = Realizations
 
 class Category_realization_of_parent(Category_over_base, BindableClass):
     """
-    An abstract base class for categories of all realizations of a given parent
+    An abstract base class for categories of all realizations of a given parent.
 
     INPUT:
 
@@ -163,7 +163,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
     def _get_name(self):
         """
-        Return a human readable string specifying which kind of bases this category is for
+        Return a human readable string specifying which kind of bases this category is for.
 
         It is obtained by splitting and lower casing the last part of
         the class name.

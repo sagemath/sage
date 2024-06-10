@@ -69,7 +69,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
     def __init__(self, alphabet=('a','b','c','d')):
         r"""
-        The free commutative monoid
+        The free commutative monoid.
 
         INPUT:
 
@@ -100,7 +100,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
     def summation(self, x, y):
         r"""
-        Returns the product of ``x`` and ``y`` in the semigroup, as per
+        Return the product of ``x`` and ``y`` in the semigroup, as per
         :meth:`CommutativeAdditiveSemigroups.ParentMethods.summation`.
 
         EXAMPLES::
@@ -119,7 +119,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
     @cached_method
     def additive_semigroup_generators(self):
         r"""
-        Returns the generators of the semigroup.
+        Return the generators of the semigroup.
 
         EXAMPLES::
 
@@ -134,7 +134,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of the semigroup.
+        Return an element of the semigroup.
 
         EXAMPLES::
 

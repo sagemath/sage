@@ -282,7 +282,7 @@ class GolayCode(AbstractLinearCode):
 
     def generator_matrix(self):
         r"""
-        Return a generator matrix of ``self``
+        Return a generator matrix of ``self``.
 
         Generator matrices of all Golay codes are known, and are thus returned
         by this method without performing any computation

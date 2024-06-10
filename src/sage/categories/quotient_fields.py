@@ -18,7 +18,7 @@ from sage.structure.element import coerce_binop
 
 class QuotientFields(Category_singleton):
     """
-    The category of quotient fields over an integral domain
+    The category of quotient fields over an integral domain.
 
     EXAMPLES::
 
@@ -57,7 +57,7 @@ class QuotientFields(Category_singleton):
         @coerce_binop
         def gcd(self, other):
             """
-            Greatest common divisor
+            Greatest common divisor.
 
             .. NOTE::
 
@@ -141,7 +141,7 @@ class QuotientFields(Category_singleton):
         @coerce_binop
         def lcm(self, other):
             """
-            Least common multiple
+            Least common multiple.
 
             In a field, the least common multiple is not very informative, as it
             is only determined up to a unit. But in the fraction field of an
@@ -628,7 +628,7 @@ class QuotientFields(Category_singleton):
 
         def _derivative(self, var=None):
             r"""
-            Returns the derivative of this rational function with respect to the
+            Return the derivative of this rational function with respect to the
             variable ``var``.
 
             Over a ring with a working gcd implementation, the derivative of a

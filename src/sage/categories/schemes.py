@@ -94,7 +94,7 @@ class Schemes(Category):
 
     def _call_(self, x):
         """
-        Construct a scheme from the data in ``x``
+        Construct a scheme from the data in ``x``.
 
         EXAMPLES:
 

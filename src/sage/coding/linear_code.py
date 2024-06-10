@@ -1041,7 +1041,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
     def juxtapose(self, other):
         """
-        Juxtaposition of ``self`` and ``other``
+        Juxtaposition of ``self`` and ``other``.
 
         The two codes must have equal dimension.
 

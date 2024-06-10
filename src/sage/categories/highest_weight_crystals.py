@@ -80,7 +80,7 @@ class HighestWeightCrystals(Category_singleton):
 
     def example(self):
         """
-        Returns an example of highest weight crystals, as per
+        Return an example of highest weight crystals, as per
         :meth:`Category.example`.
 
         EXAMPLES::
@@ -114,7 +114,7 @@ class HighestWeightCrystals(Category_singleton):
         @cached_method
         def highest_weight_vectors(self):
             r"""
-            Returns the highest weight vectors of ``self``
+            Return the highest weight vectors of ``self``.
 
             This default implementation selects among the module
             generators those that are highest weight, and caches the result.
@@ -140,7 +140,7 @@ class HighestWeightCrystals(Category_singleton):
 
         def highest_weight_vector(self):
             r"""
-            Returns the highest weight vector if there is a single one;
+            Return the highest weight vector if there is a single one;
             otherwise, raises an error.
 
             Caveat: this assumes that :meth:`.highest_weight_vectors`

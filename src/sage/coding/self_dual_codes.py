@@ -179,7 +179,7 @@ def _MS2(n):
 
 def _I2(n):
     r"""
-    Internal function
+    Internal function.
 
     EXAMPLES::
 

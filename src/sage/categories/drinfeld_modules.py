@@ -506,7 +506,7 @@ class DrinfeldModules(Category_over_base_ring):
 
     def ore_polring(self):
         r"""
-        Return the Ore polynomial ring of the category
+        Return the Ore polynomial ring of the category.
 
         EXAMPLES::
 

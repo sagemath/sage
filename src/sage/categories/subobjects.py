@@ -24,7 +24,7 @@ class SubobjectsCategory(RegressiveCovariantConstructionCategory):
     @classmethod
     def default_super_categories(cls, category):
         """
-        Returns the default super categories of ``category.Subobjects()``
+        Return the default super categories of ``category.Subobjects()``
 
         Mathematical meaning: if `A` is a subobject of `B` in the
         category `C`, then `A` is also a subquotient of `B` in the

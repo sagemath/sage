@@ -129,7 +129,7 @@ def Constellations(*data, **options):
 
 def Constellation(g=None, mutable=False, connected=True, check=True):
     r"""
-    Constellation
+    Constellation.
 
     INPUT:
 
@@ -182,7 +182,7 @@ def Constellation(g=None, mutable=False, connected=True, check=True):
 
 class Constellation_class(Element):
     r"""
-    Constellation
+    Constellation.
 
     A constellation or a tuple of permutations `(g_0,g_1,...,g_k)`
     such that the product `g_0 g_1 ... g_k` is the identity.
@@ -674,7 +674,7 @@ class Constellation_class(Element):
 
         INPUT:
 
-        - i -- integer or ``None`` (default)
+        - ``i`` -- integer or ``None`` (default)
 
         If ``None`` , return instead the list of all `g_i`.
 
@@ -1463,7 +1463,7 @@ def perms_sym_init(g, sym=None):
     Initialize a list of permutations (in the same symmetric group).
 
     OUTPUT:
-    
+
     - ``sym`` -- a symmetric group
 
     - ``gg`` -- list of permutations
@@ -1517,7 +1517,7 @@ def perms_sym_init(g, sym=None):
 
 def perms_are_connected(g, n):
     """
-    Checks that the action of the generated group is transitive
+    Checks that the action of the generated group is transitive.
 
     INPUT:
 
@@ -1680,9 +1680,9 @@ def perms_canonical_labels(p, e=None):
 
     INPUT:
 
-    - ``p`` is a list of at least 2 permutations
+    - ``p`` -- a list of at least 2 permutations
 
-    - ``e`` is None or a list of integer in the domain of the
+    - ``e`` -- None or a list of integer in the domain of the
       permutations. If provided, then the renumbering algorithm is
       only performed from the elements of ``e``.
 

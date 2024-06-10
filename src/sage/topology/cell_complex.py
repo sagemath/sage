@@ -463,10 +463,10 @@ class GenericCellComplex(SageObject):
 
         - ``dim`` -- integer or list of integers or ``None`` (default:
           ``None``); if ``None``, then return the homology in every
-           dimension.  If ``dim`` is an integer or list, return the
-           homology in the given dimensions.  (Actually, if ``dim`` is
-           a list, return the homology in the range from ``min(dim)``
-           to ``max(dim)``.)
+          dimension.  If ``dim`` is an integer or list, return the
+          homology in the given dimensions.  (Actually, if ``dim`` is
+          a list, return the homology in the range from ``min(dim)``
+          to ``max(dim)``.)
         - ``base_ring`` -- commutative ring (default: ``ZZ``); must be `\ZZ` or
           a field
         - ``subcomplex`` -- (default: empty); a subcomplex of this simplicial
@@ -673,12 +673,12 @@ class GenericCellComplex(SageObject):
 
         - ``dim`` -- integer or list of integers or ``None`` (default:
           ``None``); if ``None``, then return every Betti number, as
-           a dictionary with keys the non-negative integers.  If
-           ``dim`` is an integer or list, return the Betti number for
-           each given dimension.  (Actually, if ``dim`` is a list,
-           return the Betti numbers, as a dictionary, in the range
-           from ``min(dim)`` to ``max(dim)``.  If ``dim`` is a number,
-           return the Betti number in that dimension.)
+          a dictionary with keys the non-negative integers.  If
+          ``dim`` is an integer or list, return the Betti number for
+          each given dimension.  (Actually, if ``dim`` is a list,
+          return the Betti numbers, as a dictionary, in the range
+          from ``min(dim)`` to ``max(dim)``.  If ``dim`` is a number,
+          return the Betti number in that dimension.)
         - ``subcomplex`` -- a subcomplex (default: ``None``) of this cell
           complex;  compute the Betti numbers of the homology relative to this
           subcomplex
@@ -1011,7 +1011,7 @@ class GenericCellComplex(SageObject):
         - ``dim_left`` -- the dimension of the left-hand factors in
           the decomposition
 
-        OUTPUT: a list containing triples ``(c, left, right)``.
+        OUTPUT: list containing triples ``(c, left, right)``.
         ``left`` and ``right`` should be cells in this complex, and
         ``c`` an integer. In the cellular approximation of the
         diagonal map, the chain represented by ``cell`` should get

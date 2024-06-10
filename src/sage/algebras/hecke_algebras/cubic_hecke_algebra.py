@@ -1125,7 +1125,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     ############################################################################
     def _repr_(self):
         r"""
-        Return a string representation
+        Return a string representation.
 
         OUTPUT: string describing ``self``
 
@@ -1575,7 +1575,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
     ############################################################################
     def _basis_tietze(self):
         r"""
-        Return the complete finite sub basis as list of Tietze tuples
+        Return the complete finite sub basis as list of Tietze tuples.
 
         EXAMPLES::
 

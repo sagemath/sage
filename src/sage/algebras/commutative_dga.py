@@ -2084,7 +2084,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     def __init__(self, A, differential):
         """
-        Initialize ``self``
+        Initialize ``self``.
 
         INPUT:
 

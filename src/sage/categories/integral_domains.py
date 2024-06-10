@@ -20,7 +20,7 @@ lazy_import('sage.categories.fields', 'Fields')
 
 class IntegralDomains(CategoryWithAxiom):
     """
-    The category of integral domains
+    The category of integral domains.
 
     An integral domain is commutative ring with no zero divisors, or
     equivalently a commutative domain.

@@ -1297,7 +1297,7 @@ class ClusterQuiver(SageObject):
 
     def first_source(self):
         r"""
-        Return the first vertex of ``self`` that is a source
+        Return the first vertex of ``self`` that is a source.
 
         EXAMPLES::
 
@@ -1968,7 +1968,7 @@ class ClusterQuiver(SageObject):
 
     def number_of_edges(self):
         r"""
-        Return the total number of edges on the quiver
+        Return the total number of edges on the quiver.
 
         Note: This only works with non-valued quivers. If used on a
         non-valued quiver then the positive value is taken to be the number of edges added

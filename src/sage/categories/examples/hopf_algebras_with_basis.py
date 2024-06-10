@@ -50,7 +50,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         """
-        Returns the one of the group, which index the one of this algebra,
+        Return the one of the group, which index the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::

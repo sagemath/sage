@@ -20,7 +20,7 @@ from sage.misc.lazy_import import LazyImport
 
 class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
-    The category of Hopf algebras with a distinguished basis
+    The category of Hopf algebras with a distinguished basis.
 
     EXAMPLES::
 
@@ -121,7 +121,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
     def example(self, G=None):
         """
-        Returns an example of algebra with basis::
+        Return an example of algebra with basis::
 
             sage: HopfAlgebrasWithBasis(QQ['x']).example()                              # needs sage.groups
             An example of Hopf algebra with basis: the group algebra of the

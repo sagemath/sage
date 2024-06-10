@@ -73,7 +73,7 @@ class TwoGraph(IncidenceStructure):
     def __init__(self, points=None, blocks=None, incidence_matrix=None,
             name=None, check=False, copy=True):
         r"""
-        Constructor of the class
+        Constructor of the class.
 
         TESTS::
 
@@ -150,7 +150,7 @@ class TwoGraph(IncidenceStructure):
 
     def complement(self):
         """
-        The two-graph which is the complement of ``self``
+        The two-graph which is the complement of ``self``.
 
         That is, the two-graph consisting exactly of triples not in ``self``.
         Note that this is different from :meth:`complement

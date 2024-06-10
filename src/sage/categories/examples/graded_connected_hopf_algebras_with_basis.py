@@ -49,7 +49,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
     @cached_method
     def one_basis(self):
         """
-        Returns 0, which index the unit of the Hopf algebra.
+        Return 0, which index the unit of the Hopf algebra.
 
         OUTPUT: the nonnegative integer 0
 
@@ -66,7 +66,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
     def degree_on_basis(self, i):
         """
-        The degree of a nonnegative integer is itself
+        The degree of a nonnegative integer is itself.
 
         INPUT:
 
@@ -85,7 +85,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
     def _repr_(self):
         """
-        Representation of the graded connected Hopf algebra
+        Representation of the graded connected Hopf algebra.
 
         EXAMPLES::
 

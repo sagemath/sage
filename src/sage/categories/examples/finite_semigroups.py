@@ -19,7 +19,7 @@ from sage.structure.element_wrapper import ElementWrapper
 
 class LeftRegularBand(UniqueRepresentation, Parent):
     r"""
-    An example of a finite semigroup
+    An example of a finite semigroup.
 
     This class provides a minimal implementation of a finite semigroup.
 
@@ -134,7 +134,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
 
     def product(self, x, y):
         r"""
-        Returns the product of two elements of the semigroup.
+        Return the product of two elements of the semigroup.
 
         EXAMPLES::
 
@@ -156,7 +156,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
     @cached_method
     def semigroup_generators(self):
         r"""
-        Returns the generators of the semigroup.
+        Return the generators of the semigroup.
 
         EXAMPLES::
 
@@ -169,7 +169,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of the semigroup.
+        Return an element of the semigroup.
 
         EXAMPLES::
 

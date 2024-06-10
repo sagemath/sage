@@ -21,7 +21,7 @@ lazy_import("sage.rings.integer", "Integer")
 
 class EnumeratedSets(CategoryWithAxiom):
     """
-    The category of enumerated sets
+    The category of enumerated sets.
 
     An *enumerated set* is a *finite* or *countable* set or multiset `S`
     together with a canonical enumeration of its elements;
@@ -710,7 +710,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
         def _unrank_from_iterator(self, r):
             """
-            The ``r``-th element of ``self``
+            The ``r``-th element of ``self``.
 
             ``self.unrank(r)`` returns the ``r``-th element of ``self``, where
             ``r`` is an integer between ``0`` and ``n-1`` where ``n`` is the
@@ -748,7 +748,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
         def _rank_from_iterator(self, x):
             """
-            The rank of an element of ``self``
+            The rank of an element of ``self``.
 
             ``self.rank(x)`` returns the rank of `x`, that is its
             position in the enumeration of ``self``. This is an

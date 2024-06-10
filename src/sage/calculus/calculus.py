@@ -2112,7 +2112,7 @@ def dummy_inverse_laplace(*args):
 
 def dummy_pochhammer(*args):
     """
-    This function is called to create formal wrappers of Pochhammer symbols
+    This function is called to create formal wrappers of Pochhammer symbols.
 
     EXAMPLES::
 

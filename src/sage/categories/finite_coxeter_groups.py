@@ -943,7 +943,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         @cached_in_parent_method
         def bruhat_upper_covers(self):
             r"""
-            Returns all the elements that cover ``self`` in Bruhat order.
+            Return all the elements that cover ``self`` in Bruhat order.
 
             EXAMPLES::
 

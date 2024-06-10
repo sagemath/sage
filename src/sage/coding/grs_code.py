@@ -759,7 +759,7 @@ class GRSEvaluationVectorEncoder(Encoder):
     @cached_method
     def generator_matrix(self):
         r"""
-        Return a generator matrix of ``self``
+        Return a generator matrix of ``self``.
 
         Considering a GRS code of length `n`, dimension `k`, with
         evaluation points `(\alpha_1, \dots, \alpha_n)` and column multipliers
@@ -1068,7 +1068,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Return the message space of ``self``
+        Return the message space of ``self``.
 
         EXAMPLES::
 
@@ -1754,7 +1754,7 @@ class GRSGaoDecoder(Decoder):
 
     def decoding_radius(self):
         r"""
-        Return maximal number of errors that ``self`` can decode
+        Return maximal number of errors that ``self`` can decode.
 
         OUTPUT: the number of errors as an integer
 
@@ -2302,7 +2302,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
     def decode_to_message(self, r):
         r"""
-        Decode ``r`` to an element in message space of ``self``
+        Decode ``r`` to an element in message space of ``self``.
 
         .. NOTE::
 
@@ -2336,7 +2336,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
     def decoding_radius(self):
         r"""
-        Return maximal number of errors that ``self`` can decode
+        Return maximal number of errors that ``self`` can decode.
 
         OUTPUT: the number of errors as an integer
 

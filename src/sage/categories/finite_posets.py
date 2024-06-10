@@ -336,7 +336,7 @@ class FinitePosets(CategoryWithAxiom):
 
         def order_filter_generators(self, filter):
             r"""
-            Generators for an order filter
+            Generators for an order filter.
 
             INPUT:
 
