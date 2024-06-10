@@ -800,11 +800,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         EXAMPLES::
 
             sage: G1 = FreeGroup(2) / [(1, 2, 2, 1, 2, 1)]
-            sage: G2 = FreeGroup(2) / [(1, 2, 2, 1, 2, 1)]
+            sage: G2 = libgap(G1).sage()
             sage: G1 == G2
             True
             sage: G1 is G2
-            True
+            False
         """
         if not isinstance(other, self.__class__):
             from sage.structure.richcmp import op_NE
