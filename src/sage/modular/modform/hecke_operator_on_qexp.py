@@ -23,7 +23,7 @@ from sage.rings.power_series_ring_element import is_PowerSeries
 
 lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
-from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
+from sage.modular.dirichlet import DirichletGroup, DirichletCharacter
 from .element import ModularFormElement
 
 def hecke_operator_on_qexp(f, n, k, eps=None,
