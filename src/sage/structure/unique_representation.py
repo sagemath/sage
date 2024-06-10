@@ -561,13 +561,38 @@ from sage.misc.fast_methods import WithEqualityById
 
 class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
     r"""
-    Store the arguments passed to ``__init__`` to implement pickling.
+    Classes derived from :class:`WithPicklingByInitArgs` store the arguments
+    passed to :meth:`__init__` to implement pickling.
+
+    This class is for objects that are semantically immutable and determined
+    by the class and the arguments passed to :meth:`__init__`.
+    The class also provides implementations of :meth:`__copy__` and
+    :func:`__deepcopy__`, which simply return the object.
     """
 
     @staticmethod
     def __classcall__(cls, *args, **options):
         """
         Construct a new object of this class and store the arguments passed to ``__init__``.
+
+        TESTS::
+
+            sage: from sage.structure.unique_representation import WithPicklingByInitArgs
+            sage: class MyClass(WithPicklingByInitArgs):
+            ....:     def __init__(self, value):
+            ....:         self.value = value
+            ....:     def __eq__(self, other):
+            ....:         if type(self) != type(other):
+            ....:             return False
+            ....:         return self.value == other.value
+            sage: import __main__
+            sage: __main__.MyClass = MyClass  # This is only needed in doctests
+            sage: x = MyClass(1)
+            sage: x == loads(dumps(x))
+            True
+            sage: y = MyClass(1)
+            sage: x is y                # No Cached/UniqueRepresentation behavior
+            False
         """
         instance = typecall(cls, *args, **options)
         assert isinstance(instance, cls)
