@@ -642,34 +642,6 @@ cdef class SparseGraph(CGraph):
                         nr += 1
         return -1 if nr > 0 else n
 
-    cdef int out_neighbors_BTNode_unsafe(self, int u, SparseGraphBTNode *** p_pointers) noexcept:
-        """
-        List the out-neighbors of a vertex as BTNodes
-
-        Technically, this function transforms a binary tree into a list. The
-        information it returns is a list of pointers toward a
-        ``SparseGraphBTNode``, thus a ``SparseGraphBTNode **``.
-
-        INPUT:
-
-        - ``u`` -- the vertex to consider
-
-        - ``p_pointers`` -- a pointer toward a ``SparseGraphBTNode **``, i.e. a
-          ``SparseGraphBTNode ***``. When the function terminates,
-          ``p_pointers[0]`` points toward a filled ``SparseGraphBTNode **``. It
-          returns the length of this array.
-
-        .. NOTE::
-
-            Don't forget to free ``p_pointers[0]``  !
-        """
-        cdef int degree = self.out_degrees[u]
-        if degree == 0:
-            p_pointers[0] = NULL
-            return 0
-        p_pointers[0] = <SparseGraphBTNode **>check_allocarray(degree, sizeof(SparseGraphBTNode *))
-        return self._neighbors_BTNode_unsafe (u, 1, p_pointers[0], degree)
-
     cdef inline int next_out_neighbor_unsafe(self, int u, int v, int* l) except -2:
         """
         Return the next out-neighbor of ``u`` that is greater than ``v``.
@@ -768,34 +740,6 @@ cdef class SparseGraph(CGraph):
             2
         """
         return self.out_degrees[u]
-
-    cdef int in_neighbors_BTNode_unsafe(self, int v, SparseGraphBTNode *** p_pointers) noexcept:
-        """
-        List the in-neighbors of a vertex as BTNodes
-
-        Technically, this function transforms a binary tree into a list. The
-        information it returns is a list of pointers toward a
-        ``SparseGraphBTNode``, thus a ``SparseGraphBTNode **``.
-
-        INPUT:
-
-        - ``u`` -- the vertex to consider
-
-        - ``p_pointers`` -- a pointer toward a ``SparseGraphBTNode **``, i.e. a
-          ``SparseGraphBTNode ***``. When the function terminates,
-          ``p_pointers[0]`` points toward a filled ``SparseGraphBTNode **``. It
-          returns the length of this array.
-
-        .. NOTE::
-
-            Don't forget to free ``p_pointers[0]``  !
-        """
-        cdef int degree = self.in_degrees[v]
-        if degree == 0:
-            p_pointers[0] = NULL
-            return 0
-        p_pointers[0] = <SparseGraphBTNode **>check_allocarray(degree, sizeof(SparseGraphBTNode *))
-        return self._neighbors_BTNode_unsafe (v, 0, p_pointers[0], degree)
 
     cdef inline int next_in_neighbor_unsafe(self, int v, int u, int* l) except -2:
         """

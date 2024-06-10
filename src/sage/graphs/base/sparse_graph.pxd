@@ -43,8 +43,6 @@ cdef class SparseGraph(CGraph):
     cdef inline int _neighbors_unsafe (self, int u, bint out, int *neighbors, int size) except -2
 
     cdef inline int _neighbors_BTNode_unsafe (self, int u, bint out, SparseGraphBTNode **res, int size) except -2
-    cdef int out_neighbors_BTNode_unsafe(self, int u, SparseGraphBTNode *** p_pointers) noexcept
-    cdef int in_neighbors_BTNode_unsafe(self, int u, SparseGraphBTNode *** p_pointers) noexcept
 
     cdef inline SparseGraphBTNode* next_out_neighbor_BTNode_unsafe(self, int u, int v) noexcept:
         """
@@ -59,7 +57,7 @@ cdef class SparseGraph(CGraph):
             Repeated calls to this function until NULL is returned DOES NOT
             yield a linear time algorithm in the number of neighbors of u.
             To list the neighbors of a vertex in linear time, one should use
-            out_neighbors_BTNode_unsafe.
+            _neighbors_BTNode_unsafe.
         """
         return self.next_neighbor_BTNode_unsafe(self.vertices, u, v)
 
@@ -76,7 +74,7 @@ cdef class SparseGraph(CGraph):
             Repeated calls to this function until NULL is returned DOES NOT
             yield a linear time algorithm in the number of neighbors of u.
             To list the neighbors of a vertex in linear time, one should use
-            in_neighbors_BTNode_unsafe.
+            _neighbors_BTNode_unsafe.
         """
         return self.next_neighbor_BTNode_unsafe(self.vertices_rev, v, u)
 
