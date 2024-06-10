@@ -1646,12 +1646,11 @@ cdef inline bint _reorganize_edge(object v, object u, const int modus) noexcept:
     """
     if modus == 0:
         return False
-    if modus == 1 or modus == 2:
-        return True
+    elif modus == 3:
+        try:
+            if v <= u:
+                return False
+        except TypeError:
+            pass
 
-    try:
-        if v <= u:
-            return False
-    except TypeError:
-        pass
     return True

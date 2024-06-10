@@ -5034,7 +5034,7 @@ cdef inline bint _reorganize_edge(object v, object u, const int modus) noexcept:
     """
     if modus == 0:
         return False
-    elif modus == 3
+    elif modus == 3:
         try:
             if v <= u:
                 return False
