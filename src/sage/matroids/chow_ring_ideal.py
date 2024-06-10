@@ -85,23 +85,27 @@ class ChowRingIdeal(MPolynomialIdeal):
             return "Chow ring ideal of {}".format(self._matroid)
 
     def groebner_basis(self):
-        gb = list()
-        for F in self.flats:
-            for G in self.flats:
-                if not (F < G or G < F):
-                    gb.append(self.names[F]*self.names[G])
-                elif Set(F).is_empty():
-                    term = 0
-                    for H in self.flats:
-                        if H < F:
-                            term += self.names[H]
-                    gb.append(term**self._matroid.rank(Set(G)))
-                elif F < G:
-                    term = 0
-                    for H in self.flats:
-                        if H < F:
-                            term += self.names[H]
-                    gb.append(term**(self._matroid.rank(Set(G))-self._matroid.rank(Set(F))))
+        if self.augmented:
+            print("Augmented gb")
+        else:    
+            gb = list()
+            for F in self.flats:
+                for G in self.flats:
+                    if not (F < G or G < F):
+                        gb.append(self.names[F]*self.names[G])
+                    elif Set(F).is_empty():
+                        term = 0
+                        for H in self.flats:
+                            if H < F:
+                                term += self.names[H]
+                        gb.append(term**self._matroid.rank(Set(G)))
+                    elif F < G:
+                        term = 0
+                        for H in self.flats:
+                            if H < F:
+                                term += self.names[H]
+                        gb.append(term**(self._matroid.rank(Set(G))-self._matroid.rank(Set(F))))
+
         return gb        
 
 
