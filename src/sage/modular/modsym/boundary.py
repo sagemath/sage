@@ -554,7 +554,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         elif isinstance(x, ManinSymbol):
             return self._coerce_in_manin_symbol(x)
 
-        elif element.isinstance(x, ModularSymbolsElement):
+        elif isinstance(x, element.ModularSymbolsElement):
             M = x.parent()
             if not isinstance(M, ModularSymbolsAmbient):
                 raise TypeError("x (=%s) must be an element of a space of modular symbols of type ModularSymbolsAmbient" % x)
